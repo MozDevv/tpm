@@ -1,0 +1,34 @@
+Sure, let's break down the workflow for the pension and claims process:
+
+1. **Listing of Employees Eligible for Retirement**:
+   - Initially, there's a system or module where administrators
+    or HR personnel can view a list of employees who are eligible for retirement within the next 9 months.
+     This list is filtered by the selected Ministry, Department, or Agency (MDA).
+
+2. **Selection of Employees**:
+   - After viewing the list of eligible employees, administrators can select specific employees from the list.
+    These selected employees will proceed to the next step.
+
+3. **Notification for Registration**:
+   - Once selected, the system sends notifications to the chosen employees, informing them to register on a separate portal. 
+   This portal is specifically designed for uploading necessary retirement documents. Notifications are typically sent via emails provided by the employees.
+
+4. **Registration and Document Upload**:
+   - Employees who receive notifications register on the portal and upload the required retirement documents. 
+   These documents may include pension forms, identification documents, financial information, and any other necessary paperwork.
+
+5. **Notification Tracking**:
+   - Administrators have access to a page where they can track the status of notifications sent. 
+   This page lists employees who have been notified to register and upload documents but have not yet completed the process.
+
+6. **Document Submission Tracking**:
+   - Another page is available for administrators to track employees who have successfully submitted their retirement documents. 
+   This page provides an overview of employees who have completed the registration and document upload process.
+
+7. **Document Review and Approval**:
+   - After documents are submitted, administrators can review the uploaded documents to ensure they meet the necessary requirements. 
+   There might be a detailed view for each employee where administrators can inspect each document closely.
+   - Once reviewed, administrators have the option to approve the retirement application for each employee.
+
+Overall, this workflow ensures a streamlined process for managing pension and claims applications, from initial eligibility assessment to document submission and approval.
+ It helps administrators efficiently handle retirement requests and ensures that employees receive timely notifications and support throughout the process.

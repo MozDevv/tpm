@@ -1,0 +1,16 @@
+.nav_title {
+  font-weight: 600;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 14px;
+}
+.h6 {
+  font-weight: 700;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 12px;
+  color: var(--primary-color);
+  margin-left: 25px;
+  margin-top: 40px;
+  text-transform: capitalize;
+
+  width: 100%;
+}
