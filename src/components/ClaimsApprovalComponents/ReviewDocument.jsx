@@ -305,7 +305,7 @@ function ReviewDocument({ data }) {
             }}
           >
             <Typography variant="h6" component="h2">
-              Reason for Rejection
+              Enter Reason for Rejection
             </Typography>
             <TextField
               fullWidth

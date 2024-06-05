@@ -70,7 +70,7 @@ function RecentClaimsTable() {
       >
         Recent Claims
       </Typography>
-      <TableContainer sx={{ maxHeight: "250px" }}>
+      <TableContainer sx={{ maxHeight: "350px" }}>
         <Table sx={{ overflowY: "auto" }} aria-label="recent claims table">
           <TableHead>
             <TableRow>

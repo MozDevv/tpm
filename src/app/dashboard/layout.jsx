@@ -12,7 +12,7 @@ function Layout({ children }) {
 
   return (
     <>
-      <Grid container sx={{ height: "100vh" }}>
+      <Grid container sx={{ height: "95vh" }}>
         {/* Sidebar */}
         <Grid item xs={2}>
           <div className={styles.sidebar}>
@@ -23,8 +23,13 @@ function Layout({ children }) {
         <>
           <Grid item xs={10}>
             <Navbar />
-            <div className={styles.main}>
-              {isLoading ? <Spinner /> : children}
+            <div
+              className={styles.main}
+              style={{ height: "calc(100vh - 67px)" }}
+            >
+              <Suspense fallback={<Spinner />}>
+                {isLoading ? <Spinner /> : children}
+              </Suspense>
             </div>
           </Grid>
         </>

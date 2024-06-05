@@ -2,7 +2,7 @@
 import SimplifiedTable from "@/components/user-table/UserTable";
 import React, { useState } from "react";
 import { allClients } from "@/components/user-table/dummyData";
-import AddUserDrawer from "@/components/user-table/AddUserFolder";
+import AddUserDrawer from "@/components/user-table/AddUserDrawer";
 
 function Page() {
   const [drawerOpen, setDrawerOpen] = useState(false);

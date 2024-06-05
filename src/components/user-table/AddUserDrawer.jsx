@@ -65,6 +65,9 @@ export default function AddUserDrawer({ drawerOpen, setDrawerOpen }) {
           bottom: 16,
           right: 16,
           backgroundColor: "#006990",
+          "&:hover": {
+            backgroundColor: "#004a6e",
+          },
         }}
       >
         <AddIcon sx={{ color: "white" }} />
@@ -94,7 +97,7 @@ export default function AddUserDrawer({ drawerOpen, setDrawerOpen }) {
             variant="h3"
             sx={{ fontWeight: 600, mt: 2, color: "#006990" }}
           >
-            Add User
+            Add New User
           </Typography>
           <FormControl fullWidth>
             <FormLabel sx={{ fontSize: "11px", fontWeight: 600 }}>

@@ -6,7 +6,7 @@ const SelectedItemContext = createContext();
 export const useSelectedItem = () => useContext(SelectedItemContext);
 
 export const SelectedItemProvider = ({ children }) => {
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState();
 
   useEffect(() => {
     const savedItem = localStorage.getItem("selectedItem");

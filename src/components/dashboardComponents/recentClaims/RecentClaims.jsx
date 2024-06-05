@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
+import dynamic from "next/dynamic";
 import React from "react";
-import RecentClaimsTable from "./RecentClaimsTable";
+const RecentClaimsTable = dynamic(() => import("./RecentClaimsTable"));
 
 function RecentClaims() {
   return (

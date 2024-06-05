@@ -80,12 +80,12 @@ function DueForApproval() {
       <Box
         sx={{
           ml: "20px",
-          fontWeight: 700,
-          color: "#006990",
+          fontWeight: 600,
         }}
       >
-        {" "}
-        Due for Approval
+        <Typography variant="body1" sx={{ fontWeight: 600, color: "GrayText" }}>
+          Due for Approval
+        </Typography>
       </Box>
       <List>
         {dummyData.map((item) => (

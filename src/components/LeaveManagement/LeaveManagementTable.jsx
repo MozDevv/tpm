@@ -47,7 +47,7 @@ const generateDummyData = () => {
   return data;
 };
 
-const LeaveManagementTable = () => {
+const LeaveManagementTable = ({ setOpenAddLeave }) => {
   const [dummyData, setDummyData] = useState([]);
   const [anchorEl2, setAnchorEl2] = useState(null);
 
@@ -119,7 +119,9 @@ const LeaveManagementTable = () => {
           <Button variant="outlined" size="small">
             Designation
           </Button>
-          <Button variant="contained">Add New</Button>
+          <Button variant="contained" onClick={() => setOpenAddLeave(true)}>
+            Add Leave
+          </Button>
         </Box>
       </Box>
       <Box sx={{ width: "90%", mx: "auto", mt: 3 }}>

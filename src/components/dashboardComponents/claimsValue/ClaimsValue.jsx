@@ -1,15 +1,23 @@
 "use client";
-import React from "react";
-import { Typography, Box, Card } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Typography,
+  Box,
+  Card,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import dynamic from "next/dynamic";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 const ClaimsValue = () => {
-  const theme = useTheme();
   const primary = "#006990";
   const secondary = "#F3A92A";
+  const [selectedYear, setSelectedYear] = useState("This Year");
   const optionsrevenue = {
     grid: {
       show: true,
@@ -90,8 +98,34 @@ const ClaimsValue = () => {
         mr: "10px",
       }}
     >
-      <Box sx={{ fontWeight: 700, pl: "20px", color: "#006990" }}>
-        Claims Value
+      <Box
+        sx={{ display: "flex", width: "100%", justifyContent: "space between" }}
+      >
+        {" "}
+        <Box sx={{ fontWeight: 700, pl: "20px", color: "#006990" }}>
+          Claims Value
+        </Box>
+        <FormControl variant="standard" sx={{ ml: "auto" }}>
+          <Select
+            disableUnderline
+            id="demo-simple-select-standard"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+          >
+            <MenuItem color="main.primary" value="This Year">
+              <em>This Year</em>
+            </MenuItem>
+            <MenuItem color="primary" value="2024">
+              <Typography>2024</Typography>
+            </MenuItem>
+            <MenuItem color="primary" value="2023">
+              <Typography>2023</Typography>
+            </MenuItem>
+            <MenuItem color="primary" value="2022">
+              <Typography>2022</Typography>
+            </MenuItem>
+          </Select>
+        </FormControl>
       </Box>
       <Box>
         <Chart

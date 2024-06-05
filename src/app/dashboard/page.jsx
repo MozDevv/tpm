@@ -1,10 +1,24 @@
-import ApprovalRequests from "@/components/dashboardComponents/approvalRequests/ApprovalRequests";
-import ClaimsValue from "@/components/dashboardComponents/claimsValue/ClaimsValue";
-import DueForApproval from "@/components/dashboardComponents/dueforapproval/DueForApproval";
-import RecentClaims from "@/components/dashboardComponents/recentClaims/RecentClaims";
 import { AccountBalanceOutlined } from "@mui/icons-material";
-import { Box, Card, Grid, IconButton } from "@mui/material";
+import { Box, Card, Grid, IconButton, Typography } from "@mui/material";
+import dynamic from "next/dynamic";
 import React from "react";
+
+// Import components for the dashboard using next/dynamic
+const MemberStats = dynamic(() =>
+  import("@/components/dashboardComponents/memberStats/MemberStats")
+);
+const ApprovalRequests = dynamic(() =>
+  import("@/components/dashboardComponents/approvalRequests/ApprovalRequests")
+);
+const ClaimsValue = dynamic(() =>
+  import("@/components/dashboardComponents/claimsValue/ClaimsValue")
+);
+const DueForApproval = dynamic(() =>
+  import("@/components/dashboardComponents/dueforapproval/DueForApproval")
+);
+const RecentClaims = dynamic(() =>
+  import("@/components/dashboardComponents/recentClaims/RecentClaims")
+);
 
 function Dashboard() {
   return (
@@ -24,143 +38,17 @@ function Dashboard() {
             gap: "30px",
           }}
         >
-          <Grid container justifyContent="space-around">
-            <Grid
-              item
-              xs={3.5}
-              sx={{
-                boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-                borderRadius: "20px",
-                backgroundColor: "white",
-                height: "140px",
+          {/* MEMBER STATS */}
+          <MemberStats />
 
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                p: "20px",
-              }}
-            >
-              <Box>
-                <IconButton
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#006990",
-                    height: "25px",
-                    width: "25px",
-                    borderRadius: "3px",
-                  }}
-                >
-                  <AccountBalanceOutlined fontSize="small" />
-                </IconButton>
-              </Box>
-              <Box
-                sx={{
-                  fontSize: "16px",
-                  color: "#006990",
-                  fontWeight: 500,
-                }}
-              >
-                Principal Member
-              </Box>
-              <Box
-                sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}
-              >
-                36,427
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={3.5}
-              sx={{
-                backgroundColor: "white",
-                boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-                height: "140px",
-                borderRadius: "20px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                p: "20px",
-              }}
-            >
-              {" "}
-              <Box>
-                <IconButton
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#006990",
-                    height: "25px",
-                    width: "25px",
-                    borderRadius: "3px",
-                  }}
-                >
-                  <AccountBalanceOutlined fontSize="small" />
-                </IconButton>
-              </Box>
-              <Box
-                sx={{
-                  fontSize: "15px",
-                  color: "#006990",
-                  fontWeight: 500,
-                }}
-              >
-                Beneficiary
-              </Box>
-              <Box
-                sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}
-              >
-                1,398
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={3.5}
-              sx={{
-                boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-                backgroundColor: "white",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                p: "20px",
-                height: "140px",
-                borderRadius: "20px",
-              }}
-            >
-              {" "}
-              <Box>
-                <IconButton
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#006990",
-                    height: "25px",
-                    width: "25px",
-                    borderRadius: "3px",
-                  }}
-                >
-                  <AccountBalanceOutlined fontSize="small" />
-                </IconButton>
-              </Box>
-              <Box
-                sx={{
-                  fontSize: "15px",
-                  color: "#006990",
-                  fontWeight: 500,
-                }}
-              >
-                Funds Value
-              </Box>
-              <Box
-                sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}
-              >
-                6,427
-              </Box>
-            </Grid>
-          </Grid>
+          {/* CLAIMS VALUE  */}
           <ClaimsValue />
         </Grid>
+        {/* DUE FOR APPROVAL */}
         <Grid item xs={4} sx={{ height: "100%" }}>
           <DueForApproval />
         </Grid>
-        <Grid container height="450px" width="100%" gap={3} pt={2}>
+        <Grid container height="450px" width="100%" mb={6} gap={3} pt={2}>
           <Grid
             item
             xs={5}
