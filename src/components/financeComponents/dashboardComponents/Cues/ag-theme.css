@@ -1,0 +1,8 @@
+/* ag-theme.css */
+.ag-theme-quartz {
+  --ag-background-color: #f4f4f6;
+}
+
+.header-bold .ag-header-cell-label {
+  font-weight: bold;
+}

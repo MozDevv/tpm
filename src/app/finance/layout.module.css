@@ -1,0 +1,12 @@
+.sidebar {
+  background-color: #ffffff;
+  height: 100vh;
+  border-top-right-radius: 30px;
+  overflow-y: auto;
+}
+.main {
+  height: 95vh;
+  overflow-y: auto;
+  margin-left: 20px;
+  margin-top: 10px;
+}

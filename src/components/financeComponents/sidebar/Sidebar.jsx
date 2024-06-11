@@ -11,14 +11,8 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import styles from "./sidebar.module.css";
-import { Box, Divider, IconButton } from "@mui/material";
-import {
-  AccountBalanceWallet,
-  BarChart,
-  Payments,
-  PeopleAltOutlined,
-  SupportAgent,
-} from "@mui/icons-material";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
+import { PeopleAltOutlined } from "@mui/icons-material";
 import { useSelectedItem } from "@/context/NavItemContext";
 import { useIsLoading } from "@/context/LoadingContext";
 
@@ -38,49 +32,73 @@ function Sidebar() {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      path: "/pensions",
+      title: "Overview",
+      path: "/finance",
       icon: <DashboardOutlinedIcon />,
     },
     {
-      title: "Claims",
-      path: "/pensions/claims",
+      title: "Charts of Accounts",
+      path: "/finance/chartsofaccounts",
       icon: <ArticleOutlinedIcon />,
       children: [
         {
-          title: "Claims Management",
-          path: "/pensions/claims-management",
+          title: "Charts of Accounts List",
+          path: "/finance/chartsofaccounts/list",
         },
         {
-          title: "Claims Approval",
-          path: "/pensions/claims-approval",
+          title: "Charts of Accounts Record Creation",
+          path: "/finance/chartsofaccounts/recordcreation",
         },
       ],
     },
     {
-      title: "Assessment",
-      path: "/pensions/assessment",
-      icon: <BarChart />,
-    },
-    {
-      title: "Directorate",
-      path: "/pensions/directorate",
+      title: "Cash Management",
+      path: "/cashmanagement",
       icon: <ArticleOutlinedIcon />,
+      children: [
+        {
+          title: "Bank Account List",
+          path: "/cashmanagement/list",
+        },
+        {
+          title: "Bank Account Card",
+          path: "/cashmanagement/recordcreation",
+        },
+      ],
     },
     {
-      title: "Controller of Budget",
-      path: "/pensions/cob",
-      icon: <Payments />,
+      title: "Bank Reconciliation",
+      path: "/bankreconciliaton",
+      icon: <ArticleOutlinedIcon />,
+      children: [
+        {
+          title: "Bank Reconciliaton List",
+          path: "/bankreconciliaton/list",
+        },
+        {
+          title: "Bank Reconciliation Card",
+          path: "/bankreconciliaton/card",
+        },
+      ],
     },
     {
-      title: "Accounts",
-      path: "/pensions/accounts",
-      icon: <DashboardOutlinedIcon />,
-    },
-    {
-      title: "Customer Relations",
-      path: "/pensions",
-      icon: <SupportAgent />,
+      title: "Payables Management",
+      path: "/payablesmanagement",
+      icon: <ArticleOutlinedIcon />,
+      children: [
+        {
+          title: "Payable Vendors List",
+          path: "/payablesmanagement/vendorslist",
+        },
+        {
+          title: "Payables Card",
+          path: "/payablesmanagement/card",
+        },
+        {
+          title: "Purchase Invoices",
+          path: "/payablesmanagement/invoices",
+        },
+      ],
     },
   ];
 
@@ -114,8 +132,10 @@ function Sidebar() {
               }
               sx={{
                 mb: "5px",
-                backgroundColor: selectedItem === item.title && "#E5F0F4",
                 borderRadius: "30px",
+                mr: "10px",
+
+                backgroundColor: selectedItem === item.title && "#E5F0F4",
                 color:
                   selectedItem === item.title
                     ? "#006990"
@@ -126,7 +146,9 @@ function Sidebar() {
               }}
             >
               <ListItemIcon
-                sx={{ color: selectedItem === item.title ? "#006990" : "gray" }}
+                sx={{
+                  color: selectedItem === item.title ? "#006990" : "gray",
+                }}
               >
                 {item.icon}
               </ListItemIcon>
@@ -141,9 +163,11 @@ function Sidebar() {
                 )
               ) : null}
             </ListItem>
+            {open[item.title] && <Divider orientation="vertical" />}
             {item.children && (
               <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
+                  {" "}
                   {item.children.map((child) => (
                     <ListItem
                       button
@@ -160,7 +184,9 @@ function Sidebar() {
                       }}
                     >
                       <ListItemText sx={{ ml: 2 }}>
-                        <p className={styles.nav_title}>{child.title}</p>
+                        <Typography fontSize={13} fontWeight={600}>
+                          {child.title}
+                        </Typography>
                       </ListItemText>
                     </ListItem>
                   ))}
@@ -204,7 +230,7 @@ function Sidebar() {
               <ListItem
                 button
                 onClick={() =>
-                  handleNavigation("/pensions/users/", "User List")
+                  handleNavigation("/dashboard/users/", "User List")
                 }
                 sx={{
                   pl: 5,
@@ -222,7 +248,7 @@ function Sidebar() {
                 button
                 onClick={() =>
                   handleNavigation(
-                    "/pensions/users/leave-management",
+                    "/dashboard/users/leave-management",
                     "User Management"
                   )
                 }

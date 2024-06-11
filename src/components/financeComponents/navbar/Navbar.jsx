@@ -7,22 +7,17 @@ import {
   Box,
   Button,
   IconButton,
-  Input,
   InputAdornment,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   TextField,
-  Typography,
 } from "@mui/material";
 import {
-  AvTimer,
-  Email,
   ListAlt,
   Message,
   MessageOutlined,
-  Notifications,
   NotificationsOutlined,
   Person,
   SearchOutlined,
@@ -94,7 +89,7 @@ function Navbar() {
                 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchOutlined color="primary" />
+                    <SearchOutlined />
                   </InputAdornment>
                 ),
               }}
@@ -110,7 +105,7 @@ function Navbar() {
             }}
             onClick={handleClick3}
           >
-            <Badge badgeContent={4} color="primary">
+            <Badge badgeContent={4} color="error">
               <NotificationsOutlined
                 color="action"
                 sx={{
@@ -142,7 +137,7 @@ function Navbar() {
               borderRadius: "50%",
             }}
           >
-            <Badge badgeContent={4} color="primary">
+            <Badge badgeContent={4} color="error">
               <MessageOutlined
                 color="action"
                 sx={{
