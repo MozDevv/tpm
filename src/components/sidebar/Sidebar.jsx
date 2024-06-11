@@ -23,6 +23,7 @@ function Sidebar() {
   const { isLoading, setIsLoading } = useIsLoading();
 
   const handleToggle = (title) => {
+    setSelectedItem(title);
     setOpen((prevOpen) => ({
       ...prevOpen,
       [title]: !prevOpen[title],
@@ -107,6 +108,8 @@ function Sidebar() {
               }
               sx={{
                 mb: "5px",
+                backgroundColor: selectedItem === item.title && "#E5F0F4",
+                borderRadius: "30px",
                 color:
                   selectedItem === item.title
                     ? "#006990"
@@ -141,7 +144,8 @@ function Sidebar() {
                       key={child.title}
                       onClick={() => handleNavigation(child.path, child.title)}
                       sx={{
-                        pl: 5,
+                        pl: 7,
+                        py: "3px",
                         color:
                           selectedItem === child.title ? "#006990" : "gray",
                         "&:hover": {

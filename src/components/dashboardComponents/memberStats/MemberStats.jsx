@@ -36,18 +36,8 @@ const MemberStats = () => {
               <AccountBalanceOutlined fontSize="small" />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              fontSize: "16px",
-              color: "#006990",
-              fontWeight: 500,
-            }}
-          >
-            Principal Member
-          </Box>
-          <Box sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}>
-            36,427
-          </Box>
+          <p className="text-base text-primary font-medium">Principal Member</p>
+          <p className="text-2xl text-primary font-bold">36,427</p>
         </Grid>
         <Grid
           item
@@ -78,15 +68,7 @@ const MemberStats = () => {
               <AccountBalanceOutlined fontSize="small" />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              fontSize: "15px",
-              color: "#006990",
-              fontWeight: 500,
-            }}
-          >
-            Beneficiary
-          </Box>
+          <p className="text-base text-primary font-medium">Beneficiary</p>
           <Box sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}>
             1,398
           </Box>
@@ -96,7 +78,7 @@ const MemberStats = () => {
           xs={3.5}
           sx={{
             boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-            // backgroundColor: "white",
+
             border: "2px solid #006990",
             display: "flex",
             flexDirection: "column",
@@ -120,15 +102,7 @@ const MemberStats = () => {
               <AccountBalanceOutlined fontSize="small" />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              fontSize: "15px",
-              color: "#006990",
-              fontWeight: 500,
-            }}
-          >
-            Funds Value
-          </Box>
+          <p className="text-base text-primary font-medium">Funds Value</p>
           <Box sx={{ fontSize: "29px", color: "#006990", fontWeight: "700" }}>
             6,427
           </Box>
