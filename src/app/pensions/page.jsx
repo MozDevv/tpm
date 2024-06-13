@@ -5,19 +5,29 @@ import React from "react";
 
 // Import components for the dashboard using next/dynamic
 const MemberStats = dynamic(() =>
-  import("@/components/dashboardComponents/memberStats/MemberStats")
+  import(
+    "@/components/pensionsComponents/dashboardComponents/memberStats/MemberStats"
+  )
 );
 const ApprovalRequests = dynamic(() =>
-  import("@/components/dashboardComponents/approvalRequests/ApprovalRequests")
+  import(
+    "@/components/pensionsComponents/dashboardComponents/approvalRequests/ApprovalRequests"
+  )
 );
 const ClaimsValue = dynamic(() =>
-  import("@/components/dashboardComponents/claimsValue/ClaimsValue")
+  import(
+    "@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue"
+  )
 );
 const DueForApproval = dynamic(() =>
-  import("@/components/dashboardComponents/dueforapproval/DueForApproval")
+  import(
+    "@/components/pensionsComponents/dashboardComponents/dueforapproval/DueForApproval"
+  )
 );
 const RecentClaims = dynamic(() =>
-  import("@/components/dashboardComponents/recentClaims/RecentClaims")
+  import(
+    "@/components/pensionsComponents/dashboardComponents/recentClaims/RecentClaims"
+  )
 );
 
 function Dashboard() {

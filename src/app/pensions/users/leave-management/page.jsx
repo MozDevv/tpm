@@ -1,5 +1,5 @@
 "use client";
-import AddLeaveDrawer from "@/components/LeaveManagement/AddLeaveDrawer";
+import AddLeaveDrawer from "@/components/pensionsComponents/LeaveManagement/AddLeaveDrawer";
 import Spinner from "@/components/spinner/Spinner";
 import { Box, Breadcrumbs, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
@@ -8,7 +8,10 @@ import React, { Suspense, useState } from "react";
 
 // Dynamically import the LeaveManagementTable component
 const LeaveManagementTable = dynamic(
-  () => import("@/components/LeaveManagement/LeaveManagementTable"),
+  () =>
+    import(
+      "@/components/pensionsComponents/LeaveManagement/LeaveManagementTable"
+    ),
   {
     suspense: true,
   }

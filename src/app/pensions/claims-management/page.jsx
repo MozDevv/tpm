@@ -4,7 +4,8 @@ import Spinner from "@/components/spinner/Spinner";
 import { Box, Button, Typography } from "@mui/material";
 
 const ClaimsTable = dynamic(
-  () => import("@/components/ClaimsManagementTable/ClaimsTable"),
+  () =>
+    import("@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable"),
   {
     suspense: true,
   }
@@ -14,33 +15,13 @@ function ClaimsManagement() {
   return (
     <div>
       <Suspense fallback={<Spinner />}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mr: 6,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              pl: 2,
-              mb: 1,
-              gap: "10px",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="h2">Claims</Typography>
-            <Typography variant="h6" fontSize={13} color="GrayText">
-              Claims Listing
-            </Typography>
-          </Box>
-          <Box>
-            <Button variant="contained">Add New</Button>
-          </Box>
-        </Box>
-        <div style={{ height: "100vh", width: "100%" }}>
+        <div className="flex items-center justify-between mr-2 mt-4">
+          <div className="flex pl-2 flex-col mb-2 gap-2">
+            <h3 className="text-primary text-xl font-semibold ml-3">Claims</h3>
+          </div>
+        </div>
+
+        <div className="h-[100vh] w-[100%]">
           <ClaimsTable />
         </div>
       </Suspense>

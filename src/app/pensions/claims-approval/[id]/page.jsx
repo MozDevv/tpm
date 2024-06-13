@@ -1,6 +1,6 @@
 "use client";
-import { DummyData } from "@/components/ClaimsApprovalComponents/DummyData";
-import ReviewDocument from "@/components/ClaimsApprovalComponents/ReviewDocument";
+import { DummyData } from "@/components/pensionsComponents/ClaimsApprovalComponents/DummyData";
+import ReviewDocument from "@/components/pensionsComponents/ClaimsApprovalComponents/ReviewDocument";
 import {
   Box,
   Button,

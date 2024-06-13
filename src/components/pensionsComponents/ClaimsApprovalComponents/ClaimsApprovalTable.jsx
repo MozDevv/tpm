@@ -57,7 +57,7 @@ const ClaimsApprovalTable = () => {
   const handleRowClick = (e, id) => {
     setIsLoading(true);
     e.stopPropagation();
-    router.push(`/dashboard/claims-approval/${id}`);
+    router.push(`/pensions/claims-approval/${id}`);
     setTimeout(() => {
       setIsLoading(false);
     }, 500);

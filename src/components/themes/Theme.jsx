@@ -24,6 +24,19 @@ const baselightTheme = createTheme({
       hover: "#f6f9fc",
     },
   },
+  components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: "none", // Remove underline
+          "&:focus, &:hover, &:visited, &:link, &:active": {
+            textDecoration: "none",
+          },
+        },
+      },
+    },
+  },
+
   typography,
   /* components: {
     MuiIconButton: {

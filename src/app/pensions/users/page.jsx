@@ -1,8 +1,7 @@
 "use client";
-import SimplifiedTable from "@/components/user-table/UserTable";
+import SimplifiedTable from "@/components/pensionsComponents/user-table/UserTable";
 import React, { useState } from "react";
-import { allClients } from "@/components/user-table/dummyData";
-import AddUserDrawer from "@/components/user-table/AddUserDrawer";
+import { allClients } from "@/components/pensionsComponents/user-table/dummyData";
 
 function Page() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -13,7 +12,6 @@ function Page() {
         setDrawerOpen={setDrawerOpen}
         allClients={allClients}
       />
-      <AddUserDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
     </div>
   );
 }

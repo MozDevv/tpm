@@ -17,8 +17,10 @@ function Login() {
           sx={{
             fontSize: "30px",
             fontWeight: "700",
+            lineHeight: "40px",
+            width: "470px",
+            color: "primary.main",
           }}
-          className="text-primary font-bolder text-3xl leading-[40px] w-[437px]"
         >
           Welcome to Treasury Pension Management Integrated System
         </Typography>

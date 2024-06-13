@@ -28,7 +28,7 @@ function Auth() {
   // State variables for login form
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [resetPassword, setResetPassword] = useState(false);
+  const [resetPassword, setResetPassword] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -89,7 +89,12 @@ function Auth() {
       <form action="">
         {resetPassword ? (
           <>
-            <Typography variant="h5" fontWeight={600} mb={5} color="primary">
+            <Typography
+              sx={{ fontSize: 20 }}
+              fontWeight={600}
+              mb={5}
+              color="primary"
+            >
               Please Reset Your Password before proceeding
             </Typography>
           </>
@@ -119,7 +124,13 @@ function Auth() {
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <FormControl>
-              <FormLabel sx={{ fontSize: "14px", fontWeight: "700" }}>
+              <FormLabel
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  color: "gray",
+                }}
+              >
                 Username/Email
               </FormLabel>
               <TextField
@@ -142,7 +153,9 @@ function Auth() {
               />
             </FormControl>
             <FormControl>
-              <FormLabel sx={{ fontSize: "14px", fontWeight: "700" }}>
+              <FormLabel
+                sx={{ fontSize: "13px", color: "gray", fontWeight: "700" }}
+              >
                 Password
               </FormLabel>
               <TextField
@@ -178,7 +191,7 @@ function Auth() {
             <Button
               fullWidth
               sx={{
-                backgroundColor: "#F3A92A",
+                backgroundColor: "primary.main",
                 "&:hover": { backgroundColor: "#006990" },
                 pl: "20px",
                 display: "flex",

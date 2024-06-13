@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SimplifiedTable({
   allClients,
@@ -72,7 +73,7 @@ export default function SimplifiedTable({
 
   const router = useRouter();
   const handleRowClick = (employeeNumber) => {
-    router.push(`/dashboard/users/${employeeNumber}`);
+    router.push(`/pensions/users/${employeeNumber}`);
   };
 
   return (
@@ -88,15 +89,17 @@ export default function SimplifiedTable({
             Manage all your users in one place
           </h6>
         </Box>
-        <Button
-          onClick={() => setDrawerOpen(true)}
-          variant="contained"
-          size="small"
-          sx={{ maxHeight: "40px" }}
-          startIcon={<Person />}
-        >
-          Add new User
-        </Button>
+        <Link href="/pensions/users/newUser">
+          <Button
+            //onClick={() => setDrawerOpen(true)}
+            variant="contained"
+            size="small"
+            sx={{ maxHeight: "40px" }}
+            startIcon={<Person />}
+          >
+            Add new User
+          </Button>
+        </Link>
       </Box>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <TableContainer>

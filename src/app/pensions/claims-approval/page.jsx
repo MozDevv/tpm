@@ -2,7 +2,10 @@ import Spinner from "@/components/spinner/Spinner";
 import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
 const ClaimsApprovalTable = dynamic(
-  () => import("@/components/ClaimsApprovalComponents/ClaimsApprovalTable"),
+  () =>
+    import(
+      "@/components/pensionsComponents/ClaimsApprovalComponents/ClaimsApprovalTable"
+    ),
   {
     suspense: true,
   }

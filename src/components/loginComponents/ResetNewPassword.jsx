@@ -22,7 +22,7 @@ function ResetNewPassword() {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {" "}
       <FormControl>
-        <FormLabel sx={{ fontSize: "14px", fontWeight: "700" }}>
+        <FormLabel sx={{ fontSize: "13px", fontWeight: "700", color: "gray" }}>
           New Password
         </FormLabel>
         <TextField
@@ -56,7 +56,7 @@ function ResetNewPassword() {
         />
       </FormControl>
       <FormControl>
-        <FormLabel sx={{ fontSize: "14px", fontWeight: "700" }}>
+        <FormLabel sx={{ fontSize: "13px", fontWeight: "700", color: "gray" }}>
           Confirm New Password
         </FormLabel>
         <TextField
@@ -92,7 +92,7 @@ function ResetNewPassword() {
       <Button
         fullWidth
         sx={{
-          backgroundColor: "#F3A92A",
+          backgroundColor: "primary.main",
           "&:hover": { backgroundColor: "#006990" },
           pl: "20px",
           display: "flex",

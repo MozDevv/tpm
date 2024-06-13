@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@mui/material";
+import { Alert, ThemeProvider } from "@mui/material";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
 import { baselightTheme } from "@/components/themes/Theme";
@@ -7,6 +7,7 @@ import { LoadingProvider, useIsLoading } from "@/context/LoadingContext";
 import { Suspense } from "react";
 import Spinner from "@/components/spinner/Spinner";
 import Loading from "@/components/spinner/Loading";
+import { AlertProvider } from "@/context/AlertContext";
 
 export const metadata = {
   title: "TPMIS",
@@ -26,9 +27,11 @@ export default function RootLayout({ children }) {
       <SelectedItemProvider>
         <LoadingProvider>
           <ThemeProvider theme={baselightTheme}>
-            <body>
-              <Suspense fallback={<Spinner />}>{children}</Suspense>
-            </body>
+            <AlertProvider>
+              <body>
+                <Suspense fallback={<Spinner />}>{children}</Suspense>
+              </body>
+            </AlertProvider>
           </ThemeProvider>
         </LoadingProvider>
       </SelectedItemProvider>

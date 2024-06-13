@@ -1,18 +1,23 @@
 "use client";
-import Navbar from "@/components/navbar/Navbar";
-import Sidebar from "@/components/sidebar/Sidebar";
-import React, { Suspense } from "react";
+import Navbar from "@/components/pensionsComponents/navbar/Navbar";
+import Sidebar from "@/components/pensionsComponents/sidebar/Sidebar";
+import React, { Suspense, useState } from "react";
 import styles from "./layout.module.css";
-import { Grid } from "@mui/material";
+import { Alert, Grid } from "@mui/material";
 import { useIsLoading } from "@/context/LoadingContext";
 import Spinner from "@/components/spinner/Spinner";
+import { useAlert } from "@/context/AlertContext";
+import AlertComponent from "@/components/alerts/AlertComponent";
 
 function Layout({ children }) {
+  const { alert, setAlert } = useAlert();
+
   const { isLoading } = useIsLoading();
 
   return (
     <>
       <Grid container sx={{ height: "95vh" }}>
+        {alert.open && <AlertComponent alert={alert} setAlert={setAlert} />}
         {/* Sidebar */}
         <Grid item xs={2}>
           <div className={styles.sidebar}>

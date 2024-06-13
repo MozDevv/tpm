@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -14,33 +14,39 @@ const flattenData = (data, level = 0) =>
 // Flatten the data
 const flattenedData = flattenData(rowDataCharts);
 
-const IndentCellRenderer = ({ value, data }) => (
-  <div
-    style={{
-      paddingLeft: `${data.level * 40}px`,
-      fontWeight: data.children ? "bold" : "normal",
-    }}
-  >
-    {value}
-  </div>
-);
+const IndentCellRenderer = (params) => {
+  // Determine the row level based on the node's depth
+  const level = params.node.depth;
 
-function ChartsOfAccountsList() {
-  const frameworkComponents = {
-    indentCellRenderer: IndentCellRenderer,
+  // Apply indentation and styling based on the level
+  const style = {
+    paddingLeft: `${level * 20}px`, // Adjust indentation as needed
+    fontWeight: level > 0 ? "bold" : "normal",
   };
 
-  const adjustedColumnDefs = colDefsDataCharts.map((colDef) => ({
+  return <div style={style}>{params.value}</div>;
+};
+function ChartsOfAccountsList() {
+  const gridOptions = useMemo(() => {
+    return {
+      components: {
+        indentCellRenderer: IndentCellRenderer, // Register the component with a name
+      },
+    };
+  }, []);
+
+  const columnDefs = colDefsDataCharts.map((colDef) => ({
     ...colDef,
-    headerComponent: "indentCellRenderer", // Use the registered component name
+    // Use cellRenderer to apply the custom renderer
+    cellRenderer: "indentCellRenderer",
   }));
 
   return (
     <div className="ag-theme-alpine" style={{ height: "100%", width: "100%" }}>
       <AgGridReact
         rowData={flattenedData}
-        columnDefs={adjustedColumnDefs}
-        frameworkComponents={frameworkComponents}
+        columnDefs={columnDefs}
+        gridOptions={gridOptions}
       />
     </div>
   );
