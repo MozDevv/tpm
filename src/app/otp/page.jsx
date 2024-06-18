@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import { Typography } from "@mui/material";
 import dynamic from "next/dynamic";
+import Otp from "@/components/otp/Otp";
 
 const Auth = dynamic(() => import("@/components/authentication/Auth"));
 
 function Login() {
+  const [generateOtp, setGenerateOtp] = useState(true);
+
   return (
     <div className="grid grid-cols-2 h-screen">
       {/* Left Column */}
@@ -20,18 +23,12 @@ function Login() {
             height={99}
             width={450}
           />
-          <div className="mt-[100px]">
-            <div className="mt-10 w-[100px] mb-10 h-[12px] rounded-full bg-primary"></div>
-            <p className="text-[31px] leading-12 font-bold w-[480px] text-primary">
-              Welcome to Treasury Pension Management Integrated System
-            </p>
-          </div>
         </div>
       </div>
 
       {/* Right Column */}
       <div className="h-full flex items-center justify-center">
-        <Auth />
+        <Otp />
       </div>
     </div>
   );

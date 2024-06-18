@@ -28,7 +28,7 @@ function Auth() {
   // State variables for login form
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [resetPassword, setResetPassword] = useState(true);
+  const [resetPassword, setResetPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -82,11 +82,12 @@ function Auth() {
       setLoading(false);
     }
   };
+
   return (
-    <div>
+    <div className="">
       {" "}
       {/* Login Form Section */}
-      <form action="">
+      <form action="" className="pt-10">
         {resetPassword ? (
           <>
             <Typography
@@ -99,17 +100,7 @@ function Auth() {
             </Typography>
           </>
         ) : (
-          <Typography
-            variant="h2"
-            color="primary"
-            sx={{
-              mb: 4,
-
-              fontWeight: 700,
-            }}
-          >
-            Sign In
-          </Typography>
+          <div className="text-primary text-[28px] font-bold"> Sign In</div>
         )}{" "}
         {/* Render error message if there are errors */}
         {errors.status && (
@@ -122,13 +113,21 @@ function Auth() {
             <ResetNewPassword />
           </>
         ) : (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              mt: 4,
+              gap: "20px",
+            }}
+          >
             <FormControl>
               <FormLabel
                 sx={{
                   fontSize: "13px",
                   fontWeight: "700",
                   color: "gray",
+                  mb: "3px",
                 }}
               >
                 Username/Email
@@ -154,7 +153,12 @@ function Auth() {
             </FormControl>
             <FormControl>
               <FormLabel
-                sx={{ fontSize: "13px", color: "gray", fontWeight: "700" }}
+                sx={{
+                  fontSize: "13px",
+                  mb: "3px",
+                  color: "gray",
+                  fontWeight: "700",
+                }}
               >
                 Password
               </FormLabel>
@@ -198,12 +202,14 @@ function Auth() {
                 color: "white",
                 justifyContent: "space-between",
                 textTransform: "none",
+                fontWeight: "500",
                 mt: "10px",
               }}
-              onClick={handleSignIn}
+              // onClick={handleSignIn}
+              onClick={() => router.push("/otp")}
               disabled={loading}
             >
-              Sign In
+              Generate OTP
               <ArrowForward />
             </Button>
 
@@ -233,7 +239,7 @@ function Auth() {
             </Typography>
           </Box>
         )}
-        <div className="text-xs italic flex items-center gap-1 mt-12 font-bold text-gray-500 mb-8">
+        <div className="text-xs italic flex items-center gap-1 bottom-4 absolute font-bold text-gray-500 mb-8">
           Powered By
           <span className="text-primary cursor-pointer underline hover:text-yellow-500">
             Agile
