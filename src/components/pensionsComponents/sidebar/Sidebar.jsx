@@ -31,13 +31,11 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    const isChildSelected = ["User List", "User Management"].includes(
-      selectedItem
-    );
-    if (isChildSelected) {
+    const claimsChildren = ["Claims Management", "Claims Approval"];
+    if (claimsChildren.includes(selectedItem)) {
       setOpen((prevOpen) => ({
         ...prevOpen,
-        ["Users & Teams"]: true,
+        ["Claims"]: true,
       }));
     }
   }, [selectedItem]);
