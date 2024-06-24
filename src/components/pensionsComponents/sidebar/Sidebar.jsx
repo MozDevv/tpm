@@ -10,7 +10,11 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
-import { PeopleAltOutlined } from "@mui/icons-material";
+import {
+  KeyboardArrowRight,
+  PeopleAltOutlined,
+  Widgets,
+} from "@mui/icons-material";
 import styles from "./sidebar.module.css";
 import { Box, Divider, IconButton } from "@mui/material";
 import { BarChart, Payments, SupportAgent } from "@mui/icons-material";
@@ -21,6 +25,7 @@ function Sidebar() {
   const [open, setOpen] = useState({});
   const { selectedItem, setSelectedItem } = useSelectedItem();
   const { isLoading, setIsLoading } = useIsLoading();
+  const [parentSelected, setParentSelected] = useState("");
 
   const handleToggle = (title) => {
     setSelectedItem(title);
@@ -31,11 +36,39 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    const claimsChildren = ["Claims Management", "Claims Approval"];
-    if (claimsChildren.includes(selectedItem)) {
+    const allChildren = adminItems
+      .filter((item) => item.children)
+      .flatMap((item) =>
+        item.children.map((child) => ({ ...child, parent: item.title }))
+      );
+
+    const selectedChild = allChildren.find(
+      (child) => child.title === selectedItem
+    );
+
+    if (selectedChild) {
       setOpen((prevOpen) => ({
         ...prevOpen,
-        ["Claims"]: true,
+        [selectedChild.parent]: true,
+      }));
+    }
+  }, [selectedItem]);
+
+  useEffect(() => {
+    const allChildren = menuItems
+      .filter((item) => item.children)
+      .flatMap((item) =>
+        item.children.map((child) => ({ ...child, parent: item.title }))
+      );
+
+    const selectedChild = allChildren.find(
+      (child) => child.title === selectedItem
+    );
+
+    if (selectedChild) {
+      setOpen((prevOpen) => ({
+        ...prevOpen,
+        [selectedChild.parent]: true,
       }));
     }
   }, [selectedItem]);
@@ -45,6 +78,25 @@ function Sidebar() {
       title: "Dashboard",
       path: "/pensions",
       icon: <DashboardOutlinedIcon />,
+    },
+    {
+      title: "Preclaims",
+
+      icon: <ArticleOutlinedIcon />,
+      children: [
+        {
+          title: "Preclaim Listing",
+          path: "/pensions/preclaims/listing",
+        },
+        {
+          title: "Data Capture",
+          path: "/pensions/preclaims/data-capture",
+        },
+        {
+          title: "Verification",
+          path: "/pensions/claims-approval",
+        },
+      ],
     },
     {
       title: "Claims",
@@ -88,9 +140,51 @@ function Sidebar() {
     },
   ];
 
+  const adminItems = [
+    {
+      title: "Users & Teams",
+      icon: <PeopleAltOutlined />,
+      children: [
+        {
+          title: "User List",
+          path: "/pensions/users",
+        },
+        {
+          title: "Leave Management",
+          path: "/pensions/users/leave-management",
+        },
+      ],
+    },
+    {
+      title: "Setups",
+      icon: <Widgets />,
+      children: [
+        {
+          title: "Pension Caps",
+          path: "/pensions/setups/pension-caps",
+        },
+        {
+          title: "Pension Awards",
+          path: "/pensions/setups/pension-awards",
+        },
+        {
+          title: "Banks",
+          path: "/pensions/setups/banks",
+        },
+        {
+          title: "MDAs",
+          path: "/pensions/setups/mdas",
+        },
+      ],
+    },
+  ];
+
   return (
-    <>
-      <img src="/logo.png" alt="" height={200} width={400} />
+    <div className="pb-8">
+      <div className="sticky top-0 bg-white z-50">
+        {" "}
+        <img src="/logo.png" alt="" height={200} width={400} />
+      </div>
       <h6 className={styles.h6}>MAINMENU</h6>
       <List sx={{ mt: "10px" }} component="nav">
         {menuItems.map((item) => (
@@ -104,21 +198,16 @@ function Sidebar() {
                 }
                 sx={{
                   mb: "5px",
-                  backgroundColor: item.children
+                  /* backgroundColor: item.children
                     ? open[item.title] && selectedItem === item.title
-                      ? "#E5F0F4"
+                      ? 
                       : "transparent"
                     : selectedItem === item.title
                     ? "#E5F0F4"
-                    : "transparent",
+                    : "transparent",*/
+                  backgroundColor: open[item.title] ? "#E5F0F4" : "transparent",
                   borderRadius: "30px",
-                  color: item.children
-                    ? open[item.title] && selectedItem === item.title
-                      ? "#006990"
-                      : "rgb(153, 153, 153)"
-                    : selectedItem === item.title
-                    ? "#006990"
-                    : "rgb(153, 153, 153)",
+                  color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
                   "&:hover": {
                     backgroundColor: "rgba(0, 105, 144, 0.1)",
                   },
@@ -126,13 +215,7 @@ function Sidebar() {
               >
                 <ListItemIcon
                   sx={{
-                    color: item.children
-                      ? open[item.title] && selectedItem === item.title
-                        ? "#006990"
-                        : "gray"
-                      : selectedItem === item.title
-                      ? "#006990"
-                      : "gray",
+                    color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
                   }}
                 >
                   {item.icon}
@@ -141,8 +224,8 @@ function Sidebar() {
                   <p className={styles.nav_title}>{item.title}</p>
                 </ListItemText>
                 {item.children ? (
-                  open[item.title] ? (
-                    <ExpandLess />
+                  !open[item.title] ? (
+                    <KeyboardArrowRight />
                   ) : (
                     <ExpandMore />
                   )
@@ -198,8 +281,8 @@ function Sidebar() {
                     <p className={styles.nav_title}>{item.title}</p>
                   </ListItemText>
                   {item.children ? (
-                    open[item.title] ? (
-                      <ExpandLess />
+                    !open[item.title] ? (
+                      <KeyboardArrowRight />
                     ) : (
                       <ExpandMore />
                     )
@@ -242,85 +325,147 @@ function Sidebar() {
         ))}
       </List>
       <Divider />
+
+      {/******************************************  ADMINISTRATION  ********************************************** */}
       <Box>
         <h6 className={styles.h6}>ADMINISTRATION</h6>
-        <List>
-          <ListItem button onClick={() => handleToggle("Users & Teams")}>
-            <ListItemIcon>
-              <IconButton
-                sx={{
-                  height: "27px",
-                  width: "27px",
-                  borderRadius: "3px",
-                  backgroundColor: "#006990",
-                }}
-              >
-                <PeopleAltOutlined sx={{ color: "white", fontSize: "16px" }} />
-              </IconButton>
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                color:
-                  selectedItem === "Users & Teams"
-                    ? "#006990"
-                    : "rgb(153, 153, 153);",
-              }}
-            >
-              <p className={styles.nav_title}>Users & Teams</p>
-            </ListItemText>
-            {open["Users & Teams"] ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={open["Users & Teams"]}>
-            <List sx={{ ml: 3, pr: 1 }} component="div" disablePadding>
-              <Link
-                href="/pensions/users/"
-                className="no-underline hover:no-underline"
-              >
+        <List sx={{ mt: "10px" }}>
+          {adminItems.map((item) => (
+            <div key={item.title}>
+              {!item.path ? (
                 <ListItem
-                  button
-                  onClick={() => setSelectedItem("User List")}
+                  onClick={() =>
+                    item.children
+                      ? handleToggle(item.title)
+                      : setSelectedItem(item.title)
+                  }
                   sx={{
-                    p: 0,
-                    borderRadius: "10px",
-                    ml: 6,
-                    py: "3px",
-                    px: "3px",
-                    color: selectedItem === "User List" ? "#006990" : "gray",
+                    mb: "5px",
+                    backgroundColor: open[item.title]
+                      ? "#E5F0F4"
+                      : "transparent",
+                    borderRadius: "30px",
+                    color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 105, 144, 0.1)",
+                    },
                   }}
                 >
+                  <ListItemIcon
+                    sx={{
+                      color: open[item.title]
+                        ? "#006990"
+                        : "rgb(153, 153, 153)",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
                   <ListItemText>
-                    <p className={styles.nav_title}>User List</p>
+                    <p className={styles.nav_title}>{item.title}</p>
                   </ListItemText>
+                  {item.children ? (
+                    !open[item.title] ? (
+                      <KeyboardArrowRight />
+                    ) : (
+                      <ExpandMore />
+                    )
+                  ) : null}
                 </ListItem>
-              </Link>
-              <Link
-                className="no-underline hover:no-underline"
-                href="/pensions/users/leave-management"
-              >
-                <ListItem
-                  button
-                  onClick={() => setSelectedItem("User Management")}
-                  sx={{
-                    p: 0,
-                    width: "100%",
-                    ml: 6,
-                    px: "3px",
-                    py: "3px",
-                    borderRadius: "10px",
-                    color:
-                      selectedItem === "User Management" ? "#006990" : "gray",
-                  }}
+              ) : (
+                <Link
+                  href={item.path}
+                  className="no-underline hover:no-underline"
                 >
-                  <ListItemText>
-                    <p className={styles.nav_title}>Leave Management</p>
-                  </ListItemText>
-                </ListItem>
-              </Link>
-            </List>
-          </Collapse>
+                  <ListItem
+                    onClick={() =>
+                      item.children
+                        ? handleToggle(item.title)
+                        : setSelectedItem(item.title)
+                    }
+                    sx={{
+                      mb: "5px",
+                      backgroundColor: item.children
+                        ? open[item.title] && selectedItem === item.title
+                          ? "#E5F0F4"
+                          : "transparent"
+                        : selectedItem === item.title
+                        ? "#E5F0F4"
+                        : "transparent",
+                      borderRadius: "30px",
+                      color: item.children
+                        ? open[item.title] && selectedItem === item.title
+                          ? "#006990"
+                          : "rgb(153, 153, 153)"
+                        : selectedItem === item.title
+                        ? "#006990"
+                        : "rgb(153, 153, 153)",
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 105, 144, 0.1)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        color: item.children
+                          ? open[item.title] && selectedItem === item.title
+                            ? "#006990"
+                            : "gray"
+                          : selectedItem === item.title
+                          ? "#006990"
+                          : "gray",
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText>
+                      <p className={styles.nav_title}>{item.title}</p>
+                    </ListItemText>
+                    {item.children ? (
+                      !open[item.title] ? (
+                        <KeyboardArrowRight />
+                      ) : (
+                        <ExpandMore />
+                      )
+                    ) : null}
+                  </ListItem>
+                </Link>
+              )}
+              {item.children && (
+                <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.children.map((child) => (
+                      <Link
+                        href={child.path}
+                        key={child.title}
+                        className="no-underline hover:no-underline"
+                      >
+                        <ListItem
+                          button
+                          onClick={() => setSelectedItem(child.title)}
+                          sx={{
+                            pl: 7,
+                            py: "3px",
+                            color:
+                              selectedItem === child.title ? "#006990" : "gray",
+                            "&:hover": {
+                              backgroundColor: "rgba(0, 105, 144, 0.1)",
+                            },
+                          }}
+                        >
+                          <ListItemText sx={{ ml: 2 }}>
+                            <p className={styles.nav_title}>{child.title}</p>
+                          </ListItemText>
+                        </ListItem>
+                      </Link>
+                    ))}
+                  </List>
+                </Collapse>
+              )}
+            </div>
+          ))}
         </List>
       </Box>
-    </>
+    </div>
   );
 }
 

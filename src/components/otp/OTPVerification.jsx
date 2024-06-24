@@ -10,9 +10,20 @@ import {
 import React from "react";
 import PoweredBy from "../poweredBy/PoweredBy";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 function OTPVerification() {
   const router = useRouter();
+
+  const { auth, login, logout } = useAuth();
+
+  const handleLogin = () => {
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJyb3kua2lwY2h1bWJhQGFnaWxlYml6LmNvLmtlIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJhOGY5YzQxNS03MzA4LTRhYTgtOTliZC00NjI1MTM1OWY3MjQiLCJOYW1lIjoiUm95IiwiUGVybWlzc2lvbnMiOiJNREEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiVGVzdDEiLCJUZXN0MiIsIlRlc3QzIl0sIlVzZXJOYW1lIjoicm95LmtpcGNodW1iYUBhZ2lsZWJpei5jby5rZSIsImV4cCI6MTcxODg2NDE4MCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA0OSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNDkifQ.VnkgYB1It-Nofs85tahq7Xr_8wIC_l6g9MhlD6LueJg";
+
+    login(token);
+    router.push("/pensions");
+  };
   return (
     <div>
       {" "}
@@ -57,14 +68,15 @@ function OTPVerification() {
             justifyContent: "center",
             width: "45%",
             textTransform: "none",
-            borderColor: "#b9bec4",
-            borderWidth: "2px",
+            borderColor: "rgb(185,190,196 )",
+
+            borderWidth: "1px",
             "&:hover": {
               borderWidth: "2px",
               borderColor: "#b9bec4",
             },
           }}
-          onclick={() => router.back()}
+          onClick={() => router.back()}
         >
           <IconButton
             sx={{
@@ -80,6 +92,7 @@ function OTPVerification() {
           Back
         </Button>
         <Button
+          onClick={handleLogin}
           variant="contained"
           sx={{
             mt: 1,

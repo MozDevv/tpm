@@ -1,0 +1,9 @@
+.ag-theme-quartz .ag-cell {
+  padding-bottom: 10px;
+}
+.header-bold .ag-header-cell-label {
+  font-weight: 600;
+}
+.header-gray .ag-header-cell-label {
+  color: "gray";
+}

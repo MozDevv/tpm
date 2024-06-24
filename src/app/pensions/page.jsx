@@ -1,5 +1,6 @@
-import { AccountBalanceOutlined } from "@mui/icons-material";
-import { Box, Card, Grid, IconButton, Typography } from "@mui/material";
+"use client";
+import { useAuth } from "@/context/AuthContext";
+import { Grid } from "@mui/material";
 import dynamic from "next/dynamic";
 import React from "react";
 
@@ -30,7 +31,12 @@ const RecentClaims = dynamic(() =>
   )
 );
 
+// Dashboard component
+
 function Dashboard() {
+  const { auth, login, logout } = useAuth();
+
+  console.log("authenticating user...", auth);
   return (
     <div>
       <Grid

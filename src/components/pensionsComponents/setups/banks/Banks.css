@@ -1,0 +1,22 @@
+.parent-row {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.child-table-row {
+  background-color: #f3fbfe;
+  font-weight: normal;
+  padding-left: 20px;
+}
+.table-header {
+  background-color: #001529;
+  color: #ffffff;
+  font-weight: bold;
+}
+.child-table {
+  margin-left: 20px;
+}
+.child-table-row {
+  font-weight: normal;
+  padding-left: 20px;
+}
