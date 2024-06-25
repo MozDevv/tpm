@@ -37,6 +37,8 @@ import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 import PreclaimsNotifications from "./PreclaimsNotifications";
+import PreclaimDialog from "./PreclaimDialog";
+import { useAlert } from "@/context/AlertContext";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -51,6 +53,16 @@ const SchemaCellRenderer = ({ value }) => {
     </Box>
   );
 };
+
+const notificationStatusMap = {
+  0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
+  1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
+  2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
+  3: { name: "SUBMITTED", color: "#2ecc71" }, // Light Green
+  4: { name: "IN REVIEW", color: "#9b59b6" }, // Light Purple
+  5: { name: "CLAIM CREATED", color: "#06D001" }, // Dark Blue
+};
+
 const colDefs = [
   {
     headerName: "First Name",
@@ -59,6 +71,7 @@ const colDefs = [
     checkboxSelection: true,
     headerCheckboxSelection: true,
     pinned: "left",
+    filter: true,
   },
   {
     headerName: "Other Name",
@@ -69,22 +82,49 @@ const colDefs = [
     headerName: "Email Address",
     field: "email_address",
     width: 200,
+    filter: true,
   },
   {
     headerName: "Retiree ID",
     field: "retiree",
     width: 150,
+    hide: true,
   },
 
   {
     headerName: "Notification Status",
     field: "notification_status",
     width: 180,
+    filter: true,
+    cellRenderer: (params) => {
+      const status = notificationStatusMap[params.value];
+      if (!status) return null;
+
+      return (
+        <Button
+          variant="outlined"
+          sx={{
+            ml: 3,
+            borderColor: status.color,
+            maxHeight: "22px",
+            cursor: "pointer",
+            color: status.color,
+            fontSize: "10px",
+            fontWeight: "bold",
+          }}
+        >
+          {status.name.toLowerCase()}
+        </Button>
+      );
+    },
   },
   {
     headerName: "Gender",
     field: "gender",
     width: 120,
+    cellRenderer: (params) => {
+      return params.value === 1 ? "Male" : "Female";
+    },
   },
   {
     headerName: "Phone Number",
@@ -176,21 +216,7 @@ const colDefs = [
     field: "mda_pensionCap_description",
     width: 250,
   },
-  {
-    headerName: "Work Histories Length",
-    field: "workHistories_length",
-    width: 200,
-  },
-  {
-    headerName: "Bank Details Length",
-    field: "bankDetails_length",
-    width: 200,
-  },
-  {
-    headerName: "Prospective Pensioner Documents Length",
-    field: "prospectivePensionerDocuments_length",
-    width: 300,
-  },
+
   {
     headerName: "Pension Award Prefix",
     field: "pensionAward_prefix",
@@ -338,13 +364,27 @@ const Preclaims = () => {
 
   const [openNotification, setOpenNotification] = useState(false);
 
+  const [clickedItem, setClickedItem] = useState(null);
+
+  const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
+
   return (
     <div className="table-container relative h-[80vh] w-full">
-      <CreatePreclaim openCreate={openCreate} setOpenCreate={setOpenCreate} />
+      <CreatePreclaim
+        openCreate={openCreate}
+        setOpenCreate={setOpenCreate}
+        fetchAllPreclaims={fetchAllPreclaims}
+      />
       <PreclaimsNotifications
         selectedRows={selectedRows}
         openNotification={openNotification}
         setOpenNotification={setOpenNotification}
+      />
+
+      <PreclaimDialog
+        clickedItem={clickedItem}
+        setOpenPreclaimDialog={setOpenPreclaimDialog}
+        openPreclaimDialog={openPreclaimDialog}
       />
       <div className="h-full w-full">
         <div className="flex justify-between flex-row mt-2">
@@ -546,6 +586,10 @@ const Preclaims = () => {
               onSelectionChanged={onSelectionChanged}
               domLayout="autoHeight"
               onGridReady={onGridReady}
+              onRowClicked={(event) => {
+                setClickedItem(event.data); // Update selected item
+                setOpenPreclaimDialog(true); // Open dialog
+              }}
             />
           </div>
         </div>

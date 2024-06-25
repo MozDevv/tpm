@@ -88,10 +88,7 @@ function Sidebar() {
           title: "Preclaim Listing",
           path: "/pensions/preclaims/listing",
         },
-        {
-          title: "Data Capture",
-          path: "/pensions/preclaims/data-capture",
-        },
+
         {
           title: "Verification",
           path: "/pensions/claims-approval",

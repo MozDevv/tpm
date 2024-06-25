@@ -1,7 +1,12 @@
 "use client";
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { ExpandLess, KeyboardArrowRight } from "@mui/icons-material";
+import { useIsLoading } from "@/context/LoadingContext";
+import {
+  ExpandLess,
+  KeyboardArrowRight,
+  OpenInFull,
+} from "@mui/icons-material";
 import {
   Collapse,
   Dialog,
@@ -9,10 +14,13 @@ import {
   Button,
   TextField,
   MenuItem,
+  Icon,
+  Tooltip,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-function CreatePreclaim({ openCreate, setOpenCreate }) {
+function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
+  const { isLoading, setIsLoading } = useIsLoading();
   const [formData, setFormData] = useState({
     surname: "",
     first_name: "",
@@ -140,6 +148,7 @@ function CreatePreclaim({ openCreate, setOpenCreate }) {
 
   const handleSubmit = async () => {
     console.log("Form Data:", formData);
+    setIsLoading(true);
 
     try {
       const res = await apiService.post(
@@ -148,10 +157,13 @@ function CreatePreclaim({ openCreate, setOpenCreate }) {
       );
 
       console.log(res.data);
+      fetchAllPreclaims();
     } catch (error) {
       console.log(error.response);
     } finally {
       setOpenCreate(false);
+
+      setIsLoading(false);
     }
   };
 
@@ -162,26 +174,48 @@ function CreatePreclaim({ openCreate, setOpenCreate }) {
       fullWidth
       maxWidth="lg"
     >
-      <div className="p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
+      <div className="w-full p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
+        <IconButton
+          sx={{
+            ml: "auto",
+            position: "fixed",
+            zIndex: 899999999,
+            right: 1,
+            top: "3px",
+          }}
+        >
+          <Tooltip title="Expand">
+            {" "}
+            <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
+          </Tooltip>{" "}
+        </IconButton>
         <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
           <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
-            <div className="flex items-center justify-between px-6">
+            <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center gap-2">
                 <h5 className="text-[17px] text-primary font-semibold">
                   User Information
                 </h5>
               </div>
-              <div className="flex gap-8 mr-4">
-                <Button variant="outlined" onClick={() => setOpenCreate(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                >
-                  Save Changes
-                </Button>
+              <div className="flex ">
+                {" "}
+                <div className="flex gap-8 mr-4">
+                  <Button
+                    variant="outlined"
+                    onClick={() => setOpenCreate(false)}
+                    sx={{ maxHeight: "40px", mt: "5px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    sx={{ maxHeight: "40px", mt: "5px" }}
+                  >
+                    Save
+                  </Button>{" "}
+                </div>
               </div>
             </div>
             <hr className="border-[1px] border-black-900 my-2" />

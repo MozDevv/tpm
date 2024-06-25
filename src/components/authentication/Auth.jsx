@@ -205,11 +205,11 @@ function Auth() {
                 fontWeight: "500",
                 mt: "10px",
               }}
-              // onClick={handleSignIn}
-              onClick={() => router.push("/otp")}
+              onClick={handleSignIn}
+              //  onClick={() => router.push("/otp")}
               disabled={loading}
             >
-              Generate OTP
+              Login
               <ArrowForward />
             </Button>
 
