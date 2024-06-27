@@ -1,11 +1,13 @@
 import PensionCaps from "@/components/pensionsComponents/setups/pensionCaps/PensionCaps";
 import React from "react";
-
+import Spinner from "@/components/spinner/Spinner";
 function page() {
   return (
-    <div>
-      <PensionCaps />
-    </div>
+    <React.Suspense fallback={<Spinner />}>
+      <div>
+        <PensionCaps />
+      </div>
+    </React.Suspense>
   );
 }
 

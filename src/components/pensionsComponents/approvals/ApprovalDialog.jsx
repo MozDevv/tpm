@@ -10,7 +10,7 @@ import {
 } from "@mui/icons-material";
 import { Dialog, TextField } from "@mui/material";
 import React, { useState } from "react";
-import ProspectivePensionersDocs from "./ProspectivePensionersDocs";
+import ProspectivePensionersDocs from "../preclaims/ProspectivePensionersDocs";
 import { IconButton, Button, Collapse, MenuItem, Tooltip } from "@mui/material";
 import {
   Add,
@@ -19,12 +19,10 @@ import {
   ForwardToInbox,
 } from "@mui/icons-material";
 import "./ag-theme.css";
-import CreateClaim from "./CreateClaim";
-import CreateWorkHistory from "./CreateWorkHistory";
-import SendForApproval from "./SendForApproval";
 
-function PreclaimDialog({
-  setOpenNotification,
+import CreateClaim from "./CreateClaim";
+
+function ApprovalDialog({
   openPreclaimDialog,
   setOpenPreclaimDialog,
   fetchAllPreclaims,
@@ -209,7 +207,7 @@ function PreclaimDialog({
       }}
     >
       <Dialog
-        open={openCreateClaim && clickedItem?.notification_status === 3}
+        open={openCreateClaim && clickedItem?.notification_status === 5}
         onClose={() => setOpenCreateClaim(false)}
         sx={{
           "& .MuiDialog-paper": {
@@ -219,10 +217,11 @@ function PreclaimDialog({
           p: 4,
         }}
       >
-        <SendForApproval
+        <CreateClaim
           setOpenPreclaimDialog={setOpenPreclaimDialog}
           setOpenCreateClaim={setOpenCreateClaim}
           clickedItem={clickedItem}
+          fetchAllPreclaims={fetchAllPreclaims}
         />
         {/** <CreateClaim
           setOpenPreclaimDialog={setOpenPreclaimDialog}
@@ -230,23 +229,7 @@ function PreclaimDialog({
           clickedItem={clickedItem}
         /> */}
       </Dialog>
-      <Dialog
-        open={openCreateWorkHistory}
-        onClose={() => setOpenCreateWorkHistory(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            height: "550px",
-            width: "500px",
-          },
-          p: 4,
-        }}
-      >
-        <CreateWorkHistory
-          setOpenPreclaimDialog={setOpenPreclaimDialog}
-          setOpenCreateWorkHistory={setOpenCreateWorkHistory}
-          clickedItem={clickedItem}
-        />
-      </Dialog>
+
       <div className="w-full p-2 mt-3 mr-1 h-[100%] grid grid-cols-12 gap-2">
         <IconButton
           sx={{
@@ -284,7 +267,7 @@ function PreclaimDialog({
               </div>
               <div className="flex gap-2 items-center">
                 <div className="flex items-center">
-                  {clickedItem?.notification_status === 3 && (
+                  {clickedItem?.notification_status === 5 && (
                     <Button
                       onClick={() => setOpenCreateClaim(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
@@ -296,41 +279,12 @@ function PreclaimDialog({
                         />
                       </IconButton>
                       <p className="font-normal text-gray -ml-1 text-[13px]">
-                        Submit For Approval
+                        Create Claim
                       </p>
                     </Button>
                   )}
                 </div>
 
-                {clickedItem?.notification_status === 0 && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => setOpenNotification(true)}
-                      sx={{ mb: -1, maxHeight: "24px" }}
-                      disabled={
-                        clickedItem?.notification_status === 0 ? false : true
-                      }
-                      startIcon={<ForwardToInbox />}
-                    >
-                      <p className="font-medium text-gray -ml-2 text-sm">
-                        Notify Pensioner(s)
-                      </p>
-                    </Button>
-                  </div>
-                )}
-                <div className="flex items-center">
-                  <Button
-                    onClick={() => setOpenCreateWorkHistory(true)}
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <Add sx={{ fontSize: "18px" }} color="primary" />
-                    </IconButton>
-                    <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Add work History
-                    </p>
-                  </Button>
-                </div>
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={() => setDisabled(false)}
@@ -436,4 +390,4 @@ function PreclaimDialog({
   );
 }
 
-export default PreclaimDialog;
+export default ApprovalDialog;

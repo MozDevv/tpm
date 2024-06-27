@@ -1,11 +1,11 @@
+import DocumentTypes from "@/components/pensionsComponents/setups/documentTypes/DocumentTypes";
 import React from "react";
-import Banks from "@/components/pensionsComponents/setups/banks/Banks";
 import Spinner from "@/components/spinner/Spinner";
 function page() {
   return (
     <React.Suspense fallback={<Spinner />}>
       <div>
-        <Banks />
+        <DocumentTypes />
       </div>
     </React.Suspense>
   );

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 
-function CreateNewMDA() {
+function CreateNewMDA({ fetchMDAs, setOpenNewMDA }) {
   const [pensionCaps, setPensionCaps] = useState([]);
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -26,23 +26,6 @@ function CreateNewMDA() {
     fetchPensionCaps();
   }, []);
 
-  const fetchMDAs = async () => {
-    try {
-      const res = await apiService.get(endpoints.mdas);
-      const rawData = res.data.data;
-      const groupedRowData = rawData.map((item, index) => ({
-        no: index + 1,
-        code: item?.code,
-        name: item?.name,
-        description: item?.description,
-        pensionCap: item?.pensionCap.name,
-      }));
-      setRowData(groupedRowData); // Use setRowData instead of applyTransaction
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleCreateMda = async (e) => {
     e.preventDefault();
 
@@ -57,11 +40,12 @@ function CreateNewMDA() {
       const res = await apiService.post(endpoints.createMDA, data);
 
       if (res.status === 200 && res.data.succeeded === true) {
-        fetchMDAs();
+        await fetchMDAs();
         setCode("");
         setName("");
         setDescription("");
         setPensionCap("");
+        setOpenNewMDA(false);
       }
     } catch (error) {
       console.log(error.response);

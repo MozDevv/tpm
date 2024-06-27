@@ -1,14 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, MenuItem, TextField } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  MenuItem,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 import endpoints from "@/components/services/setupsApi";
+import { useAlert } from "@/context/AlertContext";
 
 function PreclaimsNotifications({
+  isSendNotificationEnabled,
+  fetchAllPreclaims,
   openNotification,
   setOpenNotification,
+
   selectedRows,
 }) {
   const [scheduleStartDate, setScheduleStartDate] = useState("");
@@ -19,6 +29,8 @@ function PreclaimsNotifications({
   const handleCancel = () => {
     setOpenNotification(false);
   };
+
+  const { setAlert } = useAlert();
 
   const formatDateToISOString = (dateString) => {
     const date = new Date(dateString);
@@ -54,9 +66,13 @@ function PreclaimsNotifications({
         preClaimsEndpoints.sendNotifications,
         data
       );
-
-      console.log(res.data);
-      console.log("data", data);
+      res.data.succeeded === true &&
+        (await fetchAllPreclaims(),
+        setAlert({
+          message: "Notification sent successfully",
+          severity: "success",
+          open: true,
+        }));
     } catch (error) {
       console.log(error.response);
       console.log("data", data);
@@ -69,7 +85,9 @@ function PreclaimsNotifications({
 
   return (
     <Dialog
-      open={openNotification}
+      open={
+        openNotification && isSendNotificationEnabled && selectedRows.length > 0
+      }
       onClose={() => setOpenNotification(false)}
       fullWidth
       maxWidth="sm"
@@ -81,17 +99,9 @@ function PreclaimsNotifications({
         {" "}
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-2">
-            <h5 className="text-[17px] text-primary font-semibold">
+            <h5 className="text-[19px] text-primary font-semibold">
               Send Notifications
             </h5>
-          </div>
-          <div className="flex gap-8 mr-4">
-            <Button variant="outlined" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleSend}>
-              Send
-            </Button>
           </div>
         </div>
         <div className="p-6">
@@ -102,13 +112,15 @@ function PreclaimsNotifications({
             >
               Schedule Start Date
             </label>
-            <input
-              type="datetime-local"
-              id="scheduleStartDate"
-              name="scheduleStartDate"
+
+            <TextField
+              variant="outlined"
+              size="small"
               value={scheduleStartDate}
               onChange={(e) => setScheduleStartDate(e.target.value)}
-              className="mt-1 block w-full p-3 bg-gray-100 rounded-md border-gray-400"
+              required
+              type="datetime-local"
+              fullWidth
             />
           </div>
           <div className="mb-4">
@@ -118,13 +130,14 @@ function PreclaimsNotifications({
             >
               Period End Date
             </label>
-            <input
+            <TextField
               type="datetime-local"
-              id="periodEndDate"
-              name="periodEndDate"
+              variant="outlined"
+              size="small"
               value={periodEndDate}
               onChange={(e) => setPeriodEndDate(e.target.value)}
-              className="mt-1 block w-full p-3 bg-gray-100 rounded-md border-gray-400"
+              required
+              fullWidth
             />
           </div>
           <div>
@@ -134,13 +147,17 @@ function PreclaimsNotifications({
             >
               Comments
             </label>
-            <textarea
-              id="comments"
-              name="comments"
-              rows={4}
+            <TextareaAutosize
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              className="mt-1 block w-full bg-gray-100 rounded-md border-gray-400"
+              required
+              minRows={3}
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "4px",
+                border: "1px solid gray",
+              }}
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -167,7 +184,15 @@ function PreclaimsNotifications({
                 </MenuItem>
               ))}
             </TextField>
-          </div>
+          </div>{" "}
+        </div>
+        <div className="flex gap-8 w-full justify-between px-5 mt-3">
+          <Button variant="outlined" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" onClick={handleSend}>
+            Send
+          </Button>
         </div>
       </div>
     </Dialog>

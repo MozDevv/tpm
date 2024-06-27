@@ -1,27 +1,26 @@
 "use client";
-import React, { useEffect } from "react";
-import { Box, Grid } from "@mui/material";
+
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { useIsLoading } from "@/context/LoadingContext";
+import { Box, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
 
-function PensionCaps() {
-  const [rowData, setRowData] = React.useState([]);
-
-  const fetchPensionCaps = async () => {
+function TermsOfService() {
+  const [termsOfService, setTermsOfService] = useState([]); // [1
+  const getTermsOfService = async () => {
     try {
-      const res = await apiService.get(endpoints.pensionCaps);
-      if (res.status === 200) {
-        setRowData(res.data.data);
-        console.log(res.data.data);
-      }
-    } catch (e) {
-      console.error("Error fetching data:", e);
+      const response = await apiService.get(endpoints.termsOfService);
+
+      console.log("response", response.data.data);
+
+      setTermsOfService(response.data.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchPensionCaps();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+    getTermsOfService();
+  }, []);
 
   return (
     <div className="p-3">
@@ -31,7 +30,7 @@ function PensionCaps() {
       </h6>
       <Box sx={{ flexGrow: 1, mt: 2 }}>
         <Grid container spacing={2}>
-          {rowData?.map((row) => (
+          {termsOfService?.map((row) => (
             <Grid item xs={12} sm={6} md={3} mb={1} key={row.id}>
               <div className="bg-white p-4 rounded-md shadow-sm flex flex-col gap-3 items-center justify-center">
                 <p className="font-semibold text-base pt-2 text-primary">
@@ -50,4 +49,4 @@ function PensionCaps() {
   );
 }
 
-export default PensionCaps;
+export default TermsOfService;

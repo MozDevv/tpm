@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 "use client";
+import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
 
 export const API_BASE_URL = "https://pmis.agilebiz.co.ke";
@@ -14,7 +15,13 @@ const preClaimsEndpoints = {
   getPreclaims: "/api/ProspectivePensioners/getProspectivePensioners",
 
   sendNotifications:
-    "api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule",
+    "/api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule",
+
+  //Work History
+
+  createWorkHistory: "/api/ProspectivePensioners/CreateWorkHistory",
+
+  submitForApproval: "/api/ProspectivePensioners/SendPreClaimForApproval",
 };
 
 export const apiService = {

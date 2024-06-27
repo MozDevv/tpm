@@ -31,7 +31,7 @@ const childColumns = [
   },
   {
     title: "Branch Name",
-    dataIndex: "branch_name",
+    dataIndex: "name",
     key: "branch_name",
   },
 ];
@@ -39,6 +39,7 @@ const childColumns = [
 const Banks = () => {
   const [data, setData] = useState([]);
 
+  /*
   const fetchBanksAndBranches = async () => {
     try {
       const res = await apiService.get(endpoints.getBankBranches);
@@ -75,7 +76,19 @@ const Banks = () => {
       console.log(error);
     }
   };
+*/
 
+  const [rowData, setRowData] = useState([]);
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await apiService.get(endpoints.getBanks);
+      const rawData = res.data.data;
+      setRowData(rawData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     fetchBanksAndBranches();
   }, []);
@@ -91,27 +104,28 @@ const Banks = () => {
         <Button variant="contained" color="primary">
           Create Bank
         </Button>
-        <Button variant="contained" color="secondary" sx={{ color: "white" }}>
-          Create Branch
-        </Button>
       </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={rowData}
         pagination={false}
-        rowClassName={rowClassName}
+        rowClassName="parent-row"
+        className="parent-table"
         expandable={{
-          expandedRowRender: (record) =>
-            record.children && record.children.length > 0 ? (
-              <Table
-                columns={childColumns}
-                dataSource={record.children}
-                pagination={false} // Consider disabling pagination for child tables if not needed
-                rowClassName="child-table-row"
-                className="child-table"
-              />
-            ) : null,
+          expandedRowRender: (record) => (
+            <Table
+              columns={childColumns}
+              dataSource={record.branches}
+              pagination={false}
+              rowKey="id"
+              className="child-table"
+              rowClassName="child-row"
+            />
+          ),
+          rowExpandable: (record) =>
+            record.branches && record.branches.length > 0,
         }}
+        rowKey="id"
       />
     </div>
   );

@@ -6,7 +6,7 @@ function AlertComponent({ alert, setAlert }) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setAlert({ ...alert, open: false });
-    }, 2500);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, [alert, setAlert]);

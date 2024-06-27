@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,6 +9,7 @@ import {
   IconButton,
   Button,
   Divider,
+  Drawer,
   Collapse,
   Menu,
   MenuItem,
@@ -17,21 +17,32 @@ import {
 } from "@mui/material";
 import {
   Add,
+  Close,
+  Delete,
   DeleteOutlineOutlined,
   Edit,
+  EditOutlined,
   FilterAlt,
+  FilterAltOutlined,
   FilterList,
   ForwardToInbox,
+  OpenInNew,
+  Pageview,
+  Send,
   SortByAlpha,
 } from "@mui/icons-material";
 import "./ag-theme.css";
+import CreatePreclaim from "../preclaims/CreatePreclaim";
 
-import { apiService } from "@/components/services/preclaimsApi";
-
-import claimsEndpoints from "@/components/services/claimsApi";
-import { useIsLoading } from "@/context/LoadingContext";
+import preClaimsEndpoints, {
+  apiService,
+} from "@/components/services/preclaimsApi";
+import PreclaimsNotifications from "../preclaims/PreclaimsNotifications";
+import PreclaimDialog from "../preclaims/PreclaimDialog";
+import { useAlert } from "@/context/AlertContext";
+import axios from "axios";
 import Spinner from "@/components/spinner/Spinner";
-import ClaimDialog from "./ClaimDialog";
+import ApprovalDialog from "./ApprovalDialog";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -48,23 +59,31 @@ const SchemaCellRenderer = ({ value }) => {
 };
 
 const notificationStatusMap = {
-  0: { name: "VERIFICATION", color: "#3498db" }, // Light Red
-  1: { name: "VALIDATION", color: "#f39c12" }, // Bright Orange
-  2: { name: "APPROVAL", color: "#2ecc71" }, // Light Blue
+  0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
+  1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
+  2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
+  3: { name: "SUBMITTED", color: "#9b59b6" }, // Amethyst
+  4: { name: "IN REVIEW", color: "#e67e22" }, // Carrot Orange
+  5: { name: "PENDING APPROVAL", color: "#1abc9c" }, // Light Turquoise
+  6: { name: "CLAIM CREATED", color: "#2980b9" }, // Belize Hole Blue
+  7: { name: "RETURNED FOR CLARIFICATION", color: "#2ecc71" }, // Light Green
 };
 
 const colDefs = [
   {
-    headerName: "Id",
-    field: "id",
+    headerName: "No",
+    field: "no_id",
     width: 150,
+    pinned: "left", // Pinning to the left ensures it's the first column
     checkboxSelection: true,
     headerCheckboxSelection: true,
-    pinned: "left",
-    filter: true,
+    valueGetter: (params) => {
+      const rowIndex = params.node.rowIndex + 1;
+      return `PC${rowIndex.toString().padStart(4, "0")}`; // Ensure 4 digits with leading zeros
+    },
     cellRenderer: (params) => {
       return (
-        <p className="text-primary font-semibold underline ">{params.value}</p>
+        <p className="underline text-primary font-semibold">{params.value}</p>
       );
     },
   },
@@ -81,9 +100,23 @@ const colDefs = [
     width: 150,
   },
   {
-    headerName: "Stage",
-    field: "stage",
+    headerName: "Email Address",
+    field: "email_address",
+    width: 200,
+    filter: true,
+  },
+  {
+    headerName: "Retiree ID",
+    field: "retiree",
     width: 150,
+    hide: true,
+  },
+
+  {
+    headerName: "Notification Status",
+    field: "notification_status",
+    width: 180,
+    filter: true,
     cellRenderer: (params) => {
       const status = notificationStatusMap[params.value];
       if (!status) return null;
@@ -92,6 +125,7 @@ const colDefs = [
         <Button
           variant="outlined"
           sx={{
+            ml: 3,
             borderColor: status.color,
             maxHeight: "22px",
             cursor: "pointer",
@@ -105,24 +139,6 @@ const colDefs = [
       );
     },
   },
-  {
-    headerName: "Comments",
-    field: "comments",
-    width: 150,
-  },
-  {
-    headerName: "Email Address",
-    field: "email_address",
-    width: 200,
-    filter: true,
-  },
-  {
-    headerName: "Retiree ID",
-    field: "retiree",
-    width: 150,
-    hide: true,
-  },
-
   {
     headerName: "Gender",
     field: "gender",
@@ -152,7 +168,11 @@ const colDefs = [
     field: "pension_award",
     width: 200,
   },
-
+  {
+    headerName: "Name",
+    field: "name",
+    width: 150,
+  },
   {
     headerName: "National ID",
     field: "national_id",
@@ -212,6 +232,11 @@ const colDefs = [
     field: "mda_pensionCap_name",
     width: 200,
   },
+  {
+    headerName: "MDA Pension Cap Description",
+    field: "mda_pensionCap_description",
+    width: 250,
+  },
 
   {
     headerName: "Pension Award Prefix",
@@ -223,7 +248,11 @@ const colDefs = [
     field: "pensionAward_code",
     width: 180,
   },
-
+  {
+    headerName: "Pension Award Description",
+    field: "pensionAward_description",
+    width: 250,
+  },
   {
     headerName: "Pension Award Start Date",
     field: "pensionAward_start_date",
@@ -249,15 +278,28 @@ const colDefs = [
     field: "pensionAward_pensionCap_description",
     width: 300,
   },
+  {
+    headerName: "Pension Award Pension Cap ID",
+    field: "pensionAward_pensionCap_id",
+    width: 250,
+  },
+  {
+    headerName: "ID",
+    field: "id",
+    width: 150,
+  },
 ];
 
-const ClaimsTable = () => {
+const Approvals = () => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 20; // Number of records per page
+  const paginationPageSizeSelector = [10, 20, 50];
 
   const [sortCriteria, setSortCriteria] = useState(0);
-  const gridApiRef = useRef(null);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -268,97 +310,154 @@ const ClaimsTable = () => {
     setAnchorEl(null);
   };
 
-  const [gridApi, setGridApi] = useState(null);
-  const onGridReady = (params) => {
-    gridApiRef.current = params;
-  };
-
   const exportData = () => {
     gridApi.exportDataAsCsv();
   };
 
+  const [loading, setLoading] = useState(false);
   const [rowData, setRowData] = useState([]);
 
-  const [loading, setLoading] = useState(false);
+  ///filters
+  const [filterColumn, setFilterColumn] = useState(null);
+  const [filterValue, setFilterValue] = useState(null);
 
-  const fetchAllPreclaims = async () => {
+  const [filterType, setFilterType] = useState(null);
+
+  const [sortColumn, setSortColumn] = useState(null);
+  //const [sortOrder, setSortOrder] = useState(null);
+
+  const handleFilters = async () => {
+    const filter = {
+      ...(filterColumn && {
+        "filterCriterion.criterions[0].propertyName": filterColumn,
+      }),
+      ...(filterValue && {
+        "filterCriterion.criterions[0].propertyValue": filterValue,
+      }),
+      ...(filterType && {
+        "filterCriterion.criterions[0].criterionType": filterType,
+      }),
+    };
+
+    const sort = {
+      ...(sortColumn && {
+        "sortProperties.propertyName": sortColumn,
+      }),
+      ...(sortCriteria !== 0 && {
+        "sortProperties.sortCriteria": sortCriteria,
+      }),
+    };
+
+    await fetchAllPreclaims(sort, filter);
+  };
+
+  const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
     try {
-      const res = await apiService.get(claimsEndpoints.getClaims);
-      const rawData = res.data.data;
+      const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
+        "paging.pageNumber": 1,
+        "paging.pageSize": 30,
+        ...sort,
+        ...filter,
+      });
 
-      const mappedData = rawData.map((item) => ({
-        retiree: item?.prospectivePensioner?.retiree?.id,
-        id: item?.claim_id,
+      /*  const res = await apiService.get(
+        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
+      );*/
+      if (res.data.succeeded === true) {
+        console.log(res.data.data);
+        const rawData = res.data.data;
 
-        stage: item?.stage,
-        comments: item?.comments,
-        email_address: item?.prospectivePensioner?.retiree?.email_address,
-        notification_status: item?.prospectivePensioner?.notification_status,
-        gender: item?.prospectivePensioner?.retiree?.gender,
-        phone_number: item?.prospectivePensioner?.retiree?.phone_number,
-        personal_number: item?.prospectivePensioner?.personal_number,
-        surname: item?.prospectivePensioner?.retiree?.surname,
-        first_name: item?.prospectivePensioner?.retiree?.first_name,
-        other_name: item?.prospectivePensioner?.retiree?.other_name,
-        pension_award: item?.prospectivePensioner?.mda?.name,
-        name: item?.prospectivePensioner?.pension_award?.name,
-        national_id: item?.prospectivePensioner?.retiree?.national_id,
-        kra_pin: item?.prospectivePensioner?.retiree?.kra_pin,
-        retirement_date: item?.prospectivePensioner?.retirement_date,
-        dob: item?.prospectivePensioner?.dob,
-        date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
-        last_basic_salary_amount:
-          item?.prospectivePensioner?.last_basic_salary_amount,
-        mda_code: item?.prospectivePensioner?.mda?.code,
-        mda_description: item?.prospectivePensioner?.mda?.description,
-        mda_pensionCap_code: item?.prospectivePensioner?.mda?.pensionCap?.code,
-        mda_pensionCap_name: item?.prospectivePensioner?.mda?.pensionCap?.name,
-        mda_pensionCap_description:
-          item?.prospectivePensioner?.mda?.pensionCap?.description,
-        workHistories_length: item?.prospectivePensioner?.workHistories?.length,
-        bankDetails_length: item?.prospectivePensioner?.bankDetails?.length,
-        pensionAward_prefix: item?.prospectivePensioner?.pensionAward?.prefix,
-        pensionAward_code: item?.prospectivePensioner?.pensionAward?.code,
-        pensionAward_description:
-          item?.prospectivePensioner?.pensionAward?.description,
-        pensionAward_start_date:
-          item?.prospectivePensioner?.pensionAward?.start_date,
-        pensionAward_end_date:
-          item?.prospectivePensioner?.pensionAward?.end_date,
-        pensionAward_pensionCap_code:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.code,
-        pensionAward_pensionCap_name:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.name,
-        pensionAward_pensionCap_description:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
-        pensionAward_pensionCap_id:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
-      }));
+        setTotalRecords(res.data.totalCount);
 
-      setRowData(mappedData);
-      console.log("mappedData", mappedData);
+        const filteredApprovals = rawData.filter(
+          (item) => item.notification_status === 5
+        );
+
+        const mappedData = filteredApprovals.map((item) => ({
+          retiree: item.retiree.id,
+          email_address: item.retiree.email_address,
+          notification_status: item.notification_status,
+          gender: item.retiree.gender,
+          phone_number: item.retiree.phone_number,
+          personal_number: item.personal_number,
+          surname: item.retiree.surname,
+          first_name: item.retiree.first_name,
+          other_name: item.retiree.other_name,
+          pension_award: item.mda.name,
+          name: item.pensionAward.name,
+          national_id: item.retiree.national_id,
+          kra_pin: item.retiree.kra_pin,
+          retirement_date: item.retirement_date,
+          dob: item.dob,
+          date_of_confirmation: item.date_of_confirmation,
+          last_basic_salary_amount: item.last_basic_salary_amount,
+          mda_code: item.mda.code,
+          mda_description: item.mda.description,
+          mda_pensionCap_code: item.mda.pensionCap.code,
+          mda_pensionCap_name: item.mda.pensionCap.name,
+          mda_pensionCap_description: item.mda.pensionCap.description,
+          workHistories_length: item.workHistories.length,
+          bankDetails_length: item.bankDetails.length,
+          prospectivePensionerDocuments_length:
+            item.prospectivePensionerDocuments.length,
+          pensionAward_prefix: item.pensionAward.prefix,
+          pensionAward_code: item.pensionAward.code,
+          pensionAward_description: item.pensionAward.description,
+          pensionAward_start_date: item.pensionAward.start_date,
+          pensionAward_end_date: item.pensionAward.end_date,
+          pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
+          pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
+          pensionAward_pensionCap_description:
+            item.pensionAward.pensionCap.description,
+          pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
+          id: item.id,
+        }));
+
+        setRowData(mappedData);
+      }
+
+      console.log("mappedData", red.data.data);
     } catch (error) {
       console.error("Error fetching preclaims:", error);
       return []; // Return an empty array or handle error as needed
     } finally {
       setLoading(false);
+      openFilter && setOpenFilter(false);
     }
   };
 
+  const gridApiRef = useRef(null);
+
+  const onGridReady = (params) => {
+    gridApiRef.current = params;
+    //  params.api.sizeColumnsToFit();
+  };
+
+  const handlePaginationChange = (newPageNumber) => {
+    setPageNumber(newPageNumber);
+  };
+  useEffect(() => {
+    fetchAllPreclaims();
+  }, [pageNumber]);
+
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isSendNotificationEnabled, setIsSendNotificationEnabled] =
+    useState(false);
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApiRef.current.api.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
 
+    const allUnnotified = selectedData.every(
+      (item) =>
+        notificationStatusMap[item.notification_status]?.name === "UNNOTIFIED"
+    );
+    setIsSendNotificationEnabled(allUnnotified);
+
     console.log("Selected Rows:", selectedData);
   };
-
-  useEffect(() => {
-    fetchAllPreclaims();
-  }, []);
 
   const [openNotification, setOpenNotification] = useState(false);
 
@@ -369,18 +468,33 @@ const ClaimsTable = () => {
   return (
     <>
       {loading ? (
-        <>
+        <p>
           <Spinner />
-        </>
+        </p>
       ) : (
         <div className="table-container relative h-[80vh] w-full">
-          <ClaimDialog
+          <CreatePreclaim
+            openCreate={openCreate}
+            setOpenCreate={setOpenCreate}
+            fetchAllPreclaims={fetchAllPreclaims}
+          />
+          <PreclaimsNotifications
+            isSendNotificationEnabled={isSendNotificationEnabled}
+            fetchAllPreclaims={fetchAllPreclaims}
+            selectedRows={selectedRows}
+            openNotification={openNotification}
+            setOpenNotification={setOpenNotification}
+          />
+
+          <ApprovalDialog
             clickedItem={clickedItem}
             setOpenPreclaimDialog={setOpenPreclaimDialog}
             openPreclaimDialog={openPreclaimDialog}
-            setOpenNotification={setOpenNotification}
           />
           <div className="h-full w-full">
+            <div className="text-primary text-lg font-semibold ml-5 mt-2 ">
+              Pending Approvals
+            </div>
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
                 <div className="flex items-center">
@@ -396,28 +510,13 @@ const ClaimsTable = () => {
                     </p>
                   </Button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setOpenNotification(true)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                  >
-                    <IconButton>
-                      <Edit sx={{ fontSize: "20px", mr: 1 }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">Edit</p>
-                  </Button>
-                </div>
+
                 <div className="flex items-center">
                   <Button sx={{ mb: -1, maxHeight: "24px" }}>
                     <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "20px" }}
-                        color="primary"
-                      />
+                      <OpenInNew sx={{ fontSize: "20px" }} color="primary" />
                     </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Delete
-                    </p>
+                    <p className="font-medium text-gray text-sm">View</p>
                   </Button>
                 </div>
                 <div className="flex items-center gap-2 mt-2 ml-2">
@@ -486,6 +585,8 @@ const ClaimsTable = () => {
                         type="text"
                         className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
                         required
+                        value={filterValue}
+                        onChange={(e) => setFilterValue(e.target.value)}
                       />
 
                       <IconButton onClick={handleClick}>
@@ -505,10 +606,12 @@ const ClaimsTable = () => {
                       vertical: "top",
                       horizontal: "right",
                     }}
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
                   >
-                    <MenuItem>Equal</MenuItem>
-                    <MenuItem>Contains</MenuItem>
-                    <MenuItem>Not Equal</MenuItem>
+                    <MenuItem value={"EQUAL"}>Equal</MenuItem>
+                    <MenuItem value={"NOT_EQUAL"}>Contains</MenuItem>
+                    <MenuItem value={"CONTAINS"}>Not Equal</MenuItem>
                   </Menu>
                   <Divider />
                   <div className="flex flex-col item-center p-4 mt-3">
@@ -517,15 +620,14 @@ const ClaimsTable = () => {
                     </label>
                     <select
                       name="role"
-                      //value={selectedRole}
-                      //onChange={(e) => setSelectedRole(e.target.value)}
+                      value={filterColumn}
+                      onChange={(e) => setFilterColumn(e.target.value)}
                       className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
                       required
                     >
-                      <option value="Board Member">All</option>
-                      <option value="Admin">Id</option>
-                      <option value="Business Admin">Email Address</option>
-                      <option value="Support">Full Name</option>
+                      {colDefs.map((col) => (
+                        <option value={col.field}>{col.headerName}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex flex-col item-center p-4 mt-3">
@@ -536,15 +638,14 @@ const ClaimsTable = () => {
                       {" "}
                       <select
                         name="role"
-                        //value={selectedRole}
-                        //onChange={(e) => setSelectedRole(e.target.value)}
+                        value={sortColumn}
+                        onChange={(e) => setSortColumn(e.target.value)}
                         className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
                         required
                       >
-                        <option value="Board Member">All</option>
-                        <option value="id">Id</option>
-                        <option value="email_address">Email Address</option>
-                        <option value="fullName">Full Name</option>
+                        {colDefs.map((col) => (
+                          <option value={col.field}>{col.headerName}</option>
+                        ))}
                       </select>
                       <Tooltip
                         title={
@@ -569,6 +670,7 @@ const ClaimsTable = () => {
                 <Button
                   variant="contained"
                   sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
+                  onClick={handleFilters}
                 >
                   Apply Filters
                 </Button>
@@ -588,6 +690,14 @@ const ClaimsTable = () => {
                   onSelectionChanged={onSelectionChanged}
                   domLayout="autoHeight"
                   onGridReady={onGridReady}
+                  paginationPageSize={pageSize}
+                  paginationPageSizeSelector={paginationPageSizeSelector}
+                  pagination={true}
+                  onPaginationChanged={(params) =>
+                    handlePaginationChange(
+                      params.api.paginationGetCurrentPage() + 1
+                    )
+                  }
                   onRowClicked={(event) => {
                     setClickedItem(event.data); // Update selected item
                     setOpenPreclaimDialog(true); // Open dialog
@@ -602,4 +712,4 @@ const ClaimsTable = () => {
   );
 };
 
-export default ClaimsTable;
+export default Approvals;

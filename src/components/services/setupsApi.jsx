@@ -15,6 +15,10 @@ const endpoints = {
   //BANKS
   getBankBranches: "/api/setups/GetBankBranches",
 
+  //get Banks
+
+  getBanks: "/api/setups/GetBanks",
+
   //PENSION-AWARDS
   pensionAwards:
     "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
@@ -22,6 +26,14 @@ const endpoints = {
   //MDAs
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",
+
+  //TERMS OF SERVICE
+  termsOfService: "/api/Setups/GetTermsOfServiceSetups",
+
+  //DOCUMENT TYPES
+  documentTypes: "/api/setups/GetDocumentTypeSetups",
+
+  createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
 };
 
 export const apiService = {

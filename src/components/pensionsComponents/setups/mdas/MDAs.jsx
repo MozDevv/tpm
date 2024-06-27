@@ -110,7 +110,10 @@ function MDAs() {
             unmountOnExit
           >
             <div className=" bg-white w-[350px] rounded-md p-3 ">
-              <CreateNewMDA />
+              <CreateNewMDA
+                fetchMDAs={fetchMDAs}
+                setOpenNewMDA={setOpenNewMDA}
+              />
             </div>
           </Collapse>
         </div>

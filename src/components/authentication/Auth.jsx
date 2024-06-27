@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -20,6 +21,8 @@ import {
 import axios from "axios";
 import ResetNewPassword from "../loginComponents/ResetNewPassword";
 import authEndpoints, { AuthApiService } from "../services/authApi";
+import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
 
 function Auth() {
   // Initialize Next.js router
@@ -36,6 +39,12 @@ function Auth() {
   const [errors, setErrors] = useState({
     status: false,
     message: "",
+  });
+
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   // Function to handle user sign-in
@@ -57,7 +66,7 @@ function Auth() {
         localStorage.setItem("token", res.data.data.token);
 
         // Redirect user to the dashboard upon successful login
-        router.push("/dashboard");
+        router.push("/pensions");
       }
     } catch (error) {
       console.log(error.response.data.message);
@@ -71,7 +80,12 @@ function Auth() {
       } else if (
         error.response.data.message === "Please change your password to LogIn"
       ) {
-        setResetPassword(true);
+        await handleResetPassword();
+
+        setErrors({
+          status: false,
+          message: "",
+        });
       } else {
         setErrors({
           status: true,
@@ -83,9 +97,22 @@ function Auth() {
     }
   };
 
+  const handleResetPassword = async () => {
+    try {
+      const response = await AuthApiService.post(
+        `https://pmis.agilebiz.co.ke/api/Auth/ForgetPassword?email=${username}`
+      );
+      console.log("response", response);
+      if (response.data.isSuccess) {
+        router.push(`/reset?username=${username}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="">
-      {" "}
       {/* Login Form Section */}
       <form action="" className="pt-10">
         {resetPassword ? (
@@ -110,7 +137,7 @@ function Auth() {
         )}
         {resetPassword ? (
           <>
-            <ResetNewPassword />
+            <ResetNewPassword username={username} password={password} />
           </>
         ) : (
           <Box

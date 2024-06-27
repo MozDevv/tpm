@@ -11,6 +11,9 @@ const api = axios.create({
 const claimsEndpoints = {
   createProspectivePensionerClaim:
     "/api/claims/CreateProspectivePensionerClaim",
+
+  getClaims: "/api/Claims/getClaims",
+  moveClaimStatus: "/api/claims/MoveClaimStatus",
 };
 
 export const apiService = {

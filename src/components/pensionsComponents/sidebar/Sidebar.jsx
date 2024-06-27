@@ -85,8 +85,12 @@ function Sidebar() {
       icon: <ArticleOutlinedIcon />,
       children: [
         {
-          title: "Preclaim Listing",
+          title: "Preclaims",
           path: "/pensions/preclaims/listing",
+        },
+        {
+          title: "Approvals",
+          path: "/pensions/preclaims/approvals",
         },
 
         {
@@ -157,8 +161,21 @@ function Sidebar() {
       icon: <Widgets />,
       children: [
         {
+          title: "Document Types",
+          path: "/pensions/setups/document-types",
+        },
+        {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",
+        },
+
+        {
+          title: "Terms of Service",
+          path: "/pensions/setups/termsofservice",
+        },
+        {
+          title: "MDAs",
+          path: "/pensions/setups/mdas",
         },
         {
           title: "Pension Awards",
@@ -167,10 +184,6 @@ function Sidebar() {
         {
           title: "Banks",
           path: "/pensions/setups/banks",
-        },
-        {
-          title: "MDAs",
-          path: "/pensions/setups/mdas",
         },
       ],
     },

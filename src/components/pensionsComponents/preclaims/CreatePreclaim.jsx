@@ -21,6 +21,8 @@ import React, { useEffect, useState } from "react";
 
 function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
   const { isLoading, setIsLoading } = useIsLoading();
+  const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     surname: "",
     first_name: "",
@@ -41,9 +43,25 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? parseFloat(value) : value; // Parse number if type is number
+    const parsedValue = type === "number" ? parseFloat(value) : value;
 
     setFormData({ ...formData, [name]: parsedValue });
+
+    // Validation logic
+    let error = "";
+    if (
+      type === "email" &&
+      value &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    ) {
+      error = "Invalid email format";
+    } else if (type === "number" && value && isNaN(parsedValue)) {
+      error = "Must be a number";
+    } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
+      error = "Must be a valid phone number";
+    }
+
+    setErrors({ ...errors, [name]: error });
   };
 
   const [mdas, setMdas] = useState([]);
@@ -147,6 +165,18 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
   ];
 
   const handleSubmit = async () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = "This field is required";
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return; // Don't submit if there are errors
+    }
     console.log("Form Data:", formData);
     setIsLoading(true);
 
@@ -202,7 +232,10 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
                 <div className="flex gap-8 mr-4">
                   <Button
                     variant="outlined"
-                    onClick={() => setOpenCreate(false)}
+                    onClick={() => {
+                      setOpenCreate(false);
+                      setErrors({});
+                    }}
                     sx={{ maxHeight: "40px", mt: "5px" }}
                   >
                     Cancel
@@ -261,6 +294,8 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
                               name={field.name}
                               value={formData[field.name]}
                               onChange={handleInputChange}
+                              error={!!errors[field.name]} // Show error style if there is an error
+                              helperText={errors[field.name]} // Display the error message
                             >
                               <MenuItem value="">Select {field.label}</MenuItem>
                               {field.children.map((option) => (
@@ -277,6 +312,8 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
                               size="small"
                               value={formData[field.name]}
                               onChange={handleInputChange}
+                              error={!!errors[field.name]} // Show error style if there is an error
+                              helperText={errors[field.name]} // Display the error message
                               required
                               fullWidth
                             />

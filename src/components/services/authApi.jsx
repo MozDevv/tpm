@@ -18,9 +18,11 @@ const setAuthorizationHeader = () => {
 
 const authEndpoints = {
   //auth
-  activateEmail: "/Api/auth/confirmEmail",
+  activateEmail: "/Auth/confirmEmail",
   login: "/Auth/Login",
   register: "/Auth/Register",
+  resetPassword: "/Auth/ResetPassword",
+  forgetPassword: "/Auth/ForgetPassword",
 };
 
 export const AuthApiService = {
