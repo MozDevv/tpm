@@ -290,6 +290,7 @@ const ClaimsTable = () => {
       const mappedData = rawData.map((item) => ({
         retiree: item?.prospectivePensioner?.retiree?.id,
         id: item?.claim_id,
+        claim_id: item?.id,
 
         stage: item?.stage,
         comments: item?.comments,

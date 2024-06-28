@@ -88,9 +88,14 @@ function Sidebar() {
           title: "Preclaims",
           path: "/pensions/preclaims/listing",
         },
+
         {
           title: "Approvals",
           path: "/pensions/preclaims/approvals",
+        },
+        {
+          title: "Returned Claims",
+          path: "/pensions/preclaims/returned-claims",
         },
 
         {
@@ -164,6 +169,7 @@ function Sidebar() {
           title: "Document Types",
           path: "/pensions/setups/document-types",
         },
+
         {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",

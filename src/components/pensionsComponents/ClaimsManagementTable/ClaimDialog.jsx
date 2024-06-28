@@ -2,6 +2,7 @@
 import { useIsLoading } from "@/context/LoadingContext";
 import {
   ArrowBack,
+  DriveFileMove,
   Edit,
   IosShare,
   KeyboardArrowDown,
@@ -21,6 +22,7 @@ import {
 import "./ag-theme.css";
 
 import ReturnToPreclaims from "./ReturnToPreclaims";
+import UserDetailCard from "../recordCard/UserDetailCard";
 
 function ClaimDialog({
   setOpenNotification,
@@ -192,6 +194,8 @@ function ClaimDialog({
 
   const [disabled, setDisabled] = useState(true);
 
+  const [moveStatus, setMoveStatus] = useState(null);
+
   return (
     <Dialog
       open={openPreclaimDialog}
@@ -222,6 +226,7 @@ function ClaimDialog({
           setOpenPreclaimDialog={setOpenPreclaimDialog}
           setOpenCreateClaim={setOpenCreateClaim}
           clickedItem={clickedItem}
+          moveStatus={moveStatus}
         />
         {/** <CreateClaim
           setOpenPreclaimDialog={setOpenPreclaimDialog}
@@ -268,7 +273,10 @@ function ClaimDialog({
               <div className="flex gap-2 items-center">
                 <div className="flex items-center">
                   <Button
-                    onClick={() => setOpenCreateClaim(true)}
+                    onClick={() => {
+                      setMoveStatus(1);
+                      setOpenCreateClaim(true);
+                    }}
                     sx={{ mb: -1, maxHeight: "25px" }}
                   >
                     <IconButton>
@@ -301,14 +309,20 @@ function ClaimDialog({
                 )}
                 <div className="flex items-center">
                   <Button
-                    onClick={() => setOpenCreateWorkHistory(true)}
+                    onClick={() => {
+                      setMoveStatus(0);
+                      setOpenCreateClaim(true);
+                    }}
                     sx={{ mb: -1, maxHeight: "25px" }}
                   >
                     <IconButton>
-                      <Add sx={{ fontSize: "18px" }} color="primary" />
+                      <DriveFileMove
+                        sx={{ fontSize: "18px" }}
+                        color="primary"
+                      />
                     </IconButton>
                     <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Add work History
+                      Move Status
                     </p>
                   </Button>
                 </div>
@@ -410,7 +424,8 @@ function ClaimDialog({
           </div>
         </div>
         <div className="col-span-3">
-          <ProspectivePensionersDocs />
+          {/** <ProspectivePensionersDocs /> */}
+          <UserDetailCard clickedItem={clickedItem} />
         </div>
       </div>
     </Dialog>

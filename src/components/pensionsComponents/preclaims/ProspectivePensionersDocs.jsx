@@ -10,20 +10,12 @@ import {
 } from "@mui/material";
 
 function ProspectivePensionersDocs() {
-  const steps = [
-    "Id.pdf",
-    "GP178.pdf",
-    "BankDetails.pdf",
-    "GP213.pdf",
-    "GP214.pdf",
-    "BirthCertificate.pdf",
-    "KRAPin.pdf",
-  ];
+  const steps = ["Id.pdf", "GP178.pdf", "BankDetails.pdf"];
   const activeStepIndex = 0; // Set the active step index here
 
   return (
-    <Box p={1} sx={{ width: "100%", mt: 5, pl: 3 }}>
-      <Typography variant="h6" sx={{ color: "primary.main" }} mb={4}>
+    <Box p={1} sx={{ width: "100%", mt: 2, pl: 3 }}>
+      <Typography variant="h6" sx={{ color: "primary.main" }} mb={1}>
         Submitted Documents
       </Typography>
 

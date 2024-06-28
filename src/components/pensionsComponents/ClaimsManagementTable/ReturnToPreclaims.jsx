@@ -8,6 +8,7 @@ function ReturnToPreclaims({
   clickedItem,
   setOpenPreclaimDialog,
   setOpenCreateClaim,
+  moveStatus,
 }) {
   const [comments, setComments] = useState("");
 
@@ -29,8 +30,8 @@ function ReturnToPreclaims({
     }
 
     const data = {
-      claim_id: clickedItem.id,
-      action: 0,
+      claim_id: clickedItem?.claim_id,
+      action: moveStatus,
       comments,
     };
 
@@ -44,15 +45,20 @@ function ReturnToPreclaims({
       if (response.status === 200) {
         setAlert({
           open: true,
-          message: "Claim Returned for clarification successfully",
+          message:
+            moveStatus === 1
+              ? "Claim has been returned to preclaims"
+              : "Claim has been moved to Validation",
           severity: "success",
         });
+        console.log(response.data);
+        console.log("data", data);
         setOpenCreateClaim(false);
         setOpenPreclaimDialog(false);
-        window.location.reload();
+        // window.location.reload();
       }
     } catch (error) {
-      console.error(error);
+      console.error(error.response);
     } finally {
       setOpenCreateClaim(false);
       // setOpenPreclaimDialog(false);

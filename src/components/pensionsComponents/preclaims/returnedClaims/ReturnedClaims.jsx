@@ -26,20 +26,21 @@ import {
   FilterAltOutlined,
   FilterList,
   ForwardToInbox,
+  OpenInNew,
+  Pageview,
   Send,
   SortByAlpha,
 } from "@mui/icons-material";
-import "./ag-theme.css";
-import CreatePreclaim from "./CreatePreclaim";
+import "../ag-theme.css";
 
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
-import PreclaimsNotifications from "./PreclaimsNotifications";
-import PreclaimDialog from "./PreclaimDialog";
+
 import { useAlert } from "@/context/AlertContext";
 import axios from "axios";
 import Spinner from "@/components/spinner/Spinner";
+import PreclaimDialog from "../PreclaimDialog";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -59,11 +60,11 @@ const notificationStatusMap = {
   0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
   1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
   2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
-  3: { name: "SUBMITTED", color: "#14A44D" }, // Amethyst
+  3: { name: "SUBMITTED", color: "#9b59b6" }, // Amethyst
   4: { name: "IN REVIEW", color: "#e67e22" }, // Carrot Orange
   5: { name: "PENDING APPROVAL", color: "#1abc9c" }, // Light Turquoise
   6: { name: "CLAIM CREATED", color: "#2980b9" }, // Belize Hole Blue
-  7: { name: "RETURNED FOR CLARIFICATION", color: "#E4A11B" }, // Light Green
+  7: { name: "RETURNED FOR CLARIFICATION", color: "#2ecc71" }, // Light Green
 };
 
 const colDefs = [
@@ -112,7 +113,7 @@ const colDefs = [
   {
     headerName: "Notification Status",
     field: "notification_status",
-    width: 180,
+    width: 200,
     filter: true,
     cellRenderer: (params) => {
       const status = notificationStatusMap[params.value];
@@ -122,7 +123,6 @@ const colDefs = [
         <Button
           variant="outlined"
           sx={{
-            ml: 3,
             borderColor: status.color,
             maxHeight: "22px",
             cursor: "pointer",
@@ -279,17 +279,15 @@ const colDefs = [
     headerName: "Pension Award Pension Cap ID",
     field: "pensionAward_pensionCap_id",
     width: 250,
-    hide: true,
   },
   {
     headerName: "ID",
     field: "id",
     width: 150,
-    hide: true,
   },
 ];
 
-const Preclaims = () => {
+const ReturnedClaims = () => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -369,7 +367,11 @@ const Preclaims = () => {
 
         setTotalRecords(res.data.totalCount);
 
-        const mappedData = rawData.map((item) => ({
+        const filteredApprovals = rawData.filter(
+          (item) => item.notification_status === 7
+        );
+
+        const mappedData = filteredApprovals.map((item) => ({
           retiree: item.retiree.id,
           email_address: item.retiree.email_address,
           notification_status: item.notification_status,
@@ -468,64 +470,24 @@ const Preclaims = () => {
         </p>
       ) : (
         <div className="table-container relative h-[80vh] w-full">
-          <CreatePreclaim
-            openCreate={openCreate}
-            setOpenCreate={setOpenCreate}
-            fetchAllPreclaims={fetchAllPreclaims}
-          />
-          <PreclaimsNotifications
-            isSendNotificationEnabled={isSendNotificationEnabled}
-            fetchAllPreclaims={fetchAllPreclaims}
-            selectedRows={selectedRows}
-            openNotification={openNotification}
-            setOpenNotification={setOpenNotification}
-          />
-
-          <PreclaimDialog
-            clickedItem={clickedItem}
-            setOpenPreclaimDialog={setOpenPreclaimDialog}
-            openPreclaimDialog={openPreclaimDialog}
-            setOpenNotification={setOpenNotification}
-          />
           <div className="h-full w-full">
+            <div className="text-primary text-lg font-semibold ml-5 mt-2 ">
+              Returned Claims
+            </div>
+            <PreclaimDialog
+              clickedItem={clickedItem}
+              setOpenPreclaimDialog={setOpenPreclaimDialog}
+              openPreclaimDialog={openPreclaimDialog}
+              setOpenNotification={setOpenNotification}
+            />
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
                 <div className="flex items-center">
-                  <Button
-                    onClick={() => setOpenCreate(true)}
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <Add sx={{ fontSize: "20px" }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Create
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setOpenNotification(true)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                    disabled={
-                      !isSendNotificationEnabled && selectedRows.length > 0
-                    }
-                    startIcon={<ForwardToInbox />}
-                  >
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Notify Pensioner(s)
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center">
                   <Button sx={{ mb: -1, maxHeight: "24px" }}>
                     <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "20px" }}
-                        color="primary"
-                      />
+                      <OpenInNew sx={{ fontSize: "20px" }} color="primary" />
                     </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">View</p>
+                    <p className="font-medium text-gray text-sm">View</p>
                   </Button>
                 </div>
                 <div className="flex items-center gap-2 mt-2 ml-2">
@@ -721,4 +683,4 @@ const Preclaims = () => {
   );
 };
 
-export default Preclaims;
+export default ReturnedClaims;
