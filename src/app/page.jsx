@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 
@@ -6,26 +7,30 @@ const Auth = dynamic(() => import("@/components/authentication/Auth"));
 
 function Login() {
   return (
-    <div className="flex justify-between h-screen">
-      <div className="flex-1 h-full bg-white flex items-start pl-36 justify-center flex-col gap-8">
-        {/* Logo and Welcome Section */}
-        <img src="/logo.png" alt="" height={99} width={514} />
-        <div className="mt-10 w-[100px] h-[12px] rounded-full bg-primary"></div>
-        <Typography
-          variant="h4"
-          component="div"
-          sx={{
-            fontSize: "30px",
-            fontWeight: "700",
-            lineHeight: "40px",
-            width: "470px",
-            color: "primary.main",
-          }}
-        >
-          Welcome to Treasury Pension Management Integrated System
-        </Typography>
+    <div className="grid grid-cols-2 h-screen">
+      {/* Left Column */}
+      <div className="h-full bg-white flex  justify-center flex-col">
+        <div className="pl-36">
+          {" "}
+          {/* Logo and Welcome Section */}
+          <img
+            src="/logo.png"
+            alt=""
+            className="pb-15"
+            height={99}
+            width={450}
+          />
+          <div className="mt-[100px]">
+            <div className="mt-10 w-[100px] mb-10 h-[12px] rounded-full bg-primary"></div>
+            <p className="text-[31px] leading-12 font-bold w-[480px] text-primary">
+              Welcome to Treasury Pension Management Integrated System
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="flex-1 h-full flex items-center justify-center">
+
+      {/* Right Column */}
+      <div className="h-full flex items-center justify-center">
         <Auth />
       </div>
     </div>

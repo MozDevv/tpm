@@ -14,7 +14,7 @@ export const LoadingProvider = ({ children }) => {
 
   return (
     <LoadingContext.Provider
-      value={{ isLoading, setIsLoading: setIsLoadingValue }}
+      value={{ isLoading: isLoading, setIsLoading: setIsLoadingValue }}
     >
       {children}
     </LoadingContext.Provider>

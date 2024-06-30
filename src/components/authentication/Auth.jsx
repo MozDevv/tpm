@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -20,6 +21,8 @@ import {
 import axios from "axios";
 import ResetNewPassword from "../loginComponents/ResetNewPassword";
 import authEndpoints, { AuthApiService } from "../services/authApi";
+import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
 
 function Auth() {
   // Initialize Next.js router
@@ -28,7 +31,7 @@ function Auth() {
   // State variables for login form
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [resetPassword, setResetPassword] = useState(true);
+  const [resetPassword, setResetPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +39,12 @@ function Auth() {
   const [errors, setErrors] = useState({
     status: false,
     message: "",
+  });
+
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   // Function to handle user sign-in
@@ -57,7 +66,7 @@ function Auth() {
         localStorage.setItem("token", res.data.data.token);
 
         // Redirect user to the dashboard upon successful login
-        router.push("/dashboard");
+        router.push("/pensions");
       }
     } catch (error) {
       console.log(error.response.data.message);
@@ -71,7 +80,12 @@ function Auth() {
       } else if (
         error.response.data.message === "Please change your password to LogIn"
       ) {
-        setResetPassword(true);
+        await handleResetPassword();
+
+        setErrors({
+          status: false,
+          message: "",
+        });
       } else {
         setErrors({
           status: true,
@@ -82,11 +96,25 @@ function Auth() {
       setLoading(false);
     }
   };
+
+  const handleResetPassword = async () => {
+    try {
+      const response = await AuthApiService.post(
+        `https://pmis.agilebiz.co.ke/api/Auth/ForgetPassword?email=${username}`
+      );
+      console.log("response", response);
+      if (response.data.isSuccess) {
+        router.push(`/reset?username=${username}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div>
-      {" "}
+    <div className="">
       {/* Login Form Section */}
-      <form action="">
+      <form action="" className="pt-10">
         {resetPassword ? (
           <>
             <Typography
@@ -99,17 +127,7 @@ function Auth() {
             </Typography>
           </>
         ) : (
-          <Typography
-            variant="h2"
-            color="primary"
-            sx={{
-              mb: 4,
-
-              fontWeight: 700,
-            }}
-          >
-            Sign In
-          </Typography>
+          <div className="text-primary text-[28px] font-bold"> Sign In</div>
         )}{" "}
         {/* Render error message if there are errors */}
         {errors.status && (
@@ -119,16 +137,24 @@ function Auth() {
         )}
         {resetPassword ? (
           <>
-            <ResetNewPassword />
+            <ResetNewPassword username={username} password={password} />
           </>
         ) : (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              mt: 4,
+              gap: "20px",
+            }}
+          >
             <FormControl>
               <FormLabel
                 sx={{
                   fontSize: "13px",
                   fontWeight: "700",
                   color: "gray",
+                  mb: "3px",
                 }}
               >
                 Username/Email
@@ -154,7 +180,12 @@ function Auth() {
             </FormControl>
             <FormControl>
               <FormLabel
-                sx={{ fontSize: "13px", color: "gray", fontWeight: "700" }}
+                sx={{
+                  fontSize: "13px",
+                  mb: "3px",
+                  color: "gray",
+                  fontWeight: "700",
+                }}
               >
                 Password
               </FormLabel>
@@ -198,12 +229,14 @@ function Auth() {
                 color: "white",
                 justifyContent: "space-between",
                 textTransform: "none",
+                fontWeight: "500",
                 mt: "10px",
               }}
               onClick={handleSignIn}
+              //  onClick={() => router.push("/otp")}
               disabled={loading}
             >
-              Sign In
+              Login
               <ArrowForward />
             </Button>
 
@@ -233,7 +266,7 @@ function Auth() {
             </Typography>
           </Box>
         )}
-        <div className="text-xs italic flex items-center gap-1 mt-12 font-bold text-gray-500 mb-8">
+        <div className="text-xs italic flex items-center gap-1 bottom-4 absolute font-bold text-gray-500 mb-8">
           Powered By
           <span className="text-primary cursor-pointer underline hover:text-yellow-500">
             Agile

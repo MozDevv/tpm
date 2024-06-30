@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 import axios from "axios";
 
-export const API_BASE_URL = "https://usermgnt.agilebiz.co.ke/api";
+export const API_BASE_URL = "https://pmis.agilebiz.co.ke/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -18,11 +18,11 @@ const setAuthorizationHeader = () => {
 
 const authEndpoints = {
   //auth
-  activationSetup: (uidb64, token) =>
-    `/auth/activation-set-up/${uidb64}/${token}/`,
-
+  activateEmail: "/Auth/confirmEmail",
   login: "/Auth/Login",
   register: "/Auth/Register",
+  resetPassword: "/Auth/ResetPassword",
+  forgetPassword: "/Auth/ForgetPassword",
 };
 
 export const AuthApiService = {

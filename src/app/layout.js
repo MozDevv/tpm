@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import Spinner from "@/components/spinner/Spinner";
 import Loading from "@/components/spinner/Loading";
 import { AlertProvider } from "@/context/AlertContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
   title: "TPMIS",
@@ -24,17 +25,19 @@ const montserrat = Montserrat({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <SelectedItemProvider>
-        <LoadingProvider>
-          <ThemeProvider theme={baselightTheme}>
-            <AlertProvider>
-              <body>
-                <Suspense fallback={<Spinner />}>{children}</Suspense>
-              </body>
-            </AlertProvider>
-          </ThemeProvider>
-        </LoadingProvider>
-      </SelectedItemProvider>
+      <LoadingProvider>
+        <AuthProvider>
+          <SelectedItemProvider>
+            <ThemeProvider theme={baselightTheme}>
+              <AlertProvider>
+                <body>
+                  <Suspense fallback={<Spinner />}> {children}</Suspense>
+                </body>
+              </AlertProvider>
+            </ThemeProvider>
+          </SelectedItemProvider>
+        </AuthProvider>
+      </LoadingProvider>
     </html>
   );
 }

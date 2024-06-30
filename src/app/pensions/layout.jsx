@@ -32,9 +32,7 @@ function Layout({ children }) {
               className={styles.main}
               style={{ height: "calc(100vh - 67px)" }}
             >
-              <Suspense fallback={<Spinner />}>
-                {isLoading ? <Spinner /> : children}
-              </Suspense>
+              {isLoading ? <Spinner /> : children}
             </div>
           </Grid>
         </>
