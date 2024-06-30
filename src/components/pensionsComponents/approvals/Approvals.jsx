@@ -626,7 +626,9 @@ const Approvals = () => {
                       required
                     >
                       {colDefs.map((col) => (
-                        <option value={col.field}>{col.headerName}</option>
+                        <option key={col.field} value={col.field}>
+                          {col.headerName}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -644,7 +646,9 @@ const Approvals = () => {
                         required
                       >
                         {colDefs.map((col) => (
-                          <option value={col.field}>{col.headerName}</option>
+                          <option key={col.field} value={col.field}>
+                            {col.headerName}
+                          </option>
                         ))}
                       </select>
                       <Tooltip
