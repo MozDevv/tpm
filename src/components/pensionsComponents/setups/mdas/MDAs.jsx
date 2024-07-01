@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import "../pensionAwards/PensionAwards.css";
+import "../pensionAwards/pensionAwards.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button, Collapse } from "@mui/material";
 import CreateNewMDA from "./CreateNewMDA";
