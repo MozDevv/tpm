@@ -14,6 +14,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Pagination,
 } from "@mui/material";
 import {
   Add,
@@ -255,6 +256,10 @@ const ClaimsTable = () => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 10; // Number of records per page
+  const [totalPages, setTotalPages] = useState(1);
 
   const [sortCriteria, setSortCriteria] = useState(0);
   const gridApiRef = useRef(null);
@@ -284,8 +289,15 @@ const ClaimsTable = () => {
   const fetchAllPreclaims = async () => {
     setLoading(true);
     try {
-      const res = await apiService.get(claimsEndpoints.getClaims);
+      const res = await apiService.get(claimsEndpoints.getClaims, {
+        "paging.pageNumber": pageNumber,
+        "paging.pageSize": pageSize,
+      });
       const rawData = res.data.data;
+
+      setTotalPages(res.data.totalPages);
+
+      setTotalRecords(res.data.totalCount);
 
       const mappedData = rawData.map((item) => ({
         retiree: item?.prospectivePensioner?.retiree?.id,
@@ -356,10 +368,13 @@ const ClaimsTable = () => {
 
     console.log("Selected Rows:", selectedData);
   };
+  const handlePageChange = (event, newPage) => {
+    setPageNumber(newPage);
+  };
 
   useEffect(() => {
     fetchAllPreclaims();
-  }, []);
+  }, [pageNumber, pageSize]);
 
   const [openNotification, setOpenNotification] = useState(false);
 
@@ -575,7 +590,7 @@ const ClaimsTable = () => {
                 </Button>
               </Collapse>
               <div
-                className="ag-theme-quartz"
+                className="ag-theme-quartz flex flex-col"
                 style={{
                   height: "80vh",
                   padding: "20px",
@@ -593,7 +608,23 @@ const ClaimsTable = () => {
                     setClickedItem(event.data); // Update selected item
                     setOpenPreclaimDialog(true); // Open dialog
                   }}
-                />
+                />{" "}
+                <Box
+                  sx={{
+                    mt: "-10px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Pagination
+                    count={totalPages}
+                    page={pageNumber}
+                    onChange={handlePageChange}
+                    color="primary"
+                    variant="outlined"
+                    shape="rounded"
+                  />
+                </Box>
               </div>
             </div>
           </div>

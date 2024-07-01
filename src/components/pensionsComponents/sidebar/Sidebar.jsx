@@ -156,6 +156,10 @@ function Sidebar() {
           path: "/pensions/users",
         },
         {
+          title: "Roles & Permissions",
+          path: "/pensions/users/roles-permissions",
+        },
+        {
           title: "Leave Management",
           path: "/pensions/users/leave-management",
         },

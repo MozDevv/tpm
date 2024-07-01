@@ -51,18 +51,22 @@ const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
       <table>
         <thead>
           <tr>
-            <th>Action</th>
+            <th className="text-sm">Action</th>
             {actions.map((action) => (
-              <th key={action}>{action}</th>
+              <th key={action} className="text-sm font-normal ">
+                {action}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {modules.map((module) => (
             <tr key={module}>
-              <td>{module}</td>
+              <td className="text-sm font-normal">{module}</td>
               {actions.map((action) => (
-                <td key={action}>{renderCheckbox(module, action)}</td>
+                <td key={action} className="text-xs font-normal">
+                  {renderCheckbox(module, action)}
+                </td>
               ))}
             </tr>
           ))}
@@ -72,7 +76,7 @@ const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
   );
 };
 
-const App = () => {
+const RolePermissions = () => {
   const [selectedRole, setSelectedRole] = useState("Business Admin");
   const [permissions, setPermissions] = useState({});
 
@@ -115,7 +119,7 @@ const App = () => {
           setSelectedRole={setSelectedRole}
         />
       </Grid>
-      <Grid item xs={8.5}>
+      <Grid item xs={8.5} sx={{ backgroundColor: "white" }}>
         <UserRoleTable
           permissions={permissions}
           handleChange={handleChange}
@@ -126,4 +130,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default RolePermissions;
