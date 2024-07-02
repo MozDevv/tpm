@@ -156,6 +156,22 @@ function Sidebar() {
           path: "/pensions/users",
         },
         {
+          title: "Departments Setups",
+          path: "/pensions/users/setups/departments-setups",
+        },
+        {
+          title: "Roles Setups",
+          path: "/pensions/users/setups/roles-setups",
+        },
+        {
+          title: "Tables Setups",
+          path: "/pensions/users/setups/tables-setups",
+        },
+        {
+          title: "Roles & Permissions",
+          path: "/pensions/users/roles-permissions",
+        },
+        {
           title: "Leave Management",
           path: "/pensions/users/leave-management",
         },
