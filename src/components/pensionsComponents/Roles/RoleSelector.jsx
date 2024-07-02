@@ -9,26 +9,16 @@ import {
   Checkbox,
   FormControlLabel,
   Box,
+  List,
+  ListItem,
 } from "@mui/material";
+import endpoints from "@/components/services/setupsApi";
 
 const roles = ["Business Admin", "Analyst", "Super Admin", "Admin"];
 
-const RoleSelector = ({ selectedRole, setSelectedRole }) => (
-  <FormControl fullWidth>
-    <InputLabel>Select Role</InputLabel>
-    <Select
-      value={selectedRole}
-      onChange={(e) => setSelectedRole(e.target.value)}
-      label="Select Role"
-    >
-      {roles.map((role) => (
-        <MenuItem key={role} value={role}>
-          {role}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+const RoleSelector = ({ selectedRole, setSelectedRole }) => {
+  return <></>;
+};
 
 const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
   const modules = [
@@ -80,29 +70,26 @@ const RolePermissions = () => {
   const [selectedRole, setSelectedRole] = useState("Business Admin");
   const [permissions, setPermissions] = useState({});
 
-  useEffect(() => {
-    const savedPermissions = localStorage.getItem("permissions");
-    if (savedPermissions) {
-      setPermissions(JSON.parse(savedPermissions));
+  const [roles, setRoles] = useState([]); // [1]
+
+  const fetchData = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRoles, {
+        paging: { pageNumber, pageSize },
+      });
+      const { data, totalCount } = res.data;
+
+      setRoles(data);
+
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    localStorage.setItem("permissions", JSON.stringify(permissions));
-  }, [permissions]);
-
-  const handleChange = (module, action) => {
-    setPermissions((prev) => ({
-      ...prev,
-      [selectedRole]: {
-        ...prev[selectedRole],
-        [module]: {
-          ...prev[selectedRole]?.[module],
-          [action]: !prev[selectedRole]?.[module]?.[action],
-        },
-      },
-    }));
-  };
+    fetchData();
+  }, []);
 
   const renderCheckbox = (module, action) => (
     <Checkbox
