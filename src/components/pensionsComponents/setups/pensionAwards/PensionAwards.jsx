@@ -5,10 +5,11 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 
-import "./pensionAwards.css";
 
 import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
 import MapPensionerAwards from "./MapPensionerAwards";
+import "./pensionAwards.css";
+
 
 const columnDefs = [
   {
@@ -136,10 +137,12 @@ function PensionAwards() {
   return (
     <div className="ag-theme-quartz" style={{ height: "75vh", width: "98%" }}>
       {openAward ? (
+
         <MapPensionerAwards
           setOpenAward={setOpenAward}
           rowClicked={rowClicked}
         />
+
       ) : (
         <>
           <Dialog

@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -151,5 +152,6 @@ const MapPensionerAwards = ({ rowClicked }) => {
     </div>
   );
 };
+
 
 export default MapPensionerAwards;
