@@ -4,9 +4,11 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import "./PensionAwards.css";
+
 import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
 import MapPensionerAwards from "./MapPensionerAwards";
+import "./pensionAwards.css";
+
 
 const columnDefs = [
   {
