@@ -29,6 +29,7 @@ const endpoints = {
   //MDAs
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",
+  updateMDA: "/api/Setups/EditMDA",
 
   //TERMS OF SERVICE
   termsOfService: "/api/Setups/GetTermsOfServiceSetups",

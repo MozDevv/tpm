@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -17,10 +16,12 @@ import {
   Paper,
 } from "@mui/material";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { useAlert } from "@/context/AlertContext";
 
-const MapPensionerAwards = ({ rowClicked }) => {
+const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const { alert, setAlert } = useAlert();
 
   const fetchDocumentTypes = async () => {
     try {
@@ -69,8 +70,13 @@ const MapPensionerAwards = ({ rowClicked }) => {
       const res = await apiService.post(endpoints.mapPensionerAwards, data);
 
       if (res.status === 200) {
-        alert("Documents submitted successfully");
+        setAlert({
+          open: true,
+          message: `Documents successfully mapped to ${rowClicked.name}`,
+          severity: "success",
+        });
         console.log("Response:", res.data);
+        setOpenAward(false);
       }
     } catch (error) {
       console.error("Error submitting documents:", error);
@@ -82,7 +88,7 @@ const MapPensionerAwards = ({ rowClicked }) => {
     <div className="">
       <div className="flex flex-col gap-3">
         <p className="text-primary text-xl font-semibold">
-          Map Documents to pension Awards
+          Map Documents to {rowClicked.name}
         </p>
         <p className="text-gray-700 text-sm mb-3">
           Choose the document you wish to map to the selected Award
@@ -152,6 +158,5 @@ const MapPensionerAwards = ({ rowClicked }) => {
     </div>
   );
 };
-
 
 export default MapPensionerAwards;

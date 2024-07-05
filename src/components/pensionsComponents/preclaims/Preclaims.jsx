@@ -291,7 +291,48 @@ const colDefs = [
   },
 ];
 
-const Preclaims = () => {
+const mapRowData = (items) =>
+  items.map((item) => ({
+    retiree: item.retiree.id,
+    email_address: item.retiree.email_address,
+    notification_status: item.notification_status,
+    gender: item.retiree.gender,
+    phone_number: item.retiree.phone_number,
+    personal_number: item.personal_number,
+    surname: item.retiree.surname,
+    first_name: item.retiree.first_name,
+    other_name: item.retiree.other_name,
+    pension_award: item.mda.name,
+    name: item.pensionAward.name,
+    national_id: item.retiree.national_id,
+    kra_pin: item.retiree.kra_pin,
+    retirement_date: item.retirement_date,
+    dob: item.dob,
+    date_of_confirmation: item.date_of_confirmation,
+    last_basic_salary_amount: item.last_basic_salary_amount,
+    mda_code: item.mda.code,
+    mda_description: item.mda.description,
+    mda_pensionCap_code: item.mda.pensionCap.code,
+    mda_pensionCap_name: item.mda.pensionCap.name,
+    mda_pensionCap_description: item.mda.pensionCap.description,
+    workHistories_length: item.workHistories.length,
+    bankDetails_length: item.bankDetails.length,
+    prospectivePensionerDocuments_length:
+      item.prospectivePensionerDocuments.length,
+    pensionAward_prefix: item.pensionAward.prefix,
+    pensionAward_code: item.pensionAward.code,
+    pensionAward_description: item.pensionAward.description,
+    pensionAward_start_date: item.pensionAward.start_date,
+    pensionAward_end_date: item.pensionAward.end_date,
+    pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
+    pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
+    pensionAward_pensionCap_description:
+      item.pensionAward.pensionCap.description,
+    pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
+    id: item.id,
+  }));
+
+const Preclaims = ({ status }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -354,6 +395,8 @@ const Preclaims = () => {
     await fetchAllPreclaims(sort, filter);
   };
 
+  const [items, setItems] = useState([]);
+
   const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
     try {
@@ -376,47 +419,19 @@ const Preclaims = () => {
 
         setTotalRecords(res.data.totalCount);
 
-        const mappedData = rawData.map((item) => ({
-          retiree: item.retiree.id,
-          email_address: item.retiree.email_address,
-          notification_status: item.notification_status,
-          gender: item.retiree.gender,
-          phone_number: item.retiree.phone_number,
-          personal_number: item.personal_number,
-          surname: item.retiree.surname,
-          first_name: item.retiree.first_name,
-          other_name: item.retiree.other_name,
-          pension_award: item.mda.name,
-          name: item.pensionAward.name,
-          national_id: item.retiree.national_id,
-          kra_pin: item.retiree.kra_pin,
-          retirement_date: item.retirement_date,
-          dob: item.dob,
-          date_of_confirmation: item.date_of_confirmation,
-          last_basic_salary_amount: item.last_basic_salary_amount,
-          mda_code: item.mda.code,
-          mda_description: item.mda.description,
-          mda_pensionCap_code: item.mda.pensionCap.code,
-          mda_pensionCap_name: item.mda.pensionCap.name,
-          mda_pensionCap_description: item.mda.pensionCap.description,
-          workHistories_length: item.workHistories.length,
-          bankDetails_length: item.bankDetails.length,
-          prospectivePensionerDocuments_length:
-            item.prospectivePensionerDocuments.length,
-          pensionAward_prefix: item.pensionAward.prefix,
-          pensionAward_code: item.pensionAward.code,
-          pensionAward_description: item.pensionAward.description,
-          pensionAward_start_date: item.pensionAward.start_date,
-          pensionAward_end_date: item.pensionAward.end_date,
-          pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
-          pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
-          pensionAward_pensionCap_description:
-            item.pensionAward.pensionCap.description,
-          pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
-          id: item.id,
-        }));
+        if (status || status === 0) {
+          const filteredApprovals = rawData.filter(
+            (item) => item.notification_status === status
+          );
 
-        setRowData(mappedData);
+          setItems(filteredApprovals);
+          const data = mapRowData(filteredApprovals);
+          setRowData(data);
+        } else {
+          const data = mapRowData(res.data.data);
+          setRowData(data);
+          console.log("first, state", status);
+        }
       }
 
       console.log("mappedData", res.data.data);
@@ -515,31 +530,23 @@ const Preclaims = () => {
                     </p>
                   </Button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setOpenNotification(true)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                    disabled={
-                      !isSendNotificationEnabled && selectedRows.length > 0
-                    }
-                    startIcon={<ForwardToInbox />}
-                  >
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Notify Pensioner(s)
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center">
-                  <Button sx={{ mb: -1, maxHeight: "24px" }}>
-                    <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "20px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">View</p>
-                  </Button>
-                </div>
+                {status === 0 && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => setOpenNotification(true)}
+                      sx={{ mb: -1, maxHeight: "24px" }}
+                      disabled={
+                        !isSendNotificationEnabled && selectedRows.length > 0
+                      }
+                      startIcon={<ForwardToInbox />}
+                    >
+                      <p className="font-medium text-gray -ml-2 text-sm">
+                        Notify Pensioner(s)
+                      </p>
+                    </Button>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-2 mt-2 ml-2">
                   <Button
                     onClick={() => exportData()}

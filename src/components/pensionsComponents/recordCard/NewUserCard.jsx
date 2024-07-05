@@ -1,8 +1,8 @@
 "use client";
 import authEndpoints, { AuthApiService } from "@/components/services/authApi";
+import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 import { useIsLoading } from "@/context/LoadingContext";
-import { ArrowBack, ArrowBackIos } from "@mui/icons-material";
 import {
   Avatar,
   Button,
@@ -10,13 +10,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function NewUserCard({ data, setSuccess }) {
   const { alert, setAlert } = useAlert();
-  const [selectedRole, setSelectedRole] = useState("Admin");
+  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
 
   const { isLoading, setIsLoading } = useIsLoading();
@@ -29,8 +29,8 @@ function NewUserCard({ data, setSuccess }) {
       firstName: formData.get("firstName"),
       middleName: formData.get("middleName"),
       lastName: formData.get("lastName"),
-      department: formData.get("department"),
-      role: formData.get("role"),
+      department: selectedDepartment,
+      role: selectedRole,
       employeeNumber: formData.get("employeeNumber"),
       phoneNumber: formData.get("phoneNumber"),
       email: formData.get("email"),
@@ -55,6 +55,39 @@ function NewUserCard({ data, setSuccess }) {
     }
   };
 
+  const [departments, setDepartments] = useState([]);
+  const [rolesList, setRolesList] = useState([]);
+
+  const fetchRoles = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRoles);
+      if (res.status === 200) {
+        setRolesList(res.data.data);
+      }
+      console.log("roles", res.data.data);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDepartments, {
+        paging: { pageNumber: 1, pageSize: 200 },
+      });
+      setDepartments(res.data.data);
+
+      console.log("departments", res.data.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+    fetchRoles();
+  }, []);
+
   return (
     <div className="p-2 mt-12 h-[75vh] grid grid-cols-12 gap-2">
       <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
@@ -74,7 +107,6 @@ function NewUserCard({ data, setSuccess }) {
                   Cancel
                 </button>
                 <button
-                  //   onClick={handleSubmit}
                   className="bg-primary text-sm font-medium text-white px-4 py-2 rounded-md"
                   type="submit"
                   form="new-user-form"
@@ -134,12 +166,23 @@ function NewUserCard({ data, setSuccess }) {
                   <label className="text-xs font-semibold text-gray-600">
                     Department
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="department"
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                     required
-                  />
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((department) => (
+                      <option
+                        key={department.departmentId}
+                        value={department.departmentId}
+                      >
+                        {department.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="flex flex-col flex-1">
                   <label className="text-xs font-semibold text-gray-600">
@@ -185,10 +228,12 @@ function NewUserCard({ data, setSuccess }) {
                       className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 w-full"
                       required
                     >
-                      <option value="Admin">Admin</option>
-                      <option value="Business Admin">Business Admin</option>
-                      <option value="Support">Support</option>
-                      <option value="Board Member">Board Member</option>
+                      <option value="">Select Role</option>
+                      {rolesList.map((role) => (
+                        <option key={role.roleId} value={role.roleId}>
+                          {role.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

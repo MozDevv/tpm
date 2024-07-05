@@ -1,83 +1,88 @@
-"use client";
-import React from "react";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  Avatar,
-  Button,
-  Divider,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+import { Box, Button } from "@mui/material";
+import Link from "next/link";
+import authEndpoints, { AuthApiService } from "@/components/services/authApi";
 import { Person } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-export default function SimplifiedTable({
-  allClients,
-  drawerOpen,
-  setDrawerOpen,
-}) {
-  function createData(
-    firstName,
-    middleName,
-    lastName,
-    department,
-    role,
-    employeeNumber,
-    email
-  ) {
-    return {
-      firstName,
-      middleName,
-      lastName,
-      department,
-      role,
-      employeeNumber,
-      email,
-    };
-  }
+const columnDefs = [
+  { field: "no", headerName: "No", width: 90, filter: true },
+  { field: "userName", headerName: "Username", filter: true, width: 200 },
+  { field: "email", headerName: "Email", filter: true, width: 250 },
+  {
+    field: "phoneNumber",
+    headerName: "Phone Number",
+    filter: true,
+    width: 150,
+  },
+  { field: "roleId", headerName: "Role ID", filter: true, width: 250 },
+  {
+    field: "employeeNumber",
+    headerName: "Employee Number",
+    filter: true,
+    width: 150,
+  },
+  {
+    field: "defaultPasswordChanged",
+    headerName: "Default Password Changed",
+    filter: true,
+    width: 200,
+  },
+];
 
-  const rows = allClients.map((client) =>
-    createData(
-      client.firstName,
-      client.middleName,
-      client.lastName,
-      client.department,
-      client.role,
-      client.employeeNumber,
-      client.email
-    )
-  );
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  function formatDate(date) {
-    return new Date(date).toLocaleDateString();
-  }
+function SimplifiedTable() {
+  const [rowData, setRowData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 30; // Number of records per page
 
   const router = useRouter();
-  const handleRowClick = (employeeNumber) => {
-    router.push(`/pensions/users/${employeeNumber}`);
+
+  const [userClicked, setUserClicked] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, [pageNumber]); // Fetch data whenever pageNumber changes
+
+  const fetchData = async () => {
+    try {
+      const res = await AuthApiService.get(authEndpoints.getUsers);
+      const { data, totalCount } = res.data;
+      const transformedData = transformData(data);
+      setRowData(transformedData);
+      setTotalRecords(totalCount);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const transformData = (data) => {
+    return data.map((item, index) => ({
+      no: index + 1 + (pageNumber - 1) * pageSize,
+      id: item.id,
+      userName: item.userName,
+      email: item.email,
+      phoneNumber: item.phoneNumber,
+      roleId: item.roleId,
+      employeeNumber: item.employeeNumber,
+      defaultPasswordChanged: item.defaultPasswordChanged ? "Yes" : "No",
+    }));
+  };
+
+  const handlePaginationChange = (newPageNumber) => {
+    setPageNumber(newPageNumber);
+  };
+
+  const handleClickUser = (user) => {
+    router.push(`/pensions/users/${user.id}`);
   };
 
   return (
-    <Box sx={{ width: "96%", mx: "auto", pt: "40px" }}>
+    <div>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Box
           sx={{ display: "flex", gap: "6px", flexDirection: "column", mb: 1 }}
@@ -101,74 +106,25 @@ export default function SimplifiedTable({
           </Button>
         </Link>
       </Box>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <TableHead sx={{ fontWeight: "bold" }}>
-              <TableRow sx={{ fontWeight: "bold" }}>
-                <TableCell></TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>First Name</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Middle Name</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Last Name</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Department</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Role</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>
-                  Employee Number
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow
-                    sx={{ cursor: "pointer" }}
-                    hover
-                    tabIndex={-1}
-                    key={row.employeeNumber}
-                    onClick={() => handleRowClick(row.employeeNumber)}
-                  >
-                    <TableCell component="th" scope="row">
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Avatar sx={{ height: 27, width: 27 }}></Avatar>
-                      </Box>
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>
-                      {row.firstName}
-                    </TableCell>
-                    <TableCell>{row.middleName}</TableCell>
-                    <TableCell>{row.lastName}</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "GrayText" }}>
-                      {row.department}
-                    </TableCell>
-                    <TableCell>{row.role}</TableCell>
-                    <TableCell>{row.employeeNumber}</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "GrayText" }}>
-                      {row.email}
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+      <div className="ag-theme-quartz" style={{ height: "75vh", width: "98%" }}>
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={rowData}
+          pagination={false}
+          domLayout="autoHeight"
+          paginationPageSize={pageSize}
+          onPaginationChanged={(params) =>
+            handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
+          }
+          onRowClicked={(e) => {
+            setUserClicked(e.data);
+            handleClickUser(e.data);
+            console.log(e.data);
+          }}
         />
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
-
-  function isActiveRow(appointmentDate) {
-    const appointmentDateTime = new Date(appointmentDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return appointmentDateTime >= today;
-  }
 }
+
+export default SimplifiedTable;

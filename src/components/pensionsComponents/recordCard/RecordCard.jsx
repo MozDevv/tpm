@@ -11,7 +11,7 @@ import React, { useState } from "react";
 
 import UserDetailCard from "./UserDetailCard";
 
-function RecordCard() {
+function RecordCard({ clickedItem }) {
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -74,11 +74,12 @@ function RecordCard() {
             <Collapse in={openBio} timeout="auto" unmountOnExit>
               <div className="flex gap-4  mt-2 p-2">
                 <div className="flex flex-col w-1/3">
-                  <label className="text-xs font-semibold text-gray-600">
+                  <label className="text-xs font-semibold  text-gray-600">
                     First Name
                   </label>
                   <input
                     type="text"
+                    value={clickedItem?.firstName}
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
                   />
@@ -88,6 +89,7 @@ function RecordCard() {
                     Middle Name
                   </label>
                   <input
+                    value={clickedItem?.middleName}
                     type="text"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
@@ -99,6 +101,7 @@ function RecordCard() {
                   </label>
                   <input
                     type="text"
+                    value={clickedItem?.lastName}
                     placeholder="National Treasury"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
@@ -138,6 +141,7 @@ function RecordCard() {
                     Contacts
                   </label>
                   <input
+                    value={clickedItem?.phoneNumber}
                     type="text"
                     placeholder="0122 28821 28"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
@@ -149,6 +153,7 @@ function RecordCard() {
                     Email
                   </label>
                   <input
+                    value={clickedItem?.email}
                     type="text"
                     placeholder="123@io.com"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
@@ -157,9 +162,10 @@ function RecordCard() {
                 </div>
                 <div className="flex flex-col w-1/3">
                   <label className="text-xs font-semibold text-gray-600">
-                    Org Name
+                    Department
                   </label>
                   <input
+                    value={clickedItem?.department?.name}
                     type="text"
                     placeholder="National Treasury"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
@@ -193,32 +199,24 @@ function RecordCard() {
               <div className="flex gap-4  p-2 ">
                 <div className="flex flex-col w-1/3">
                   <label className="text-xs  font-semibold text-gray-600">
-                    Claim Type
+                    Employee Numer
                   </label>
                   <input
                     type="text"
-                    placeholder="Policy"
+                    value={clickedItem?.employeeNumber}
+                    //placeholder="Policy"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
                   />
                 </div>
                 <div className="flex flex-col w-1/3">
                   <label className="text-xs font-semibold text-gray-600">
-                    Sum Amount
+                    Role
                   </label>
                   <input
                     type="text"
+                    value={clickedItem?.role?.name}
                     placeholder="2212332"
-                    className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
-                    required
-                  />
-                </div>
-                <div className="flex flex-col w-1/3">
-                  <label className="text-xs font-semibold text-gray-600">
-                    Sum Amount
-                  </label>
-                  <input
-                    type="text"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
                   />
@@ -229,7 +227,7 @@ function RecordCard() {
         </div>
       </div>
       <div className="col-span-3 bg-white shadow-md rounded-2xl p-4 ml-3 mr-1">
-        <UserDetailCard />
+        <UserDetailCard clickedItem={clickedItem} />
       </div>
     </div>
   );
