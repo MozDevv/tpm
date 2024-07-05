@@ -81,6 +81,7 @@ function Auth() {
         error.response.data.message === "Please change your password to LogIn"
       ) {
         await handleResetPassword();
+        //  alert("Please reset your password before proceeding");
 
         setErrors({
           status: false,

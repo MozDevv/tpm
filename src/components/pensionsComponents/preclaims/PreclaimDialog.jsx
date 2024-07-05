@@ -82,7 +82,7 @@ function PreclaimDialog({
           value: clickedItem?.kra_pin,
         },
         {
-          label: "Date of Confirmation",
+          label: "Employment Confirmation Date",
           name: "date_of_confirmation",
           type: "date",
 

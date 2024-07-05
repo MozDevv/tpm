@@ -5,6 +5,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 
+
 import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
 import MapPensionerAwards from "./MapPensionerAwards";
 import "./pensionAwards.css";
@@ -86,8 +87,10 @@ function PensionAwards() {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1 + (pageNumber - 1) * pageSize,
+
       prefix: transformString(item.prefix),
       name: item.name,
+      id: item.id,
       description: transformString(item.description),
       start_date: item.start_date,
       end_date: item.end_date,
@@ -134,7 +137,12 @@ function PensionAwards() {
   return (
     <div className="ag-theme-quartz" style={{ height: "75vh", width: "98%" }}>
       {openAward ? (
-        <MapPensionerAwards />
+
+        <MapPensionerAwards
+          setOpenAward={setOpenAward}
+          rowClicked={rowClicked}
+        />
+
       ) : (
         <>
           <Dialog

@@ -1,25 +1,39 @@
-import UserRoleTable from "@/components/pensionsComponents/Roles/UserRoleTable";
+"use client";
 import RecordCard from "@/components/pensionsComponents/recordCard/RecordCard";
-import { Box, Breadcrumbs, Grid, Typography } from "@mui/material";
-import React from "react";
+import UserDetailCard from "@/components/pensionsComponents/recordCard/UserDetailCard";
+import UserDetails from "@/components/pensionsComponents/user-table/UserDetails";
+import axios from "axios";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-const User = () => {
+function page({ params }) {
+  const router = useRouter();
+  const { id } = params;
+  const [userData, setUserData] = useState(null);
+
+  console.log(id);
+  const fetchUserDetails = async () => {
+    try {
+      const res = await axios.get(
+        `https://pmis.agilebiz.co.ke/api/UserManagement/GetUsers?documentID=${id}`
+      );
+
+      console.log(res.data.data);
+      setUserData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
   return (
     <div>
-      <div>
-        <div className="pl-3 mt-5">
-          <h2 className="mb-2 text-lg text-primary font-semibold ">Users</h2>
-
-          <Breadcrumbs aria-label="breadcrumb">
-            <h5 className="font-semibold">User Details</h5>
-            <h5 className="font-medium text-sm text-black">Xavier Sisse</h5>
-          </Breadcrumbs>
-        </div>
-
-        <RecordCard />
-      </div>
+      <RecordCard clickedItem={userData} />
     </div>
   );
-};
+}
 
-export default User;
+export default page;

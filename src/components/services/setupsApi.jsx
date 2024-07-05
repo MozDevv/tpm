@@ -23,9 +23,13 @@ const endpoints = {
   pensionAwards:
     "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
 
+  //MAP PENSIONER AWARDS
+  mapPensionerAwards: "/api/Setups/MapDocumentTypesPensionAward",
+
   //MDAs
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",
+  updateMDA: "/api/Setups/EditMDA",
 
   //TERMS OF SERVICE
   termsOfService: "/api/Setups/GetTermsOfServiceSetups",
