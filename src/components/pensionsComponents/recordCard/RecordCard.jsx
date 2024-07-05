@@ -7,11 +7,33 @@ import {
   Phone,
 } from "@mui/icons-material";
 import { Avatar, Collapse, Divider, Icon, IconButton } from "@mui/material";
-import React, { useState } from "react";
+
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 import UserDetailCard from "./UserDetailCard";
 
-function RecordCard({ clickedItem }) {
+function RecordCard({ id }) {
+  const [clickedItem, setClickedItem] = useState(null);
+  console.log(id);
+  const fetchUserDetails = async () => {
+    try {
+      const res = await axios.get(
+        `https://pmis.agilebiz.co.ke/api/UserManagement/GetUsers?documentID=${id}`
+      );
+
+      console.log(res.data.data);
+      setClickedItem(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
