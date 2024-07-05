@@ -215,7 +215,7 @@ function Sidebar() {
             button
             onClick={() => setSelectedItem(subChild.title)}
             sx={{
-              pl: 12,
+              pl: 11,
               py: "3px",
 
               color:
