@@ -24,6 +24,22 @@ function NewUserCard({ data, setSuccess }) {
 
   const { isLoading, setIsLoading } = useIsLoading();
 
+  const validateForm = (userData) => {
+    let formErrors = {};
+
+    if (!userData.firstName) formErrors.firstName = "First Name is required";
+    if (!userData.lastName) formErrors.lastName = "Last Name is required";
+    if (!userData.employeeNumber)
+      formErrors.employeeNumber = "Employee Number is required";
+    if (!userData.phoneNumber)
+      formErrors.phoneNumber = "Phone Number is required";
+    if (!userData.email) formErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(userData.email))
+      formErrors.email = "Email is invalid";
+
+    return formErrors;
+  };
+
   const handleSubmit = async (event) => {
     setIsLoading(true);
     event.preventDefault();
@@ -37,10 +53,17 @@ function NewUserCard({ data, setSuccess }) {
       employeeNumber: formData.get("employeeNumber"),
       phoneNumber: formData.get("phoneNumber"),
       email: formData.get("email"),
-      adminType: selectedAdminType, // Include the admin type in the user data
-      mda: selectedAdminType === "MDA" ? selectedMDA : null, // Include MDA if selected
+      //adminType: selectedAdminType, // Include the admin type in the user data
+      // mda: selectedAdminType === "MDA" ? selectedMDA : null, // Include MDA if selected
     };
     console.log(userData);
+
+    const formErrors = validateForm(userData);
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const res = await AuthApiService.post(authEndpoints.register, userData);
