@@ -18,6 +18,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -59,6 +60,20 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
       error = "Must be a number";
     } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
       error = "Must be a valid phone number";
+    } else if (name === "dob" && value) {
+      const dobDate = dayjs(value);
+      const age = dayjs().diff(dobDate, "year");
+      if (age < 18) {
+        error = "User must be at least 18 years old";
+      }
+    } else if (name === "date_of_confirmation" && value && formData.dob) {
+      const confirmationDate = dayjs(value);
+      const dobDate = dayjs(formData.dob);
+      const diff = confirmationDate.diff(dobDate, "year");
+      if (diff < 18) {
+        error =
+          "Date of Confirmation must be at least 18 years after Date of Birth";
+      }
     }
 
     setErrors({ ...errors, [name]: error });
@@ -172,11 +187,30 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
       }
     });
 
+    if (formData.dob) {
+      const dobDate = dayjs(formData.dob);
+      const age = dayjs().diff(dobDate, "year");
+      if (age < 18) {
+        newErrors.dob = "User must be at least 18 years old";
+      }
+    }
+
+    if (formData.date_of_confirmation && formData.dob) {
+      const confirmationDate = dayjs(formData.date_of_confirmation);
+      const dobDate = dayjs(formData.dob);
+      const diff = confirmationDate.diff(dobDate, "year");
+      if (diff < 18) {
+        newErrors.date_of_confirmation =
+          "Date of Confirmation must be at least 18 years after Date of Birth";
+      }
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       return; // Don't submit if there are errors
     }
+
     console.log("Form Data:", formData);
     setIsLoading(true);
 

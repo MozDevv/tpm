@@ -517,19 +517,21 @@ const Preclaims = ({ status }) => {
           <div className="h-full w-full">
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
-                <div className="flex items-center">
-                  <Button
-                    onClick={() => setOpenCreate(true)}
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <Add sx={{ fontSize: "20px" }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Create
-                    </p>
-                  </Button>
-                </div>
+                {!status && (
+                  <div className="flex items-center">
+                    <Button
+                      onClick={() => setOpenCreate(true)}
+                      sx={{ mb: -1, maxHeight: "25px" }}
+                    >
+                      <IconButton>
+                        <Add sx={{ fontSize: "20px" }} color="primary" />
+                      </IconButton>
+                      <p className="font-medium text-gray -ml-2 text-sm">
+                        Create
+                      </p>
+                    </Button>
+                  </div>
+                )}
                 {status === 0 && (
                   <div className="flex items-center gap-2">
                     <Button
