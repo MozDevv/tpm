@@ -85,10 +85,7 @@ function Sidebar() {
             },
           ],
         },
-        {
-          title: "Approvals",
-          path: "/pensions/preclaims/approvals",
-        },
+
         {
           title: "Returned Claims",
           path: "/pensions/preclaims/returned-claims",
@@ -103,6 +100,10 @@ function Sidebar() {
       title: "Claims",
       icon: <ArticleOutlinedIcon />,
       children: [
+        {
+          title: "Pending Approvals",
+          path: "/pensions/preclaims/approvals",
+        },
         {
           title: "Claims Management",
           path: "/pensions/claims-management",
@@ -197,6 +198,14 @@ function Sidebar() {
         },
         {
           title: "Banks",
+          path: "/pensions/setups/banks",
+        },
+        {
+          title: "Counties",
+          path: "/pensions/setups/banks",
+        },
+        {
+          title: "Constituencies",
           path: "/pensions/setups/banks",
         },
       ],
