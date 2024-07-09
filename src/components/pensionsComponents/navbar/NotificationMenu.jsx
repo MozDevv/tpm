@@ -39,7 +39,7 @@ function NotificationMenu() {
           {" "}
           <List>
             {notifications.map((notification, index) => (
-              <ListItem sx={{ width: "100%" }}>
+              <ListItem sx={{ width: "100%" }} key={index}>
                 <Box
                   sx={{
                     width: "100%",

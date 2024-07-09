@@ -23,6 +23,10 @@ const authEndpoints = {
   register: "/Auth/Register",
   resetPassword: "/Auth/ResetPassword",
   forgetPassword: "/Auth/ForgetPassword",
+
+  //users
+
+  getUsers: "/UserManagement/GetUsers",
 };
 
 export const AuthApiService = {

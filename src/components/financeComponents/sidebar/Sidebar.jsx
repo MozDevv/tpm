@@ -34,6 +34,7 @@ function Sidebar() {
     {
       title: "Overview",
       path: "/finance",
+
       icon: <DashboardOutlinedIcon />,
     },
     {

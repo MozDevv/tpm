@@ -82,7 +82,7 @@ function PreclaimDialog({
           value: clickedItem?.kra_pin,
         },
         {
-          label: "Date of Confirmation",
+          label: "Employment Confirmation Date",
           name: "date_of_confirmation",
           type: "date",
 
@@ -373,19 +373,7 @@ function PreclaimDialog({
                     </p>
                   </Button>
                 </div>
-                <div className="flex items-center">
-                  <Button sx={{ mb: -1, maxHeight: "24px" }}>
-                    <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "18px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Delete
-                    </p>
-                  </Button>
-                </div>
+
                 <IconButton onClick={() => setIsExpanded(!isExpanded)}>
                   <Tooltip title={isExpanded ? "Shrink" : "Expand"}>
                     <OpenInFull

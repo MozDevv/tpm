@@ -1,0 +1,33 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - work
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: SSH into Server and Restart PM2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT }}
+          script: |
+            cd tpm/tpm/tpm
+            git pull
+            npm install
+            npm install     # Install PM2 globally if not already installed
+            pm2 restart tpm       # Restart your PM2 process (adjust as needed)

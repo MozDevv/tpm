@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import "../pensionAwards/PensionAwards.css";
+import "../pensionAwards/pensionAwards.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button, Collapse } from "@mui/material";
 import CreateNewMDA from "./CreateNewMDA";
+import OpenMda from "./OpenMda";
 const columnDefs = [
   {
     field: "no",
@@ -55,6 +56,8 @@ function MDAs() {
         code: item?.code,
         name: item?.name,
         description: item?.description,
+        pensionCapId: item?.pensionCap.id,
+        id: item?.id,
         pensionCap: item?.pensionCap.name,
       }));
       setRowData(groupedRowData); // Use setRowData instead of applyTransaction
@@ -72,52 +75,70 @@ function MDAs() {
   };
 
   const [openNewMDA, setOpenNewMDA] = useState(false);
+
+  const [mdaClicked, setMdaClicked] = useState(false);
+
+  const [rowDataClicked, setRowDataClicked] = useState({});
   return (
     <div className="mt-5">
-      <div className="mb-2">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpenNewMDA((openNewMDA) => !openNewMDA)}
-        >
-          Add new
-        </Button>
-      </div>
-
-      <div className="flex">
-        <div
-          className="ag-theme-quartz  h-[95vh] pr-5 mt-5 "
-          style={{ width: openNewMDA ? "calc(100vw - 350px)" : "100vw" }}
-        >
-          <AgGridReact
-            domLayout="autoHeight"
-            rowData={rowData}
-            columnDefs={columnDefs}
-            onGridReady={onGridReady}
+      {mdaClicked && (
+        <>
+          <OpenMda
+            rowClicked={rowDataClicked}
+            mdaClicked={mdaClicked}
+            setMdaClicked={setMdaClicked}
           />
-        </div>
-        <div className="flex h-[80vh]">
-          <Collapse
-            in={openNewMDA}
-            sx={{
-              bgcolor: "white",
-              mt: 2,
-              borderRadius: "10px",
-              color: "black",
-              borderRadius: "10px",
-            }}
-            timeout="auto"
-            unmountOnExit
+        </>
+      )}
+      <>
+        <div className="mb-2">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenNewMDA((openNewMDA) => !openNewMDA)}
           >
-            <div className=" bg-white w-[350px] rounded-md p-3 ">
-              <CreateNewMDA
-                fetchMDAs={fetchMDAs}
-                setOpenNewMDA={setOpenNewMDA}
-              />
-            </div>
-          </Collapse>
+            Add new
+          </Button>
         </div>
-      </div>
+        <div className="flex">
+          <div
+            className="ag-theme-quartz  h-[95vh] pr-5 mt-5 "
+            style={{ width: openNewMDA ? "calc(100vw - 350px)" : "100vw" }}
+          >
+            <AgGridReact
+              domLayout="autoHeight"
+              rowData={rowData}
+              columnDefs={columnDefs}
+              onGridReady={onGridReady}
+              onRowClicked={(e) => {
+                setMdaClicked(true);
+                setRowDataClicked(e.data);
+              }}
+            />
+          </div>
+          <div className="flex h-[80vh]">
+            <Collapse
+              in={openNewMDA}
+              sx={{
+                bgcolor: "white",
+                mt: 2,
+                borderRadius: "10px",
+                color: "black",
+                borderRadius: "10px",
+              }}
+              timeout="auto"
+              unmountOnExit
+            >
+              <div className=" bg-white w-[350px] rounded-md p-3 ">
+                <CreateNewMDA
+                  fetchMDAs={fetchMDAs}
+                  setOpenNewMDA={setOpenNewMDA}
+                />
+              </div>
+            </Collapse>
+          </div>
+        </div>{" "}
+      </>
     </div>
   );
 }

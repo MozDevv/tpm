@@ -14,6 +14,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Pagination,
 } from "@mui/material";
 import {
   Add,
@@ -40,6 +41,7 @@ import PreclaimDialog from "./PreclaimDialog";
 import { useAlert } from "@/context/AlertContext";
 import axios from "axios";
 import Spinner from "@/components/spinner/Spinner";
+import ReactPaginate from "react-paginate";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -59,10 +61,10 @@ const notificationStatusMap = {
   0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
   1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
   2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
-  3: { name: "SUBMITTED", color: "#14A44D" }, // Amethyst
+  3: { name: "SUBMITTED", color: "#970FF2" }, // Amethyst
   4: { name: "IN REVIEW", color: "#e67e22" }, // Carrot Orange
   5: { name: "PENDING APPROVAL", color: "#1abc9c" }, // Light Turquoise
-  6: { name: "CLAIM CREATED", color: "#2980b9" }, // Belize Hole Blue
+  6: { name: "CLAIM CREATED", color: "#49D907" }, // Belize Hole Blue
   7: { name: "RETURNED FOR CLARIFICATION", color: "#E4A11B" }, // Light Green
 };
 
@@ -289,14 +291,55 @@ const colDefs = [
   },
 ];
 
-const Preclaims = () => {
+const mapRowData = (items) =>
+  items.map((item) => ({
+    retiree: item.retiree.id,
+    email_address: item.retiree.email_address,
+    notification_status: item.notification_status,
+    gender: item.retiree.gender,
+    phone_number: item.retiree.phone_number,
+    personal_number: item.personal_number,
+    surname: item.retiree.surname,
+    first_name: item.retiree.first_name,
+    other_name: item.retiree.other_name,
+    pension_award: item.mda.name,
+    name: item.pensionAward.name,
+    national_id: item.retiree.national_id,
+    kra_pin: item.retiree.kra_pin,
+    retirement_date: item.retirement_date,
+    dob: item.dob,
+    date_of_confirmation: item.date_of_confirmation,
+    last_basic_salary_amount: item.last_basic_salary_amount,
+    mda_code: item.mda.code,
+    mda_description: item.mda.description,
+    mda_pensionCap_code: item.mda.pensionCap.code,
+    mda_pensionCap_name: item.mda.pensionCap.name,
+    mda_pensionCap_description: item.mda.pensionCap.description,
+    workHistories_length: item.workHistories.length,
+    bankDetails_length: item.bankDetails.length,
+    prospectivePensionerDocuments_length:
+      item.prospectivePensionerDocuments.length,
+    pensionAward_prefix: item.pensionAward.prefix,
+    pensionAward_code: item.pensionAward.code,
+    pensionAward_description: item.pensionAward.description,
+    pensionAward_start_date: item.pensionAward.start_date,
+    pensionAward_end_date: item.pensionAward.end_date,
+    pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
+    pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
+    pensionAward_pensionCap_description:
+      item.pensionAward.pensionCap.description,
+    pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
+    id: item.id,
+  }));
+
+const Preclaims = ({ status }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 20; // Number of records per page
-  const paginationPageSizeSelector = [10, 20, 50];
+  const pageSize = 10; // Number of records per page
+  const paginationPageSizeSelector = [5, 10, 20, 50];
 
   const [sortCriteria, setSortCriteria] = useState(0);
 
@@ -323,6 +366,8 @@ const Preclaims = () => {
   const [filterType, setFilterType] = useState(null);
 
   const [sortColumn, setSortColumn] = useState(null);
+
+  const [totalPages, setTotalPages] = useState(1);
   //const [sortOrder, setSortOrder] = useState(null);
 
   const handleFilters = async () => {
@@ -350,12 +395,14 @@ const Preclaims = () => {
     await fetchAllPreclaims(sort, filter);
   };
 
+  const [items, setItems] = useState([]);
+
   const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
     try {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
-        "paging.pageNumber": 1,
-        "paging.pageSize": 30,
+        "paging.pageNumber": pageNumber,
+        "paging.pageSize": pageSize,
         ...sort,
         ...filter,
       });
@@ -367,52 +414,27 @@ const Preclaims = () => {
         console.log(res.data.data);
         const rawData = res.data.data;
 
+        const { totalCount, currentPage, totalPages } = res.data;
+        setTotalPages(res.data.totalPages);
+
         setTotalRecords(res.data.totalCount);
 
-        const mappedData = rawData.map((item) => ({
-          retiree: item.retiree.id,
-          email_address: item.retiree.email_address,
-          notification_status: item.notification_status,
-          gender: item.retiree.gender,
-          phone_number: item.retiree.phone_number,
-          personal_number: item.personal_number,
-          surname: item.retiree.surname,
-          first_name: item.retiree.first_name,
-          other_name: item.retiree.other_name,
-          pension_award: item.mda.name,
-          name: item.pensionAward.name,
-          national_id: item.retiree.national_id,
-          kra_pin: item.retiree.kra_pin,
-          retirement_date: item.retirement_date,
-          dob: item.dob,
-          date_of_confirmation: item.date_of_confirmation,
-          last_basic_salary_amount: item.last_basic_salary_amount,
-          mda_code: item.mda.code,
-          mda_description: item.mda.description,
-          mda_pensionCap_code: item.mda.pensionCap.code,
-          mda_pensionCap_name: item.mda.pensionCap.name,
-          mda_pensionCap_description: item.mda.pensionCap.description,
-          workHistories_length: item.workHistories.length,
-          bankDetails_length: item.bankDetails.length,
-          prospectivePensionerDocuments_length:
-            item.prospectivePensionerDocuments.length,
-          pensionAward_prefix: item.pensionAward.prefix,
-          pensionAward_code: item.pensionAward.code,
-          pensionAward_description: item.pensionAward.description,
-          pensionAward_start_date: item.pensionAward.start_date,
-          pensionAward_end_date: item.pensionAward.end_date,
-          pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
-          pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
-          pensionAward_pensionCap_description:
-            item.pensionAward.pensionCap.description,
-          pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
-          id: item.id,
-        }));
+        if (status || status === 0) {
+          const filteredApprovals = rawData.filter(
+            (item) => item.notification_status === status
+          );
 
-        setRowData(mappedData);
+          setItems(filteredApprovals);
+          const data = mapRowData(filteredApprovals);
+          setRowData(data);
+        } else {
+          const data = mapRowData(res.data.data);
+          setRowData(data);
+          console.log("first, state", status);
+        }
       }
 
-      console.log("mappedData", red.data.data);
+      console.log("mappedData", res.data.data);
     } catch (error) {
       console.error("Error fetching preclaims:", error);
       return []; // Return an empty array or handle error as needed
@@ -423,18 +445,23 @@ const Preclaims = () => {
   };
 
   const gridApiRef = useRef(null);
+  const [gridApi, setGridApi] = useState(null);
 
   const onGridReady = (params) => {
+    // fetchAllPreclaims();
+
+    setGridApi(params.api);
     gridApiRef.current = params;
     //  params.api.sizeColumnsToFit();
   };
 
-  const handlePaginationChange = (newPageNumber) => {
-    setPageNumber(newPageNumber);
+  const handlePageChange = (event, newPage) => {
+    setPageNumber(newPage);
   };
+
   useEffect(() => {
     fetchAllPreclaims();
-  }, [pageNumber]);
+  }, [pageNumber, pageSize]);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [isSendNotificationEnabled, setIsSendNotificationEnabled] =
@@ -490,44 +517,38 @@ const Preclaims = () => {
           <div className="h-full w-full">
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
-                <div className="flex items-center">
-                  <Button
-                    onClick={() => setOpenCreate(true)}
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <Add sx={{ fontSize: "20px" }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Create
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setOpenNotification(true)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                    disabled={
-                      !isSendNotificationEnabled && selectedRows.length > 0
-                    }
-                    startIcon={<ForwardToInbox />}
-                  >
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Notify Pensioner(s)
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center">
-                  <Button sx={{ mb: -1, maxHeight: "24px" }}>
-                    <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "20px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">View</p>
-                  </Button>
-                </div>
+                {!status && (
+                  <div className="flex items-center">
+                    <Button
+                      onClick={() => setOpenCreate(true)}
+                      sx={{ mb: -1, maxHeight: "25px" }}
+                    >
+                      <IconButton>
+                        <Add sx={{ fontSize: "20px" }} color="primary" />
+                      </IconButton>
+                      <p className="font-medium text-gray -ml-2 text-sm">
+                        Create
+                      </p>
+                    </Button>
+                  </div>
+                )}
+                {status === 0 && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => setOpenNotification(true)}
+                      sx={{ mb: -1, maxHeight: "24px" }}
+                      disabled={
+                        !isSendNotificationEnabled && selectedRows.length > 0
+                      }
+                      startIcon={<ForwardToInbox />}
+                    >
+                      <p className="font-medium text-gray -ml-2 text-sm">
+                        Notify Pensioner(s)
+                      </p>
+                    </Button>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-2 mt-2 ml-2">
                   <Button
                     onClick={() => exportData()}
@@ -555,13 +576,6 @@ const Preclaims = () => {
                     </IconButton>
                   </div>
                 </div>
-              </div>
-
-              <div className="absolute right-12">
-                <Button variant="contained" className="flex gap-1">
-                  <Add />
-                  Add New
-                </Button>
               </div>
             </div>
             <Divider sx={{ mt: 1, mb: 1 }} />
@@ -685,7 +699,7 @@ const Preclaims = () => {
                 </Button>
               </Collapse>
               <div
-                className="ag-theme-quartz"
+                className="ag-theme-quartz flex flex-col"
                 style={{
                   height: "80vh",
                   padding: "20px",
@@ -699,19 +713,24 @@ const Preclaims = () => {
                   onSelectionChanged={onSelectionChanged}
                   domLayout="autoHeight"
                   onGridReady={onGridReady}
-                  paginationPageSize={pageSize}
-                  paginationPageSizeSelector={paginationPageSizeSelector}
-                  pagination={true}
-                  onPaginationChanged={(params) =>
-                    handlePaginationChange(
-                      params.api.paginationGetCurrentPage() + 1
-                    )
-                  }
+                  totalRecords={totalRecords}
                   onRowClicked={(event) => {
                     setClickedItem(event.data); // Update selected item
                     setOpenPreclaimDialog(true); // Open dialog
                   }}
                 />
+                {/*************PAGINATION *************/}
+
+                <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                  <Pagination
+                    count={totalPages}
+                    page={pageNumber}
+                    onChange={handlePageChange}
+                    color="primary"
+                    variant="outlined"
+                    shape="rounded"
+                  />
+                </Box>
               </div>
             </div>
           </div>

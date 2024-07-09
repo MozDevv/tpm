@@ -9,26 +9,16 @@ import {
   Checkbox,
   FormControlLabel,
   Box,
+  List,
+  ListItem,
 } from "@mui/material";
+import endpoints from "@/components/services/setupsApi";
 
 const roles = ["Business Admin", "Analyst", "Super Admin", "Admin"];
 
-const RoleSelector = ({ selectedRole, setSelectedRole }) => (
-  <FormControl fullWidth>
-    <InputLabel>Select Role</InputLabel>
-    <Select
-      value={selectedRole}
-      onChange={(e) => setSelectedRole(e.target.value)}
-      label="Select Role"
-    >
-      {roles.map((role) => (
-        <MenuItem key={role} value={role}>
-          {role}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+const RoleSelector = ({ selectedRole, setSelectedRole }) => {
+  return <></>;
+};
 
 const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
   const modules = [
@@ -51,18 +41,22 @@ const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
       <table>
         <thead>
           <tr>
-            <th>Action</th>
+            <th className="text-sm">Action</th>
             {actions.map((action) => (
-              <th key={action}>{action}</th>
+              <th key={action} className="text-sm font-normal ">
+                {action}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {modules.map((module) => (
             <tr key={module}>
-              <td>{module}</td>
+              <td className="text-sm font-normal">{module}</td>
               {actions.map((action) => (
-                <td key={action}>{renderCheckbox(module, action)}</td>
+                <td key={action} className="text-xs font-normal">
+                  {renderCheckbox(module, action)}
+                </td>
               ))}
             </tr>
           ))}
@@ -72,33 +66,30 @@ const UserRoleTable = ({ permissions, handleChange, renderCheckbox }) => {
   );
 };
 
-const App = () => {
+const RolePermissions = () => {
   const [selectedRole, setSelectedRole] = useState("Business Admin");
   const [permissions, setPermissions] = useState({});
 
-  useEffect(() => {
-    const savedPermissions = localStorage.getItem("permissions");
-    if (savedPermissions) {
-      setPermissions(JSON.parse(savedPermissions));
+  const [roles, setRoles] = useState([]); // [1]
+
+  const fetchData = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRoles, {
+        paging: { pageNumber, pageSize },
+      });
+      const { data, totalCount } = res.data;
+
+      setRoles(data);
+
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    localStorage.setItem("permissions", JSON.stringify(permissions));
-  }, [permissions]);
-
-  const handleChange = (module, action) => {
-    setPermissions((prev) => ({
-      ...prev,
-      [selectedRole]: {
-        ...prev[selectedRole],
-        [module]: {
-          ...prev[selectedRole]?.[module],
-          [action]: !prev[selectedRole]?.[module]?.[action],
-        },
-      },
-    }));
-  };
+    fetchData();
+  }, []);
 
   const renderCheckbox = (module, action) => (
     <Checkbox
@@ -115,7 +106,7 @@ const App = () => {
           setSelectedRole={setSelectedRole}
         />
       </Grid>
-      <Grid item xs={8.5}>
+      <Grid item xs={8.5} sx={{ backgroundColor: "white" }}>
         <UserRoleTable
           permissions={permissions}
           handleChange={handleChange}
@@ -126,4 +117,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default RolePermissions;

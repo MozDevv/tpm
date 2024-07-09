@@ -23,9 +23,13 @@ const endpoints = {
   pensionAwards:
     "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
 
+  //MAP PENSIONER AWARDS
+  mapPensionerAwards: "/api/Setups/MapDocumentTypesPensionAward",
+
   //MDAs
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",
+  updateMDA: "/api/Setups/EditMDA",
 
   //TERMS OF SERVICE
   termsOfService: "/api/Setups/GetTermsOfServiceSetups",
@@ -33,7 +37,38 @@ const endpoints = {
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
 
+  //GET MENUS
+  getMenus: "/GetMenuJSON",
+
   createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
+
+  //Departments setups
+  getDepartments: "/api/DepartmentsSetup/GetDepartments",
+
+  //Create Department
+  createDepartment: "/api/DepartmentsSetup/CreateDepartment",
+
+  //createRole
+  createRole: "/CreateRole",
+
+  //Get Roles
+
+  getRoles: "/GetRoles",
+
+  //Get Tables
+  getTables: "/api/TableSetup/GetTables",
+
+  //Get Permissions
+  getPermissions: "/api/PermissionsSetup/GetPermissions",
+
+  //Create Permissions
+  createPermissions: "/api/PermissionsSetup/CreatePermission",
+
+  //PermissionRoles
+  permissionRoles: "/api/PermissionRoleSetup/CreatePermissionRole",
+
+  //Get Permission Roles
+  getPermissionRoles: "/api/PermissionRoleSetup/GetPermissionsRole",
 };
 
 export const apiService = {
