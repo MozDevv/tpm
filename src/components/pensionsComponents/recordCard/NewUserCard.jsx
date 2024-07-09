@@ -48,13 +48,16 @@ function NewUserCard({ data, setSuccess }) {
       firstName: formData.get("firstName"),
       middleName: formData.get("middleName"),
       lastName: formData.get("lastName"),
-      department: selectedDepartment,
-      role: selectedRole,
+      ...(selectedAdminType === "Treasury" && {
+        department: selectedDepartment,
+        role: selectedRole,
+      }),
       employeeNumber: formData.get("employeeNumber"),
       phoneNumber: formData.get("phoneNumber"),
       email: formData.get("email"),
+      mdaid: selectedMDA, // Include the MDA ID in the user data
       //adminType: selectedAdminType, // Include the admin type in the user data
-      // mda: selectedAdminType === "MDA" ? selectedMDA : null, // Include MDA if selected
+      isMDA: selectedAdminType === "MDA" ? true : false,
     };
     console.log(userData);
 
@@ -210,7 +213,7 @@ function NewUserCard({ data, setSuccess }) {
                         >
                           <option value="">Select MDA</option>
                           {mdas.map((mda) => (
-                            <option key={mda.mdaId} value={mda.mdaId}>
+                            <option key={mda.id} value={mda.id}>
                               {mda.name}
                             </option>
                           ))}
@@ -219,70 +222,71 @@ function NewUserCard({ data, setSuccess }) {
                     </div>
                   </div>
                 )}
-
-                <div className="pb-4">
-                  <div className="mb-4 flex items-center gap-2">
-                    <h6 className="font-semibold text-primary text-sm">
-                      Roles & Departments
-                    </h6>
-                    <hr className="flex-grow border-blue-500 border-opacity-20" />
-                  </div>
-                  <div className="flex px-3 ">
-                    <div className="flex justify-evenly w-1/3 px-5 ml-1">
-                      <div className="flex flex-col flex-1">
-                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Department
-                          <div className="text-red-600 text-base mt-[3px]">
-                            *
-                          </div>
-                        </label>
-                        <select
-                          name="role"
-                          value={selectedDepartment}
-                          onChange={(e) =>
-                            setSelectedDepartment(e.target.value)
-                          }
-                          className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 "
-                          required
-                        >
-                          <option value="">Select Department</option>
-                          {departments.map((department) => (
-                            <option
-                              key={department.departmentId}
-                              value={department.departmentId}
-                            >
-                              {department.name}
-                            </option>
-                          ))}
-                        </select>
+                {selectedAdminType === "Treasury" && (
+                  <div className="pb-4">
+                    <div className="mb-4 flex items-center gap-2">
+                      <h6 className="font-semibold text-primary text-sm">
+                        Roles & Departments
+                      </h6>
+                      <hr className="flex-grow border-blue-500 border-opacity-20" />
+                    </div>
+                    <div className="flex px-3 ">
+                      <div className="flex justify-evenly w-1/3 px-5 ml-1">
+                        <div className="flex flex-col flex-1">
+                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                            Department
+                            <div className="text-red-600 text-base mt-[3px]">
+                              *
+                            </div>
+                          </label>
+                          <select
+                            name="role"
+                            value={selectedDepartment}
+                            onChange={(e) =>
+                              setSelectedDepartment(e.target.value)
+                            }
+                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 "
+                            required
+                          >
+                            <option value="">Select Department</option>
+                            {departments.map((department) => (
+                              <option
+                                key={department.departmentId}
+                                value={department.departmentId}
+                              >
+                                {department.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="flex justify-evenly w-1/3 px-5 pr-4">
+                        <div className="flex flex-col flex-1">
+                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                            Role
+                            <div className="text-red-600 text-base mt-[3px]">
+                              *
+                            </div>
+                          </label>
+                          <select
+                            name="role"
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
+                            required
+                          >
+                            <option value="">Select Role</option>
+                            {rolesList.map((role) => (
+                              <option key={role.roleId} value={role.roleId}>
+                                {role.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-evenly w-1/3 px-5 pr-4">
-                      <div className="flex flex-col flex-1">
-                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Role
-                          <div className="text-red-600 text-base mt-[3px]">
-                            *
-                          </div>
-                        </label>
-                        <select
-                          name="role"
-                          value={selectedRole}
-                          onChange={(e) => setSelectedRole(e.target.value)}
-                          className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
-                          required
-                        >
-                          <option value="">Select Role</option>
-                          {rolesList.map((role) => (
-                            <option key={role.roleId} value={role.roleId}>
-                              {role.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
                   </div>
-                </div>
+                )}
                 <div className="pb-4">
                   <div className="mb-4 flex items-center gap-2">
                     <h6 className="font-semibold text-primary text-sm">Bio</h6>

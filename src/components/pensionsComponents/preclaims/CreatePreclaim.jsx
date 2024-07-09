@@ -19,8 +19,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { useAuth } from "@/context/AuthContext";
 
-function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
+function CreatePreclaim({
+  openCreate,
+  setOpenCreate,
+  fetchAllPreclaims,
+  permissions,
+}) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 

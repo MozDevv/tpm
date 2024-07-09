@@ -20,6 +20,8 @@ import { Box, Divider } from "@mui/material";
 import { BarChart, Payments, SupportAgent } from "@mui/icons-material";
 import { useSelectedItem } from "@/context/NavItemContext";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
 
 function Sidebar() {
   const [open, setOpen] = useState({});
@@ -52,6 +54,39 @@ function Sidebar() {
       }));
     }
   }, [selectedItem]);
+
+  const { auth } = useAuth();
+
+  console.log("first", auth);
+
+  const getMenus = async (role) => {
+    try {
+      if (!role) {
+        throw new Error("Role is not defined");
+      }
+      const res = await axios.get(
+        `https://pmis.agilebiz.co.ke/GetMenuJSON?Role=${role}`
+      );
+
+      console.log("sidebar Items", res.data);
+    } catch (error) {
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        console.log("Error response:", error.response);
+      } else if (error.request) {
+        // Request was made but no response was received
+        console.log("Error request:", error.request);
+      } else {
+        // Something else happened while setting up the request
+        console.log("Error message:", error.message);
+      }
+      console.log("Role:", role);
+    }
+  };
+
+  useEffect(() => {
+    getMenus(auth?.user?.roles);
+  }, [auth?.user?.roles]);
 
   const menuItems = [
     {
@@ -159,13 +194,23 @@ function Sidebar() {
           path: "/pensions/users/setups/roles-setups",
         },
         {
+          title: "Permissions Setups",
+          path: "/pensions/users/setups/permissions-setups",
+        },
+        {
+          title: "Menus",
+          path: "/pensions/setups/menus",
+        },
+        {
           title: "Tables Setups",
           path: "/pensions/users/setups/tables-setups",
         },
+
         {
           title: "Roles & Permissions",
           path: "/pensions/users/roles-permissions",
         },
+
         {
           title: "Leave Management",
           path: "/pensions/users/leave-management",
@@ -180,6 +225,7 @@ function Sidebar() {
           title: "Document Types",
           path: "/pensions/setups/document-types",
         },
+
         {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",

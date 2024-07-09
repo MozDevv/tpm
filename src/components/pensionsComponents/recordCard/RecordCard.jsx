@@ -4,15 +4,24 @@ import {
   ArrowBackIos,
   ExpandLess,
   ExpandMore,
+  Launch,
   Phone,
 } from "@mui/icons-material";
-import { Avatar, Collapse, Divider, Icon, IconButton } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Collapse,
+  Divider,
+  Icon,
+  IconButton,
+} from "@mui/material";
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 import UserDetailCard from "./UserDetailCard";
+import AssignRole from "../Roles/assignRoles/AssignRole";
 
 function RecordCard({ id }) {
   const [clickedItem, setClickedItem] = useState(null);
@@ -52,15 +61,27 @@ function RecordCard({ id }) {
   const [openBio, setOpenBio] = useState(true);
   const [openOverview, setOpenOverview] = useState(true);
   const [openRole, setOpenRole] = useState(true);
+  const [openPermissions, setOpenPermissions] = useState(false);
 
   return (
     <div className="p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
+      <AssignRole
+        openPermissions={openPermissions}
+        setOpenPermissions={setOpenPermissions}
+        userId={id}
+      />
       <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center gap-2">
             <h5 className="text-xl text-black font-semibold">Edit User</h5>
           </div>
           <div className="flex gap-8 mr-4">
+            <Button
+              startIcon={<Launch />}
+              onClick={() => setOpenPermissions(true)}
+            >
+              View User Permissions
+            </Button>
             <button
               className="bg-gray-200 text-primary text-sm font-medium  px-4 py-2 rounded-md"
               onClick={handleOpenRejectModal}

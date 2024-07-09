@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "../pensionAwards/pensionAwards.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { Button, Collapse } from "@mui/material";
+import { Button, Collapse, Dialog } from "@mui/material";
 import CreateNewMDA from "./CreateNewMDA";
 import OpenMda from "./OpenMda";
 const columnDefs = [
@@ -81,6 +81,21 @@ function MDAs() {
   const [rowDataClicked, setRowDataClicked] = useState({});
   return (
     <div className="mt-5">
+      <div className=" bg-white  rounded-md p-3 ">
+        <Dialog
+          open={openNewMDA}
+          onClose={() => setOpenNewMDA(false)}
+          sx={{
+            "& .MuiDialog-paper": {
+              width: "50%",
+              height: "80%",
+              maxHeight: "80%",
+            },
+          }}
+        >
+          <CreateNewMDA fetchMDAs={fetchMDAs} setOpenNewMDA={setOpenNewMDA} />
+        </Dialog>
+      </div>
       {mdaClicked && (
         <>
           <OpenMda
@@ -95,15 +110,15 @@ function MDAs() {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setOpenNewMDA((openNewMDA) => !openNewMDA)}
+            onClick={() => setOpenNewMDA(true)}
           >
             Add new
           </Button>
         </div>
         <div className="flex">
           <div
-            className="ag-theme-quartz  h-[95vh] pr-5 mt-5 "
-            style={{ width: openNewMDA ? "calc(100vw - 350px)" : "100vw" }}
+            className="ag-theme-quartz  h-[95vh] pr-5 mt-5 w-full "
+            // style={{ width: openNewMDA ? "calc(100vw - 350px)" : "100vw" }}
           >
             <AgGridReact
               domLayout="autoHeight"
@@ -116,27 +131,7 @@ function MDAs() {
               }}
             />
           </div>
-          <div className="flex h-[80vh]">
-            <Collapse
-              in={openNewMDA}
-              sx={{
-                bgcolor: "white",
-                mt: 2,
-                borderRadius: "10px",
-                color: "black",
-                borderRadius: "10px",
-              }}
-              timeout="auto"
-              unmountOnExit
-            >
-              <div className=" bg-white w-[350px] rounded-md p-3 ">
-                <CreateNewMDA
-                  fetchMDAs={fetchMDAs}
-                  setOpenNewMDA={setOpenNewMDA}
-                />
-              </div>
-            </Collapse>
-          </div>
+          <div className="flex h-[80vh]"></div>
         </div>{" "}
       </>
     </div>

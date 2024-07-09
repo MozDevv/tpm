@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 "use client";
+import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
 
 export const API_BASE_URL = "https://pmis.agilebiz.co.ke";
@@ -37,6 +38,9 @@ const endpoints = {
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
 
+  //GET MENUS
+  getMenus: "/GetMenuJSON",
+
   createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
 
   //Departments setups
@@ -57,6 +61,23 @@ const endpoints = {
 
   //Get Permissions
   getPermissions: "/api/PermissionsSetup/GetPermissions",
+
+  //Create Permissions
+  createPermissions: "/api/PermissionsSetup/CreatePermission",
+
+  //PermissionRoles
+  permissionRoles: "/api/PermissionRoleSetup/CreatePermissionRole",
+
+  //Get Permission Roles
+  getPermissionRoles: "/api/PermissionRoleSetup/GetPermissionsRole",
+
+  //create permission user
+  createPermissionsUser: "/api/PermissionUserSetUp/CreatePermissionsUser",
+
+  //getUserPermissions
+  getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
+
+  getMenus: "/GetMenuJSON",
 };
 
 export const apiService = {

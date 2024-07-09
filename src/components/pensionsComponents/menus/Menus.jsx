@@ -10,11 +10,11 @@ import {
   Checkbox,
   Box,
 } from "@mui/material";
-import CreatePermission from "./CreatePermission";
+import CreatePermission from "../Roles/CreatePermission";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 
-const UserRoleTable = () => {
+const Menus = () => {
   const [clickedRole, setClickedRole] = useState(null);
   const [createPermission, setCreatePermission] = useState(false);
   const [allPermissions, setAllPermissions] = useState([]);
@@ -239,4 +239,4 @@ const UserRoleTable = () => {
   );
 };
 
-export default UserRoleTable;
+export default Menus;
