@@ -14,6 +14,7 @@ import authEndpoints, { AuthApiService } from "../services/authApi";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import OTPInput from "react-otp-input";
+import { useAuth } from "@/context/AuthContext";
 
 function ResetNewPassword() {
   const [errors, setErrors] = useState({
@@ -29,6 +30,8 @@ function ResetNewPassword() {
   const [newPassword, setNewPassword] = useState("");
 
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const { login } = useAuth();
 
   const [otp, setOtp] = useState("");
   const router = useRouter();
@@ -93,6 +96,7 @@ function ResetNewPassword() {
 
       if (response.data.isSuccess) {
         router.push("/");
+        login(response?.data?.data?.token);
       }
     } catch (error) {
       if (error.response.data.message === "OTP has expired") {

@@ -23,11 +23,13 @@ import ResetNewPassword from "../loginComponents/ResetNewPassword";
 import authEndpoints, { AuthApiService } from "../services/authApi";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
+import { useAuth } from "@/context/AuthContext";
 
 function Auth() {
   // Initialize Next.js router
   const router = useRouter();
 
+  const { login } = useAuth();
   // State variables for login form
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -63,7 +65,9 @@ function Auth() {
       console.log("data", res.data);
       if (res.data.isSuccess) {
         // Store token in local storage upon successful login
-        localStorage.setItem("token", res.data.data.token);
+        //localStorage.setItem("token", res.data.data.token);
+
+        login(res.data.data.token);
 
         // Redirect user to the dashboard upon successful login
         router.push("/pensions");
@@ -81,7 +85,7 @@ function Auth() {
         error.response.data.message === "Please change your password to LogIn"
       ) {
         await handleResetPassword();
-        //  alert("Please reset your password before proceeding");
+        // alert("Please reset your password before proceeding");
 
         setErrors({
           status: false,

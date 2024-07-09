@@ -76,6 +76,8 @@ const endpoints = {
 
   //getUserPermissions
   getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
+
+  getMenus: "/GetMenuJSON",
 };
 
 export const apiService = {

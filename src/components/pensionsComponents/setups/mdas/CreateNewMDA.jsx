@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, Dialog } from "@mui/material";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 
 function CreateNewMDA({ fetchMDAs, setOpenNewMDA }) {
@@ -53,7 +53,7 @@ function CreateNewMDA({ fetchMDAs, setOpenNewMDA }) {
   };
 
   return (
-    <div className="h-[300px] p-2">
+    <div className="p-8">
       <div className="text-primary pl-1 text-lg font-semibold">New MDA</div>
       <form onSubmit={handleCreateMda} className="mt-5 flex flex-col gap-4">
         <div className="flex flex-col gap-1 w-full">

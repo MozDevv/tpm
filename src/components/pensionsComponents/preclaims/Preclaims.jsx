@@ -42,6 +42,7 @@ import { useAlert } from "@/context/AlertContext";
 import axios from "axios";
 import Spinner from "@/components/spinner/Spinner";
 import ReactPaginate from "react-paginate";
+import { useAuth } from "@/context/AuthContext";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -338,7 +339,7 @@ const Preclaims = ({ status }) => {
   const [openCreate, setOpenCreate] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 10; // Number of records per page
+  const pageSize = 18; // Number of records per page
   const paginationPageSizeSelector = [5, 10, 20, 50];
 
   const [sortCriteria, setSortCriteria] = useState(0);
@@ -369,6 +370,10 @@ const Preclaims = ({ status }) => {
 
   const [totalPages, setTotalPages] = useState(1);
   //const [sortOrder, setSortOrder] = useState(null);
+
+  const { auth } = useAuth();
+
+  console.log("auth ****************", auth.user.permissions);
 
   const handleFilters = async () => {
     const filter = {
@@ -487,6 +492,8 @@ const Preclaims = ({ status }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
 
+  const permissions = auth.user.permissions;
+
   return (
     <>
       {loading ? (
@@ -496,6 +503,7 @@ const Preclaims = ({ status }) => {
       ) : (
         <div className="table-container relative h-[80vh] w-full">
           <CreatePreclaim
+            permissions={permissions}
             openCreate={openCreate}
             setOpenCreate={setOpenCreate}
             fetchAllPreclaims={fetchAllPreclaims}
@@ -509,6 +517,7 @@ const Preclaims = ({ status }) => {
           />
 
           <PreclaimDialog
+            permissions={permissions}
             clickedItem={clickedItem}
             setOpenPreclaimDialog={setOpenPreclaimDialog}
             openPreclaimDialog={openPreclaimDialog}
@@ -522,6 +531,11 @@ const Preclaims = ({ status }) => {
                     <Button
                       onClick={() => setOpenCreate(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
+                      disabled={
+                        !permissions.includes(
+                          "preclaims.create.prospective_pensioner"
+                        )
+                      }
                     >
                       <IconButton>
                         <Add sx={{ fontSize: "20px" }} color="primary" />
@@ -538,7 +552,11 @@ const Preclaims = ({ status }) => {
                       onClick={() => setOpenNotification(true)}
                       sx={{ mb: -1, maxHeight: "24px" }}
                       disabled={
-                        !isSendNotificationEnabled && selectedRows.length > 0
+                        (!isSendNotificationEnabled &&
+                          selectedRows.length > 0) ||
+                        !permissions.includes(
+                          "preclaims.notify.prospective_pensioner"
+                        )
                       }
                       startIcon={<ForwardToInbox />}
                     >

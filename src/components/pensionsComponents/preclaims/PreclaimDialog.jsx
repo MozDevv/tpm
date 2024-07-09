@@ -31,6 +31,7 @@ function PreclaimDialog({
   openPreclaimDialog,
   setOpenPreclaimDialog,
   fetchAllPreclaims,
+  permissions,
   clickedItem,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -332,7 +333,9 @@ function PreclaimDialog({
                       onClick={() => setOpenNotification(true)}
                       sx={{ mb: -1, maxHeight: "24px" }}
                       disabled={
-                        clickedItem?.notification_status === 0 ? false : true
+                        !permissions.includes(
+                          "preclaims.notify.prospective_pensioner"
+                        )
                       }
                       startIcon={<ForwardToInbox />}
                     >
@@ -342,11 +345,13 @@ function PreclaimDialog({
                     </Button>
                   </div>
                 )}
+                {/*
                 <div className="flex items-center">
                   {clickedItem?.notification_status !== 7 && (
                     <Button
                       onClick={() => setOpenCreateWorkHistory(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
+                      
                     >
                       <IconButton>
                         <Add sx={{ fontSize: "18px" }} color="primary" />
@@ -356,18 +361,18 @@ function PreclaimDialog({
                       </p>
                     </Button>
                   )}
-                </div>
+                </div> */}
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={() => setDisabled(false)}
+                    disabled={
+                      !permissions.includes(
+                        "preclaims.edit.prospective_pensioner"
+                      )
+                    }
                     sx={{ mb: -1, maxHeight: "24px" }}
+                    startIcon={<Edit />}
                   >
-                    <IconButton>
-                      <Edit
-                        sx={{ fontSize: "18px", mr: "2px" }}
-                        color="primary"
-                      />
-                    </IconButton>
                     <p className="font-normal text-gray -ml-2 text-[13px]">
                       Edit
                     </p>

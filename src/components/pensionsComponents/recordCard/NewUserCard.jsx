@@ -48,12 +48,14 @@ function NewUserCard({ data, setSuccess }) {
       firstName: formData.get("firstName"),
       middleName: formData.get("middleName"),
       lastName: formData.get("lastName"),
-      department: selectedDepartment,
-      role: selectedRole,
+      ...(selectedAdminType === "Treasury" && {
+        department: selectedDepartment,
+        role: selectedRole,
+      }),
       employeeNumber: formData.get("employeeNumber"),
       phoneNumber: formData.get("phoneNumber"),
       email: formData.get("email"),
-      mdaId: selectedMDA, // Include the MDA ID in the user data
+      mdaid: selectedMDA, // Include the MDA ID in the user data
       //adminType: selectedAdminType, // Include the admin type in the user data
       isMDA: selectedAdminType === "MDA" ? true : false,
     };
