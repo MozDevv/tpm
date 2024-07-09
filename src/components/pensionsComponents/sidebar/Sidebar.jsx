@@ -27,6 +27,7 @@ function Sidebar() {
   const [open, setOpen] = useState({});
   const { selectedItem, setSelectedItem } = useSelectedItem();
   const { isLoading, setIsLoading } = useIsLoading();
+  const [fetchedMenuItems, setFetchedMenuItems] = useState([]);
 
   const handleToggle = (title) => {
     setOpen((prevOpen) => ({
@@ -57,8 +58,6 @@ function Sidebar() {
 
   const { auth } = useAuth();
 
-  console.log("first", auth);
-
   const getMenus = async (role) => {
     try {
       if (!role) {
@@ -67,6 +66,8 @@ function Sidebar() {
       const res = await axios.get(
         `https://pmis.agilebiz.co.ke/GetMenuJSON?Role=${role}`
       );
+
+      setFetchedMenuItems(res.data.data);
 
       console.log("sidebar Items", res.data);
     } catch (error) {
@@ -100,7 +101,6 @@ function Sidebar() {
       children: [
         {
           title: "Retirees",
-
           subChildren: [
             {
               title: "Retirees List",
@@ -120,7 +120,6 @@ function Sidebar() {
             },
           ],
         },
-
         {
           title: "Returned Claims",
           path: "/pensions/preclaims/returned-claims",
@@ -205,12 +204,10 @@ function Sidebar() {
           title: "Tables Setups",
           path: "/pensions/users/setups/tables-setups",
         },
-
         {
           title: "Roles & Permissions",
           path: "/pensions/users/roles-permissions",
         },
-
         {
           title: "Leave Management",
           path: "/pensions/users/leave-management",
@@ -225,7 +222,6 @@ function Sidebar() {
           title: "Document Types",
           path: "/pensions/setups/document-types",
         },
-
         {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",
@@ -258,6 +254,28 @@ function Sidebar() {
     },
   ];
 
+  const filterMenuItems = (items, fetchedItems) => {
+    return items
+      .map((item) => {
+        const fetchedItem = fetchedItems.find(
+          (fetched) => fetched.name === item.title
+        );
+        if (!fetchedItem) return null;
+
+        const children = item.children
+          ? filterMenuItems(item.children, fetchedItem.children || [])
+          : null;
+        return {
+          ...item,
+          children,
+        };
+      })
+      .filter((item) => item !== null);
+  };
+
+  const filteredMenuItems = filterMenuItems(menuItems, fetchedMenuItems);
+  const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
+
   const renderSubChildren = (subChildren) => (
     <List component="div" disablePadding>
       {subChildren.map((subChild) => (
@@ -272,7 +290,6 @@ function Sidebar() {
             sx={{
               pl: 11,
               py: "3px",
-
               color:
                 selectedItem === subChild.title
                   ? "#006990"
@@ -294,228 +311,120 @@ function Sidebar() {
   const renderChildren = (children) => (
     <List component="div" disablePadding>
       {children.map((child) => (
-        <div key={child.title}>
-          {!child.path ? (
-            <>
+        <React.Fragment key={child.title}>
+          {child.subChildren ? (
+            <React.Fragment>
               <ListItem
                 button
                 onClick={() => handleToggle(child.title)}
+                sx={{ pl: 6, py: "3px" }}
+              >
+                <ListItemText>
+                  <p className={styles.nav_title}>{child.title}</p>
+                </ListItemText>
+                {open[child.title] ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={open[child.title]} timeout="auto" unmountOnExit>
+                {renderSubChildren(child.subChildren)}
+              </Collapse>
+            </React.Fragment>
+          ) : (
+            <Link href={child.path} className="no-underline hover:no-underline">
+              <ListItem
+                button
+                onClick={() => setSelectedItem(child.title)}
                 sx={{
-                  pl: 10,
-                  py: "5px",
-                  borderRadius: "30px",
-
-                  //  backgroundColor: open[child.title] ? "#E5F0F4" : "transparent",
-                  color: open[child.title] ? "#006990" : "rgb(153, 153, 153)",
+                  pl: 8,
+                  py: "3px",
+                  color:
+                    selectedItem === child.title
+                      ? "#006990"
+                      : "rgb(153, 153, 153)",
                   "&:hover": {
                     backgroundColor: "rgba(0, 105, 144, 0.1)",
                   },
                 }}
               >
-                <ListItemText
-                  sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                >
+                <ListItemText>
                   <p className={styles.nav_title}>{child.title}</p>
                 </ListItemText>
-                {child?.subChildren ? (
-                  open[child.title] ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
-                ) : null}
               </ListItem>
-            </>
-          ) : (
-            <>
-              <Link
-                href={child.path}
-                className="no-underline hover:no-underline"
-                key={child.title}
-              >
-                <ListItem
-                  button
-                  onClick={() => setSelectedItem(child.title)}
-                  sx={{
-                    pl: 10,
-                    py: "5px",
-                    borderRadius: "30px",
-
-                    //  backgroundColor: open[child.title] ? "#E5F0F4" : "transparent",
-                    color:
-                      selectedItem === child.title
-                        ? "#006990"
-                        : "rgb(153, 153, 153)",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 105, 144, 0.1)",
-                    },
-                  }}
-                >
-                  <ListItemText
-                    sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                  >
-                    <p className={styles.nav_title}>{child.title}</p>
-                  </ListItemText>
-                  {child?.subChildren ? (
-                    open[child.title] ? (
-                      <ExpandLess />
-                    ) : (
-                      <ExpandMore />
-                    )
-                  ) : null}
-                </ListItem>{" "}
-              </Link>
-            </>
+            </Link>
           )}
-          {child.subChildren && (
-            <Collapse in={open[child.title]} timeout="auto" unmountOnExit>
-              {renderSubChildren(child.subChildren)}
-            </Collapse>
-          )}
-        </div>
+        </React.Fragment>
       ))}
     </List>
   );
 
+  const renderMenuItems = (items) =>
+    items.map((item) => (
+      <React.Fragment key={item.title}>
+        <Link
+          href={item.path || "#"}
+          className="no-underline hover:no-underline"
+        >
+          <ListItem
+            button
+            onClick={() => {
+              if (!item.children) {
+                setSelectedItem(item.title);
+              }
+              if (item.children) {
+                handleToggle(item.title);
+              }
+            }}
+            sx={{
+              py: "6px",
+              backgroundColor:
+                selectedItem === item.title ? "#DDF3F8" : "transparent",
+              "&:hover": {
+                backgroundColor: "#f0f7f9",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                color:
+                  selectedItem === item.title
+                    ? "#006990"
+                    : "rgb(153, 153, 153)",
+              }}
+            >
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={item.title}
+              primaryTypographyProps={{
+                style: {
+                  color:
+                    selectedItem === item.title
+                      ? "#006990"
+                      : "rgb(153, 153, 153)",
+                  fontWeight: selectedItem === item.title ? "bold" : "normal",
+                },
+              }}
+            />
+            {item.children &&
+              (open[item.title] ? <ExpandLess /> : <ExpandMore />)}
+          </ListItem>
+        </Link>
+        {item.children && (
+          <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+            {renderChildren(item.children)}
+          </Collapse>
+        )}
+      </React.Fragment>
+    ));
+
   return (
-    <div className="pb-8">
-      <div className="sticky top-0 bg-white z-50">
-        <img src="/logo.png" alt="" height={200} width={400} />
-      </div>
-      <h6 className={styles.h6}>MAINMENU</h6>
-      <List sx={{ mt: "10px" }} component="nav">
-        {menuItems.map((item) => (
-          <div key={item.title}>
-            {!item.path ? (
-              <ListItem
-                onClick={() =>
-                  item.children
-                    ? handleToggle(item.title)
-                    : setSelectedItem(item.title)
-                }
-                sx={{
-                  mb: "5px",
-                  backgroundColor: open[item.title] ? "#E5F0F4" : "transparent",
-                  borderRadius: "30px",
-                  color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 105, 144, 0.1)",
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText>
-                  <p className={styles.nav_title}>{item.title}</p>
-                </ListItemText>
-                {item.children ? (
-                  open[item.title] ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
-                ) : null}
-              </ListItem>
-            ) : (
-              <Link
-                href={item.path}
-                className="no-underline hover:no-underline"
-              >
-                <ListItem
-                  onClick={() => setSelectedItem(item.title)}
-                  sx={{
-                    mb: "5px",
-                    backgroundColor:
-                      selectedItem === item.title ? "#E5F0F4" : "transparent",
-                    borderRadius: "30px",
-                    color:
-                      selectedItem === item.title
-                        ? "#006990"
-                        : "rgb(153, 153, 153)",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 105, 144, 0.1)",
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      color:
-                        selectedItem === item.title
-                          ? "#006990"
-                          : "rgb(153, 153, 153)",
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText>
-                    <p className={styles.nav_title}>{item.title}</p>
-                  </ListItemText>
-                </ListItem>
-              </Link>
-            )}
-            {item.children && (
-              <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
-                {renderChildren(item.children)}
-              </Collapse>
-            )}
-          </div>
-        ))}
+    <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+      <img src="/logo.png" className="w-full h-[60px] pt-2 mb-3 " alt="" />
+      <List>
+        {renderMenuItems(filteredMenuItems)}
+        <Divider />
+        {renderMenuItems(filteredAdminItems)}
       </List>
-      <Divider />
-      <Box>
-        <h6 className={styles.h6}>ADMIN</h6>
-        <List sx={{ mt: "10px" }} component="nav">
-          {adminItems.map((item) => (
-            <div key={item.title}>
-              <ListItem
-                onClick={() =>
-                  item.children
-                    ? handleToggle(item.title)
-                    : setSelectedItem(item.title)
-                }
-                sx={{
-                  mb: "5px",
-                  backgroundColor: open[item.title] ? "#E5F0F4" : "transparent",
-                  borderRadius: "30px",
-                  color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 105, 144, 0.1)",
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText>
-                  <p className={styles.nav_title}>{item.title}</p>
-                </ListItemText>
-                {item.children ? (
-                  open[item.title] ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
-                ) : null}
-              </ListItem>
-              {item.children && (
-                <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
-                  {renderChildren(item.children)}
-                </Collapse>
-              )}
-            </div>
-          ))}
-        </List>
-      </Box>
-    </div>
+    </Box>
   );
 }
 
