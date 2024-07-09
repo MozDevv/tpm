@@ -68,6 +68,7 @@ function RecordCard({ id }) {
       <AssignRole
         openPermissions={openPermissions}
         setOpenPermissions={setOpenPermissions}
+        userId={id}
       />
       <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
         <div className="flex items-center justify-between p-2">

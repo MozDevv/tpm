@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 "use client";
+import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
 
 export const API_BASE_URL = "https://pmis.agilebiz.co.ke";
@@ -69,6 +70,12 @@ const endpoints = {
 
   //Get Permission Roles
   getPermissionRoles: "/api/PermissionRoleSetup/GetPermissionsRole",
+
+  //create permission user
+  createPermissionsUser: "/api/PermissionUserSetUp/CreatePermissionsUser",
+
+  //getUserPermissions
+  getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
 };
 
 export const apiService = {

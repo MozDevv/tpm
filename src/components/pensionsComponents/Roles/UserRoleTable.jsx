@@ -90,6 +90,7 @@ const UserRoleTable = () => {
       }
     } catch (error) {
       console.log(error);
+      console.log("formData", formData);
     }
   };
 
@@ -211,10 +212,10 @@ const UserRoleTable = () => {
                         <ListItem key={permission?.permissionId}>
                           <Checkbox
                             checked={isPermissionChecked(
-                              permission?.permissionID
+                              permission?.permissionId
                             )}
                             onChange={() =>
-                              handlePermissionChange(permission?.permissionID)
+                              handlePermissionChange(permission?.permissionId)
                             }
                           />
                           <Typography>{permission?.description}</Typography>
