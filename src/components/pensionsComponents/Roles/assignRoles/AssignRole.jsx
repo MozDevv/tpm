@@ -1,4 +1,5 @@
 "use client";
+import endpoints, { apiService } from "@/components/services/setupsApi";
 import {
   Box,
   Checkbox,
@@ -7,47 +8,75 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-function AssignRole({ openPermissions, setOpenPermissions }) {
-  const [allPermissions, setAllPermissions] = useState([]); // [1
+function AssignRole({ openPermissions, setOpenPermissions, userId }) {
+  const [allPermissions, setAllPermissions] = useState([]);
+  const [userPermissions, setUserPermissions] = useState([]);
 
   useEffect(() => {
-    // Fetch permissions data from the API
+    // Fetch all permissions data from the API
     fetch("https://pmis.agilebiz.co.ke/api/PermissionsSetup/GetPermissions")
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {
-          /*const permissions = data.data.reduce((acc, permission) => {
-            if (permission.table?.permissions) {
-              acc.push(
-                ...permission.table.permissions.filter((p) => p !== null)
-              );
-            }
-            return acc;
-          }, []);
-
-          */
           setAllPermissions(data.data);
         }
       })
       .catch((error) => console.error("Error fetching permissions:", error));
   }, []);
 
+  const fetchUserPermissions = async () => {
+    try {
+      const res = await axios.get(
+        `https://pmis.agilebiz.co.ke/api/PermissionUserSetUp/GetPermissionsUser?userId=${userId}`
+      );
+      if (res.data.isSuccess) {
+        setUserPermissions(res.data.data.map((perm) => perm.permissionId));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserPermissions();
+  }, [userId]);
+
   const chunkedPermissions = [[], [], []];
   allPermissions.forEach((permission, index) => {
     chunkedPermissions[index % 3].push(permission);
   });
 
-  const handlePermissionChange = (permissionId) => {
-    setPermissionRoles((prev) => ({
-      ...prev,
-      [clickedRole]: {
-        ...prev[clickedRole],
-        [permissionId]: !prev[clickedRole][permissionId],
-      },
-    }));
+  const handlePermissionChange = async (permissionId) => {
+    const isPermissionAssigned = userPermissions.includes(permissionId);
+
+    try {
+      if (isPermissionAssigned) {
+        // If permission is already assigned, remove it
+        await apiService.post(
+          endpoints.removePermissionsUser,
+          new FormData()
+            .append("userId", userId)
+            .append("permissionId", permissionId)
+        );
+        setUserPermissions((prev) => prev.filter((id) => id !== permissionId));
+      } else {
+        const formData = new FormData();
+        formData.append("userId", userId);
+        formData.append("permissionId", permissionId);
+
+        await apiService.post(endpoints.createPermissionsUser, formData);
+
+        console.log(formData);
+        setUserPermissions((prev) => [...prev, permissionId]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <Dialog
       open={openPermissions}
@@ -55,9 +84,7 @@ function AssignRole({ openPermissions, setOpenPermissions }) {
       sx={{
         p: 4,
         "& .MuiDialog-paper": {
-          //padding: "40px",
           maxWidth: "1000px",
-          //width: "100%",
         },
       }}
     >
@@ -85,9 +112,9 @@ function AssignRole({ openPermissions, setOpenPermissions }) {
                 {column.map((permission) => (
                   <ListItem key={permission.permissionId}>
                     <Checkbox
-                      /* checked={isPermissionChecked(
-                              permission.permissionId
-                            )} */
+                      checked={userPermissions.includes(
+                        permission.permissionId
+                      )}
                       onChange={() =>
                         handlePermissionChange(permission.permissionId)
                       }

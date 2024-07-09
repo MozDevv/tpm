@@ -19,7 +19,13 @@ const columnDefs = [
     filter: true,
     width: 150,
   },
-  { field: "roleId", headerName: "Role ID", filter: true, width: 250 },
+  {
+    field: "roleId",
+    headerName: "Role ID",
+    filter: true,
+    width: 250,
+    hide: true,
+  },
   {
     field: "employeeNumber",
     headerName: "Employee Number",
