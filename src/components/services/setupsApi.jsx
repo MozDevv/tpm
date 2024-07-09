@@ -37,6 +37,9 @@ const endpoints = {
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
 
+  //GET MENUS
+  getMenus: "/GetMenuJSON",
+
   createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
 
   //Departments setups
@@ -57,6 +60,15 @@ const endpoints = {
 
   //Get Permissions
   getPermissions: "/api/PermissionsSetup/GetPermissions",
+
+  //Create Permissions
+  createPermissions: "/api/PermissionsSetup/CreatePermission",
+
+  //PermissionRoles
+  permissionRoles: "/api/PermissionRoleSetup/CreatePermissionRole",
+
+  //Get Permission Roles
+  getPermissionRoles: "/api/PermissionRoleSetup/GetPermissionsRole",
 };
 
 export const apiService = {

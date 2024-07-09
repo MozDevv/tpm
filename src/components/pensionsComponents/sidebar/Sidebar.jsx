@@ -159,8 +159,20 @@ function Sidebar() {
           path: "/pensions/users/setups/roles-setups",
         },
         {
+          title: "Permissions Setups",
+          path: "/pensions/users/setups/permissions-setups",
+        },
+        {
+          title: "Menus",
+          path: "/pensions/setups/menus",
+        },
+        {
           title: "Tables Setups",
           path: "/pensions/users/setups/tables-setups",
+        },
+        {
+          title: "Assign User Permissions",
+          path: "/pensions/users/assign-roles",
         },
         {
           title: "Roles & Permissions",
@@ -180,6 +192,7 @@ function Sidebar() {
           title: "Document Types",
           path: "/pensions/setups/document-types",
         },
+
         {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",
