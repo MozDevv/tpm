@@ -3,6 +3,7 @@
   font-family: "Montserrat", Arial, sans-serif;
   font-size: 14px;
   padding-right: 10px;
+  color: gray;
 }
 .h6 {
   font-weight: 700;
@@ -12,6 +13,6 @@
   margin-left: 25px;
   margin-top: 40px;
   text-transform: capitalize;
-
+  margin-bottom: 20px;
   width: 100%;
 }

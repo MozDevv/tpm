@@ -333,7 +333,7 @@ function PreclaimDialog({
                       onClick={() => setOpenNotification(true)}
                       sx={{ mb: -1, maxHeight: "24px" }}
                       disabled={
-                        !permissions.includes(
+                        !permissions?.includes(
                           "preclaims.notify.prospective_pensioner"
                         )
                       }
@@ -366,7 +366,7 @@ function PreclaimDialog({
                   <Button
                     onClick={() => setDisabled(false)}
                     disabled={
-                      !permissions.includes(
+                      !permissions?.includes(
                         "preclaims.edit.prospective_pensioner"
                       )
                     }

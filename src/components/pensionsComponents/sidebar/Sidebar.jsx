@@ -317,12 +317,21 @@ function Sidebar() {
               <ListItem
                 button
                 onClick={() => handleToggle(child.title)}
-                sx={{ pl: 6, py: "3px" }}
+                sx={{ pl: 8, py: "3px" }}
               >
-                <ListItemText>
-                  <p className={styles.nav_title}>{child.title}</p>
+                <ListItemText
+                  sx={{
+                    color: open[child.title] ? "#006990" : "rgb(153, 153, 153)",
+                    fontWeight: "700",
+                  }}
+                >
+                  {child.title}
                 </ListItemText>
-                {open[child.title] ? <ExpandLess /> : <ExpandMore />}
+                {open[child.title] ? (
+                  <ExpandLess sx={{ color: "gray" }} />
+                ) : (
+                  <ExpandMore sx={{ color: "gray" }} />
+                )}
               </ListItem>
               <Collapse in={open[child.title]} timeout="auto" unmountOnExit>
                 {renderSubChildren(child.subChildren)}
@@ -345,8 +354,18 @@ function Sidebar() {
                   },
                 }}
               >
-                <ListItemText>
-                  <p className={styles.nav_title}>{child.title}</p>
+                <ListItemText
+                  sx={{
+                    color:
+                      selectedItem === child.title
+                        ? "#006990"
+                        : "rgb(153, 153, 153)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 105, 144, 0.1)",
+                    },
+                  }}
+                >
+                  {child.title}
                 </ListItemText>
               </ListItem>
             </Link>
@@ -374,38 +393,36 @@ function Sidebar() {
               }
             }}
             sx={{
-              py: "6px",
-              backgroundColor:
-                selectedItem === item.title ? "#DDF3F8" : "transparent",
+              mb: "5px",
+              backgroundColor: open[item.title] ? "#E5F0F4" : "transparent",
+              borderRadius: "30px",
+              color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
               "&:hover": {
-                backgroundColor: "#f0f7f9",
+                backgroundColor: "rgba(0, 105, 144, 0.1)",
               },
             }}
           >
             <ListItemIcon
               sx={{
-                color:
-                  selectedItem === item.title
-                    ? "#006990"
-                    : "rgb(153, 153, 153)",
+                color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
               }}
             >
               {item.icon}
             </ListItemIcon>
             <ListItemText
-              primary={item.title}
-              primaryTypographyProps={{
-                style: {
-                  color:
-                    selectedItem === item.title
-                      ? "#006990"
-                      : "rgb(153, 153, 153)",
-                  fontWeight: selectedItem === item.title ? "bold" : "normal",
-                },
+              sx={{
+                color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
+                fontWeight: "bold",
               }}
-            />
+            >
+              {item.title}
+            </ListItemText>
             {item.children &&
-              (open[item.title] ? <ExpandLess /> : <ExpandMore />)}
+              (open[item.title] ? (
+                <ExpandLess sx={{ color: "gray" }} />
+              ) : (
+                <ExpandMore sx={{ color: "gray" }} />
+              ))}
           </ListItem>
         </Link>
         {item.children && (
@@ -420,8 +437,11 @@ function Sidebar() {
     <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
       <img src="/logo.png" className="w-full h-[60px] pt-2 mb-3 " alt="" />
       <List>
+        <h6 className={styles.h6}>MAIN MENU</h6>
         {renderMenuItems(filteredMenuItems)}
+
         <Divider />
+        <h6 className={styles.h6}>ADMINISTRATION</h6>
         {renderMenuItems(filteredAdminItems)}
       </List>
     </Box>
