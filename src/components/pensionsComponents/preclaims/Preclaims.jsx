@@ -339,7 +339,7 @@ const Preclaims = ({ status }) => {
   const [openCreate, setOpenCreate] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 18; // Number of records per page
+  const pageSize = 10; // Number of records per page
   const paginationPageSizeSelector = [5, 10, 20, 50];
 
   const [sortCriteria, setSortCriteria] = useState(0);
