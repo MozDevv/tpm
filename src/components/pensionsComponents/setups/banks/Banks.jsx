@@ -39,45 +39,6 @@ const childColumns = [
 const Banks = () => {
   const [data, setData] = useState([]);
 
-  /*
-  const fetchBanksAndBranches = async () => {
-    try {
-      const res = await apiService.get(endpoints.getBankBranches);
-      const rawData = res.data.data;
-
-      if (Array.isArray(rawData)) {
-        const groupedData = rawData.reduce((acc, item) => {
-          const bankId = item.bank.id;
-          if (!acc[bankId]) {
-            acc[bankId] = {
-              key: bankId,
-              name: item.bank.name,
-              code: item.bank.code,
-              bank_type_id: item.bank.bank_type_id,
-              bankType: item.bank.bankType,
-              children: [],
-            };
-          }
-          acc[bankId].children.push({
-            key: item.id,
-            branch_code: item.branch_code,
-            branch_name: item.name,
-          });
-          return acc;
-        }, {});
-
-        setData(Object.values(groupedData));
-        console.log("Grouped Data:");
-        console.log(Object.values(groupedData));
-      } else {
-        console.error("Fetched data is not an array:", rawData);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-*/
-
   const [rowData, setRowData] = useState([]);
 
   const fetchBanksAndBranches = async () => {

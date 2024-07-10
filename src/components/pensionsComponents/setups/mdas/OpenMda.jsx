@@ -65,11 +65,10 @@ function OpenMda({ mdaClicked, setMdaClicked, rowClicked }) {
         open={mdaClicked}
         onClose={handleClose}
       >
-        <div className="flex w-full justify-between max-h-8 mb-3">
-          <p className="text-base text-primary font-semibold mb-5">MDA</p>
-          <Button variant="contained" color="primary">
-            <p className="text-xs">Map to Document Type</p>
-          </Button>
+        <div className="flex w-full justify-between mb-3">
+          <p className="text-primary font-semibold text-base my-3 px-3">
+            {formData.name}
+          </p>
         </div>
         <form>
           <div className="mb-4">
@@ -77,7 +76,7 @@ function OpenMda({ mdaClicked, setMdaClicked, rowClicked }) {
               htmlFor="name"
               className="block text-xs font-medium text-[13px] text-gray-700"
             >
-              Name
+              Employee Name
             </label>
             <TextField
               id="name"
@@ -113,7 +112,7 @@ function OpenMda({ mdaClicked, setMdaClicked, rowClicked }) {
               htmlFor="code"
               className="block text-xs font-medium text-[13px] text-gray-700"
             >
-              Code
+              Employee Code
             </label>
             <TextField
               id="code"
@@ -210,7 +209,7 @@ function OpenMda({ mdaClicked, setMdaClicked, rowClicked }) {
               </Button>
             )}
             <Button variant="contained" color="warning">
-              Delete
+              Cancel
             </Button>
           </div>
         </form>

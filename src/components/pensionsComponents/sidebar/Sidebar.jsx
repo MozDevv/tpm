@@ -197,7 +197,7 @@ function Sidebar() {
           path: "/pensions/users/setups/permissions-setups",
         },
         {
-          title: "Menus",
+          title: "Menu Setups",
           path: "/pensions/setups/menus",
         },
         {
@@ -290,17 +290,18 @@ function Sidebar() {
             sx={{
               pl: 11,
               py: "3px",
-              color:
-                selectedItem === subChild.title
-                  ? "#006990"
-                  : "rgb(153, 153, 153)",
+
               "&:hover": {
                 backgroundColor: "rgba(0, 105, 144, 0.1)",
               },
             }}
           >
-            <ListItemText>
-              <p className={styles.nav_title}>{subChild.title}</p>
+            <ListItemText
+              sx={{
+                color: selectedItem === subChild.title ? "#006990" : "#1F1F1F",
+              }}
+            >
+              {subChild.title}
             </ListItemText>
           </ListItem>
         </Link>
@@ -317,11 +318,11 @@ function Sidebar() {
               <ListItem
                 button
                 onClick={() => handleToggle(child.title)}
-                sx={{ pl: 8, py: "3px" }}
+                sx={{ pl: 10, py: "3px" }}
               >
                 <ListItemText
                   sx={{
-                    color: open[child.title] ? "#006990" : "rgb(153, 153, 153)",
+                    color: open[child.title] ? "#006990" : "#1F1F1F",
                     fontWeight: "700",
                   }}
                 >
@@ -343,12 +344,9 @@ function Sidebar() {
                 button
                 onClick={() => setSelectedItem(child.title)}
                 sx={{
-                  pl: 8,
+                  pl: 10,
                   py: "3px",
-                  color:
-                    selectedItem === child.title
-                      ? "#006990"
-                      : "rgb(153, 153, 153)",
+                  color: selectedItem === child.title ? "#006990" : "#1F1F1F",
                   "&:hover": {
                     backgroundColor: "rgba(0, 105, 144, 0.1)",
                   },
@@ -356,13 +354,7 @@ function Sidebar() {
               >
                 <ListItemText
                   sx={{
-                    color:
-                      selectedItem === child.title
-                        ? "#006990"
-                        : "rgb(153, 153, 153)",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 105, 144, 0.1)",
-                    },
+                    color: selectedItem === child.title ? "#006990" : "#1F1F1F",
                   }}
                 >
                   {child.title}
@@ -394,9 +386,15 @@ function Sidebar() {
             }}
             sx={{
               mb: "5px",
-              backgroundColor: open[item.title] ? "#E5F0F4" : "transparent",
+              backgroundColor:
+                open[item.title] || selectedItem === item.title
+                  ? "#E5F0F4"
+                  : "transparent",
               borderRadius: "30px",
-              color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
+              color:
+                open[item.title] || selectedItem === item.title
+                  ? "#006990"
+                  : "#1F1F1F",
               "&:hover": {
                 backgroundColor: "rgba(0, 105, 144, 0.1)",
               },
@@ -404,14 +402,20 @@ function Sidebar() {
           >
             <ListItemIcon
               sx={{
-                color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
+                color:
+                  open[item.title] || selectedItem === item.title
+                    ? "#006990"
+                    : "#1F1F1F",
               }}
             >
               {item.icon}
             </ListItemIcon>
             <ListItemText
               sx={{
-                color: open[item.title] ? "#006990" : "rgb(153, 153, 153)",
+                color:
+                  open[item.title] || selectedItem === item.title
+                    ? "#006990"
+                    : "#1F1F1F",
                 fontWeight: "bold",
               }}
             >
@@ -434,8 +438,10 @@ function Sidebar() {
     ));
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-      <img src="/logo.png" className="w-full h-[60px] pt-2 mb-3 " alt="" />
+    <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
+      <div className="sticky top-0 bg-white z-50">
+        <img src="/logo.png" className="w-full h-[60px] pt-2 mb-3 " alt="" />
+      </div>
       <List>
         <h6 className={styles.h6}>MAIN MENU</h6>
         {renderMenuItems(filteredMenuItems)}
