@@ -78,6 +78,15 @@ const endpoints = {
   getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
 
   getMenus: "/GetMenuJSON",
+
+  //Get Menu Items
+  getMenuItems: "/GetMenuItems",
+
+  //Get MenuRole
+  getMenuRole: (roleId) => `/GetMenuJSON?Role=${roleId}`,
+
+  //updateMenuRole
+  updateMenuRole: "/CreatePermissionRole",
 };
 
 export const apiService = {

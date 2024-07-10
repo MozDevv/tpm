@@ -13,6 +13,7 @@ import {
 import CreatePermission from "../Roles/CreatePermission";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
+import MenuList from "./MenuList";
 
 const Menus = () => {
   const [clickedRole, setClickedRole] = useState(null);
@@ -21,17 +22,16 @@ const Menus = () => {
   const [rolesList, setRolesList] = useState([]);
   const [permissionRoles, setPermissionRoles] = useState({});
 
-  useEffect(() => {
-    // Fetch permissions data from the API
-    fetch("https://pmis.agilebiz.co.ke/api/PermissionsSetup/GetPermissions")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.isSuccess) {
-          setAllPermissions(data.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching permissions:", error));
-  }, []);
+  const fetchMenuItems = async (id) => {
+    try {
+      const res = await apiService.get(endpoints.getMenuRole(id));
+      if (res.status === 200) {
+        console.log(res.data);
+      }
+    } catch (error) {
+      console.error("Error fetching menu items:", error.response);
+    }
+  };
 
   const fetchRoles = async () => {
     try {
@@ -50,90 +50,6 @@ const Menus = () => {
 
   const { alert, setAlert } = useAlert();
 
-  const handlePermissionChange = async (permissionId) => {
-    if (!clickedRole) return; // Handle no role selected
-
-    const formData = new FormData();
-    formData.append("roleId", clickedRole.roleId);
-    formData.append("permissionId", permissionId);
-
-    try {
-      const res = await apiService.post(endpoints.permissionRoles, formData);
-      console.log(res.data);
-      if (res.status === 201) {
-        // Update permissionRoles for the clicked role
-        const updatedRolePermissions = [
-          ...(permissionRoles[clickedRole.roleId] || []),
-        ];
-        const permissionIndex = updatedRolePermissions.findIndex(
-          (permission) => permission.permissionID === permissionId
-        );
-
-        if (permissionIndex === -1) {
-          updatedRolePermissions.push({ permissionID: permissionId });
-        } else {
-          updatedRolePermissions.splice(permissionIndex, 1);
-        }
-
-        const updatedPermissionRoles = {
-          ...permissionRoles,
-          [clickedRole.roleId]: updatedRolePermissions,
-        };
-
-        setPermissionRoles(updatedPermissionRoles);
-
-        setAlert({
-          open: true,
-          message: "Permission updated successfully",
-          severity: "success",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      console.log("formData", formData);
-    }
-  };
-
-  const [permissionIds, setPermissionIds] = useState([]);
-
-  const fetchPermissionRoles = async () => {
-    try {
-      if (!clickedRole) return;
-
-      const res = await apiService.get(endpoints.getPermissionRoles, {
-        RoleID: clickedRole.roleId,
-      });
-
-      if (res.status === 200) {
-        setPermissionRoles((prev) => ({
-          ...prev,
-          [clickedRole.roleId]: res.data.data,
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPermissionRoles();
-  }, [clickedRole]);
-
-  const isPermissionChecked = (permissionId) => {
-    if (!clickedRole || !permissionRoles[clickedRole.roleId]) return false;
-
-    return permissionRoles[clickedRole.roleId].some(
-      (permissionRole) => permissionRole.permissionID === permissionId
-    );
-  };
-
-  // Divide permissions into three columns
-  const chunkedPermissions = [[], [], []];
-  allPermissions.forEach((permission, index) => {
-    chunkedPermissions[index % 3].push(permission);
-  });
-
-  console.log("chunkedPermissions", chunkedPermissions);
   return (
     <div className="px-5 mt-6">
       {createPermission && (
@@ -162,7 +78,10 @@ const Menus = () => {
             {rolesList.map((role) => (
               <ListItem
                 key={role.roleId}
-                onClick={() => setClickedRole(role)}
+                onClick={() => {
+                  setClickedRole(role);
+                  fetchMenuItems(role.roleId);
+                }}
                 sx={{
                   cursor: "pointer",
                   py: "12px",
@@ -184,8 +103,8 @@ const Menus = () => {
         <Grid item xs={9.5}>
           {clickedRole ? (
             <div>
-              <p className="text-primary mb-3 ml-6 mt-5 text-base font-semibold">
-                Permissions for{" "}
+              <p className="text-primary mb-5 ml-6 mt-5 text-base font-semibold">
+                Sidebar Menu Items allowed for{" "}
                 {
                   rolesList.find((role) => role.roleId === clickedRole.roleId)
                     ?.name
@@ -206,30 +125,14 @@ const Menus = () => {
                     gap: 2,
                   }}
                 >
-                  {chunkedPermissions.map((column, columnIndex) => (
-                    <List key={columnIndex} sx={{ flex: 1 }}>
-                      {column.map((permission) => (
-                        <ListItem key={permission?.permissionId}>
-                          <Checkbox
-                            checked={isPermissionChecked(
-                              permission?.permissionId
-                            )}
-                            onChange={() =>
-                              handlePermissionChange(permission?.permissionId)
-                            }
-                          />
-                          <Typography>{permission?.description}</Typography>
-                        </ListItem>
-                      ))}
-                    </List>
-                  ))}
+                  <MenuList roleId={clickedRole.roleId} roleName={clickedRole?.name}/>
                 </Box>
               </Box>
             </div>
           ) : (
             <>
               <p className="text-gray-400 p-3 font-semibold text-base mt-8 ml-6">
-                Select the role to view the permissions{" "}
+                Select a role to display the allowed Menu Items.
               </p>
             </>
           )}
