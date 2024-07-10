@@ -532,7 +532,7 @@ const Preclaims = ({ status }) => {
                       onClick={() => setOpenCreate(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
                       disabled={
-                        !permissions.includes(
+                        !permissions?.includes(
                           "preclaims.create.prospective_pensioner"
                         )
                       }
@@ -554,7 +554,7 @@ const Preclaims = ({ status }) => {
                       disabled={
                         (!isSendNotificationEnabled &&
                           selectedRows.length > 0) ||
-                        !permissions.includes(
+                        !permissions?.includes(
                           "preclaims.notify.prospective_pensioner"
                         )
                       }
