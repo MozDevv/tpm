@@ -38,6 +38,12 @@ const endpoints = {
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
 
+  //GET COUNTIES
+  getCounties: "/api/Setups/GetCounties",
+
+  //Get Countries
+  getCountries: "/api/Setups/GetCountries",
+
   //GET MENUS
   getMenus: "/GetMenuJSON",
 
@@ -76,6 +82,17 @@ const endpoints = {
 
   //getUserPermissions
   getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
+
+  getMenus: "/GetMenuJSON",
+
+  //Get Menu Items
+  getMenuItems: "/GetMenuItems",
+
+  //Get MenuRole
+  getMenuRole: (roleId) => `/GetMenuJSON?Role=${roleId}`,
+
+  //updateMenuRole
+  updateMenuRole: "/CreatePermissionRole",
 };
 
 export const apiService = {

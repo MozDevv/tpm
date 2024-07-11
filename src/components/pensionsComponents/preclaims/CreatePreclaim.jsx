@@ -19,8 +19,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { useAuth } from "@/context/AuthContext";
 
-function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
+function CreatePreclaim({
+  openCreate,
+  setOpenCreate,
+  fetchAllPreclaims,
+  permissions,
+}) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 
@@ -40,6 +46,7 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
     retirement_date: "",
     pension_award_id: "",
     mda_id: "",
+    country_id: "94ece052-7142-477a-af0f-c3909402d247",
   });
 
   const handleInputChange = (e) => {
@@ -119,6 +126,7 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
           name: "date_of_confirmation",
           type: "date",
         },
+
         { label: "Date of Birth", name: "dob", type: "date" },
         { label: "National ID", name: "national_id", type: "text" },
       ],
@@ -135,11 +143,11 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
           type: "select",
           children: [
             {
-              id: 1,
+              id: 0,
               name: "Male",
             },
             {
-              id: 0,
+              id: 1,
               name: "Female",
             },
           ],
@@ -182,7 +190,12 @@ function CreatePreclaim({ openCreate, setOpenCreate, fetchAllPreclaims }) {
   const handleSubmit = async () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+      if (
+        formData[key] === undefined ||
+        formData[key] === null ||
+        formData[key] === "" ||
+        formData[key] === false
+      ) {
         newErrors[key] = "This field is required";
       }
     });
