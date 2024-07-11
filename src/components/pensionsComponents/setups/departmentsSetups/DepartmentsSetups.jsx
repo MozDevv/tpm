@@ -148,7 +148,7 @@ function DepartmentsSetups() {
           <div className="flex w-full justify-between max-h-8 mb-3">
             {" "}
             <p className="text-base text-primary font-semibold mb-5">
-              Roles Setups
+              Departments Setups
             </p>
           </div>
           <form>

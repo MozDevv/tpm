@@ -43,6 +43,7 @@ import axios from "axios";
 import Spinner from "@/components/spinner/Spinner";
 import ReactPaginate from "react-paginate";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -373,7 +374,7 @@ const Preclaims = ({ status }) => {
 
   const { auth } = useAuth();
 
-  console.log("auth ****************", auth.user.permissions);
+  console.log("auth ****************", auth?.user?.permissions);
 
   const handleFilters = async () => {
     const filter = {
@@ -494,6 +495,8 @@ const Preclaims = ({ status }) => {
 
   const permissions = auth.user.permissions;
 
+  const router = useRouter();
+
   return (
     <>
       {loading ? (
@@ -530,6 +533,9 @@ const Preclaims = ({ status }) => {
                   <div className="flex items-center">
                     <Button
                       onClick={() => setOpenCreate(true)}
+                      /* onClick={() =>
+                        router.push("/pensions/preclaims/listing/new")
+                      }*/
                       sx={{ mb: -1, maxHeight: "25px" }}
                       disabled={
                         !permissions?.includes(
