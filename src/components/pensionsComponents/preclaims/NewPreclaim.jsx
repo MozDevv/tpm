@@ -20,8 +20,11 @@ import {
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useAlert } from "@/context/AlertContext";
 
-function CreatePreclaim({
+function NewPreclaim({
   openCreate,
   setOpenCreate,
   fetchAllPreclaims,
@@ -46,13 +49,26 @@ function CreatePreclaim({
     retirement_date: "",
     pension_award_id: "",
     mda_id: "",
-    country_id: "94ece052-7142-477a-af0f-c3909402d247",
-  });
+    country_id: "",
+    city: "",
+    county_id: "",
 
+    designation_grade: "",
+    authority_for_retirement_reference: "",
+    authority_for_retirement_dated: "",
+    date_of_first_appointment: "",
+    date_from_which_pension_will_commence: "",
+    identifier_type: "",
+  });
+  const router = useRouter();
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
     const parsedValue = type === "number" ? parseFloat(value) : value;
+    /*  const parsedValueDate =
+      type === "date" ? new Date(value).toLocaleDateString() : value;
 
+  
+*/
     setFormData({ ...formData, [name]: parsedValue });
 
     // Validation logic
@@ -73,13 +89,39 @@ function CreatePreclaim({
       if (age < 18) {
         error = "User must be at least 18 years old";
       }
+    } else if (name === "national_id" && value && !/^\d+$/.test(value)) {
+      error = "Must be a valid National ID";
+    } else if (
+      name === "kra_pin" &&
+      value &&
+      !/^[A-Z]\d{9}[A-Z]$/.test(value)
+    ) {
+      error = "Must be a valid KRA PIN";
+    } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
+      error = "Must be a valid number";
+    } else if (type === "date" && value && dayjs(value).isAfter(dayjs())) {
+      error = "Date cannot be in the future";
     } else if (name === "date_of_confirmation" && value && formData.dob) {
-      const confirmationDate = dayjs(value);
       const dobDate = dayjs(formData.dob);
-      const diff = confirmationDate.diff(dobDate, "year");
-      if (diff < 18) {
-        error =
-          "Date of Confirmation must be at least 18 years after Date of Birth";
+      const confirmationDate = dayjs(value);
+      if (confirmationDate.isBefore(dobDate)) {
+        error = "Date of confirmation cannot be before date of birth";
+      }
+    } else if (name === "retirement_date" && value && formData.dob) {
+      const dobDate = dayjs(formData.dob);
+      const retirementDate = dayjs(value);
+      if (retirementDate.isBefore(dobDate)) {
+        error = "Date of retirement cannot be before date of birth";
+      } else if (
+        name === "date_of_first_appointment" &&
+        value &&
+        formData.dob
+      ) {
+        const dobDate = dayjs(formData.dob);
+        const appointmentDate = dayjs(value);
+        if (appointmentDate.isBefore(dobDate)) {
+          error = "Date of first appointment cannot be before date of birth";
+        }
       }
     }
 
@@ -107,9 +149,37 @@ function CreatePreclaim({
     }
   };
 
+  const [counties, setCounties] = useState([]);
+  const [countries, setCountries] = useState([]);
+
+  const { alert, setAlert } = useAlert();
+  const fetchCountiesAndContituencies = async () => {
+    try {
+      const res = await apiService.get(endpoints.getCounties);
+      const rawData = res.data.data;
+      setCounties(rawData);
+
+      console.log("first", rawData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchCountries = async () => {
+    try {
+      const res = await apiService.get(endpoints.getCountries);
+
+      setCountries(res.data.data);
+
+      console.log("countries", res.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
   useEffect(() => {
     fetchMdas();
     fetchPensionAwards();
+    fetchCountiesAndContituencies();
+    fetchCountries();
   }, []);
 
   const sections = [
@@ -117,26 +187,12 @@ function CreatePreclaim({
       title: "General Information",
       state: useState(true),
       fields: [
-        { label: "Surname", name: "surname", type: "text" },
-        { label: "First Name", name: "first_name", type: "text" },
-        { label: "Other Name", name: "other_name", type: "text" },
-        { label: "KRA PIN", name: "kra_pin", type: "text" },
-        {
-          label: "Date of Confirmation",
-          name: "date_of_confirmation",
-          type: "date",
-        },
+        { label: "Personal Number", name: "personal_number", type: "text" },
 
+        { label: "First Name", name: "first_name", type: "text" },
+        { label: "Surname", name: "surname", type: "text" },
+        { label: "Other Name", name: "other_name", type: "text" },
         { label: "Date of Birth", name: "dob", type: "date" },
-        { label: "National ID", name: "national_id", type: "text" },
-      ],
-    },
-    {
-      title: "Contact Details",
-      state: useState(true),
-      fields: [
-        { label: "Email Address", name: "email_address", type: "email" },
-        { label: "Phone Number", name: "phone_number", type: "text" },
         {
           label: "Gender",
           name: "gender",
@@ -152,19 +208,53 @@ function CreatePreclaim({
             },
           ],
         },
-        { label: "Personal Number", name: "personal_number", type: "text" },
-      ],
-    },
-    {
-      title: "Payment Details",
-      state: useState(true),
-      fields: [
         {
-          label: "Last Basic Salary Amount",
-          name: "last_basic_salary_amount",
-          type: "number",
+          label: "Type Of Identification",
+          name: "identifier_type",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "National ID",
+            },
+            {
+              id: 1,
+              name: "Passport No",
+            },
+          ],
         },
-        { label: "Retirement Date", name: "retirement_date", type: "date" },
+
+        { label: "National ID", name: "national_id", type: "text" },
+        {
+          label: "Designation and Grade",
+          name: "designation_grade",
+          type: "text",
+        },
+
+        {
+          label: "Ministry/Department/Agency",
+          name: "mda_id",
+          type: "select",
+          children: mdas.map((mda) => ({
+            id: mda.id,
+            name: mda.name,
+          })),
+        },
+        {
+          label: "Date of First Appointment",
+          name: "date_of_first_appointment",
+          type: "date",
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+        },
+        {
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
+          type: "date",
+        },
         {
           label: "Pension Award ID",
           name: "pension_award_id",
@@ -174,20 +264,67 @@ function CreatePreclaim({
             name: award.name,
           })),
         },
+        { label: "KRA PIN", name: "kra_pin", type: "text" },
         {
-          label: "MDA ID",
-          name: "mda_id",
+          label: "Authority of retirement Ref No.",
+          name: "authority_for_retirement_reference",
+          type: "text",
+        },
+        {
+          label: "Authority of retirement Date",
+          name: "authority_for_retirement_dated",
+          type: "date",
+        },
+
+        {
+          label: "Date of confirmation into pensionable Office",
+          name: "date_of_confirmation",
+          type: "date",
+        },
+
+        {
+          label: "Last Basic Salary Amount",
+          name: "last_basic_salary_amount",
+          type: "number",
+        },
+      ],
+    },
+
+    {
+      title: "Contact Details",
+      state: useState(true),
+      fields: [
+        { label: "Email Address", name: "email_address", type: "email" },
+        { label: "Postal Address", name: "postal_address", type: "text" },
+        { label: "Phone Number", name: "phone_number", type: "text" },
+        { label: "County", name: "county", type: "text" },
+        { label: "City/Town", name: "city", type: "text" },
+        {
+          label: "Country",
+          name: "country_id",
           type: "select",
-          children: mdas.map((mda) => ({
-            id: mda.id,
-            name: mda.name,
+          children: countries.map((country) => ({
+            id: country.id,
+            name: country.country_name,
+          })),
+        },
+        {
+          label: "County",
+          name: "county_id",
+          type: "select",
+          children: counties.map((county) => ({
+            id: county.id,
+            name: county.county_name,
           })),
         },
       ],
     },
   ];
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Preclaims Data", formData);
+
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (
@@ -208,70 +345,77 @@ function CreatePreclaim({
       }
     }
 
-    if (formData.date_of_confirmation && formData.dob) {
-      const confirmationDate = dayjs(formData.date_of_confirmation);
-      const dobDate = dayjs(formData.dob);
-      const diff = confirmationDate.diff(dobDate, "year");
-      if (diff < 18) {
-        newErrors.date_of_confirmation =
-          "Date of Confirmation must be at least 18 years after Date of Birth";
-      }
-    }
-
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) {
+    /*  if (Object.keys(newErrors).length > 0) {
+      console.log("Errors found", newErrors);
       return; // Don't submit if there are errors
     }
+*/
+    console.log("Form Data (before formatting):", formData);
+    // setIsLoading(true);
+    const formattedFormData = { ...formData };
+    Object.keys(formattedFormData).forEach((key) => {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+        formattedFormData[key] = dayjs(formattedFormData[key]).format(
+          "YYYY-MM-DDTHH:mm:ss[Z]"
+        );
+      }
+    });
 
-    console.log("Form Data:", formData);
-    setIsLoading(true);
+    console.log("Formatted Form Data:", formattedFormData);
 
     try {
-      const res = await apiService.post(
-        preClaimsEndpoints.createPreclaim,
-        formData
+      const res = await axios.post(
+        "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/CreateProspectivePensioner",
+        formattedFormData
       );
 
-      console.log(res.data);
-      fetchAllPreclaims();
-    } catch (error) {
-      console.log(error.response);
-    } finally {
-      setOpenCreate(false);
+      console.log("API Response:", res.data);
+      if (res.data.succeeded && res.status === 200) {
+        setAlert({
+          open: true,
+          message:
+            "Prospective pensioner Information & Contact Details added successfully",
+          severity: "success",
+        });
+        router.push(
+          `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
+        );
+      }
 
-      setIsLoading(false);
+      // fetchAllPreclaims(); // Uncomment if you need to refresh the preclaims list
+    } catch (error) {
+      console.log("API Error:", error);
+    } finally {
+      // setOpenCreate(false);
+      // setIsLoading(false);
     }
   };
 
   return (
-    <Dialog
-      open={openCreate}
-      onClose={() => setOpenCreate(false)}
-      fullWidth
-      maxWidth="lg"
-    >
-      <div className="w-full p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
-        <IconButton
-          sx={{
-            ml: "auto",
-            position: "fixed",
-            zIndex: 899999999,
-            right: 1,
-            top: "3px",
-          }}
-        >
-          <Tooltip title="Expand">
-            {" "}
-            <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
-          </Tooltip>{" "}
-        </IconButton>
-        <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
-          <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
+    <div className="w-full p-2 mt-3 mr-1 h-[95vh] grid grid-cols-12 gap-2">
+      <IconButton
+        sx={{
+          ml: "auto",
+          position: "fixed",
+          zIndex: 899999999,
+          right: 1,
+          top: "3px",
+        }}
+      >
+        <Tooltip title="Expand">
+          {" "}
+          <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
+        </Tooltip>{" "}
+      </IconButton>
+      <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
+        <form onSubmit={handleSubmit}>
+          <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
             <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center gap-2">
                 <h5 className="text-[17px] text-primary font-semibold">
-                  User Information
+                  Data Capture
                 </h5>
               </div>
               <div className="flex ">
@@ -290,7 +434,8 @@ function CreatePreclaim({
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleSubmit}
+                    // onClick={handleSubmit}
+                    type="submit"
                     sx={{ maxHeight: "40px", mt: "5px" }}
                   >
                     Save
@@ -300,6 +445,7 @@ function CreatePreclaim({
             </div>
             <hr className="border-[1px] border-black-900 my-2" />
           </div>
+
           <div className="p-6 mt-[-15px]">
             {sections.map((section, index) => {
               const [open, setOpen] = section.state;
@@ -326,7 +472,7 @@ function CreatePreclaim({
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
                   <Collapse in={open} timeout="auto" unmountOnExit>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
                       {section.fields.map((field, fieldIndex) => (
                         <div key={fieldIndex} className="flex flex-col">
                           <label className="text-xs font-semibold text-gray-600">
@@ -373,10 +519,10 @@ function CreatePreclaim({
               );
             })}
           </div>
-        </div>
+        </form>
       </div>
-    </Dialog>
+    </div>
   );
 }
 
-export default CreatePreclaim;
+export default NewPreclaim;

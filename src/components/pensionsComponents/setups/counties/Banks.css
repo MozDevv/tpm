@@ -1,0 +1,35 @@
+.parent-row {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.child-table-row {
+  background-color: #f3fbfe;
+  font-weight: normal;
+  padding-left: 20px;
+}
+.table-header {
+  background-color: #001529;
+  color: #eb2828;
+  font-weight: bold;
+}
+.child-table {
+  margin-left: 20px;
+}
+.child-table-row {
+  font-weight: normal;
+  padding-left: 20px;
+}
+/* Parent table header styling */
+.parent-table .ant-table-thead > tr > th {
+  background-color: #f0f8ff; /* Light blue background */
+  color: #000; /* Black text */
+  font-weight: bold; /* Bold text */
+}
+
+/* Child table header styling */
+.child-table .ant-table-thead > tr > th {
+  background-color: #f0f8ff; /* Light grey background */
+  color: #333; /* Dark grey text */
+  font-weight: bold; /* Bold text */
+}

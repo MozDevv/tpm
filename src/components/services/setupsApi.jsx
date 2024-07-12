@@ -20,6 +20,9 @@ const endpoints = {
 
   getBanks: "/api/setups/GetBanks",
 
+  createBankforPensioner:
+    "/api/ProspectivePensioners/CreateProspectivePensionerBankDetail",
+
   //PENSION-AWARDS
   pensionAwards:
     "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
@@ -37,6 +40,12 @@ const endpoints = {
 
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
+
+  //GET COUNTIES
+  getCounties: "/api/Setups/GetCounties",
+
+  //Get Countries
+  getCountries: "/api/Setups/GetCountries",
 
   //GET MENUS
   getMenus: "/GetMenuJSON",

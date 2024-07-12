@@ -13,6 +13,7 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import {
   KeyboardArrowRight,
   PeopleAltOutlined,
+  Person,
   Widgets,
 } from "@mui/icons-material";
 import styles from "./sidebar.module.css";
@@ -181,7 +182,7 @@ function Sidebar() {
       icon: <PeopleAltOutlined />,
       children: [
         {
-          title: "User List",
+          title: "Manage Users",
           path: "/pensions/users",
         },
         {
@@ -207,6 +208,14 @@ function Sidebar() {
         {
           title: "Roles & Permissions",
           path: "/pensions/users/roles-permissions",
+        },
+        {
+          title: "Counties",
+          path: "/pensions/setups/counties",
+        },
+        {
+          title: "Constituencies",
+          path: "/pensions/setups/constituencies",
         },
         {
           title: "Leave Management",
@@ -274,8 +283,8 @@ function Sidebar() {
   };
 
   const filteredMenuItems = filterMenuItems(menuItems, fetchedMenuItems);
-  const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
-
+  //const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
+  const filteredAdminItems = adminItems;
   const renderSubChildren = (subChildren) => (
     <List component="div" disablePadding>
       {subChildren.map((subChild) => (
@@ -318,7 +327,7 @@ function Sidebar() {
               <ListItem
                 button
                 onClick={() => handleToggle(child.title)}
-                sx={{ pl: 10, py: "3px" }}
+                sx={{ pl: 10, py: "3px", display: "flex" }}
               >
                 <ListItemText
                   sx={{
@@ -448,6 +457,7 @@ function Sidebar() {
 
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
+
         {renderMenuItems(filteredAdminItems)}
       </List>
     </Box>
