@@ -22,6 +22,21 @@ const preClaimsEndpoints = {
   createWorkHistory: "/api/ProspectivePensioners/CreateWorkHistory",
 
   submitForApproval: "/api/ProspectivePensioners/SendPreClaimForApproval",
+
+  //workHistory
+  getPostandNatureofSalaries: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries/?prospective_pensioner_id=${id}`,
+  createPostAndNatureOfService:
+    "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary",
+  getPensionableSalary: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPensionableSalary/?prospective_pensioner_id=${id}`,
+  createPensionableSalary:
+    "/api/ProspectivePensioners/CreateProspectivePensionerPensionableSalary",
+  getPeriodsOfAbsence: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPeriodsOfAbsenceWithoutSalary/?prospective_pensioner_id=${id}`,
+
+  createPeriodsOfAbsence:
+    "api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
 };
 
 export const apiService = {
