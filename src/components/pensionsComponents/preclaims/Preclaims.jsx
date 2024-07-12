@@ -295,42 +295,42 @@ const colDefs = [
 
 const mapRowData = (items) =>
   items.map((item) => ({
-    retiree: item.retiree.id,
-    email_address: item.retiree.email_address,
+    retiree: item.retiree?.id,
+    email_address: item.retiree?.email_address,
     notification_status: item.notification_status,
-    gender: item.retiree.gender,
-    phone_number: item.retiree.phone_number,
+    gender: item.retiree?.gender,
+    phone_number: item.retiree?.phone_number,
     personal_number: item.personal_number,
-    surname: item.retiree.surname,
-    first_name: item.retiree.first_name,
-    other_name: item.retiree.other_name,
-    pension_award: item.mda.name,
-    name: item.pensionAward.name,
-    national_id: item.retiree.national_id,
-    kra_pin: item.retiree.kra_pin,
+    surname: item.retiree?.surname,
+    first_name: item.retiree?.first_name,
+    other_name: item.retiree?.other_name,
+    pension_award: item.mda?.name,
+    name: item.pensionAward?.name,
+    national_id: item.retiree?.national_id,
+    kra_pin: item.retiree?.kra_pin,
     retirement_date: item.retirement_date,
     dob: item.dob,
     date_of_confirmation: item.date_of_confirmation,
     last_basic_salary_amount: item.last_basic_salary_amount,
-    mda_code: item.mda.code,
-    mda_description: item.mda.description,
-    mda_pensionCap_code: item.mda.pensionCap.code,
-    mda_pensionCap_name: item.mda.pensionCap.name,
-    mda_pensionCap_description: item.mda.pensionCap.description,
-    workHistories_length: item.workHistories.length,
-    bankDetails_length: item.bankDetails.length,
+    mda_code: item.mda?.code,
+    mda_description: item.mda?.description,
+    mda_pensionCap_code: item.mda?.pensionCap?.code,
+    mda_pensionCap_name: item.mda?.pensionCap?.name,
+    mda_pensionCap_description: item.mda?.pensionCap?.description,
+    workHistories_length: item?.workHistories?.length,
+    bankDetails_length: item?.bankDetails?.length,
     prospectivePensionerDocuments_length:
-      item.prospectivePensionerDocuments.length,
-    pensionAward_prefix: item.pensionAward.prefix,
-    pensionAward_code: item.pensionAward.code,
-    pensionAward_description: item.pensionAward.description,
-    pensionAward_start_date: item.pensionAward.start_date,
-    pensionAward_end_date: item.pensionAward.end_date,
-    pensionAward_pensionCap_code: item.pensionAward.pensionCap.code,
-    pensionAward_pensionCap_name: item.pensionAward.pensionCap.name,
+      item?.prospectivePensionerDocuments?.length,
+    pensionAward_prefix: item.pensionAward?.prefix,
+    pensionAward_code: item.pensionAward?.code,
+    pensionAward_description: item.pensionAward?.description,
+    pensionAward_start_date: item.pensionAward?.start_date,
+    pensionAward_end_date: item.pensionAward?.end_date,
+    pensionAward_pensionCap_code: item.pensionAward?.pensionCap?.code,
+    pensionAward_pensionCap_name: item.pensionAward?.pensionCap?.name,
     pensionAward_pensionCap_description:
-      item.pensionAward.pensionCap.description,
-    pensionAward_pensionCap_id: item.pensionAward.pensionCap.id,
+      item.pensionAward?.pensionCap?.description,
+    pensionAward_pensionCap_id: item.pensionAward?.pensionCap?.id,
     id: item.id,
   }));
 
@@ -532,10 +532,10 @@ const Preclaims = ({ status }) => {
                 {!status && (
                   <div className="flex items-center">
                     <Button
-                      onClick={() => setOpenCreate(true)}
-                      /* onClick={() =>
+                      // onClick={() => setOpenCreate(true)}
+                      onClick={() =>
                         router.push("/pensions/preclaims/listing/new")
-                      }*/
+                      }
                       sx={{ mb: -1, maxHeight: "25px" }}
                       disabled={
                         !permissions?.includes(

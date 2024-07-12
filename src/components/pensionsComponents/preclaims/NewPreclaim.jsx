@@ -91,10 +91,22 @@ function NewPreclaim({
       }
     } else if (name === "national_id" && value && !/^\d+$/.test(value)) {
       error = "Must be a valid National ID";
-    } else if (name === "kra_pin" && value && !/^\d+$/.test(value)) {
+    } else if (
+      name === "kra_pin" &&
+      value &&
+      !/^[A-Z]\d{9}[A-Z]$/.test(value)
+    ) {
       error = "Must be a valid KRA PIN";
     } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
       error = "Must be a valid number";
+    } else if (type === "date" && value && dayjs(value).isAfter(dayjs())) {
+      error = "Date cannot be in the future";
+    } else if (name === "date_of_confirmation" && value && formData.dob) {
+      const dobDate = dayjs(formData.dob);
+      const confirmationDate = dayjs(value);
+      if (confirmationDate.isBefore(dobDate)) {
+        error = "Date of confirmation cannot be before date of birth";
+      }
     } else if (name === "retirement_date" && value && formData.dob) {
       const dobDate = dayjs(formData.dob);
       const retirementDate = dayjs(value);
@@ -399,7 +411,7 @@ function NewPreclaim({
       </IconButton>
       <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
         <form onSubmit={handleSubmit}>
-          <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
+          <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
             <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center gap-2">
                 <h5 className="text-[17px] text-primary font-semibold">
@@ -460,7 +472,7 @@ function NewPreclaim({
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
                   <Collapse in={open} timeout="auto" unmountOnExit>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
                       {section.fields.map((field, fieldIndex) => (
                         <div key={fieldIndex} className="flex flex-col">
                           <label className="text-xs font-semibold text-gray-600">

@@ -111,7 +111,8 @@ function AddBankDetails({ id }) {
           severity: "success",
         });
       }
-      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      router.push(`/pensions/preclaims/listing`);
 
       console.log("Data", res.data);
     } catch (error) {
