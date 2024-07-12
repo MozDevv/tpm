@@ -6,6 +6,7 @@ import {
   IosShare,
   KeyboardArrowDown,
   KeyboardArrowRight,
+  Launch,
   OpenInFull,
 } from "@mui/icons-material";
 import { Dialog, Divider, TextField } from "@mui/material";
@@ -25,6 +26,7 @@ import SendForApproval from "./SendForApproval";
 import { notification } from "antd";
 import RecordCard from "../recordCard/RecordCard";
 import UserDetailCard from "../recordCard/UserDetailCard";
+import { useRouter } from "next/navigation";
 
 function PreclaimDialog({
   setOpenNotification,
@@ -233,6 +235,12 @@ function PreclaimDialog({
 
   const [disabled, setDisabled] = useState(true);
 
+  const router = useRouter();
+  const handleOpenWorkHistory = () => {
+    router.push(
+      `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}`
+    );
+  };
   return (
     <Dialog
       open={openPreclaimDialog}
@@ -361,6 +369,21 @@ function PreclaimDialog({
                       </p>
                     </Button>
                   )}
+
+                  <Button
+                    onClick={handleOpenWorkHistory}
+                    sx={{ mb: -1, maxHeight: "25px" }}
+                  >
+                    <IconButton>
+                      <Launch
+                        sx={{ fontSize: "18px", mb: "2px" }}
+                        color="primary"
+                      />
+                    </IconButton>
+                    <p className="font-normal text-gray -ml-1 text-[13px]">
+                      View Work History
+                    </p>
+                  </Button>
                 </div>
 
                 {clickedItem?.notification_status === 0 && (
