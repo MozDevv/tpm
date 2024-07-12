@@ -2,7 +2,7 @@
 import NewPreclaim from "@/components/pensionsComponents/preclaims/NewPreclaim";
 import React from "react";
 
-function WorkHistory() {
+function page() {
   return (
     <div>
       <NewPreclaim />
@@ -10,4 +10,4 @@ function WorkHistory() {
   );
 }
 
-export default WorkHistory;
+export default page;

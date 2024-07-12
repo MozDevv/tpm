@@ -2,7 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import React from "react";
 
-function page() {
+function AddWorkHistory() {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
@@ -11,4 +11,4 @@ function page() {
   return <div></div>;
 }
 
-export default page;
+export default AddWorkHistory;
