@@ -6,6 +6,7 @@ import {
   IosShare,
   KeyboardArrowDown,
   KeyboardArrowRight,
+  Launch,
   OpenInFull,
 } from "@mui/icons-material";
 import { Dialog, Divider, TextField } from "@mui/material";
@@ -25,6 +26,7 @@ import SendForApproval from "./SendForApproval";
 import { notification } from "antd";
 import RecordCard from "../recordCard/RecordCard";
 import UserDetailCard from "../recordCard/UserDetailCard";
+import { useRouter } from "next/navigation";
 
 function PreclaimDialog({
   setOpenNotification,
@@ -108,6 +110,52 @@ function PreclaimDialog({
           type: "text",
           value: clickedItem?.national_id,
         },
+        {
+          label: "Pension Commencement Date",
+          name: "pension_commencement_date",
+          type: "date",
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+        },
+        {
+          label: "Gender",
+          name: "gender",
+          type: "select",
+          value: clickedItem?.gender === 1 ? "Male" : "Female",
+        },
+        {
+          label: "Personal Number",
+          name: "personal_number",
+          type: "text",
+          value: clickedItem?.personal_number,
+        },
+        {
+          label: "Last Basic Salary Amount",
+          name: "last_basic_salary_amount",
+          type: "number",
+          value: clickedItem?.last_basic_salary_amount,
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+          value: clickedItem?.retirement_date,
+        },
+        {
+          label: "Pension Award ",
+          name: "pension_award_id",
+          type: "select",
+          value: clickedItem?.pensionAward_description,
+        },
+        {
+          label: "MDA",
+          name: "mda_id",
+          type: "select",
+          value: clickedItem?.mda_description,
+        },
       ],
     },
     {
@@ -125,18 +173,6 @@ function PreclaimDialog({
           name: "phone_number",
           type: "text",
           value: clickedItem?.phone_number,
-        },
-        {
-          label: "Gender",
-          name: "gender",
-          type: "select",
-          value: clickedItem?.gender === 1 ? "Male" : "Female",
-        },
-        {
-          label: "Personal Number",
-          name: "personal_number",
-          type: "text",
-          value: clickedItem?.personal_number,
         },
       ],
     },
@@ -176,36 +212,6 @@ function PreclaimDialog({
         },
       ],
     },
-    {
-      title: "Payment Details",
-      state: useState(true),
-      fields: [
-        {
-          label: "Last Basic Salary Amount",
-          name: "last_basic_salary_amount",
-          type: "number",
-          value: clickedItem?.last_basic_salary_amount,
-        },
-        {
-          label: "Retirement Date",
-          name: "retirement_date",
-          type: "date",
-          value: clickedItem?.retirement_date,
-        },
-        {
-          label: "Pension Award ",
-          name: "pension_award_id",
-          type: "select",
-          value: clickedItem?.pensionAward_description,
-        },
-        {
-          label: "MDA",
-          name: "mda_id",
-          type: "select",
-          value: clickedItem?.mda_description,
-        },
-      ],
-    },
   ];
 
   console.log("clickedItem", clickedItem);
@@ -233,6 +239,12 @@ function PreclaimDialog({
 
   const [disabled, setDisabled] = useState(true);
 
+  const router = useRouter();
+  const handleOpenWorkHistory = () => {
+    router.push(
+      `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}`
+    );
+  };
   return (
     <Dialog
       open={openPreclaimDialog}
@@ -361,6 +373,21 @@ function PreclaimDialog({
                       </p>
                     </Button>
                   )}
+
+                  <Button
+                    onClick={handleOpenWorkHistory}
+                    sx={{ mb: -1, maxHeight: "25px" }}
+                  >
+                    <IconButton>
+                      <Launch
+                        sx={{ fontSize: "18px", mb: "2px" }}
+                        color="primary"
+                      />
+                    </IconButton>
+                    <p className="font-normal text-gray -ml-1 text-[13px]">
+                      View Work History
+                    </p>
+                  </Button>
                 </div>
 
                 {clickedItem?.notification_status === 0 && (
