@@ -283,8 +283,8 @@ function Sidebar() {
   };
 
   const filteredMenuItems = filterMenuItems(menuItems, fetchedMenuItems);
-  const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
-
+  //const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
+  const filteredAdminItems = adminItems;
   const renderSubChildren = (subChildren) => (
     <List component="div" disablePadding>
       {subChildren.map((subChild) => (
