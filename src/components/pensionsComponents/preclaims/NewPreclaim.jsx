@@ -297,6 +297,15 @@ function NewPreclaim({
         { label: "Email Address", name: "email_address", type: "email" },
         { label: "Postal Address", name: "postal_address", type: "text" },
         { label: "Phone Number", name: "phone_number", type: "text" },
+        {
+          label: "County",
+          name: "county_id",
+          type: "select",
+          children: counties.map((county) => ({
+            id: county.id,
+            name: county.county_name,
+          })),
+        },
         { label: "County", name: "county", type: "text" },
         { label: "City/Town", name: "city", type: "text" },
         {
@@ -306,15 +315,6 @@ function NewPreclaim({
           children: countries.map((country) => ({
             id: country.id,
             name: country.country_name,
-          })),
-        },
-        {
-          label: "County",
-          name: "county_id",
-          type: "select",
-          children: counties.map((county) => ({
-            id: county.id,
-            name: county.county_name,
           })),
         },
       ],
@@ -472,7 +472,7 @@ function NewPreclaim({
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
                   <Collapse in={open} timeout="auto" unmountOnExit>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-2 p-6">
                       {section.fields.map((field, fieldIndex) => (
                         <div key={fieldIndex} className="flex flex-col">
                           <label className="text-xs font-semibold text-gray-600">

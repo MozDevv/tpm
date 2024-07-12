@@ -331,7 +331,20 @@ const mapRowData = (items) =>
     pensionAward_pensionCap_description:
       item.pensionAward?.pensionCap?.description,
     pensionAward_pensionCap_id: item.pensionAward?.pensionCap?.id,
+    retirement_date: item?.retirement_date,
+    date_of_first_appointment: item?.date_of_first_appointment,
+    date_of_confirmation: item?.date_of_confirmation,
+    country: item?.country,
+    city_town: item?.city_town,
+    pension_commencement_date: item?.pension_commencement_date,
+    postal_address: item?.postal_address,
     id: item.id,
+    bank_name: item.bankDetails?.bankBranch?.bank?.name,
+    branch_name: item.bankDetails?.bankBranch?.name,
+    account_number: item.bankDetails?.account_number,
+    bankType: item.bankDetails?.bankBranch?.bank?.bankType?.type,
+    branch_code: item.bankDetails?.bankBranch?.branch_code,
+    bank_code: item.bankDetails?.bankBranch?.bank.code,
   }));
 
 const Preclaims = ({ status }) => {

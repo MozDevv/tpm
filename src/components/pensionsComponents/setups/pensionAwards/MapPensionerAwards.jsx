@@ -4,7 +4,6 @@ import {
   Autocomplete,
   TextField,
   Checkbox,
-  FormControlLabel,
   Grid,
   Button,
   Table,
@@ -20,6 +19,7 @@ import { useAlert } from "@/context/AlertContext";
 
 const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
+  const [initialDocuments, setInitialDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
   const { alert, setAlert } = useAlert();
 
@@ -34,15 +34,30 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
 
   useEffect(() => {
     fetchDocumentTypes();
-  }, []);
+    if (rowClicked.awardDocuments) {
+      const initialDocs = rowClicked.awardDocuments.map((doc) => ({
+        ...doc,
+        required: doc.required || false,
+        pensionerUpload: doc.pensioner_upload || false,
+      }));
+      setSelectedDocuments(initialDocs);
+      setInitialDocuments(initialDocs);
+    }
+  }, [rowClicked]);
 
   const handleDocumentChange = (event, newValue) => {
-    const updatedDocuments = newValue.map((doc) => ({
-      ...doc,
-      required: doc.required || false,
-      pensionerUpload: doc.pensionerUpload || false,
+    const newDocuments = newValue.filter(
+      (newDoc) =>
+        !selectedDocuments.some((doc) => doc.document.id === newDoc.id)
+    );
+
+    const updatedDocuments = newDocuments.map((doc) => ({
+      document: doc,
+      required: false,
+      pensionerUpload: false,
     }));
-    setSelectedDocuments(updatedDocuments);
+
+    setSelectedDocuments([...selectedDocuments, ...updatedDocuments]);
   };
 
   const handleCheckboxChange = (index, field) => (event) => {
@@ -55,10 +70,17 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   const handleSubmit = async () => {
+    const newDocuments = selectedDocuments.filter(
+      (doc) =>
+        !initialDocuments.some(
+          (initialDoc) => initialDoc.document.id === doc.document.id
+        )
+    );
+
     const data = {
       pension_award_id: rowClicked.id,
-      documents: selectedDocuments.map((doc) => ({
-        document_id: doc.id, // Assuming `id` is the unique identifier for the document
+      documents: newDocuments.map((doc) => ({
+        document_id: doc.document.id,
         required: doc.required,
         pensioner_upload: doc.pensionerUpload,
       })),
@@ -69,7 +91,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     try {
       const res = await apiService.post(endpoints.mapPensionerAwards, data);
 
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.succeeded) {
         setAlert({
           open: true,
           message: `Documents successfully mapped to ${rowClicked.name}`,
@@ -80,7 +102,6 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
       }
     } catch (error) {
       console.error("Error submitting documents:", error);
-      alert("Failed to submit documents");
     }
   };
 
@@ -88,20 +109,18 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     <div className="">
       <div className="flex flex-col gap-3">
         <p className="text-primary text-xl font-semibold">
-          Map Documents to {rowClicked.name}
+          Map Documents to {rowClicked?.name}
         </p>
         <p className="text-gray-700 text-sm mb-3">
           Choose the document you wish to map to the selected Award
         </p>
       </div>
       <Grid container spacing={2}>
-        x
         <Grid item xs={12}>
           <Autocomplete
             multiple
             options={documents}
             getOptionLabel={(option) => option.name}
-            value={selectedDocuments}
             onChange={handleDocumentChange}
             renderInput={(params) => (
               <TextField
@@ -124,8 +143,8 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
               </TableHead>
               <TableBody>
                 {selectedDocuments.map((doc, index) => (
-                  <TableRow key={doc.id}>
-                    <TableCell>{doc.name}</TableCell>
+                  <TableRow key={doc.document.id}>
+                    <TableCell>{doc.document.name}</TableCell>
                     <TableCell align="center">
                       <Checkbox
                         checked={doc.required}
