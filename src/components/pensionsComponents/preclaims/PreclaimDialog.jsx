@@ -141,6 +141,42 @@ function PreclaimDialog({
       ],
     },
     {
+      title: "Bank Details",
+      state: useState(true),
+      fields: [
+        {
+          label: "Branch name",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.branch_name,
+        },
+        {
+          label: "Branch Code",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.branch_code,
+        },
+        {
+          label: "Bank code",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.bank_code,
+        },
+        {
+          label: "Bank Name",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.bank_name,
+        },
+        {
+          label: "Account Number",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.account_number,
+        },
+      ],
+    },
+    {
       title: "Payment Details",
       state: useState(true),
       fields: [

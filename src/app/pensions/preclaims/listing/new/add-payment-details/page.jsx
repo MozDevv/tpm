@@ -3,7 +3,7 @@ import AddBankDetails from "@/components/pensionsComponents/preclaims/AddBankDet
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
-function page() {
+function PaymentDetails() {
   const searchParams = useSearchParams();
 
   //const token = searchParams.get("token");
@@ -17,4 +17,4 @@ function page() {
   );
 }
 
-export default page;
+export default PaymentDetails;
