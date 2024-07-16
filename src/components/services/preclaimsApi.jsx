@@ -37,6 +37,13 @@ const preClaimsEndpoints = {
 
   createPeriodsOfAbsence:
     "api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
+
+  //Documents
+  getAwardDocuments: (id) =>
+    `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
+
+  //Documents
+  submitProspectivePensionerDocs: `/api/MDAReceiveProspectivePensionerDocuments`,
 };
 
 export const apiService = {

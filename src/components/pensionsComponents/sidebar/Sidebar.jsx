@@ -106,6 +106,8 @@ function Sidebar() {
             {
               title: "Retirees List",
               path: "/pensions/preclaims/listing",
+              indirect: ["MDAs", "Pension Awards", "Banks"],
+              direct: ["Retirees", "Retirees List"],
             },
             {
               title: "Unnotified Retirees",
@@ -193,18 +195,18 @@ function Sidebar() {
           title: "Roles Setups",
           path: "/pensions/users/setups/roles-setups",
         },
-        {
-          title: "Permissions Setups",
-          path: "/pensions/users/setups/permissions-setups",
-        },
+        // {
+        //   title: "Permissions Setups",
+        //   path: "/pensions/users/setups/permissions-setups",
+        // },
         {
           title: "Menu Setups",
           path: "/pensions/setups/menus",
         },
-        {
-          title: "Tables Setups",
-          path: "/pensions/users/setups/tables-setups",
-        },
+        // {
+        //   title: "Tables Setups",
+        //   path: "/pensions/users/setups/tables-setups",
+        // },
         {
           title: "Roles & Permissions",
           path: "/pensions/users/roles-permissions",
@@ -283,8 +285,8 @@ function Sidebar() {
   };
 
   const filteredMenuItems = filterMenuItems(menuItems, fetchedMenuItems);
-  //const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
-  const filteredAdminItems = adminItems;
+  const filteredAdminItems = filterMenuItems(adminItems, fetchedMenuItems);
+  //const filteredAdminItems = adminItems;
   const renderSubChildren = (subChildren) => (
     <List component="div" disablePadding>
       {subChildren.map((subChild) => (

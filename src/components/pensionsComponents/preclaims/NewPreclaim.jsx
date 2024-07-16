@@ -52,7 +52,7 @@ function NewPreclaim({
     country_id: "",
     city: "",
     county_id: "",
-
+    pension_commencement_date: "",
     designation_grade: "",
     authority_for_retirement_reference: "",
     authority_for_retirement_dated: "",
@@ -246,6 +246,11 @@ function NewPreclaim({
           type: "date",
         },
         {
+          label: "Pension Commencement Date",
+          name: "pension_commencement_date",
+          type: "date",
+        },
+        {
           label: "Retirement Date",
           name: "retirement_date",
           type: "date",
@@ -256,7 +261,7 @@ function NewPreclaim({
           type: "date",
         },
         {
-          label: "Pension Award ID",
+          label: "Pension Award",
           name: "pension_award_id",
           type: "select",
           children: pensionAwards.map((award) => ({
@@ -298,17 +303,6 @@ function NewPreclaim({
         { label: "Postal Address", name: "postal_address", type: "text" },
         { label: "Phone Number", name: "phone_number", type: "text" },
         {
-          label: "County",
-          name: "county_id",
-          type: "select",
-          children: counties.map((county) => ({
-            id: county.id,
-            name: county.county_name,
-          })),
-        },
-        { label: "County", name: "county", type: "text" },
-        { label: "City/Town", name: "city", type: "text" },
-        {
           label: "Country",
           name: "country_id",
           type: "select",
@@ -317,6 +311,17 @@ function NewPreclaim({
             name: country.country_name,
           })),
         },
+        {
+          label: "County",
+          name: "county_id",
+          type: "select",
+          children: counties.map((county) => ({
+            id: county.id,
+            name: county.county_name,
+          })),
+        },
+
+        { label: "City/Town", name: "city", type: "text" },
       ],
     },
   ];

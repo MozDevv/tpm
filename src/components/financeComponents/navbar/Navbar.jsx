@@ -26,6 +26,7 @@ import {
 import { useSelectedItem } from "@/context/NavItemContext";
 import { useRouter } from "next/navigation";
 import NotificationMenu from "./NotificationMenu";
+import { useAuth } from "@/context/AuthContext";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -51,14 +52,19 @@ function Navbar() {
   }, [selectedItem]);
 
   const router = useRouter();
+  const { auth, login, logout } = useAuth();
+
+  console.log("auth**&&&&&&&&", auth.user.name);
 
   const handleLogout = () => {
     if (localStorage.getItem("token")) {
       localStorage.removeItem("token");
+      logout();
     }
 
     router.push("/");
   };
+
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
@@ -157,7 +163,7 @@ function Navbar() {
                     fontWeight: 700,
                   }}
                 >
-                  Sisse
+                  {auth.user.name}
                 </h6>
               </Box>
               <h6

@@ -59,7 +59,7 @@ const SchemaCellRenderer = ({ value }) => {
   );
 };
 
-const notificationStatusMap = {
+export const notificationStatusMap = {
   0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
   1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
   2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
@@ -315,6 +315,7 @@ const mapRowData = (items) =>
     mda_code: item.mda?.code,
     mda_description: item.mda?.description,
     mda_pensionCap_code: item.mda?.pensionCap?.code,
+    // mda_id: item.mda?.pensionCap?.code,
     mda_pensionCap_name: item.mda?.pensionCap?.name,
     mda_pensionCap_description: item.mda?.pensionCap?.description,
     workHistories_length: item?.workHistories?.length,
@@ -332,6 +333,11 @@ const mapRowData = (items) =>
       item.pensionAward?.pensionCap?.description,
     pensionAward_pensionCap_id: item.pensionAward?.pensionCap?.id,
     retirement_date: item?.retirement_date,
+    date_from_which_pension_will_commence:
+      item?.date_from_which_pension_will_commence,
+    authority_for_retirement_dated: item?.authority_for_retirement_dated,
+    authority_for_retirement_reference:
+      item?.authority_for_retirement_reference,
     date_of_first_appointment: item?.date_of_first_appointment,
     date_of_confirmation: item?.date_of_confirmation,
     country: item?.country,
@@ -339,12 +345,12 @@ const mapRowData = (items) =>
     pension_commencement_date: item?.pension_commencement_date,
     postal_address: item?.postal_address,
     id: item.id,
-    bank_name: item.bankDetails?.bankBranch?.bank?.name,
-    branch_name: item.bankDetails?.bankBranch?.name,
-    account_number: item.bankDetails?.account_number,
-    bankType: item.bankDetails?.bankBranch?.bank?.bankType?.type,
-    branch_code: item.bankDetails?.bankBranch?.branch_code,
-    bank_code: item.bankDetails?.bankBranch?.bank.code,
+    bank_name: item.bankDetails[0]?.bankBranch?.bank?.name,
+    branch_name: item.bankDetails[0]?.bankBranch?.name,
+    account_number: item.bankDetails[0]?.account_number,
+    bankType: item.bankDetails[0]?.bankBranch?.bank?.bankType?.type,
+    branch_code: item.bankDetails[0]?.bankBranch?.branch_code,
+    bank_code: item.bankDetails[0]?.bankBranch?.bank.code,
   }));
 
 const Preclaims = ({ status }) => {
@@ -525,6 +531,7 @@ const Preclaims = ({ status }) => {
             fetchAllPreclaims={fetchAllPreclaims}
           />
           <PreclaimsNotifications
+            //clickedItem={}
             isSendNotificationEnabled={isSendNotificationEnabled}
             fetchAllPreclaims={fetchAllPreclaims}
             selectedRows={selectedRows}
