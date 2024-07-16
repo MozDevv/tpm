@@ -22,6 +22,28 @@ const preClaimsEndpoints = {
   createWorkHistory: "/api/ProspectivePensioners/CreateWorkHistory",
 
   submitForApproval: "/api/ProspectivePensioners/SendPreClaimForApproval",
+
+  //workHistory
+  getPostandNatureofSalaries: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries/?prospective_pensioner_id=${id}`,
+  createPostAndNatureOfService:
+    "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary",
+  getPensionableSalary: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPensionableSalary/?prospective_pensioner_id=${id}`,
+  createPensionableSalary:
+    "/api/ProspectivePensioners/CreateProspectivePensionerPensionableSalary",
+  getPeriodsOfAbsence: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPeriodsOfAbsenceWithoutSalary/?prospective_pensioner_id=${id}`,
+
+  createPeriodsOfAbsence:
+    "api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
+
+  //Documents
+  getAwardDocuments: (id) =>
+    `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
+
+  //Documents
+  submitProspectivePensionerDocs: `/api/MDAReceiveProspectivePensionerDocuments`,
 };
 
 export const apiService = {

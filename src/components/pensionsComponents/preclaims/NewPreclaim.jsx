@@ -20,6 +20,9 @@ import {
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useAlert } from "@/context/AlertContext";
 
 function NewPreclaim({
   openCreate,
@@ -46,13 +49,26 @@ function NewPreclaim({
     retirement_date: "",
     pension_award_id: "",
     mda_id: "",
-    country_id: "94ece052-7142-477a-af0f-c3909402d247",
+    country_id: "",
+    city: "",
+    county_id: "",
+    pension_commencement_date: "",
+    designation_grade: "",
+    authority_for_retirement_reference: "",
+    authority_for_retirement_dated: "",
+    date_of_first_appointment: "",
+    date_from_which_pension_will_commence: "",
+    identifier_type: "",
   });
-
+  const router = useRouter();
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
     const parsedValue = type === "number" ? parseFloat(value) : value;
+    /*  const parsedValueDate =
+      type === "date" ? new Date(value).toLocaleDateString() : value;
 
+  
+*/
     setFormData({ ...formData, [name]: parsedValue });
 
     // Validation logic
@@ -73,13 +89,39 @@ function NewPreclaim({
       if (age < 18) {
         error = "User must be at least 18 years old";
       }
+    } else if (name === "national_id" && value && !/^\d+$/.test(value)) {
+      error = "Must be a valid National ID";
+    } else if (
+      name === "kra_pin" &&
+      value &&
+      !/^[A-Z]\d{9}[A-Z]$/.test(value)
+    ) {
+      error = "Must be a valid KRA PIN";
+    } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
+      error = "Must be a valid number";
+    } else if (type === "date" && value && dayjs(value).isAfter(dayjs())) {
+      error = "Date cannot be in the future";
     } else if (name === "date_of_confirmation" && value && formData.dob) {
-      const confirmationDate = dayjs(value);
       const dobDate = dayjs(formData.dob);
-      const diff = confirmationDate.diff(dobDate, "year");
-      if (diff < 18) {
-        error =
-          "Date of Confirmation must be at least 18 years after Date of Birth";
+      const confirmationDate = dayjs(value);
+      if (confirmationDate.isBefore(dobDate)) {
+        error = "Date of confirmation cannot be before date of birth";
+      }
+    } else if (name === "retirement_date" && value && formData.dob) {
+      const dobDate = dayjs(formData.dob);
+      const retirementDate = dayjs(value);
+      if (retirementDate.isBefore(dobDate)) {
+        error = "Date of retirement cannot be before date of birth";
+      } else if (
+        name === "date_of_first_appointment" &&
+        value &&
+        formData.dob
+      ) {
+        const dobDate = dayjs(formData.dob);
+        const appointmentDate = dayjs(value);
+        if (appointmentDate.isBefore(dobDate)) {
+          error = "Date of first appointment cannot be before date of birth";
+        }
       }
     }
 
@@ -110,6 +152,7 @@ function NewPreclaim({
   const [counties, setCounties] = useState([]);
   const [countries, setCountries] = useState([]);
 
+  const { alert, setAlert } = useAlert();
   const fetchCountiesAndContituencies = async () => {
     try {
       const res = await apiService.get(endpoints.getCounties);
@@ -151,6 +194,21 @@ function NewPreclaim({
         { label: "Other Name", name: "other_name", type: "text" },
         { label: "Date of Birth", name: "dob", type: "date" },
         {
+          label: "Gender",
+          name: "gender",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "Male",
+            },
+            {
+              id: 1,
+              name: "Female",
+            },
+          ],
+        },
+        {
           label: "Type Of Identification",
           name: "identifier_type",
           type: "select",
@@ -172,6 +230,7 @@ function NewPreclaim({
           name: "designation_grade",
           type: "text",
         },
+
         {
           label: "Ministry/Department/Agency",
           name: "mda_id",
@@ -187,12 +246,22 @@ function NewPreclaim({
           type: "date",
         },
         {
+          label: "Pension Commencement Date",
+          name: "pension_commencement_date",
+          type: "date",
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+        },
+        {
           label: "Date of Which Pension will Commence/Date Of Death ",
           name: "date_from_which_pension_will_commence",
           type: "date",
         },
         {
-          label: "Pension Award ID",
+          label: "Pension Award",
           name: "pension_award_id",
           type: "select",
           children: pensionAwards.map((award) => ({
@@ -225,55 +294,42 @@ function NewPreclaim({
         },
       ],
     },
-    {
-      title: "Payment Details",
-      state: useState(true),
-      fields: [
-        {
-          label: "Bank code",
-          name: "bank_code",
-          placeholder: "",
-          type: "text",
-        },
-        {
-          label: "Bank Name",
-          name: "bank_name",
-          placeholder: "",
-          type: "text",
-        },
-        {
-          label: "Bank Branch code",
-          name: "bank_branch_code",
-          placeholder: "",
-          type: "text",
-        },
-        {
-          label: "Bank Branch name",
-          name: "bank_branch_name",
-          placeholder: "",
-          type: "text",
-        },
 
-        {
-          label: "Account Number",
-          name: "account_number",
-          placeholder: "",
-          type: "text",
-        },
-      ],
-    },
     {
       title: "Contact Details",
       state: useState(true),
       fields: [
-        { label: "Postal Address", name: "phone_number", type: "text" },
-        { label: "County", name: "county", type: "text" },
+        { label: "Email Address", name: "email_address", type: "email" },
+        { label: "Postal Address", name: "postal_address", type: "text" },
+        { label: "Phone Number", name: "phone_number", type: "text" },
+        {
+          label: "Country",
+          name: "country_id",
+          type: "select",
+          children: countries.map((country) => ({
+            id: country.id,
+            name: country.country_name,
+          })),
+        },
+        {
+          label: "County",
+          name: "county_id",
+          type: "select",
+          children: counties.map((county) => ({
+            id: county.id,
+            name: county.county_name,
+          })),
+        },
+
         { label: "City/Town", name: "city", type: "text" },
       ],
     },
   ];
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Preclaims Data", formData);
+
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (
@@ -294,39 +350,51 @@ function NewPreclaim({
       }
     }
 
-    if (formData.date_of_confirmation && formData.dob) {
-      const confirmationDate = dayjs(formData.date_of_confirmation);
-      const dobDate = dayjs(formData.dob);
-      const diff = confirmationDate.diff(dobDate, "year");
-      if (diff < 18) {
-        newErrors.date_of_confirmation =
-          "Date of Confirmation must be at least 18 years after Date of Birth";
-      }
-    }
-
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) {
+    /*  if (Object.keys(newErrors).length > 0) {
+      console.log("Errors found", newErrors);
       return; // Don't submit if there are errors
     }
+*/
+    console.log("Form Data (before formatting):", formData);
+    // setIsLoading(true);
+    const formattedFormData = { ...formData };
+    Object.keys(formattedFormData).forEach((key) => {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+        formattedFormData[key] = dayjs(formattedFormData[key]).format(
+          "YYYY-MM-DDTHH:mm:ss[Z]"
+        );
+      }
+    });
 
-    console.log("Form Data:", formData);
-    setIsLoading(true);
+    console.log("Formatted Form Data:", formattedFormData);
 
     try {
-      const res = await apiService.post(
-        preClaimsEndpoints.createPreclaim,
-        formData
+      const res = await axios.post(
+        "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/CreateProspectivePensioner",
+        formattedFormData
       );
 
-      console.log(res.data);
-      fetchAllPreclaims();
-    } catch (error) {
-      console.log(error.response);
-    } finally {
-      setOpenCreate(false);
+      console.log("API Response:", res.data);
+      if (res.data.succeeded && res.status === 200) {
+        setAlert({
+          open: true,
+          message:
+            "Prospective pensioner Information & Contact Details added successfully",
+          severity: "success",
+        });
+        router.push(
+          `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
+        );
+      }
 
-      setIsLoading(false);
+      // fetchAllPreclaims(); // Uncomment if you need to refresh the preclaims list
+    } catch (error) {
+      console.log("API Error:", error);
+    } finally {
+      // setOpenCreate(false);
+      // setIsLoading(false);
     }
   };
 
@@ -347,112 +415,116 @@ function NewPreclaim({
         </Tooltip>{" "}
       </IconButton>
       <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
-        <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
-          <div className="flex items-center justify-between px-6 w-[100%]">
-            <div className="flex items-center gap-2">
-              <h5 className="text-[17px] text-primary font-semibold">
-                Data Capture
-              </h5>
-            </div>
-            <div className="flex ">
-              {" "}
-              <div className="flex gap-8 mr-4">
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setOpenCreate(false);
-                    setErrors({});
-                  }}
-                  sx={{ maxHeight: "40px", mt: "5px" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                  sx={{ maxHeight: "40px", mt: "5px" }}
-                >
-                  Save
-                </Button>{" "}
+        <form onSubmit={handleSubmit}>
+          <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
+            <div className="flex items-center justify-between px-6 w-[100%]">
+              <div className="flex items-center gap-2">
+                <h5 className="text-[17px] text-primary font-semibold">
+                  Data Capture
+                </h5>
               </div>
-            </div>
-          </div>
-          <hr className="border-[1px] border-black-900 my-2" />
-        </div>
-        <div className="p-6 mt-[-15px]">
-          {sections.map((section, index) => {
-            const [open, setOpen] = section.state;
-            return (
-              <div key={index} className="gap-3 my-3">
-                <div className="flex items-center gap-2">
-                  <h6 className="font-semibold text-primary text-sm">
-                    {section.title}
-                  </h6>
-                  <IconButton
-                    sx={{ ml: "-5px", zIndex: 1 }}
-                    onClick={() => setOpen((prevOpen) => !prevOpen)}
+              <div className="flex ">
+                {" "}
+                <div className="flex gap-8 mr-4">
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setOpenCreate(false);
+                      setErrors({});
+                    }}
+                    sx={{ maxHeight: "40px", mt: "5px" }}
                   >
-                    {!open ? (
-                      <KeyboardArrowRight
-                        sx={{ color: "primary.main", fontSize: "14px" }}
-                      />
-                    ) : (
-                      <ExpandLess
-                        sx={{ color: "primary.main", fontSize: "14px" }}
-                      />
-                    )}
-                  </IconButton>
-                  <hr className="flex-grow border-blue-500 border-opacity-20" />
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    // onClick={handleSubmit}
+                    type="submit"
+                    sx={{ maxHeight: "40px", mt: "5px" }}
+                  >
+                    Save
+                  </Button>{" "}
                 </div>
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-2">
-                    {section.fields.map((field, fieldIndex) => (
-                      <div key={fieldIndex} className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-600">
-                          {field.label}
-                        </label>
-                        {field.type === "select" ? (
-                          <TextField
-                            select
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            name={field.name}
-                            value={formData[field.name]}
-                            onChange={handleInputChange}
-                            error={!!errors[field.name]} // Show error style if there is an error
-                            helperText={errors[field.name]} // Display the error message
-                          >
-                            <MenuItem value="">Select {field.label}</MenuItem>
-                            {field.children.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.name}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        ) : (
-                          <TextField
-                            type={field.type}
-                            name={field.name}
-                            variant="outlined"
-                            size="small"
-                            value={formData[field.name]}
-                            onChange={handleInputChange}
-                            error={!!errors[field.name]} // Show error style if there is an error
-                            helperText={errors[field.name]} // Display the error message
-                            required
-                            fullWidth
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </Collapse>
               </div>
-            );
-          })}
-        </div>
+            </div>
+            <hr className="border-[1px] border-black-900 my-2" />
+          </div>
+
+          <div className="p-6 mt-[-15px]">
+            {sections.map((section, index) => {
+              const [open, setOpen] = section.state;
+              return (
+                <div key={index} className="gap-3 my-3">
+                  <div className="flex items-center gap-2">
+                    <h6 className="font-semibold text-primary text-sm">
+                      {section.title}
+                    </h6>
+                    <IconButton
+                      sx={{ ml: "-5px", zIndex: 1 }}
+                      onClick={() => setOpen((prevOpen) => !prevOpen)}
+                    >
+                      {!open ? (
+                        <KeyboardArrowRight
+                          sx={{ color: "primary.main", fontSize: "14px" }}
+                        />
+                      ) : (
+                        <ExpandLess
+                          sx={{ color: "primary.main", fontSize: "14px" }}
+                        />
+                      )}
+                    </IconButton>
+                    <hr className="flex-grow border-blue-500 border-opacity-20" />
+                  </div>
+                  <Collapse in={open} timeout="auto" unmountOnExit>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-2 p-6">
+                      {section.fields.map((field, fieldIndex) => (
+                        <div key={fieldIndex} className="flex flex-col">
+                          <label className="text-xs font-semibold text-gray-600">
+                            {field.label}
+                          </label>
+                          {field.type === "select" ? (
+                            <TextField
+                              select
+                              variant="outlined"
+                              size="small"
+                              fullWidth
+                              name={field.name}
+                              value={formData[field.name]}
+                              onChange={handleInputChange}
+                              error={!!errors[field.name]} // Show error style if there is an error
+                              helperText={errors[field.name]} // Display the error message
+                            >
+                              <MenuItem value="">Select {field.label}</MenuItem>
+                              {field.children.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                  {option.name}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          ) : (
+                            <TextField
+                              type={field.type}
+                              name={field.name}
+                              variant="outlined"
+                              size="small"
+                              value={formData[field.name]}
+                              onChange={handleInputChange}
+                              error={!!errors[field.name]} // Show error style if there is an error
+                              helperText={errors[field.name]} // Display the error message
+                              required
+                              fullWidth
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </Collapse>
+                </div>
+              );
+            })}
+          </div>
+        </form>
       </div>
     </div>
   );

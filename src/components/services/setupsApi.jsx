@@ -20,6 +20,9 @@ const endpoints = {
 
   getBanks: "/api/setups/GetBanks",
 
+  createBankforPensioner:
+    "/api/ProspectivePensioners/CreateProspectivePensionerBankDetail",
+
   //PENSION-AWARDS
   pensionAwards:
     "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
