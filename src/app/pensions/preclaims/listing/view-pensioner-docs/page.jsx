@@ -1,11 +1,9 @@
 "use client";
-import ViewPensionerDocs from "@/components/pensionsComponents/preclaims/documents/ViewPensionerDocs";
-import React from "react";
 
 function page() {
   return (
     <div>
-      <ViewPensionerDocs />
+      <h1>Page</h1>
     </div>
   );
 }

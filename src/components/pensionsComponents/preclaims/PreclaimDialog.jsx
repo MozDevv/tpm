@@ -430,24 +430,6 @@ function PreclaimDialog({
                       View Work History
                     </p>
                   </Button>
-                  <Button
-                    onClick={() =>
-                      router.push(
-                        "/pensions/preclaims/listing/view-pensioner-docs"
-                      )
-                    }
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <AssignmentOutlined
-                        sx={{ fontSize: "18px", mb: "2px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-normal text-gray -ml-1 text-[13px]">
-                      View Pensioner Docs
-                    </p>
-                  </Button>
                 </div>
 
                 {clickedItem?.notification_status === 0 && (
