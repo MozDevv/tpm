@@ -31,6 +31,7 @@ function PeriodsOfAbsence({ id }) {
       );
       setPeriodsOfAbsence(res.data.data);
       setLoading(false);
+      console.log("Period of Absence", res.data.data);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -44,8 +45,7 @@ function PeriodsOfAbsence({ id }) {
   const fields = [
     { label: "Start Date", value: "start_date", type: "date" },
     { label: "End Date", value: "end_date", type: "date" },
-    { label: "Cause Of Absence", value: "cause_of_absence" , },
-    { label: "Number of Days", value: "number_of_days" },
+    { label: "Cause Of Absence", value: "cause_of_absence" },
   ];
 
   const handleInputChange = (e) => {

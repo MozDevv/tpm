@@ -25,19 +25,19 @@ const montserrat = Montserrat({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <LoadingProvider>
-        <AuthProvider>
-          <SelectedItemProvider>
-            <ThemeProvider theme={baselightTheme}>
-              <AlertProvider>
-                <body>
+      <body>
+        <LoadingProvider>
+          <AuthProvider>
+            <SelectedItemProvider>
+              <ThemeProvider theme={baselightTheme}>
+                <AlertProvider>
                   <Suspense fallback={<Spinner />}> {children}</Suspense>
-                </body>
-              </AlertProvider>
-            </ThemeProvider>
-          </SelectedItemProvider>
-        </AuthProvider>
-      </LoadingProvider>
+                </AlertProvider>
+              </ThemeProvider>
+            </SelectedItemProvider>
+          </AuthProvider>
+        </LoadingProvider>
+      </body>
     </html>
   );
 }

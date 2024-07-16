@@ -6,15 +6,11 @@ import PeriodsOfAbsence from "./PeriodsOfAbscence";
 import Spinner from "@/components/spinner/Spinner";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { Close } from "@mui/icons-material";
 
 function AddPensionersWorkHistory({ id }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  // Simulate loading state with setTimeout
-  setTimeout(() => {
-    setLoading(false);
-  }, 2000); // Adjust timeout as per your actual async calls
 
   return (
     <div className="p-2 w-full">
@@ -28,9 +24,12 @@ function AddPensionersWorkHistory({ id }) {
               mb: 3,
               mt: 2,
             }}
-            onClick={() => router.push("/pensions/preclaims/listing")}
+            onClick={() =>
+              router.push(`/pensions/preclaims/listing/new/documents?id=${id}`)
+            }
+            //endIcon={<Close />}
           >
-            Proceed
+            close
           </Button>
         </div>
       </div>

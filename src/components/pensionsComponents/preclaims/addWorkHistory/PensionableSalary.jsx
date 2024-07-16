@@ -30,6 +30,7 @@ function PensionableSalary({ id }) {
       );
       setPensionableSalary(res.data.data);
       setLoading(false);
+      console.log("Pensionable Salary", res.data.data);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -44,6 +45,7 @@ function PensionableSalary({ id }) {
     { label: "Start Date", value: "start_date", type: "date" },
     { label: "End Date", value: "end_date", type: "date" },
     { label: "Salary", value: "salary" },
+    { label: "Pensionable Allowance", value: "pensionable_allowance" },
   ];
 
   const { alert, setAlert } = useAlert();

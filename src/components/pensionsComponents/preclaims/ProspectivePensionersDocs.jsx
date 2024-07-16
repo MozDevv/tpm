@@ -1,17 +1,73 @@
-import React from "react";
 import {
-  Stepper,
-  Step,
-  StepLabel,
   Typography,
   Box,
   List,
   ListItem,
+  Modal,
+  CircularProgress,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { message } from "antd";
+import preClaimsEndpoints, {
+  apiService,
+} from "@/components/services/preclaimsApi";
 
-function ProspectivePensionersDocs() {
-  const steps = ["Id.pdf", "GP178.pdf", "BankDetails.pdf"];
-  const activeStepIndex = 0; // Set the active step index here
+function ProspectivePensionersDocs({ clickedItem }) {
+  const id = clickedItem?.id;
+  const [awardDocuments, setAwardDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pdfData, setPdfData] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const getAwardDocuments = async () => {
+      try {
+        const res = await apiService.get(
+          preClaimsEndpoints.getAwardDocuments(id)
+        );
+        const documents =
+          res.data?.data[0]?.prospectivePensionerDocumentSelections
+            .filter((selection) => selection.edms_id !== null)
+            .map((selection) => ({
+              id: selection.id,
+              name: selection.documentType.name,
+              description: selection.documentType.description,
+              extensions: selection.documentType.extenstions,
+              required: selection.required,
+              pensioner_upload: selection.pensioner_upload,
+            }));
+        setAwardDocuments(documents);
+      } catch (error) {
+        console.log("Error fetching award documents:", error);
+        message.error("Failed to fetch award documents.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getAwardDocuments();
+  }, [id]);
+
+  const handleDocumentClick = async (docId) => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
+      );
+      setPdfData(res.data?.messages[0]); // Assuming the base64 data is in res.data.base64
+      setModalOpen(true);
+    } catch (error) {
+      console.log("Error fetching document:", error);
+      message.error("Failed to fetch document.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setPdfData(null);
+  };
 
   return (
     <Box p={1} sx={{ width: "100%", mt: 2, pl: 3 }}>
@@ -20,32 +76,47 @@ function ProspectivePensionersDocs() {
       </Typography>
 
       <List sx={{ display: "flex", gap: "5px", flexDirection: "column" }}>
-        {steps.map((step, index) => (
-          <ListItem key={index} sx={{ pl: 3 }}>
+        {awardDocuments.map((doc, index) => (
+          <ListItem
+            key={index}
+            sx={{ pl: 3, cursor: "pointer" }}
+            onClick={() => handleDocumentClick(doc.id)}
+          >
             <p className="text-sm text-gray-700 text-medium underline">
-              {step}
+              {doc.name}
             </p>
           </ListItem>
         ))}
       </List>
 
-      {/** 
-      <Stepper
-        sx={{ pl: 3 }}
-        orientation="vertical"
-        pt={0}
-        activeStep={activeStepIndex}
+      <Modal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        {steps.map((step, index) => (
-          <Step key={index}>
-            <StepLabel>
-              <Typography sx={{ textDecoration: "underline" }} fontSize={12}>
-                {step}
-              </Typography>
-            </StepLabel>
-          </Step>
-        ))}
-      </Stepper>*/}
+        <Box
+          sx={{
+            width: "80%",
+            height: "80%",
+            backgroundColor: "white",
+            padding: 2,
+            overflow: "auto",
+          }}
+        >
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            pdfData && (
+              <embed
+                src={`data:application/pdf;base64,${pdfData}`}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+              />
+            )
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 }

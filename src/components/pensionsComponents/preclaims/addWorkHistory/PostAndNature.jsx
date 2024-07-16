@@ -37,6 +37,8 @@ function PostAndNature({ id }) {
         preClaimsEndpoints.getPostandNatureofSalaries(id)
       );
       setPostAndNatureData(res.data.data);
+
+      console.log("post and nature", res.data.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -93,7 +95,7 @@ function PostAndNature({ id }) {
     });
 
     try {
-     const res= await apiService.post(
+      const res = await apiService.post(
         preClaimsEndpoints.createPostAndNatureOfService,
         formattedFormData
       );

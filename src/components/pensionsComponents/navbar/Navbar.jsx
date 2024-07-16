@@ -31,6 +31,8 @@ import {
 import { useSelectedItem } from "@/context/NavItemContext";
 import { useRouter } from "next/navigation";
 import NotificationMenu from "./NotificationMenu";
+import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -56,6 +58,24 @@ function Navbar() {
   }, [selectedItem]);
 
   const router = useRouter();
+  const { auth, login, logout } = useAuth();
+  const [role, setRole] = useState("");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `https://pmis.agilebiz.co.ke/GetRoles?documentId=${auth.user.roles}`
+        );
+        setRole(res.data.data.name);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log("auth**&&&&&&&&", auth.user.name);
 
   const handleLogout = () => {
     if (localStorage.getItem("token")) {
@@ -162,7 +182,7 @@ function Navbar() {
                     fontWeight: 700,
                   }}
                 >
-                  Sisse
+                  {auth.user.name.split(" ")[0]}
                 </h6>
               </Box>
               <h6
@@ -172,7 +192,7 @@ function Navbar() {
                   color: "rgb(153, 153, 153)",
                 }}
               >
-                Pension Admin
+                {role}
               </h6>
             </Box>{" "}
             <Avatar sx={{ height: "36px", width: "36px" }} />

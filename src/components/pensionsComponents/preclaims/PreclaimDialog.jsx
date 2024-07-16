@@ -2,6 +2,7 @@
 import { useIsLoading } from "@/context/LoadingContext";
 import {
   ArrowBack,
+  AssignmentOutlined,
   Edit,
   IosShare,
   KeyboardArrowDown,
@@ -27,6 +28,7 @@ import { notification } from "antd";
 import RecordCard from "../recordCard/RecordCard";
 import UserDetailCard from "../recordCard/UserDetailCard";
 import { useRouter } from "next/navigation";
+import PensionerDetailSummary from "./PensionerDetailSummary";
 
 function PreclaimDialog({
   setOpenNotification,
@@ -60,6 +62,12 @@ function PreclaimDialog({
       title: "General Information",
       state: useState(true),
       fields: [
+        {
+          label: "Personal Number",
+          name: "personal_number",
+          type: "text",
+          value: clickedItem?.personal_number,
+        },
         {
           label: "Surname",
           name: "surname",
@@ -115,23 +123,14 @@ function PreclaimDialog({
           name: "pension_commencement_date",
           type: "date",
         },
-        {
-          label: "Retirement Date",
-          name: "retirement_date",
-          type: "date",
-        },
+
         {
           label: "Gender",
           name: "gender",
           type: "select",
-          value: clickedItem?.gender === 1 ? "Male" : "Female",
+          value: clickedItem?.gender === 0 ? "Male" : "Female",
         },
-        {
-          label: "Personal Number",
-          name: "personal_number",
-          type: "text",
-          value: clickedItem?.personal_number,
-        },
+
         {
           label: "Last Basic Salary Amount",
           name: "last_basic_salary_amount",
@@ -142,8 +141,37 @@ function PreclaimDialog({
           label: "Retirement Date",
           name: "retirement_date",
           type: "date",
-          value: clickedItem?.retirement_date,
+          value: clickedItem?.retirement_date
+            ? new Date(clickedItem?.retirement_date).toISOString().split("T")[0]
+            : "",
         },
+        {
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
+          type: "date",
+          value: clickedItem?.date_from_which_pension_will_commence
+            ? new Date(clickedItem?.date_from_which_pension_will_commence)
+                .toISOString()
+                .split("T")[0]
+            : "",
+        },
+        {
+          label: "Authority of retirement Ref No.",
+          name: "authority_for_retirement_reference",
+          type: "text",
+          value: clickedItem?.authority_for_retirement_reference,
+        },
+        {
+          label: "Authority of retirement Date",
+          name: "authority_for_retirement_dated",
+          type: "date",
+          value: clickedItem?.authority_for_retirement_dated
+            ? new Date(clickedItem?.authority_for_retirement_dated)
+                .toISOString()
+                .split("T")[0]
+            : "",
+        },
+
         {
           label: "Pension Award ",
           name: "pension_award_id",
@@ -168,11 +196,25 @@ function PreclaimDialog({
           type: "email",
           value: clickedItem?.email_address,
         },
+
         {
-          label: "Phone Number",
-          name: "phone_number",
+          label: "Postal Address",
+          name: "postal_address",
           type: "text",
-          value: clickedItem?.phone_number,
+          value: clickedItem?.postal_address,
+        },
+        { label: "Phone Number", name: "phone_number", type: "text" },
+        {
+          label: "Country",
+          name: "country",
+          type: "text",
+          value: "Kenya",
+        },
+        {
+          label: "City/Town",
+          name: "city",
+          type: "text",
+          value: clickedItem?.city_town,
         },
       ],
     },
@@ -304,7 +346,7 @@ function PreclaimDialog({
           clickedItem={clickedItem}
         />
       </Dialog>
-      <div className="w-full p-2 mt-3 mr-1 h-[100%] grid grid-cols-12 gap-2">
+      <div className="w-full p-2 mt-3 mr-1  grid grid-cols-12 gap-2 overflow-hidden">
         <IconButton
           sx={{
             ml: "auto",
@@ -319,7 +361,7 @@ function PreclaimDialog({
             <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
           </Tooltip>{" "}
         </IconButton>
-        <div className="col-span-9 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
+        <div className="col-span-9 max-h-[100%] overflow-y-auto  bg-white shadow-sm rounded-2xl pb-4">
           <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
             <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center">
@@ -386,6 +428,24 @@ function PreclaimDialog({
                     </IconButton>
                     <p className="font-normal text-gray -ml-1 text-[13px]">
                       View Work History
+                    </p>
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      router.push(
+                        "/pensions/preclaims/listing/view-pensioner-docs"
+                      )
+                    }
+                    sx={{ mb: -1, maxHeight: "25px" }}
+                  >
+                    <IconButton>
+                      <AssignmentOutlined
+                        sx={{ fontSize: "18px", mb: "2px" }}
+                        color="primary"
+                      />
+                    </IconButton>
+                    <p className="font-normal text-gray -ml-1 text-[13px]">
+                      View Pensioner Docs
                     </p>
                   </Button>
                 </div>
@@ -457,7 +517,7 @@ function PreclaimDialog({
             </div>
             <hr className="border-[1px] border-black-900 my-2" />
           </div>
-          <div className="p-6 mt-[-15px]">
+          <div className="p-6 mt-[-15px] h-full overflow-y-auto">
             {sections.map((section, index) => {
               const [open, setOpen] = section.state;
               return (
@@ -483,7 +543,7 @@ function PreclaimDialog({
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
                   <Collapse in={open} timeout="auto" unmountOnExit>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-2 ">
                       {section.fields.map((field, fieldIndex) => (
                         <div key={fieldIndex} className="flex flex-col">
                           <label className="text-xs font-semibold text-gray-600">
@@ -498,7 +558,15 @@ function PreclaimDialog({
                             value={field.value}
                             required
                             fullWidth
-                            sx={{ fontWeight: 600 }}
+                            sx={{
+                              fontWeight: 600,
+                              "& .MuiInputBase-input.Mui-disabled, & .MuiOutlinedInput-input.Mui-disabled":
+                                {
+                                  color: "rgba(0, 0, 0, 0.4)", // Darken text color
+                                  fontWeight: 600, // Bold text
+                                  WebkitTextFillColor: "rgba(0, 0, 0, 0.6)", // Ensures the color is applied in WebKit browsers
+                                },
+                            }}
                             disabled={disabled}
                           />
                         </div>
@@ -511,16 +579,15 @@ function PreclaimDialog({
           </div>
         </div>
         <div className="col-span-3 flex flex-col">
-          <UserDetailCard clickedItem={clickedItem} />
+          <PensionerDetailSummary clickedItem={clickedItem} />
 
           <Divider sx={{ mt: 3 }} />
-          {(clickedItem?.notification_status === 3 ||
+          <ProspectivePensionersDocs clickedItem={clickedItem} />
+          {/**   {(clickedItem?.notification_status === 3 ||
             clickedItem?.notification_status === 4 ||
             clickedItem?.notification_status === 5 ||
             clickedItem?.notification_status === 6 ||
-            clickedItem?.notification_status === 7) && (
-            <ProspectivePensionersDocs />
-          )}
+            clickedItem?.notification_status === 7) && <></>}*/}
         </div>
       </div>
     </Dialog>
