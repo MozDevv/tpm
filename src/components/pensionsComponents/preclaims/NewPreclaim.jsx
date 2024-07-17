@@ -25,6 +25,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { message } from "antd";
 
 dayjs.extend(isSameOrBefore);
 
@@ -65,25 +66,16 @@ function NewPreclaim({
     identifier_type: "",
   });
   const router = useRouter();
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? parseFloat(value) : value;
-    /*  const parsedValueDate =
-      type === "date" ? new Date(value).toLocaleDateString() : value;
-    */
-    setFormData({ ...formData, [name]: parsedValue });
 
-    // Validation logic
+  const validateField = (name, value, formData) => {
     let error = "";
 
     if (
-      type === "email" &&
+      name === "email_address" &&
       value &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     ) {
       error = "Invalid email format";
-    } else if (type === "number" && value && isNaN(parsedValue)) {
-      error = "Must be a number";
     } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
       error = "Must be a valid phone number";
     } else if (name === "dob" && value) {
@@ -111,11 +103,8 @@ function NewPreclaim({
     ) {
       error = "Must be a valid phone number";
     } else if (
-      type === "date" &&
+      name.includes("date") &&
       value &&
-      name !== "date_from_which_pension_will_commence" &&
-      name !== "retirement_date" &&
-      name !== "authority_for_retirement_dated" &&
       dayjs(value).isAfter(dayjs())
     ) {
       error = "Date cannot be in the future";
@@ -178,6 +167,17 @@ function NewPreclaim({
       }
     }
 
+    return error;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
+    const parsedValue = type === "number" ? parseFloat(value) : value;
+    /*  const parsedValueDate =
+      type === "date" ? new Date(value).toLocaleDateString() : value;
+    */
+    setFormData({ ...formData, [name]: parsedValue });
+    const error = validateField(name, parsedValue, formData);
     setErrors({ ...errors, [name]: error });
   };
 
@@ -404,6 +404,12 @@ function NewPreclaim({
         newErrors[key] = "This field is required";
       }
     });
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key], formData);
+      if (error) {
+        newErrors[key] = error;
+      }
+    });
 
     if (formData.dob) {
       const dobDate = dayjs(formData.dob);
@@ -451,8 +457,15 @@ function NewPreclaim({
           `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         );
       }
-
-      // fetchAllPreclaims(); // Uncomment if you need to refresh the preclaims list
+      if (
+        res.data.succeeded === false &&
+        res.data.messages[0] ===
+          "A similar award has already been created for the retiree."
+      ) {
+        message.error(
+          "A similar award has already been created for the retiree."
+        );
+      }
     } catch (error) {
       console.log("API Error:", error);
     } finally {
