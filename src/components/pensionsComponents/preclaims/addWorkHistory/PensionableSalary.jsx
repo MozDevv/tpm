@@ -13,7 +13,9 @@ import {
   Paper,
   Button,
   Dialog,
+  IconButton,
 } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 
@@ -22,6 +24,9 @@ function PensionableSalary({ id }) {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const { alert, setAlert } = useAlert();
 
   const fetchPensionableSalary = async () => {
     try {
@@ -48,7 +53,6 @@ function PensionableSalary({ id }) {
     { label: "Pensionable Allowance", value: "pensionable_allowance" },
   ];
 
-  const { alert, setAlert } = useAlert();
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -64,20 +68,51 @@ function PensionableSalary({ id }) {
     });
 
     try {
-      const res = await apiService.post(
-        preClaimsEndpoints.createPensionableSalary,
-        formattedFormData
-      );
+      let res;
+      if (isEditMode) {
+        res = await apiService.put(
+          preClaimsEndpoints.updatePensionableSalary(editId),
+          formattedFormData
+        );
+      } else {
+        res = await apiService.post(
+          preClaimsEndpoints.createPensionableSalary,
+          formattedFormData
+        );
+      }
 
       if (res.status === 200) {
         fetchPensionableSalary();
         setOpen(false);
         setAlert({
           open: true,
-          message: "Pensionable Salary added successfully",
+          message: `Pensionable Salary ${
+            isEditMode ? "updated" : "added"
+          } successfully`,
           severity: "success",
         });
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setFormData(item);
+    setEditId(item.id);
+    setIsEditMode(true);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiService.delete(preClaimsEndpoints.deletePensionableSalary(id));
+      fetchPensionableSalary();
+      setAlert({
+        open: true,
+        message: "Pensionable Salary deleted successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -88,7 +123,7 @@ function PensionableSalary({ id }) {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-6">
           <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            Add Pensionable Salary
+            {isEditMode ? "Edit" : "Add"} Pensionable Salary
           </h1>
           <div className="flex flex-col gap-3">
             {fields.map((field) => (
@@ -99,13 +134,14 @@ function PensionableSalary({ id }) {
                 <input
                   type={field.type}
                   name={field.value}
+                  value={formData[field.value] || ""}
                   onChange={handleInputChange}
                   className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
                 />
               </div>
             ))}
             <Button variant="contained" onClick={handleSubmit} sx={{ mt: 4 }}>
-              Submit
+              {isEditMode ? "Update" : "Submit"}
             </Button>
           </div>
         </div>
@@ -119,11 +155,15 @@ function PensionableSalary({ id }) {
           mt: 2,
           mb: 2,
         }}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setFormData({});
+          setIsEditMode(false);
+          setOpen(true);
+        }}
       >
         Add Pensionable Salary
       </Button>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -132,6 +172,7 @@ function PensionableSalary({ id }) {
               <TableCell>End Date</TableCell>
               <TableCell>Salary</TableCell>
               <TableCell>Pensionable Allowance</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -146,6 +187,14 @@ function PensionableSalary({ id }) {
                 </TableCell>
                 <TableCell>{item.salary}</TableCell>
                 <TableCell>{item.pensionable_allowance}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(item)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(item.id)}>
+                    <Delete sx={{ color: "crimson" }} />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

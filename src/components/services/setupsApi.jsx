@@ -97,6 +97,8 @@ const endpoints = {
 
   //updateMenuRole
   updateMenuRole: "/CreatePermissionRole",
+
+  //getPro
 };
 
 export const apiService = {

@@ -1,4 +1,5 @@
 "use client";
+import CustomBreadcrumbs from "@/components/CustomBreadcrumbs/CustomBreadcrumbs";
 import AddDocuments from "@/components/pensionsComponents/preclaims/documents/AddDocuments";
 import preClaimsEndpoints, {
   apiService,
@@ -29,6 +30,7 @@ function Documents() {
 
   return (
     <div>
+      <CustomBreadcrumbs currentStep={4} />
       <p className="text-primary font-semibold mb-5 text-xl ml-1 mt-4">
         Upload all the Required Items
       </p>

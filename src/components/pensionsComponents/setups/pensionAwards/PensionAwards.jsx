@@ -12,12 +12,10 @@ import {
   MenuItem,
   FormControlLabel,
   Switch,
-  TextField
+  TextField,
 } from "@mui/material";
 import MapPensionerAwards from "./MapPensionerAwards";
 import "./pensionAwards.css";
-
-
 
 function PensionAwards() {
   const [rowData, setRowData] = useState([]);
@@ -35,11 +33,10 @@ function PensionAwards() {
     description: "",
     id: "",
     prefix: "",
-    has_commutation: false
+    has_commutation: false,
   });
 
   const [formDataErrors, setFormDataErrors] = useState({});
-
 
   const columnDefs = [
     {
@@ -82,8 +79,8 @@ function PensionAwards() {
       filter: false,
       cellRenderer: (params) => {
         const index = params.value;
-        const current_data = rowData[index]
-        const has_commutation = current_data.has_commutation
+        const current_data = rowData[index];
+        const has_commutation = current_data.has_commutation;
 
         return (
           <Button
@@ -101,7 +98,7 @@ function PensionAwards() {
             {has_commutation ? "Yes" : "No"}
           </Button>
         );
-      }
+      },
     },
     {
       field: "mapDocs",
@@ -110,19 +107,17 @@ function PensionAwards() {
       filter: false,
       cellRenderer: (params) => {
         const index = params.value;
-        const current_data = rowData[index]
+        const current_data = rowData[index];
         // const id = params[index].value;
-        const document_nos = current_data.awardDocuments.length
+        const document_nos = current_data.awardDocuments.length;
 
         return (
           <Button
             variant="outlined"
-            onClick={
-              () => {
-                setOpenAward(true);
-                setRowClicked(current_data);
-              }
-            }
+            onClick={() => {
+              setOpenAward(true);
+              setRowClicked(current_data);
+            }}
             sx={{
               ml: 3,
               borderColor: "#3498db",
@@ -136,7 +131,7 @@ function PensionAwards() {
             Map Documents ({document_nos})
           </Button>
         );
-      }
+      },
     },
     // {
     //   field: "start_date",
@@ -186,7 +181,7 @@ function PensionAwards() {
       awardDocuments: item.awardDocuments,
       start_date: item.start_date,
       // end_date: item.end_date,
-      has_commutation: item.has_commutation
+      has_commutation: item.has_commutation,
     }));
   };
 
@@ -204,7 +199,6 @@ function PensionAwards() {
     setPageNumber(newPageNumber);
   };
 
-
   const fetchDocumentTypes = async () => {
     try {
       const res = await apiService.get(endpoints.documentTypes);
@@ -217,60 +211,54 @@ function PensionAwards() {
     }
   };
 
-
   const handleEditFormChange = (evt) => {
-
-    
     let { name, value, type, checked } = evt.target;
 
-    let errors = { ...formDataErrors }
+    let errors = { ...formDataErrors };
 
     if (name == "name" && (value == null || value.length == 0)) {
-      errors = { ...errors, [name]: 'Name is required' };
+      errors = { ...errors, [name]: "Name is required" };
     } else if (name == "prefix" && (value == null || value.length == 0)) {
-      errors = { ...errors, [name]: 'Prefix is required' };
+      errors = { ...errors, [name]: "Prefix is required" };
     } else if (name == "description" && (value == null || value.length == 0)) {
-      errors = { ...errors, [name]: 'Description is required' };
+      errors = { ...errors, [name]: "Description is required" };
     } else if (name == "has_commutation") {
-      value = checked
+      value = checked;
     } else {
       errors = { ...errors, [name]: null };
     }
-
 
     setEditFormData({ ...editFormData, [name]: value });
     setFormDataErrors({ ...errors });
   };
 
   const handleEditFormSubmit = async (e) => {
-
     e.preventDefault();
 
     let valid = true;
 
-    Object.keys(formDataErrors).forEach(k => {
+    Object.keys(formDataErrors).forEach((k) => {
       if (formDataErrors[k] !== null) {
         valid = false;
         return;
       }
-    })
+    });
 
     if (valid) {
       console.log(editFormData);
 
-      
-      editFormData.id = rowClicked?.id
+      editFormData.id = rowClicked?.id;
 
       try {
-        const res = await apiService.post(`/api/Setups/EditPensionAward`,
+        const res = await apiService.post(
+          `/api/Setups/EditPensionAward`,
           editFormData
         );
 
         if (res.data.succeeded && res.status === 200) {
           setAlert({
             open: true,
-            message:
-              "Pension award updated successfully",
+            message: "Pension award updated successfully",
             severity: "success",
           });
           setOpenDialog(false);
@@ -282,9 +270,8 @@ function PensionAwards() {
         console.log("API Error:", error);
       } finally {
       }
-
     }
-  }
+  };
 
   useEffect(() => {
     fetchDocumentTypes();
@@ -309,13 +296,13 @@ function PensionAwards() {
             }}
             open={openDialog}
             onClose={() => {
-              setOpenDialog(false)
+              setOpenDialog(false);
               setEditFormData({
                 name: "",
                 description: "",
                 id: "",
                 prefix: "",
-                has_commutation: false
+                has_commutation: false,
               });
             }}
           >
@@ -324,7 +311,6 @@ function PensionAwards() {
               <p className="text-base  text-primary font-semibold mb-5">
                 EDIT {rowClicked?.name?.toUpperCase()}
               </p>
-
             </div>
             <form onSubmit={handleEditFormSubmit}>
               <div className="mb-4">
@@ -346,7 +332,6 @@ function PensionAwards() {
                   error={!!formDataErrors.name}
                   helperText={formDataErrors.name}
                 />
-
               </div>
 
               <div className="mb-4">
@@ -368,7 +353,6 @@ function PensionAwards() {
                   error={!!formDataErrors.prefix}
                   helperText={formDataErrors.prefix}
                 />
-
               </div>
 
               <div className="mb-4">
@@ -389,7 +373,6 @@ function PensionAwards() {
                   error={!!formDataErrors.description}
                   helperText={formDataErrors.description}
                 />
-
               </div>
 
               <div className="mb-4">
@@ -400,7 +383,6 @@ function PensionAwards() {
                   Has Commutation?
                 </label>
 
-
                 <div className="flex items-center gap-2">
                   <FormControlLabel
                     control={
@@ -408,16 +390,26 @@ function PensionAwards() {
                         checked={editFormData.has_commutation}
                         id="has_commutation"
                         name="has_commutation"
-                        inputProps={{ 'aria-label': 'controlled' }}
-                        onChange={handleEditFormChange} />
+                        inputProps={{ "aria-label": "controlled" }}
+                        onChange={handleEditFormChange}
+                      />
                     }
-                    label={editFormData?.has_commutation ? "Commutable" : "Not Commutable"}
+                    label={
+                      editFormData?.has_commutation
+                        ? "Commutable"
+                        : "Not Commutable"
+                    }
                   />
                 </div>
               </div>
 
               <div className="flex w-full">
-                <Button variant="contained" type="submit" className="flex-1" color="primary">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className="flex-1"
+                  color="primary"
+                >
                   <p className="text-md"> Save Changes</p>
                 </Button>
               </div>
@@ -449,7 +441,7 @@ function PensionAwards() {
                 description: e.data.description,
                 id: e.data.id,
                 prefix: e.data.prefix,
-                has_commutation: e.data.has_commutation
+                has_commutation: e.data.has_commutation,
               });
             }}
             onGridReady={onGridReady}
