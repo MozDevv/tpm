@@ -14,6 +14,9 @@ const preClaimsEndpoints = {
 
   getPreclaims: "/api/ProspectivePensioners/getProspectivePensioners",
 
+  getProspectivePensioner: (id) =>
+    `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
+
   sendNotifications:
     "/api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule",
 
@@ -25,7 +28,7 @@ const preClaimsEndpoints = {
 
   //workHistory
   getPostandNatureofSalaries: (id) =>
-    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries/?prospective_pensioner_id=${id}`,
+    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
   createPostAndNatureOfService:
     "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary",
   getPensionableSalary: (id) =>

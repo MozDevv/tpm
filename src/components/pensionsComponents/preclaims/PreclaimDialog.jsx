@@ -203,7 +203,12 @@ function PreclaimDialog({
           type: "text",
           value: clickedItem?.postal_address,
         },
-        { label: "Phone Number", name: "phone_number", type: "text" },
+        {
+          label: "Phone Number",
+          name: "phone_number",
+          type: "text",
+          value: clickedItem?.phone_number,
+        },
         {
           label: "Country",
           name: "country",
@@ -284,7 +289,7 @@ function PreclaimDialog({
   const router = useRouter();
   const handleOpenWorkHistory = () => {
     router.push(
-      `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}`
+      `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}&name=${clickedItem?.first_name}`
     );
   };
   return (

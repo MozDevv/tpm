@@ -13,7 +13,13 @@ import {
   Paper,
   Button,
   Dialog,
+  Select,
+  MenuItem,
+  TextField,
+  FormControl,
+  IconButton,
 } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 
@@ -45,11 +51,25 @@ function PeriodsOfAbsence({ id }) {
   const fields = [
     { label: "Start Date", value: "start_date", type: "date" },
     { label: "End Date", value: "end_date", type: "date" },
-    { label: "Cause Of Absence", value: "cause_of_absence" },
+    {
+      label: "Cause Of Absence",
+      value: "cause_of_absence",
+      type: "select",
+      options: [
+        "Absenteeism",
+        "Suspension",
+        "Interdiction",
+        "Unpaid Maternity Leave",
+        "Study Leave",
+        "Sick Leave",
+        "Condoned Leave",
+      ],
+    },
   ];
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async () => {
@@ -82,25 +102,67 @@ function PeriodsOfAbsence({ id }) {
     }
   };
 
+  const handleEdit = (item) => {
+    setFormData(item);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiService.delete(preClaimsEndpoints.deletePeriodOfAbsence(id));
+      fetchPeriodsOfAbsence();
+      setAlert({
+        open: true,
+        message: "Period of Absence deleted successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-10">
-          <h1 className="text-base font-semibold text-primary py-2 mb-3">
+          <h1 className="text-lg font-semibold text-primary py-2 mb-3">
             Add Period of Absence
           </h1>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-[300px]">
             {fields.map((field) => (
               <div key={field.value}>
                 <label className="text-xs font-semibold text-gray-600">
                   {field.label}
                 </label>
-                <input
-                  type={field.type}
-                  name={field.value}
-                  onChange={handleInputChange}
-                  className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
-                />
+                {field.type === "select" ? (
+                  <FormControl fullWidth>
+                    <TextField
+                      select
+                      name={field.value}
+                      value={formData[field.value] || ""}
+                      onChange={handleInputChange}
+                      defaultValue=""
+                      size="medium"
+                      fullWidth
+                    >
+                      {field.options.map((option, index) => (
+                        <MenuItem key={index} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </FormControl>
+                ) : (
+                  <TextField
+                    size="medium"
+                    fullWidth
+                    type={field.type || "text"}
+                    name={field.value}
+                    value={formData[field.value] || ""}
+                    onChange={handleInputChange}
+                    className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
+                  />
+                )}
               </div>
             ))}
             <Button variant="contained" onClick={handleSubmit} sx={{ mt: 4 }}>
@@ -118,11 +180,14 @@ function PeriodsOfAbsence({ id }) {
           mt: 2,
           mb: 2,
         }}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setFormData({});
+          setOpen(true);
+        }}
       >
         Add Period of Absence
       </Button>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -131,6 +196,7 @@ function PeriodsOfAbsence({ id }) {
               <TableCell>End Date</TableCell>
               <TableCell>Cause Of Absence</TableCell>
               <TableCell>Number of Days</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -145,6 +211,14 @@ function PeriodsOfAbsence({ id }) {
                 </TableCell>
                 <TableCell>{item.cause_of_absence}</TableCell>
                 <TableCell>{item.number_of_days}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(item)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(item.id)}>
+                    <Delete sx={{ color: "crimson" }} />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

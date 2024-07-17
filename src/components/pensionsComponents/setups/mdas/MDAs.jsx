@@ -61,7 +61,7 @@ const columnDefs = [
 function MDAs() {
   const [rowData, setRowData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 18;
+  const pageSize = 100;
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -164,7 +164,7 @@ function MDAs() {
               />
             </div>
           </div>{" "}
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+          {/* <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
             <Pagination
               count={totalPages}
               page={pageNumber}
@@ -173,7 +173,7 @@ function MDAs() {
               variant="outlined"
               shape="rounded"
             />
-          </Box>
+          </Box> */}
         </div>
       </>
     </div>

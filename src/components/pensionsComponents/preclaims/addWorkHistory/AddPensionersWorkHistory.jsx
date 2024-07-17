@@ -8,9 +8,14 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Close } from "@mui/icons-material";
 
-function AddPensionersWorkHistory({ id }) {
+function AddPensionersWorkHistory({ id, name }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const handleRedirect = () => {
+    !name
+      ? router.push(`/pensions/preclaims/listing/new/documents?id=${id}`)
+      : router.push(`/pensions/preclaims/listing`);
+  };
 
   return (
     <div className="p-2 w-full">
@@ -24,19 +29,17 @@ function AddPensionersWorkHistory({ id }) {
               mb: 3,
               mt: 2,
             }}
-            onClick={() =>
-              router.push(`/pensions/preclaims/listing/new/documents?id=${id}`)
-            }
+            onClick={handleRedirect}
             //endIcon={<Close />}
           >
-            close
+            Next
           </Button>
         </div>
       </div>
       <hr className="border-[1px] border-black-900 my-2" />
       <div className="container">
         <Suspense fallback={<Spinner />}>
-          <PostAndNature id={id} />
+          <PostAndNature id={id} loading={loading} setLoading={setLoading} />
         </Suspense>
         <Suspense fallback={<Spinner />}>
           <PensionableSalary id={id} />
