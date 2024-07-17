@@ -57,6 +57,13 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
   },
+
+  {
+    field: "mapDocs",
+    headerName: "Map Docs",
+    headerClass: "prefix-header",
+    filter: true,
+  },
 ];
 function PensionAwards() {
   const [rowData, setRowData] = useState([]);
@@ -94,6 +101,7 @@ function PensionAwards() {
       end_date: item.end_date,
       pensionCap: item.pensionCap.name,
       awardDocuments: item.awardDocuments,
+      mapDocs: item,
     }));
   };
 

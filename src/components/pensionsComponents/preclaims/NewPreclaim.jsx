@@ -50,9 +50,9 @@ function NewPreclaim({
     pension_award_id: "",
     mda_id: "",
     country_id: "",
-    city: "",
+    city_town: "",
     county_id: "",
-    pension_commencement_date: "",
+    // pension_commencement_date: "",
     designation_grade: "",
     authority_for_retirement_reference: "",
     authority_for_retirement_dated: "",
@@ -99,7 +99,15 @@ function NewPreclaim({
       error = "Must be a valid KRA PIN";
     } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
       error = "Must be a valid number";
-    } else if (type === "date" && value && dayjs(value).isAfter(dayjs())) {
+    } else if (name === "postal_address" && value && isNaN(value)) {
+      error = "Postal Address must be a valid number";
+    } else if (
+      type === "date" &&
+      value &&
+      name !== "date_from_which_pension_will_commence" &&
+      name !== "retirement_date" &&
+      dayjs(value).isAfter(dayjs())
+    ) {
       error = "Date cannot be in the future";
     } else if (name === "date_of_confirmation" && value && formData.dob) {
       const dobDate = dayjs(formData.dob);
@@ -224,7 +232,12 @@ function NewPreclaim({
           ],
         },
 
-        { label: "National ID", name: "national_id", type: "text" },
+        {
+          label: "National ID/Passport No.",
+          name: "national_id",
+          type: "text",
+        },
+        { label: "KRA PIN", name: "kra_pin", type: "text" },
         {
           label: "Designation and Grade",
           name: "designation_grade",
@@ -240,58 +253,12 @@ function NewPreclaim({
             name: mda.name,
           })),
         },
-        {
-          label: "Date of First Appointment",
-          name: "date_of_first_appointment",
-          type: "date",
-        },
-        {
-          label: "Pension Commencement Date",
-          name: "pension_commencement_date",
-          type: "date",
-        },
-        {
-          label: "Retirement Date",
-          name: "retirement_date",
-          type: "date",
-        },
-        {
-          label: "Date of Which Pension will Commence/Date Of Death ",
-          name: "date_from_which_pension_will_commence",
-          type: "date",
-        },
-        {
-          label: "Pension Award",
-          name: "pension_award_id",
-          type: "select",
-          children: pensionAwards.map((award) => ({
-            id: award.id,
-            name: award.name,
-          })),
-        },
-        { label: "KRA PIN", name: "kra_pin", type: "text" },
-        {
-          label: "Authority of retirement Ref No.",
-          name: "authority_for_retirement_reference",
-          type: "text",
-        },
-        {
-          label: "Authority of retirement Date",
-          name: "authority_for_retirement_dated",
-          type: "date",
-        },
 
-        {
-          label: "Date of confirmation into pensionable Office",
-          name: "date_of_confirmation",
-          type: "date",
-        },
-
-        {
-          label: "Last Basic Salary Amount",
-          name: "last_basic_salary_amount",
-          type: "number",
-        },
+        // {
+        //   label: "Pension Commencement Date",
+        //   name: "pension_commencement_date",
+        //   type: "date",
+        // },
       ],
     },
 
@@ -321,7 +288,58 @@ function NewPreclaim({
           })),
         },
 
-        { label: "City/Town", name: "city", type: "text" },
+        { label: "City/Town", name: "city_town", type: "text" },
+      ],
+    },
+    {
+      title: "Benefits",
+      state: useState(true),
+      fields: [
+        {
+          label: "Pension Award",
+          name: "pension_award_id",
+          type: "select",
+          children: pensionAwards.map((award) => ({
+            id: award.id,
+            name: award.name,
+          })),
+        },
+        {
+          label: "Date of First Appointment",
+          name: "date_of_first_appointment",
+          type: "date",
+        },
+        {
+          label: "Date of confirmation into pensionable Office",
+          name: "date_of_confirmation",
+          type: "date",
+        },
+        {
+          label: "Authority of retirement Ref No.",
+          name: "authority_for_retirement_reference",
+          type: "text",
+        },
+        {
+          label: "Authority of retirement Date",
+          name: "authority_for_retirement_dated",
+          type: "date",
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+        },
+        {
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
+          type: "date",
+        },
+
+        {
+          label: "Last Basic Salary Amount",
+          name: "last_basic_salary_amount",
+          type: "number",
+        },
       ],
     },
   ];
