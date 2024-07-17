@@ -2,6 +2,7 @@
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useIsLoading } from "@/context/LoadingContext";
+import { BASE_CORE_API } from "@/utils/constants";
 import {
   ExpandLess,
   KeyboardArrowRight,
@@ -372,7 +373,7 @@ function NewPreclaim({
 
     try {
       const res = await axios.post(
-        "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/CreateProspectivePensioner",
+        `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
         formattedFormData
       );
 

@@ -13,7 +13,19 @@ import {
   TableHead,
   TableRow,
   Paper,
+  IconButton
+  
 } from "@mui/material";
+
+
+import {
+  ArrowBack,
+  ExpandLess,
+  KeyboardArrowRight,
+  OpenInFull,
+} from "@mui/icons-material";
+
+
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 
@@ -108,6 +120,22 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   return (
     <div className="">
       <div className="flex flex-col gap-3">
+
+        <div className="">
+            <IconButton
+                  sx={{
+                    border: "1px solid #006990",
+                    borderRadius: "50%",
+                    padding: "3px",
+                    marginRight: "10px",
+                    color: "#006990",
+                  }}
+                  onClick={() => setOpenAward(false)}
+                >
+                  <ArrowBack sx={{ color: "#006990" }} />
+            </IconButton>
+        </div>
+
         <p className="text-primary text-xl font-semibold">
           Map Documents to {rowClicked?.name}
         </p>

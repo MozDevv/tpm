@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import NotificationMenu from "./NotificationMenu";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -64,7 +65,7 @@ function Navbar() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `https://pmis.agilebiz.co.ke/GetRoles?documentId=${auth.user.roles}`
+          `${BASE_CORE_API}GetRoles?documentId=${auth.user.roles}`
         );
         setRole(res.data.data.name);
       } catch (error) {

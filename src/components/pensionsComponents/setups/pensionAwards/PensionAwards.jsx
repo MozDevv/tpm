@@ -4,66 +4,155 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-
-import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
+import { useAlert } from "@/context/AlertContext";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  MenuItem,
+  FormControlLabel,
+  Switch,
+  TextField
+} from "@mui/material";
 import MapPensionerAwards from "./MapPensionerAwards";
 import "./pensionAwards.css";
 
-const columnDefs = [
-  {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
-  },
-  {
-    field: "prefix",
-    headerName: "Prefix",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-  {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "start_date",
-    headerName: "Start Date",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-  {
-    field: "end_date",
-    headerName: "End Date",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-  {
-    field: "pensionCap",
-    headerName: "Pension Cap",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-];
+
+
 function PensionAwards() {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
+  const [openAward, setOpenAward] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [rowClicked, setRowClicked] = useState();
+  const [required, setRequired] = useState(false);
+  const [documentTypes, setDocumentTypes] = useState([]); // [1]
+  const { alert, setAlert } = useAlert();
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    description: "",
+    id: "",
+    prefix: "",
+    has_commutation: false
+  });
 
+  const [formDataErrors, setFormDataErrors] = useState({});
+
+
+  const columnDefs = [
+    {
+      field: "no",
+      headerName: "No",
+      headerClass: "prefix-header",
+      width: 90,
+      filter: true,
+    },
+    {
+      field: "prefix",
+      headerName: "Prefix",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "pensionCap",
+      headerName: "Pension Cap",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "commutable",
+      headerName: "Commutable",
+      headerClass: "prefix-header",
+      filter: false,
+      cellRenderer: (params) => {
+        const index = params.value;
+        const current_data = rowData[index]
+        const has_commutation = current_data.has_commutation
+
+        return (
+          <Button
+            variant="outlined"
+            sx={{
+              ml: 3,
+              borderColor: has_commutation ? "#3498db" : "#e67e22",
+              maxHeight: "22px",
+              cursor: "pointer",
+              color: has_commutation ? "#3498db" : "#e67e22",
+              fontSize: "10px",
+              fontWeight: "bold",
+            }}
+          >
+            {has_commutation ? "Yes" : "No"}
+          </Button>
+        );
+      }
+    },
+    {
+      field: "mapDocs",
+      headerName: "Map Documents",
+      headerClass: "prefix-header",
+      filter: false,
+      cellRenderer: (params) => {
+        const index = params.value;
+        const current_data = rowData[index]
+        // const id = params[index].value;
+        const document_nos = current_data.awardDocuments.length
+
+        return (
+          <Button
+            variant="outlined"
+            onClick={
+              () => {
+                setOpenAward(true);
+                setRowClicked(current_data);
+              }
+            }
+            sx={{
+              ml: 3,
+              borderColor: "#3498db",
+              maxHeight: "22px",
+              cursor: "pointer",
+              color: "#3498db",
+              fontSize: "10px",
+              fontWeight: "bold",
+            }}
+          >
+            Map Documents ({document_nos})
+          </Button>
+        );
+      }
+    },
+    // {
+    //   field: "start_date",
+    //   headerName: "Start Date",
+    //   headerClass: "prefix-header",
+    //   filter: true,
+    //   width: 100,
+    // },
+    // {
+    //   field: "end_date",
+    //   headerName: "End Date",
+    //   headerClass: "prefix-header",
+    //   filter: true,
+    //   width: 100,
+    // }
+  ];
   useEffect(() => {
     fetchData();
   }, [pageNumber]); // Fetch data whenever pageNumber changes
@@ -74,6 +163,7 @@ function PensionAwards() {
         paging: { pageNumber, pageSize },
       });
       const { data, totalCount } = res.data;
+
       const transformedData = transformData(data);
       setRowData(transformedData);
       setTotalRecords(totalCount);
@@ -88,12 +178,15 @@ function PensionAwards() {
 
       prefix: transformString(item.prefix),
       name: item.name,
+      pensionCap: item.pensionCap.name,
       id: item.id,
       description: transformString(item.description),
-      start_date: item.start_date,
-      end_date: item.end_date,
-      pensionCap: item.pensionCap.name,
+      commutable: index,
+      mapDocs: index,
       awardDocuments: item.awardDocuments,
+      start_date: item.start_date,
+      // end_date: item.end_date,
+      has_commutation: item.has_commutation
     }));
   };
 
@@ -110,12 +203,7 @@ function PensionAwards() {
   const handlePaginationChange = (newPageNumber) => {
     setPageNumber(newPageNumber);
   };
-  const [openAward, setOpenAward] = useState(false);
-  const [rowClicked, setRowClicked] = useState();
 
-  const [required, setRequired] = useState(false);
-
-  const [documentTypes, setDocumentTypes] = useState([]); // [1]
 
   const fetchDocumentTypes = async () => {
     try {
@@ -128,6 +216,75 @@ function PensionAwards() {
       console.log(error);
     }
   };
+
+
+  const handleEditFormChange = (evt) => {
+
+    
+    let { name, value, type, checked } = evt.target;
+
+    let errors = { ...formDataErrors }
+
+    if (name == "name" && (value == null || value.length == 0)) {
+      errors = { ...errors, [name]: 'Name is required' };
+    } else if (name == "prefix" && (value == null || value.length == 0)) {
+      errors = { ...errors, [name]: 'Prefix is required' };
+    } else if (name == "description" && (value == null || value.length == 0)) {
+      errors = { ...errors, [name]: 'Description is required' };
+    } else if (name == "has_commutation") {
+      value = checked
+    } else {
+      errors = { ...errors, [name]: null };
+    }
+
+
+    setEditFormData({ ...editFormData, [name]: value });
+    setFormDataErrors({ ...errors });
+  };
+
+  const handleEditFormSubmit = async (e) => {
+
+    e.preventDefault();
+
+    let valid = true;
+
+    Object.keys(formDataErrors).forEach(k => {
+      if (formDataErrors[k] !== null) {
+        valid = false;
+        return;
+      }
+    })
+
+    if (valid) {
+      console.log(editFormData);
+
+      
+      editFormData.id = rowClicked?.id
+
+      try {
+        const res = await apiService.post(`/api/Setups/EditPensionAward`,
+          editFormData
+        );
+
+        if (res.data.succeeded && res.status === 200) {
+          setAlert({
+            open: true,
+            message:
+              "Pension award updated successfully",
+            severity: "success",
+          });
+          setOpenDialog(false);
+          fetchData();
+        }
+
+        // fetchAllPreclaims(); // Uncomment if you need to refresh the preclaims list
+      } catch (error) {
+        console.log("API Error:", error);
+      } finally {
+      }
+
+    }
+  }
 
   useEffect(() => {
     fetchDocumentTypes();
@@ -150,66 +307,89 @@ function PensionAwards() {
                 width: "100%",
               },
             }}
-            open={openAward}
-            onClose={() => setOpenAward(false)}
+            open={openDialog}
+            onClose={() => {
+              setOpenDialog(false)
+              setEditFormData({
+                name: "",
+                description: "",
+                id: "",
+                prefix: "",
+                has_commutation: false
+              });
+            }}
           >
             <div className="flex w-full justify-between max-h-8 mb-3">
               {" "}
-              <p className="text-base text-primary font-semibold mb-5">
-                Pension Award
+              <p className="text-base  text-primary font-semibold mb-5">
+                EDIT {rowClicked?.name?.toUpperCase()}
               </p>
-              <Button variant="contained" color="primary">
-                <p className="text-xs"> Map to Document Type</p>
-              </Button>
+
             </div>
-            <form>
+            <form onSubmit={handleEditFormSubmit}>
               <div className="mb-4">
                 <label
-                  htmlFor="end_date"
+                  htmlFor="name"
                   className="block text-xs font-medium text-[13px] text-gray-700"
                 >
                   Name
                 </label>
-                <input
-                  type="text"
-                  id="end_date"
-                  name="end_date"
-                  value={rowClicked?.name}
-                  // onChange={(e) => setEndDate(e.target.value)}
-                  className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+
+                <TextField
+                  id="name"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name="name"
+                  value={editFormData.name}
+                  onChange={handleEditFormChange}
+                  error={!!formDataErrors.name}
+                  helperText={formDataErrors.name}
                 />
+
               </div>
+
               <div className="mb-4">
                 <label
-                  htmlFor="end_date"
+                  htmlFor="prefix"
+                  className="block text-xs font-medium text-[13px] text-gray-700"
+                >
+                  Name
+                </label>
+
+                <TextField
+                  id="prefix"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name="prefix"
+                  value={editFormData.prefix}
+                  onChange={handleEditFormChange}
+                  error={!!formDataErrors.prefix}
+                  helperText={formDataErrors.prefix}
+                />
+
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="description"
                   className="block text-xs font-medium text-[13px] text-gray-700"
                 >
                   Description
                 </label>
-                <input
-                  type="text"
-                  id="end_date"
-                  name="end_date"
-                  value={rowClicked?.description}
-                  // onChange={(e) => setEndDate(e.target.value)}
-                  className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                <TextField
+                  id="description"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name="description"
+                  value={editFormData.description}
+                  onChange={handleEditFormChange}
+                  error={!!formDataErrors.description}
+                  helperText={formDataErrors.description}
                 />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="end_date"
-                  className="block text-xs font-medium text-[13px] text-gray-700"
-                >
-                  Pension Cap
-                </label>
-                <input
-                  type="text"
-                  id="end_date"
-                  name="end_date"
-                  value={rowClicked?.pensionCap}
-                  // onChange={(e) => setEndDate(e.target.value)}
-                  className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+
               </div>
 
               <div className="mb-4">
@@ -217,41 +397,29 @@ function PensionAwards() {
                   htmlFor="position"
                   className="block text-xs font-medium text-gray-700"
                 >
-                  Pension Award
+                  Has Commutation?
                 </label>
 
-                <TextField
-                  select
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  // name="extension"
-                  value={documentTypes}
-                  onChange={(e) => setDocumentTypes(e.target.value)}
-                  className="mt-1 block w-full  rounded-md border-gray-400"
-                >
-                  <MenuItem value="none">Select Terms of Service</MenuItem>
-                  {Array.isArray(documentTypes) &&
-                    documentTypes.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.name}
-                      </MenuItem>
-                    ))}
-                </TextField>
+
+                <div className="flex items-center gap-2">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={editFormData.has_commutation}
+                        id="has_commutation"
+                        name="has_commutation"
+                        inputProps={{ 'aria-label': 'controlled' }}
+                        onChange={handleEditFormChange} />
+                    }
+                    label={editFormData?.has_commutation ? "Commutable" : "Not Commutable"}
+                  />
+                </div>
               </div>
-              <div className="flex justify-between w-full">
-                <div className="flex flex-row gap-2 items-center">
-                  <label className="block text-xs font-medium text-gray-700">
-                    Required
-                  </label>
-                  <Checkbox checked={required} color="primary" />
-                </div>
-                <div className="flex flex-row gap-2 items-center">
-                  <label className="block text-xs font-medium text-gray-700">
-                    Pensioner Upload
-                  </label>
-                  <Checkbox checked={required} color="primary" />
-                </div>
+
+              <div className="flex w-full">
+                <Button variant="contained" type="submit" className="flex-1" color="primary">
+                  <p className="text-md"> Save Changes</p>
+                </Button>
               </div>
             </form>
           </Dialog>
@@ -273,9 +441,16 @@ function PensionAwards() {
               handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
             }
             onRowClicked={(e) => {
-              setOpenAward(true);
+              setOpenDialog(true);
               setRowClicked(e.data);
-              console.log(e.data);
+              setEditFormData({
+                ...editFormData,
+                name: e.data.name,
+                description: e.data.description,
+                id: e.data.id,
+                prefix: e.data.prefix,
+                has_commutation: e.data.has_commutation
+              });
             }}
             onGridReady={onGridReady}
           />
