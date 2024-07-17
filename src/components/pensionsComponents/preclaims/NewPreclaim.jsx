@@ -24,6 +24,9 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrBefore);
 
 function NewPreclaim({
   openCreate,
@@ -67,13 +70,12 @@ function NewPreclaim({
     const parsedValue = type === "number" ? parseFloat(value) : value;
     /*  const parsedValueDate =
       type === "date" ? new Date(value).toLocaleDateString() : value;
-
-  
-*/
+    */
     setFormData({ ...formData, [name]: parsedValue });
 
     // Validation logic
     let error = "";
+
     if (
       type === "email" &&
       value &&
@@ -103,34 +105,65 @@ function NewPreclaim({
     } else if (name === "postal_address" && value && isNaN(value)) {
       error = "Postal Address must be a valid number";
     } else if (
+      name === "phone_number" &&
+      value &&
+      !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
+    ) {
+      error = "Must be a valid phone number";
+    } else if (
       type === "date" &&
       value &&
       name !== "date_from_which_pension_will_commence" &&
       name !== "retirement_date" &&
+      name !== "authority_for_retirement_dated" &&
       dayjs(value).isAfter(dayjs())
     ) {
       error = "Date cannot be in the future";
-    } else if (name === "date_of_confirmation" && value && formData.dob) {
+    } else if (name === "date_of_first_appointment" && value && formData.dob) {
       const dobDate = dayjs(formData.dob);
-      const confirmationDate = dayjs(value);
-      if (confirmationDate.isBefore(dobDate)) {
-        error = "Date of confirmation cannot be before date of birth";
+      const appointmentDate = dayjs(value);
+      const ageAtAppointment = appointmentDate.diff(dobDate, "year");
+      if (ageAtAppointment < 18) {
+        error =
+          "Date of first appointment must be at least 18 years after date of birth";
       }
-    } else if (name === "retirement_date" && value && formData.dob) {
-      const dobDate = dayjs(formData.dob);
+    } else if (
+      name === "date_of_confirmation" &&
+      value &&
+      formData.date_of_first_appointment
+    ) {
+      const appointmentDate = dayjs(formData.date_of_first_appointment);
+      const confirmationDate = dayjs(value);
+      if (confirmationDate.isBefore(appointmentDate)) {
+        error =
+          "Date of confirmation cannot be before date of first appointment";
+      }
+    } else if (name === "authority_for_retirement_dated" && value) {
+      const retirementAuthorityDate = dayjs(value);
+      if (retirementAuthorityDate.isAfter(dayjs())) {
+        error = "Date of authority of retirement should not exceed today";
+      }
+    } else if (
+      name === "retirement_date" &&
+      value &&
+      formData.authority_for_retirement_dated
+    ) {
+      const authorityDate = dayjs(formData.authority_for_retirement_dated);
       const retirementDate = dayjs(value);
-      if (retirementDate.isBefore(dobDate)) {
-        error = "Date of retirement cannot be before date of birth";
-      } else if (
-        name === "date_of_first_appointment" &&
-        value &&
-        formData.dob
-      ) {
-        const dobDate = dayjs(formData.dob);
-        const appointmentDate = dayjs(value);
-        if (appointmentDate.isBefore(dobDate)) {
-          error = "Date of first appointment cannot be before date of birth";
-        }
+      if (retirementDate.isBefore(authorityDate)) {
+        error =
+          "Retirement date cannot be after the date of authority of retirement";
+      }
+    } else if (
+      name === "date_from_which_pension_will_commence" &&
+      value &&
+      formData.retirement_date
+    ) {
+      const retirementDate = dayjs(formData.retirement_date);
+      const pensionCommenceDate = dayjs(value);
+      if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
+        error =
+          "Date from which the pension will commence must be at least a day after the retirement date";
       }
     }
 
