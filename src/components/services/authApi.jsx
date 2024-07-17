@@ -1,7 +1,8 @@
 /* eslint-disable no-useless-catch */
 import axios from "axios";
+import { BASE_CORE_API } from "@/utils/constants";
 
-export const API_BASE_URL = "https://pmis.agilebiz.co.ke/api";
+export const API_BASE_URL = `${BASE_CORE_API}api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
