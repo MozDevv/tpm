@@ -3,7 +3,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Add, ArticleOutlined } from "@mui/icons-material";
 import { Button, Dialog, IconButton, List, ListItem } from "@mui/material";
 import React, { useEffect } from "react";
-import { Box, Grid, MenuItem, TextField } from "@mui/material";
+import { Box, Grid, MenuItem, TextField, FormControlLabel, Switch, Chip } from "@mui/material";
 
 function DocumentTypes() {
   const [openNotification, setOpenNotification] = React.useState(false);
@@ -37,12 +37,14 @@ function DocumentTypes() {
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [extension, setExtension] = React.useState("");
+  const [has_two_sides, setHasTwoSides] = React.useState(false);
 
   const handleCreate = async () => {
     const data = {
       name: name,
       description: description,
       extenstions: extension,
+      has_two_sides: has_two_sides
     };
 
     try {
@@ -151,6 +153,33 @@ function DocumentTypes() {
                   ))}
                 </TextField>
               </div>
+
+
+              <div className="mb-4">
+                <label
+                  htmlFor="position"
+                  className="block text-xs font-medium text-gray-700"
+                >
+                  Has Two Sides?
+                </label>
+
+
+                <div className="flex items-center gap-2">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={has_two_sides}
+                        id="has_two_sides"
+                        name="has_two_sides"
+                        inputProps={{ 'aria-label': 'controlled' }}
+                        onChange={(e) => setHasTwoSides(e.target.checked)} />
+                    }
+                    label={has_two_sides ? "Has 2 sides" : "Just one side"}
+                  />
+                </div>
+              </div>
+
+
             </form>
           </Box>
         </div>
@@ -188,11 +217,12 @@ function DocumentTypes() {
                   </IconButton>
                   <div className="flex flex-col ">
                     <p className="font-semibold text-base text-primary">
-                      {documentType?.description}
+                    {documentType?.name.charAt(0).toUpperCase() +
+                        documentType?.name.slice(1).toLowerCase()} 
+                        {documentType.has_two_sides && <Chip className="ml-2" size="small" label="Two Sides" color="primary" variant="outlined" />}
                     </p>
                     <p className="text-gray-500 font-normal text-xs">
-                      {documentType?.name.charAt(0).toUpperCase() +
-                        documentType?.name.slice(1).toLowerCase()}
+                      {documentType?.description}
                     </p>
                   </div>
                 </div>

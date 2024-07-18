@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BASE_CORE_API } from "@/utils/constants";
 import {
   Alert,
   Box,
@@ -105,7 +106,7 @@ function Auth() {
   const handleResetPassword = async () => {
     try {
       const response = await AuthApiService.post(
-        `https://pmis.agilebiz.co.ke/api/Auth/ForgetPassword?email=${username}`
+        `${BASE_CORE_API}api/Auth/ForgetPassword?email=${username}`
       );
       console.log("response", response);
       if (response.data.isSuccess) {

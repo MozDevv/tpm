@@ -145,7 +145,7 @@ const colDefs = [
     field: "gender",
     width: 120,
     cellRenderer: (params) => {
-      return params.value === 1 ? "Male" : "Female";
+      return params.value === 0 ? "Male" : "Female";
     },
   },
   {

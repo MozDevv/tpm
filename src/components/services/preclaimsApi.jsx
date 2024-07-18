@@ -3,7 +3,9 @@
 import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
 
-export const API_BASE_URL = "https://pmis.agilebiz.co.ke";
+import { BASE_CORE_API } from "@/utils/constants";
+
+export const API_BASE_URL = `${BASE_CORE_API}`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -13,6 +15,9 @@ const preClaimsEndpoints = {
   createPreclaim: "/api/ProspectivePensioners/CreateProspectivePensioner",
 
   getPreclaims: "/api/ProspectivePensioners/getProspectivePensioners",
+
+  getProspectivePensioner: (id) =>
+    `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
 
   sendNotifications:
     "/api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule",
@@ -25,7 +30,7 @@ const preClaimsEndpoints = {
 
   //workHistory
   getPostandNatureofSalaries: (id) =>
-    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries/?prospective_pensioner_id=${id}`,
+    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
   createPostAndNatureOfService:
     "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary",
   getPensionableSalary: (id) =>

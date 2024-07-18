@@ -37,11 +37,11 @@ const AddDocuments = ({ id }) => {
           );
 
         // Filter documents to upload based on pensioner_upload: false
-        // const uploadableDocuments = !documents.filter(
-        //   (doc) => !doc.pensioner_upload
-        // );
+        const uploadableDocuments = !documents.filter(
+          (doc) => !doc.pensioner_upload
+        );
 
-        setAwardDocuments(documents);
+        setAwardDocuments(uploadableDocuments);
       } catch (error) {
         console.log("Error fetching award documents:", error);
         message.error("Failed to fetch award documents.");

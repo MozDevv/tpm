@@ -2,6 +2,7 @@
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useIsLoading } from "@/context/LoadingContext";
+import { BASE_CORE_API } from "@/utils/constants";
 import {
   ExpandLess,
   KeyboardArrowRight,
@@ -23,6 +24,10 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { message } from "antd";
+
+dayjs.extend(isSameOrBefore);
 
 function NewPreclaim({
   openCreate,
@@ -50,9 +55,10 @@ function NewPreclaim({
     pension_award_id: "",
     mda_id: "",
     country_id: "",
-    city: "",
+    city_town: "",
     county_id: "",
-    pension_commencement_date: "",
+
+    // pension_commencement_date: "",
     designation_grade: "",
     authority_for_retirement_reference: "",
     authority_for_retirement_dated: "",
@@ -61,26 +67,16 @@ function NewPreclaim({
     identifier_type: "",
   });
   const router = useRouter();
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? parseFloat(value) : value;
-    /*  const parsedValueDate =
-      type === "date" ? new Date(value).toLocaleDateString() : value;
 
-  
-*/
-    setFormData({ ...formData, [name]: parsedValue });
-
-    // Validation logic
+  const validateField = (name, value, formData) => {
     let error = "";
+
     if (
-      type === "email" &&
+      name === "email_address" &&
       value &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     ) {
       error = "Invalid email format";
-    } else if (type === "number" && value && isNaN(parsedValue)) {
-      error = "Must be a number";
     } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
       error = "Must be a valid phone number";
     } else if (name === "dob" && value) {
@@ -99,32 +95,90 @@ function NewPreclaim({
       error = "Must be a valid KRA PIN";
     } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
       error = "Must be a valid number";
-    } else if (type === "date" && value && dayjs(value).isAfter(dayjs())) {
+    } else if (name === "postal_address" && value && isNaN(value)) {
+      error = "Postal Address must be a valid number";
+    } else if (
+      name === "phone_number" &&
+      value &&
+      !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
+    ) {
+      error = "Must be a valid phone number";
+    } else if (
+      name.includes("date") &&
+      value &&
+      dayjs(value).isAfter(dayjs())
+    ) {
       error = "Date cannot be in the future";
-    } else if (name === "date_of_confirmation" && value && formData.dob) {
+    } else if (name === "date_of_first_appointment" && value && formData.dob) {
       const dobDate = dayjs(formData.dob);
-      const confirmationDate = dayjs(value);
-      if (confirmationDate.isBefore(dobDate)) {
-        error = "Date of confirmation cannot be before date of birth";
+      const appointmentDate = dayjs(value);
+      const ageAtAppointment = appointmentDate.diff(dobDate, "year");
+      if (ageAtAppointment < 18) {
+        error =
+          "Date of first appointment must be at least 18 years after date of birth";
       }
-    } else if (name === "retirement_date" && value && formData.dob) {
-      const dobDate = dayjs(formData.dob);
+    } else if (
+      name === "date_of_confirmation" &&
+      value &&
+      formData.date_of_first_appointment
+    ) {
+      const appointmentDate = dayjs(formData.date_of_first_appointment);
+      const confirmationDate = dayjs(value);
+      if (confirmationDate.isBefore(appointmentDate)) {
+        error =
+          "Date of confirmation cannot be before date of first appointment";
+      }
+    } else if (
+      name === "authority_for_retirement_dated" &&
+      value &&
+      formData.date_of_first_appointment
+    ) {
+      const appointmentDate = dayjs(formData.date_of_first_appointment);
+      const authorityOfRetirement = dayjs(value);
+      if (authorityOfRetirement.isBefore(appointmentDate)) {
+        error =
+          "Authority of retirement date cannot be before date of first appointment";
+      }
+    } else if (name === "authority_for_retirement_dated" && value) {
+      const retirementAuthorityDate = dayjs(value);
+      if (retirementAuthorityDate.isAfter(dayjs())) {
+        error = "Date of authority of retirement should not exceed today";
+      }
+    } else if (
+      name === "retirement_date" &&
+      value &&
+      formData.authority_for_retirement_dated
+    ) {
+      const authorityDate = dayjs(formData.authority_for_retirement_dated);
       const retirementDate = dayjs(value);
-      if (retirementDate.isBefore(dobDate)) {
-        error = "Date of retirement cannot be before date of birth";
-      } else if (
-        name === "date_of_first_appointment" &&
-        value &&
-        formData.dob
-      ) {
-        const dobDate = dayjs(formData.dob);
-        const appointmentDate = dayjs(value);
-        if (appointmentDate.isBefore(dobDate)) {
-          error = "Date of first appointment cannot be before date of birth";
-        }
+      if (retirementDate.isBefore(authorityDate)) {
+        error =
+          "Retirement date cannot be before the date of authority of retirement";
+      }
+    } else if (
+      name === "date_from_which_pension_will_commence" &&
+      value &&
+      formData.retirement_date
+    ) {
+      const retirementDate = dayjs(formData.retirement_date);
+      const pensionCommenceDate = dayjs(value);
+      if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
+        error =
+          "Date from which the pension will commence must be at least a day after the retirement date";
       }
     }
 
+    return error;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
+    const parsedValue = type === "number" ? parseFloat(value) : value;
+    /*  const parsedValueDate =
+      type === "date" ? new Date(value).toLocaleDateString() : value;
+    */
+    setFormData({ ...formData, [name]: parsedValue });
+    const error = validateField(name, parsedValue, formData);
     setErrors({ ...errors, [name]: error });
   };
 
@@ -224,7 +278,12 @@ function NewPreclaim({
           ],
         },
 
-        { label: "National ID", name: "national_id", type: "text" },
+        {
+          label: "National ID/Passport No.",
+          name: "national_id",
+          type: "text",
+        },
+        { label: "KRA PIN", name: "kra_pin", type: "text" },
         {
           label: "Designation and Grade",
           name: "designation_grade",
@@ -240,58 +299,12 @@ function NewPreclaim({
             name: mda.name,
           })),
         },
-        {
-          label: "Date of First Appointment",
-          name: "date_of_first_appointment",
-          type: "date",
-        },
-        {
-          label: "Pension Commencement Date",
-          name: "pension_commencement_date",
-          type: "date",
-        },
-        {
-          label: "Retirement Date",
-          name: "retirement_date",
-          type: "date",
-        },
-        {
-          label: "Date of Which Pension will Commence/Date Of Death ",
-          name: "date_from_which_pension_will_commence",
-          type: "date",
-        },
-        {
-          label: "Pension Award",
-          name: "pension_award_id",
-          type: "select",
-          children: pensionAwards.map((award) => ({
-            id: award.id,
-            name: award.name,
-          })),
-        },
-        { label: "KRA PIN", name: "kra_pin", type: "text" },
-        {
-          label: "Authority of retirement Ref No.",
-          name: "authority_for_retirement_reference",
-          type: "text",
-        },
-        {
-          label: "Authority of retirement Date",
-          name: "authority_for_retirement_dated",
-          type: "date",
-        },
 
-        {
-          label: "Date of confirmation into pensionable Office",
-          name: "date_of_confirmation",
-          type: "date",
-        },
-
-        {
-          label: "Last Basic Salary Amount",
-          name: "last_basic_salary_amount",
-          type: "number",
-        },
+        // {
+        //   label: "Pension Commencement Date",
+        //   name: "pension_commencement_date",
+        //   type: "date",
+        // },
       ],
     },
 
@@ -321,7 +334,58 @@ function NewPreclaim({
           })),
         },
 
-        { label: "City/Town", name: "city", type: "text" },
+        { label: "City/Town", name: "city_town", type: "text" },
+      ],
+    },
+    {
+      title: "Benefits",
+      state: useState(true),
+      fields: [
+        {
+          label: "Pension Award",
+          name: "pension_award_id",
+          type: "select",
+          children: pensionAwards.map((award) => ({
+            id: award.id,
+            name: award.name,
+          })),
+        },
+        {
+          label: "Date of First Appointment",
+          name: "date_of_first_appointment",
+          type: "date",
+        },
+        {
+          label: "Date of confirmation into pensionable Office",
+          name: "date_of_confirmation",
+          type: "date",
+        },
+        {
+          label: "Authority of retirement Ref No.",
+          name: "authority_for_retirement_reference",
+          type: "text",
+        },
+        {
+          label: "Authority of retirement Date",
+          name: "authority_for_retirement_dated",
+          type: "date",
+        },
+        {
+          label: "Retirement Date",
+          name: "retirement_date",
+          type: "date",
+        },
+        {
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
+          type: "date",
+        },
+
+        {
+          label: "Last Basic Salary Amount",
+          name: "last_basic_salary_amount",
+          type: "number",
+        },
       ],
     },
   ];
@@ -339,6 +403,12 @@ function NewPreclaim({
         formData[key] === false
       ) {
         newErrors[key] = "This field is required";
+      }
+    });
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key], formData);
+      if (error) {
+        newErrors[key] = error;
       }
     });
 
@@ -372,7 +442,7 @@ function NewPreclaim({
 
     try {
       const res = await axios.post(
-        "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/CreateProspectivePensioner",
+        `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
         formattedFormData
       );
 
@@ -388,8 +458,15 @@ function NewPreclaim({
           `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         );
       }
-
-      // fetchAllPreclaims(); // Uncomment if you need to refresh the preclaims list
+      if (
+        res.data.succeeded === false &&
+        res.data.messages[0] ===
+          "A similar award has already been created for the retiree."
+      ) {
+        message.error(
+          "A similar award has already been created for the retiree."
+        );
+      }
     } catch (error) {
       console.log("API Error:", error);
     } finally {
@@ -443,7 +520,7 @@ function NewPreclaim({
                     type="submit"
                     sx={{ maxHeight: "40px", mt: "5px" }}
                   >
-                    Save
+                    Next
                   </Button>{" "}
                 </div>
               </div>

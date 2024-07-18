@@ -20,35 +20,60 @@ import {
   MenuItem,
   TextField,
   FormControl,
+  IconButton,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
+import { Delete, Edit } from "@mui/icons-material";
+import axios from "axios";
 
-function PostAndNature({ id }) {
+function PostAndNature({ id, loading, setLoading }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
   const { alert, setAlert } = useAlert();
+  const [dateOfConfirmation, setDateOfConfirmation] = useState(null);
 
   const fetchPostandNature = async () => {
     try {
-      const res = await apiService.get(
-        preClaimsEndpoints.getPostandNatureofSalaries(id)
+      const res = await axios.get(
+        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
-      setPostAndNatureData(res.data.data);
-
-      console.log("post and nature", res.data.data);
-      setLoading(false);
+      if (res.status === 200) {
+        setPostAndNatureData(res.data.data);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPostandNature();
+    if (id) {
+      fetchPostandNature();
+    }
   }, [id]);
+
+  const fetchProspectivePensioners = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(id)
+      );
+      setDateOfConfirmation(dayjs(res.data.data[0].date_of_confirmation));
+
+      console.log("first", dayjs(res.data.data[0].date_of_confirmation));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProspectivePensioners();
+  }, []);
 
   const fields = [
     { label: "Date", value: "date", type: "date" },
@@ -77,7 +102,7 @@ function PostAndNature({ id }) {
   ];
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
       [name]: type === "radio" ? JSON.parse(value) : value,
@@ -94,23 +119,75 @@ function PostAndNature({ id }) {
       }
     });
 
-    try {
-      const res = await apiService.post(
-        preClaimsEndpoints.createPostAndNatureOfService,
-        formattedFormData
+    // Validate the date and fields
+    if (
+      dayjs(formattedFormData.date).isBefore(dateOfConfirmation) &&
+      !formattedFormData.was_pensionable &&
+      formattedFormData.nature_of_service === "Permanent"
+    ) {
+      message.error(
+        "The pensioner was Temporary before the date of confirmation."
       );
+      return;
+    }
+    if (
+      !formattedFormData.was_pensionable &&
+      formattedFormData.nature_of_service === "Permanent"
+    ) {
+      message.error(
+        "If NOT Pensionable  Nature of Service should be Temporary."
+      );
+      return;
+    }
+
+    try {
+      let res;
+      if (isEditMode) {
+        res = await apiService.put(
+          preClaimsEndpoints.updatePostAndNatureOfService(editId),
+          formattedFormData
+        );
+      } else {
+        res = await apiService.post(
+          preClaimsEndpoints.createPostAndNatureOfService,
+          formattedFormData
+        );
+      }
 
       if (res.status === 200) {
         fetchPostandNature();
-
         setAlert({
           open: true,
-          message: "Post and Nature of Service added successfully",
+          message: `Post and Nature of Service ${
+            isEditMode ? "updated" : "added"
+          } successfully`,
           severity: "success",
         });
-
         setOpen(false);
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setFormData(item);
+    setEditId(item.id);
+    setIsEditMode(true);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiService.delete(
+        preClaimsEndpoints.deletePostAndNatureOfService(id)
+      );
+      fetchPostandNature();
+      setAlert({
+        open: true,
+        message: "Post and Nature of Service deleted successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +198,7 @@ function PostAndNature({ id }) {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-10">
           <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            Add Post and Nature of Service
+            {isEditMode ? "Edit" : "Add"} Post and Nature of Service
           </h1>
           <div className="flex flex-col gap-2">
             {fields.map((field) => (
@@ -140,6 +217,7 @@ function PostAndNature({ id }) {
                   <RadioGroup
                     name={field.value}
                     onChange={handleInputChange}
+                    value={formData[field.value] ? "true" : "false"}
                     className="flex flex-row gap-2"
                   >
                     <FormControlLabel
@@ -159,7 +237,7 @@ function PostAndNature({ id }) {
                       select
                       name={field.value}
                       onChange={handleInputChange}
-                      defaultValue=""
+                      value={formData[field.value] || ""}
                       size="small"
                     >
                       {field.options.map((option) => (
@@ -173,6 +251,7 @@ function PostAndNature({ id }) {
                   <input
                     type={field.type || "text"}
                     name={field.value}
+                    value={formData[field.value] || ""}
                     onChange={handleInputChange}
                     className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
                   />
@@ -180,7 +259,7 @@ function PostAndNature({ id }) {
               </div>
             ))}
             <Button variant="contained" onClick={handleSubmit} sx={{ mt: 4 }}>
-              Submit
+              {isEditMode ? "Update" : "Submit"}
             </Button>
           </div>
         </div>
@@ -194,11 +273,15 @@ function PostAndNature({ id }) {
           mt: 2,
           mb: 2,
         }}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setFormData({});
+          setIsEditMode(false);
+          setOpen(true);
+        }}
       >
         Add Post and Nature of Service
       </Button>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -208,11 +291,12 @@ function PostAndNature({ id }) {
               <TableCell>Was Pensionable</TableCell>
               <TableCell>Nature of Salary Scale</TableCell>
               <TableCell>Nature of Service</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {postAndNatureData.map((item, index) => (
-              <TableRow key={item.prospective_pensioner_id}>
+              <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   {new Date(item.date).toLocaleDateString()}
@@ -221,6 +305,14 @@ function PostAndNature({ id }) {
                 <TableCell>{item.was_pensionable ? "Yes" : "No"}</TableCell>
                 <TableCell>{item.nature_of_salary_scale}</TableCell>
                 <TableCell>{item.nature_of_service}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(item)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(item.id)}>
+                    <Delete sx={{ color: "crimson" }} />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -2,8 +2,9 @@
 "use client";
 import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
+import { BASE_CORE_API } from "@/utils/constants";
 
-export const API_BASE_URL = "https://pmis.agilebiz.co.ke";
+export const API_BASE_URL = `${BASE_CORE_API}`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -96,6 +97,8 @@ const endpoints = {
 
   //updateMenuRole
   updateMenuRole: "/CreatePermissionRole",
+
+  //getPro
 };
 
 export const apiService = {
