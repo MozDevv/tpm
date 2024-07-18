@@ -158,7 +158,13 @@ function PostAndNature({ id, loading, setLoading }) {
   };
 
   const handleEdit = (item) => {
-    setFormData(item);
+    const formattedItem = {
+      ...item,
+      date: dayjs(item.date).format("YYYY-MM-DD"),
+      // end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+    };
+
+    setFormData(formattedItem);
     setEditId(item.id);
     setIsEditMode(true);
     setOpen(true);

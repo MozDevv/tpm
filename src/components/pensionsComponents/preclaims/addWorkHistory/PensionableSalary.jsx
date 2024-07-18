@@ -18,6 +18,7 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
 
 function PensionableSalary({ id }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -59,6 +60,8 @@ function PensionableSalary({ id }) {
 
   const handleSubmit = async () => {
     const formattedFormData = { ...formData, prospective_pensioner_id: id };
+
+    // Format date fields
     Object.keys(formData).forEach((key) => {
       if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
@@ -69,6 +72,7 @@ function PensionableSalary({ id }) {
 
     try {
       let res;
+
       if (isEditMode) {
         res = await apiService.post(
           preClaimsEndpoints.updatePensionableSalary,
@@ -77,16 +81,6 @@ function PensionableSalary({ id }) {
             id: editId,
           }
         );
-
-        if (res.status === 200) {
-          fetchPensionableSalary();
-          setOpen(false);
-          setAlert({
-            open: true,
-            message: "Pensionable Salary updated successfully",
-            severity: "success",
-          });
-        }
       } else {
         res = await apiService.post(
           preClaimsEndpoints.createPensionableSalary,
@@ -94,7 +88,8 @@ function PensionableSalary({ id }) {
         );
       }
 
-      if (res.status === 200) {
+      // Check for successful response
+      if (res.status === 200 && res.data.succeeded) {
         fetchPensionableSalary();
         setOpen(false);
         setAlert({
@@ -104,8 +99,10 @@ function PensionableSalary({ id }) {
           } successfully`,
           severity: "success",
         });
-      }
-      if (res?.data?.validationErrors?.length > 0) {
+      } else if (
+        res.data.validationErrors &&
+        res.data.validationErrors.length > 0
+      ) {
         res.data.validationErrors.forEach((error) => {
           error.errors.forEach((err) => {
             message.error(`${error.field}: ${err}`);
@@ -113,12 +110,20 @@ function PensionableSalary({ id }) {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error("Submission error:", error);
+      message.error("An error occurred while submitting the data.");
     }
   };
 
   const handleEdit = (item) => {
-    setFormData(item);
+    const formattedItem = {
+      ...item,
+      start_date: dayjs(item.start_date).format("YYYY-MM-DD"),
+      end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+    };
+
+    setFormData(formattedItem);
+    //setFormData(item);
     setEditId(item.id);
     setIsEditMode(true);
     setOpen(true);

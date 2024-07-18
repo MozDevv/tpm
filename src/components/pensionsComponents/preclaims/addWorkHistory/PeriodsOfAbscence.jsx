@@ -22,6 +22,7 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
 
 function PeriodsOfAbsence({ id }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
@@ -92,7 +93,7 @@ function PeriodsOfAbsence({ id }) {
           }
         );
 
-        if (res.status === 200) {
+        if (res.status === 200 && res.data.succeeded) {
           fetchPeriodsOfAbsence();
           setOpen(false);
           setAlert({
@@ -100,8 +101,7 @@ function PeriodsOfAbsence({ id }) {
             message: "Period of Absence updated successfully",
             severity: "success",
           });
-        }
-        if (res.data.validationErrors.length > 0) {
+        } else if (res.data.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
@@ -140,7 +140,13 @@ function PeriodsOfAbsence({ id }) {
   const [editId, setEditId] = useState();
 
   const handleEdit = (item) => {
-    setFormData(item);
+    const formattedItem = {
+      ...item,
+      start_date: dayjs(item.start_date).format("YYYY-MM-DD"),
+      end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+    };
+
+    setFormData(formattedItem);
     setOpen(true);
     setEditId(item.id);
     setIsEditMode(true);

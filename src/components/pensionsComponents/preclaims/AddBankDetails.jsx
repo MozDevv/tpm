@@ -27,10 +27,11 @@ function AddBankDetails({ id }) {
       const res = await apiService.get(
         preClaimsEndpoints.getProspectivePensioner(id)
       );
-      const data = res.data.data[0];
+      const data = res?.data?.data[0];
 
+      console.log("Data ********", res?.data?.data[0]);
       // Check if the retiree has bank details
-      if (res.data.data.length > 0) {
+      if (res?.data?.data[0]?.bankDetails?.length > 0) {
         setHasBankDetails(true);
       }
 
@@ -103,12 +104,11 @@ function AddBankDetails({ id }) {
   };
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     if (hasBankDetails) {
       router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
       return;
     }
-
-    e.preventDefault();
     const validationErrors = validateForm(formData);
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submitting data (e.g., API call)
@@ -151,7 +151,10 @@ function AddBankDetails({ id }) {
           severity: "success",
         });
       }
-      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+
+      console.log("Bank details submitted successfully:", res.data);
+      console.log("Data", data);
+      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
     } catch (error) {
       console.log("Error submitting bank details:", error);
     }
@@ -162,7 +165,9 @@ function AddBankDetails({ id }) {
     : [];
 
   const handlePrevious = () => {
-    router.push(`/pensions/preclaims/listing/new?id=${id}`);
+    if (id) {
+      router.push(`/pensions/preclaims/listing/new?id=${id}`);
+    }
   };
 
   return (

@@ -544,6 +544,8 @@ function NewPreclaim({
       const error = validateField(key, formData[key], formData);
       if (error) {
         newErrors[key] = error;
+        message.error(error);
+        return;
       }
     });
 
@@ -590,14 +592,12 @@ function NewPreclaim({
           `${BASE_CORE_API}api/ProspectivePensioners/UpdateProspectivePensioner`,
           { ...data, id: retireeId }
         );
-        if (res?.data?.validationErrors.length > 0) {
-          res.data.validationErrors.forEach((error) => {
-            error.errors.forEach((err) => {
-              message.error(`${error.field}: ${err}`);
-            });
-          });
-        }
-        if (res.status === 200) {
+
+        if (
+          res?.status === 200 &&
+          res?.data?.messages[0] ===
+            "Prospective pensioner updated successfully"
+        ) {
           setAlert({
             open: true,
             message:
@@ -606,6 +606,29 @@ function NewPreclaim({
           });
           fetchRetiree();
           setEditMode(false);
+        }
+        if (
+          res?.data?.messages[0] ===
+          "Date of confirmation cannot be before or same as date of birth"
+        ) {
+          message.error(
+            "Date of confirmation cannot be before or same as date of birth"
+          );
+        }
+        if (
+          res?.data?.messages[0] ===
+          "The prospective pensioner has already passed the modification state"
+        ) {
+          message.error(
+            "The prospective pensioner has already passed the modification state"
+          );
+        }
+        if (res?.data?.validationErrors.length > 0) {
+          res.data.validationErrors.forEach((error) => {
+            error.errors.forEach((err) => {
+              message.error(`${error.field}: ${err}`);
+            });
+          });
         }
       } else {
         res = await axios.post(
@@ -645,9 +668,6 @@ function NewPreclaim({
       }
     } catch (error) {
       console.log("API Error:", error);
-    } finally {
-      // setOpenCreate(false);
-      // setIsLoading(false);
     }
   };
 
