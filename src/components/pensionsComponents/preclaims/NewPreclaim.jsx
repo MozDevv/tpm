@@ -57,6 +57,7 @@ function NewPreclaim({
     country_id: "",
     city_town: "",
     county_id: "",
+
     // pension_commencement_date: "",
     designation_grade: "",
     authority_for_retirement_reference: "",
@@ -519,7 +520,7 @@ function NewPreclaim({
                     type="submit"
                     sx={{ maxHeight: "40px", mt: "5px" }}
                   >
-                    Save
+                    Next
                   </Button>{" "}
                 </div>
               </div>
