@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   // Function to handle login
   const login = (token) => {
     localStorage.setItem("token", token);
+
     try {
       const decoded = jwtDecode(token);
       setAuth({
@@ -27,11 +28,16 @@ export const AuthProvider = ({ children }) => {
               "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
             ],
           name: decoded.Name,
+          userId:
+            decoded[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+            ],
           permissions: decoded.Permissions,
           roles:
             decoded[
               "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
             ],
+
           username: decoded.UserName,
           exp: decoded.exp,
           iss: decoded.iss,

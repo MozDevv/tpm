@@ -45,6 +45,9 @@ const endpoints = {
   //GET COUNTIES
   getCounties: "/api/Setups/GetCounties",
 
+  createCounty: "/api/Setups/CreateCounty",
+
+  createConstituency: "/api/Setups/CreateConstituency",
   //Get Countries
   getCountries: "/api/Setups/GetCountries",
 

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table } from "antd";
+import { Table, message } from "antd";
 import "./Banks.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button, Dialog, MenuItem, TextField } from "@mui/material";
@@ -69,8 +69,48 @@ const Counties = () => {
     return record.children ? "parent-row" : "child-row";
   };
 
+  const handleCreateCounty = async () => {
+    const data = {
+      country_id: countryId,
+      county_code: countyCode,
+      county_name: countyName,
+    };
+    try {
+      const res = await apiService.post(endpoints.createCounty, data);
+
+      setCreateCounty(false);
+      fetchCountiesAndContituencies();
+      message.success("County Created Successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const [createCounty, setCreateCounty] = useState(false);
+  const [countyCode, setCountyCode] = useState("");
   const [createContituency, setCreateContituency] = useState(false);
+
+  const [openConstituency, setOpenConstituency] = useState(false);
+
+  const handleCreateConstituency = async () => {
+    const data = {
+      // countyI
+      constituency_name: countyName,
+      county_id: countryId,
+    };
+    try {
+      const res = await apiService.post(endpoints.createConstituency, data);
+
+      setOpenConstituency(false);
+      fetchCountiesAndContituencies();
+      message.success("County Created Successfully");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setCreateContituency(false)
+      setCountyName("");
+      setCountryId("");
+    }
+  };
 
   return (
     <div className="p-3">
@@ -86,11 +126,90 @@ const Counties = () => {
         >
           Add County
         </Button>
-        <Button variant="text" color="primary" startIcon={<Add />}>
+        <Button
+          variant="text"
+          color="primary"
+          onClick={() => setOpenConstituency(true)}
+          startIcon={<Add />}
+        >
           Add Constituency
         </Button>
       </div>
 
+      <Dialog
+        sx={{
+          "& .MuiDialog-paper": {
+            padding: "40px",
+            maxWidth: "500px",
+            width: "100%",
+          },
+        }}
+        open={openConstituency}
+        onClose={() => setOpenConstituency(false)}
+      >
+        <div className="flex w-full justify-between max-h-8 mb-3">
+          {" "}
+          <p className="text-base text-primary font-semibold mb-5">
+            Create Constituency
+          </p>
+        </div>
+        <form>
+          <div className="mb-4">
+            <label
+              htmlFor="end_date"
+              className="block text-xs font-medium text-[13px] text-gray-700"
+            >
+              Constituency Name
+            </label>
+            <input
+              type="text"
+              id="end_date"
+              name="end_date"
+              value={countyName}
+              onChange={(e) => setCountyName(e.target.value)}
+              className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="">
+            <label
+              htmlFor="end_date"
+              className="block text-xs font-medium text-[13px] text-gray-700"
+            >
+              County
+            </label>
+            <TextField
+              select
+              variant="outlined"
+              size="small"
+              fullWidth
+              // name="extension"
+              sx={{
+                my: 1,
+              }}
+              value={countryId}
+              onChange={(e) => setCountryId(e.target.value)}
+              className="mt-1 block w-full  rounded-md border-gray-400"
+            >
+              <MenuItem value="none">Select Country</MenuItem>
+              {Array.isArray(countries) &&
+                rowData.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.county_name}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </div>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateConstituency}
+          >
+            <p className="text-xs">Create Constistuency</p>
+          </Button>
+        </form>
+      </Dialog>
       <Dialog
         sx={{
           "& .MuiDialog-paper": {
@@ -130,14 +249,14 @@ const Counties = () => {
               htmlFor="end_date"
               className="block text-xs font-medium text-[13px] text-gray-700"
             >
-              Description
+              County Code
             </label>
             <input
               type="text"
               id="end_date"
               name="end_date"
-              //value={description}
-              // onChange={(e) => setDescription(e.target.value)}
+              value={countyCode}
+              onChange={(e) => setCountyCode(e.target.value)}
               className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
@@ -174,9 +293,9 @@ const Counties = () => {
           <Button
             variant="contained"
             color="primary"
-            // onClick={createDepartment}
+            onClick={handleCreateCounty}
           >
-            <p className="text-xs">Create Department</p>
+            <p className="text-xs">Create County</p>
           </Button>
         </form>
       </Dialog>

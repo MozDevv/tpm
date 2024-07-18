@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { message } from "antd";
+import { useMda } from "@/context/MdaContext";
 
 dayjs.extend(isSameOrBefore);
 
@@ -37,6 +38,8 @@ function NewPreclaim({
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
+
+  const { mdaId } = useMda();
 
   const [formData, setFormData] = useState({
     surname: "",
@@ -53,11 +56,11 @@ function NewPreclaim({
     last_basic_salary_amount: "",
     retirement_date: "",
     pension_award_id: "",
-    mda_id: "",
+    mda_id: mdaId,
     country_id: "",
     city_town: "",
     county_id: "",
-
+    constituency_id: "",
     // pension_commencement_date: "",
     designation_grade: "",
     authority_for_retirement_reference: "",
@@ -177,6 +180,14 @@ function NewPreclaim({
     /*  const parsedValueDate =
       type === "date" ? new Date(value).toLocaleDateString() : value;
     */
+    if (name === "county_id") {
+      const selectedCounty = counties.find((county) => county.id === value);
+      if (selectedCounty) {
+        setConstituencies(selectedCounty.constituencies);
+      } else {
+        setConstituencies([]);
+      }
+    }
     setFormData({ ...formData, [name]: parsedValue });
     const error = validateField(name, parsedValue, formData);
     setErrors({ ...errors, [name]: error });
@@ -187,7 +198,10 @@ function NewPreclaim({
 
   const fetchMdas = async () => {
     try {
-      const res = await apiService.get(endpoints.mdas);
+      const res = await apiService.get(endpoints.mdas, {
+        //"paging.pageNumber": ,
+        "paging.pageSize": 200,
+      });
       setMdas(res.data.data);
     } catch (error) {
       console.error("Error fetching MDAs:", error);
@@ -206,12 +220,24 @@ function NewPreclaim({
   const [counties, setCounties] = useState([]);
   const [countries, setCountries] = useState([]);
 
+  const [constituencies, setConstituencies] = useState([]);
   const { alert, setAlert } = useAlert();
   const fetchCountiesAndContituencies = async () => {
     try {
       const res = await apiService.get(endpoints.getCounties);
       const rawData = res.data.data;
-      setCounties(rawData);
+
+      const countiesData = rawData.map((county) => ({
+        id: county.id,
+        name: county.county_name,
+        constituencies: county.constituencies.map((constituency) => ({
+          id: constituency.id,
+          name: constituency.constituency_name,
+        })),
+      }));
+
+      setCounties(countiesData);
+      setConstituencies(countiesData.constituencies);
 
       console.log("first", rawData);
     } catch (error) {
@@ -330,8 +356,19 @@ function NewPreclaim({
           type: "select",
           children: counties.map((county) => ({
             id: county.id,
-            name: county.county_name,
+            name: county.name,
           })),
+        },
+        {
+          label: "Counstituency",
+          name: "constituency_id",
+          type: "select",
+          children: formData.county_id
+            ? constituencies.map((constituency) => ({
+                id: constituency.id,
+                name: constituency.name,
+              }))
+            : [{ id: "", name: "Please select a county first" }],
         },
 
         { label: "City/Town", name: "city_town", type: "text" },
@@ -457,6 +494,14 @@ function NewPreclaim({
         router.push(
           `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         );
+      }
+
+      if (res.data.validationErrors.length > 0) {
+        res.data.validationErrors.forEach((error) => {
+          error.errors.forEach((err) => {
+            message.error(`${error.field}: ${err}`);
+          });
+        });
       }
       if (
         res.data.succeeded === false &&
