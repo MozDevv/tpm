@@ -4,7 +4,7 @@ import NewPreclaim from "@/components/pensionsComponents/preclaims/NewPreclaim";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 
-function NewPreclaim({ id }) {
+function NewProspectivePensioner({ id }) {
   const searchParams = useSearchParams();
   const retireeId = searchParams.get("id");
   return (
@@ -15,4 +15,4 @@ function NewPreclaim({ id }) {
   );
 }
 
-export default NewPreclaim;
+export default NewProspectivePensioner;
