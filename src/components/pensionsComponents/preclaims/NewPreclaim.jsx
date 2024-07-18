@@ -61,7 +61,9 @@ function NewPreclaim({
         first_name: retiree?.first_name ?? "",
         surname: retiree?.surname ?? "",
         other_name: retiree?.other_name ?? "",
-        dob: retiree?.dob ?? "",
+        dob: retiree?.dob
+          ? new Date(retiree.dob).toISOString().split("T")[0]
+          : "",
         gender: retiree?.gender ?? "",
         identifier_type: retiree?.identifier_type ?? "",
         national_id: retiree?.national_id ?? "",
@@ -70,9 +72,10 @@ function NewPreclaim({
         email_address: retiree?.email_address ?? "",
         postal_address: retiree?.postal_address ?? "",
         phone_number: retiree?.phone_number ?? "",
-        country_id: retiree?.country?.country_name ?? "",
-        county_id: "",
-        constituency_id: retiree?.constituency?.constituency_name ?? "",
+        country_id:
+          retiree?.country?.id ?? "94ece052-7142-477a-af0f-c3909402d247",
+        county_id: retiree?.constituency?.county_id ?? "",
+        constituency_id: retiree?.constituency?.id ?? "",
         city_town: retiree?.city_town ?? "",
         pension_award_id: retiree?.pensionAward?.id ?? "",
         date_of_first_appointment: retiree?.date_of_first_appointment
@@ -447,7 +450,7 @@ function NewPreclaim({
           name: "constituency_id",
           type: "select",
           children: formData.county_id
-            ? constituencies.map((constituency) => ({
+            ? constituencies?.map((constituency) => ({
                 id: constituency.id,
                 name: constituency.name,
               }))
@@ -705,9 +708,9 @@ function NewPreclaim({
                               helperText={errors[field.name]} // Display the error message
                             >
                               <MenuItem value="">Select {field.label}</MenuItem>
-                              {field.children.map((option) => (
-                                <MenuItem key={option.id} value={option.id}>
-                                  {option.name}
+                              {field?.children?.map((option) => (
+                                <MenuItem key={option?.id} value={option?.id}>
+                                  {option?.name}
                                 </MenuItem>
                               ))}
                             </TextField>
