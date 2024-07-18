@@ -1,0 +1,6 @@
+/.github
+/.next
+next.config.mjs
+nginx.conf
+README.md
+Dockerfile

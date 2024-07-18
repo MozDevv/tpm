@@ -27,6 +27,7 @@ import { useSelectedItem } from "@/context/NavItemContext";
 import { useRouter } from "next/navigation";
 import NotificationMenu from "./NotificationMenu";
 import { useAuth } from "@/context/AuthContext";
+import { useMda } from "@/context/MdaContext";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -55,6 +56,10 @@ function Navbar() {
   const { auth, login, logout } = useAuth();
 
   console.log("auth**&&&&&&&&", auth.user.name);
+
+  const { mdaId } = useMda();
+
+  console.log("MDA ID**************", mdaId);
 
   const handleLogout = () => {
     if (localStorage.getItem("token")) {

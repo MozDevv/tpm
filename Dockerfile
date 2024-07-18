@@ -1,10 +1,18 @@
-FROM node:20.5.0-alpine as builder
-WORKDIR /app 
+FROM node:20.5.0-alpine
+ 
+WORKDIR /app
+ 
 COPY  package.json .
+ 
 RUN npm install
+ 
 COPY . .
-RUN npm run dev
-
+ 
+RUN npm run build
+ 
+EXPOSE 3000
+ 
+CMD ["npm", "start"]
 
 
 # FROM nginx:alpine
