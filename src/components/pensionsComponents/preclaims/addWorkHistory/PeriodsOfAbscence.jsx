@@ -83,46 +83,120 @@ function PeriodsOfAbsence({ id }) {
     });
 
     try {
-      const res = await apiService.post(
-        preClaimsEndpoints.createPeriodsOfAbsence,
-        formattedFormData
-      );
+      if (isEditMode) {
+        const res = await apiService.post(
+          preClaimsEndpoints.UpdatePeriodsOfAbsence,
+          {
+            ...formattedFormData,
+            id: editId,
+          }
+        );
 
-      if (res.status === 200) {
-        fetchPeriodsOfAbsence();
-        setOpen(false);
-        setAlert({
-          open: true,
-          message: "Period of Absence added successfully",
-          severity: "success",
-        });
+        if (res.status === 200) {
+          fetchPeriodsOfAbsence();
+          setOpen(false);
+          setAlert({
+            open: true,
+            message: "Period of Absence updated successfully",
+            severity: "success",
+          });
+        }
+        if (res.data.validationErrors.length > 0) {
+          res.data.validationErrors.forEach((error) => {
+            error.errors.forEach((err) => {
+              message.error(`${error.field}: ${err}`);
+            });
+          });
+        }
+      } else {
+        const res = await apiService.post(
+          preClaimsEndpoints.createPeriodsOfAbsence,
+          formattedFormData
+        );
+
+        if (res.status === 200 && res.data.succeeded) {
+          fetchPeriodsOfAbsence();
+          setOpen(false);
+          setAlert({
+            open: true,
+            message: "Period of Absence added successfully",
+            severity: "success",
+          });
+        }
+        if (res.data.validationErrors.length > 0) {
+          res.data.validationErrors.forEach((error) => {
+            error.errors.forEach((err) => {
+              message.error(`${error.field}: ${err}`);
+            });
+          });
+        }
       }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState();
+
   const handleEdit = (item) => {
     setFormData(item);
     setOpen(true);
+    setEditId(item.id);
+    setIsEditMode(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      await apiService.delete(preClaimsEndpoints.deletePeriodOfAbsence(id));
+      await apiService.post(
+        preClaimsEndpoints.deletePeriodsOfAbsence(recordId)
+      );
       fetchPeriodsOfAbsence();
       setAlert({
         open: true,
-        message: "Period of Absence deleted successfully",
+        message: "Periods of abscence deleted successfully",
         severity: "success",
       });
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState();
+  const [recordId, setRecordId] = useState();
+
   return (
     <div>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <div className="p-6">
+          <h1 className="text-base font-semibold text-primary py-2 mb-3">
+            Delete Confirmation
+          </h1>
+          <p className="text-gray-600 mb-3">
+            Are you sure you want to delete this record?
+          </p>
+          <div className="flex justify-between w-full mt-5">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDeleteDialog(false)}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDelete}
+              sx={{ backgroundColor: "crimson", color: "white" }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Dialog>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-10">
           <h1 className="text-lg font-semibold text-primary py-2 mb-3">
@@ -215,7 +289,12 @@ function PeriodsOfAbsence({ id }) {
                   <IconButton onClick={() => handleEdit(item)}>
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(item.id)}>
+                  <IconButton
+                    onClick={() => {
+                      setOpenDeleteDialog(true);
+                      setRecordId(item.id);
+                    }}
+                  >
                     <Delete sx={{ color: "crimson" }} />
                   </IconButton>
                 </TableCell>

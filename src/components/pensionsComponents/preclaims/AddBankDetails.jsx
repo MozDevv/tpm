@@ -1,10 +1,9 @@
-"use client";
-import { useAlert } from "@/context/AlertContext";
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-
-import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/context/AlertContext";
+import endpoints, { apiService } from "@/components/services/setupsApi";
+import preClaimsEndpoints from "@/components/services/preclaimsApi";
 
 function AddBankDetails({ id }) {
   const [banks, setBanks] = useState([]);
@@ -16,10 +15,52 @@ function AddBankDetails({ id }) {
     accountNumber: "",
     accountName: "",
   });
-
   const [errors, setErrors] = useState({});
-
   const { alert, setAlert } = useAlert();
+  const router = useRouter();
+
+  const [hasBankDetails, setHasBankDetails] = useState(false);
+
+  // Function to fetch existing bank details if available
+  const fetchExistingBankDetails = async (id) => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(id)
+      );
+      const data = res.data.data[0];
+
+      // Check if the retiree has bank details
+      if (res.data.data.length > 0) {
+        setHasBankDetails(true);
+      }
+
+      setFormData({
+        bankId: data.bankDetails[0]?.bankBranch?.bank_id,
+        branchId: data.bankDetails[0]?.bank_branch_id,
+        accountNumber: data.bankDetails[0]?.account_number,
+        accountName: data.accountName,
+      });
+
+      setSelectedBank(data.bankDetails[0]?.bankBranch?.bank_id);
+
+      console.log("DATA", data.bankDetails[0].bankBranch);
+      console.log("formData", formData);
+      console.log("SELECTED BANK", selectedBank);
+
+      console.log("Existing bank details:", data.bankDetails);
+    } catch (error) {
+      console.log("Error fetching existing bank details:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchExistingBankDetails(id);
+    }
+
+    // Fetch banks and branches
+    fetchBanksAndBranches();
+  }, [id]);
 
   const fetchBanksAndBranches = async () => {
     try {
@@ -41,13 +82,9 @@ function AddBankDetails({ id }) {
       setBanks(banksData);
       setBranches(branchesData);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching banks and branches:", error);
     }
   };
-
-  useEffect(() => {
-    fetchBanksAndBranches();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +103,11 @@ function AddBankDetails({ id }) {
   };
 
   const handleSubmit = (e) => {
+    if (hasBankDetails) {
+      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      return;
+    }
+
     e.preventDefault();
     const validationErrors = validateForm(formData);
     if (Object.keys(validationErrors).length === 0) {
@@ -85,13 +127,11 @@ function AddBankDetails({ id }) {
     if (!data.branchId) {
       errors.branchId = "Branch is required";
     }
-    if (!data.accountNumber) {
-      errors.accountNumber = "Account Number is required";
-    }
+    // if (!data.accountNumber) {
+    //   errors.accountNumber = "Account Number is required";
+    // }
     return errors;
   };
-
-  const router = useRouter();
 
   const submitFormData = async (formData) => {
     const data = {
@@ -112,13 +152,8 @@ function AddBankDetails({ id }) {
         });
       }
       router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
-      //router.push(`/pensions/preclaims/listing`);
-
-      console.log("Data", res.data);
     } catch (error) {
-      console.log(error);
-
-      console.log(data);
+      console.log("Error submitting bank details:", error);
     }
   };
 
@@ -139,7 +174,7 @@ function AddBankDetails({ id }) {
               Add Bank Details
             </h5>
           </div>
-          <div className="flex ">
+          <div className="flex">
             {" "}
             <div className="flex gap-8 mr-4">
               <Button
@@ -152,7 +187,6 @@ function AddBankDetails({ id }) {
               <Button
                 variant="contained"
                 color="primary"
-                // onClick={handleSubmit}
                 type="submit"
                 sx={{ maxHeight: "40px", mt: "5px" }}
               >
@@ -244,7 +278,7 @@ function AddBankDetails({ id }) {
               className={`border bg-gray-100 border-gray-300 rounded-md p-2 text-sm ${
                 errors.accountName ? "border-red-500" : ""
               }`}
-              required
+              // required
             />
           </div>
         </div>

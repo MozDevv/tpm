@@ -4,6 +4,7 @@ import { create } from "@mui/material/styles/createTransitions";
 import axios from "axios";
 
 import { BASE_CORE_API } from "@/utils/constants";
+import { Update } from "@mui/icons-material";
 
 export const API_BASE_URL = `${BASE_CORE_API}`;
 
@@ -42,6 +43,24 @@ const preClaimsEndpoints = {
 
   createPeriodsOfAbsence:
     "api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
+
+  deletePostAndNature: (id) =>
+    `/api/ProspectivePensioners/DeleteProspectivePensionerPostAndNatureofSalary?id=${id}`,
+
+  updatePostAndNature:
+    "api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalary",
+
+  deletePensionableSalary: (id) =>
+    `/api/ProspectivePensioners/DeleteProspectivePensionerPensionableSalary?id=${id}`,
+
+  updatePensionableSalary:
+    "/api/ProspectivePensioners/UpdateProspectivePensionerPensionableSalary",
+
+  deletePeriodsOfAbsence: (id) =>
+    `api/ProspectivePensioners/DeleteProspectivePensionerPeriodsOfAbsenceWithoutSalary/?id=${id}`,
+
+  UpdatePeriodsOfAbsence:
+    "/api/ProspectivePensioners/UpdateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
 
   //Documents
   getAwardDocuments: (id) =>

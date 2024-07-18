@@ -70,10 +70,23 @@ function PensionableSalary({ id }) {
     try {
       let res;
       if (isEditMode) {
-        res = await apiService.put(
-          preClaimsEndpoints.updatePensionableSalary(editId),
-          formattedFormData
+        res = await apiService.post(
+          preClaimsEndpoints.updatePensionableSalary,
+          {
+            ...formattedFormData,
+            id: editId,
+          }
         );
+
+        if (res.status === 200) {
+          fetchPensionableSalary();
+          setOpen(false);
+          setAlert({
+            open: true,
+            message: "Pensionable Salary updated successfully",
+            severity: "success",
+          });
+        }
       } else {
         res = await apiService.post(
           preClaimsEndpoints.createPensionableSalary,
@@ -92,6 +105,13 @@ function PensionableSalary({ id }) {
           severity: "success",
         });
       }
+      if (res?.data?.validationErrors?.length > 0) {
+        res.data.validationErrors.forEach((error) => {
+          error.errors.forEach((err) => {
+            message.error(`${error.field}: ${err}`);
+          });
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -104,22 +124,57 @@ function PensionableSalary({ id }) {
     setOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      await apiService.delete(preClaimsEndpoints.deletePensionableSalary(id));
+      await apiService.post(
+        preClaimsEndpoints.deletePensionableSalary(recordId)
+      );
       fetchPensionableSalary();
       setAlert({
         open: true,
         message: "Pensionable Salary deleted successfully",
         severity: "success",
       });
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState();
+  const [recordId, setRecordId] = useState();
+
   return (
     <div>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <div className="p-6">
+          <h1 className="text-base font-semibold text-primary py-2 mb-3">
+            Delete Confirmation
+          </h1>
+          <p className="text-gray-600 mb-3">
+            Are you sure you want to delete this record?
+          </p>
+          <div className="flex justify-between w-full mt-5">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDeleteDialog(false)}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDelete}
+              sx={{ backgroundColor: "crimson", color: "white" }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Dialog>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-6">
           <h1 className="text-base font-semibold text-primary py-2 mb-3">
@@ -191,7 +246,12 @@ function PensionableSalary({ id }) {
                   <IconButton onClick={() => handleEdit(item)}>
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(item.id)}>
+                  <IconButton
+                    onClick={() => {
+                      setOpenDeleteDialog(true);
+                      setRecordId(item.id);
+                    }}
+                  >
                     <Delete sx={{ color: "crimson" }} />
                   </IconButton>
                 </TableCell>
