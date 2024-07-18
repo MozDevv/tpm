@@ -21,7 +21,7 @@ export const MdaProvider = ({ children }) => {
       });
       if (res.status === 200) {
         console.log("mdata", res.data.data.mdaId);
-        setMdas(res.data.data.mdaId);
+        setMdaId(res.data.data.mdaId);
       }
     } catch (error) {
       console.error("Error fetching user details:", error);

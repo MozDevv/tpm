@@ -35,39 +35,121 @@ function NewPreclaim({
   setOpenCreate,
   fetchAllPreclaims,
   permissions,
+  retireeId,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 
   const { mdaId } = useMda();
+  const [retiree, setRetiree] = useState({});
+
+  useEffect(() => {
+    if (retireeId) {
+      fetchRetiree();
+    }
+  }, [retireeId]);
+
+  const fetchRetiree = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(retireeId)
+      );
+      const retiree = res.data.data[0];
+      setRetiree(retiree);
+      setFormData({
+        personal_number: retiree?.personal_number ?? "",
+        first_name: retiree?.first_name ?? "",
+        surname: retiree?.surname ?? "",
+        other_name: retiree?.other_name ?? "",
+        dob: retiree?.dob ?? "",
+        gender: retiree?.gender ?? "",
+        identifier_type: retiree?.identifier_type ?? "",
+        national_id: retiree?.national_id ?? "",
+        kra_pin: retiree?.kra_pin ?? "",
+        designation_grade: retiree?.designation_grade ?? "",
+        email_address: retiree?.email_address ?? "",
+        postal_address: retiree?.postal_address ?? "",
+        phone_number: retiree?.phone_number ?? "",
+        country_id: retiree?.country?.country_name ?? "",
+        county_id: "",
+        constituency_id: retiree?.constituency?.constituency_name ?? "",
+        city_town: retiree?.city_town ?? "",
+        pension_award_id: retiree?.pensionAward?.id ?? "",
+        date_of_first_appointment: retiree?.date_of_first_appointment
+          ? new Date(retiree.date_of_first_appointment)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        date_of_confirmation: retiree?.date_of_confirmation
+          ? new Date(retiree.date_of_confirmation).toISOString().split("T")[0]
+          : "",
+        authority_for_retirement_reference:
+          retiree?.authority_for_retirement_reference ?? "",
+        authority_for_retirement_dated: retiree?.authority_for_retirement_dated
+          ? new Date(retiree.authority_for_retirement_dated)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        retirement_date: retiree?.retirement_date
+          ? new Date(retiree.retirement_date).toISOString().split("T")[0]
+          : "",
+        date_from_which_pension_will_commence:
+          retiree?.date_from_which_pension_will_commence
+            ? new Date(retiree.date_from_which_pension_will_commence)
+                .toISOString()
+                .split("T")[0]
+            : "",
+        last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
+      });
+      console.log("retiree ********", retiree);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [formData, setFormData] = useState({
-    surname: "",
-    first_name: "",
-    other_name: "",
-    kra_pin: "",
-    date_of_confirmation: "",
-    dob: "",
-    national_id: "",
-    email_address: "",
-    phone_number: "",
-    gender: "",
-    personal_number: "",
-    last_basic_salary_amount: "",
-    retirement_date: "",
-    pension_award_id: "",
-    mda_id: mdaId,
-    country_id: "",
-    city_town: "",
+    personal_number: retiree?.personal_number ?? "",
+    first_name: retiree?.first_name ?? "",
+    surname: retiree?.surname ?? "",
+    other_name: retiree?.other_name ?? "",
+    dob: retiree?.dob ? new Date(retiree.dob).toISOString().split("T")[0] : "",
+    gender: retiree?.gender ?? "",
+    identifier_type: retiree?.identifier_type ?? "",
+    national_id: retiree?.national_id ?? "",
+    kra_pin: retiree?.kra_pin ?? "",
+    designation_grade: retiree?.designation_grade ?? "",
+    email_address: retiree?.email_address ?? "",
+    postal_address: retiree?.postal_address ?? "",
+    phone_number: retiree?.phone_number ?? "",
+    country_id:
+      (retiree?.country?.id || "94ece052-7142-477a-af0f-c3909402d247") ?? "",
     county_id: "",
-    constituency_id: "",
-    // pension_commencement_date: "",
-    designation_grade: "",
-    authority_for_retirement_reference: "",
-    authority_for_retirement_dated: "",
-    date_of_first_appointment: "",
-    date_from_which_pension_will_commence: "",
-    identifier_type: "",
+    constituency_id: retiree?.constituency?.id ?? "",
+    city_town: retiree?.city_town ?? "",
+    pension_award_id: retiree?.pensionAward?.id ?? "",
+    date_of_first_appointment: retiree?.date_of_first_appointment
+      ? new Date(retiree.date_of_first_appointment).toISOString().split("T")[0]
+      : "",
+    date_of_confirmation: retiree?.date_of_confirmation
+      ? new Date(retiree.date_of_confirmation).toISOString().split("T")[0]
+      : "",
+    authority_for_retirement_reference:
+      retiree?.authority_for_retirement_reference ?? "",
+    authority_for_retirement_dated: retiree?.authority_for_retirement_dated
+      ? new Date(retiree.authority_for_retirement_dated)
+          .toISOString()
+          .split("T")[0]
+      : "",
+    retirement_date: retiree?.retirement_date
+      ? new Date(retiree.retirement_date).toISOString().split("T")[0]
+      : "",
+    date_from_which_pension_will_commence:
+      retiree?.date_from_which_pension_will_commence
+        ? new Date(retiree.date_from_which_pension_will_commence)
+            .toISOString()
+            .split("T")[0]
+        : "",
+    last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
   });
   const router = useRouter();
 
@@ -108,6 +190,8 @@ function NewPreclaim({
       error = "Must be a valid phone number";
     } else if (
       name.includes("date") &&
+      name !== "date_from_which_pension_will_commence" &&
+      name !== "retirement_date" &&
       value &&
       dayjs(value).isAfter(dayjs())
     ) {
@@ -193,20 +277,20 @@ function NewPreclaim({
     setErrors({ ...errors, [name]: error });
   };
 
-  const [mdas, setMdas] = useState([]);
+  //const [mdas, setMdas] = useState([]);
   const [pensionAwards, setPensionAwards] = useState([]);
 
-  const fetchMdas = async () => {
-    try {
-      const res = await apiService.get(endpoints.mdas, {
-        //"paging.pageNumber": ,
-        "paging.pageSize": 200,
-      });
-      setMdas(res.data.data);
-    } catch (error) {
-      console.error("Error fetching MDAs:", error);
-    }
-  };
+  // const fetchMdas = async () => {
+  //   try {
+  //     const res = await apiService.get(endpoints.mdas, {
+  //       //"paging.pageNumber": ,
+  //       "paging.pageSize": 200,
+  //     });
+  //     setMdas(res.data.data);
+  //   } catch (error) {
+  //     console.error("Error fetching MDAs:", error);
+  //   }
+  // };
 
   const fetchPensionAwards = async () => {
     try {
@@ -256,7 +340,6 @@ function NewPreclaim({
     }
   };
   useEffect(() => {
-    fetchMdas();
     fetchPensionAwards();
     fetchCountiesAndContituencies();
     fetchCountries();
@@ -316,15 +399,15 @@ function NewPreclaim({
           type: "text",
         },
 
-        {
-          label: "Ministry/Department/Agency",
-          name: "mda_id",
-          type: "select",
-          children: mdas.map((mda) => ({
-            id: mda.id,
-            name: mda.name,
-          })),
-        },
+        // {
+        //   label: "Ministry/Department/Agency",
+        //   name: "mda_id",
+        //   type: "select",
+        //   children: mdas.map((mda) => ({
+        //     id: mda.id,
+        //     name: mda.name,
+        //   })),
+        // },
 
         // {
         //   label: "Pension Commencement Date",
@@ -477,10 +560,14 @@ function NewPreclaim({
 
     console.log("Formatted Form Data:", formattedFormData);
 
+    const data = { ...formattedFormData, mda_id: mdaId };
+
+    console.log("Data to be sent:", data);
+
     try {
       const res = await axios.post(
         `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
-        formattedFormData
+        data
       );
 
       console.log("API Response:", res.data);

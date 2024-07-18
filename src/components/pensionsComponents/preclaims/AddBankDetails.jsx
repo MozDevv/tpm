@@ -126,6 +126,10 @@ function AddBankDetails({ id }) {
     ? branches.filter((branch) => branch.bankId === selectedBank)
     : [];
 
+  const handlePrevious = () => {
+    router.push(`/pensions/preclaims/listing/new?id=${id}`);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full p-2 mt-8">
       <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
@@ -140,13 +144,10 @@ function AddBankDetails({ id }) {
             <div className="flex gap-8 mr-4">
               <Button
                 variant="outlined"
-                onClick={() => {
-                  setOpenCreate(false);
-                  setErrors({});
-                }}
+                onClick={handlePrevious}
                 sx={{ maxHeight: "40px", mt: "5px" }}
               >
-                Cancel
+                Previous
               </Button>
               <Button
                 variant="contained"
@@ -155,7 +156,7 @@ function AddBankDetails({ id }) {
                 type="submit"
                 sx={{ maxHeight: "40px", mt: "5px" }}
               >
-                Save
+                Next
               </Button>
             </div>
           </div>
