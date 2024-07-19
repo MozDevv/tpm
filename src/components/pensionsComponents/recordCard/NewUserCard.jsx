@@ -12,6 +12,8 @@ import {
   DialogTitle,
   Divider,
 } from "@mui/material";
+import { message } from "antd";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function NewUserCard({ data, setSuccess }) {
@@ -39,6 +41,8 @@ function NewUserCard({ data, setSuccess }) {
 
     return formErrors;
   };
+
+  const router = useRouter();
 
   const handleSubmit = async (event) => {
     setIsLoading(true);
@@ -78,9 +82,16 @@ function NewUserCard({ data, setSuccess }) {
           severity: "success",
         });
         event.target.reset();
+        router.push("/pensions/users");
+      }
+
+      if (res.data.isSuccess === false) {
+        message.error(res.data.message);
       }
     } catch (error) {
       console.log(error.response);
+
+      message.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }

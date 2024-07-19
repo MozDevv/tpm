@@ -44,6 +44,7 @@ import Spinner from "@/components/spinner/Spinner";
 import ReactPaginate from "react-paginate";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useMda } from "@/context/MdaContext";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -422,6 +423,8 @@ const Preclaims = ({ status }) => {
 
   const [items, setItems] = useState([]);
 
+  const { mdaId } = useMda();
+
   const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
     try {
@@ -432,6 +435,8 @@ const Preclaims = ({ status }) => {
         ...filter,
       });
 
+      console.log("mdaId***********", mdaId);
+
       /*  const res = await apiService.get(
         `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
@@ -439,13 +444,17 @@ const Preclaims = ({ status }) => {
         console.log(res.data.data);
         const rawData = res.data.data;
 
+        // Filter data by mdaId
+        const filteredMinistriesData = rawData.filter(
+          (item) => item.mda_id === mdaId
+        );
         const { totalCount, currentPage, totalPages } = res.data;
         setTotalPages(res.data.totalPages);
 
         setTotalRecords(res.data.totalCount);
 
         if (status || status === 0) {
-          const filteredApprovals = rawData.filter(
+          const filteredApprovals = filteredMinistriesData.filter(
             (item) => item.notification_status === status
           );
 
@@ -453,7 +462,7 @@ const Preclaims = ({ status }) => {
           const data = mapRowData(filteredApprovals);
           setRowData(data);
         } else {
-          const data = mapRowData(res.data.data);
+          const data = mapRowData(filteredMinistriesData);
           setRowData(data);
           console.log("first, state", status);
         }

@@ -5,7 +5,15 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 
-import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  MenuItem,
+  TextField,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 
 const columnDefs = [
   {
@@ -15,7 +23,6 @@ const columnDefs = [
     width: 90,
     filter: true,
   },
-
   {
     field: "name",
     headerName: "Name",
@@ -45,16 +52,17 @@ const columnDefs = [
     width: 100,
   },
 ];
+
 function DepartmentsSetups() {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const [departments, setDepartments] = useState([]); // [1]
-  const pageSize = 10; // Number of records per page
+  const [departments, setDepartments] = useState([]);
+  const pageSize = 10;
 
   useEffect(() => {
     fetchData();
-  }, [pageNumber]); // Fetch data whenever pageNumber changes
+  }, [pageNumber]);
 
   const fetchData = async () => {
     try {
@@ -95,15 +103,17 @@ function DepartmentsSetups() {
   const handlePaginationChange = (newPageNumber) => {
     setPageNumber(newPageNumber);
   };
+
   const [openAward, setOpenAward] = useState(false);
   const [rowClicked, setRowClicked] = useState();
 
   const [required, setRequired] = useState(false);
 
-  const [documentTypes, setDocumentTypes] = useState([]); // [1]
+  const [documentTypes, setDocumentTypes] = useState([]);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [isMda, setIsMda] = useState(false); // New state for is_mda
   const [openCreateDepartment, setOpenCreateDepartment] = useState(false);
 
   const handleCreateDepartment = () => {
@@ -114,20 +124,25 @@ function DepartmentsSetups() {
     if (name === "" || description === "") {
       return;
     }
+
+    const data = {
+      name: name,
+      description: description,
+      isMDA: isMda,
+    };
     try {
-      const res = await apiService.post(endpoints.createDepartment, {
-        name: name,
-        description: description,
-        // roles: roles,
-      });
+      const res = await apiService.post(endpoints.createDepartment, data);
 
       if (res.status === 201) {
         setOpenCreateDepartment(false);
         fetchData();
       }
       console.log("res", res);
+
+      console.log("data", data);
     } catch (error) {
       console.error("Error creating department:", error);
+      console.log("data", data);
     }
   };
 
@@ -146,7 +161,6 @@ function DepartmentsSetups() {
           onClose={() => setOpenCreateDepartment(false)}
         >
           <div className="flex w-full justify-between max-h-8 mb-3">
-            {" "}
             <p className="text-base text-primary font-semibold mb-5">
               Departments Setups
             </p>
@@ -154,15 +168,15 @@ function DepartmentsSetups() {
           <form>
             <div className="mb-4">
               <label
-                htmlFor="end_date"
+                htmlFor="name"
                 className="block text-xs font-medium text-[13px] text-gray-700"
               >
                 Name
               </label>
               <input
                 type="text"
-                id="end_date"
-                name="end_date"
+                id="name"
+                name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -170,21 +184,33 @@ function DepartmentsSetups() {
             </div>
             <div className="mb-4">
               <label
-                htmlFor="end_date"
+                htmlFor="description"
                 className="block text-xs font-medium text-[13px] text-gray-700"
               >
                 Description
               </label>
               <input
                 type="text"
-                id="end_date"
-                name="end_date"
+                id="description"
+                name="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="mt-1 block w-full p-2 bg-white border border-gray-400 text-[13px] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
-
+            <div className="mb-4">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isMda}
+                    onChange={(e) => setIsMda(e.target.checked)}
+                    name="is_mda"
+                    color="primary"
+                  />
+                }
+                label="Is MDA"
+              />
+            </div>
             <Button
               variant="contained"
               color="primary"
@@ -195,8 +221,7 @@ function DepartmentsSetups() {
           </form>
         </Dialog>
         <div className="p-3 mb-4 flex justify-between items-center">
-          <div className="">
-            {" "}
+          <div>
             <p className="font-semibold text-[25px] text-primary">
               Departments
             </p>

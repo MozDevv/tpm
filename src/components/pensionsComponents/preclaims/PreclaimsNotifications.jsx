@@ -13,6 +13,7 @@ import preClaimsEndpoints, {
 import endpoints from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 import { useMda } from "@/context/MdaContext";
+import { message } from "antd";
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -27,6 +28,8 @@ function PreclaimsNotifications({
   const [comments, setComments] = useState("");
 
   const { mdaId } = useMda();
+
+  console.log("selected Rows notifi *******", selectedRows);
 
   const handleCancel = () => {
     setOpenNotification(false);
@@ -81,6 +84,10 @@ function PreclaimsNotifications({
           severity: "success",
           open: true,
         }));
+
+      if (res.data.messages.length > 0) {
+        message.error(res.data.message[0]);
+      }
     } catch (error) {
       console.log(error.response);
       console.log("data", data);
