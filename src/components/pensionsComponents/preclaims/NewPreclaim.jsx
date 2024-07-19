@@ -42,6 +42,8 @@ function NewPreclaim({
 
   const { mdaId } = useMda();
   const [retiree, setRetiree] = useState({});
+  const [editMode, setEditMode] = useState(false);
+  //const [hasId, setHasId] = useState(false);
 
   useEffect(() => {
     if (retireeId) {
@@ -243,7 +245,7 @@ function NewPreclaim({
       const retirementDate = dayjs(value);
       if (retirementDate.isBefore(authorityDate)) {
         error =
-          "Retirement date cannot be before the date of authority of retirement";
+          "Date of last pay cannot be before the date of authority of retirement";
       }
     } else if (
       name === "date_from_which_pension_will_commence" &&
@@ -254,7 +256,7 @@ function NewPreclaim({
       const pensionCommenceDate = dayjs(value);
       if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
         error =
-          "Date from which the pension will commence must be at least a day after the retirement date";
+          "Date from which the pension will commence must be at least a day after the day of last pay";
       }
     }
 
@@ -262,6 +264,9 @@ function NewPreclaim({
   };
 
   const handleInputChange = (e) => {
+    if (retireeId) {
+      setEditMode(true);
+    }
     const { name, value, type } = e.target;
     const parsedValue = type === "number" ? parseFloat(value) : value;
     /*  const parsedValueDate =
@@ -494,7 +499,7 @@ function NewPreclaim({
           type: "date",
         },
         {
-          label: "Retirement Date",
+          label: "Last Pay Date",
           name: "retirement_date",
           type: "date",
         },
@@ -517,6 +522,13 @@ function NewPreclaim({
     e.preventDefault();
     console.log("Preclaims Data", formData);
 
+    if (retireeId && !editMode) {
+      router.push(
+        `/pensions/preclaims/listing/new/add-payment-details?id=${retireeId}`
+      );
+      return;
+    }
+
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (
@@ -532,6 +544,8 @@ function NewPreclaim({
       const error = validateField(key, formData[key], formData);
       if (error) {
         newErrors[key] = error;
+        message.error(error);
+        return;
       }
     });
 
@@ -563,15 +577,65 @@ function NewPreclaim({
 
     console.log("Formatted Form Data:", formattedFormData);
 
+    if (!mdaId) {
+      message.error("MDA not found");
+      return;
+    }
     const data = { ...formattedFormData, mda_id: mdaId };
 
     console.log("Data to be sent:", data);
 
     try {
-      const res = await axios.post(
-        `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
-        data
-      );
+      let res;
+      if (editMode) {
+        res = await axios.post(
+          `${BASE_CORE_API}api/ProspectivePensioners/UpdateProspectivePensioner`,
+          { ...data, id: retireeId }
+        );
+
+        if (
+          res?.status === 200 &&
+          res?.data?.messages[0] ===
+            "Prospective pensioner updated successfully"
+        ) {
+          setAlert({
+            open: true,
+            message:
+              "Prospective pensioner Information & Contact Details updated successfully",
+            severity: "success",
+          });
+          fetchRetiree();
+          setEditMode(false);
+        }
+        if (
+          res?.data?.messages[0] ===
+          "Date of confirmation cannot be before or same as date of birth"
+        ) {
+          message.error(
+            "Date of confirmation cannot be before or same as date of birth"
+          );
+        }
+        if (
+          res?.data?.messages[0] ===
+          "The prospective pensioner has already passed the modification state"
+        ) {
+          message.error(
+            "The prospective pensioner has already passed the modification state"
+          );
+        }
+        if (res?.data?.validationErrors.length > 0) {
+          res.data.validationErrors.forEach((error) => {
+            error.errors.forEach((err) => {
+              message.error(`${error.field}: ${err}`);
+            });
+          });
+        }
+      } else {
+        res = await axios.post(
+          `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
+          data
+        );
+      }
 
       console.log("API Response:", res.data);
       if (res.data.succeeded && res.status === 200) {
@@ -604,9 +668,6 @@ function NewPreclaim({
       }
     } catch (error) {
       console.log("API Error:", error);
-    } finally {
-      // setOpenCreate(false);
-      // setIsLoading(false);
     }
   };
 
@@ -655,7 +716,7 @@ function NewPreclaim({
                     type="submit"
                     sx={{ maxHeight: "40px", mt: "5px" }}
                   >
-                    Next
+                    {editMode ? "Update" : "Next"}
                   </Button>{" "}
                 </div>
               </div>

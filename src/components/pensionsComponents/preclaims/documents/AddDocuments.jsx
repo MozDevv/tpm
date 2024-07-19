@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, Upload, Button, Modal, message, Tooltip } from "antd";
+import { Table, Upload, Modal, message, Tooltip } from "antd";
+import { Button, Chip } from "@mui/material";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import preClaimsEndpoints, {
@@ -16,189 +17,122 @@ const AddDocuments = ({ id }) => {
   const [previewTitle, setPreviewTitle] = useState("");
   const [uploadButtonDisabled, setUploadButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
+  const getAwardDocuments = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getAwardDocuments(id)
+      );
+      const documents =
+        res.data?.data[0]?.prospectivePensionerDocumentSelections
+          ?.map((selection) => ({
+            id: selection.id,
+            name: selection.documentType.name,
+            description: selection.documentType.description,
+            extensions: selection.documentType.extenstions,
+            required: selection.required,
+            pensioner_upload: selection.pensioner_upload,
+            edms_id: selection.edms_id,
+            side: selection.side,
+            has_two_sides: selection.documentType.has_two_sides,
+            uploadedDetails: selection?.uploadedDocumentDetails?.document_name,
+          }))
+          .filter((doc) => !doc.pensioner_upload) || [];
+
+      setAwardDocuments(documents);
+    } catch (error) {
+      console.log("Error fetching award documents:", error);
+      message.error("Failed to fetch award documents.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  // Fetch award documents
   useEffect(() => {
-    const getAwardDocuments = async () => {
-      try {
-        const res = await apiService.get(
-          preClaimsEndpoints.getAwardDocuments(id)
-        );
-        console.log("Award documents:", res.data?.data[0]);
-        const documents =
-          res.data?.data[0]?.prospectivePensionerDocumentSelections?.map(
-            (selection) => ({
-              id: selection.id,
-              name: selection.documentType.name,
-              description: selection.documentType.description,
-              extensions: selection.documentType.extenstions,
-              required: selection.required,
-              pensioner_upload: selection.pensioner_upload,
-            })
-          );
-
-        // Filter documents to upload based on pensioner_upload: false
-        const uploadableDocuments = !documents.filter(
-          (doc) => !doc.pensioner_upload
-        );
-
-        setAwardDocuments(uploadableDocuments);
-      } catch (error) {
-        console.log("Error fetching award documents:", error);
-        message.error("Failed to fetch award documents.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     getAwardDocuments();
   }, [id]);
 
+  // Update upload button disabled state
   useEffect(() => {
-    // Check if all required documents are uploaded
     const requiredDocumentsUploaded = awardDocuments.every(
-      (doc) => !doc.required || fileList.some((file) => file.uid === doc.id)
+      (doc) => !doc.required || doc.edms_id
     );
-
     setUploadButtonDisabled(!requiredDocumentsUploaded);
-  }, [fileList, awardDocuments]);
+  }, [awardDocuments]);
 
+  // Handle file change and upload
   const handleChange = async (info, record) => {
     const { file } = info;
 
-    if (!file.originFileObj) {
-      return;
-    }
-    if (file.status === "uploading") {
-      return;
-    }
+    if (file.status === "uploading") return;
 
-    /*
-    const allowedExtensions = record.extensions.split(","); // Assuming extensions are comma-separated in the extensions field
-
-    const fileExtension =
-      `.${file.name.split(".").pop().toLowerCase()}` === ".docx"
-        ? ".doc"
-        : `.${file.name.split(".").pop().toLowerCase()}`;
-
-    console.log("fileExtension", fileExtension);
-    if (!allowedExtensions.includes(fileExtension)) {
-      message.error(
-        `Invalid file extension. Allowed extensions are: ${record.extensions}`
-      );
-      return;
-    }
-*/
     const formData = new FormData();
     formData.append("id", id);
     formData.append("submissions[0].document_selection_id", record.id);
     formData.append("submissions[0].uploaded_file", file.originFileObj);
     formData.append("is_mda", true);
 
-    console.log("formData", formData);
-    console.log("file", file.originFileObj);
-    console.log("file 2", file);
-
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-      console.log("Upload successful:", response.data);
-      message.success("File uploaded successfully");
 
-      // Update fileList state if needed
-      const updatedFileList = [
-        ...fileList.filter((f) => f.uid !== record.id),
-        {
-          uid: record.id,
-          name: `${record.name}_${Date.now()}_${file.name}`,
-          status: file.status,
-          url: file.url,
-          originFileObj: new File(
-            [file.originFileObj],
-            `${record.name}_${Date.now()}_${file.name}`,
-            {
-              type: file.originFileObj.type,
-            }
-          ),
-        },
-      ];
-      setFileList(updatedFileList);
+      if (res.status === 200) {
+        message.success("File uploaded successfully");
+        setFileList((prevFileList) => [
+          ...prevFileList.filter((f) => f.uid !== record.id),
+          {
+            uid: record.id,
+            name: file.name,
+            status: file.status,
+            url: file.url,
+            originFileObj: file.originFileObj,
+          },
+        ]);
+        getAwardDocuments();
+        // window.location.reload();
+      }
     } catch (error) {
       console.error("Upload error:", error);
       message.error("File upload failed.");
-    } finally {
-      const updatedFileList = [
-        ...fileList.filter((f) => f.uid !== record.id),
-        {
-          uid: record.id,
-          name: `${record.name}_${Date.now()}_${file.name}`,
-          status: file.status,
-          url: file.url,
-          originFileObj: new File(
-            [file.originFileObj],
-            `${record.name}_${Date.now()}_${file.name}`,
-            { type: file.originFileObj.type }
-          ),
-        },
-      ];
-
-      setFileList(updatedFileList);
     }
   };
 
-  const router = useRouter();
+  // Handle file preview
+  const handlePreview = async (record) => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
+      );
+      const base64Data = res.data?.messages[0];
+      if (base64Data) {
+        setPreviewContent(
+          <embed
+            src={`data:application/pdf;base64,${base64Data}`}
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          />
+        );
+        setPreviewTitle(record.name);
+        setPreviewVisible(true);
+      } else {
+        message.error("No preview available for this document.");
+      }
+    } catch (error) {
+      console.log("Error fetching document:", error);
+      message.error("Failed to fetch document.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUpload = () => {
     router.push("/pensions/preclaims/listing/");
-  };
-
-  const handlePreview = async (file) => {
-    if (!file || !file.originFileObj) {
-      message.error("File preview is not available.");
-      return;
-    }
-
-    let previewContent = null;
-    const fileType = file.originFileObj.type;
-
-    if (fileType.startsWith("image/")) {
-      previewContent = (
-        <img
-          alt="preview"
-          style={{ maxWidth: "100%", maxHeight: "70vh" }}
-          src={URL.createObjectURL(file.originFileObj)}
-        />
-      );
-    } else if (fileType === "application/pdf") {
-      previewContent = (
-        <iframe
-          title="preview"
-          src={URL.createObjectURL(file.originFileObj)}
-          style={{ width: "100%", height: "70vh" }}
-        />
-      );
-    } else if (
-      fileType.startsWith("text/") ||
-      fileType === "application/msword"
-    ) {
-      const text = await file.originFileObj.text();
-      previewContent = (
-        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-          {text}
-        </pre>
-      );
-    } else {
-      previewContent = <p>Preview not available for this file type.</p>;
-    }
-
-    setPreviewTitle(file.name);
-    setPreviewContent(previewContent);
-    setPreviewVisible(true);
   };
 
   const columns = [
@@ -206,11 +140,41 @@ const AddDocuments = ({ id }) => {
       title: "Document Name",
       dataIndex: "name",
       key: "name",
+      render: (name, record) => (
+        <>
+          {name}{" "}
+          {record.has_two_sides && (
+            <Chip
+              label={record.side}
+              size="small"
+              variant="contained"
+              sx={{
+                maxHeight: "20px",
+                fontSize: "10px",
+                mb: "8px",
+                borderWidth: "2px",
+              }}
+              color={record.side === "Front" ? "primary" : "secondary"}
+            />
+          )}
+        </>
+      ),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+    },
+    {
+      title: "Status",
+      dataIndex: "uploaded",
+      key: "uploaded",
+      render: (_, record) =>
+        record.edms_id ? (
+          <Button sx={{ color: "green", fontSize: "12px" }}>Uploaded</Button>
+        ) : (
+          <Button sx={{ color: "red", fontSize: "12px" }}>Not Uploaded</Button>
+        ),
     },
     {
       title: "Extensions",
@@ -227,7 +191,13 @@ const AddDocuments = ({ id }) => {
           showUploadList={false}
           onChange={(info) => handleChange(info, record)}
         >
-          <Button icon={<UploadOutlined />}>Select File</Button>
+          <Button
+            startIcon={<UploadOutlined />}
+            variant="outlined"
+            size="small"
+          >
+            Select File
+          </Button>
         </Upload>
       ),
     },
@@ -239,7 +209,9 @@ const AddDocuments = ({ id }) => {
       ellipsis: true,
       render: (_, record) => {
         const file = fileList.find((f) => f.uid === record.id);
-        const fileName = file ? file.name : "No file selected";
+        const fileName = file
+          ? file.name
+          : record?.uploadedDetails || "No file selected";
         return (
           <Tooltip title={fileName}>
             <span>
@@ -253,40 +225,43 @@ const AddDocuments = ({ id }) => {
       title: "Preview File",
       dataIndex: "preview",
       key: "preview",
-      render: (_, record) => {
-        const file = fileList.find((f) => f.uid === record.id);
-        return (
-          <Button
-            type="primary"
-            onClick={() => handlePreview(file)}
-            disabled={!file}
-          >
-            Preview
-          </Button>
-        );
-      },
+      render: (_, record) => (
+        <Button
+          variant="contained"
+          onClick={() => handlePreview(record)}
+          disabled={!record.edms_id}
+          size="small"
+        >
+          Preview
+        </Button>
+      ),
     },
   ];
+
+  const handlePrevious = () => {
+    router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+  };
 
   return (
     <>
       {loading ? (
-        <>
-          <Spinner />
-        </>
+        <Spinner />
       ) : (
         <>
-          <div className="flex justify-end">
+          <div className="flex items-center gap-8 mb-3 justify-end mr-8">
+            <Button variant="outlined" onClick={handlePrevious}>
+              Previous
+            </Button>
             <Button
-              type="primary"
+              variant="contained"
+              color="primary"
               onClick={handleUpload}
               disabled={uploadButtonDisabled}
-              style={{
-                marginRight: "20px",
-                marginBottom: "10px",
+              sx={{
+                backgroundColor: uploadButtonDisabled ? "#ccc" : undefined,
               }}
             >
-              Upload
+              Finish
             </Button>
           </div>
           <Table
@@ -295,12 +270,14 @@ const AddDocuments = ({ id }) => {
             pagination={false}
             scroll={{ x: "max-content" }}
           />
-
           <Modal
             visible={previewVisible}
             title={previewTitle}
             footer={null}
             onCancel={() => setPreviewVisible(false)}
+            width="80%"
+            bodyStyle={{ height: 800, overflowY: "auto" }}
+            style={{ top: 20 }}
           >
             {previewContent}
           </Modal>

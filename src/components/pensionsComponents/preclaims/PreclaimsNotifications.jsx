@@ -12,6 +12,7 @@ import preClaimsEndpoints, {
 } from "@/components/services/preclaimsApi";
 import endpoints from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
+import { useMda } from "@/context/MdaContext";
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -24,7 +25,8 @@ function PreclaimsNotifications({
   const [scheduleStartDate, setScheduleStartDate] = useState("");
   const [periodEndDate, setPeriodEndDate] = useState("");
   const [comments, setComments] = useState("");
-  const [mdaId, setMdaId] = useState("");
+
+  const { mdaId } = useMda();
 
   const handleCancel = () => {
     setOpenNotification(false);
@@ -48,15 +50,21 @@ function PreclaimsNotifications({
 
   useEffect(() => {
     fetchMdas();
-  }, []); // [2
+  }, []); // [2]
 
   const handleSend = async () => {
     const ids = selectedRows.map((row) => row.id);
+    const currentDate = new Date();
+    const oneMinuteLater = new Date(currentDate.getTime() + 60000); // Adding 1 minute
+
+    const formatDateToISOString = (date) => {
+      return date.toISOString();
+    };
 
     const data = {
       mda_id: mdaId,
-      schedule_start_date: formatDateToISOString(scheduleStartDate),
-      period_end_date: formatDateToISOString(periodEndDate),
+      schedule_start_date: formatDateToISOString(currentDate),
+      period_end_date: formatDateToISOString(oneMinuteLater),
       comments: comments,
       lines: ids.map((id) => ({ prospective_pensioner_id: id })),
     };
@@ -81,7 +89,7 @@ function PreclaimsNotifications({
     }
   };
 
-  const [mdas, setMdas] = useState([]); // [1
+  //const [mdas, setMdas] = useState([]); // [1
 
   return (
     <Dialog
@@ -105,7 +113,7 @@ function PreclaimsNotifications({
           </div>
         </div>
         <div className="p-6">
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label
               htmlFor="scheduleStartDate"
               className="block text-xs font-medium text-gray-700"
@@ -139,7 +147,7 @@ function PreclaimsNotifications({
               required
               fullWidth
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="comments"
@@ -160,7 +168,7 @@ function PreclaimsNotifications({
               }}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          {/* <div className="flex flex-col gap-1">
             <label
               htmlFor="comments"
               className=" text-xs font-medium text-gray-700 pt-3 pb-2"
@@ -184,7 +192,7 @@ function PreclaimsNotifications({
                 </MenuItem>
               ))}
             </TextField>
-          </div>{" "}
+          </div>{" "} */}
         </div>
         <div className="flex gap-8 w-full justify-between px-5 mt-3">
           <Button variant="outlined" onClick={handleCancel}>

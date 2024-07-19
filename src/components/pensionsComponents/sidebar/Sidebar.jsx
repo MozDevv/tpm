@@ -310,6 +310,7 @@ function Sidebar() {
             <ListItemText
               sx={{
                 color: selectedItem === subChild.title ? "#006990" : "#1F1F1F",
+                fontWeight: 600,
               }}
             >
               {subChild.title}
@@ -334,7 +335,7 @@ function Sidebar() {
                 <ListItemText
                   sx={{
                     color: open[child.title] ? "#006990" : "#1F1F1F",
-                    fontWeight: "700",
+                    fontWeight: 700,
                   }}
                 >
                   {child.title}
@@ -366,6 +367,7 @@ function Sidebar() {
                 <ListItemText
                   sx={{
                     color: selectedItem === child.title ? "#006990" : "#1F1F1F",
+                    fontWeight: 600,
                   }}
                 >
                   {child.title}
@@ -427,8 +429,9 @@ function Sidebar() {
                   open[item.title] || selectedItem === item.title
                     ? "#006990"
                     : "#1F1F1F",
-                fontWeight: "bold",
+                fontWeight: 700,
               }}
+              // className="font-bold"
             >
               {item.title}
             </ListItemText>

@@ -17,11 +17,34 @@ function AddPensionersWorkHistory({ id, name }) {
       : router.push(`/pensions/preclaims/listing`);
   };
 
+  const handlePrevious = () => {
+    !name
+      ? router.push(
+          `/pensions/preclaims/listing/new/add-payment-details?id=${id}`
+        )
+      : router.push(`/pensions/preclaims/listing`);
+  };
+
   return (
-    <div className="p-2 w-full">
-      <div className="w-[100%]  flex justify-between items-center px-6">
-        <p className="text-primary font-semibold text-xl "></p>
-        <div className="">
+    <div className="p-2 w-full pb-8">
+      <div className="w-[100%]  flex justify-between items-center px-6 sticky top-0 overflow-hidden z-50">
+        <div></div>
+
+        <div className=" flex items-center gap-14">
+          <div className="">
+            <Button
+              variant="outlined"
+              sx={{
+                mr: "auto",
+                mb: 3,
+                mt: 2,
+              }}
+              onClick={handlePrevious}
+              //endIcon={<Close />}
+            >
+              Previous
+            </Button>
+          </div>
           <Button
             variant="contained"
             sx={{

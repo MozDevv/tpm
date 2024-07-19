@@ -1,7 +1,4 @@
-"use client";
-import preClaimsEndpoints, {
-  apiService,
-} from "@/components/services/preclaimsApi";
+import { useAlert } from "@/context/AlertContext";
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -23,10 +20,12 @@ import {
   IconButton,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 import { Delete, Edit } from "@mui/icons-material";
 import axios from "axios";
+import preClaimsEndpoints, {
+  apiService,
+} from "@/components/services/preclaimsApi";
 
 function PostAndNature({ id, loading, setLoading }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
@@ -36,6 +35,7 @@ function PostAndNature({ id, loading, setLoading }) {
   const [editId, setEditId] = useState(null);
   const { alert, setAlert } = useAlert();
   const [dateOfConfirmation, setDateOfConfirmation] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
   const fetchPostandNature = async () => {
     try {
@@ -64,8 +64,6 @@ function PostAndNature({ id, loading, setLoading }) {
         preClaimsEndpoints.getProspectivePensioner(id)
       );
       setDateOfConfirmation(dayjs(res.data.data[0].date_of_confirmation));
-
-      console.log("first", dayjs(res.data.data[0].date_of_confirmation));
     } catch (error) {
       console.log(error);
     }
@@ -119,33 +117,13 @@ function PostAndNature({ id, loading, setLoading }) {
       }
     });
 
-    // Validate the date and fields
-    if (
-      dayjs(formattedFormData.date).isBefore(dateOfConfirmation) &&
-      !formattedFormData.was_pensionable &&
-      formattedFormData.nature_of_service === "Permanent"
-    ) {
-      message.error(
-        "The pensioner was Temporary before the date of confirmation."
-      );
-      return;
-    }
-    if (
-      !formattedFormData.was_pensionable &&
-      formattedFormData.nature_of_service === "Permanent"
-    ) {
-      message.error(
-        "If NOT Pensionable  Nature of Service should be Temporary."
-      );
-      return;
-    }
-
     try {
       let res;
       if (isEditMode) {
-        res = await apiService.put(
-          preClaimsEndpoints.updatePostAndNatureOfService(editId),
-          formattedFormData
+        const data = { ...formattedFormData, id: editId };
+        res = await apiService.post(
+          preClaimsEndpoints.updatePostAndNature,
+          data
         );
       } else {
         res = await apiService.post(
@@ -154,7 +132,7 @@ function PostAndNature({ id, loading, setLoading }) {
         );
       }
 
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.succeeded) {
         fetchPostandNature();
         setAlert({
           open: true,
@@ -165,36 +143,82 @@ function PostAndNature({ id, loading, setLoading }) {
         });
         setOpen(false);
       }
+      if (res.data.validationErrors) {
+        const errors = {};
+        res.data.validationErrors.forEach((error) => {
+          error.errors.forEach((err) => {
+            message.error(`${error.field}: ${err}`);
+          });
+        });
+        setValidationErrors(errors);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleEdit = (item) => {
-    setFormData(item);
+    const formattedItem = {
+      ...item,
+      date: dayjs(item.date).format("YYYY-MM-DD"),
+      // end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+    };
+
+    setFormData(formattedItem);
     setEditId(item.id);
     setIsEditMode(true);
     setOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      await apiService.delete(
-        preClaimsEndpoints.deletePostAndNatureOfService(id)
-      );
+      await apiService.post(preClaimsEndpoints.deletePostAndNature(recordId));
       fetchPostandNature();
       setAlert({
         open: true,
-        message: "Post and Nature of Service deleted successfully",
+        message: "Post and Nature deleted successfully",
         severity: "success",
       });
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState();
+  const [recordId, setRecordId] = useState();
+
   return (
     <div>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <div className="p-6">
+          <h1 className="text-base font-semibold text-primary py-2 mb-3">
+            Delete Confirmation
+          </h1>
+          <p className="text-gray-600 mb-3">
+            Are you sure you want to delete this record?
+          </p>
+          <div className="flex justify-between w-full mt-5">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDeleteDialog(false)}
+              sx={{ mr: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDelete}
+              sx={{ backgroundColor: "crimson", color: "white" }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Dialog>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-10">
           <h1 className="text-base font-semibold text-primary py-2 mb-3">
@@ -211,7 +235,9 @@ function PostAndNature({ id, loading, setLoading }) {
                     type="checkbox"
                     name={field.value}
                     onChange={handleInputChange}
-                    className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
+                    className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
+                      validationErrors[field.value] ? "border-red-500" : ""
+                    }`}
                   />
                 ) : field.type === "radio" ? (
                   <RadioGroup
@@ -239,6 +265,9 @@ function PostAndNature({ id, loading, setLoading }) {
                       onChange={handleInputChange}
                       value={formData[field.value] || ""}
                       size="small"
+                      className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
+                        validationErrors[field.value] ? "border-red-500" : ""
+                      }`}
                     >
                       {field.options.map((option) => (
                         <MenuItem key={option.id} value={option.name}>
@@ -253,8 +282,15 @@ function PostAndNature({ id, loading, setLoading }) {
                     name={field.value}
                     value={formData[field.value] || ""}
                     onChange={handleInputChange}
-                    className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
+                    className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
+                      validationErrors[field.value] ? "border-red-500" : ""
+                    }`}
                   />
+                )}
+                {validationErrors[field.value] && (
+                  <span className="text-xs text-red-500">
+                    {validationErrors[field.value]}
+                  </span>
                 )}
               </div>
             ))}
@@ -309,7 +345,12 @@ function PostAndNature({ id, loading, setLoading }) {
                   <IconButton onClick={() => handleEdit(item)}>
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(item.id)}>
+                  <IconButton
+                    onClick={() => {
+                      setOpenDeleteDialog(item.id);
+                      setRecordId(item.id);
+                    }}
+                  >
                     <Delete sx={{ color: "crimson" }} />
                   </IconButton>
                 </TableCell>

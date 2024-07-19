@@ -11,7 +11,13 @@ import { useRouter } from "next/navigation";
 
 const columnDefs = [
   { field: "no", headerName: "No", width: 90, filter: true },
-  { field: "userName", headerName: "Username", filter: true, width: 200 },
+  { field: "userName", headerName: "Email", filter: true, width: 200 },
+  {
+    field: "employeeNumber",
+    headerName: "Employee Number",
+    filter: true,
+    width: 150,
+  },
   { field: "email", headerName: "Email", filter: true, width: 250 },
   {
     field: "phoneNumber",
@@ -26,12 +32,7 @@ const columnDefs = [
     width: 250,
     hide: true,
   },
-  {
-    field: "employeeNumber",
-    headerName: "Employee Number",
-    filter: true,
-    width: 150,
-  },
+
   {
     field: "defaultPasswordChanged",
     headerName: "Default Password Changed",
@@ -58,6 +59,8 @@ function SimplifiedTable() {
     try {
       const res = await AuthApiService.get(authEndpoints.getUsers);
       const { data, totalCount } = res.data;
+
+      console.log("Users", data);
       const transformedData = transformData(data);
       setRowData(transformedData);
       setTotalRecords(totalCount);
@@ -84,7 +87,7 @@ function SimplifiedTable() {
   };
 
   const handleClickUser = (user) => {
-    router.push(`/pensions/users/${user.id}`);
+    router.push(`/pensions/users/user-info?id=${user.id}`);
   };
 
   return (
@@ -105,7 +108,7 @@ function SimplifiedTable() {
             //onClick={() => setDrawerOpen(true)}
             variant="contained"
             size="small"
-            sx={{ maxHeight: "40px" }}
+            sx={{ mr: 4, mt: 3 }}
             startIcon={<Person />}
           >
             Add new User
@@ -119,6 +122,9 @@ function SimplifiedTable() {
           pagination={false}
           domLayout="autoHeight"
           paginationPageSize={pageSize}
+          onGridReady={(params) => {
+            params.api.sizeColumnsToFit();
+          }}
           onPaginationChanged={(params) =>
             handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
           }

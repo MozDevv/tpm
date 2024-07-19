@@ -11,6 +11,11 @@ import {
   Avatar,
   Button,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Icon,
   IconButton,
@@ -18,10 +23,12 @@ import {
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 import UserDetailCard from "./UserDetailCard";
 import AssignRole from "../Roles/assignRoles/AssignRole";
+import { useAuth } from "@/context/AuthContext";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function RecordCard({ id }) {
   const [clickedItem, setClickedItem] = useState(null);
@@ -34,6 +41,11 @@ function RecordCard({ id }) {
 
       console.log(res.data.data);
       setClickedItem(res.data.data);
+
+      console.log("clickedItem", res.data.data.roleId);
+      const roleName = fetchData(res.data.data.roleId);
+      console.log("roleName", roleName);
+      // alert(roleName);
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +74,33 @@ function RecordCard({ id }) {
   const [openOverview, setOpenOverview] = useState(true);
   const [openRole, setOpenRole] = useState(true);
   const [openPermissions, setOpenPermissions] = useState(false);
+  const { auth, login, logout } = useAuth();
 
+  const [role, setRole] = useState("");
+
+  const fetchData = async (id) => {
+    try {
+      const res = await axios.get(`${BASE_CORE_API}GetRoles?documentId=${id}`);
+      setRole(res.data.data.name);
+
+      console.log("role", role);
+      console.log("res", res.data);
+
+      return res.data.data.name;
+
+      //setRole(res.data.data.name);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const router = useRouter();
+  const handleConfirmDialog = () => {
+    router.push("/pensions/users/");
+    setOpenDialog(false);
+  };
   return (
     <div className="p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
       <AssignRole
@@ -70,6 +108,43 @@ function RecordCard({ id }) {
         setOpenPermissions={setOpenPermissions}
         userId={id}
       />
+      {/* Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <p className="my-3 text-gray-700 text-base">
+              {" "}
+              Are you sure you want to cancel and go back to the previous page?
+            </p>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <div className=" w-full flex justify-between px-4 pb-3">
+            <Button
+              onClick={() => setOpenDialog(false)}
+              variant="outlined"
+              color="primary"
+            >
+              No
+            </Button>
+            <Button
+              onClick={handleConfirmDialog}
+              variant="contained"
+              color="error"
+            >
+              Yes
+            </Button>
+          </div>
+        </DialogActions>
+      </Dialog>
       <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center gap-2">
@@ -84,7 +159,7 @@ function RecordCard({ id }) {
             </Button>
             <button
               className="bg-gray-200 text-primary text-sm font-medium  px-4 py-2 rounded-md"
-              onClick={handleOpenRejectModal}
+              onClick={() => setOpenDialog(true)}
             >
               Cancel
             </button>
@@ -258,8 +333,8 @@ function RecordCard({ id }) {
                   </label>
                   <input
                     type="text"
-                    value={clickedItem?.role?.name}
-                    placeholder="2212332"
+                    value={role}
+                    placeholder="MDA HRM"
                     className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm"
                     required
                   />
