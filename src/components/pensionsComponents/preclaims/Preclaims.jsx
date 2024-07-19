@@ -425,6 +425,10 @@ const Preclaims = ({ status }) => {
 
   const { mdaId } = useMda();
 
+  console.log("auth.user.email ***********", auth.user.email);
+
+  // alert("auth.user.email ***********", auth);
+
   const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
     try {
@@ -445,9 +449,10 @@ const Preclaims = ({ status }) => {
         const rawData = res.data.data;
 
         // Filter data by mdaId
-        const filteredMinistriesData = rawData.filter(
-          (item) => item.mda_id === mdaId
-        );
+        const filteredMinistriesData =
+          auth.user.email === "super@mail.com"
+            ? rawData
+            : rawData.filter((item) => item.mda_id === mdaId);
         const { totalCount, currentPage, totalPages } = res.data;
         setTotalPages(res.data.totalPages);
 
