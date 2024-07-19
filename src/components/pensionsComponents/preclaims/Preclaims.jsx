@@ -70,7 +70,7 @@ export const notificationStatusMap = {
   7: { name: "RETURNED FOR CLARIFICATION", color: "#E4A11B" }, // Light Green
 };
 
-const colDefs = [
+export const colDefs = [
   {
     headerName: "No",
     field: "no_id",
@@ -293,21 +293,21 @@ const colDefs = [
   },
 ];
 
-const mapRowData = (items) =>
+export const mapRowData = (items) =>
   items.map((item) => ({
-    retiree: item.retiree?.id,
-    email_address: item.retiree?.email_address,
+    retiree: item?.id,
+    email_address: item?.email_address,
     notification_status: item.notification_status,
-    gender: item.retiree?.gender,
-    phone_number: item.retiree?.phone_number,
+    gender: item?.gender,
+    phone_number: item?.phone_number,
     personal_number: item.personal_number,
-    surname: item.retiree?.surname,
-    first_name: item.retiree?.first_name,
-    other_name: item.retiree?.other_name,
+    surname: item?.surname,
+    first_name: item?.first_name,
+    other_name: item?.other_name,
     pension_award: item.mda?.name,
     name: item.pensionAward?.name,
-    national_id: item.retiree?.national_id,
-    kra_pin: item.retiree?.kra_pin,
+    national_id: item?.national_id,
+    kra_pin: item?.kra_pin,
     retirement_date: item.retirement_date,
     dob: item.dob,
     date_of_confirmation: item.date_of_confirmation,

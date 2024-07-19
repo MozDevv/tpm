@@ -154,7 +154,7 @@ function AddBankDetails({ id }) {
 
       console.log("Bank details submitted successfully:", res.data);
       console.log("Data", data);
-      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
     } catch (error) {
       console.log("Error submitting bank details:", error);
     }

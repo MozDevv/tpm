@@ -54,7 +54,7 @@ function ProspectivePensionersDocs({ clickedItem }) {
       const res = await apiService.get(
         `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
       );
-      setPdfData(res.data?.messages[0]); // Assuming the base64 data is in res.data.base64
+      setPdfData(res.data?.messages[0]);
       setModalOpen(true);
     } catch (error) {
       console.log("Error fetching document:", error);

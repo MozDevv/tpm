@@ -107,6 +107,12 @@ function PeriodsOfAbsence({ id }) {
               message.error(`${error.field}: ${err}`);
             });
           });
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.message.length > 0
+        ) {
+          message.error(res.data.message[0]);
         }
       } else {
         const res = await apiService.post(

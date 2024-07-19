@@ -36,6 +36,7 @@ const AddDocuments = ({ id }) => {
             edms_id: selection.edms_id,
             side: selection.side,
             has_two_sides: selection.documentType.has_two_sides,
+            uploadedDetails: selection?.uploadedDocumentDetails?.document_name,
           }))
           .filter((doc) => !doc.pensioner_upload) || [];
 
@@ -208,7 +209,9 @@ const AddDocuments = ({ id }) => {
       ellipsis: true,
       render: (_, record) => {
         const file = fileList.find((f) => f.uid === record.id);
-        const fileName = file ? file.name : "No file selected";
+        const fileName = file
+          ? file.name
+          : record?.uploadedDetails || "No file selected";
         return (
           <Tooltip title={fileName}>
             <span>

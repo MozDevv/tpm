@@ -1,11 +1,12 @@
 "use client";
 import RecordCard from "@/components/pensionsComponents/recordCard/RecordCard";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function page({ params }) {
-  const { id } = params;
+function UserInfo() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   return (
     <div>
@@ -14,4 +15,4 @@ function page({ params }) {
   );
 }
 
-export default page;
+export default UserInfo;
