@@ -85,6 +85,9 @@ function Navbar() {
 
     router.push("/");
   };
+
+  
+
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
