@@ -292,6 +292,10 @@ function PreclaimDialog({
       `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}&name=${clickedItem?.first_name}`
     );
   };
+
+  const handleEdit = () => {
+    router.push(`/pensions/preclaims/listing/new?id=${clickedItem?.id}`);
+  };
   return (
     <Dialog
       open={openPreclaimDialog}
@@ -474,12 +478,8 @@ function PreclaimDialog({
                 </div> */}
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={() => setDisabled(false)}
-                    disabled={
-                      !permissions?.includes(
-                        "preclaims.edit.prospective_pensioner"
-                      )
-                    }
+                    onClick={handleEdit}
+                    disabled={clickedItem?.notification_status !== 0}
                     sx={{ mb: -1, maxHeight: "24px" }}
                     startIcon={<Edit />}
                   >
