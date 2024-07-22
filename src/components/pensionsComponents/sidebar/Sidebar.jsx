@@ -11,13 +11,14 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import {
+  DragIndicator,
   KeyboardArrowRight,
   PeopleAltOutlined,
   Person,
   Widgets,
 } from "@mui/icons-material";
 import styles from "./sidebar.module.css";
-import { Box, Divider } from "@mui/material";
+import { Box, Divider, IconButton } from "@mui/material";
 import { BarChart, Payments, SupportAgent } from "@mui/icons-material";
 import { useSelectedItem } from "@/context/NavItemContext";
 import { useIsLoading } from "@/context/LoadingContext";
@@ -65,7 +66,7 @@ function Sidebar() {
         throw new Error("Role is not defined");
       }
       const res = await axios.get(
-        `https://pmis.agilebiz.co.ke/GetMenuJSON?Role=${role}`
+        `https://tntportalapi.agilebiz.co.ke/GetMenuJSON?Role=${role}`
       );
 
       setFetchedMenuItems(res.data.data);
@@ -309,11 +310,11 @@ function Sidebar() {
           >
             <ListItemText
               sx={{
-                color: selectedItem === subChild.title ? "#006990" : "#1F1F1F",
+                color: selectedItem === subChild.title ? "#006990" : "gray",
                 fontWeight: 600,
               }}
             >
-              {subChild.title}
+              <p className={styles.nav_title}> {subChild.title}</p>
             </ListItemText>
           </ListItem>
         </Link>
@@ -334,11 +335,11 @@ function Sidebar() {
               >
                 <ListItemText
                   sx={{
-                    color: open[child.title] ? "#006990" : "#1F1F1F",
+                    color: open[child.title] ? "#006990" : "gray",
                     fontWeight: 700,
                   }}
                 >
-                  {child.title}
+                  <p className={styles.nav_title}> {child.title}</p>
                 </ListItemText>
                 {open[child.title] ? (
                   <ExpandLess sx={{ color: "gray" }} />
@@ -366,11 +367,12 @@ function Sidebar() {
               >
                 <ListItemText
                   sx={{
-                    color: selectedItem === child.title ? "#006990" : "#1F1F1F",
+                    color: selectedItem === child.title ? "#006990" : "gray",
                     fontWeight: 600,
+                    display: "flex",
                   }}
                 >
-                  {child.title}
+                  <p className={styles.nav_title}> {child.title}</p>
                 </ListItemText>
               </ListItem>
             </Link>
@@ -428,12 +430,12 @@ function Sidebar() {
                 color:
                   open[item.title] || selectedItem === item.title
                     ? "#006990"
-                    : "#1F1F1F",
+                    : "gray",
                 fontWeight: 700,
               }}
               // className="font-bold"
             >
-              {item.title}
+              <p className={styles.nav_title}> {item.title}</p>
             </ListItemText>
             {item.children &&
               (open[item.title] ? (

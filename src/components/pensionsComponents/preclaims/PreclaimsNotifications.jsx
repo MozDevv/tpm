@@ -77,16 +77,20 @@ function PreclaimsNotifications({
         preClaimsEndpoints.sendNotifications,
         data
       );
-      res.data.succeeded === true &&
-        (await fetchAllPreclaims(),
+
+      if (res.data.succeeded === true) {
+        await fetchAllPreclaims();
         setAlert({
           message: "Notification sent successfully",
           severity: "success",
           open: true,
-        }));
-
-      if (res.data.messages.length > 0) {
-        message.error(res.data.message[0]);
+        });
+      } else {
+        if (Array.isArray(res.data.messages) && res.data.messages.length > 0) {
+          message.error(res.data.messages[0]);
+        } else {
+          message.error("Failed to send notification");
+        }
       }
     } catch (error) {
       console.log(error.response);
