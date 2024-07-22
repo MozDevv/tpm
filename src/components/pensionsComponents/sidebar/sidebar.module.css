@@ -2,8 +2,7 @@
   font-weight: 600;
   font-family: "Montserrat", Arial, sans-serif;
   font-size: 14px;
-  padding-right: 10px;
-  color: gray;
+  padding-right: 3px;
 }
 .h6 {
   font-weight: 700;
@@ -15,4 +14,28 @@
   text-transform: capitalize;
   margin-bottom: 20px;
   width: 100%;
+}
+/* Add this to your CSS or a relevant stylesheet */
+.tree-item {
+  position: relative;
+  padding-left: 20px; /* Adjust as needed for indentation */
+}
+
+.tree-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -20px; /* Adjust as needed for the line */
+  width: 20px; /* Adjust as needed */
+  height: 100%;
+  border-left: 2px solid #ddd; /* Vertical line color */
+}
+
+.tree-item-children {
+  padding-left: 20px; /* Adjust as needed for indentation of children */
+}
+
+.tree-item-last::before {
+  height: 50%; /* Adjust to show line only to middle */
+  border-bottom: 2px solid #ddd; /* Horizontal line at the end */
 }

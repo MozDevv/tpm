@@ -305,7 +305,7 @@ export const mapRowData = (items) =>
     surname: item?.surname,
     first_name: item?.first_name,
     other_name: item?.other_name,
-    pension_award: item.mda?.name,
+    pension_award: item.pensionAward?.name,
     name: item.pensionAward?.name,
     national_id: item?.national_id,
     kra_pin: item?.kra_pin,
@@ -397,18 +397,23 @@ const Preclaims = ({ status }) => {
   console.log("auth ****************", auth?.user?.permissions);
 
   const handleFilters = async () => {
-    const filter = {
-      ...(filterColumn && {
-        "filterCriterion.criterions[0].propertyName": filterColumn,
-      }),
-      ...(filterValue && {
-        "filterCriterion.criterions[0].propertyValue": filterValue,
-      }),
-      ...(filterType && {
-        "filterCriterion.criterions[0].criterionType": filterType,
-      }),
-    };
-
+    const filter = status
+      ? {
+          "filterCriterion.criterions[0].propertyName": "notification_status",
+          "filterCriterion.criterions[0].propertyValue": status,
+          "filterCriterion.criterions[0].criterionType": 0,
+        }
+      : {
+          ...(filterColumn && {
+            "filterCriterion.criterions[0].propertyName": filterColumn,
+          }),
+          ...(filterValue && {
+            "filterCriterion.criterions[0].propertyValue": filterValue,
+          }),
+          ...(filterType && {
+            "filterCriterion.criterions[0].criterionType": filterType,
+          }),
+        };
     const sort = {
       ...(sortColumn && {
         "sortProperties.propertyName": sortColumn,
@@ -430,19 +435,27 @@ const Preclaims = ({ status }) => {
   // alert("auth.user.email ***********", auth);
 
   const fetchAllPreclaims = async (sort, filter) => {
+    const adjustedFilter =
+      status || status === 0
+        ? {
+            "filterCriterion.criterions[0].propertyName": "notification_status",
+            "filterCriterion.criterions[0].propertyValue": status,
+            "filterCriterion.criterions[0].criterionType": 0,
+          }
+        : filter;
     setLoading(true);
     try {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
         "paging.pageNumber": pageNumber,
         "paging.pageSize": pageSize,
         ...sort,
-        ...filter,
+        ...adjustedFilter,
       });
 
       console.log("mdaId***********", mdaId);
 
       /*  const res = await apiService.get(
-        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
+        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
       if (res.data.succeeded === true) {
         console.log(res.data.data);
@@ -463,8 +476,8 @@ const Preclaims = ({ status }) => {
             (item) => item.notification_status === status
           );
 
-          setItems(filteredApprovals);
-          const data = mapRowData(filteredApprovals);
+          setItems(filteredMinistriesData);
+          const data = mapRowData(filteredMinistriesData);
           setRowData(data);
         } else {
           const data = mapRowData(filteredMinistriesData);

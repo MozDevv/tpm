@@ -1,0 +1,74 @@
+[13/06 14:16] Hosea Kipruto Cherop
+{
+
+  "filterCriterion": {
+
+    "compositionType": 0,
+
+    "criterions": [
+
+      {
+
+        "criterionType": 0,
+
+        "propertyName": "email_address",
+
+        "propertyValue": "test@mail.com"
+
+      }
+
+    ]
+
+  },
+
+  "paging": {
+
+    "pageNumber": 0,
+
+    "pageSize": 0
+
+  },
+
+  "sortProperties": {
+
+    "propertyName": "created_date",
+
+    "sortCriteria": 0
+
+  }
+
+}
+ 
+[13/06 14:16] Hosea Kipruto Cherop
+public enum RequestCompositionType
+
+{
+
+    AND,
+
+    OR,
+
+}
+
+public enum RequestFilterCriterionType
+
+{
+
+    EQUAL,
+
+    NOT_EQUAL,
+
+    CONTAINS,
+
+}
+ 
+public enum SortCriteria
+
+{
+
+    ASC,
+
+    DESC,
+
+}
+ 

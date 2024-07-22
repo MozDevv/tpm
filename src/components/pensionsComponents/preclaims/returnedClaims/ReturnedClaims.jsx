@@ -359,7 +359,7 @@ const ReturnedClaims = () => {
       });
 
       /*  const res = await apiService.get(
-        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
+        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
       if (res.data.succeeded === true) {
         console.log(res.data.data);

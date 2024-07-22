@@ -23,7 +23,9 @@ const UserRoleTable = () => {
 
   useEffect(() => {
     // Fetch permissions data from the API
-    fetch("https://pmis.agilebiz.co.ke/api/PermissionsSetup/GetPermissions")
+    fetch(
+      "https://tntportalapi.agilebiz.co.ke/api/PermissionsSetup/GetPermissions"
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {

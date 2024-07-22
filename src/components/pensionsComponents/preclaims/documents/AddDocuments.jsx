@@ -75,7 +75,7 @@ const AddDocuments = ({ id }) => {
 
     try {
       const res = await axios.post(
-        "https://pmis.agilebiz.co.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
+        "https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -106,7 +106,7 @@ const AddDocuments = ({ id }) => {
     setLoading(true);
     try {
       const res = await apiService.get(
-        `https://pmis.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
+        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
       );
       const base64Data = res.data?.messages[0];
       if (base64Data) {
