@@ -6,7 +6,6 @@ import EditBeneficiaryDialog from "./EditBeneficiaryDialog";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
-import { render } from "react-dom";
 
 function ViewBeneficiaries({
   viewBeneficiaries,

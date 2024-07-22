@@ -473,7 +473,6 @@ function PreclaimDialog({
                         console.log("openBeneficiaries", openBeneficiaries);
                       }}
                       sx={{ mb: -1, maxHeight: "25px" }}
-                      aria-description="View Beneficiaries"
                     >
                       <IconButton>
                         <PeopleOutline
