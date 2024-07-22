@@ -66,7 +66,7 @@ function Sidebar() {
         throw new Error("Role is not defined");
       }
       const res = await axios.get(
-        `https://tntportalapi.agilebiz.co.ke/GetMenuJSON?Role=${role}`
+        `https://tntportalapi.agilebiz.co.ke/api/GetMenuJSON?Role=${role}`
       );
 
       setFetchedMenuItems(res.data.data);
