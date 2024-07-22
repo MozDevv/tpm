@@ -52,7 +52,7 @@ function ProspectivePensionersDocs({ clickedItem }) {
     setLoading(true);
     try {
       const res = await apiService.get(
-        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
       );
       setPdfData(res.data?.messages[0]);
       setModalOpen(true);

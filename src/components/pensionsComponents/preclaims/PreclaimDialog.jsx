@@ -9,8 +9,10 @@ import {
   KeyboardArrowRight,
   Launch,
   OpenInFull,
+  PeopleOutline,
 } from "@mui/icons-material";
-import { Dialog, Divider, TextField } from "@mui/material";
+import { Box, Dialog, Divider, TextField } from "@mui/material";
+
 import React, { useState } from "react";
 import ProspectivePensionersDocs from "./ProspectivePensionersDocs";
 import { IconButton, Button, Collapse, MenuItem, Tooltip } from "@mui/material";
@@ -24,11 +26,13 @@ import "./ag-theme.css";
 import CreateClaim from "../approvals/CreateClaim";
 import CreateWorkHistory from "./CreateWorkHistory";
 import SendForApproval from "./SendForApproval";
-import { notification } from "antd";
+import { Modal, notification } from "antd";
 import RecordCard from "../recordCard/RecordCard";
 import UserDetailCard from "../recordCard/UserDetailCard";
 import { useRouter } from "next/navigation";
 import PensionerDetailSummary from "./PensionerDetailSummary";
+import ViewBeneficiaries from "./ViewBeneficiaries";
+import ApprovalDialog from "../approvals/ApprovalDialog";
 
 function PreclaimDialog({
   setOpenNotification,
@@ -283,8 +287,13 @@ function PreclaimDialog({
   const currentSize = isExpanded ? expandSizes.expanded : expandSizes.default;
 
   const [openCreateWorkHistory, setOpenCreateWorkHistory] = useState(false);
+  const [openBeneficiaries, setOpenBeneficiaries] = useState(false);
 
+  const handleOpenBeneficiaries = () => setOpenBeneficiaries(true);
+  const handleCloseBeneficiaries = () => setOpenBeneficiaries(false);
   const [disabled, setDisabled] = useState(true);
+
+  //const [openCreateClaim, setOpenCreateClaim] = useState(false);
 
   const router = useRouter();
   const handleOpenWorkHistory = () => {
@@ -329,15 +338,60 @@ function PreclaimDialog({
             clickedItem={clickedItem}
           />
         )}
-        {(clickedItem?.notification_status === 5 ||
-          clickedItem?.notification_status === 7) && (
-          <CreateClaim
-            setOpenPreclaimDialog={setOpenPreclaimDialog}
-            setOpenCreateClaim={setOpenCreateClaim}
+      </Dialog>
+
+      <Dialog
+        open={openCreateClaim && clickedItem?.notification_status === 5}
+        onClose={() => setOpenCreateClaim(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            height: "300px",
+            width: "400px",
+          },
+          p: 4,
+        }}
+      >
+        <CreateClaim
+          setOpenPreclaimDialog={setOpenPreclaimDialog}
+          setOpenCreateClaim={setOpenCreateClaim}
+          clickedItem={clickedItem}
+          fetchAllPreclaims={fetchAllPreclaims}
+        />
+      </Dialog>
+
+      <Dialog
+        title="View Beneficiaries & Guardians"
+        open={openBeneficiaries}
+        onOk={handleCloseBeneficiaries}
+        onClose={handleCloseBeneficiaries}
+        width={1000}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxHeight: "90vh",
+            maxWidth: "80vw",
+          },
+        }}
+      >
+        {" "}
+        <Box
+          sx={{
+            //  bgcolor: "background.paper",
+            borderRadius: 1,
+            boxShadow: 24,
+            p: 4,
+            width: "100%",
+            height: "100%",
+            overflow: "auto",
+          }}
+        >
+          <ViewBeneficiaries
+            setViewBeneficiaries={setOpenBeneficiaries}
+            viewBeneficiaries={openBeneficiaries}
             clickedItem={clickedItem}
           />
-        )}
+        </Box>
       </Dialog>
+
       <Dialog
         open={openCreateWorkHistory}
         onClose={() => setOpenCreateWorkHistory(false)}
@@ -371,6 +425,7 @@ function PreclaimDialog({
           </Tooltip>{" "}
         </IconButton>
         <div className="col-span-9 max-h-[100%] overflow-y-auto  bg-white shadow-sm rounded-2xl pb-4">
+          `{" "}
           <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
             <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center">
@@ -392,7 +447,7 @@ function PreclaimDialog({
               </div>
               <div className="flex gap-2 items-center">
                 <div className="flex items-center">
-                  {clickedItem?.notification_status === 7 && (
+                  {clickedItem?.notification_status === 5 && (
                     <Button
                       onClick={() => setOpenCreateClaim(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
@@ -404,7 +459,30 @@ function PreclaimDialog({
                         />
                       </IconButton>
                       <p className="font-normal text-gray -ml-1 text-[13px]">
-                        Create Claim
+                        Approve & Push to claims
+                      </p>
+                    </Button>
+                  )}
+                  {clickedItem?.notification_status === 5 && (
+                    <Button
+                      onClick={() => {
+                        setOpenBeneficiaries(
+                          (prevOpenBeneficiaries) => !prevOpenBeneficiaries
+                        );
+                        console.log("clicked Button **************");
+                        console.log("openBeneficiaries", openBeneficiaries);
+                      }}
+                      sx={{ mb: -1, maxHeight: "25px" }}
+                      aria-description="View Beneficiaries"
+                    >
+                      <IconButton>
+                        <PeopleOutline
+                          sx={{ fontSize: "18px", mb: "2px" }}
+                          color="primary"
+                        />
+                      </IconButton>
+                      <p className="font-normal text-gray -ml-1 text-[13px]">
+                        View Beneficiaries & Guardians
                       </p>
                     </Button>
                   )}

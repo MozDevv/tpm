@@ -65,7 +65,7 @@ export const notificationStatusMap = {
   1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
   2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
   3: { name: "SUBMITTED", color: "#970FF2" }, // Amethyst
-  4: { name: "IN REVIEW", color: "#e67e22" }, // Carrot Orange
+  4: { name: "IN REVIEW", color: "#970FF2" }, // Carrot Orange
   5: { name: "PENDING APPROVAL", color: "#1abc9c" }, // Light Turquoise
   6: { name: "CLAIM CREATED", color: "#49D907" }, // Belize Hole Blue
   7: { name: "RETURNED FOR CLARIFICATION", color: "#E4A11B" }, // Light Green
@@ -455,7 +455,7 @@ const Preclaims = ({ status }) => {
       console.log("mdaId***********", mdaId);
 
       /*  const res = await apiService.get(
-        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
       if (res.data.succeeded === true) {
         console.log(res.data.data);
@@ -476,8 +476,8 @@ const Preclaims = ({ status }) => {
             (item) => item.notification_status === status
           );
 
-          setItems(filteredMinistriesData);
-          const data = mapRowData(filteredMinistriesData);
+          setItems(filteredApprovals);
+          const data = mapRowData(filteredApprovals);
           setRowData(data);
         } else {
           const data = mapRowData(filteredMinistriesData);

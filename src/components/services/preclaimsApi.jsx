@@ -68,6 +68,10 @@ const preClaimsEndpoints = {
 
   //Documents
   submitProspectivePensionerDocs: `/api/MDAReceiveProspectivePensionerDocuments`,
+
+  //GetBeneficiaries
+  getBeneficiaries: (id) =>
+    `/api/Claims/getBeneficiaries?prospective_pensioner_id=${id}&children=true&spouses=true&guardians=true`,
 };
 
 export const apiService = {

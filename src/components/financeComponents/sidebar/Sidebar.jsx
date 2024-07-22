@@ -1,4 +1,4 @@
-"use client";
+side"use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import List from "@mui/material/List";
