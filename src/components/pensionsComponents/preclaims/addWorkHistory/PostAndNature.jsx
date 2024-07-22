@@ -40,7 +40,7 @@ function PostAndNature({ id, loading, setLoading }) {
   const fetchPostandNature = async () => {
     try {
       const res = await axios.get(
-        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
       if (res.status === 200) {
         setPostAndNatureData(res.data.data);

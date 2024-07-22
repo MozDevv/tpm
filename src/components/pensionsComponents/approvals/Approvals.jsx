@@ -353,16 +353,20 @@ const Approvals = () => {
 
   const fetchAllPreclaims = async (sort, filter) => {
     setLoading(true);
+
     try {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
         "paging.pageNumber": 1,
         "paging.pageSize": 30,
         ...sort,
-        ...filter,
+        //  ...filter,
+        "filterCriterion.criterions[0].propertyName": "notification_status",
+        "filterCriterion.criterions[0].propertyValue": 5,
+        "filterCriterion.criterions[0].criterionType": 0,
       });
 
       /*  const res = await apiService.get(
-        `https://tntportalapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
       if (res.data.succeeded === true) {
         console.log(res.data.data);
@@ -370,11 +374,11 @@ const Approvals = () => {
 
         setTotalRecords(res.data.totalCount);
 
-        const filteredApprovals = rawData.filter(
-          (item) => item.notification_status === 5
-        );
+        // const filteredApprovals = rawData.filter(
+        //   (item) => item.notification_status === 5
+        // );
 
-        const mappedData = filteredApprovals.map((item) => ({
+        const mappedData = rawData.map((item) => ({
           retiree: item.retiree?.id,
           email_address: item.retiree?.email_address,
           notification_status: item.notification_status,

@@ -67,7 +67,7 @@ const endpoints = {
 
   //Get Roles
 
-  getRoles: "/GetRoles",
+  getRoles: "/api/RolesSetUp/GetRoles",
 
   //Get Tables
   getTables: "/api/TableSetup/GetTables",
@@ -90,13 +90,13 @@ const endpoints = {
   //getUserPermissions
   getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
 
-  getMenus: "/GetMenuJSON",
+  getMenus: "/api/GetMenuJSON",
 
   //Get Menu Items
-  getMenuItems: "/GetMenuItems",
+  getMenuItems: "/api/GetMenuItems",
 
   //Get MenuRole
-  getMenuRole: (roleId) => `/GetMenuJSON?Role=${roleId}`,
+  getMenuRole: (roleId) => `/api/GetMenuJSON?Role=${roleId}`,
 
   //updateMenuRole
   updateMenuRole: "/CreatePermissionRole",
