@@ -304,6 +304,8 @@ const ClaimsTable = () => {
         //  id: item?.claim_id,
         claim_id: item?.claim_id,
 
+        id_claim: item?.id,
+
         stage: item?.stage,
         comments: item?.comments,
         email_address: item?.prospectivePensioner?.retiree?.email_address,
@@ -458,13 +460,6 @@ const ClaimsTable = () => {
                     </IconButton>
                   </div>
                 </div>
-              </div>
-
-              <div className="absolute right-12">
-                <Button variant="contained" className="flex gap-1">
-                  <Add />
-                  Add New
-                </Button>
               </div>
             </div>
             <Divider sx={{ mt: 1, mb: 1 }} />

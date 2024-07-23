@@ -316,7 +316,7 @@ function PreclaimDialog({
       }}
     >
       <Dialog
-        open={openCreateClaim}
+        open={openCreateClaim & (clickedItem?.notification_status === 3)}
         onClose={() => setOpenCreateClaim(false)}
         sx={{
           "& .MuiDialog-paper": {
@@ -326,17 +326,19 @@ function PreclaimDialog({
           p: 4,
         }}
       >
-        {clickedItem?.notification_status === 3 && (
-          <SendForApproval
-            setOpenPreclaimDialog={setOpenPreclaimDialog}
-            setOpenCreateClaim={setOpenCreateClaim}
-            clickedItem={clickedItem}
-          />
-        )}
+        <SendForApproval
+          setOpenPreclaimDialog={setOpenPreclaimDialog}
+          setOpenCreateClaim={setOpenCreateClaim}
+          clickedItem={clickedItem}
+        />
       </Dialog>
 
       <Dialog
-        open={openCreateClaim && clickedItem?.notification_status === 5}
+        open={
+          openCreateClaim &&
+          (clickedItem?.notification_status === 5 ||
+            clickedItem?.notification_status === 7)
+        }
         onClose={() => setOpenCreateClaim(false)}
         sx={{
           "& .MuiDialog-paper": {
@@ -442,7 +444,8 @@ function PreclaimDialog({
               </div>
               <div className="flex gap-2 items-center">
                 <div className="flex items-center">
-                  {clickedItem?.notification_status === 5 && (
+                  {(clickedItem?.notification_status === 5 ||
+                    clickedItem?.notification_status === 7) && (
                     <Button
                       onClick={() => setOpenCreateClaim(true)}
                       sx={{ mb: -1, maxHeight: "25px" }}
@@ -459,6 +462,7 @@ function PreclaimDialog({
                     </Button>
                   )}
                   {(clickedItem?.notification_status === 5 ||
+                    clickedItem?.notification_status === 7 ||
                     clickedItem?.notification_status === 3) && (
                     <Button
                       onClick={() => {

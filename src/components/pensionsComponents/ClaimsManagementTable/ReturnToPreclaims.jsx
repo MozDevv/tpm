@@ -30,7 +30,7 @@ function ReturnToPreclaims({
     }
 
     const data = {
-      claim_id: clickedItem?.claim_id,
+      claim_id: clickedItem?.id_claim,
       action: moveStatus,
       comments,
     };
