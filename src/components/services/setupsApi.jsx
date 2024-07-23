@@ -99,7 +99,7 @@ const endpoints = {
   getMenuRole: (roleId) => `/api/GetMenuJSON?Role=${roleId}`,
 
   //updateMenuRole
-  updateMenuRole: "/CreatePermissionRole",
+  updateMenuRole: "/api/RoleMenuItemSetup/CreatePermissionRole",
 
   //getPro
 };

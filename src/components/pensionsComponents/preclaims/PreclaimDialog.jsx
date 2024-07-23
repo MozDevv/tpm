@@ -122,11 +122,6 @@ function PreclaimDialog({
           type: "text",
           value: clickedItem?.national_id,
         },
-        {
-          label: "Pension Commencement Date",
-          name: "pension_commencement_date",
-          type: "date",
-        },
 
         {
           label: "Gender",
@@ -425,7 +420,7 @@ function PreclaimDialog({
           </Tooltip>{" "}
         </IconButton>
         <div className="col-span-9 max-h-[100%] overflow-y-auto  bg-white shadow-sm rounded-2xl pb-4">
-          `{" "}
+          {" "}
           <div className="pt-6 sticky top-0 bg-inherit z-50 pb-2">
             <div className="flex items-center justify-between px-6 w-[100%]">
               <div className="flex items-center">
@@ -463,7 +458,8 @@ function PreclaimDialog({
                       </p>
                     </Button>
                   )}
-                  {clickedItem?.notification_status === 5 && (
+                  {(clickedItem?.notification_status === 5 ||
+                    clickedItem?.notification_status === 3) && (
                     <Button
                       onClick={() => {
                         setOpenBeneficiaries(

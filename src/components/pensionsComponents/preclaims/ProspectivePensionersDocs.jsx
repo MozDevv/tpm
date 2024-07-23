@@ -76,7 +76,7 @@ function ProspectivePensionersDocs({ clickedItem }) {
       </Typography>
 
       <List sx={{ display: "flex", gap: "5px", flexDirection: "column" }}>
-        {awardDocuments.map((doc, index) => (
+        {awardDocuments?.map((doc, index) => (
           <ListItem
             key={index}
             sx={{ pl: 3, cursor: "pointer" }}

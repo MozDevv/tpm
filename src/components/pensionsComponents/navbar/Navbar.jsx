@@ -65,7 +65,7 @@ function Navbar() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `${BASE_CORE_API}GetRoles?documentId=${auth.user.roles}`
+          `${BASE_CORE_API}api/RolesSetUp/GetRoles?documentId=${auth.user.roles}`
         );
         setRole(res.data.data.name);
       } catch (error) {
@@ -85,8 +85,6 @@ function Navbar() {
 
     router.push("/");
   };
-
-  
 
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>

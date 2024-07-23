@@ -128,10 +128,10 @@ function Sidebar() {
           title: "Returned Claims",
           path: "/pensions/preclaims/returned-claims",
         },
-        {
-          title: "Verification",
-          path: "/pensions/claims-approval",
-        },
+        // {
+        //   title: "Verification",
+        //   path: "/pensions/claims-approval",
+        // },
       ],
     },
     {

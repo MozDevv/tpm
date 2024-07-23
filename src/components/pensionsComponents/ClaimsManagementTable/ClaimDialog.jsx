@@ -7,9 +7,11 @@ import {
   IosShare,
   KeyboardArrowDown,
   KeyboardArrowRight,
+  Launch,
   OpenInFull,
+  PeopleOutline,
 } from "@mui/icons-material";
-import { Dialog, TextField } from "@mui/material";
+import { Box, Dialog, Divider, TextField } from "@mui/material";
 import React, { useState } from "react";
 import ProspectivePensionersDocs from "../preclaims/ProspectivePensionersDocs";
 import { IconButton, Button, Collapse, MenuItem, Tooltip } from "@mui/material";
@@ -23,6 +25,9 @@ import "./ag-theme.css";
 
 import ReturnToPreclaims from "./ReturnToPreclaims";
 import UserDetailCard from "../recordCard/UserDetailCard";
+import PensionerDetailSummary from "../preclaims/PensionerDetailSummary";
+import ViewBeneficiaries from "../preclaims/ViewBeneficiaries";
+import { useRouter } from "next/navigation";
 
 function ClaimDialog({
   setOpenNotification,
@@ -56,6 +61,12 @@ function ClaimDialog({
       state: useState(true),
       fields: [
         {
+          label: "Personal Number",
+          name: "personal_number",
+          type: "text",
+          value: clickedItem?.personal_number,
+        },
+        {
           label: "Surname",
           name: "surname",
           type: "text",
@@ -80,7 +91,7 @@ function ClaimDialog({
           value: clickedItem?.kra_pin,
         },
         {
-          label: "Date of Confirmation",
+          label: "Employment Confirmation Date",
           name: "date_of_confirmation",
           type: "date",
 
@@ -105,42 +116,14 @@ function ClaimDialog({
           type: "text",
           value: clickedItem?.national_id,
         },
-      ],
-    },
-    {
-      title: "Contact Details",
-      state: useState(true),
-      fields: [
-        {
-          label: "Email Address",
-          name: "email_address",
-          type: "email",
-          value: clickedItem?.email_address,
-        },
-        {
-          label: "Phone Number",
-          name: "phone_number",
-          type: "text",
-          value: clickedItem?.phone_number,
-        },
+
         {
           label: "Gender",
           name: "gender",
           type: "select",
-          value: clickedItem?.gender === 1 ? "Male" : "Female",
+          value: clickedItem?.gender === 0 ? "Male" : "Female",
         },
-        {
-          label: "Personal Number",
-          name: "personal_number",
-          type: "text",
-          value: clickedItem?.personal_number,
-        },
-      ],
-    },
-    {
-      title: "Payment Details",
-      state: useState(true),
-      fields: [
+
         {
           label: "Last Basic Salary Amount",
           name: "last_basic_salary_amount",
@@ -151,8 +134,37 @@ function ClaimDialog({
           label: "Retirement Date",
           name: "retirement_date",
           type: "date",
-          value: clickedItem?.retirement_date,
+          value: clickedItem?.retirement_date
+            ? new Date(clickedItem?.retirement_date).toISOString().split("T")[0]
+            : "",
         },
+        {
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
+          type: "date",
+          value: clickedItem?.date_from_which_pension_will_commence
+            ? new Date(clickedItem?.date_from_which_pension_will_commence)
+                .toISOString()
+                .split("T")[0]
+            : "",
+        },
+        {
+          label: "Authority of retirement Ref No.",
+          name: "authority_for_retirement_reference",
+          type: "text",
+          value: clickedItem?.authority_for_retirement_reference,
+        },
+        {
+          label: "Authority of retirement Date",
+          name: "authority_for_retirement_dated",
+          type: "date",
+          value: clickedItem?.authority_for_retirement_dated
+            ? new Date(clickedItem?.authority_for_retirement_dated)
+                .toISOString()
+                .split("T")[0]
+            : "",
+        },
+
         {
           label: "Pension Award ",
           name: "pension_award_id",
@@ -167,12 +179,106 @@ function ClaimDialog({
         },
       ],
     },
+    {
+      title: "Contact Details",
+      state: useState(true),
+      fields: [
+        {
+          label: "Email Address",
+          name: "email_address",
+          type: "email",
+          value: clickedItem?.email_address,
+        },
+
+        {
+          label: "Postal Address",
+          name: "postal_address",
+          type: "text",
+          value: clickedItem?.postal_address,
+        },
+        {
+          label: "Phone Number",
+          name: "phone_number",
+          type: "text",
+          value: clickedItem?.phone_number,
+        },
+        {
+          label: "Country",
+          name: "country",
+          type: "text",
+          value: "Kenya",
+        },
+        {
+          label: "City/Town",
+          name: "city",
+          type: "text",
+          value: clickedItem?.city_town,
+        },
+      ],
+    },
+    {
+      title: "Bank Details",
+      state: useState(true),
+      fields: [
+        {
+          label: "Branch name",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.branch_name,
+        },
+        {
+          label: "Branch Code",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.branch_code,
+        },
+        {
+          label: "Bank code",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.bank_code,
+        },
+        {
+          label: "Bank Name",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.bank_name,
+        },
+        {
+          label: "Account Number",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.account_number,
+        },
+      ],
+    },
   ];
 
   console.log("clickedItem", clickedItem);
 
   const [openCreateClaim, setOpenCreateClaim] = useState(false);
+  const statusMapping = {
+    0: {
+      name: "VERIFICATION",
+      color: "#3498db",
+      next: 1,
+      nextName: "VALIDATION",
+    },
+    1: { name: "VALIDATION", color: "#f39c12", next: 2, nextName: "APPROVAL" },
+    2: {
+      name: "APPROVAL",
+      color: "#2ecc71",
+      next: 0,
+      nextName: "VERIFICATION",
+    },
+  };
 
+  const [moveStatus, setMoveStatus] = useState(clickedItem?.status);
+
+  const handleClick = () => {
+    const nextStatus = statusMapping[moveStatus].next;
+    setMoveStatus(nextStatus);
+  };
   const [isExpanded, setIsExpanded] = useState(false);
   const expandSizes = {
     default: {
@@ -194,7 +300,15 @@ function ClaimDialog({
 
   const [disabled, setDisabled] = useState(true);
 
-  const [moveStatus, setMoveStatus] = useState(null);
+  const [openBeneficiaries, setOpenBeneficiaries] = useState(false);
+
+  const router = useRouter();
+
+  const handleOpenWorkHistory = () => {
+    router.push(
+      `/pensions/preclaims/listing/new/add-work-history?id=${clickedItem?.id}&name=${clickedItem?.first_name}`
+    );
+  };
 
   return (
     <Dialog
@@ -211,6 +325,37 @@ function ClaimDialog({
         },
       }}
     >
+      <Dialog
+        title="View Beneficiaries & Guardians"
+        open={openBeneficiaries}
+        onClose={() => setOpenBeneficiaries(false)}
+        width={1000}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxHeight: "90vh",
+            maxWidth: "80vw",
+          },
+        }}
+      >
+        {" "}
+        <Box
+          sx={{
+            //  bgcolor: "background.paper",
+            borderRadius: 1,
+            boxShadow: 24,
+            p: 4,
+            width: "100%",
+            height: "100%",
+            overflow: "auto",
+          }}
+        >
+          <ViewBeneficiaries
+            setViewBeneficiaries={setOpenBeneficiaries}
+            viewBeneficiaries={openBeneficiaries}
+            clickedItem={clickedItem}
+          />
+        </Box>
+      </Dialog>
       <Dialog
         open={openCreateClaim}
         onClose={() => setOpenCreateClaim(false)}
@@ -271,6 +416,26 @@ function ClaimDialog({
                 </p>
               </div>
               <div className="flex gap-2 items-center">
+                <Button
+                  onClick={() => {
+                    setOpenBeneficiaries(
+                      (prevOpenBeneficiaries) => !prevOpenBeneficiaries
+                    );
+                    //  console.log("clicked Button **************");
+                    //  console.log("openBeneficiaries", openBeneficiaries);
+                  }}
+                  sx={{ mb: -1, maxHeight: "25px" }}
+                >
+                  <IconButton>
+                    <PeopleOutline
+                      sx={{ fontSize: "18px", mb: "2px" }}
+                      color="primary"
+                    />
+                  </IconButton>
+                  <p className="font-normal text-gray -ml-1 text-[13px]">
+                    View Beneficiaries & Guardians
+                  </p>
+                </Button>
                 <div className="flex items-center">
                   <Button
                     onClick={() => {
@@ -291,22 +456,23 @@ function ClaimDialog({
                   </Button>
                 </div>
 
-                {clickedItem?.notification_status === 0 && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => setOpenNotification(true)}
-                      sx={{ mb: -1, maxHeight: "24px" }}
-                      disabled={
-                        clickedItem?.notification_status === 0 ? false : true
-                      }
-                      startIcon={<ForwardToInbox />}
-                    >
-                      <p className="font-medium text-gray -ml-2 text-sm">
-                        Notify Pensioner(s)
-                      </p>
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={handleOpenWorkHistory}
+                    sx={{ mb: -1, maxHeight: "25px" }}
+                  >
+                    <IconButton>
+                      <Launch
+                        sx={{ fontSize: "18px", mb: "2px" }}
+                        color="primary"
+                      />
+                    </IconButton>
+                    <p className="font-normal text-gray -ml-1 text-[13px]">
+                      View Work History
+                    </p>
+                  </Button>
+                </div>
+
                 <div className="flex items-center">
                   <Button
                     onClick={() => {
@@ -322,39 +488,11 @@ function ClaimDialog({
                       />
                     </IconButton>
                     <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Move Status
+                      Move to {statusMapping[moveStatus]?.nextName}
                     </p>
                   </Button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setDisabled(false)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                  >
-                    <IconButton>
-                      <Edit
-                        sx={{ fontSize: "18px", mr: "2px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Edit
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center">
-                  <Button sx={{ mb: -1, maxHeight: "24px" }}>
-                    <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "18px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-normal text-gray -ml-2 text-[13px]">
-                      Delete
-                    </p>
-                  </Button>
-                </div>
+
                 <IconButton onClick={() => setIsExpanded(!isExpanded)}>
                   <Tooltip title={isExpanded ? "Shrink" : "Expand"}>
                     <OpenInFull
@@ -411,7 +549,15 @@ function ClaimDialog({
                             value={field.value}
                             required
                             fullWidth
-                            sx={{ fontWeight: 600 }}
+                            sx={{
+                              fontWeight: 600,
+                              "& .MuiInputBase-input.Mui-disabled, & .MuiOutlinedInput-input.Mui-disabled":
+                                {
+                                  color: "rgba(0, 0, 0, 0.4)", // Darken text color
+                                  fontWeight: 600, // Bold text
+                                  WebkitTextFillColor: "rgba(0, 0, 0, 0.6)", // Ensures the color is applied in WebKit browsers
+                                },
+                            }}
                             disabled={disabled}
                           />
                         </div>
@@ -423,9 +569,11 @@ function ClaimDialog({
             })}
           </div>
         </div>
-        <div className="col-span-3">
-          {/** <ProspectivePensionersDocs /> */}
-          <UserDetailCard clickedItem={clickedItem} />
+        <div className="col-span-3 flex flex-col">
+          <PensionerDetailSummary clickedItem={clickedItem} />
+
+          <Divider sx={{ mt: 3 }} />
+          <ProspectivePensionersDocs clickedItem={clickedItem} />
         </div>
       </div>
     </Dialog>
