@@ -215,6 +215,12 @@ function PreclaimDialog({
           value: "Kenya",
         },
         {
+          label: "County",
+          name: "county",
+          type: "text",
+          value: clickedItem?.county,
+        },
+        {
           label: "City/Town",
           name: "city",
           type: "text",
@@ -255,6 +261,12 @@ function PreclaimDialog({
           placeholder: "",
           type: "text",
           value: clickedItem?.account_number,
+        },
+        {
+          label: "Account Name",
+          placeholder: "",
+          type: "text",
+          value: clickedItem?.account_name,
         },
       ],
     },

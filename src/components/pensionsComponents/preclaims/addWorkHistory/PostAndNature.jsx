@@ -30,7 +30,14 @@ import preClaimsEndpoints, {
 function PostAndNature({ id, loading, setLoading }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    date: "",
+    post: "",
+    was_pensionable: false,
+    nature_of_salary_scale: "",
+    nature_of_service: "",
+  });
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
   const { alert, setAlert } = useAlert();
@@ -43,8 +50,10 @@ function PostAndNature({ id, loading, setLoading }) {
         `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
       if (res.status === 200) {
-        setPostAndNatureData(res.data.data);
-        setLoading(false);
+        const sortedData = res.data.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setPostAndNatureData(sortedData);
       }
     } catch (error) {
       console.log(error);
@@ -58,12 +67,28 @@ function PostAndNature({ id, loading, setLoading }) {
     }
   }, [id]);
 
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+
   const fetchProspectivePensioners = async () => {
     try {
       const res = await apiService.get(
         preClaimsEndpoints.getProspectivePensioner(id)
       );
-      setDateOfConfirmation(dayjs(res.data.data[0].date_of_confirmation));
+      setDateOfConfirmation(
+        new Date(res.data.data[0].date_of_confirmation)
+          .toISOString()
+          .split("T")[0]
+      );
+
+      setDateOfFirstAppointment(
+        new Date(res.data.data[0].date_of_first_appointment)
+          .toISOString()
+          .split("T")[0]
+      );
+      console.log(
+        "first appointment",
+        res.data.data[0].date_of_first_appointment
+      );
     } catch (error) {
       console.log(error);
     }
@@ -74,7 +99,8 @@ function PostAndNature({ id, loading, setLoading }) {
   }, []);
 
   const fields = [
-    { label: "Date", value: "date", type: "date" },
+    //{label: "Date Of First Appointment", value: "date_of_first_appointment", type: "date"},
+    { label: "Start Date", value: "date", type: "date" },
     { label: "Post", value: "post" },
     {
       label: "Whether Pensionable(Yes/No)",
@@ -101,11 +127,30 @@ function PostAndNature({ id, loading, setLoading }) {
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
-    setFormData({
+    const updatedFormData = {
       ...formData,
       [name]: type === "radio" ? JSON.parse(value) : value,
-    });
+    };
+
+    // Automatically set related fields based on 'whether pensionable'
+    if (name === "was_pensionable") {
+      updatedFormData.nature_of_salary_scale = value === true ? "P" : "";
+      updatedFormData.nature_of_service = value === true ? "Permanent" : "";
+    }
+
+    setFormData(updatedFormData);
   };
+
+  useEffect(() => {
+    if (!postAndNatureData.length && dateOfConfirmation) {
+      setFormData((prevState) => ({
+        ...prevState,
+        date: dateOfConfirmation.format("YYYY-MM-DD"),
+        nature_of_salary_scale: "P",
+        nature_of_service: "Permanent",
+      }));
+    }
+  }, [postAndNatureData, dateOfConfirmation]);
 
   const handleSubmit = async () => {
     const formattedFormData = { ...formData, prospective_pensioner_id: id };
@@ -225,6 +270,26 @@ function PostAndNature({ id, loading, setLoading }) {
             {isEditMode ? "Edit" : "Add"} Post and Nature of Service
           </h1>
           <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold text-gray-600">
+              Date Of Confirmation
+            </label>
+            <input
+              type="date"
+              name="date"
+              value={dateOfConfirmation}
+              disabled
+              className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm`}
+            />
+            <label className="text-xs font-semibold text-gray-600">
+              Date Of First Appointment
+            </label>
+            <input
+              type="date"
+              name="date"
+              value={dateOfFirstAppointment}
+              disabled
+              className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm`}
+            />
             {fields.map((field) => (
               <div key={field.value}>
                 <label className="text-xs font-semibold text-gray-600">

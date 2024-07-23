@@ -39,7 +39,7 @@ function AddBankDetails({ id }) {
         bankId: data.bankDetails[0]?.bankBranch?.bank_id,
         branchId: data.bankDetails[0]?.bank_branch_id,
         accountNumber: data.bankDetails[0]?.account_number,
-        accountName: data.accountName,
+        accountName: data.bankDetails[0]?.account_name,
       });
 
       setSelectedBank(data.bankDetails[0]?.bankBranch?.bank_id);
