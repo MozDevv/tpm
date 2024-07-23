@@ -141,17 +141,6 @@ function PostAndNature({ id, loading, setLoading }) {
     setFormData(updatedFormData);
   };
 
-  useEffect(() => {
-    if (!postAndNatureData.length && dateOfConfirmation) {
-      setFormData((prevState) => ({
-        ...prevState,
-        date: dateOfConfirmation.format("YYYY-MM-DD"),
-        nature_of_salary_scale: "P",
-        nature_of_service: "Permanent",
-      }));
-    }
-  }, [postAndNatureData, dateOfConfirmation]);
-
   const handleSubmit = async () => {
     const formattedFormData = { ...formData, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
