@@ -3,6 +3,7 @@ import axios from "axios";
 import { Tree } from "antd";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
+import { BASE_CORE_API } from "@/utils/constants";
 
 const MenuList = ({ roleId, roleName }) => {
   const [treeData, setTreeData] = useState([]);
@@ -10,11 +11,10 @@ const MenuList = ({ roleId, roleName }) => {
   const { setAlert } = useAlert();
 
   useEffect(() => {
-    // Fetch menu items and roles based on roleId
     const fetchData = async () => {
       try {
         const [menuItemsResponse, menuRolesResponse] = await Promise.all([
-          axios.get(`${BASE_CORE_API}GetMenuItems`),
+          axios.get(`${BASE_CORE_API}api/GetMenuItems`),
           apiService.get(endpoints.getMenuRole(roleId)),
         ]);
 
@@ -27,11 +27,11 @@ const MenuList = ({ roleId, roleName }) => {
             menuRolesResponse.data.data
           );
           setTreeData(formattedData);
-          setCheckedKeys(
-            findCheckedKeys(formattedData, menuRolesResponse.data.data)
-          );
+          setCheckedKeys(findCheckedKeys(formattedData));
+
+          console.log("formattedData:**************", treeData);
+          console.log("CheckedKeys***********", treeData);
         }
-        console.log("roleID", roleId);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -40,7 +40,6 @@ const MenuList = ({ roleId, roleName }) => {
     fetchData();
   }, [roleId]);
 
-  // Function to format data recursively and mark checked items
   const formatData = (items, menuRoles) => {
     const map = {};
     const treeData = [];
@@ -63,16 +62,16 @@ const MenuList = ({ roleId, roleName }) => {
         title: item.name,
         key: item.menuItemId.toString(),
         children:
-          item.children.length > 0 ? traverseAndCheck(item.children) : null,
-        checked: menuRoles.some((role) => role.name === item.name), // Check if item's name is in menuRoles
+          item.children.length > 0 ? traverseAndCheck(item.children) : [],
+        checked: menuRoles.some((role) => role.name === item.name),
       }));
     };
 
+    console.log("treeData:", treeData);
     return traverseAndCheck(treeData);
   };
 
-  // Function to find checked keys recursively
-  const findCheckedKeys = (data, menuRoles) => {
+  const findCheckedKeys = (data) => {
     const checkedKeys = [];
 
     const traverseTree = (items) => {
@@ -81,7 +80,7 @@ const MenuList = ({ roleId, roleName }) => {
           checkedKeys.push(item.key);
         }
 
-        if (item.children) {
+        if (item.children && item.children.length > 0) {
           traverseTree(item.children);
         }
       });
@@ -97,19 +96,20 @@ const MenuList = ({ roleId, roleName }) => {
 
     setCheckedKeys(checkedKeysValue);
     handleRoleMenuChange(menuItemId, isChecked);
+
+    console.log("checkedKeysValue:", checkedKeysValue);
+    console.log("node:", node);
   };
 
   const handleRoleMenuChange = async (menuItemId, isChecked) => {
-    if (!menuItemId) return; // Handle no role selected
+    if (!menuItemId) return;
 
     const formData = new FormData();
     formData.append("roleId", roleId);
     formData.append("menuItemId", menuItemId);
-    // formData.append("isChecked", isChecked); // Indicate whether it's checked or not
 
     try {
       const res = await apiService.post(endpoints.updateMenuRole, formData);
-      console.log(res.data);
       if (res.status === 201) {
         setAlert({
           open: true,
@@ -117,9 +117,9 @@ const MenuList = ({ roleId, roleName }) => {
           severity: "success",
         });
       }
+      fetchData();
     } catch (error) {
-      console.log(error);
-      console.log("formData", formData);
+      console.error("Error updating menu role:", error);
     }
   };
 

@@ -57,7 +57,7 @@ const notificationStatusMap = {
 const colDefs = [
   {
     headerName: "Id",
-    field: "id",
+    field: "claim_id",
     width: 150,
     checkboxSelection: true,
     headerCheckboxSelection: true,
@@ -301,8 +301,8 @@ const ClaimsTable = () => {
 
       const mappedData = rawData.map((item) => ({
         retiree: item?.prospectivePensioner?.retiree?.id,
-        id: item?.claim_id,
-        claim_id: item?.id,
+        //  id: item?.claim_id,
+        claim_id: item?.claim_id,
 
         stage: item?.stage,
         comments: item?.comments,
@@ -347,6 +347,38 @@ const ClaimsTable = () => {
           item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
         pensionAward_pensionCap_id:
           item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
+
+        //////
+
+        retirement_date: item?.prospectivePensioner?.retirement_date,
+        date_from_which_pension_will_commence:
+          item?.prospectivePensioner?.date_from_which_pension_will_commence,
+        authority_for_retirement_dated:
+          item?.prospectivePensioner?.authority_for_retirement_dated,
+        authority_for_retirement_reference:
+          item?.prospectivePensioner?.authority_for_retirement_reference,
+        date_of_first_appointment:
+          item?.prospectivePensioner?.date_of_first_appointment,
+        date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
+        country: item?.prospectivePensioner?.country,
+        city_town: item?.prospectivePensioner?.city_town,
+        pension_commencement_date:
+          item?.prospectivePensioner?.pension_commencement_date,
+        postal_address: item?.prospectivePensioner?.postal_address,
+        id: item.prospectivePensioner?.id,
+        bank_name:
+          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank?.name,
+        branch_name:
+          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.name,
+        account_number:
+          item.prospectivePensioner?.bankDetails[0]?.account_number,
+        bankType:
+          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank?.bankType
+            ?.type,
+        branch_code:
+          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.branch_code,
+        bank_code:
+          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank.code,
       }));
 
       setRowData(mappedData);
@@ -399,43 +431,6 @@ const ClaimsTable = () => {
           <div className="h-full w-full">
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
-                <div className="flex items-center">
-                  <Button
-                    onClick={() => setOpenCreate(true)}
-                    sx={{ mb: -1, maxHeight: "25px" }}
-                  >
-                    <IconButton>
-                      <Add sx={{ fontSize: "20px" }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Create
-                    </p>
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setOpenNotification(true)}
-                    sx={{ mb: -1, maxHeight: "24px" }}
-                  >
-                    <IconButton>
-                      <Edit sx={{ fontSize: "20px", mr: 1 }} color="primary" />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">Edit</p>
-                  </Button>
-                </div>
-                <div className="flex items-center">
-                  <Button sx={{ mb: -1, maxHeight: "24px" }}>
-                    <IconButton>
-                      <DeleteOutlineOutlined
-                        sx={{ fontSize: "20px" }}
-                        color="primary"
-                      />
-                    </IconButton>
-                    <p className="font-medium text-gray -ml-2 text-sm">
-                      Delete
-                    </p>
-                  </Button>
-                </div>
                 <div className="flex items-center gap-2 mt-2 ml-2">
                   <Button
                     onClick={() => exportData()}
