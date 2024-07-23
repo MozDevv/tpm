@@ -465,11 +465,11 @@ const Preclaims = ({ status }) => {
 
         // Filter data by mdaId
         const filteredMinistriesData =
-          auth.user.email === "super@mail.com"
+          status === 5
+            ? rawData
+            : auth.user.email === "super@mail.com"
             ? rawData
             : rawData.filter((item) => item.mda_id === mdaId);
-        const { totalCount, currentPage, totalPages } = res.data;
-        setTotalPages(res.data.totalPages);
 
         setTotalRecords(res.data.totalCount);
 
