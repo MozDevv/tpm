@@ -302,7 +302,9 @@ function NewPreclaim({
 
   const fetchPensionAwards = async () => {
     try {
-      const res = await apiService.get(endpoints.pensionAwards);
+      const res = await apiService.get(endpoints.pensionAwards, {
+        "paging.pageSize": 100,
+      });
       setPensionAwards(res.data.data);
     } catch (error) {
       console.error("Error fetching Pension Awards:", error);
@@ -316,7 +318,9 @@ function NewPreclaim({
   const { alert, setAlert } = useAlert();
   const fetchCountiesAndContituencies = async () => {
     try {
-      const res = await apiService.get(endpoints.getCounties);
+      const res = await apiService.get(endpoints.getCounties, {
+        "paging.pageSize": 100,
+      });
       const rawData = res.data.data;
 
       const countiesData = rawData.map((county) => ({
@@ -338,7 +342,9 @@ function NewPreclaim({
   };
   const fetchCountries = async () => {
     try {
-      const res = await apiService.get(endpoints.getCountries);
+      const res = await apiService.get(endpoints.getCountries, {
+        "paging.pageSize": 100,
+      });
 
       setCountries(res.data.data);
 
@@ -454,6 +460,7 @@ function NewPreclaim({
           label: "Counstituency",
           name: "constituency_id",
           type: "select",
+          // placeholder: formData.constituency_name,
           children: formData.county_id
             ? constituencies?.map((constituency) => ({
                 id: constituency.id,
@@ -578,7 +585,7 @@ function NewPreclaim({
     console.log("Formatted Form Data:", formattedFormData);
 
     if (!mdaId) {
-      message.error("MDA not found");
+      message.error("MDA not found, Please sign in as an MDA user");
       return;
     }
     const data = { ...formattedFormData, mda_id: mdaId };
@@ -670,6 +677,30 @@ function NewPreclaim({
       console.log("API Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (formData.retirement_date) {
+      const lastPayDate = dayjs(formData.retirement_date);
+      const nextDay = lastPayDate.add(1, "day").format("YYYY-MM-DD");
+      setFormData({
+        ...formData,
+        date_from_which_pension_will_commence: nextDay,
+      });
+    }
+  }, [formData.retirement_date]);
+
+  useEffect(() => {
+    if (formData.dob) {
+      const dobDate = dayjs(formData.dob);
+      const firstAppointmentDate = dobDate
+        .add(18, "years")
+        .format("YYYY-MM-DD");
+      setFormData({
+        ...formData,
+        date_of_first_appointment: firstAppointmentDate,
+      });
+    }
+  }, [formData.dob]);
 
   return (
     <div className="w-full p-2 mt-3 mr-1 h-[95vh] grid grid-cols-12 gap-2">

@@ -7,6 +7,9 @@ import Spinner from "@/components/spinner/Spinner";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Close } from "@mui/icons-material";
+import preClaimsEndpoints, {
+  apiService,
+} from "@/components/services/preclaimsApi";
 
 function AddPensionersWorkHistory({ id, name }) {
   const [loading, setLoading] = useState(true);
@@ -23,6 +26,24 @@ function AddPensionersWorkHistory({ id, name }) {
           `/pensions/preclaims/listing/new/add-payment-details?id=${id}`
         )
       : router.push(`/pensions/preclaims/listing`);
+  };
+
+  const [retiree, setRetiree] = useState({});
+
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+
+  const fetchRetiree = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(id)
+      );
+      const data = res?.data?.data[0]; // Get the retiree data
+
+      setDateOfFirstAppointment(data.date_of_first_appointment);
+      setRetiree(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -62,7 +83,12 @@ function AddPensionersWorkHistory({ id, name }) {
       <hr className="border-[1px] border-black-900 my-2" />
       <div className="container">
         <Suspense fallback={<Spinner />}>
-          <PostAndNature id={id} loading={loading} setLoading={setLoading} />
+          <PostAndNature
+            id={id}
+            loading={loading}
+            setLoading={setLoading}
+            dateOfFirstAppointment={dateOfFirstAppointment}
+          />
         </Suspense>
         <Suspense fallback={<Spinner />}>
           <PensionableSalary id={id} />
