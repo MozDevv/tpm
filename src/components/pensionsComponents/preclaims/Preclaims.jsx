@@ -551,7 +551,7 @@ const Preclaims = ({ status }) => {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-    /AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/create: () => router.push("/pensions/preclaims/listing/new"),
+    create: () => router.push("/pensions/preclaims/listing/new"),
     create: () => setOpenBaseCard(true),
     edit: () => console.log("Edit clicked"),
     delete: () => console.log("Delete clicked"),
