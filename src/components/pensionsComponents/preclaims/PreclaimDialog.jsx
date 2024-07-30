@@ -548,23 +548,7 @@ function PreclaimDialog({
                     </Button>
                   </div>
                 )}
-                {/*
-                <div className="flex items-center">
-                  {clickedItem?.notification_status !== 7 && (
-                    <Button
-                      onClick={() => setOpenCreateWorkHistory(true)}
-                      sx={{ mb: -1, maxHeight: "25px" }}
-                      
-                    >
-                      <IconButton>
-                        <Add sx={{ fontSize: "18px" }} color="primary" />
-                      </IconButton>
-                      <p className="font-normal text-gray -ml-2 text-[13px]">
-                        Add work History
-                      </p>
-                    </Button>
-                  )}
-                </div> */}
+
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={handleEdit}

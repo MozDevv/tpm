@@ -45,6 +45,7 @@ import ReactPaginate from "react-paginate";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useMda } from "@/context/MdaContext";
+import ListNavigation from "@/components/baseComponents/ListNavigation";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -545,6 +546,19 @@ const Preclaims = ({ status }) => {
 
   const router = useRouter();
 
+  const [openBaseCard, setOpenBaseCard] = useState(false);
+
+  const handlers = {
+    filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
+    openInExcel: () => exportData(),
+    create: () => router.push("/pensions/preclaims/listing/new"),
+    create: () => setOpenBaseCard(true),
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => setOpenNotification(true),
+  };
+
   return (
     <>
       {loading ? (
@@ -576,9 +590,15 @@ const Preclaims = ({ status }) => {
             setOpenNotification={setOpenNotification}
           />
           <div className="h-full w-full">
+            <ListNavigation
+              handlers={handlers}
+              permissions={permissions}
+              status={status}
+            />
+
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">
-                {!status && (
+                {/* {!status && (
                   <div className="flex items-center">
                     <Button
                       // onClick={() => setOpenCreate(true)}
@@ -620,9 +640,9 @@ const Preclaims = ({ status }) => {
                       </p>
                     </Button>
                   </div>
-                )}
+                )} */}
 
-                <div className="flex items-center gap-2 mt-2 ml-2">
+                {/* <div className="flex items-center gap-2 mt-2 ml-2">
                   <Button
                     onClick={() => exportData()}
                     sx={{ maxHeight: "25px" }}
@@ -648,7 +668,7 @@ const Preclaims = ({ status }) => {
                       </Tooltip>
                     </IconButton>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             <Divider sx={{ mt: 1, mb: 1 }} />

@@ -107,8 +107,6 @@ function Sidebar() {
             {
               title: "Retirees List",
               path: "/pensions/preclaims/listing",
-              indirect: ["MDAs", "Pension Awards", "Banks"],
-              direct: ["Retirees", "Retirees List"],
             },
             {
               title: "Unnotified Retirees",
@@ -456,7 +454,11 @@ function Sidebar() {
   return (
     <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
       <div className="sticky top-0 bg-white z-50">
-        <img src="/logo.png" className="w-full h-[60px] pt-2 mb-3 " alt="" />
+        <img
+          src="/logo.png"
+          className="w-full h-[60px] pt-2 mb-[-20px] "
+          alt=""
+        />
       </div>
       <List>
         <h6 className={styles.h6}>MAIN MENU</h6>

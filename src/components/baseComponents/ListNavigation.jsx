@@ -1,0 +1,158 @@
+import React from "react";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import {
+  FilterList,
+  OpenInNew,
+  Create,
+  Edit,
+  Delete,
+  Report,
+  ForwardToInbox,
+  CheckCircle,
+  Send,
+  Add,
+} from "@mui/icons-material";
+
+const ListNavigation = ({ handlers, permissions, status }) => {
+  // Define buttons with required permissions
+  const buttons = [
+    {
+      name: "Filter",
+      icon: FilterList,
+      action: "filter",
+      requiredPermissions: [],
+    },
+    {
+      name: "Open in Excel",
+      icon: OpenInNew,
+      action: "openInExcel",
+      requiredPermissions: [],
+    },
+    {
+      name: "Create",
+      icon: Add,
+      action: "create",
+      requiredPermissions: ["preclaims.create.prospective_pensioner"],
+    },
+    {
+      name: "Edit",
+      icon: Edit,
+      action: "edit",
+      requiredPermissions: ["update"],
+    },
+    {
+      name: "Delete",
+      icon: Delete,
+      action: "delete",
+      requiredPermissions: ["preclaims.delete.prospective_pensioner"],
+    },
+    {
+      name: "Notify",
+      icon: ForwardToInbox,
+      action: "notify",
+      requiredPermissions: ["preclaims.notify.prospective_pensioner"],
+      status: [0],
+    },
+    {
+      name: "Approve",
+      icon: CheckCircle,
+      action: "approve",
+      requiredPermissions: ["preclaims.approve.prospective_pensioner"],
+      status: [1],
+    },
+    {
+      name: "Submit",
+      icon: Send,
+      action: "submit",
+      requiredPermissions: ["preclaims.execute.send_preclaim_for_approval"],
+      status: [2],
+    },
+  ];
+
+  // Define the reports button
+  const reportsButton = {
+    name: "Reports",
+    icon: Report,
+    action: "reports",
+    requiredPermissions: ["reports"],
+  };
+
+  // Render buttons based on permissions and status
+  const renderButtons = () => {
+    return buttons
+      .filter((button) => !button.status || button.status.includes(status))
+      .map((button, index) => (
+        <Button
+          key={index}
+          onClick={handlers[button.action]}
+          sx={{ mb: -1, maxHeight: "25px" }}
+          disabled={button.requiredPermissions.some(
+            (permission) => !permissions.includes(permission)
+          )}
+          startIcon={
+            <button.icon
+              sx={{
+                fontSize: "20px",
+                mr: "2px",
+                color: button.requiredPermissions.some(
+                  (permission) => !permissions.includes(permission)
+                )
+                  ? "gray"
+                  : "primary",
+              }}
+              color="primary"
+            />
+          }
+        >
+          <p className="font-medium text-gray -ml-2 text-sm">{button.name}</p>
+        </Button>
+      ));
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "25px",
+        paddingRight: "20px",
+        marginLeft: "20px",
+      }}
+    >
+      <div className="flex gap-6 items-center">{renderButtons()}</div>
+      <Button
+        onClick={handlers[reportsButton.action]}
+        sx={{ mb: -1, maxHeight: "25px" }}
+        disabled={!permissions.includes(reportsButton.requiredPermissions[0])}
+        startIcon={
+          <IconButton
+            disabled={
+              !permissions.some((permission) =>
+                reportsButton.requiredPermissions.includes(permission)
+              )
+            }
+          >
+            <reportsButton.icon
+              sx={{
+                fontSize: "20px",
+                color: !permissions.some((permission) =>
+                  reportsButton.requiredPermissions.includes(permission)
+                )
+                  ? "gray"
+                  : "primary",
+              }}
+            />
+          </IconButton>
+        }
+      >
+        <p className="font-medium text-gray -ml-2 text-sm">
+          {reportsButton.name}
+        </p>
+      </Button>
+    </div>
+  );
+};
+
+export default ListNavigation;
