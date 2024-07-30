@@ -76,7 +76,7 @@ function Navbar() {
     fetchData();
   }, []);
 
-  console.log("auth**&&&&&&&&", auth.user.name);
+  console.log("auth**&&&&&&&&", auth?.user?.name);
 
   const handleLogout = () => {
     if (localStorage.getItem("token")) {
@@ -184,7 +184,7 @@ function Navbar() {
                     fontWeight: 700,
                   }}
                 >
-                  {auth.user.name.split(" ")[0]}
+                  {auth?.user?.name.split(" ")[0]}
                 </h6>
               </Box>
               <h6

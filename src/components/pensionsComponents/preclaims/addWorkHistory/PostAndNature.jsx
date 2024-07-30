@@ -371,7 +371,10 @@ function PostAndNature({ id, loading, setLoading }) {
       >
         Add Post and Nature of Service
       </Button>
-      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+      <TableContainer
+        // component={Paper}
+        sx={{ boxShadow: "none", width: "100%", height: "100%" }}
+      >
         <Table>
           <TableHead>
             <TableRow>

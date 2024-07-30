@@ -10,6 +10,7 @@ import {
   Report,
   ForwardToInbox,
   CheckCircle,
+  QuestionMark,
   Send,
   Add,
 } from "@mui/icons-material";
@@ -33,7 +34,7 @@ const ListNavigation = ({ handlers, permissions, status }) => {
       name: "Create",
       icon: Add,
       action: "create",
-      requiredPermissions: ["preclaims.create.prospective_pensioner"],
+      requiredPermissions: [],
     },
     {
       name: "Edit",
@@ -78,17 +79,25 @@ const ListNavigation = ({ handlers, permissions, status }) => {
     requiredPermissions: ["reports"],
   };
 
+  const openDetailsButton = {
+    name: "Open Details",
+    icon: QuestionMark,
+    action: "openDetails",
+    requiredPermissions: [],
+    status: [8],
+  };
   // Render buttons based on permissions and status
   const renderButtons = () => {
     return buttons
       .filter((button) => !button.status || button.status.includes(status))
+      .filter((button) => !button.action || handlers[button.action])
       .map((button, index) => (
         <Button
           key={index}
           onClick={handlers[button.action]}
           sx={{ mb: -1, maxHeight: "25px" }}
           disabled={button.requiredPermissions.some(
-            (permission) => !permissions.includes(permission)
+            (permission) => !permissions?.includes(permission)
           )}
           startIcon={
             <button.icon
@@ -96,7 +105,7 @@ const ListNavigation = ({ handlers, permissions, status }) => {
                 fontSize: "20px",
                 mr: "2px",
                 color: button.requiredPermissions.some(
-                  (permission) => !permissions.includes(permission)
+                  (permission) => !permissions?.includes(permission)
                 )
                   ? "gray"
                   : "primary",
@@ -122,35 +131,64 @@ const ListNavigation = ({ handlers, permissions, status }) => {
       }}
     >
       <div className="flex gap-6 items-center">{renderButtons()}</div>
-      <Button
-        onClick={handlers[reportsButton.action]}
-        sx={{ mb: -1, maxHeight: "25px" }}
-        disabled={!permissions.includes(reportsButton.requiredPermissions[0])}
-        startIcon={
-          <IconButton
-            disabled={
-              !permissions.some((permission) =>
-                reportsButton.requiredPermissions.includes(permission)
-              )
-            }
-          >
-            <reportsButton.icon
-              sx={{
-                fontSize: "20px",
-                color: !permissions.some((permission) =>
+      <div className="">
+        <Button
+          onClick={handlers[reportsButton.action]}
+          sx={{ mb: -1, maxHeight: "25px" }}
+          disabled={
+            !permissions?.includes(reportsButton.requiredPermissions[0])
+          }
+          startIcon={
+            <IconButton
+              disabled={
+                !permissions?.some((permission) =>
                   reportsButton.requiredPermissions.includes(permission)
                 )
-                  ? "gray"
-                  : "primary",
-              }}
-            />
-          </IconButton>
-        }
-      >
-        <p className="font-medium text-gray -ml-2 text-sm">
-          {reportsButton.name}
-        </p>
-      </Button>
+              }
+            >
+              <reportsButton.icon
+                sx={{
+                  fontSize: "20px",
+                  color: !permissions?.some((permission) =>
+                    reportsButton.requiredPermissions.includes(permission)
+                  )
+                    ? "gray"
+                    : "primary",
+                }}
+              />
+            </IconButton>
+          }
+        >
+          <p className="font-medium text-gray -ml-2 text-sm">
+            {reportsButton.name}
+          </p>
+        </Button>
+        <Button
+          onClick={handlers[openDetailsButton.action]}
+          sx={{
+            mb: -1,
+            maxHeight: "25px",
+            display: handlers[openDetailsButton.action] ? "content" : "none",
+          }}
+          // disabled={
+          //   !permissions?.includes(openDetailsButton.requiredPermissions[0])
+          // }
+          startIcon={
+            <IconButton>
+              <openDetailsButton.icon
+                sx={{
+                  fontSize: "16px",
+                  color: "primary",
+                }}
+              />
+            </IconButton>
+          }
+        >
+          <p className="font-medium text-gray -ml-3 text-sm">
+            {openDetailsButton.name}
+          </p>
+        </Button>
+      </div>
     </div>
   );
 };

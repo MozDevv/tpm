@@ -11,7 +11,7 @@ import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 
-function AddPensionersWorkHistory({ id, name }) {
+function AddPensionersWorkHistory({ id, name, moveToNextTab }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const handleRedirect = () => {
@@ -47,41 +47,28 @@ function AddPensionersWorkHistory({ id, name }) {
   };
 
   return (
-    <div className="p-2 w-full pb-8">
-      <div className="w-[100%]  flex justify-between items-center px-6 sticky top-0 overflow-hidden z-50">
+    <div className="p-2 w-full  max-h-[100vh] overflow-hidden flex flex-col">
+      <div className="flex justify-between items-center px-6 sticky top-0 bg-white z-10">
         <div></div>
-
-        <div className=" flex items-center gap-14">
-          <div className="">
-            <Button
-              variant="outlined"
-              sx={{
-                mr: "auto",
-                mb: 3,
-                mt: 2,
-              }}
-              onClick={handlePrevious}
-              //endIcon={<Close />}
-            >
-              Previous
-            </Button>
-          </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outlined"
+            sx={{ mb: 3, mt: 2 }}
+            onClick={handlePrevious}
+          >
+            Previous
+          </Button>
           <Button
             variant="contained"
-            sx={{
-              mr: "auto",
-              mb: 3,
-              mt: 2,
-            }}
-            onClick={handleRedirect}
-            //endIcon={<Close />}
+            sx={{ mb: 3, mt: 2 }}
+            onClick={moveToNextTab}
           >
             Next
           </Button>
         </div>
       </div>
-      <hr className="border-[1px] border-black-900 my-2" />
-      <div className="container">
+      <hr className="border-[1px] border-black-900 my-2 w-full" />
+      <div className="flex-1 overflow-y-auto pb-[200px] max-h-full">
         <Suspense fallback={<Spinner />}>
           <PostAndNature
             id={id}

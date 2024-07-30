@@ -464,10 +464,14 @@ function Sidebar() {
         <h6 className={styles.h6}>MAIN MENU</h6>
         {renderMenuItems(filteredMenuItems)}
 
+        {/* {renderMenuItems(menuItems)} */}
+
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
 
         {renderMenuItems(filteredAdminItems)}
+
+        {/* {renderMenuItems(adminItems)} */}
       </List>
     </Box>
   );

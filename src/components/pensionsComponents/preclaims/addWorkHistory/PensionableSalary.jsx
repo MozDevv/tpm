@@ -223,7 +223,10 @@ function PensionableSalary({ id }) {
       >
         Add Pensionable Salary
       </Button>
-      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+      <TableContainer
+        //component={Paper}
+        sx={{ boxShadow: "none" }}
+      >
         <Table>
           <TableHead>
             <TableRow>

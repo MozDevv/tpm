@@ -55,7 +55,7 @@ function Navbar() {
   const router = useRouter();
   const { auth, login, logout } = useAuth();
 
-  console.log("auth**&&&&&&&&", auth.user.name);
+  console.log("auth**&&&&&&&&", auth?.user?.name);
 
   const { mdaId } = useMda();
 
@@ -168,7 +168,7 @@ function Navbar() {
                     fontWeight: 700,
                   }}
                 >
-                  {auth.user.name}
+                  {auth?.user?.name}
                 </h6>
               </Box>
               <h6

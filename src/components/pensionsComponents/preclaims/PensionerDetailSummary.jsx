@@ -40,7 +40,7 @@ function PensionerDetailSummary({ clickedItem }) {
         setAwardDocuments(documents);
       } catch (error) {
         console.log("Error fetching award documents:", error);
-        message.error("Failed to fetch award documents.");
+        // message.error("Failed to fetch award documents.");
       } finally {
         setLoading(false);
       }
@@ -54,7 +54,7 @@ function PensionerDetailSummary({ clickedItem }) {
       <div className="flex items-center flex-col justify-center p-2 gap-2">
         <Avatar sx={{ height: "100px", width: "100px" }} />
         <div className="flex flex-col mt-5 gap-2 items-center justify-center">
-          <h5 className="font-semibold text-primary text-base">{`${clickedItem?.first_name} ${clickedItem.surname}`}</h5>
+          <h5 className="font-semibold text-primary text-base">{`${clickedItem?.first_name} ${clickedItem?.surname}`}</h5>
         </div>
       </div>
       <Divider />
@@ -89,7 +89,7 @@ function PensionerDetailSummary({ clickedItem }) {
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Status</h6>
           <span className="text-xs">
-            {notificationStatusMap[clickedItem?.notification_status].name}
+            {notificationStatusMap[clickedItem?.notification_status]?.name}
           </span>
         </div>
       </div>

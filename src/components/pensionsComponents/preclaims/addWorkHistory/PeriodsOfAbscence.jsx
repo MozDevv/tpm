@@ -273,7 +273,10 @@ function PeriodsOfAbsence({ id }) {
       >
         Add Period of Absence
       </Button>
-      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+      <TableContainer
+        //component={Paper}
+        sx={{ boxShadow: "none" }}
+      >
         <Table>
           <TableHead>
             <TableRow>

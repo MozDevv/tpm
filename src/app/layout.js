@@ -10,6 +10,7 @@ import Loading from "@/components/spinner/Loading";
 import { AlertProvider } from "@/context/AlertContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { MdaProvider } from "@/context/MdaContext";
+import { RetireeIdProvider } from "@/context/RetireeContext";
 
 export const metadata = {
   title: "TPMIS",
@@ -30,13 +31,15 @@ export default function RootLayout({ children }) {
         <LoadingProvider>
           <AuthProvider>
             <MdaProvider>
-              <SelectedItemProvider>
-                <ThemeProvider theme={baselightTheme}>
-                  <AlertProvider>
-                    <Suspense fallback={<Spinner />}> {children}</Suspense>
-                  </AlertProvider>
-                </ThemeProvider>
-              </SelectedItemProvider>
+              <RetireeIdProvider>
+                <SelectedItemProvider>
+                  <ThemeProvider theme={baselightTheme}>
+                    <AlertProvider>
+                      <Suspense fallback={<Spinner />}> {children}</Suspense>
+                    </AlertProvider>
+                  </ThemeProvider>
+                </SelectedItemProvider>
+              </RetireeIdProvider>
             </MdaProvider>
           </AuthProvider>
         </LoadingProvider>

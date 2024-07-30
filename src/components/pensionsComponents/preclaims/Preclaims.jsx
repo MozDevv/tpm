@@ -46,6 +46,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useMda } from "@/context/MdaContext";
 import ListNavigation from "@/components/baseComponents/ListNavigation";
+import BaseCard from "@/components/baseComponents/BaseCard";
+import CreateProspectivePensioner from "./createProspective/CreateProspectivePensioner";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -433,9 +435,9 @@ const Preclaims = ({ status }) => {
 
   const { mdaId } = useMda();
 
-  console.log("auth.user.email ***********", auth.user.email);
+  console.log("auth?.user?.email ***********", auth?.user?.email);
 
-  // alert("auth.user.email ***********", auth);
+  // alert("auth?.user?.email ***********", auth);
 
   const fetchAllPreclaims = async (sort, filter) => {
     const adjustedFilter =
@@ -468,7 +470,7 @@ const Preclaims = ({ status }) => {
         const filteredMinistriesData =
           status === 5
             ? rawData
-            : auth.user.email === "super@mail.com"
+            : auth?.user?.email === "super@mail.com"
             ? rawData
             : rawData.filter((item) => item.mda_id === mdaId);
 
@@ -542,7 +544,7 @@ const Preclaims = ({ status }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
 
-  const permissions = auth.user.permissions;
+  const permissions = auth?.user?.permissions;
 
   const router = useRouter();
 
@@ -551,13 +553,27 @@ const Preclaims = ({ status }) => {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-    create: () => router.push("/pensions/preclaims/listing/new"),
-    create: () => setOpenBaseCard(true),
+    // create: () => router.push("/pensions/preclaims/listing/new"),
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
     edit: () => console.log("Edit clicked"),
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => setOpenNotification(true),
   };
+
+  const baseCardHandlers = {
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => setOpenNotification(true),
+  };
+
+  const title = clickedItem
+    ? "Pensioner Details"
+    : "Create Prospective Pensioner";
 
   return (
     <>
@@ -567,6 +583,16 @@ const Preclaims = ({ status }) => {
         </p>
       ) : (
         <div className="table-container relative h-[80vh] w-full">
+          <BaseCard
+            openBaseCard={openBaseCard}
+            setOpenBaseCard={setOpenBaseCard}
+            status={status}
+            handlers={baseCardHandlers}
+            title={title}
+            clickedItem={clickedItem}
+          >
+            <CreateProspectivePensioner clickedItem={clickedItem} />
+          </BaseCard>
           <CreatePreclaim
             permissions={permissions}
             openCreate={openCreate}
@@ -582,13 +608,13 @@ const Preclaims = ({ status }) => {
             setOpenNotification={setOpenNotification}
           />
 
-          <PreclaimDialog
+          {/* <PreclaimDialog
             permissions={permissions}
             clickedItem={clickedItem}
             setOpenPreclaimDialog={setOpenPreclaimDialog}
             openPreclaimDialog={openPreclaimDialog}
             setOpenNotification={setOpenNotification}
-          />
+          /> */}
           <div className="h-full w-full">
             <ListNavigation
               handlers={handlers}
@@ -807,9 +833,9 @@ const Preclaims = ({ status }) => {
                   domLayout="autoHeight"
                   onGridReady={onGridReady}
                   totalRecords={totalRecords}
-                  onRowClicked={(event) => {
+                  onCellDoubleClicked={(event) => {
+                    setOpenBaseCard(true);
                     setClickedItem(event.data); // Update selected item
-                    setOpenPreclaimDialog(true); // Open dialog
                   }}
                 />
                 {/*************PAGINATION *************/}

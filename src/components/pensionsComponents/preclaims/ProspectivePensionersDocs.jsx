@@ -39,7 +39,7 @@ function ProspectivePensionersDocs({ clickedItem }) {
         setAwardDocuments(documents);
       } catch (error) {
         console.log("Error fetching award documents:", error);
-        message.error("Failed to fetch award documents.");
+        //message.error("Failed to fetch award documents.");
       } finally {
         setLoading(false);
       }

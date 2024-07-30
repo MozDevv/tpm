@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
+import { message } from "antd";
 
-function AddBankDetails({ id }) {
+function AddBankDetails({ id, moveToNextTab }) {
   const [banks, setBanks] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBank, setSelectedBank] = useState("");
@@ -106,7 +107,7 @@ function AddBankDetails({ id }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (hasBankDetails) {
-      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
       return;
     }
     const validationErrors = validateForm(formData);
@@ -154,7 +155,9 @@ function AddBankDetails({ id }) {
 
       console.log("Bank details submitted successfully:", res.data);
       console.log("Data", data);
-      router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      message.success("Bank details submitted successfully");
+      moveToNextTab();
+      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
     } catch (error) {
       console.log("Error submitting bank details:", error);
     }

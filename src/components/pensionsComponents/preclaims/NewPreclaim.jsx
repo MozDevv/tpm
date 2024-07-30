@@ -33,9 +33,11 @@ dayjs.extend(isSameOrBefore);
 function NewPreclaim({
   openCreate,
   setOpenCreate,
+  moveToNextTab,
   fetchAllPreclaims,
   permissions,
   retireeId,
+  setRetireeId,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -646,15 +648,22 @@ function NewPreclaim({
 
       console.log("API Response:", res.data);
       if (res.data.succeeded && res.status === 200) {
-        setAlert({
-          open: true,
-          message:
-            "Prospective pensioner Information & Contact Details added successfully",
-          severity: "success",
-        });
-        router.push(
-          `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
-        );
+        // setAlert({
+        //   open: true,
+        //   message:
+        //     "Prospective pensioner Information & Contact Details added successfully",
+        //   severity: "success",
+        // });
+
+        message.success("Prospective pensioner Information added successfully");
+        // router.push(
+        //   `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
+        // );
+
+        moveToNextTab();
+
+        setRetireeId(res.data.data);
+        console.log("Retiree ID:", res.data.data);
       }
 
       if (res.data.validationErrors.length > 0) {
@@ -703,132 +712,136 @@ function NewPreclaim({
   }, [formData.dob]);
 
   return (
-    <div className="w-full p-2 mt-3 mr-1 h-[95vh] grid grid-cols-12 gap-2">
-      <IconButton
-        sx={{
-          ml: "auto",
-          position: "fixed",
-          zIndex: 899999999,
-          right: 1,
-          top: "3px",
-        }}
-      >
-        <Tooltip title="Expand">
-          {" "}
-          <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
-        </Tooltip>{" "}
-      </IconButton>
-      <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
-        <form onSubmit={handleSubmit}>
-          <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
-            <div className="flex items-center justify-between px-6 w-[100%]">
-              <div className="flex items-center gap-2">
-                <h5 className="text-[17px] text-primary font-semibold">
-                  Data Capture
-                </h5>
-              </div>
-              <div className="flex ">
-                {" "}
-                <div className="flex gap-8 mr-4">
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setOpenCreate(false);
-                      setErrors({});
-                    }}
-                    sx={{ maxHeight: "40px", mt: "5px" }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    // onClick={handleSubmit}
-                    type="submit"
-                    sx={{ maxHeight: "40px", mt: "5px" }}
-                  >
-                    {editMode ? "Update" : "Next"}
-                  </Button>{" "}
+    <div className="max-h-[100vh]  overflow-y-auto pb-[250px]">
+      <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
+        <IconButton
+          sx={{
+            ml: "auto",
+            position: "fixed",
+            zIndex: 899999999,
+            right: 1,
+            top: "3px",
+          }}
+        >
+          <Tooltip title="Expand">
+            {" "}
+            <OpenInFull sx={{ color: "primary.main", fontSize: "18px" }} />
+          </Tooltip>{" "}
+        </IconButton>
+        <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
+          <form onSubmit={handleSubmit} className="">
+            <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
+              <div className="flex items-center justify-between px-6 w-[100%]">
+                <div className="flex items-center gap-2">
+                  <h5 className="text-[17px] text-primary font-semibold">
+                    Data Capture
+                  </h5>
                 </div>
-              </div>
-            </div>
-            <hr className="border-[1px] border-black-900 my-2" />
-          </div>
-
-          <div className="p-6 mt-[-15px]">
-            {sections.map((section, index) => {
-              const [open, setOpen] = section.state;
-              return (
-                <div key={index} className="gap-3 my-3">
-                  <div className="flex items-center gap-2">
-                    <h6 className="font-semibold text-primary text-sm">
-                      {section.title}
-                    </h6>
-                    <IconButton
-                      sx={{ ml: "-5px", zIndex: 1 }}
-                      onClick={() => setOpen((prevOpen) => !prevOpen)}
+                <div className="flex ">
+                  {" "}
+                  <div className="flex gap-8 mr-4">
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        setOpenCreate(false);
+                        setErrors({});
+                      }}
+                      sx={{ maxHeight: "40px", mt: "5px" }}
                     >
-                      {!open ? (
-                        <KeyboardArrowRight
-                          sx={{ color: "primary.main", fontSize: "14px" }}
-                        />
-                      ) : (
-                        <ExpandLess
-                          sx={{ color: "primary.main", fontSize: "14px" }}
-                        />
-                      )}
-                    </IconButton>
-                    <hr className="flex-grow border-blue-500 border-opacity-20" />
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // onClick={handleSubmit}
+                      type="submit"
+                      sx={{ maxHeight: "40px", mt: "5px" }}
+                    >
+                      {editMode ? "Update" : "Next"}
+                    </Button>{" "}
                   </div>
-                  <Collapse in={open} timeout="auto" unmountOnExit>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-2 p-6">
-                      {section.fields.map((field, fieldIndex) => (
-                        <div key={fieldIndex} className="flex flex-col">
-                          <label className="text-xs font-semibold text-gray-600">
-                            {field.label}
-                          </label>
-                          {field.type === "select" ? (
-                            <TextField
-                              select
-                              variant="outlined"
-                              size="small"
-                              fullWidth
-                              name={field.name}
-                              value={formData[field.name]}
-                              onChange={handleInputChange}
-                              error={!!errors[field.name]} // Show error style if there is an error
-                              helperText={errors[field.name]} // Display the error message
-                            >
-                              <MenuItem value="">Select {field.label}</MenuItem>
-                              {field?.children?.map((option) => (
-                                <MenuItem key={option?.id} value={option?.id}>
-                                  {option?.name}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          ) : (
-                            <TextField
-                              type={field.type}
-                              name={field.name}
-                              variant="outlined"
-                              size="small"
-                              value={formData[field.name]}
-                              onChange={handleInputChange}
-                              error={!!errors[field.name]} // Show error style if there is an error
-                              helperText={errors[field.name]} // Display the error message
-                              required
-                              fullWidth
-                            />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </Collapse>
                 </div>
-              );
-            })}
-          </div>
-        </form>
+              </div>
+              <hr className="border-[1px] border-black-900 my-2" />
+            </div>
+
+            <div className="p-2 mt-[-15px] ">
+              {sections.map((section, index) => {
+                const [open, setOpen] = section.state;
+                return (
+                  <div key={index} className="gap-3 my-3">
+                    <div className="flex items-center gap-2">
+                      <h6 className="font-semibold text-primary text-sm">
+                        {section.title}
+                      </h6>
+                      <IconButton
+                        sx={{ ml: "-5px", zIndex: 1 }}
+                        onClick={() => setOpen((prevOpen) => !prevOpen)}
+                      >
+                        {!open ? (
+                          <KeyboardArrowRight
+                            sx={{ color: "primary.main", fontSize: "14px" }}
+                          />
+                        ) : (
+                          <ExpandLess
+                            sx={{ color: "primary.main", fontSize: "14px" }}
+                          />
+                        )}
+                      </IconButton>
+                      <hr className="flex-grow border-blue-500 border-opacity-20" />
+                    </div>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
+                        {section.fields.map((field, fieldIndex) => (
+                          <div key={fieldIndex} className="flex flex-col">
+                            <label className="text-xs font-semibold text-gray-600">
+                              {field.label}
+                            </label>
+                            {field.type === "select" ? (
+                              <TextField
+                                select
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                                name={field.name}
+                                value={formData[field.name]}
+                                onChange={handleInputChange}
+                                error={!!errors[field.name]} // Show error style if there is an error
+                                helperText={errors[field.name]} // Display the error message
+                              >
+                                <MenuItem value="">
+                                  Select {field.label}
+                                </MenuItem>
+                                {field?.children?.map((option) => (
+                                  <MenuItem key={option?.id} value={option?.id}>
+                                    {option?.name}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            ) : (
+                              <TextField
+                                type={field.type}
+                                name={field.name}
+                                variant="outlined"
+                                size="small"
+                                value={formData[field.name]}
+                                onChange={handleInputChange}
+                                error={!!errors[field.name]} // Show error style if there is an error
+                                helperText={errors[field.name]} // Display the error message
+                                required
+                                fullWidth
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </Collapse>
+                  </div>
+                );
+              })}
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
