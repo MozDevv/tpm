@@ -58,7 +58,7 @@ const columnDefs = [
     width: 250,
   },
 ];
-function MDAs() {
+function MDAsCopy() {
   const [rowData, setRowData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 100;
@@ -180,4 +180,4 @@ function MDAs() {
   );
 }
 
-export default MDAs;
+export default MDAsCopy;
