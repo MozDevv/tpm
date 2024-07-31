@@ -58,7 +58,7 @@ const columnDefs = [
   },
 ];
 
-const MDAs = () => {
+const MDASetups = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
@@ -211,4 +211,4 @@ const MDAs = () => {
   );
 };
 
-export default MDAs;
+export default MDASetups;
