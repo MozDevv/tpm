@@ -16,7 +16,7 @@ import { message } from "antd";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function NewUserCard({ data, setSuccess }) {
+function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const { alert, setAlert } = useAlert();
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -82,7 +82,9 @@ function NewUserCard({ data, setSuccess }) {
           severity: "success",
         });
         event.target.reset();
-        router.push("/pensions/users");
+
+        setOpenBaseCard(false);
+        // router.push("/pensions/users");
       }
 
       if (res.data.isSuccess === false) {
@@ -116,7 +118,8 @@ function NewUserCard({ data, setSuccess }) {
   const fetchDepartments = async () => {
     try {
       const res = await apiService.get(endpoints.getDepartments, {
-        paging: { pageNumber: 1, pageSize: 200 },
+        "paging.pageNumber": 1,
+        "paging.pageSize": 200,
       });
       setDepartments(res.data.data);
 
@@ -128,7 +131,10 @@ function NewUserCard({ data, setSuccess }) {
 
   const fetchMDAs = async () => {
     try {
-      const res = await apiService.get(endpoints.mdas);
+      const res = await apiService.get(endpoints.mdas, {
+        "paging.pageNumber": 1,
+        "paging.pageSize": 200,
+      });
       setMDAs(res.data.data);
       console.log("mdas", res.data.data);
     } catch (error) {
@@ -143,15 +149,13 @@ function NewUserCard({ data, setSuccess }) {
   }, []);
 
   return (
-    <div className="p-2 mt-12 h-[75vh] grid grid-cols-12 gap-2">
-      <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
-        <div className="p-6">
+    <div className="p-2 mt-1 h-[75vh] grid grid-cols-12 gap-2">
+      <div className="col-span-9 bg-white  rounded-2xl px-4">
+        <div className="px-6">
           <form id="new-user-form" onSubmit={handleSubmit}>
             <div className="flex items-center justify-between p-2 mb-3">
               <div className="flex items-center gap-2">
-                <h5 className="text-xl font-semibold ml-4 text-primary">
-                  Create New User
-                </h5>
+                <h5 className="text-xl font-semibold ml-4 text-primary"></h5>
               </div>
               <div className="flex gap-8 mr-4">
                 <button
@@ -191,8 +195,10 @@ function NewUserCard({ data, setSuccess }) {
                     required
                   >
                     <option value="">Select User Type</option>
+
                     <option value="MDA">MDA</option>
                     <option value="Treasury">Treasury</option>
+                    <option value="Treasury">Other</option>
                   </select>
                 </div>
               </div>
@@ -414,7 +420,7 @@ function NewUserCard({ data, setSuccess }) {
           </form>
         </div>
       </div>
-      <div className="col-span-3 bg-white shadow-md rounded-2xl p-4 ml-3 mr-2">
+      <div className="col-span-3 bg-white  rounded-2xl p-4 ml-3 mr-2">
         <div className="flex items-center justify-center gap-2 pt-5">
           <Avatar sx={{ height: "100px", width: "100px" }} />
         </div>

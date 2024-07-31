@@ -11,11 +11,14 @@ import React from "react";
 import PoweredBy from "../poweredBy/PoweredBy";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { message } from "antd";
 
 function OTPVerification() {
   const router = useRouter();
 
   const { auth, login, logout } = useAuth();
+
+  const [email, setEmail] = React.useState("");
 
   const handleLogin = () => {
     const token =
@@ -24,11 +27,20 @@ function OTPVerification() {
     login(token);
     router.push("/pensions");
   };
+
+  const handleSubmit = () => {
+    if (email === "") {
+      message.error("Please enter your email address");
+      return;
+    }
+
+    router.push(`/reset?username=${email}`);
+  };
   return (
     <div>
       {" "}
       <div className="flex flex-col gap-2">
-        <p className="text-primary text-[25px] font-bold">OTP Verification</p>
+        <p className="text-primary text-[25px] font-bold">Forgot Password</p>
       </div>
       <FormControl>
         <FormLabel
@@ -40,10 +52,10 @@ function OTPVerification() {
             mt: 3,
           }}
         >
-          Enter otp sent to s*****@email.com
+          Enter your email address
         </FormLabel>
         <TextField
-          type="text"
+          type="email"
           sx={{
             height: "48px",
             width: "512px",
@@ -54,6 +66,7 @@ function OTPVerification() {
             },
           }}
           fullWidth
+          onChange={(e) => setEmail(e.target.value)}
           //  placeholder="123@email.com"
           inputProps={{ style: { height: "12px" } }}
           required
@@ -92,7 +105,7 @@ function OTPVerification() {
           Back
         </Button>
         <Button
-          onClick={handleLogin}
+          onClick={handleSubmit}
           variant="contained"
           sx={{
             mt: 1,

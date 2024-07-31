@@ -64,6 +64,11 @@ function PreclaimsNotifications({
       return date.toISOString();
     };
 
+    if (mdaId === "" || mdaId === null) {
+      message.error("Login as an MDA user to send notifications");
+      return;
+    }
+
     const data = {
       mda_id: mdaId,
       schedule_start_date: formatDateToISOString(currentDate),
@@ -85,6 +90,8 @@ function PreclaimsNotifications({
           severity: "success",
           open: true,
         });
+
+        //  message.success("Notification sent successfully");
       } else {
         if (Array.isArray(res.data.messages) && res.data.messages.length > 0) {
           message.error(res.data.messages[0]);

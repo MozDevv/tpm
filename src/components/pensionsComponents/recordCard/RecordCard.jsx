@@ -102,7 +102,7 @@ function RecordCard({ id }) {
     setOpenDialog(false);
   };
   return (
-    <div className="p-2 mt-3 mr-1 h-[75vh] grid grid-cols-12 gap-2">
+    <div className="px-2  mr-1 h-[75vh] grid grid-cols-12 gap-2">
       <AssignRole
         openPermissions={openPermissions}
         setOpenPermissions={setOpenPermissions}
@@ -145,10 +145,10 @@ function RecordCard({ id }) {
           </div>
         </DialogActions>
       </Dialog>
-      <div className="col-span-9 bg-white shadow-md rounded-2xl p-4">
+      <div className="col-span-9  bg-white  rounded-2xl px-4">
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center gap-2">
-            <h5 className="text-xl text-black font-semibold">Edit User</h5>
+            <h5 className="text-xl text-black font-semibold"></h5>
           </div>
           <div className="flex gap-8 mr-4">
             <Button
@@ -168,7 +168,7 @@ function RecordCard({ id }) {
             </button> */}
           </div>
         </div>
-        <div className="p-6">
+        <div className="px-6 mt-[-20px]">
           <div className=" gap-3 my-3 ">
             {/************ Bio ********************* */}
             <div className=" flex items-center gap-2 ">
@@ -344,7 +344,7 @@ function RecordCard({ id }) {
           </div>
         </div>
       </div>
-      <div className="col-span-3 bg-white shadow-md rounded-2xl p-4 ml-3 mr-1">
+      <div className="col-span-3 bg-white  rounded-2xl p-4 ml-3 mr-1">
         <UserDetailCard clickedItem={clickedItem} />
       </div>
     </div>

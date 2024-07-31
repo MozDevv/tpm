@@ -259,12 +259,14 @@ function Auth() {
             >
               Forgot Your Password?
               <Typography
-                component="span"
+                // component="link"
+                onClick={() => router.push(`/otp`)}
                 sx={{
                   fontSize: "13px",
                   textDecoration: "underline",
                   fontWeight: "700",
                   color: "#F3A92A",
+                  cursor: "pointer",
                 }}
               >
                 Reset

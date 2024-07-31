@@ -13,9 +13,15 @@ import {
   QuestionMark,
   Send,
   Add,
+  TrendingUp,
+  Info,
+  BarChart,
 } from "@mui/icons-material";
+import { useAuth } from "@/context/AuthContext";
 
-const ListNavigation = ({ handlers, permissions, status }) => {
+const ListNavigation = ({ handlers, status }) => {
+  const { auth } = useAuth();
+  const permissions = auth?.user?.permissions;
   // Define buttons with required permissions
   const buttons = [
     {
@@ -74,14 +80,14 @@ const ListNavigation = ({ handlers, permissions, status }) => {
   // Define the reports button
   const reportsButton = {
     name: "Reports",
-    icon: Report,
+    icon: BarChart,
     action: "reports",
     requiredPermissions: ["reports"],
   };
 
   const openDetailsButton = {
     name: "Open Details",
-    icon: QuestionMark,
+    icon: Info,
     action: "openDetails",
     requiredPermissions: [],
     status: [8],

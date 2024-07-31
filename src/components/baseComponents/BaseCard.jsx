@@ -15,6 +15,7 @@ function BaseCard({
   status,
   clickedItem,
   handlers,
+  isUserComponent,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(false);
@@ -59,7 +60,7 @@ function BaseCard({
         },
       }}
     >
-      <div className="overflow-y-hidden">
+      <div className="overflow-y-hidden p-5">
         <div className="flex items-center justify-between w-full px-3 sticky top-0 z-[99999999] bg-white">
           <div className="flex items-center gap-1 mt-10">
             <IconButton
@@ -91,12 +92,16 @@ function BaseCard({
           </div>
         </div>
         <div
-          className={` grid grid-cols-12 gap-2 ${
-            !isDetailsVisible ? "grid-cols-12" : "grid-cols-9"
+          className={`grid gap-2 ${
+            isUserComponent
+              ? "grid-cols-12" // Full width if isUserComponent is true
+              : !isDetailsVisible
+              ? "grid-cols-12" // Full width if details are not visible
+              : "grid-cols-9" // Default layout
           }`}
         >
-          <div className="col-span-9 ">
-            <div className="w-full ">
+          <div className={`col-span-${isUserComponent ? "12" : "9"} `}>
+            <div className="w-full">
               <ListNavigation
                 handlers={updatedHandlers}
                 permissions={permissions}
@@ -106,8 +111,9 @@ function BaseCard({
             <Divider />
             {children}
           </div>
-          {!isDetailsVisible && (
-            <div className="col-span-3 flex flex-col mt-10 ">
+
+          {!isUserComponent && !isDetailsVisible && (
+            <div className="col-span-3 flex flex-col mt-10">
               <PensionerDetailSummary clickedItem={clickedItem} />
               <Divider sx={{ mt: 3 }} />
             </div>

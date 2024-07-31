@@ -70,4 +70,88 @@ export const menuItems = [
     title: "Customer Relations",
     path: "/pensions",
   },
+  {
+    title: "Users & Teams",
+
+    children: [
+      {
+        title: "Manage Users",
+        path: "/pensions/users",
+      },
+      {
+        title: "Departments Setups",
+        path: "/pensions/users/setups/departments-setups",
+      },
+      {
+        title: "Roles Setups",
+        path: "/pensions/users/setups/roles-setups",
+      },
+      // {
+      //   title: "Permissions Setups",
+      //   path: "/pensions/users/setups/permissions-setups",
+      // },
+      {
+        title: "Menu Setups",
+        path: "/pensions/setups/menus",
+      },
+      // {
+      //   title: "Tables Setups",
+      //   path: "/pensions/users/setups/tables-setups",
+      // },
+      {
+        title: "Roles & Permissions",
+        path: "/pensions/users/roles-permissions",
+      },
+      {
+        title: "Counties",
+        path: "/pensions/setups/counties",
+      },
+      {
+        title: "Constituencies",
+        path: "/pensions/setups/constituencies",
+      },
+      {
+        title: "Leave Management",
+        path: "/pensions/users/leave-management",
+      },
+    ],
+  },
+  {
+    title: "Setups",
+
+    children: [
+      {
+        title: "Document Types",
+        path: "/pensions/setups/document-types",
+      },
+      {
+        title: "Pension Caps",
+        path: "/pensions/setups/pension-caps",
+      },
+      {
+        title: "Terms of Service",
+        path: "/pensions/setups/termsofservice",
+      },
+      {
+        title: "MDAs",
+        path: "/pensions/setups/mdas",
+      },
+      {
+        title: "Pension Awards",
+        path: "/pensions/setups/pension-awards",
+      },
+      {
+        title: "Banks",
+        path: "/pensions/setups/banks",
+      },
+      {
+        title: "Counties",
+        path: "/pensions/setups/banks",
+      },
+      {
+        title: "Constituencies",
+        path: "/pensions/setups/banks",
+      },
+    ],
+  },
 ];

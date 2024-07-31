@@ -46,7 +46,7 @@ function Otp() {
             onClick={() => handleButtonClick("email")}
           >
             <p className="font-semibold text-sm w-[250px]">
-              Send Code to my email s******@agile.com
+              Send Code to my email address
             </p>
             <ArrowForward />
           </Button>
@@ -71,7 +71,7 @@ function Otp() {
             onClick={() => handleButtonClick("phone")}
           >
             <p className="font-semibold text-sm w-[250px]">
-              Send Code to Phone Number +234 80********
+              Send Code to Phone Number
             </p>
             <ArrowForward />
           </Button>

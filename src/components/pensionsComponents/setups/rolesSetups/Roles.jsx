@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -14,26 +14,14 @@ const columnDefs = [
     headerClass: "prefix-header",
     width: 90,
     filter: true,
-    hide: true,
   },
-  {
-    field: "code",
-    headerName: "Code",
-    headerClass: "prefix-header",
-    width: 200,
-    filter: true,
-  },
+
   {
     field: "name",
     headerName: "Name",
     headerClass: "prefix-header",
     filter: true,
-  },
-  {
-    field: "employerType",
-    headerName: "Employer Type",
-    headerClass: "prefix-header",
-    filter: true,
+    width: 250,
   },
   {
     field: "description",
@@ -43,53 +31,44 @@ const columnDefs = [
     width: 250,
   },
   {
-    field: "shortName",
-    headerName: "Short Name",
+    field: "created_date",
+    headerName: "Created Date",
     headerClass: "prefix-header",
     filter: true,
-    width: 250,
+    width: 100,
   },
   {
-    field: "pensionCap",
-    headerName: "Pension Cap",
+    field: "roles",
+    headerName: "Roles",
     headerClass: "prefix-header",
     filter: true,
-    width: 250,
+    width: 100,
+    hide: true,
   },
 ];
 
-const Mdas = () => {
+const Roles = () => {
+  const [rowData, setRowData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 10; // Number of records per page
+  const [departments, setDepartments] = useState([]); // [1]
+
+  const transformString = (str) => {
+    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
+      return a.toUpperCase();
+    });
+  };
+
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1,
-      code: item?.code,
-      name: item?.name,
-      employerType: item?.employer_type === 0 ? "Ministry" : "Department",
-      description: item?.description,
-      shortName: item?.short_name,
-      pensionCapId: item?.pensionCap.id,
-      id: item?.id,
-      pensionCap: item?.pensionCap.name,
+      no: index + 1 + (pageNumber - 1) * pageSize,
+      name: item.name,
+      description: transformString(item.description),
+      created_date: item.created_date,
+      roles: item.roles,
     }));
   };
-
-  const [pensionCaps, setPensionCaps] = React.useState([]);
-
-  const fetchPensionCaps = async () => {
-    try {
-      const res = await apiService.get(endpoints.pensionCaps);
-      if (res.status === 200) {
-        setPensionCaps(res.data.data);
-        console.log(res.data.data);
-      }
-    } catch (e) {
-      console.error("Error fetching data:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchPensionCaps();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -122,50 +101,43 @@ const Mdas = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "MDA" : "Create New MDA";
+  const title = clickedItem ? "Role" : "Create a New Role";
 
   const fields = [
-    { name: "code", label: "Code", type: "text", required: true },
+    { name: "Name", label: "Name", type: "text", required: true },
     {
-      name: "description",
+      name: "Description",
       label: "Description",
       type: "text",
       required: true,
     },
-
     {
-      name: "employer_type",
-      label: "Employee Type",
+      name: "departmentId",
+      label: "Select Department",
       type: "select",
       required: true,
-      options: [
-        { id: 0, name: "Ministry" },
-        { id: 1, name: "Department" },
-      ],
-    },
-
-    {
-      name: "name",
-      label: "Name",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "pension_cap_id",
-      label: "Pension Cap",
-      type: "select",
-      options: pensionCaps.map((p) => ({
-        id: p.id,
-        name: p.name,
+      options: departments.map((d) => ({
+        id: d.departmentId,
+        name: d.name,
       })),
     },
-    {
-      name: "short_name",
-      label: "Short Name",
-      type: "text",
-      required: true,
-    },
   ];
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDepartments, {
+        paging: { pageNumber, pageSize: 200 },
+      });
+      const { data, totalCount } = res.data;
+      setDepartments(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
 
   return (
     <div className="">
@@ -180,14 +152,15 @@ const Mdas = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createMDA}
+            apiEndpoint={endpoints.createRole}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
           />
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createMDA}
+            apiEndpoint={endpoints.createRole}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -199,16 +172,16 @@ const Mdas = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.mdas}
+        fetchApiEndpoint={endpoints.getRoles}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="MDAs"
-        currentTitle="MDAs"
+        breadcrumbTitle="Roles Setups"
+        currentTitle="Roles Setups"
       />
     </div>
   );
 };
 
-export default Mdas;
+export default Roles;

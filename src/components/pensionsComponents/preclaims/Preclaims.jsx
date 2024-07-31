@@ -128,10 +128,10 @@ export const colDefs = [
 
       return (
         <Button
-          variant="outlined"
+          variant="text"
           sx={{
             ml: 3,
-            borderColor: status.color,
+            // borderColor: status.color,
             maxHeight: "22px",
             cursor: "pointer",
             color: status.color,
@@ -365,7 +365,7 @@ const Preclaims = ({ status }) => {
   const [openCreate, setOpenCreate] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 10; // Number of records per page
+  const pageSize = 12; // Number of records per page
   const paginationPageSizeSelector = [5, 10, 20, 50];
 
   const [sortCriteria, setSortCriteria] = useState(0);
@@ -475,6 +475,7 @@ const Preclaims = ({ status }) => {
             : rawData.filter((item) => item.mda_id === mdaId);
 
         setTotalRecords(res.data.totalCount);
+        setTotalPages(res.data.totalPages);
 
         if (status || status === 0) {
           const filteredApprovals = filteredMinistriesData.filter(
@@ -511,6 +512,10 @@ const Preclaims = ({ status }) => {
     gridApiRef.current = params;
     //  params.api.sizeColumnsToFit();
   };
+
+  useEffect(() => {
+    fetchAllPreclaims();
+  }, [pageNumber]);
 
   const handlePageChange = (event, newPage) => {
     setPageNumber(newPage);
@@ -575,6 +580,10 @@ const Preclaims = ({ status }) => {
     ? "Pensioner Details"
     : "Create Prospective Pensioner";
 
+  const handlePaginationChange = (newPageNumber) => {
+    setPageNumber(newPageNumber);
+  };
+
   return (
     <>
       {loading ? (
@@ -582,7 +591,7 @@ const Preclaims = ({ status }) => {
           <Spinner />
         </p>
       ) : (
-        <div className="table-container relative h-[80vh] w-full">
+        <div className="table-container relative h-[80vh] w-full overflow-y-auto">
           <BaseCard
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
@@ -618,85 +627,11 @@ const Preclaims = ({ status }) => {
           <div className="h-full w-full">
             <ListNavigation
               handlers={handlers}
-              permissions={permissions}
+              // permissions={permissions}
               status={status}
             />
 
-            <div className="flex justify-between flex-row mt-2">
-              <div className="flex gap-2 items-center pl-3">
-                {/* {!status && (
-                  <div className="flex items-center">
-                    <Button
-                      // onClick={() => setOpenCreate(true)}
-                      onClick={() =>
-                        router.push("/pensions/preclaims/listing/new")
-                      }
-                      sx={{ mb: -1, maxHeight: "25px" }}
-                      disabled={
-                        !permissions?.includes(
-                          "preclaims.create.prospective_pensioner"
-                        )
-                      }
-                    >
-                      <IconButton>
-                        <Add sx={{ fontSize: "20px" }} color="primary" />
-                      </IconButton>
-                      <p className="font-medium text-gray -ml-2 text-sm">
-                        Create
-                      </p>
-                    </Button>
-                  </div>
-                )}
-                {status === 0 && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => setOpenNotification(true)}
-                      sx={{ mb: -1, maxHeight: "24px" }}
-                      disabled={
-                        (!isSendNotificationEnabled &&
-                          selectedRows.length > 0) ||
-                        !permissions?.includes(
-                          "preclaims.notify.prospective_pensioner"
-                        )
-                      }
-                      startIcon={<ForwardToInbox />}
-                    >
-                      <p className="font-medium text-gray -ml-2 text-sm">
-                        Notify Pensioner(s)
-                      </p>
-                    </Button>
-                  </div>
-                )} */}
-
-                {/* <div className="flex items-center gap-2 mt-2 ml-2">
-                  <Button
-                    onClick={() => exportData()}
-                    sx={{ maxHeight: "25px" }}
-                  >
-                    <img
-                      src="/excel.png"
-                      alt="Open in Excel"
-                      height={20}
-                      width={20}
-                    />
-                    <p className="font-medium text-gray text-sm ">
-                      Open in Excel
-                    </p>
-                  </Button>
-                  <div className="">
-                    <IconButton
-                      onClick={() =>
-                        setOpenFilter((prevOpenFilter) => !prevOpenFilter)
-                      }
-                    >
-                      <Tooltip title="filter items" placement="top">
-                        <FilterAlt sx={{ color: "primary.main" }} />
-                      </Tooltip>
-                    </IconButton>
-                  </div>
-                </div> */}
-              </div>
-            </div>
+            <div className="flex justify-between flex-row mt-2"></div>
             <Divider sx={{ mt: 1, mb: 1 }} />
 
             <div className="flex">
@@ -820,12 +755,14 @@ const Preclaims = ({ status }) => {
               <div
                 className="ag-theme-quartz flex flex-col"
                 style={{
-                  height: "80vh",
+                  height: "70vh",
                   padding: "20px",
                   width: openFilter ? "calc(100vw - 300px)" : "100vw",
                 }}
               >
                 <AgGridReact
+                  paginationPageSize={pageSize}
+                  //  pagination={true}
                   rowData={rowData}
                   columnDefs={colDefs}
                   rowSelection="multiple"
@@ -833,6 +770,7 @@ const Preclaims = ({ status }) => {
                   domLayout="autoHeight"
                   onGridReady={onGridReady}
                   totalRecords={totalRecords}
+                  rowHeight={36}
                   onCellDoubleClicked={(event) => {
                     setOpenBaseCard(true);
                     setClickedItem(event.data); // Update selected item
@@ -840,8 +778,16 @@ const Preclaims = ({ status }) => {
                 />
                 {/*************PAGINATION *************/}
 
-                <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    // mt: "-30px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
                   <Pagination
+                    showFirstButton
+                    showLastButton
                     count={totalPages}
                     page={pageNumber}
                     onChange={handlePageChange}

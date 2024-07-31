@@ -63,7 +63,7 @@ const endpoints = {
   createDepartment: "/api/DepartmentsSetup/CreateDepartment",
 
   //createRole
-  createRole: "/CreateRole",
+  createRole: "/api/RolesSetUp/CreateRole",
 
   //Get Roles
 
