@@ -456,7 +456,7 @@ function Sidebar() {
       <div className="sticky top-0 bg-white z-50">
         <img
           src="/logo.png"
-          className="w-full h-[60px] pt-2 mb-[-20px] "
+          className="w-full h-[75px] pt-2 mb-[-20px] "
           alt=""
         />
       </div>

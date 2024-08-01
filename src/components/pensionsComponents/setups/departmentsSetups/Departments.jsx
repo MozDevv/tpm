@@ -101,7 +101,7 @@ const Departments = () => {
     {
       name: "description",
       label: "Description",
-      type: "email",
+      type: "text",
       required: true,
     },
     { name: "isMda", label: "Is Mda", type: "switch", required: true },
@@ -120,9 +120,11 @@ const Departments = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
           />
         ) : (
           <BaseInputCard
@@ -130,10 +132,13 @@ const Departments = () => {
             apiEndpoint={endpoints.createDepartment}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
           />
         )}
       </BaseCard>
       <BaseTable
+        openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}

@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import PensionerDetailSummary from "../pensionsComponents/preclaims/PensionerDetailSummary";
 import { Divider } from "antd";
 import ListNavigation from "./ListNavigation";
+import UserDetailCard from "../pensionsComponents/recordCard/UserDetailCard";
 
 function BaseCard({
   openBaseCard,
@@ -91,31 +92,43 @@ function BaseCard({
             </IconButton>
           </div>
         </div>
+        <div className="w-full flex flex-col ">
+          <ListNavigation
+            handlers={updatedHandlers}
+            permissions={permissions}
+            status={status}
+          />
+          <Divider />
+        </div>
         <div
-          className={`grid gap-2 ${
-            isUserComponent
-              ? "grid-cols-12" // Full width if isUserComponent is true
-              : !isDetailsVisible
-              ? "grid-cols-12" // Full width if details are not visible
-              : "grid-cols-9" // Default layout
-          }`}
+          // className={`grid gap-2 ${
+          //   isUserComponent
+          //     ? "grid-cols-12" // Full width if isUserComponent is true
+          //     : !isDetailsVisible
+          //     ? "grid-cols-12" // Full width if details are not visible
+          //     : "grid-cols-9" // Default layout
+          // }`}
+          className="grid gap-2 grid-cols-12 mt-[-20px]"
         >
-          <div className={`col-span-${isUserComponent ? "12" : "9"} `}>
-            <div className="w-full">
-              <ListNavigation
-                handlers={updatedHandlers}
-                permissions={permissions}
-                status={status}
-              />
-            </div>
-            <Divider />
+          {" "}
+          <div
+            className={`col-span-${isDetailsVisible ? "12" : "9"} `}
+            // className="col-span-9"
+          >
             {children}
           </div>
-
-          {!isUserComponent && !isDetailsVisible && (
+          {!isDetailsVisible && (
             <div className="col-span-3 flex flex-col mt-10">
-              <PensionerDetailSummary clickedItem={clickedItem} />
-              <Divider sx={{ mt: 3 }} />
+              {isUserComponent ? (
+                <>
+                  <UserDetailCard clickedItem={clickedItem} />
+                </>
+              ) : (
+                <>
+                  <PensionerDetailSummary clickedItem={clickedItem} />
+                  <Divider sx={{ mt: 3 }} />
+                </>
+              )}
             </div>
           )}
         </div>

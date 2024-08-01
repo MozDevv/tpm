@@ -8,7 +8,7 @@ function UserDetailCard({ clickedItem }) {
       <div className="flex items-center flex-col justify-center p-2 gap-2">
         <Avatar sx={{ height: "100px", width: "100px" }} />
         <div className="flex flex-col mt-5 gap-2 items-center justify-center">
-          <h5 className="font-semibold text-primary text-base">{`${clickedItem?.userName}`}</h5>
+          <h5 className="font-semibold text-primary text-base">{`${clickedItem?.email}`}</h5>
         </div>
       </div>
       <Divider />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import authEndpoints, { AuthApiService } from "@/components/services/authApi";
 import { Person } from "@mui/icons-material";
@@ -8,17 +8,27 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 import UserDetails from "./UserDetails";
 import NewUserCard from "../recordCard/NewUserCard";
 import RecordCard from "../recordCard/RecordCard";
+import endpoints, { apiService } from "@/components/services/setupsApi";
+import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 const columnDefs = [
   { field: "no", headerName: "No", width: 90, filter: true },
-  { field: "userName", headerName: "Email", filter: true, width: 200 },
+  { field: "email", headerName: "Email", filter: true, width: 200 },
+  { field: "firstName", headerName: "First Name", filter: true, width: 200 },
+  { field: "lastName", headerName: "Last Name", filter: true, width: 200 },
   {
     field: "employeeNumber",
     headerName: "Employee Number",
     filter: true,
     width: 150,
   },
-  { field: "email", headerName: "Email", filter: true, width: 250, hide: true },
+  {
+    field: "email",
+    headerName: "Email",
+    filter: true,
+    width: 250,
+    hide: false,
+  },
   {
     field: "phoneNumber",
     headerName: "Phone Number",
@@ -45,14 +55,25 @@ const Users = () => {
     return data.map((item, index) => ({
       no: index + 1,
       id: item.id,
-      userName: item.userName,
+      firstName: item.firstName,
+      lastName: item.lastName,
       email: item.email,
       phoneNumber: item.phoneNumber,
-      roleId: item.roleId,
+      roleId: item.roles,
       employeeNumber: item.employeeNumber,
-      defaultPasswordChanged: item.defaultPasswordChanged ? "Yes" : "No",
+      defaultPasswordChanged: item.defaultPasswordChanged,
+      lockoutEnabled: item.lockoutEnabled,
+      departmentId: item.departmentId,
+      roleId: item.roleId,
+      emailConfirmed: item.emailConfirmed,
+      phoneNumberConfirmed: item.phoneNumberConfirmed,
+      twoFactorEnabled: item.twoFactorEnabled,
+      lockoutEnd: item.lockoutEnd,
+      defaultPasswordGracePeriod: item.defaultPasswordGracePeriod,
     }));
   };
+
+  const [editUser, setEditUser] = React.useState(false);
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -61,7 +82,7 @@ const Users = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
+    edit: () => console.log("first edit clicked"),
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
@@ -72,9 +93,8 @@ const Users = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
+    edit: () => {
+      setEditUser(true);
     },
     delete: (item) => {
       //  setOpenBaseCard(true);
@@ -84,8 +104,108 @@ const Users = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [departments, setDepartments] = React.useState([]);
 
+  const [refreshData, setRefreshData] = React.useState(false);
+
+  const pageNumber = 1;
+  const pageSize = 200;
+
+  const [roles, setRoles] = React.useState([]);
   const title = clickedItem ? "User Details" : "Create New User";
+
+  const fields = [
+    {
+      name: "employeeNumber",
+      label: "Employee Number",
+      type: "text",
+      required: true,
+    },
+
+    { name: "firstName", label: "First Name", type: "text", required: true },
+    { name: "lastName", label: "Last Name", type: "text", required: true },
+    {
+      name: "email",
+      label: "Email",
+      type: "email",
+      required: true,
+    },
+    {
+      name: "phoneNumber",
+      label: "Phone Number",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "roleId",
+      label: "Role",
+      type: "select",
+      required: true,
+      options: roles.map((r) => ({ id: r.roleId, name: r.name })),
+    },
+
+    {
+      name: "departmentId",
+      label: "Select Department",
+      type: "select",
+      required: true,
+      options: departments.map((d) => ({
+        id: d.departmentId,
+        name: d.name,
+      })),
+    },
+    {
+      name: "emailConfirmed",
+      label: "Email Confirmed",
+      type: "switch",
+      // required: true,
+    },
+
+    {
+      name: "lockoutEnabled",
+      label: "Lockout Enabled",
+      type: "switch",
+      // required: true,
+    },
+    {
+      name: "lockoutEnd",
+      label: "Lockout End",
+      type: "datetime-local",
+      // required: true,
+    },
+  ];
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDepartments, {
+        paging: { pageNumber, pageSize: 200 },
+      });
+      const { data, totalCount } = res.data;
+      setDepartments(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchRoles = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRoles, {
+        paging: { pageNumber, pageSize },
+      });
+      const { data, totalCount } = res.data;
+
+      console.log("Roles", data);
+      setRoles(data);
+      //set setTotalRecords(totalCount);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+    fetchDepartments();
+  }, []);
 
   return (
     <div className="">
@@ -98,12 +218,23 @@ const Users = () => {
         isUserComponent={true}
       >
         {clickedItem ? (
-          <RecordCard id={clickedItem.id} />
+          // <RecordCard id={clickedItem.id} editUser={editUser} />
+          <BaseInputCard
+            setRefreshData={setRefreshData}
+            fields={fields}
+            apiEndpoint={authEndpoints.updateUser(clickedItem.id)}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={false}
+          />
         ) : (
           <NewUserCard setOpenBaseCard={setOpenBaseCard} />
         )}
       </BaseCard>
       <BaseTable
+        openBaseCard={openBaseCard}
+        refreshData={refreshData}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}

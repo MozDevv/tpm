@@ -28,6 +28,8 @@ const authEndpoints = {
   //users
 
   getUsers: "/UserManagement/GetUsers",
+
+  updateUser: (id) => `/api/UserManagement/UpdateUser/${id}`,
 };
 
 export const AuthApiService = {

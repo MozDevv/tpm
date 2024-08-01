@@ -62,6 +62,9 @@ const endpoints = {
   //Create Department
   createDepartment: "/api/DepartmentsSetup/CreateDepartment",
 
+  //update Department
+  updateDepartment: (id) => `/api/DepartmentsSetup/UpdateDepartments/${id}`,
+
   //createRole
   createRole: "/api/RolesSetUp/CreateRole",
 

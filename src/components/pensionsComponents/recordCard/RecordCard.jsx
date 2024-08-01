@@ -30,7 +30,7 @@ import AssignRole from "../Roles/assignRoles/AssignRole";
 import { useAuth } from "@/context/AuthContext";
 import { BASE_CORE_API } from "@/utils/constants";
 
-function RecordCard({ id }) {
+function RecordCard({ id, editUser }) {
   const [clickedItem, setClickedItem] = useState(null);
   console.log(id);
   const fetchUserDetails = async () => {
@@ -163,9 +163,11 @@ function RecordCard({ id }) {
             >
               Back
             </button>
-            {/* <button className="bg-primary text-sm font-medium  text-white px-4 py-2 rounded-md">
-              Save Changes
-            </button> */}
+            {editUser && (
+              <button className="bg-primary text-sm font-medium  text-white px-4 py-2 rounded-md">
+                Edit
+              </button>
+            )}
           </div>
         </div>
         <div className="px-6 mt-[-20px]">

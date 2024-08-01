@@ -31,6 +31,8 @@ const BaseTable = ({
   setClickedItem,
   setOpenBaseCard,
   transformData,
+  refreshData,
+  openBaseCard,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -64,6 +66,10 @@ const BaseTable = ({
   useEffect(() => {
     fetchData();
   }, [pageNumber]);
+
+  useEffect(() => {
+    fetchData();
+  }, [openBaseCard]);
 
   const handleFilters = async () => {
     const filter = status

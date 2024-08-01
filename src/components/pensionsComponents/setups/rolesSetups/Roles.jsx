@@ -168,6 +168,7 @@ const Roles = () => {
         )}
       </BaseCard>
       <BaseTable
+        openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}

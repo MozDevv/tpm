@@ -15,6 +15,8 @@ const BaseInputCard = ({
   postApiFunction,
   clickedItem,
   setOpenBaseCard,
+  useRequestBody,
+  setReFetchData,
 }) => {
   const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -22,17 +24,13 @@ const BaseInputCard = ({
 
   useEffect(() => {
     if (clickedItem) {
-      // Populate form data if clickedItem is provided
-      const initialFormData = fields.reduce((acc, field) => {
-        acc[field.name] = clickedItem[field.name] ?? "";
-        return acc;
-      }, {});
-      setFormData(initialFormData);
+      // Populate form data with clickedItem values directly
+      setFormData(clickedItem);
     } else {
       // Reset form data if no clickedItem
       setFormData({});
     }
-  }, [clickedItem, fields]);
+  }, [clickedItem]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -63,17 +61,35 @@ const BaseInputCard = ({
     console.log("Base Input Card: form data to be sent: ", formData);
     if (validateForm()) {
       try {
-        const res = await postApiFunction(apiEndpoint, formData);
+        let dataToSend = {};
+
+        // Filter out null or undefined values
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== null && formData[key] !== undefined) {
+            dataToSend[key] = formData[key];
+          }
+        });
+
+        if (!useRequestBody) {
+          const formDataObj = new FormData();
+          Object.keys(dataToSend).forEach((key) => {
+            formDataObj.append(key, dataToSend[key]);
+          });
+          dataToSend = formDataObj;
+        }
+
+        const res = await postApiFunction(apiEndpoint, dataToSend);
         setIsEditing(false);
 
         if (
           res.status === 201 ||
           res.status === 200 ||
+          res.status === 204 ||
           res.data.succeeded === true
         ) {
-          //fetchData();
           message.success("Data saved successfully");
           setOpenBaseCard(false);
+          setReFetchData(true);
         }
       } catch (error) {
         console.error("Error saving data:", error);
@@ -111,7 +127,7 @@ const BaseInputCard = ({
                 size="small"
                 fullWidth
                 name={field.name}
-                value={formData[field.name]}
+                value={formData[field.name] || ""}
                 onChange={handleInputChange}
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}
