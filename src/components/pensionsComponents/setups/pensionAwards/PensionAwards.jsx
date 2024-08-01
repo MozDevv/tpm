@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -8,6 +8,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button } from "@mui/material";
+import PensionAwardCard from "./PensionAwardCard";
 
 const columnDefs = [
   {
@@ -112,20 +113,23 @@ const PensionAwards = () => {
       return a.toUpperCase();
     });
   };
+
+  const pageSize = 100;
+  const pageNumber = 1;
+
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1 + (pageNumber - 1) * pageSize,
-
+      no: index + 1,
       prefix: transformString(item.prefix),
       name: item.name,
-      pensionCap: item.pensionCap.name,
+      pensionCap: item.pensionCap.id,
       id: item.id,
       description: transformString(item.description),
       commutable: index,
       mapDocs: index,
       awardDocuments: item.awardDocuments,
       start_date: item.start_date,
-      // end_date: item.end_date,
+      end_date: item.end_date,
       has_commutation: item.has_commutation,
     }));
   };
@@ -161,17 +165,56 @@ const PensionAwards = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Department" : "Create New Department";
+  const title = clickedItem ? "Pension Award" : "Create New Pension Award";
 
+  const [pensionCaps, setPensionCaps] = React.useState([]);
+
+  const fetchPensionCaps = async () => {
+    try {
+      const res = await apiService.get(endpoints.pensionCaps);
+      if (res.status === 200) {
+        setPensionCaps(res.data.data);
+        console.log(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPensionCaps();
+  }, []);
   const fields = [
+    { name: "prefix", label: "Prefix", type: "text", required: true },
     { name: "name", label: "Name", type: "text", required: true },
+    {
+      name: "pensionCap",
+      label: "Pension Cap",
+      type: "select",
+      required: true,
+      options: pensionCaps.map((item) => ({
+        id: item.id,
+        name: item.name,
+      })),
+    },
     {
       name: "description",
       label: "Description",
-      type: "email",
+      type: "text",
       required: true,
     },
-    { name: "isMda", label: "Is Mda", type: "switch", required: true },
+    {
+      name: "start_date",
+      label: "Start Date",
+      type: "date",
+      //  required: true,
+    },
+    {
+      name: "end_date",
+      label: "End Date",
+      type: "date",
+      // required: true,
+    },
   ];
 
   return (
@@ -185,11 +228,13 @@ const PensionAwards = () => {
         isUserComponent={false}
       >
         {clickedItem ? (
-          <BaseInputCard
+          <PensionAwardCard
             fields={fields}
-            apiEndpoint={endpoints.pensionAwards}
+            apiEndpoint={endpoints.editPensionAwards}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
           />
         ) : (
           <BaseInputCard
@@ -197,10 +242,12 @@ const PensionAwards = () => {
             apiEndpoint={endpoints.pensionAwards}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
           />
         )}
       </BaseCard>
       <BaseTable
+        openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
@@ -210,8 +257,8 @@ const PensionAwards = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Pensioner Awards"
-        currentTitle="Pensioner Awards"
+        breadcrumbTitle="Pension Awards"
+        currentTitle="Pension Awards"
       />
     </div>
   );

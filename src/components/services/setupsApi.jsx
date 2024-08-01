@@ -31,6 +31,8 @@ const endpoints = {
   //MAP PENSIONER AWARDS
   mapPensionerAwards: "/api/Setups/MapDocumentTypesPensionAward",
 
+  editPensionAwards: "/api/Setups/EditPensionAward",
+
   //MDAs
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",

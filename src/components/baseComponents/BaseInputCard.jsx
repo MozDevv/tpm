@@ -89,7 +89,7 @@ const BaseInputCard = ({
         ) {
           message.success("Data saved successfully");
           setOpenBaseCard(false);
-          setReFetchData(true);
+          // setReFetchData(true);
         }
       } catch (error) {
         console.error("Error saving data:", error);

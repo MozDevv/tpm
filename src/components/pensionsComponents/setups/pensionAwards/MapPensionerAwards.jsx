@@ -14,9 +14,8 @@ import {
   TableRow,
   Paper,
   IconButton,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
-
 
 import {
   ArrowBack,
@@ -24,7 +23,6 @@ import {
   KeyboardArrowRight,
   OpenInFull,
 } from "@mui/icons-material";
-
 
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
@@ -46,9 +44,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   useEffect(() => {
-    console.log('awardDocuments', rowClicked.awardDocuments)
-    const selected = rowClicked.awardDocuments.map(_ => _.document)
-    setDefaultDocuments([...selected])
+    console.log("awardDocuments", rowClicked.awardDocuments);
+    const selected = rowClicked.awardDocuments.map((_) => _.document);
+    setDefaultDocuments([...selected]);
 
     const initialDocs = rowClicked.awardDocuments.map((doc) => ({
       ...doc,
@@ -60,10 +58,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     }));
 
     setSelectedDocuments(initialDocs);
-  }, [])
+  }, []);
 
   useEffect(() => {
-
     fetchDocumentTypes();
     if (rowClicked.awardDocuments) {
       // const initialDocs = rowClicked.awardDocuments.map((doc) => ({
@@ -81,30 +78,24 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   }, [rowClicked]);
 
   const handleDocumentChange = (event, newValue) => {
-    debugger
+    debugger;
     // const newDocuments = newValue.filter(
     //   (newDoc) =>
     //     !selectedDocuments.some((doc) => doc.document.id === newDoc.id)
     // );
 
-    const newDocuments = selectedDocuments.filter(
-      (s) =>{
+    const newDocuments = selectedDocuments.filter((s) => {
+      let notexists = !newValue.some((n) => n.id === s.document.id);
 
-        let notexists = !newValue.some((n) => n.id === s.document.id)
-
-        return !notexists;
-
-      }
-        
-    );
-
+      return !notexists;
+    });
 
     // const newValues = selectedDocuments.filter(doc => doc.id == newValue.id);
 
-    newValue.forEach(v => {
-      if (!newDocuments.some(s => s.document.id === v.id)) {
-        debugger
-        
+    newValue.forEach((v) => {
+      if (!newDocuments.some((s) => s.document.id === v.id)) {
+        debugger;
+
         newDocuments.push({
           document: v,
           required: false,
@@ -114,7 +105,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           back: false,
         });
       }
-    })
+    });
 
     // const updatedDocuments = newDocuments.map((doc) => ({
     //   document: doc,
@@ -139,7 +130,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   const handleSubmit = async () => {
-    debugger
+    debugger;
     const newDocuments = selectedDocuments.filter(
       (doc) =>
         !initialDocuments.some(
@@ -178,9 +169,8 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   return (
-    <div className="">
-      <div className="flex flex-col gap-3">
-
+    <div className="mt-4">
+      {/* <div className="flex flex-col gap-3">
         <div className="">
           <IconButton
             sx={{
@@ -202,9 +192,8 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         <p className="text-gray-700 text-sm mb-3">
           Choose the document you wish to map to the selected Award
         </p>
-      </div>
+      </div> */}
       <Grid container spacing={2}>
-
         <Grid item xs={12}>
           <Autocomplete
             multiple
@@ -222,7 +211,6 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
             )}
           />
         </Grid>
-
 
         <Grid item xs={12}>
           <TableContainer component={Paper}>
@@ -249,37 +237,32 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                       />
                     </TableCell>
                     <TableCell align="center">
+                      {doc.document.has_two_sides && (
+                        <>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={doc.front}
+                                onChange={handleCheckboxChange(index, "front")}
+                                name={`required-${index}`}
+                              />
+                            }
+                            label="Front"
+                          />
 
-                      {doc.document.has_two_sides && <>
-
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={doc.front}
-                              onChange={handleCheckboxChange(index, "front")}
-                              name={`required-${index}`}
-                            />
-                          } label="Front" />
-
-
-
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={doc.back}
-                              label="back"
-                              onChange={handleCheckboxChange(index, "back")}
-                              name={`required-${index}`}
-                            />
-                          } label="Back" />
-
-
-
-
-
-                      </>}
-
-
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={doc.back}
+                                label="back"
+                                onChange={handleCheckboxChange(index, "back")}
+                                name={`required-${index}`}
+                              />
+                            }
+                            label="Back"
+                          />
+                        </>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

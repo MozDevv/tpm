@@ -150,7 +150,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
   return (
     <div className="p-2 mt-1 h-[75vh] grid grid-cols-12 gap-2">
-      <div className="col-span-9 bg-white  rounded-2xl px-4">
+      <div className="col-span-12 bg-white  rounded-2xl px-4">
         <div className="px-6">
           <form id="new-user-form" onSubmit={handleSubmit}>
             <div className="flex items-center justify-between p-2 mb-3">
@@ -420,11 +420,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
           </form>
         </div>
       </div>
-      <div className="col-span-3 bg-white  rounded-2xl p-4 ml-3 mr-2">
+      {/* <div className="col-span-3 bg-white  rounded-2xl p-4 ml-3 mr-2">
         <div className="flex items-center justify-center gap-2 pt-5">
           <Avatar sx={{ height: "100px", width: "100px" }} />
         </div>
-      </div>
+      </div> */}
       <Dialog
         sx={{ p: 1 }}
         open={openDialog}

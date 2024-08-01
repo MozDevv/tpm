@@ -30,7 +30,7 @@ const columnDefs = [
     filter: true,
   },
   {
-    field: "employerType",
+    field: "employer_type",
     headerName: "Employer Type",
     headerClass: "prefix-header",
     filter: true,
@@ -43,7 +43,7 @@ const columnDefs = [
     width: 250,
   },
   {
-    field: "shortName",
+    field: "short_name",
     headerName: "Short Name",
     headerClass: "prefix-header",
     filter: true,
@@ -61,13 +61,14 @@ const columnDefs = [
 const MDASetups = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
+      mda_id: item?.id,
       no: index + 1,
       code: item?.code,
       name: item?.name,
-      employerType: item?.employer_type === 0 ? "Ministry" : "Department",
+      employer_type: item?.employer_type === 0 ? "Ministry" : "Department",
       description: item?.description,
-      shortName: item?.short_name,
-      pensionCapId: item?.pensionCap.id,
+      short_name: item?.short_name,
+      pension_cap_id: item?.pensionCap.id,
       id: item?.id,
       pensionCap: item?.pensionCap.name,
     }));
@@ -180,9 +181,11 @@ const MDASetups = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createMDA}
+            apiEndpoint={endpoints.updateMDA}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
           />
         ) : (
           <BaseInputCard
@@ -191,10 +194,12 @@ const MDASetups = () => {
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
           />
         )}
       </BaseCard>
       <BaseTable
+        openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}

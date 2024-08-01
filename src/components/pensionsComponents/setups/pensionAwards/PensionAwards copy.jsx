@@ -17,7 +17,7 @@ import {
 import MapPensionerAwards from "./MapPensionerAwards";
 import "./pensionAwards.css";
 
-function PensionAwards() {
+function PensionAwards2() {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -452,4 +452,4 @@ function PensionAwards() {
   );
 }
 
-export default PensionAwards;
+export default PensionAwards2;
