@@ -532,9 +532,10 @@ function NewPreclaim({
     console.log("Preclaims Data", formData);
 
     if (retireeId && !editMode) {
-      router.push(
-        `/pensions/preclaims/listing/new/add-payment-details?id=${retireeId}`
-      );
+      // router.push(
+      //   `/pensions/preclaims/listing/new/add-payment-details?id=${retireeId}`
+      // );
+      moveToNextTab();
       return;
     }
 
@@ -711,6 +712,10 @@ function NewPreclaim({
     }
   }, [formData.dob]);
 
+  // const handleNext = () => {
+  //   !editMode && retireeId && moveToNextTab();
+  // };
+
   return (
     <div className="max-h-[100vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -732,28 +737,15 @@ function NewPreclaim({
           <form onSubmit={handleSubmit} className="">
             <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
               <div className="flex items-center justify-between px-6 w-[100%]">
-                <div className="flex items-center gap-2">
-                  <h5 className="text-[17px] text-primary font-semibold">
-                    Data Capture
-                  </h5>
-                </div>
+                <div className="flex items-center gap-2"></div>
                 <div className="flex ">
                   {" "}
                   <div className="flex gap-8 mr-4">
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        setOpenCreate(false);
-                        setErrors({});
-                      }}
-                      sx={{ maxHeight: "40px", mt: "5px" }}
-                    >
-                      Cancel
-                    </Button>
+                    <div className=""></div>
                     <Button
                       variant="contained"
                       color="primary"
-                      // onClick={handleSubmit}
+                      //  onClick={handleNext}
                       type="submit"
                       sx={{ maxHeight: "40px", mt: "5px" }}
                     >

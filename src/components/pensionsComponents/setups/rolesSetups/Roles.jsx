@@ -104,9 +104,9 @@ const Roles = () => {
   const title = clickedItem ? "Role" : "Create a New Role";
 
   const fields = [
-    { name: "Name", label: "Name", type: "text", required: true },
+    { name: "name", label: "Name", type: "text", required: true },
     {
-      name: "Description",
+      name: "description",
       label: "Description",
       type: "text",
       required: true,

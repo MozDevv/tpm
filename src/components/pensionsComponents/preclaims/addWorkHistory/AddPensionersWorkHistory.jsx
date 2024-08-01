@@ -11,7 +11,12 @@ import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 
-function AddPensionersWorkHistory({ id, name, moveToNextTab }) {
+function AddPensionersWorkHistory({
+  id,
+  name,
+  moveToNextTab,
+  moveToPreviousTab,
+}) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const handleRedirect = () => {
@@ -21,11 +26,7 @@ function AddPensionersWorkHistory({ id, name, moveToNextTab }) {
   };
 
   const handlePrevious = () => {
-    !name
-      ? router.push(
-          `/pensions/preclaims/listing/new/add-payment-details?id=${id}`
-        )
-      : router.push(`/pensions/preclaims/listing`);
+    moveToPreviousTab();
   };
 
   const [retiree, setRetiree] = useState({});

@@ -6,7 +6,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
 import { message } from "antd";
 
-function AddBankDetails({ id, moveToNextTab }) {
+function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
   const [banks, setBanks] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBank, setSelectedBank] = useState("");
@@ -108,6 +108,7 @@ function AddBankDetails({ id, moveToNextTab }) {
     e.preventDefault();
     if (hasBankDetails) {
       // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      moveToNextTab();
       return;
     }
     const validationErrors = validateForm(formData);
@@ -135,6 +136,12 @@ function AddBankDetails({ id, moveToNextTab }) {
   };
 
   const submitFormData = async (formData) => {
+    if (id) {
+      moveToNextTab();
+      // router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+      return;
+    }
+
     const data = {
       prospective_pensioner_id: id,
       bank_branch_id: formData.branchId,
@@ -168,9 +175,7 @@ function AddBankDetails({ id, moveToNextTab }) {
     : [];
 
   const handlePrevious = () => {
-    if (id) {
-      router.push(`/pensions/preclaims/listing/new?id=${id}`);
-    }
+    moveToPreviousTab();
   };
 
   return (

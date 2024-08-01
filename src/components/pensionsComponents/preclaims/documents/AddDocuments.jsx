@@ -9,7 +9,7 @@ import preClaimsEndpoints, {
 import Spinner from "@/components/spinner/Spinner";
 import { useRouter } from "next/navigation";
 
-const AddDocuments = ({ id }) => {
+const AddDocuments = ({ id, moveToPreviousTab }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -132,7 +132,7 @@ const AddDocuments = ({ id }) => {
   };
 
   const handleUpload = () => {
-    router.push("/pensions/preclaims/listing/");
+    // router.push("/pensions/preclaims/listing/");
   };
 
   const columns = [
@@ -239,7 +239,8 @@ const AddDocuments = ({ id }) => {
   ];
 
   const handlePrevious = () => {
-    router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+    //router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
+    moveToPreviousTab();
   };
 
   return (
@@ -252,7 +253,7 @@ const AddDocuments = ({ id }) => {
             <Button variant="outlined" onClick={handlePrevious}>
               Previous
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               onClick={handleUpload}
@@ -261,8 +262,8 @@ const AddDocuments = ({ id }) => {
                 backgroundColor: uploadButtonDisabled ? "#ccc" : undefined,
               }}
             >
-              Finish
-            </Button>
+              Upload
+            </Button> */}
           </div>
           <Table
             columns={columns}

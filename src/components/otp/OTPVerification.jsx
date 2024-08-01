@@ -12,6 +12,8 @@ import PoweredBy from "../poweredBy/PoweredBy";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { message } from "antd";
+import { AuthApiService } from "../services/authApi";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function OTPVerification() {
   const router = useRouter();
@@ -20,21 +22,23 @@ function OTPVerification() {
 
   const [email, setEmail] = React.useState("");
 
-  const handleLogin = () => {
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJyb3kua2lwY2h1bWJhQGFnaWxlYml6LmNvLmtlIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJhOGY5YzQxNS03MzA4LTRhYTgtOTliZC00NjI1MTM1OWY3MjQiLCJOYW1lIjoiUm95IiwiUGVybWlzc2lvbnMiOiJNREEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiVGVzdDEiLCJUZXN0MiIsIlRlc3QzIl0sIlVzZXJOYW1lIjoicm95LmtpcGNodW1iYUBhZ2lsZWJpei5jby5rZSIsImV4cCI6MTcxODg2NDE4MCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA0OSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNDkifQ.VnkgYB1It-Nofs85tahq7Xr_8wIC_l6g9MhlD6LueJg";
-
-    login(token);
-    router.push("/pensions");
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (email === "") {
       message.error("Please enter your email address");
       return;
     }
 
-    router.push(`/reset?username=${email}`);
+    try {
+      const response = await AuthApiService.post(
+        `${BASE_CORE_API}api/Auth/ForgetPassword?email=${email}`
+      );
+      console.log("response", response);
+      if (response.status === 200) {
+        router.push(`/reset?username=${email}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>

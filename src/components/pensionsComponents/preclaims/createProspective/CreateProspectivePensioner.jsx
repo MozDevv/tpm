@@ -23,7 +23,13 @@ function CreateProspectivePensioner({ clickedItem }) {
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
+    console.log("Moving to next tab:", nextTab); // Debug line
     setActiveKey(nextTab);
+  };
+
+  const moveToPreviousTab = () => {
+    const prevTab = (parseInt(activeKey, 10) - 1).toString();
+    setActiveKey(prevTab);
   };
 
   return (
@@ -50,6 +56,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}
                     moveToNextTab={moveToNextTab}
+                    moveToPreviousTab={moveToPreviousTab}
                   />
                 </div>
               </TabPane>
@@ -64,6 +71,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                 <AddBankDetails
                   id={activeRetireeId}
                   moveToNextTab={moveToNextTab}
+                  moveToPreviousTab={moveToPreviousTab}
                 />
               </TabPane>
               <TabPane
@@ -78,6 +86,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                   id={activeRetireeId}
                   name={clickedItem ? clickedItem.first_name : undefined}
                   moveToNextTab={moveToNextTab}
+                  moveToPreviousTab={moveToPreviousTab}
                 />
               </TabPane>
               <TabPane
@@ -91,6 +100,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                 <AddDocuments
                   id={activeRetireeId}
                   moveToNextTab={moveToNextTab}
+                  moveToPreviousTab={moveToPreviousTab}
                 />
               </TabPane>
             </Tabs>
