@@ -11,6 +11,7 @@ import SendForApproval from "../pensionsComponents/preclaims/SendForApproval";
 import CreateBranch from "./CreateBranch";
 import endpoints, { apiService } from "../services/setupsApi";
 import BaseInputCard from "./BaseInputCard";
+import CreateClaim from "../pensionsComponents/preclaims/CreateClaim";
 
 function BaseCard({
   openBaseCard,
@@ -81,7 +82,7 @@ function BaseCard({
       }}
     >
       <Dialog
-        open={openAction && status === 3}
+        open={openAction && (status === 3 || status === 7 || status === 5)}
         onClose={() => setOpenCreateClaim(false)}
         sx={{
           "& .MuiDialog-paper": {
@@ -91,14 +92,28 @@ function BaseCard({
           p: 4,
         }}
       >
-        {status === 3 && (
+        {status === 3 ? (
           <SendForApproval
             fetchAllPreclaims={fetchAllPreclaims}
             setOpenPreclaimDialog={setOpenBaseCard}
             setOpenCreateClaim={setOpenAction}
             clickedItem={clickedItem}
           />
-        )}
+        ) : status === 7 ? (
+          <CreateClaim
+            setOpenPreclaimDialog={setOpenBaseCard}
+            setOpenCreateClaim={setOpenAction}
+            clickedItem={clickedItem}
+            fetchAllPreclaims={fetchAllPreclaims}
+          />
+        ) : status === 5 ? (
+          <CreateClaim
+            setOpenPreclaimDialog={setOpenBaseCard}
+            setOpenCreateClaim={setOpenAction}
+            clickedItem={clickedItem}
+            fetchAllPreclaims={fetchAllPreclaims}
+          />
+        ) : null}
       </Dialog>
       {/* <Dialog
         maxWidth="lg"

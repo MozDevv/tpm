@@ -206,7 +206,7 @@ const Banks = () => {
         pageSize={30}
         handlers={handlers}
         breadcrumbTitle="Banks"
-        currentTitle="Banks Setups"
+        currentTitle="Banks"
       />
     </div>
   );

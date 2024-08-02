@@ -18,6 +18,7 @@ import {
   BarChart,
   AccountBalance,
   AddBusiness,
+  AddCircle,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -90,6 +91,13 @@ const ListNavigation = ({ handlers, status }) => {
       action: "createBankType",
       requiredPermissions: [],
       status: ["createBranch"],
+    },
+    {
+      name: "Create Claim",
+      icon: AddCircle,
+      action: "createClaim",
+      requiredPermissions: [],
+      status: [5, 7],
     },
   ];
 

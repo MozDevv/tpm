@@ -576,6 +576,7 @@ const Preclaims = ({ status }) => {
     reports: () => console.log("Reports clicked"),
     notify: () => setOpenNotification(true),
     submit: () => setOpenAction(true),
+    createClaim: () => setOpenAction(true),
   };
 
   const title = clickedItem

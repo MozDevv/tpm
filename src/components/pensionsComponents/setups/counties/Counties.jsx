@@ -10,6 +10,7 @@ const columns = [
   {
     title: "County Code",
     dataIndex: "county_code",
+
     key: "code",
   },
   {
@@ -222,7 +223,6 @@ const Counties = () => {
         onClose={() => setCreateCounty(false)}
       >
         <div className="flex w-full justify-between max-h-8 mb-3">
-          {" "}
           <p className="text-base text-primary font-semibold mb-5">
             Create County
           </p>
