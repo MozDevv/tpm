@@ -387,6 +387,33 @@ function NewPreclaim({
             },
           ],
         },
+
+        {
+          label: "Mortality Status",
+          name: "status_status",
+          type: "select",
+          children: [
+            {
+              id: 1,
+              name: "Alive",
+            },
+            {
+              id: 2,
+              name: "Dead",
+            },
+          ],
+        },
+        {
+          label: "Marital Status",
+          name: "marital_status",
+          type: "select",
+          children: [
+            { id: 1, name: "Single" },
+            { id: 2, name: "Married" },
+            { id: 3, name: "Divorced" },
+            { id: 4, name: "Widowed" },
+          ],
+        },
         {
           label: "Type Of Identification",
           name: "identifier_type",

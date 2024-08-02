@@ -103,6 +103,34 @@ function CreateProspectivePensioner({ clickedItem }) {
                   moveToPreviousTab={moveToPreviousTab}
                 />
               </TabPane>
+              <TabPane
+                tab={
+                  <span className="text-primary font-montserrat">
+                    Maintenance Case
+                  </span>
+                }
+                key="5"
+              >
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Exercitationem ipsam vitae nihil molestiae porro necessitatibus
+                velit quasi, similique voluptatibus sunt fugit, eveniet
+                repudiandae voluptas deleniti asperiores amet dolor ratione
+                fugiat.
+              </TabPane>
+              <TabPane
+                tab={
+                  <span className="text-primary font-montserrat">
+                    Deductions
+                  </span>
+                }
+                key="6"
+              >
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Exercitationem ipsam vitae nihil molestiae porro necessitatibus
+                velit quasi, similique voluptatibus sunt fugit, eveniet
+                repudiandae voluptas deleniti asperiores amet dolor ratione
+                fugiat.
+              </TabPane>
             </Tabs>
           </div>
         </div>
