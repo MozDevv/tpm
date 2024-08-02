@@ -7,6 +7,10 @@ import PensionerDetailSummary from "../pensionsComponents/preclaims/PensionerDet
 import { Divider } from "antd";
 import ListNavigation from "./ListNavigation";
 import UserDetailCard from "../pensionsComponents/recordCard/UserDetailCard";
+import SendForApproval from "../pensionsComponents/preclaims/SendForApproval";
+import CreateBranch from "./CreateBranch";
+import endpoints, { apiService } from "../services/setupsApi";
+import BaseInputCard from "./BaseInputCard";
 
 function BaseCard({
   openBaseCard,
@@ -17,6 +21,21 @@ function BaseCard({
   clickedItem,
   handlers,
   isUserComponent,
+  setOpenCreateClaim,
+  openAction,
+  setOpenAction,
+  fetchAllPreclaims,
+  fields,
+  postApiFunction,
+  apiEndpoint,
+  inputTitle,
+  idLabel,
+  useRequestBody,
+  secondaryFields,
+  secondaryApiEndpoint,
+  secondaryPostApiFunction,
+  secondaryInputTitle,
+  dialogType,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(false);
@@ -61,6 +80,97 @@ function BaseCard({
         },
       }}
     >
+      <Dialog
+        open={openAction && status === 3}
+        onClose={() => setOpenCreateClaim(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            height: "300px",
+            width: "500px",
+          },
+          p: 4,
+        }}
+      >
+        {status === 3 && (
+          <SendForApproval
+            fetchAllPreclaims={fetchAllPreclaims}
+            setOpenPreclaimDialog={setOpenBaseCard}
+            setOpenCreateClaim={setOpenAction}
+            clickedItem={clickedItem}
+          />
+        )}
+      </Dialog>
+      {/* <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          "& .MuiDialog-paper": {
+            minHeight: "200px",
+            minWidth: "600px",
+          },
+        }}
+        open={openAction && status === "createBranch"}
+        onClose={() => setOpenAction(false)}
+      >
+        <CreateBranch clickedItem={clickedItem} setOpenAction={setOpenAction} />
+      </Dialog> */}
+      <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          "& .MuiDialog-paper": {
+            minHeight: "250px",
+            minWidth: "600px",
+            pt: 5,
+          },
+        }}
+        open={
+          openAction && status === "createBranch" && dialogType === "branch"
+        }
+        onClose={() => setOpenAction(false)}
+      >
+        <BaseInputCard
+          inputTitle={inputTitle}
+          fields={fields}
+          apiEndpoint={apiEndpoint}
+          postApiFunction={postApiFunction}
+          setOpenAction={setOpenAction}
+          //clickedItem={clickedItem.id}
+          id={clickedItem?.id}
+          idLabel={idLabel}
+          setOpenBaseCard={setOpenBaseCard}
+          useRequestBody={useRequestBody}
+        />
+      </Dialog>
+      <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          "& .MuiDialog-paper": {
+            minHeight: "250px",
+            minWidth: "600px",
+            pt: 5,
+          },
+        }}
+        open={
+          openAction && status === "createBranch" && dialogType === "bankType"
+        }
+        onClose={() => setOpenAction(false)}
+      >
+        <BaseInputCard
+          inputTitle={secondaryInputTitle}
+          fields={secondaryFields}
+          apiEndpoint={secondaryApiEndpoint}
+          postApiFunction={secondaryPostApiFunction}
+          setOpenAction={setOpenAction}
+          //clickedItem={clickedItem.id}
+          //  id={clickedItem?.id}
+          // idLabel={idLabel}
+          setOpenBaseCard={setOpenBaseCard}
+          useRequestBody={useRequestBody}
+        />
+      </Dialog>
+
       <div className="overflow-y-hidden p-5">
         <div className="flex items-center justify-between w-full px-3 sticky top-0 z-[99999999] bg-white">
           <div className="flex items-center gap-1 mt-10">

@@ -554,6 +554,7 @@ const Preclaims = ({ status }) => {
   const router = useRouter();
 
   const [openBaseCard, setOpenBaseCard] = useState(false);
+  const [openAction, setOpenAction] = useState(false);
 
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
@@ -574,6 +575,7 @@ const Preclaims = ({ status }) => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => setOpenNotification(true),
+    submit: () => setOpenAction(true),
   };
 
   const title = clickedItem
@@ -599,6 +601,9 @@ const Preclaims = ({ status }) => {
             handlers={baseCardHandlers}
             title={title}
             clickedItem={clickedItem}
+            openAction={openAction}
+            setOpenAction={setOpenAction}
+            fetchAllPreclaims={fetchAllPreclaims}
           >
             <CreateProspectivePensioner clickedItem={clickedItem} />
           </BaseCard>

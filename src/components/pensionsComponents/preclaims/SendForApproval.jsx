@@ -8,6 +8,7 @@ function SendForApproval({
   clickedItem,
   setOpenPreclaimDialog,
   setOpenCreateClaim,
+  fetchAllPreclaims,
 }) {
   const [comments, setComments] = useState("");
 
@@ -46,6 +47,7 @@ function SendForApproval({
           message: "Submitted for approval successfully",
           severity: "success",
         });
+        fetchAllPreclaims();
         setOpenCreateClaim(false);
         setOpenPreclaimDialog(false);
       }
@@ -61,7 +63,7 @@ function SendForApproval({
     <div>
       {" "}
       <div className="p-8 h-[100%]">
-        <p className="text-primary relative font-semibold text-lg mb-2">
+        <p className="text-primary relative font-semibold text-lg mb-3">
           Submit for Approval
         </p>
 
@@ -94,7 +96,7 @@ function SendForApproval({
             fullWidth
             color="primary"
           >
-            Create
+            Submit
           </Button>
         </div>
         {errors.status && (

@@ -17,6 +17,10 @@ const BaseInputCard = ({
   setOpenBaseCard,
   useRequestBody,
   setReFetchData,
+  inputTitle,
+  id,
+  idLabel,
+  setOpenAction,
 }) => {
   const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -70,6 +74,10 @@ const BaseInputCard = ({
           }
         });
 
+        if (id && idLabel) {
+          dataToSend[idLabel] = id;
+        }
+
         if (!useRequestBody) {
           const formDataObj = new FormData();
           Object.keys(dataToSend).forEach((key) => {
@@ -89,6 +97,7 @@ const BaseInputCard = ({
         ) {
           message.success("Data saved successfully");
           setOpenBaseCard(false);
+          setOpenAction && setOpenAction(false);
           // setReFetchData(true);
         }
       } catch (error) {
@@ -103,6 +112,11 @@ const BaseInputCard = ({
 
   return (
     <div className="py-6 px-15">
+      {inputTitle && (
+        <p className="text-base mt-[-25px] font-semibold text-primary ml-3">
+          {inputTitle}
+        </p>
+      )}
       <div className="flex justify-end gap-2 mr-5">
         {!isEditing && clickedItem ? (
           <Button variant="contained" onClick={handleEdit}>

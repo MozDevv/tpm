@@ -149,7 +149,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
       })),
     };
 
-    console.log("Data to be submitted:", data);
+    console.log("Data to be submitted: ", data);
 
     try {
       const res = await apiService.post(endpoints.mapPensionerAwards, data);

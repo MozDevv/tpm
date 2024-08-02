@@ -16,6 +16,8 @@ import {
   TrendingUp,
   Info,
   BarChart,
+  AccountBalance,
+  AddBusiness,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -69,11 +71,25 @@ const ListNavigation = ({ handlers, status }) => {
       status: [1],
     },
     {
-      name: "Submit",
+      name: "Submit For Approval",
       icon: Send,
       action: "submit",
       requiredPermissions: ["preclaims.execute.send_preclaim_for_approval"],
-      status: [2],
+      status: [3],
+    },
+    {
+      name: "Create Branch",
+      icon: AccountBalance,
+      action: "createBranch",
+      requiredPermissions: [],
+      status: ["createBranch"],
+    },
+    {
+      name: "Create Bank Type",
+      icon: AddBusiness,
+      action: "createBankType",
+      requiredPermissions: [],
+      status: ["createBranch"],
     },
   ];
 

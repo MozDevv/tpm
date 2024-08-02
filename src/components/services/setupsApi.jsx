@@ -21,6 +21,20 @@ const endpoints = {
 
   getBanks: "/api/setups/GetBanks",
 
+  //create Bank
+
+  createBank: "/api/Setups/CreateBank",
+
+  //Create Bank Branch
+  createBankBranch: "/api/Setups/CreateBankBranch",
+
+  //getBank Types
+
+  getBankTypes: "/api/Setups/GetBankTypes",
+
+  //createBankType
+  createBankType: "/api/Setups/CreateBankType",
+
   createBankforPensioner:
     "/api/ProspectivePensioners/CreateProspectivePensionerBankDetail",
 
