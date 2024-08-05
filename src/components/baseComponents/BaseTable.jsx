@@ -24,12 +24,13 @@ const BaseTable = ({
   columnDefs,
   fetchApiService,
   fetchApiEndpoint,
-  pageSize = 30,
+  pageSize = 100,
   handlers,
   breadcrumbTitle,
   currentTitle,
   setClickedItem,
   setOpenBaseCard,
+  openAction,
   transformData,
   refreshData,
   openBaseCard,
@@ -120,6 +121,10 @@ const BaseTable = ({
       console.error("Error fetching data:", error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [openAction]);
 
   const handlePaginationChange = (newPageNumber) => {
     setPageNumber(newPageNumber);

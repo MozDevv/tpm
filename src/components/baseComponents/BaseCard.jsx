@@ -140,6 +140,36 @@ function BaseCard({
           },
         }}
         open={
+          openAction &&
+          status === "createConstituency" &&
+          dialogType === "branch"
+        }
+        onClose={() => setOpenAction(false)}
+      >
+        <BaseInputCard
+          inputTitle={inputTitle}
+          fields={fields}
+          apiEndpoint={apiEndpoint}
+          postApiFunction={postApiFunction}
+          setOpenAction={setOpenAction}
+          //clickedItem={clickedItem.id}
+          id={clickedItem?.id}
+          idLabel={idLabel}
+          setOpenBaseCard={setOpenBaseCard}
+          useRequestBody={useRequestBody}
+        />
+      </Dialog>
+      <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          "& .MuiDialog-paper": {
+            minHeight: "250px",
+            minWidth: "600px",
+            pt: 5,
+          },
+        }}
+        open={
           openAction && status === "createBranch" && dialogType === "branch"
         }
         onClose={() => setOpenAction(false)}

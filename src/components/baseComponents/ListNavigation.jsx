@@ -19,6 +19,7 @@ import {
   AccountBalance,
   AddBusiness,
   AddCircle,
+  AddCircleOutline,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -92,6 +93,14 @@ const ListNavigation = ({ handlers, status }) => {
       requiredPermissions: [],
       status: ["createBranch"],
     },
+    {
+      name: "Add Constituency",
+      icon: AddCircleOutline,
+      action: "createConstituency",
+      requiredPermissions: [],
+      status: ["createConstituency"],
+    },
+
     {
       name: "Create Claim",
       icon: AddCircle,

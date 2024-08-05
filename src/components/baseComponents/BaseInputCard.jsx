@@ -96,7 +96,7 @@ const BaseInputCard = ({
           res.data.succeeded === true
         ) {
           message.success("Data saved successfully");
-          setOpenBaseCard(false);
+          // setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
           // setReFetchData(true);
         }
