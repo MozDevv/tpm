@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 
 // Assume this is your transformation function
@@ -25,7 +26,13 @@ const columnDefs = [
   },
   {
     field: "name",
-    headerName: "Name",
+    headerName: "Designation Name",
+    headerClass: "prefix-header",
+    filter: true,
+  },
+  {
+    field: "mda_name",
+    headerName: "MDA Name",
     headerClass: "prefix-header",
     filter: true,
   },
@@ -58,23 +65,45 @@ const columnDefs = [
   },
 ];
 
-const MDASetups = () => {
+const DesignationGrades = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
-      mda_id: item?.id,
+      mda_id: item?.mda_id,
       no: index + 1,
-      code: item?.code,
-      name: item?.name,
-      employer_type: item?.employer_type === 0 ? "Ministry" : "Department",
-      description: item?.description,
-      short_name: item?.short_name,
-      pension_cap_id: item?.pensionCap.id,
       id: item?.id,
-      pensionCap: item?.pensionCap.name,
+
+      name: item?.name,
+      employer_type: item?.mda?.employer_type === 0 ? "Ministry" : "Department",
+      description: item?.mda?.description,
+      mda_name: item?.mda?.name,
+      short_name: item?.mda?.short_name,
+      pension_cap_id: item?.pensionCap?.id,
+      id: item?.id,
+      pensionCap: item?.pensionCap?.name,
     }));
   };
 
   const [pensionCaps, setPensionCaps] = React.useState([]);
+
+  const [mdas, setMdas] = React.useState([]);
+
+  const fetchMdas = async () => {
+    try {
+      const res = await apiService.get(endpoints.mdas, {
+        "paging.pageSize": 1000,
+      });
+      if (res.status === 200) {
+        setMdas(res.data.data);
+        console.log(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchMdas();
+  }, []);
 
   const fetchPensionCaps = async () => {
     try {
@@ -119,49 +148,64 @@ const MDASetups = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "MDA" : "Create New MDA";
+  const title = clickedItem ? "Designation" : "Create New Designation";
 
   const fields = [
-    { name: "code", label: "Code", type: "text", required: true },
-    {
-      name: "description",
-      label: "Description",
-      type: "text",
-      required: true,
-    },
-
-    {
-      name: "employer_type",
-      label: "Employee Type",
-      type: "select",
-      required: true,
-      options: [
-        { id: 0, name: "Ministry" },
-        { id: 1, name: "Department" },
-      ],
-    },
-
     {
       name: "name",
-      label: "Name",
+      label: "Designation Name",
       type: "text",
       required: true,
     },
     {
-      name: "pension_cap_id",
-      label: "Pension Cap",
+      name: "mda_id",
+      label: "MDA",
       type: "select",
-      options: pensionCaps.map((p) => ({
-        id: p.id,
-        name: p.name,
+      required: true,
+      options: mdas.map((m) => ({
+        id: m.id,
+        name: m.name,
       })),
     },
-    {
-      name: "short_name",
-      label: "Short Name",
-      type: "text",
-      required: true,
-    },
+    // {
+    //   name: "mda_name",
+    //   label: "MDA Name",
+    //   type: "text",
+    //   required: true,
+    // },
+    // {
+    //   name: "description",
+    //   label: "Description",
+    //   type: "text",
+    //   required: true,
+    // },
+
+    // {
+    //   name: "employer_type",
+    //   label: "Employee Type",
+    //   type: "select",
+    //   required: true,
+    //   options: [
+    //     { id: 0, name: "Ministry" },
+    //     { id: 1, name: "Department" },
+    //   ],
+    // },
+
+    // {
+    //   name: "pensionCap",
+    //   label: "Pension Cap",
+    //   type: "select",
+    //   options: pensionCaps.map((p) => ({
+    //     id: p.id,
+    //     name: p.name,
+    //   })),
+    // },
+    // {
+    //   name: "short_name",
+    //   label: "Short Name",
+    //   type: "text",
+    //   required: true,
+    // },
   ];
 
   return (
@@ -173,13 +217,13 @@ const MDASetups = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteMDA(clickedItem?.mda_id)}
+        deleteApiEndpoint={endpoints.deleteDesignation(clickedItem?.id)}
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateMDA}
+            apiEndpoint={endpoints.editDesignation}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -188,7 +232,7 @@ const MDASetups = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createMDA}
+            apiEndpoint={endpoints.createDesignation}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -202,16 +246,16 @@ const MDASetups = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.mdas}
+        fetchApiEndpoint={endpoints.getDesignations}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="MDAs"
-        currentTitle="MDAs"
+        breadcrumbTitle="Designation & Grades"
+        currentTitle="Designation & Grades"
       />
     </div>
   );
 };
 
-export default MDASetups;
+export default DesignationGrades;

@@ -137,6 +137,14 @@ export const menuItems = [
         path: "/pensions/setups/mdas",
       },
       {
+        title: "Postal Codes",
+        path: "/pensions/setups/postal-codes",
+      },
+      {
+        title: "Designation & Grades",
+        path: "/pensions/setups/designation-grades",
+      },
+      {
         title: "Pension Awards",
         path: "/pensions/setups/pension-awards",
       },

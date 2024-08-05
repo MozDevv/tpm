@@ -72,6 +72,9 @@ const BaseTable = ({
     fetchData();
   }, [openBaseCard]);
 
+  useEffect(() => {
+    fetchData();
+  }, [openAction]);
   const handleFilters = async () => {
     const filter = status
       ? {
@@ -121,10 +124,6 @@ const BaseTable = ({
       console.error("Error fetching data:", error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [openAction]);
 
   const handlePaginationChange = (newPageNumber) => {
     setPageNumber(newPageNumber);

@@ -214,10 +214,10 @@ function Sidebar() {
           title: "Counties",
           path: "/pensions/setups/counties",
         },
-        {
-          title: "Constituencies",
-          path: "/pensions/setups/constituencies",
-        },
+        // {
+        //   title: "Constituencies",
+        //   path: "/pensions/setups/constituencies",
+        // },
         {
           title: "Leave Management",
           path: "/pensions/users/leave-management",
@@ -235,6 +235,14 @@ function Sidebar() {
         {
           title: "Pension Caps",
           path: "/pensions/setups/pension-caps",
+        },
+        {
+          title: "Designation & Grades",
+          path: "/pensions/setups/designation-grades",
+        },
+        {
+          title: "Postal Codes",
+          path: "/pensions/setups/postal-codes",
         },
         {
           title: "Terms of Service",

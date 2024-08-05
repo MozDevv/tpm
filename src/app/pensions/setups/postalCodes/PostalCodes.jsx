@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+"use client";
+import React, { use, useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -14,83 +15,56 @@ const columnDefs = [
     headerClass: "prefix-header",
     width: 90,
     filter: true,
-    hide: true,
   },
   {
     field: "code",
-    headerName: "Code",
+    headerName: "Postal Code",
     headerClass: "prefix-header",
-    width: 200,
     filter: true,
+    width: 250,
   },
   {
     field: "name",
     headerName: "Name",
     headerClass: "prefix-header",
     filter: true,
-  },
-  {
-    field: "employer_type",
-    headerName: "Employer Type",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-  {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
-    filter: true,
     width: 250,
   },
   {
-    field: "short_name",
-    headerName: "Short Name",
+    field: "county_name",
+    headerName: "County Name",
     headerClass: "prefix-header",
     filter: true,
-    width: 250,
+    width: 100,
   },
   {
-    field: "pensionCap",
-    headerName: "Pension Cap",
+    field: "county_code",
+    headerName: "County Code",
     headerClass: "prefix-header",
     filter: true,
-    width: 250,
+    width: 100,
+    hide: true,
   },
 ];
 
-const MDASetups = () => {
+const PostalCodes = () => {
+  const transformString = (str) => {
+    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
+      return a.toUpperCase();
+    });
+  };
   const transformData = (data) => {
     return data.map((item, index) => ({
-      mda_id: item?.id,
       no: index + 1,
-      code: item?.code,
-      name: item?.name,
-      employer_type: item?.employer_type === 0 ? "Ministry" : "Department",
-      description: item?.description,
-      short_name: item?.short_name,
-      pension_cap_id: item?.pensionCap.id,
-      id: item?.id,
-      pensionCap: item?.pensionCap.name,
+      id: item.id,
+      code: item.code,
+      name: item.name,
+      county_name: item.county.county_name,
+      county_code: item.county.county_code,
+      countyId: item.countyId,
+      //  constituency: item?.constituencies[0]?.constituency_name,
     }));
   };
-
-  const [pensionCaps, setPensionCaps] = React.useState([]);
-
-  const fetchPensionCaps = async () => {
-    try {
-      const res = await apiService.get(endpoints.pensionCaps);
-      if (res.status === 200) {
-        setPensionCaps(res.data.data);
-        console.log(res.data.data);
-      }
-    } catch (e) {
-      console.error("Error fetching data:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchPensionCaps();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -114,53 +88,44 @@ const MDASetups = () => {
       // setOpenBaseCard(true);
       // setClickedItem(item);
     },
+    delete: (item) => {
+      //  setOpenBaseCard(true);
+      //  setClickedItem(item);
+    },
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [counties, setCounties] = React.useState([]);
 
-  const title = clickedItem ? "MDA" : "Create New MDA";
+  const title = clickedItem ? "Postal Code" : "Create New Postal Address";
+
+  const fetchCounties = async () => {
+    try {
+      const response = await apiService.get(endpoints.getCounties, {
+        "paging.pageSize": 1000,
+      });
+      setCounties(response.data.data);
+    } catch (error) {
+      console.log("Error fetching counties", error);
+    }
+  };
+  useEffect(() => {
+    fetchCounties();
+  }, []);
 
   const fields = [
-    { name: "code", label: "Code", type: "text", required: true },
+    { name: "name", label: "Name", type: "text", required: true },
+    { name: "code", label: "Postal Code", type: "text", required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
-      required: true,
-    },
-
-    {
-      name: "employer_type",
-      label: "Employee Type",
+      name: "countyId",
+      label: "County",
       type: "select",
       required: true,
-      options: [
-        { id: 0, name: "Ministry" },
-        { id: 1, name: "Department" },
-      ],
-    },
-
-    {
-      name: "name",
-      label: "Name",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "pension_cap_id",
-      label: "Pension Cap",
-      type: "select",
-      options: pensionCaps.map((p) => ({
-        id: p.id,
-        name: p.name,
+      options: counties.map((county) => ({
+        id: county.id,
+        name: county.county_name,
       })),
-    },
-    {
-      name: "short_name",
-      label: "Short Name",
-      type: "text",
-      required: true,
     },
   ];
 
@@ -173,13 +138,13 @@ const MDASetups = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteMDA(clickedItem?.mda_id)}
+        deleteApiEndpoint={endpoints.deletePostalCode(clickedItem?.id)}
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateMDA}
+            apiEndpoint={endpoints.editPostalCode}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -188,11 +153,11 @@ const MDASetups = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createMDA}
+            apiEndpoint={endpoints.createPostalCode}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
           />
         )}
       </BaseCard>
@@ -202,16 +167,16 @@ const MDASetups = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.mdas}
+        fetchApiEndpoint={endpoints.getPostalCodes}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="MDAs"
-        currentTitle="MDAs"
+        breadcrumbTitle="Postal Codes"
+        currentTitle="Postal Codes"
       />
     </div>
   );
 };
 
-export default MDASetups;
+export default PostalCodes;

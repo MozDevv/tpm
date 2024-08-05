@@ -69,10 +69,13 @@ function NewPreclaim({
           ? new Date(retiree.dob).toISOString().split("T")[0]
           : "",
         gender: retiree?.gender ?? "",
+
         identifier_type: retiree?.identifier_type ?? "",
         national_id: retiree?.national_id ?? "",
         kra_pin: retiree?.kra_pin ?? "",
         designation_grade: retiree?.designation_grade ?? "",
+        mortality_status: retiree?.mortality_status ?? "",
+        marital_status: retiree?.marital_status ?? "",
         email_address: retiree?.email_address ?? "",
         postal_address: retiree?.postal_address ?? "",
         phone_number: retiree?.phone_number ?? "",
@@ -120,6 +123,8 @@ function NewPreclaim({
     surname: retiree?.surname ?? "",
     other_name: retiree?.other_name ?? "",
     dob: retiree?.dob ? new Date(retiree.dob).toISOString().split("T")[0] : "",
+    mortality_status: retiree?.mortality_status ?? "",
+    marital_status: retiree?.marital_status ?? "",
     gender: retiree?.gender ?? "",
     identifier_type: retiree?.identifier_type ?? "",
     national_id: retiree?.national_id ?? "",
@@ -187,8 +192,6 @@ function NewPreclaim({
       error = "Must be a valid KRA PIN";
     } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
       error = "Must be a valid number";
-    } else if (name === "postal_address" && value && isNaN(value)) {
-      error = "Postal Address must be a valid number";
     } else if (
       name === "phone_number" &&
       value &&
@@ -270,18 +273,25 @@ function NewPreclaim({
       setEditMode(true);
     }
     const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? parseFloat(value) : value;
+    let parsedValue = type === "number" ? parseFloat(value) : value;
     /*  const parsedValueDate =
       type === "date" ? new Date(value).toLocaleDateString() : value;
     */
-    if (name === "county_id") {
-      const selectedCounty = counties.find((county) => county.id === value);
-      if (selectedCounty) {
-        setConstituencies(selectedCounty.constituencies);
-      } else {
-        setConstituencies([]);
-      }
+
+    if (type === "text") {
+      parsedValue = parsedValue.toUpperCase();
     }
+    if (type === "text" || type === "select-one") {
+      parsedValue = parsedValue.toUpperCase();
+    }
+    // if (name === "county_id") {
+    //   const selectedCounty = counties.find((county) => county.id === value);
+    //   if (selectedCounty) {
+    //     setConstituencies(selectedCounty.constituencies);
+    //   } else {
+    //     setConstituencies([]);
+    //   }
+    // }
     setFormData({ ...formData, [name]: parsedValue });
     const error = validateField(name, parsedValue, formData);
     setErrors({ ...errors, [name]: error });
@@ -318,6 +328,8 @@ function NewPreclaim({
 
   const [constituencies, setConstituencies] = useState([]);
   const { alert, setAlert } = useAlert();
+  const [designations, setDesignations] = useState([]);
+  const [postalAddress, setPostalAddress] = useState([]);
   const fetchCountiesAndContituencies = async () => {
     try {
       const res = await apiService.get(endpoints.getCounties, {
@@ -335,11 +347,22 @@ function NewPreclaim({
       }));
 
       setCounties(countiesData);
-      setConstituencies(countiesData.constituencies);
+      //setConstituencies(countiesData.constituencies);
 
       console.log("first", rawData);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const fetchConstituencies = async () => {
+    try {
+      const res = await apiService.get(endpoints.getConstituencies, {
+        "paging.pageSize": 1000,
+      });
+      setConstituencies(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Constituencies:", error);
     }
   };
   const fetchCountries = async () => {
@@ -355,10 +378,35 @@ function NewPreclaim({
       console.log(error.response);
     }
   };
+
+  const fetchDesignations = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDesignations, {
+        "paging.pageSize": 1000,
+      });
+      setDesignations(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Designations:", error);
+    }
+  };
+
+  const fetchPostalAddress = async () => {
+    try {
+      const res = await apiService.get(endpoints.getPostalCodes, {
+        "paging.pageSize": 1000,
+      });
+      setPostalAddress(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Postal Address:", error);
+    }
+  };
   useEffect(() => {
     fetchPensionAwards();
+    fetchPostalAddress();
     fetchCountiesAndContituencies();
+    fetchConstituencies();
     fetchCountries();
+    fetchDesignations();
   }, []);
 
   const sections = [
@@ -390,7 +438,7 @@ function NewPreclaim({
 
         {
           label: "Mortality Status",
-          name: "status_status",
+          name: "mortality_status",
           type: "select",
           children: [
             {
@@ -408,10 +456,10 @@ function NewPreclaim({
           name: "marital_status",
           type: "select",
           children: [
-            { id: 1, name: "Single" },
-            { id: 2, name: "Married" },
-            { id: 3, name: "Divorced" },
-            { id: 4, name: "Widowed" },
+            { id: 0, name: "Single" },
+            { id: 1, name: "Married" },
+            { id: 2, name: "Divorced" },
+            { id: 3, name: "Widowed" },
           ],
         },
         {
@@ -439,7 +487,13 @@ function NewPreclaim({
         {
           label: "Designation and Grade",
           name: "designation_grade",
-          type: "text",
+          type: "select",
+          children: designations
+            .filter((designation) => designation?.mda?.id === mdaId)
+            .map((designation) => ({
+              id: designation.id,
+              name: designation.name,
+            })),
         },
 
         // {
@@ -465,7 +519,7 @@ function NewPreclaim({
       state: useState(true),
       fields: [
         { label: "Email Address", name: "email_address", type: "email" },
-        { label: "Postal Address", name: "postal_address", type: "text" },
+
         { label: "Phone Number", name: "phone_number", type: "text" },
         {
           label: "Country",
@@ -489,13 +543,45 @@ function NewPreclaim({
           label: "Counstituency",
           name: "constituency_id",
           type: "select",
-          // placeholder: formData.constituency_name,
+          children:
+            formData.county_id !== ""
+              ? constituencies
+                  .filter(
+                    (constituency) =>
+                      constituency.county_id === formData.county_id
+                  )
+                  .map((constituency) => ({
+                    id: constituency.id,
+                    name: constituency.constituency_name,
+                  }))
+              : constituencies.map((constituency) => ({
+                  id: constituency.id,
+                  name: constituency.constituency_name,
+                })),
+        },
+        // placeholder: formData.constituency_name,
+        //   children: formData.county_id
+        //     ? constituencies?.map((constituency) => ({
+        //         id: constituency.id,
+        //         name: constituency.name,
+        //       }))
+        //     : [{ id: "", name: "Please select a county first" }],
+        // },
+        {
+          label: "Postal Address",
+          name: "postal_address",
+          type: "select",
           children: formData.county_id
-            ? constituencies?.map((constituency) => ({
-                id: constituency.id,
-                name: constituency.name,
-              }))
-            : [{ id: "", name: "Please select a county first" }],
+            ? postalAddress
+                .filter((address) => address.countyId === formData.county_id)
+                .map((address) => ({
+                  id: address.id,
+                  name: `${address.code} - ${address.name}`,
+                }))
+            : postalAddress.map((address) => ({
+                id: address.id,
+                name: `${address.code} - ${address.name}`,
+              })),
         },
 
         { label: "City/Town", name: "city_town", type: "text" },
@@ -833,7 +919,9 @@ function NewPreclaim({
                                 </MenuItem>
                                 {field?.children?.map((option) => (
                                   <MenuItem key={option?.id} value={option?.id}>
-                                    {option?.name}
+                                    {option?.code
+                                      ? `${option.name} - ${option.code}`
+                                      : option.name}
                                   </MenuItem>
                                 ))}
                               </TextField>
@@ -847,7 +935,6 @@ function NewPreclaim({
                                 onChange={handleInputChange}
                                 error={!!errors[field.name]} // Show error style if there is an error
                                 helperText={errors[field.name]} // Display the error message
-                                required
                                 fullWidth
                               />
                             )}

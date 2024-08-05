@@ -13,7 +13,7 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 const columnDefs = [
   { field: "no", headerName: "No", width: 90, filter: true },
-  { field: "email", headerName: "Email", filter: true, width: 200 },
+  { field: "email", headerName: "Email", filter: true, width: 200, hide: true },
   { field: "firstName", headerName: "First Name", filter: true, width: 200 },
   { field: "lastName", headerName: "Last Name", filter: true, width: 200 },
   {

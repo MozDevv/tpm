@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
-import { IconButton, Tooltip } from "@mui/material";
+import { Avatar, IconButton, Tooltip } from "@mui/material";
 import { ArrowBack, OpenInFull } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import PensionerDetailSummary from "../pensionsComponents/preclaims/PensionerDetailSummary";
-import { Divider } from "antd";
+import { Divider, message } from "antd";
 import ListNavigation from "./ListNavigation";
 import UserDetailCard from "../pensionsComponents/recordCard/UserDetailCard";
 import SendForApproval from "../pensionsComponents/preclaims/SendForApproval";
@@ -12,6 +12,7 @@ import CreateBranch from "./CreateBranch";
 import endpoints, { apiService } from "../services/setupsApi";
 import BaseInputCard from "./BaseInputCard";
 import CreateClaim from "../pensionsComponents/preclaims/CreateClaim";
+import BaseDeleteDialog from "./BaseDeleteDialog";
 
 function BaseCard({
   openBaseCard,
@@ -37,9 +38,11 @@ function BaseCard({
   secondaryPostApiFunction,
   secondaryInputTitle,
   dialogType,
+  deleteApiEndpoint,
+  deleteApiService,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isDetailsVisible, setDetailsVisible] = useState(false);
+  const [isDetailsVisible, setDetailsVisible] = useState(true);
 
   const expandSizes = {
     default: {
@@ -58,12 +61,29 @@ function BaseCard({
 
   const currentSize = isExpanded ? expandSizes.expanded : expandSizes.default;
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
   const updatedHandlers = {
     ...handlers,
     openDetails: () => setDetailsVisible(!isDetailsVisible),
+    delete: () => setIsDialogOpen(true),
+  };
+
+  const handleDeleteItem = async () => {
+    try {
+      const res = await deleteApiService(deleteApiEndpoint);
+
+      if (res.status === 200 || res.status === 201 || res.data.succeeded) {
+        //  fetchAllPreclaims();
+        message.success(`${title} deleted successfully`);
+        setIsDialogOpen(false);
+        setOpenBaseCard(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -81,6 +101,12 @@ function BaseCard({
         },
       }}
     >
+      <BaseDeleteDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onDelete={handleDeleteItem}
+        itemName={clickedItem?.name}
+      />
       <Dialog
         open={openAction && (status === 3 || status === 7 || status === 5)}
         onClose={() => setOpenCreateClaim(false)}
@@ -279,10 +305,15 @@ function BaseCard({
                   <UserDetailCard clickedItem={clickedItem} />
                 </>
               ) : (
-                <>
-                  <PensionerDetailSummary clickedItem={clickedItem} />
-                  <Divider sx={{ mt: 3 }} />
-                </>
+                <></>
+                // <div className="flex items-center flex-col justify-center p-2 gap-2">
+                //   <Avatar sx={{ height: "100px", width: "100px" }} />
+                // </div>
+
+                // <>
+                //   <PensionerDetailSummary clickedItem={clickedItem} />
+                //   <Divider sx={{ mt: 3 }} />
+                // </>
               )}
             </div>
           )}

@@ -51,6 +51,7 @@ const endpoints = {
   mdas: "/api/Setups/Getmdas",
   createMDA: "/api/Setups/Createmda",
   updateMDA: "/api/Setups/EditMDA",
+  deleteMDA: (id) => `/api/Setups/DeleteMDA/${id}`,
 
   //TERMS OF SERVICE
   termsOfService: "/api/Setups/GetTermsOfServiceSetups",
@@ -58,14 +59,44 @@ const endpoints = {
   //DOCUMENT TYPES
   documentTypes: "/api/setups/GetDocumentTypeSetups",
 
+  //designation & grades
+  getDesignations: "/api/Setups/GetDesignationSetups",
+
+  //editDesignation
+  editDesignation: "/api/Setups/EditDesignationSetup",
+
+  //createDesignation
+  createDesignation: "/api/Setups/CreateDesignationSetup",
+
+  //editDesignation
+  editDesignation: "/api/Setups/EditDesignationSetup",
+
+  //deleteDesignation
+  deleteDesignation: (id) => `/api/Setups/DeleteDesignationSetup/${id}`,
+
   //GET COUNTIES
   getCounties: "/api/Setups/GetCounties",
 
   createCounty: "/api/Setups/CreateCounty",
 
+  //getConstituencies
+  getConstituencies: "/api/Setups/GetConstituencies",
+
   createConstituency: "/api/Setups/CreateConstituency",
   //Get Countries
   getCountries: "/api/Setups/GetCountries",
+
+  //getPostal codes
+  getPostalCodes: "/api/Setups/GetPostalCodes",
+
+  //createPostalCode
+  createPostalCode: "/api/Setups/CreatePostalCodeDTO",
+
+  //editPostalCode
+  editPostalCode: "/api/Setups/EditPostalCode",
+
+  //deletePostalCode
+  deletePostalCode: (id) => `/api/Setups/DeletePostalCode/${id}`,
 
   //GET MENUS
   getMenus: "/GetMenuJSON",

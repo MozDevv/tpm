@@ -170,7 +170,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
 
   return (
     <div className="mt-4">
-      {/* <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <div className="">
           <IconButton
             sx={{
@@ -192,7 +192,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         <p className="text-gray-700 text-sm mb-3">
           Choose the document you wish to map to the selected Award
         </p>
-      </div> */}
+      </div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Autocomplete
