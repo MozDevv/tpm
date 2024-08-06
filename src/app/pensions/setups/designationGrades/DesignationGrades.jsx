@@ -15,15 +15,9 @@ const columnDefs = [
     headerClass: "prefix-header",
     width: 90,
     filter: true,
-    hide: true,
+    hide: false,
   },
-  {
-    field: "code",
-    headerName: "Code",
-    headerClass: "prefix-header",
-    width: 200,
-    filter: true,
-  },
+
   {
     field: "name",
     headerName: "Designation Name",
@@ -79,7 +73,7 @@ const DesignationGrades = () => {
       short_name: item?.mda?.short_name,
       pension_cap_id: item?.pensionCap?.id,
       id: item?.id,
-      pensionCap: item?.pensionCap?.name,
+      pensionCap: item?.mda?.pensionCap?.name,
     }));
   };
 

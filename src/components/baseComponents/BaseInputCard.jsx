@@ -63,6 +63,10 @@ const BaseInputCard = ({
 
   const handleSave = async () => {
     console.log("Base Input Card: form data to be sent: ", formData);
+
+    console.log("Base Input Card: apiEndpoint: ", apiEndpoint);
+    console.log("Base Input Card: postApiFunction: ", postApiFunction);
+
     if (validateForm()) {
       try {
         let dataToSend = {};
@@ -89,13 +93,15 @@ const BaseInputCard = ({
         const res = await postApiFunction(apiEndpoint, dataToSend);
         setIsEditing(false);
 
+        console.log("Data  ", res.data);
+
         if (
           res.status === 201 ||
           res.status === 200 ||
           res.status === 204 ||
           res.data.succeeded === true
         ) {
-          message.success("Data saved successfully");
+          message.success("Record saved successfully");
           // setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
           // setReFetchData(true);

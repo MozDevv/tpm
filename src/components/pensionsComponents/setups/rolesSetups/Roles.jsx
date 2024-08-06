@@ -6,6 +6,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { formatDate } from "@/utils/dateFormatter";
 
 const columnDefs = [
   {
@@ -36,14 +37,22 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
     width: 100,
+    valueFormatter: (params) => formatDate(params.value),
   },
   {
-    field: "roles",
-    headerName: "Roles",
+    field: "departmentId",
+    headerName: "departmentID",
     headerClass: "prefix-header",
     filter: true,
     width: 100,
     hide: true,
+  },
+  {
+    field: "departmentName",
+    headerName: "Department",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 100,
   },
 ];
 
@@ -62,11 +71,14 @@ const Roles = () => {
 
   const transformData = (data) => {
     return data.map((item, index) => ({
+      id: item.roleId,
       no: index + 1 + (pageNumber - 1) * pageSize,
       name: item.name,
       description: transformString(item.description),
       created_date: item.created_date,
-      roles: item.roles,
+      departmentId: item.departmentID,
+      departmentName: item?.department?.name,
+      // roles: item.roles,
     }));
   };
 
@@ -148,14 +160,17 @@ const Roles = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
+        deleteApiEndpoint={endpoints.deleteRole(clickedItem?.id)}
+        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createRole}
+            apiEndpoint={endpoints.updateRole(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={false}
           />
         ) : (
           <BaseInputCard

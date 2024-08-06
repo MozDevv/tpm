@@ -8,7 +8,6 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { formatDate } from "@/utils/dateFormatter";
-import PensionCapCard from "./PensionCapCard";
 
 const columnDefs = [
   {
@@ -41,7 +40,7 @@ const columnDefs = [
   },
 ];
 
-const PensionCaps = () => {
+const NoSeries = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -95,8 +94,8 @@ const PensionCaps = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Pension Cap Details"
-    : "Create New Pension Cap Details";
+    ? "No. Series Details"
+    : "Create New No. Series Details";
 
   const fields = [
     { name: "name", label: "Name", type: "text", required: true },
@@ -105,6 +104,35 @@ const PensionCaps = () => {
       label: "Description",
       type: "text",
       required: true,
+    },
+  ];
+
+  const updatedFields = [
+    ...fields,
+    {
+      name: "starting_no",
+      label: "Starting No",
+      type: "text",
+    },
+    {
+      name: "ending_no",
+      label: "Ending No",
+      type: "text",
+    },
+    {
+      name: "increment_by",
+      label: "Increment By",
+      type: "text",
+    },
+    {
+      name: "start_date",
+      label: "Start Date",
+      type: "date",
+    },
+    {
+      name: "end_date",
+      label: "End Date",
+      type: "date",
     },
   ];
 
@@ -121,8 +149,8 @@ const PensionCaps = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <PensionCapCard
-            fields={fields}
+          <BaseInputCard
+            fields={updatedFields}
             apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
@@ -151,11 +179,11 @@ const PensionCaps = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Pension Caps"
-        currentTitle="Pension Caps"
+        breadcrumbTitle="No. Series"
+        currentTitle="No. Series"
       />
     </div>
   );
 };
 
-export default PensionCaps;
+export default NoSeries;

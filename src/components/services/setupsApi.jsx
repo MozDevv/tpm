@@ -14,6 +14,9 @@ const endpoints = {
   //PENSION-CAPS
   pensionCaps: "/api/Setups/GetPensionCaps",
 
+  //assignCaptermsOfservice
+  assignCaptermsOfservice: "/api/Setups/AssignDeassignCapTermsOfService",
+
   //BANKS
   getBankBranches: "/api/setups/GetBankBranches",
 
@@ -112,12 +115,21 @@ const endpoints = {
   //update Department
   updateDepartment: (id) => `/api/DepartmentsSetup/UpdateDepartments/${id}`,
 
+  //delete Department
+  deleteDepartment: (id) => `/api/DepartmentsSetup/DeleteDepartments/${id}`,
+
   //createRole
   createRole: "/api/RolesSetUp/CreateRole",
 
   //Get Roles
 
   getRoles: "/api/RolesSetUp/GetRoles",
+
+  //updateRole
+  updateRole: (id) => `/api/RolesSetUp/UpdateRole/${id}`,
+
+  //deleteRole
+  deleteRole: (id) => `/api/RolesSetUp/DeleteRoles/${id}`,
 
   //Get Tables
   getTables: "/api/TableSetup/GetTables",

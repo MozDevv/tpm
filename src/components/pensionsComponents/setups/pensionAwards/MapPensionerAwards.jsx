@@ -172,7 +172,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     <div className="mt-4">
       <div className="flex flex-col gap-3">
         <div className="">
-          <IconButton
+          {/* <IconButton
             sx={{
               border: "1px solid #006990",
               borderRadius: "50%",
@@ -183,15 +183,23 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
             onClick={() => setOpenAward(false)}
           >
             <ArrowBack sx={{ color: "#006990" }} />
-          </IconButton>
+          </IconButton> */}
         </div>
 
-        <p className="text-primary text-xl font-semibold">
-          Map Documents to {rowClicked?.name}
-        </p>
-        <p className="text-gray-700 text-sm mb-3">
-          Choose the document you wish to map to the selected Award
-        </p>
+        <div className="flex flex-col gap-2">
+          <p className="text-primary text-xl font-semibold">
+            Map Documents to {rowClicked?.name}
+          </p>
+          <p className="text-gray-700 text-sm mb-3">
+            Choose the document you wish to map to the selected Award
+          </p>
+        </div>
+        <div className="absolute right-0 mt-6">
+          {" "}
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </div>
       </div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -269,11 +277,6 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
         </Grid>
       </Grid>
     </div>

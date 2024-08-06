@@ -121,6 +121,10 @@ export const menuItems = [
 
     children: [
       {
+        title: "No. Series",
+        path: "/pensions/setups/no-series",
+      },
+      {
         title: "Document Types",
         path: "/pensions/setups/document-types",
       },

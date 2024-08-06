@@ -44,6 +44,15 @@ const columnDefs = [
     filter: true,
     width: 250,
   },
+  {
+    field: "has_commutation",
+    headerName: "Commutable",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 250,
+  },
+
+  {},
   // {
   //   field: "commutable",
   //   headerName: "Commutable",
@@ -214,6 +223,12 @@ const PensionAwards = () => {
       label: "End Date",
       type: "date",
       // required: true,
+    },
+    {
+      name: "has_commutation",
+      label: "Commutable",
+      type: "switch",
+      required: true,
     },
   ];
 

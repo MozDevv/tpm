@@ -107,7 +107,7 @@ function PreclaimsNotifications({
     }
   };
 
-  //const [mdas, setMdas] = useState([]); // [1
+  const [mdas, setMdas] = useState([]); // [1
 
   return (
     <Dialog

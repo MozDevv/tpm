@@ -52,7 +52,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       firstName: formData.get("firstName"),
       middleName: formData.get("middleName"),
       lastName: formData.get("lastName"),
-      ...(selectedAdminType === "Treasury" && {
+      ...((selectedAdminType === "Treasury" ||
+        selectedAdminType === "other") && {
         department: selectedDepartment,
         role: selectedRole,
       }),
@@ -198,7 +199,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
                     <option value="MDA">MDA</option>
                     <option value="Treasury">Treasury</option>
-                    <option value="Treasury">Other</option>
+                    <option value="other">Other</option>
                   </select>
                 </div>
               </div>
@@ -239,71 +240,77 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                     </div>
                   </div>
                 )}
-                {selectedAdminType === "Treasury" && (
-                  <div className="pb-4">
-                    <div className="mb-4 flex items-center gap-2">
-                      <h6 className="font-semibold text-primary text-sm">
-                        Roles & Departments
-                      </h6>
-                      <hr className="flex-grow border-blue-500 border-opacity-20" />
-                    </div>
-                    <div className="flex px-3 ">
-                      <div className="flex justify-evenly w-1/3 px-5 ml-1">
-                        <div className="flex flex-col flex-1">
-                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                            Department
-                            <div className="text-red-600 text-base mt-[3px]">
-                              *
-                            </div>
-                          </label>
-                          <select
-                            name="role"
-                            value={selectedDepartment}
-                            onChange={(e) =>
-                              setSelectedDepartment(e.target.value)
-                            }
-                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 "
-                            required
-                          >
-                            <option value="">Select Department</option>
-                            {departments.map((department) => (
-                              <option
-                                key={department.departmentId}
-                                value={department.departmentId}
-                              >
-                                {department.name}
-                              </option>
-                            ))}
-                          </select>
+                {selectedAdminType === "Treasury" ||
+                  (selectedAdminType === "other" && (
+                    <div className="pb-4">
+                      <div className="mb-4 flex items-center gap-2">
+                        <h6 className="font-semibold text-primary text-sm">
+                          Roles & Departments
+                        </h6>
+                        <hr className="flex-grow border-blue-500 border-opacity-20" />
+                      </div>
+                      <div className="flex px-3 ">
+                        <div className="flex justify-evenly w-1/3 px-5 ml-1">
+                          <div className="flex flex-col flex-1">
+                            <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                              Department
+                              <div className="text-red-600 text-base mt-[3px]">
+                                *
+                              </div>
+                            </label>
+                            <select
+                              name="role"
+                              value={selectedDepartment}
+                              onChange={(e) =>
+                                setSelectedDepartment(e.target.value)
+                              }
+                              className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 "
+                              required
+                            >
+                              <option value="">Select Department</option>
+                              {departments.map((department) => (
+                                <option
+                                  key={department.departmentId}
+                                  value={department.departmentId}
+                                >
+                                  {department.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-evenly w-1/3 px-5 pr-4">
+                          <div className="flex flex-col flex-1">
+                            <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                              Role
+                              <div className="text-red-600 text-base mt-[3px]">
+                                *
+                              </div>
+                            </label>
+                            <select
+                              name="role"
+                              value={selectedRole}
+                              onChange={(e) => setSelectedRole(e.target.value)}
+                              className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
+                              required
+                            >
+                              <option value="">Select Role</option>
+                              {rolesList
+                                .filter(
+                                  (role) =>
+                                    role.departmentID === selectedDepartment
+                                )
+                                .map((role) => (
+                                  <option key={role.roleId} value={role.roleId}>
+                                    {role.name}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex justify-evenly w-1/3 px-5 pr-4">
-                        <div className="flex flex-col flex-1">
-                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                            Role
-                            <div className="text-red-600 text-base mt-[3px]">
-                              *
-                            </div>
-                          </label>
-                          <select
-                            name="role"
-                            value={selectedRole}
-                            onChange={(e) => setSelectedRole(e.target.value)}
-                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
-                            required
-                          >
-                            <option value="">Select Role</option>
-                            {rolesList.map((role) => (
-                              <option key={role.roleId} value={role.roleId}>
-                                {role.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
                 <div className="pb-4">
                   <div className="mb-4 flex items-center gap-2">
                     <h6 className="font-semibold text-primary text-sm">Bio</h6>
@@ -326,23 +333,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         />
                       </div>
                     </div>
-                    <div className="flex justify-evenly w-1/3 px-3 ml-1 mt-3">
-                      <div className="flex flex-col flex-1">
-                        <label className="text-xs font-semibold text-gray-600">
-                          Middle Name
-                        </label>
-                        <input
-                          type="text"
-                          name="middleName"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
-                        />
-                      </div>
-                    </div>
+
                     <div className="flex justify-evenly w-1/3 px-3 ml-1">
                       <div className="flex flex-col flex-1">
                         <label className="text-xs font-semibold text-gray-600  flex items-center gap-[4px]">
-                          Last Name
+                          Surname
                           <div className="text-red-600 text-base mt-[3px]">
                             *
                           </div>
@@ -352,6 +347,18 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="lastName"
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                           required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-evenly w-1/3 px-3 ml-1 mt-3">
+                      <div className="flex flex-col flex-1">
+                        <label className="text-xs font-semibold text-gray-600">
+                          Other Name
+                        </label>
+                        <input
+                          type="text"
+                          name="middleName"
+                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         />
                       </div>
                     </div>

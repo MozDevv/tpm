@@ -6,6 +6,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { formatDate } from "@/utils/dateFormatter";
 
 const columnDefs = [
   {
@@ -35,14 +36,14 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
     width: 100,
+    valueFormatter: (params) => formatDate(params.value),
   },
   {
-    field: "roles",
-    headerName: "Roles",
+    field: "isMDA",
+    headerName: "Is Mda",
     headerClass: "prefix-header",
     filter: true,
     width: 100,
-    hide: true,
   },
 ];
 
@@ -52,6 +53,7 @@ const Departments = () => {
       return a.toUpperCase();
     });
   };
+
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
@@ -59,7 +61,8 @@ const Departments = () => {
       name: item.name,
       description: transformString(item.description),
       created_date: item.created_date,
-      roles: item.roles,
+      isMDA: item.isMDA,
+      // roles: item.roles,
     }));
   };
 
@@ -104,7 +107,7 @@ const Departments = () => {
       type: "text",
       required: true,
     },
-    { name: "isMda", label: "Is Mda", type: "switch", required: true },
+    { name: "isMDA", label: "Is Mda", type: "switch", required: true },
   ];
 
   return (
@@ -116,6 +119,8 @@ const Departments = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
+        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard

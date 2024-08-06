@@ -448,7 +448,7 @@ const Preclaims = ({ status }) => {
             "filterCriterion.criterions[0].criterionType": 0,
           }
         : filter;
-    setLoading(true);
+    //  setLoading(true);
     try {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
         "paging.pageNumber": pageNumber,
@@ -466,13 +466,19 @@ const Preclaims = ({ status }) => {
         console.log(res.data.data);
         const rawData = res.data.data;
 
+        let filteredMinistriesData = [];
+
         // Filter data by mdaId
-        const filteredMinistriesData =
-          status === 5
-            ? rawData
-            : auth?.user?.email === "super@mail.com"
-            ? rawData
-            : rawData.filter((item) => item.mda_id === mdaId);
+        if (mdaId) {
+          filteredMinistriesData =
+            status === 5
+              ? rawData
+              : auth?.user?.email === "super@mail.com"
+              ? rawData
+              : rawData.filter((item) => item.mda_id === mdaId);
+        } else {
+          filteredMinistriesData = rawData;
+        }
 
         setTotalRecords(res.data.totalCount);
         setTotalPages(res.data.totalPages);
@@ -497,7 +503,7 @@ const Preclaims = ({ status }) => {
       console.error("Error fetching preclaims:", error);
       return []; // Return an empty array or handle error as needed
     } finally {
-      setLoading(false);
+      // setLoading(false);
       openFilter && setOpenFilter(false);
     }
   };
@@ -556,6 +562,10 @@ const Preclaims = ({ status }) => {
   const [openBaseCard, setOpenBaseCard] = useState(false);
   const [openAction, setOpenAction] = useState(false);
 
+  useEffect(() => {
+    fetchAllPreclaims();
+  }, [openBaseCard]);
+
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -606,7 +616,10 @@ const Preclaims = ({ status }) => {
             setOpenAction={setOpenAction}
             fetchAllPreclaims={fetchAllPreclaims}
           >
-            <CreateProspectivePensioner clickedItem={clickedItem} />
+            <CreateProspectivePensioner
+              openBaseCard={openBaseCard}
+              clickedItem={clickedItem}
+            />
           </BaseCard>
           <CreatePreclaim
             permissions={permissions}
