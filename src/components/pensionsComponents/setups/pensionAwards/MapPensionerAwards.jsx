@@ -186,11 +186,11 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           </IconButton> */}
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <p className="text-primary text-xl font-semibold">
             Map Documents to {rowClicked?.name}
           </p>
-          <p className="text-gray-700 text-sm mb-3">
+          <p className="text-gray-700 text-sm mb-7">
             Choose the document you wish to map to the selected Award
           </p>
         </div>

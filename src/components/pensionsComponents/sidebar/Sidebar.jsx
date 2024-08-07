@@ -66,7 +66,7 @@ function Sidebar() {
         throw new Error("Role is not defined");
       }
       const res = await axios.get(
-        `https://tntapi.agilebiz.co.ke/api/GetMenuJSON1/${role}`
+        `https://tntapi.agilebiz.co.ke/api/MenuItemsSetup/GetMenuJSON1/${role}`
       );
 
       setFetchedMenuItems(res.data.data);
@@ -245,6 +245,10 @@ function Sidebar() {
           title: "Designation & Grades",
           path: "/pensions/setups/designation-grades",
         },
+        // {
+        //   title: "Grade Setups",
+        //   path: "/pensions/setups/grade-setups",
+        // },
         {
           title: "Postal Codes",
           path: "/pensions/setups/postal-codes",

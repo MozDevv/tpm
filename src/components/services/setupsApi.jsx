@@ -14,15 +14,42 @@ const endpoints = {
   //PENSION-CAPS
   pensionCaps: "/api/Setups/GetPensionCaps",
 
+  //getGrades
+  getGrades: (id) => `/api/Setups/GetGradeSetups?designationId=${id}`,
+
+  getAllGrades: "/api/Setups/GetGradeSetups",
+
+  //createGrade
+  createGrade: "/api/Setups/CreateGradeSetup",
+
   //assignCaptermsOfservice
   assignCaptermsOfservice: "/api/Setups/AssignDeassignCapTermsOfService",
+
+  //get Number Series
+  getNumberSeries: "/api/setups/GetNumberSeries",
+
+  //create Number Series
+  createNumberSeries: "/api/setups/CreateNumberSeries",
+
+  //create Number Series Line
+  createNumberSeriesLine: "/api/setups/CreateNumberSeriesLine",
+
+  //get Number Series Line
+  getNumberSeriesLine: "/api/setups/GetNumberSeriesLine",
+
+  //get Number Series Line by code
+  getNumberSeriesLineByCode: (code) =>
+    `api/setups/GetNumberSeriesLines?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=code&filterCriterion.criterions[0].propertyValue=${code}`,
 
   //BANKS
   getBankBranches: "/api/setups/GetBankBranches",
 
   //get Banks
-
   getBanks: "/api/setups/GetBanks",
+
+  //delete Bank
+
+  deleteBank: (id) => `/api/Setups/DeleteBank/${id}`,
 
   //create Bank
 
@@ -102,7 +129,7 @@ const endpoints = {
   deletePostalCode: (id) => `/api/Setups/DeletePostalCode/${id}`,
 
   //GET MENUS
-  getMenus: "/GetMenuJSON",
+  getMenus: "/api/MenuItemsSetup/GetMenuJSON",
 
   createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
 
@@ -152,13 +179,13 @@ const endpoints = {
   //getUserPermissions
   getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
 
-  getMenus: "/api/GetMenuJSON",
+  getMenus: "/api/MenuItemsSetup/GetMenuJSON",
 
   //Get Menu Items
-  getMenuItems: "/api/GetMenuItems",
+  getMenuItems: "/api/MenuItemsSetup/GetMenuItems",
 
   //Get MenuRole
-  getMenuRole: (roleId) => `/api/GetMenuJSON?Role=${roleId}`,
+  getMenuRole: (roleId) => `/api/MenuItemsSetup/GetMenuJSON/${roleId}`,
 
   //updateMenuRole
   updateMenuRole: "/api/RoleMenuItemSetup/CreatePermissionRole",

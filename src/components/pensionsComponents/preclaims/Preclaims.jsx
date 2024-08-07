@@ -77,15 +77,15 @@ export const notificationStatusMap = {
 export const colDefs = [
   {
     headerName: "No",
-    field: "no_id",
+    field: "no_series",
     width: 150,
     pinned: "left", // Pinning to the left ensures it's the first column
     checkboxSelection: true,
     headerCheckboxSelection: true,
-    valueGetter: (params) => {
-      const rowIndex = params.node.rowIndex + 1;
-      return `PC${rowIndex.toString().padStart(4, "0")}`; // Ensure 4 digits with leading zeros
-    },
+    // valueGetter: (params) => {
+    //   const rowIndex = params.node.rowIndex + 1;
+    //   return `PC${rowIndex.toString().padStart(4, "0")}`; // Ensure 4 digits with leading zeros
+    // },
     cellRenderer: (params) => {
       return (
         <p className="underline text-primary font-semibold">{params.value}</p>
@@ -298,66 +298,69 @@ export const colDefs = [
 ];
 
 export const mapRowData = (items) =>
-  items.map((item) => ({
-    retiree: item?.id,
-    email_address: item?.email_address,
-    notification_status: item.notification_status,
-    gender: item?.gender,
-    phone_number: item?.phone_number,
-    personal_number: item.personal_number,
-    surname: item?.surname,
-    first_name: item?.first_name,
-    other_name: item?.other_name,
-    pension_award: item.pensionAward?.name,
-    name: item.pensionAward?.name,
-    national_id: item?.national_id,
-    kra_pin: item?.kra_pin,
-    retirement_date: item.retirement_date,
-    dob: item.dob,
-    date_of_confirmation: item.date_of_confirmation,
-    last_basic_salary_amount: item.last_basic_salary_amount,
-    mda_code: item.mda?.code,
-    mda_description: item.mda?.description,
-    mda_pensionCap_code: item.mda?.pensionCap?.code,
-    // mda_id: item.mda?.pensionCap?.code,
-    mda_pensionCap_name: item.mda?.pensionCap?.name,
-    mda_pensionCap_description: item.mda?.pensionCap?.description,
-    workHistories_length: item?.workHistories?.length,
-    bankDetails_length: item?.bankDetails?.length,
-    prospectivePensionerDocuments_length:
-      item?.prospectivePensionerDocuments?.length,
-    pensionAward_prefix: item.pensionAward?.prefix,
-    pensionAward_code: item.pensionAward?.code,
-    pensionAward_description: item.pensionAward?.description,
-    pensionAward_start_date: item.pensionAward?.start_date,
-    pensionAward_end_date: item.pensionAward?.end_date,
-    pensionAward_pensionCap_code: item.pensionAward?.pensionCap?.code,
-    pensionAward_pensionCap_name: item.pensionAward?.pensionCap?.name,
-    pensionAward_pensionCap_description:
-      item.pensionAward?.pensionCap?.description,
-    pensionAward_pensionCap_id: item.pensionAward?.pensionCap?.id,
-    retirement_date: item?.retirement_date,
-    date_from_which_pension_will_commence:
-      item?.date_from_which_pension_will_commence,
-    authority_for_retirement_dated: item?.authority_for_retirement_dated,
-    authority_for_retirement_reference:
-      item?.authority_for_retirement_reference,
-    date_of_first_appointment: item?.date_of_first_appointment,
-    date_of_confirmation: item?.date_of_confirmation,
-    country: item?.country,
-    county: item?.constituency?.county?.county_name,
-    city_town: item?.city_town,
-    pension_commencement_date: item?.pension_commencement_date,
-    postal_address: item?.postal_address,
-    id: item.id,
-    bank_name: item.bankDetails[0]?.bankBranch?.bank?.name,
-    branch_name: item.bankDetails[0]?.bankBranch?.name,
-    account_number: item.bankDetails[0]?.account_number,
-    account_name: item.bankDetails[0]?.account_name,
-    bankType: item.bankDetails[0]?.bankBranch?.bank?.bankType?.type,
-    branch_code: item.bankDetails[0]?.bankBranch?.branch_code,
-    bank_code: item.bankDetails[0]?.bankBranch?.bank.code,
-  }));
+  items
+    .filter((item) => item.no)
+    .map((item) => ({
+      no_series: item?.no,
+      retiree: item?.id,
+      email_address: item?.email_address,
+      notification_status: item.notification_status,
+      gender: item?.gender,
+      phone_number: item?.phone_number,
+      personal_number: item.personal_number,
+      surname: item?.surname,
+      first_name: item?.first_name,
+      other_name: item?.other_name,
+      pension_award: item.pensionAward?.name,
+      name: item.pensionAward?.name,
+      national_id: item?.national_id,
+      kra_pin: item?.kra_pin,
+      retirement_date: item.retirement_date,
+      dob: item.dob,
+      date_of_confirmation: item.date_of_confirmation,
+      last_basic_salary_amount: item.last_basic_salary_amount,
+      mda_code: item.mda?.code,
+      mda_description: item.mda?.description,
+      mda_pensionCap_code: item.mda?.pensionCap?.code,
+      // mda_id: item.mda?.pensionCap?.code,
+      mda_pensionCap_name: item.mda?.pensionCap?.name,
+      mda_pensionCap_description: item.mda?.pensionCap?.description,
+      workHistories_length: item?.workHistories?.length,
+      bankDetails_length: item?.bankDetails?.length,
+      prospectivePensionerDocuments_length:
+        item?.prospectivePensionerDocuments?.length,
+      pensionAward_prefix: item.pensionAward?.prefix,
+      pensionAward_code: item.pensionAward?.code,
+      pensionAward_description: item.pensionAward?.description,
+      pensionAward_start_date: item.pensionAward?.start_date,
+      pensionAward_end_date: item.pensionAward?.end_date,
+      pensionAward_pensionCap_code: item.pensionAward?.pensionCap?.code,
+      pensionAward_pensionCap_name: item.pensionAward?.pensionCap?.name,
+      pensionAward_pensionCap_description:
+        item.pensionAward?.pensionCap?.description,
+      pensionAward_pensionCap_id: item.pensionAward?.pensionCap?.id,
+      retirement_date: item?.retirement_date,
+      date_from_which_pension_will_commence:
+        item?.date_from_which_pension_will_commence,
+      authority_for_retirement_dated: item?.authority_for_retirement_dated,
+      authority_for_retirement_reference:
+        item?.authority_for_retirement_reference,
+      date_of_first_appointment: item?.date_of_first_appointment,
+      date_of_confirmation: item?.date_of_confirmation,
+      country: item?.country,
+      county: item?.constituency?.county?.county_name,
+      city_town: item?.city_town,
+      pension_commencement_date: item?.pension_commencement_date,
+      postal_address: item?.postal_address,
+      id: item.id,
+      bank_name: item.bankDetails[0]?.bankBranch?.bank?.name,
+      branch_name: item.bankDetails[0]?.bankBranch?.name,
+      account_number: item.bankDetails[0]?.account_number,
+      account_name: item.bankDetails[0]?.account_name,
+      bankType: item.bankDetails[0]?.bankBranch?.bank?.bankType?.type,
+      branch_code: item.bankDetails[0]?.bankBranch?.branch_code,
+      bank_code: item.bankDetails[0]?.bankBranch?.bank.code,
+    }));
 
 const Preclaims = ({ status }) => {
   const [dummyData, setDummyData] = useState([]);
@@ -584,7 +587,9 @@ const Preclaims = ({ status }) => {
     edit: () => console.log("Edit clicked"),
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
-    notify: () => setOpenNotification(true),
+    notify: () => {
+      setOpenNotification(true);
+    },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
   };

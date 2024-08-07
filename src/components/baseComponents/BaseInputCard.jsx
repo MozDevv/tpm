@@ -8,6 +8,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { message } from "antd";
+import dayjs from "dayjs";
 
 const BaseInputCard = ({
   fields,
@@ -22,7 +23,12 @@ const BaseInputCard = ({
   idLabel,
   setOpenAction,
 }) => {
-  const [formData, setFormData] = useState({});
+  const initialFormData = fields.reduce((acc, field) => {
+    acc[field.name] = field.default !== undefined ? field.default : "";
+    return acc;
+  }, {});
+
+  const [formData, setFormData] = useState(initialFormData);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -56,6 +62,13 @@ const BaseInputCard = ({
       ) {
         newErrors[field.name] = `${field.label} is required`;
       }
+      if (field.type === "date" && formData[field.name]) {
+        if (!dayjs(formData[field.name], "YYYY-MM-DD", true).isValid()) {
+          newErrors[field.name] = `${field.label} is not a valid date`;
+        } else {
+          formData[field.name] = dayjs(formData[field.name]).toISOString();
+        }
+      }
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -78,6 +91,18 @@ const BaseInputCard = ({
           }
         });
 
+        const formattedFormData = { ...dataToSend };
+        Object.keys(formattedFormData).forEach((key) => {
+          if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+            formattedFormData[key] = dayjs(
+              formattedFormData[key]
+            ).toISOString();
+          }
+        });
+        dataToSend = formattedFormData;
+
+        console.log("DATA TO SEND: ", dataToSend);
+
         if (id && idLabel) {
           dataToSend[idLabel] = id;
         }
@@ -87,6 +112,7 @@ const BaseInputCard = ({
           Object.keys(dataToSend).forEach((key) => {
             formDataObj.append(key, dataToSend[key]);
           });
+
           dataToSend = formDataObj;
         }
 

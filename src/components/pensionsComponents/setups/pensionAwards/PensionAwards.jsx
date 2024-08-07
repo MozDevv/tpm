@@ -36,6 +36,7 @@ const columnDefs = [
     headerName: "Pension Cap",
     headerClass: "prefix-header",
     filter: true,
+    hide: true,
   },
   {
     field: "description",

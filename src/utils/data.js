@@ -25,7 +25,7 @@ function Login() {
           component="div"
           className={styles.welcome_text}
         >
-          Welcome to Treasury Pension Management Integrated System
+          Welcome to Treasury Pension Management Information System
         </Typography>
       </div>
       <div className={styles.right}>

@@ -60,77 +60,82 @@ function CreateProspectivePensioner({ clickedItem }) {
                   />
                 </div>
               </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Bank Details
-                  </span>
-                }
-                key="2"
-              >
-                <AddBankDetails
-                  id={activeRetireeId}
-                  moveToNextTab={moveToNextTab}
-                  moveToPreviousTab={moveToPreviousTab}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat overflow-hidden">
-                    Work History
-                  </span>
-                }
-                key="3"
-              >
-                <AddPensionersWorkHistory
-                  id={activeRetireeId}
-                  name={clickedItem ? clickedItem.first_name : undefined}
-                  moveToNextTab={moveToNextTab}
-                  moveToPreviousTab={moveToPreviousTab}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Documents
-                  </span>
-                }
-                key="4"
-              >
-                <AddDocuments
-                  id={activeRetireeId}
-                  moveToNextTab={moveToNextTab}
-                  moveToPreviousTab={moveToPreviousTab}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Maintenance Case
-                  </span>
-                }
-                key="5"
-              >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Exercitationem ipsam vitae nihil molestiae porro necessitatibus
-                velit quasi, similique voluptatibus sunt fugit, eveniet
-                repudiandae voluptas deleniti asperiores amet dolor ratione
-                fugiat.
-              </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Deductions
-                  </span>
-                }
-                key="6"
-              >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Exercitationem ipsam vitae nihil molestiae porro necessitatibus
-                velit quasi, similique voluptatibus sunt fugit, eveniet
-                repudiandae voluptas deleniti asperiores amet dolor ratione
-                fugiat.
-              </TabPane>
+              {clickedItem?.notification_status &&
+                clickedItem.notification_status !== 2 && (
+                  <>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Bank Details
+                        </span>
+                      }
+                      key="2"
+                    >
+                      <AddBankDetails
+                        id={activeRetireeId}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat overflow-hidden">
+                          Work History
+                        </span>
+                      }
+                      key="3"
+                    >
+                      <AddPensionersWorkHistory
+                        id={activeRetireeId}
+                        name={clickedItem ? clickedItem.first_name : undefined}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Documents
+                        </span>
+                      }
+                      key="4"
+                    >
+                      <AddDocuments
+                        id={activeRetireeId}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Maintenance Case
+                        </span>
+                      }
+                      key="5"
+                    >
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Exercitationem ipsam vitae nihil molestiae porro
+                      necessitatibus velit quasi, similique voluptatibus sunt
+                      fugit, eveniet repudiandae voluptas deleniti asperiores
+                      amet dolor ratione fugiat.
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Deductions
+                        </span>
+                      }
+                      key="6"
+                    >
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Exercitationem ipsam vitae nihil molestiae porro
+                      necessitatibus velit quasi, similique voluptatibus sunt
+                      fugit, eveniet repudiandae voluptas deleniti asperiores
+                      amet dolor ratione fugiat.
+                    </TabPane>
+                  </>
+                )}
             </Tabs>
           </div>
         </div>

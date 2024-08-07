@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import {
@@ -10,22 +10,23 @@ import {
   Report,
   ForwardToInbox,
   CheckCircle,
-  QuestionMark,
   Send,
   Add,
-  TrendingUp,
-  Info,
   BarChart,
   AccountBalance,
   AddBusiness,
   AddCircle,
   AddCircleOutline,
+  Info,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
 const ListNavigation = ({ handlers, status }) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
+
+  const [itemClicked, setItemClicked] = useState(false);
+
   // Define buttons with required permissions
   const buttons = [
     {
@@ -100,7 +101,13 @@ const ListNavigation = ({ handlers, status }) => {
       requiredPermissions: [],
       status: ["createConstituency"],
     },
-
+    {
+      name: "Create Number Series Line",
+      icon: AddCircle,
+      action: "numberSeriesLine",
+      requiredPermissions: [],
+      status: ["numberSeriesLine"],
+    },
     {
       name: "Create Claim",
       icon: AddCircle,
@@ -125,6 +132,12 @@ const ListNavigation = ({ handlers, status }) => {
     requiredPermissions: [],
     status: [8],
   };
+
+  // Function to handle item click
+  const handleItemClick = () => {
+    setItemClicked(true);
+  };
+
   // Render buttons based on permissions and status
   const renderButtons = () => {
     return buttons
@@ -133,7 +146,10 @@ const ListNavigation = ({ handlers, status }) => {
       .map((button, index) => (
         <Button
           key={index}
-          onClick={handlers[button.action]}
+          onClick={() => {
+            handleItemClick();
+            handlers[button.action]();
+          }}
           sx={{ mb: -1, maxHeight: "25px" }}
           disabled={button.requiredPermissions.some(
             (permission) => !permissions?.includes(permission)
@@ -170,7 +186,7 @@ const ListNavigation = ({ handlers, status }) => {
       }}
     >
       <div className="flex gap-6 items-center">{renderButtons()}</div>
-      <div className="">
+      <div>
         <Button
           onClick={handlers[reportsButton.action]}
           sx={{ mb: -1, maxHeight: "25px" }}
@@ -179,20 +195,22 @@ const ListNavigation = ({ handlers, status }) => {
           }
           startIcon={
             <IconButton
-              disabled={
-                !permissions?.some((permission) =>
-                  reportsButton.requiredPermissions.includes(permission)
-                )
-              }
+              // disabled={
+              //   !permissions?.some((permission) =>
+              //     reportsButton.requiredPermissions.includes(permission)
+              //   )
+              // }
+              disabled
             >
               <reportsButton.icon
                 sx={{
                   fontSize: "20px",
-                  color: !permissions?.some((permission) =>
-                    reportsButton.requiredPermissions.includes(permission)
-                  )
-                    ? "gray"
-                    : "primary",
+                  // color: !permissions?.some((permission) =>
+                  //   reportsButton.requiredPermissions.includes(permission)
+                  // )
+                  //   ? "gray"
+                  //   : "primary",
+                  color: "gray",
                 }}
               />
             </IconButton>
@@ -209,9 +227,6 @@ const ListNavigation = ({ handlers, status }) => {
             maxHeight: "25px",
             display: handlers[openDetailsButton.action] ? "content" : "none",
           }}
-          // disabled={
-          //   !permissions?.includes(openDetailsButton.requiredPermissions[0])
-          // }
           startIcon={
             <IconButton>
               <openDetailsButton.icon

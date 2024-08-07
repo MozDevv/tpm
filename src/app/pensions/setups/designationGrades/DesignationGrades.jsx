@@ -7,6 +7,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import DesignationGradesCard from "./DesignationGradesCard";
 
 const columnDefs = [
   {
@@ -161,45 +162,49 @@ const DesignationGrades = () => {
         name: m.name,
       })),
     },
-    // {
-    //   name: "mda_name",
-    //   label: "MDA Name",
-    //   type: "text",
-    //   required: true,
-    // },
-    // {
-    //   name: "description",
-    //   label: "Description",
-    //   type: "text",
-    //   required: true,
-    // },
+  ];
 
-    // {
-    //   name: "employer_type",
-    //   label: "Employee Type",
-    //   type: "select",
-    //   required: true,
-    //   options: [
-    //     { id: 0, name: "Ministry" },
-    //     { id: 1, name: "Department" },
-    //   ],
-    // },
+  const updatedFields = [
+    ...fields,
+    {
+      name: "mda_name",
+      label: "MDA Name",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "text",
+      required: true,
+    },
 
-    // {
-    //   name: "pensionCap",
-    //   label: "Pension Cap",
-    //   type: "select",
-    //   options: pensionCaps.map((p) => ({
-    //     id: p.id,
-    //     name: p.name,
-    //   })),
-    // },
-    // {
-    //   name: "short_name",
-    //   label: "Short Name",
-    //   type: "text",
-    //   required: true,
-    // },
+    {
+      name: "employer_type",
+      label: "Employee Type",
+      type: "select",
+      required: true,
+      options: [
+        { id: 0, name: "Ministry" },
+        { id: 1, name: "Department" },
+      ],
+    },
+
+    {
+      name: "pensionCap",
+      label: "Pension Cap",
+      type: "select",
+      options: pensionCaps.map((p) => ({
+        id: p.id,
+        name: p.name,
+      })),
+    },
+    {
+      name: "short_name",
+      label: "Short Name",
+      type: "text",
+      required: true,
+    },
   ];
 
   return (
@@ -215,8 +220,8 @@ const DesignationGrades = () => {
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
+          <DesignationGradesCard
+            fields={updatedFields}
             apiEndpoint={endpoints.editDesignation}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}

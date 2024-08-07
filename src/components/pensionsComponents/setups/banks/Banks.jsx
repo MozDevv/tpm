@@ -173,6 +173,8 @@ const Banks = () => {
         secondaryApiEndpoint={endpoints.createBankType}
         secondaryPostApiFunction={apiService.post}
         secondaryInputTitle="Create New Bank Type"
+        deleteApiEndpoint={endpoints.deleteBank(clickedItem?.id)}
+        deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BankCard

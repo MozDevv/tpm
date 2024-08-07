@@ -8,6 +8,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { formatDate } from "@/utils/dateFormatter";
+import NoSeriesCard from "./NoSeriesCard";
 
 const columnDefs = [
   {
@@ -24,13 +25,7 @@ const columnDefs = [
     width: 90,
     filter: true,
   },
-  {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
+
   {
     field: "description",
     headerName: "Description",
@@ -52,13 +47,8 @@ const NoSeries = () => {
       no: index + 1,
       code: item.code,
       id: item.id,
-      name: item.name,
+      // name: item.name,
       description: transformString(item.description),
-      termsOfService: item?.pensionCapTermsOfServiceSetups.map((term) => ({
-        id: term?.id,
-        name: term?.term?.name,
-        description: term?.term?.description,
-      })),
     }));
   };
 
@@ -88,6 +78,7 @@ const NoSeries = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    numberSeriesLine: () => setOpenAction(true),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -98,7 +89,7 @@ const NoSeries = () => {
     : "Create New No. Series Details";
 
   const fields = [
-    { name: "name", label: "Name", type: "text", required: true },
+    { name: "code", label: "Code", type: "text", required: true },
     {
       name: "description",
       label: "Description",
@@ -136,6 +127,54 @@ const NoSeries = () => {
     },
   ];
 
+  const [openAction, setOpenAction] = React.useState(false);
+
+  const numberSeriesLinefields = [
+    {
+      name: "startingDate",
+      label: "Starting Date",
+      type: "date",
+    },
+    {
+      name: "startingNumber",
+      label: "starting No",
+      type: "text",
+    },
+    {
+      name: "endingNumber",
+      label: "End Number",
+      type: "text",
+    },
+    {
+      name: "lastDateUsed",
+      label: "Last Date Used",
+      type: "date",
+    },
+    {
+      name: "lastNumberUsed",
+      label: "Last Number Used",
+      type: "number",
+    },
+    {
+      name: "incrementByNumber",
+      label: "Increment By",
+      type: "number",
+    },
+
+    {
+      name: "warningNumber",
+      label: "Warning Number",
+      type: "text",
+    },
+
+    {
+      name: "allowGapsInNumbers",
+      label: "Allow Gaps In Numbers",
+      type: "switch",
+      default: true,
+    },
+  ];
+
   return (
     <div className="">
       <BaseCard
@@ -147,10 +186,19 @@ const NoSeries = () => {
         isUserComponent={false}
         deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
         deleteApiService={apiService.post}
+        status={"numberSeriesLine"}
+        setOpenAction={setOpenAction}
+        openAction={openAction}
+        fields={numberSeriesLinefields}
+        apiEndpoint={endpoints.createNumberSeriesLine}
+        postApiFunction={apiService.post}
+        inputTitle="Create New Number Series Line"
+        idLabel="numberSeriesId"
+        useRequestBody={true}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={updatedFields}
+          <NoSeriesCard
+            fields={fields}
             apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
@@ -160,7 +208,7 @@ const NoSeries = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createNumberSeries}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -169,12 +217,13 @@ const NoSeries = () => {
         )}
       </BaseCard>
       <BaseTable
+        openAction={openAction}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.pensionCaps}
+        fetchApiEndpoint={endpoints.getNumberSeries}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

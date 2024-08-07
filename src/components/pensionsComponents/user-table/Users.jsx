@@ -59,6 +59,7 @@ const Users = () => {
       lastName: item.lastName,
       email: item.email,
       phoneNumber: item.phoneNumber,
+      id_number: item.idNumber,
       roleId: item.roles,
       employeeNumber: item.employeeNumber,
       defaultPasswordChanged: item.defaultPasswordChanged,
@@ -131,6 +132,11 @@ const Users = () => {
       required: true,
     },
     {
+      name: "id_number",
+      label: "ID Number",
+      type: "text",
+    },
+    {
       name: "phoneNumber",
       label: "Phone Number",
       type: "text",
@@ -153,12 +159,6 @@ const Users = () => {
         id: d.departmentId,
         name: d.name,
       })),
-    },
-    {
-      name: "emailConfirmed",
-      label: "Email Confirmed",
-      type: "switch",
-      // required: true,
     },
 
     {

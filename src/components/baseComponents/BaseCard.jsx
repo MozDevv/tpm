@@ -107,6 +107,7 @@ function BaseCard({
         onDelete={handleDeleteItem}
         itemName={clickedItem?.name}
       />
+
       <Dialog
         open={openAction && (status === 3 || status === 7 || status === 5)}
         onClose={() => setOpenCreateClaim(false)}
@@ -170,6 +171,32 @@ function BaseCard({
           status === "createConstituency" &&
           dialogType === "branch"
         }
+        onClose={() => setOpenAction(false)}
+      >
+        <BaseInputCard
+          inputTitle={inputTitle}
+          fields={fields}
+          apiEndpoint={apiEndpoint}
+          postApiFunction={postApiFunction}
+          setOpenAction={setOpenAction}
+          //clickedItem={clickedItem.id}
+          id={clickedItem?.id}
+          idLabel={idLabel}
+          setOpenBaseCard={setOpenBaseCard}
+          useRequestBody={useRequestBody}
+        />
+      </Dialog>
+      <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          "& .MuiDialog-paper": {
+            minHeight: "250px",
+            minWidth: "600px",
+            pt: 5,
+          },
+        }}
+        open={openAction && status === "numberSeriesLine"}
         onClose={() => setOpenAction(false)}
       >
         <BaseInputCard

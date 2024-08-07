@@ -38,6 +38,7 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             has_two_sides: selection.documentType.has_two_sides,
             uploadedDetails: selection?.uploadedDocumentDetails?.document_name,
           }))
+
           .filter((doc) => !doc.pensioner_upload) || [];
 
       setAwardDocuments(documents);

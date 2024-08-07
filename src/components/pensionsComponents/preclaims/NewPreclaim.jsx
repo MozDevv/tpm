@@ -17,6 +17,7 @@ import {
   MenuItem,
   Icon,
   Tooltip,
+  Autocomplete,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -69,6 +70,8 @@ function NewPreclaim({
           ? new Date(retiree.dob).toISOString().split("T")[0]
           : "",
         gender: retiree?.gender ?? "",
+        postal_code: retiree?.postal_code ?? "",
+        notification_status: retiree?.notification_status ?? "",
 
         identifier_type: retiree?.identifier_type ?? "",
         national_id: retiree?.national_id ?? "",
@@ -79,6 +82,8 @@ function NewPreclaim({
         email_address: retiree?.email_address ?? "",
         postal_address: retiree?.postal_address ?? "",
         phone_number: retiree?.phone_number ?? "",
+        grade_id: retiree?.grade_id ?? "",
+        designation_id: retiree?.designation?.id ?? "",
         country_id:
           retiree?.country?.id ?? "94ece052-7142-477a-af0f-c3909402d247",
         county_id: retiree?.constituency?.county_id ?? "",
@@ -122,13 +127,17 @@ function NewPreclaim({
     first_name: retiree?.first_name ?? "",
     surname: retiree?.surname ?? "",
     other_name: retiree?.other_name ?? "",
+    postal_code: retiree?.postal_code ?? "",
     dob: retiree?.dob ? new Date(retiree.dob).toISOString().split("T")[0] : "",
+    notification_status: retiree?.notification_status ?? "",
     mortality_status: retiree?.mortality_status ?? "",
     marital_status: retiree?.marital_status ?? "",
     gender: retiree?.gender ?? "",
     identifier_type: retiree?.identifier_type ?? "",
     national_id: retiree?.national_id ?? "",
+    grade_id: retiree?.grade_id ?? "",
     kra_pin: retiree?.kra_pin ?? "",
+    designation_id: retiree?.designation?.id ?? "",
     designation_grade: retiree?.designation_grade ?? "",
     email_address: retiree?.email_address ?? "",
     postal_address: retiree?.postal_address ?? "",
@@ -252,17 +261,18 @@ function NewPreclaim({
         error =
           "Date of last pay cannot be before the date of authority of retirement";
       }
-    } else if (
-      name === "date_from_which_pension_will_commence" &&
-      value &&
-      formData.retirement_date
-    ) {
-      const retirementDate = dayjs(formData.retirement_date);
-      const pensionCommenceDate = dayjs(value);
-      if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
-        error =
-          "Date from which the pension will commence must be at least a day after the day of last pay";
-      }
+      // } else if (
+      //   name === "date_from_which_pension_will_commence" &&
+      //   value &&
+      //   formData.retirement_date
+      // ) {
+      //   const retirementDate = dayjs(formData.retirement_date);
+      //   const pensionCommenceDate = dayjs(value);
+      //   if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
+      //     error =
+      //       "Date from which the pension will commence must be at least a day after the day of last pay";
+      //   }
+      // }
     }
 
     return error;
@@ -274,9 +284,6 @@ function NewPreclaim({
     }
     const { name, value, type } = e.target;
     let parsedValue = type === "number" ? parseFloat(value) : value;
-    /*  const parsedValueDate =
-      type === "date" ? new Date(value).toLocaleDateString() : value;
-    */
 
     if (type === "text") {
       parsedValue = parsedValue.toUpperCase();
@@ -400,7 +407,25 @@ function NewPreclaim({
       console.error("Error fetching Postal Address:", error);
     }
   };
+
+  const [grades, setGrades] = useState([]);
+  const fetchGrades = async () => {
+    try {
+      const res = await apiService.get(endpoints.getAllGrades);
+      if (res.status === 200) {
+        setGrades(
+          res.data.data.map((item, index) => ({ ...item, no: index + 1 }))
+        );
+
+        console.log(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
   useEffect(() => {
+    fetchGrades();
     fetchPensionAwards();
     fetchPostalAddress();
     fetchCountiesAndContituencies();
@@ -419,6 +444,9 @@ function NewPreclaim({
         { label: "First Name", name: "first_name", type: "text" },
         { label: "Surname", name: "surname", type: "text" },
         { label: "Other Name", name: "other_name", type: "text" },
+        { label: "Email Address", name: "email_address", type: "email" },
+
+        { label: "Phone Number", name: "phone_number", type: "text" },
         { label: "Date of Birth", name: "dob", type: "date" },
         {
           label: "Gender",
@@ -437,7 +465,7 @@ function NewPreclaim({
         },
 
         {
-          label: "Mortality Status",
+          label: "Alive/Dead",
           name: "mortality_status",
           type: "select",
           children: [
@@ -485,14 +513,25 @@ function NewPreclaim({
         },
         { label: "KRA PIN", name: "kra_pin", type: "text" },
         {
-          label: "Designation and Grade",
-          name: "designation_grade",
+          label: "Designation",
+          name: "designation_id",
           type: "select",
           children: designations
             .filter((designation) => designation?.mda?.id === mdaId)
             .map((designation) => ({
               id: designation.id,
               name: designation.name,
+            })),
+        },
+        {
+          label: "Grade",
+          name: "grade_id",
+          type: "select",
+          children: grades
+            .filter((grade) => grade.designation_id === formData.designation_id)
+            .map((grade) => ({
+              id: grade.id,
+              name: grade.grade,
             })),
         },
 
@@ -518,9 +557,6 @@ function NewPreclaim({
       title: "Contact Details",
       state: useState(true),
       fields: [
-        { label: "Email Address", name: "email_address", type: "email" },
-
-        { label: "Phone Number", name: "phone_number", type: "text" },
         {
           label: "Country",
           name: "country_id",
@@ -570,18 +606,28 @@ function NewPreclaim({
         {
           label: "Postal Address",
           name: "postal_address",
-          type: "select",
-          children: formData.county_id
-            ? postalAddress
-                .filter((address) => address.countyId === formData.county_id)
-                .map((address) => ({
-                  id: address.id,
-                  name: `${address.code} - ${address.name}`,
-                }))
-            : postalAddress.map((address) => ({
-                id: address.id,
-                name: `${address.code} - ${address.name}`,
-              })),
+          type: "number",
+        },
+        {
+          label: "Postal Code",
+          name: "postal_code",
+          type: "autocomplete",
+          // autocomplete: "on",
+          children: postalAddress.map((address) => ({
+            id: address.id,
+            name: address.code,
+          })),
+          // children: formData.county_id
+          //   ? postalAddress
+          //       .filter((address) => address.countyId === formData.county_id)
+          //       .map((address) => ({
+          //         id: address.id,
+          //         name: `${address.code} - ${address.name}`,
+          //       }))
+          //   : postalAddress.map((address) => ({
+          //       id: address.id,
+          //       name: `${address.code} - ${address.name}`,
+          //     })),
         },
 
         { label: "City/Town", name: "city_town", type: "text" },
@@ -621,13 +667,13 @@ function NewPreclaim({
           type: "date",
         },
         {
-          label: "Last Pay Date",
-          name: "retirement_date",
+          label: "Date of Which Pension will Commence/Date Of Death ",
+          name: "date_from_which_pension_will_commence",
           type: "date",
         },
         {
-          label: "Date of Which Pension will Commence/Date Of Death ",
-          name: "date_from_which_pension_will_commence",
+          label: "Last Pay Date",
+          name: "retirement_date",
           type: "date",
         },
 
@@ -774,7 +820,7 @@ function NewPreclaim({
         //   `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         // );
 
-        moveToNextTab();
+        clickedItem && moveToNextTab();
 
         setRetireeId(res.data.data);
         console.log("Retiree ID:", res.data.data);
@@ -801,29 +847,43 @@ function NewPreclaim({
     }
   };
 
+  // useEffect(() => {
+  //   if (formData.retirement_date) {
+  //     const lastPayDate = dayjs(formData.retirement_date);
+  //     const nextDay = lastPayDate.add(1, "day").format("YYYY-MM-DD");
+  //     setFormData({
+  //       ...formData,
+  //       date_from_which_pension_will_commence: nextDay,
+  //     });
+  //   }
+  // }, [formData.retirement_date]);
   useEffect(() => {
-    if (formData.retirement_date) {
-      const lastPayDate = dayjs(formData.retirement_date);
-      const nextDay = lastPayDate.add(1, "day").format("YYYY-MM-DD");
+    if (formData.authority_for_retirement_dated) {
+      const authority_for_retirement_dated = dayjs(
+        formData.authority_for_retirement_dated
+      );
+      const nextDay = authority_for_retirement_dated
+        .add(1, "day")
+        .format("YYYY-MM-DD");
       setFormData({
         ...formData,
         date_from_which_pension_will_commence: nextDay,
       });
     }
-  }, [formData.retirement_date]);
+  }, [formData.authority_for_retirement_dated]);
 
-  useEffect(() => {
-    if (formData.dob) {
-      const dobDate = dayjs(formData.dob);
-      const firstAppointmentDate = dobDate
-        .add(18, "years")
-        .format("YYYY-MM-DD");
-      setFormData({
-        ...formData,
-        date_of_first_appointment: firstAppointmentDate,
-      });
-    }
-  }, [formData.dob]);
+  // useEffect(() => {
+  //   if (formData.dob) {
+  //     const dobDate = dayjs(formData.dob);
+  //     const firstAppointmentDate = dobDate
+  //       .add(18, "years")
+  //       .format("YYYY-MM-DD");
+  //     setFormData({
+  //       ...formData,
+  //       date_of_first_appointment: firstAppointmentDate,
+  //     });
+  //   }
+  // }, [formData.dob]);
 
   // const handleNext = () => {
   //   !editMode && retireeId && moveToNextTab();
@@ -862,7 +922,11 @@ function NewPreclaim({
                       type="submit"
                       sx={{ maxHeight: "40px", mt: "5px" }}
                     >
-                      {editMode ? "Update" : "Next"}
+                      {formData.notification_status
+                        ? "Next"
+                        : editMode
+                        ? "Update"
+                        : "Save"}
                     </Button>{" "}
                   </div>
                 </div>
@@ -871,80 +935,120 @@ function NewPreclaim({
             </div>
 
             <div className="p-2 mt-[-15px] ">
-              {sections.map((section, index) => {
-                const [open, setOpen] = section.state;
-                return (
-                  <div key={index} className="gap-3 my-3">
-                    <div className="flex items-center gap-2">
-                      <h6 className="font-semibold text-primary text-sm">
-                        {section.title}
-                      </h6>
-                      <IconButton
-                        sx={{ ml: "-5px", zIndex: 1 }}
-                        onClick={() => setOpen((prevOpen) => !prevOpen)}
-                      >
-                        {!open ? (
-                          <KeyboardArrowRight
-                            sx={{ color: "primary.main", fontSize: "14px" }}
-                          />
-                        ) : (
-                          <ExpandLess
-                            sx={{ color: "primary.main", fontSize: "14px" }}
-                          />
-                        )}
-                      </IconButton>
-                      <hr className="flex-grow border-blue-500 border-opacity-20" />
-                    </div>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
-                        {section.fields.map((field, fieldIndex) => (
-                          <div key={fieldIndex} className="flex flex-col">
-                            <label className="text-xs font-semibold text-gray-600">
-                              {field.label}
-                            </label>
-                            {field.type === "select" ? (
-                              <TextField
-                                select
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                name={field.name}
-                                value={formData[field.name]}
-                                onChange={handleInputChange}
-                                error={!!errors[field.name]} // Show error style if there is an error
-                                helperText={errors[field.name]} // Display the error message
-                              >
-                                <MenuItem value="">
-                                  Select {field.label}
-                                </MenuItem>
-                                {field?.children?.map((option) => (
-                                  <MenuItem key={option?.id} value={option?.id}>
-                                    {option?.code
-                                      ? `${option.name} - ${option.code}`
-                                      : option.name}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                            ) : (
-                              <TextField
-                                type={field.type}
-                                name={field.name}
-                                variant="outlined"
-                                size="small"
-                                value={formData[field.name]}
-                                onChange={handleInputChange}
-                                error={!!errors[field.name]} // Show error style if there is an error
-                                helperText={errors[field.name]} // Display the error message
-                                fullWidth
-                              />
-                            )}
-                          </div>
-                        ))}
+              {sections
+                .filter(
+                  (section) =>
+                    section.title !== "Contact Details" &&
+                    (formData.notification_status !== 0 ||
+                      formData.notification_status !== 2)
+                )
+                .map((section, index) => {
+                  const [open, setOpen] = section.state;
+                  return (
+                    <div key={index} className="gap-3 my-3">
+                      <div className="flex items-center gap-2">
+                        <h6 className="font-semibold text-primary text-sm">
+                          {section.title}
+                        </h6>
+                        <IconButton
+                          sx={{ ml: "-5px", zIndex: 1 }}
+                          onClick={() => setOpen((prevOpen) => !prevOpen)}
+                        >
+                          {!open ? (
+                            <KeyboardArrowRight
+                              sx={{ color: "primary.main", fontSize: "14px" }}
+                            />
+                          ) : (
+                            <ExpandLess
+                              sx={{ color: "primary.main", fontSize: "14px" }}
+                            />
+                          )}
+                        </IconButton>
+                        <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
-                    </Collapse>
-                  </div>
-                );
-              })}
+                      <Collapse in={open} timeout="auto" unmountOnExit>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
+                          {section.fields.map((field, fieldIndex) => (
+                            <div key={fieldIndex} className="flex flex-col">
+                              <label className="text-xs font-semibold text-gray-600">
+                                {field.label}
+                              </label>
+                              {field.type === "select" ? (
+                                <TextField
+                                  select
+                                  variant="outlined"
+                                  size="small"
+                                  fullWidth
+                                  name={field.name}
+                                  value={formData[field.name]}
+                                  onChange={handleInputChange}
+                                  error={!!errors[field.name]} // Show error style if there is an error
+                                  helperText={errors[field.name]} // Display the error message
+                                >
+                                  <MenuItem value="">
+                                    Select {field.label}
+                                  </MenuItem>
+                                  {field?.children?.map((option) => (
+                                    <MenuItem
+                                      key={option?.id}
+                                      value={option?.id}
+                                    >
+                                      {option?.code
+                                        ? `${option.name} - ${option.code}`
+                                        : option.name}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                              ) : field.type === "autocomplete" ? (
+                                <Autocomplete
+                                  options={field.children}
+                                  getOptionLabel={(option) => option.name}
+                                  onChange={(event, newValue) => {
+                                    handleInputChange({
+                                      target: {
+                                        name: field.name,
+                                        value: newValue ? newValue.id : "",
+                                      },
+                                    });
+                                  }}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      variant="outlined"
+                                      size="small"
+                                      fullWidth
+                                      name={field.name}
+                                      error={!!errors[field.name]}
+                                      helperText={errors[field.name]}
+                                    />
+                                  )}
+                                  value={
+                                    field.children.find(
+                                      (option) =>
+                                        option.id === formData[field.name]
+                                    ) || null
+                                  }
+                                />
+                              ) : (
+                                <TextField
+                                  type={field.type}
+                                  name={field.name}
+                                  variant="outlined"
+                                  size="small"
+                                  value={formData[field.name]}
+                                  onChange={handleInputChange}
+                                  error={!!errors[field.name]} // Show error style if there is an error
+                                  helperText={errors[field.name]} // Display the error message
+                                  fullWidth
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </Collapse>
+                    </div>
+                  );
+                })}
             </div>
           </form>
         </div>

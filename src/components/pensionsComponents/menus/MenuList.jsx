@@ -14,7 +14,7 @@ const MenuList = ({ roleId, roleName }) => {
     const fetchData = async () => {
       try {
         const [menuItemsResponse, menuRolesResponse] = await Promise.all([
-          axios.get(`${BASE_CORE_API}api/GetMenuItems`),
+          axios.get(`${BASE_CORE_API}/api/MenuItemsSetup/GetMenuItems`),
           apiService.get(endpoints.getMenuRole(roleId)),
         ]);
 
