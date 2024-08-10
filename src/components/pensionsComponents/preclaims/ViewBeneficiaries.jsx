@@ -23,6 +23,7 @@ function ViewBeneficiaries({
       const res = await apiService.get(
         preClaimsEndpoints.getBeneficiaries(clickedItem.id)
       );
+
       setBeneficiaries(res.data.data);
     } catch (error) {
       console.log(error);

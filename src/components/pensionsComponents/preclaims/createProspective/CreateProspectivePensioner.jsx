@@ -114,6 +114,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                         </span>
                       }
                       key="5"
+                      
                     >
                       <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>

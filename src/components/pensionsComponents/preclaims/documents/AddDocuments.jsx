@@ -247,7 +247,10 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
   return (
     <>
       {loading ? (
-        <Spinner />
+        <div className="mb-20">
+          {" "}
+          <Spinner />
+        </div>
       ) : (
         <>
           <div className="flex items-center gap-8 mb-3 justify-end mr-8">
@@ -278,8 +281,9 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             footer={null}
             onCancel={() => setPreviewVisible(false)}
             width="80%"
-            bodyStyle={{ height: 800, overflowY: "auto" }}
-            style={{ top: 20 }}
+            bodyStyle={{ height: 1000, overflowY: "auto" }}
+            style={{ top: 20, height: 850, overflowY: "auto", zIndex: 2000 }} // Increased zIndex value
+            zIndex={2000} // Also add zIndex to Modal
           >
             {previewContent}
           </Modal>
