@@ -184,6 +184,7 @@ const Banks = () => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            openAction={openAction}
           />
         ) : (
           <BaseInputCard

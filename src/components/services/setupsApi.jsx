@@ -42,10 +42,13 @@ const endpoints = {
     `api/setups/GetNumberSeriesLines?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=code&filterCriterion.criterions[0].propertyValue=${code}`,
 
   //BANKS
-  getBankBranches: "/api/setups/GetBankBranches",
+  getBankBranches: (id) => `/api/setups/GetBankBranches?id=${id}`,
 
   //get Banks
   getBanks: "/api/setups/GetBanks",
+
+  //getBankById
+  getBankById: (id) => `/api/Setups/GetBanks?id=${id}`,
 
   //delete Bank
 

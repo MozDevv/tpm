@@ -98,6 +98,7 @@ function BaseCard({
           maxHeight: currentSize.maxHeight,
           minWidth: currentSize.minWidth,
           maxWidth: currentSize.maxWidth,
+          transition: "all 0.3s ease",
         },
       }}
     >
