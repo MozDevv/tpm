@@ -68,11 +68,6 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary }) {
       type: "email",
     },
     { label: "Guardian City", name: ["guardian", "city"], type: "text" },
-    {
-      label: "Guardian Relationship",
-      name: ["guardian", "relationship_id"],
-      type: "text",
-    },
   ];
 
   return (
