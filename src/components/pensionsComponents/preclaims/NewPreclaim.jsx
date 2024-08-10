@@ -215,14 +215,14 @@ function NewPreclaim({
       dayjs(value).isAfter(dayjs())
     ) {
       error = "Date cannot be in the future";
-    } else if (name === "date_of_first_appointment" && value && formData.dob) {
-      const dobDate = dayjs(formData.dob);
-      const appointmentDate = dayjs(value);
-      const ageAtAppointment = appointmentDate.diff(dobDate, "year");
-      if (ageAtAppointment < 18) {
-        error =
-          "Date of first appointment must be at least 18 years after date of birth";
-      }
+      // } else if (name === "date_of_first_appointment" && value && formData.dob) {
+      //   const dobDate = dayjs(formData.dob);
+      //   const appointmentDate = dayjs(value);
+      //   const ageAtAppointment = appointmentDate.diff(dobDate, "year");
+      //   if (ageAtAppointment < 18) {
+      //     error =
+      //       "Date of first appointment must be at least 18 years after date of birth";
+      //   }
     } else if (
       name === "date_of_confirmation" &&
       value &&
@@ -936,12 +936,16 @@ function NewPreclaim({
 
             <div className="p-2 mt-[-15px] ">
               {sections
-                .filter(
-                  (section) =>
-                    section.title !== "Contact Details" &&
-                    (formData.notification_status !== 0 ||
-                      formData.notification_status !== 2)
-                )
+                .filter((section) => {
+                  if (section.title === "Contact Details") {
+                    return (
+                      formData.notification_status !== 0 &&
+                      formData.notification_status !== 2 &&
+                      formData.notification_status !== ""
+                    );
+                  }
+                  return true;
+                })
                 .map((section, index) => {
                   const [open, setOpen] = section.state;
                   return (

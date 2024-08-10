@@ -5,6 +5,7 @@ import NewPreclaim from "../NewPreclaim";
 import AddPensionersWorkHistory from "../addWorkHistory/AddPensionersWorkHistory";
 import AddBankDetails from "../AddBankDetails";
 import AddDocuments from "../documents/AddDocuments";
+import ViewBeneficiaries from "../ViewBeneficiaries";
 
 const { TabPane } = Tabs;
 
@@ -109,10 +110,20 @@ function CreateProspectivePensioner({ clickedItem }) {
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
-                          Maintenance Case
+                          Beneficiaries & Guardian Details
                         </span>
                       }
                       key="5"
+                    >
+                      <ViewBeneficiaries clickedItem={clickedItem} />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Maintenance Case
+                        </span>
+                      }
+                      key="6"
                     >
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Exercitationem ipsam vitae nihil molestiae porro
@@ -126,7 +137,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                           Deductions
                         </span>
                       }
-                      key="6"
+                      key="7"
                     >
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Exercitationem ipsam vitae nihil molestiae porro
