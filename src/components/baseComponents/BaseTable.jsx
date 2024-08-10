@@ -290,6 +290,7 @@ const BaseTable = ({
             onGridReady={(params) => {
               params.api.sizeColumnsToFit();
               onGridReady(params);
+              gridApiRef.current.api.showLoadingOverlay();
             }}
             onPaginationChanged={(params) =>
               handlePaginationChange(params.api.paginationGetCurrentPage() + 1)

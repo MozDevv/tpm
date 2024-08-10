@@ -516,9 +516,11 @@ const Preclaims = ({ status }) => {
 
   const onGridReady = (params) => {
     // fetchAllPreclaims();
-
+    // gridApiRef.current.api.showLoadingOverlay();
     setGridApi(params.api);
     gridApiRef.current = params;
+
+    params.api.showLoadingOverlay();
     //  params.api.sizeColumnsToFit();
   };
 
