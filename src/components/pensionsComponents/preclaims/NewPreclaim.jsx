@@ -662,7 +662,7 @@ function NewPreclaim({
           type: "text",
         },
         {
-          label: "Authority of retirement Date",
+          label: "Retirement Date",
           name: "authority_for_retirement_dated",
           type: "date",
         },
