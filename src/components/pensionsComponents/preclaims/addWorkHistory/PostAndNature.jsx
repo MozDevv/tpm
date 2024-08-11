@@ -26,6 +26,8 @@ import axios from "axios";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
+import { useMda } from "@/context/MdaContext";
+import endpoints from "@/components/services/setupsApi";
 
 function PostAndNature({ id, loading, setLoading }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
@@ -69,6 +71,9 @@ function PostAndNature({ id, loading, setLoading }) {
 
   const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
 
+  const [mdaId, setMdaId] = useState("");
+  const [cap, setCap] = useState("");
+
   const fetchProspectivePensioners = async () => {
     try {
       const res = await apiService.get(
@@ -85,6 +90,10 @@ function PostAndNature({ id, loading, setLoading }) {
           .toISOString()
           .split("T")[0]
       );
+
+      setCap(res.data.data[0].mda.pensionCap.name);
+      //setCap("CAP196");
+      setMdaId(res.data.data[0].mda.id);
       console.log(
         "first appointment",
         res.data.data[0].date_of_first_appointment
@@ -98,10 +107,55 @@ function PostAndNature({ id, loading, setLoading }) {
     fetchProspectivePensioners();
   }, []);
 
+  const [designations, setDesignations] = useState([]);
+
+  const fetchDesignations = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDesignations, {
+        "paging.pageSize": 1000,
+      });
+      setDesignations(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Designations:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDesignations();
+  }, []);
+  const natureOfServiceOptions = {
+    CAP189: [
+      { id: "Probation", name: "Probation" },
+      { id: "Permanent", name: "Permanent" },
+      { id: "Temporary", name: "Temporary" },
+      { id: "Contract", name: "Contract" },
+    ],
+    CAP199: [
+      { id: "ReckonableService", name: "Reckonable Service" },
+      { id: "NonReckonableService", name: "Non-Reckonable Service" },
+    ],
+    CAP196: [
+      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "DSO_RK_APN_PK", name: "DSO/RK & APN/PK" },
+    ],
+  };
+
   const fields = [
     //{label: "Date Of First Appointment", value: "date_of_first_appointment", type: "date"},
     { label: "Start Date", value: "date", type: "date" },
-    { label: "Post", value: "post" },
+    {
+      label: "Post",
+      value: "post",
+      type: "select",
+      options: designations
+        .filter((designation) => designation?.mda?.id === mdaId)
+        .map((designation) => ({
+          id: designation.name,
+          name: designation.name,
+        })),
+    },
     {
       label: "Whether Pensionable(Yes/No)",
       value: "was_pensionable",
@@ -116,12 +170,7 @@ function PostAndNature({ id, loading, setLoading }) {
       label: "Nature of Service",
       value: "nature_of_service",
       type: "select",
-      options: [
-        { id: "Probation", name: "Probation" },
-        { id: "Permanent", name: "Permanent" },
-        { id: "Temporary", name: "Temporary" },
-        { id: "Contract", name: "Contract" },
-      ],
+      options: natureOfServiceOptions[cap] || [],
     },
   ];
 
