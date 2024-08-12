@@ -81,9 +81,10 @@ function NewPreclaim({
         marital_status: retiree?.marital_status ?? "",
         email_address: retiree?.email_address ?? "",
         postal_address: retiree?.postal_address ?? "",
+        postal_code: retiree?.postal_code_id ?? "",
         phone_number: retiree?.phone_number ?? "",
         grade_id: retiree?.grade_id ?? "",
-        designation_id: retiree?.designation?.id ?? "",
+        designation_id: retiree?.designation_id ?? "",
         country_id:
           retiree?.country?.id ?? "94ece052-7142-477a-af0f-c3909402d247",
         county_id: retiree?.constituency?.county_id ?? "",
@@ -137,10 +138,11 @@ function NewPreclaim({
     national_id: retiree?.national_id ?? "",
     grade_id: retiree?.grade_id ?? "",
     kra_pin: retiree?.kra_pin ?? "",
-    designation_id: retiree?.designation?.id ?? "",
+    designation_id: retiree?.designation_id ?? "",
     designation_grade: retiree?.designation_grade ?? "",
     email_address: retiree?.email_address ?? "",
     postal_address: retiree?.postal_address ?? "",
+    postal_code: retiree?.postal_code_id ?? "",
     phone_number: retiree?.phone_number ?? "",
     country_id:
       (retiree?.country?.id || "94ece052-7142-477a-af0f-c3909402d247") ?? "",
@@ -517,7 +519,9 @@ function NewPreclaim({
           name: "designation_id",
           type: "select",
           children: designations
-            .filter((designation) => designation?.mda?.id === mdaId)
+            .filter((designation) =>
+              mdaId ? designation?.mda?.id === mdaId : designation
+            )
             .map((designation) => ({
               id: designation.id,
               name: designation.name,
