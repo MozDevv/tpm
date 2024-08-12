@@ -41,6 +41,12 @@ const endpoints = {
   getNumberSeriesLineByCode: (code) =>
     `api/setups/GetNumberSeriesLines?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=code&filterCriterion.criterions[0].propertyValue=${code}`,
 
+  //Get Numbering sections
+  getNumberingSections: "/api/Setups/GetNumberingSections",
+
+  //edit Numbering Section
+  editNumberingSection: "/api/Setups/EditNumberingSection",
+
   //BANKS
   getBankBranches: (id) => `/api/setups/GetBankBranches?id=${id}`,
 
@@ -72,8 +78,7 @@ const endpoints = {
     "/api/ProspectivePensioners/CreateProspectivePensionerBankDetail",
 
   //PENSION-AWARDS
-  pensionAwards:
-    "/api/Setups/GetPensionAwards?paging.pageNumber=1&paging.pageSize=30",
+  pensionAwards: "/api/Setups/GetPensionAwards",
 
   //MAP PENSIONER AWARDS
   mapPensionerAwards: "/api/Setups/MapDocumentTypesPensionAward",

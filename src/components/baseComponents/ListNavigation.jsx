@@ -18,6 +18,7 @@ import {
   AddCircle,
   AddCircleOutline,
   Info,
+  FormatListNumbered,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -114,6 +115,12 @@ const ListNavigation = ({ handlers, status }) => {
       action: "createClaim",
       requiredPermissions: [],
       status: [5, 7],
+    },
+    {
+      name: "Numbering Sections",
+      icon: FormatListNumbered,
+      action: "numberingSections",
+      requiredPermissions: [],
     },
   ];
 

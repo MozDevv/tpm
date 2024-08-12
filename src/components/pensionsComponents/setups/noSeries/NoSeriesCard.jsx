@@ -195,16 +195,6 @@ function NoSeriesCard({
                   />
                 </div>
               </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Numbering Sections
-                  </span>
-                }
-                key="3"
-              >
-                <NumberingSections />
-              </TabPane>
             </Tabs>
           </div>
         </div>

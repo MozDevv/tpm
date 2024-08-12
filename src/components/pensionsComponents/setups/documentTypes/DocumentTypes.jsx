@@ -1,13 +1,106 @@
 "use client";
+import React, { useEffect, useState } from "react";
+
+// Assume this is your transformation function
+import BaseTable from "@/components/baseComponents/BaseTable";
+import BaseCard from "@/components/baseComponents/BaseCard";
+
+import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { Add, ArticleOutlined } from "@mui/icons-material";
-import { Button, Dialog, IconButton, List, ListItem } from "@mui/material";
-import React, { useEffect } from "react";
-import { Box, Grid, MenuItem, TextField, FormControlLabel, Switch, Chip } from "@mui/material";
+import { formatDate } from "@/utils/dateFormatter";
 
-function DocumentTypes() {
-  const [openNotification, setOpenNotification] = React.useState(false);
+const columnDefs = [
+  {
+    field: "no",
+    headerName: "No",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 90,
+  },
 
+  {
+    field: "name",
+    headerName: "Name",
+    headerClass: "prefix-header",
+    filter: true,
+  },
+  {
+    field: "description",
+    headerName: "Description",
+    headerClass: "prefix-header",
+    filter: true,
+  },
+  {
+    field: "extenstions",
+    headerName: "Extensions",
+    headerClass: "prefix-header",
+    filter: true,
+  },
+  {
+    field: "has_two_sides",
+    headerName: "Has Two Sides",
+    headerClass: "prefix-header",
+    filter: true,
+  },
+];
+
+const DocumentTypes = () => {
+  const [rowData, setRowData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 10; // Number of records per page
+  const [departments, setDepartments] = useState([]); // [1]
+
+  const transformString = (str) => {
+    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
+      return a.toUpperCase();
+    });
+  };
+
+  const transformData = (data) => {
+    return data.map((item, index) => ({
+      id: item.id,
+      no: index + 1 + (pageNumber - 1) * pageSize,
+      name: item.name,
+      description: item.description,
+      extenstions: item.extenstions,
+      has_two_sides: item.has_two_sides,
+      // roles: item.roles,
+    }));
+  };
+
+  const handlers = {
+    // filter: () => console.log("Filter clicked"),
+    // openInExcel: () => console.log("Export to Excel clicked"),
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => console.log("Notify clicked"),
+  };
+
+  const baseCardHandlers = {
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: (item) => {
+      // setOpenBaseCard(true);
+      // setClickedItem(item);
+    },
+    delete: (item) => {
+      //  setOpenBaseCard(true);
+      //  setClickedItem(item);
+    },
+  };
+
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
+
+  const title = clickedItem ? "Document" : "Create a New Document";
   const documentExtensions = [
     { value: ".pdf", label: "PDF" },
     { value: ".doc", label: "DOC" },
@@ -17,225 +110,81 @@ function DocumentTypes() {
     { value: ".ppt", label: "PPT" },
     { value: ".pptx", label: "PPTX" },
   ];
-  const [documentTypes, setDocumentTypes] = React.useState([]);
-  const fetchDocumentTypes = async () => {
-    try {
-      const res = await apiService.get(endpoints.documentTypes);
-
-      console.log(res.data.data);
-
-      setDocumentTypes(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDocumentTypes();
-  }, []);
-
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [extension, setExtension] = React.useState("");
-  const [has_two_sides, setHasTwoSides] = React.useState(false);
-
-  const handleCreate = async () => {
-    const data = {
-      name: name,
-      description: description,
-      extenstions: extension,
-      has_two_sides: has_two_sides
-    };
-
-    try {
-      const res = await apiService.post(endpoints.createDocumentType, data);
-      console.log(res.data);
-      fetchDocumentTypes();
-      setOpenNotification(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const fields = [
+    { name: "name", label: "Name", type: "text", required: true },
+    {
+      name: "description",
+      label: "Description",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "extenstions",
+      label: "Extension",
+      type: "select",
+      multiple: false,
+      required: true,
+      options: documentExtensions.map((d) => ({
+        id: d.value,
+        name: d.label,
+      })),
+    },
+    {
+      name: "has_two_sides",
+      label: "Has Two Sides",
+      type: "switch",
+      required: true,
+    },
+  ];
 
   return (
-    <div className="mt-8">
-      <Dialog
-        open={openNotification}
-        onClose={() => setOpenNotification(false)}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          padding: "20px",
-        }}
+    <div className="">
+      <BaseCard
+        openBaseCard={openBaseCard}
+        setOpenBaseCard={setOpenBaseCard}
+        handlers={baseCardHandlers}
+        title={title}
+        clickedItem={clickedItem}
+        isUserComponent={false}
+        deleteApiEndpoint={endpoints.deleteRole(clickedItem?.id)}
+        deleteApiService={apiService.post}
       >
-        <div className="p-8">
-          {" "}
-          <div className="flex items-center justify-between ">
-            <div className="flex items-center gap-2">
-              <h5 className="text-[17px] text-primary font-semibold">
-                Create Document Type
-              </h5>
-            </div>
-            <div className="flex gap-8 mr-4">
-              <Button
-                variant="outlined"
-                onClick={() => setOpenNotification(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCreate}
-              >
-                Create
-              </Button>
-            </div>
-          </div>
-          <Box sx={{ flexGrow: 1, mt: 2 }}>
-            <form>
-              <div className="mb-4">
-                <label
-                  htmlFor="name"
-                  className="block text-xs font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1 block w-full p-3 bg-gray-100 rounded-md border-gray-600"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className="block text-xs font-medium text-gray-700"
-                >
-                  Description
-                </label>
-                <input
-                  type="text"
-                  id="description"
-                  name="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="mt-1 block w-full p-3 bg-gray-100 rounded-md border-gray-400"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="extension"
-                  className="block text-xs font-medium text-gray-700"
-                >
-                  Document Extension
-                </label>
-                <TextField
-                  select
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="extension"
-                  value={extension}
-                  onChange={(e) => setExtension(e.target.value)}
-                  className="mt-1 block w-full bg-gray-100 rounded-md border-gray-400"
-                >
-                  <MenuItem value="">Select Extension</MenuItem>
-                  {documentExtensions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
-
-
-              <div className="mb-4">
-                <label
-                  htmlFor="position"
-                  className="block text-xs font-medium text-gray-700"
-                >
-                  Has Two Sides?
-                </label>
-
-
-                <div className="flex items-center gap-2">
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={has_two_sides}
-                        id="has_two_sides"
-                        name="has_two_sides"
-                        inputProps={{ 'aria-label': 'controlled' }}
-                        onChange={(e) => setHasTwoSides(e.target.checked)} />
-                    }
-                    label={has_two_sides ? "Has 2 sides" : "Just one side"}
-                  />
-                </div>
-              </div>
-
-
-            </form>
-          </Box>
-        </div>
-      </Dialog>
-      <div className="mb-3 ml-4">
-        <Button
-          onClick={() => setOpenNotification(true)}
-          variant="contained"
-          sx={{
-            color: "primary",
-          }}
-        >
-          Add Document Type
-        </Button>
-      </div>
-      <div className="px-3">
-        <List>
-          {documentTypes?.map((documentType) => (
-            <ListItem
-              key={documentType.id}
-              sx={{
-                backgroundColor: "white",
-                width: "100%",
-                borderRadius: 5,
-                mb: 2,
-                padding: 2,
-                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
-              }}
-            >
-              <div className="flex justify-between w-full">
-                {" "}
-                <div className="px-3 flex flex-row gap-3">
-                  <IconButton>
-                    <ArticleOutlined sx={{ color: "gray" }} />
-                  </IconButton>
-                  <div className="flex flex-col ">
-                    <p className="font-semibold text-base text-primary">
-                    {documentType?.name.charAt(0).toUpperCase() +
-                        documentType?.name.slice(1).toLowerCase()} 
-                        {documentType.has_two_sides && <Chip className="ml-2" size="small" label="Two Sides" color="primary" variant="outlined" />}
-                    </p>
-                    <p className="text-gray-500 font-normal text-xs">
-                      {documentType?.description}
-                    </p>
-                  </div>
-                </div>
-                <div className="pr-8 mt-1">
-                  <p className="text-gray-500">{documentType.extenstions}</p>
-                </div>
-              </div>
-            </ListItem>
-          ))}
-        </List>
-      </div>
+        {clickedItem ? (
+          <BaseInputCard
+            fields={fields}
+            apiEndpoint={endpoints.updateRole(clickedItem.id)}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+          />
+        ) : (
+          <BaseInputCard
+            fields={fields}
+            apiEndpoint={endpoints.createDocumentType}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+          />
+        )}
+      </BaseCard>
+      <BaseTable
+        openBaseCard={openBaseCard}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        setOpenBaseCard={setOpenBaseCard}
+        columnDefs={columnDefs}
+        fetchApiEndpoint={endpoints.documentTypes}
+        fetchApiService={apiService.get}
+        transformData={transformData}
+        pageSize={30}
+        handlers={handlers}
+        breadcrumbTitle="Document Types"
+        currentTitle="Document Types"
+      />
     </div>
   );
-}
+};
 
 export default DocumentTypes;

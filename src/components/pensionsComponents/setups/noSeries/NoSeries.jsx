@@ -9,6 +9,7 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { formatDate } from "@/utils/dateFormatter";
 import NoSeriesCard from "./NoSeriesCard";
+import NumberingSections from "./NumberingSections";
 
 const columnDefs = [
   {
@@ -63,6 +64,7 @@ const NoSeries = () => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
+    numberingSections: () => setOpenNumberingSections(true),
   };
 
   const baseCardHandlers = {
@@ -83,6 +85,9 @@ const NoSeries = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+
+  const [openNumberingSections, setOpenNumberingSections] =
+    React.useState(false);
 
   const title = clickedItem
     ? "No. Series Details"
@@ -215,6 +220,22 @@ const NoSeries = () => {
             setOpenBaseCard={setOpenBaseCard}
           />
         )}
+      </BaseCard>
+      <BaseCard
+        openBaseCard={openNumberingSections}
+        setOpenBaseCard={setOpenNumberingSections}
+        ///handlers={handlers}
+        title={"Numbering Sections"}
+        clickedItem={clickedItem}
+        isUserComponent={false}
+        fields={numberSeriesLinefields}
+        apiEndpoint={endpoints.createNumberSeriesLine}
+        postApiFunction={apiService.post}
+        inputTitle="Create New Number Series Line"
+        idLabel="numberSeriesId"
+        useRequestBody={true}
+      >
+        <NumberingSections />
       </BaseCard>
       <BaseTable
         openAction={openAction}

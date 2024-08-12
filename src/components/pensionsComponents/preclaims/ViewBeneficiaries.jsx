@@ -38,6 +38,7 @@ function ViewBeneficiaries({
     {
       headerName: "Relationship",
       field: "relationship.name",
+      pinnned: "left",
     },
     {
       headerName: "Surname",

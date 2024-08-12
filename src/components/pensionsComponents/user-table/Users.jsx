@@ -110,7 +110,7 @@ const Users = () => {
   const [refreshData, setRefreshData] = React.useState(false);
 
   const pageNumber = 1;
-  const pageSize = 200;
+  const pageSize = 12;
 
   const [roles, setRoles] = React.useState([]);
   const title = clickedItem ? "User Details" : "Create New User";
@@ -242,7 +242,7 @@ const Users = () => {
         fetchApiService={AuthApiService.get}
         fetchApiEndpoint={authEndpoints.getUsers}
         transformData={transformData}
-        pageSize={30}
+        //pageSize={30}
         handlers={handlers}
         breadcrumbTitle="User Management"
         currentTitle="Manage Users"

@@ -6,6 +6,9 @@ import {
   Divider,
   Switch,
   FormControlLabel,
+  Select,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { message } from "antd";
 import dayjs from "dayjs";
@@ -25,6 +28,9 @@ const BaseInputCard = ({
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
+    if (field.type === "switch") {
+      acc[field.name] = field.default !== undefined ? field.default : false;
+    }
     return acc;
   }, {});
 
@@ -43,11 +49,22 @@ const BaseInputCard = ({
   }, [clickedItem]);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value, type, checked, multiple } = e.target;
+    if (multiple) {
+      const values = Array.from(
+        e.target.selectedOptions,
+        (option) => option.value
+      );
+      setFormData((prev) => ({
+        ...prev,
+        [name]: values,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
     setIsEditing(true);
   };
 
@@ -167,29 +184,60 @@ const BaseInputCard = ({
               {field.label}
             </label>
             {field.type === "select" ? (
-              <TextField
-                select
-                variant="outlined"
-                size="small"
-                fullWidth
-                name={field.name}
-                value={formData[field.name] || ""}
-                onChange={handleInputChange}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-              >
-                <MenuItem value="">Select {field.label}</MenuItem>
-                {field?.options?.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              field.multiple ? (
+                <Select
+                  multiple
+                  size="small"
+                  name={field.name}
+                  value={formData[field.name] || []}
+                  onChange={handleInputChange}
+                  renderValue={(selected) => (
+                    <div>
+                      {selected.map((value) => (
+                        <span key={value} style={{ margin: 2 }}>
+                          {
+                            field.options.find((option) => option.id === value)
+                              ?.name
+                          }
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                >
+                  {field.options.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      <Checkbox
+                        checked={formData[field.name]?.indexOf(option.id) > -1}
+                      />
+                      <ListItemText primary={option.name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              ) : (
+                <TextField
+                  select
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name={field.name}
+                  value={formData[field.name] || ""}
+                  onChange={handleInputChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                >
+                  <MenuItem value="">Select {field.label}</MenuItem>
+                  {field?.options?.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )
             ) : field.type === "switch" ? (
               <FormControlLabel
                 control={
                   <Switch
-                    checked={formData[field.name] || false}
+                    checked={formData[field.name] === true}
                     onChange={handleInputChange}
                     name={field.name}
                     color="primary"

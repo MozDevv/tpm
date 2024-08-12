@@ -43,14 +43,13 @@ const BaseTable = ({
   const [openFilter, setOpenFilter] = useState(false);
   const [filterColumn, setFilterColumn] = useState("");
   const [filterValue, setFilterValue] = useState("");
-  const [filterType, setFilterType] = useState(2);
+  const [filterType, setFilterType] = useState("EQUAL");
   const [sortColumn, setSortColumn] = useState("");
   const [sortCriteria, setSortCriteria] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const [totalPages, setTotalPages] = useState(1);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -68,24 +67,33 @@ const BaseTable = ({
 
   useEffect(() => {
     fetchData();
-  }, [pageNumber, openBaseCard, openAction]);
+  }, [pageNumber]);
 
+  useEffect(() => {
+    fetchData();
+  }, [openBaseCard]);
+
+  useEffect(() => {
+    fetchData();
+  }, [openAction]);
   const handleFilters = async () => {
-    const filter = {
-      ...(filterColumn && {
-        "filterCriterion.criterions[0].propertyName": filterColumn,
-      }),
-      ...(filterValue && {
-        "filterCriterion.criterions[0].propertyValue": filterValue,
-      }),
-      ...(filterType
-        ? {
-            "filterCriterion.criterions[0].criterionType": filterType,
-          }
-        : {
-            "filterCriterion.criterions[0].criterionType": 2,
+    const filter = status
+      ? {
+          "filterCriterion.criterions[0].propertyName": "notification_status",
+          "filterCriterion.criterions[0].propertyValue": status,
+          "filterCriterion.criterions[0].criterionType": 0,
+        }
+      : {
+          ...(filterColumn && {
+            "filterCriterion.criterions[0].propertyName": filterColumn,
           }),
-    };
+          ...(filterValue && {
+            "filterCriterion.criterions[0].propertyValue": filterValue,
+          }),
+          ...(filterType && {
+            "filterCriterion.criterions[0].criterionType": filterType,
+          }),
+        };
     const sort = {
       ...(sortColumn && {
         "sortProperties.propertyName": sortColumn,
@@ -95,23 +103,22 @@ const BaseTable = ({
       }),
     };
 
-    await fetchData(filter);
+    await fetchData(sort, filter);
   };
 
-  const fetchData = async (filter) => {
+  const fetchData = async (sort, filter) => {
     try {
       const res = await fetchApiService(fetchApiEndpoint, {
         "paging.pageNumber": pageNumber,
-        "paging.pageSize": 10,
-
+        "paging.pageSize": pageSize,
+        ...sort,
         ...filter,
       });
-      const { data, totalCount, totalPages } = res.data;
+      const { data, totalCount } = res.data;
 
       const transformedData = transformData(data);
       setRowData(transformedData);
       setTotalRecords(totalCount);
-      setTotalPages(totalPages);
 
       console.log("Data fetched successfully:", transformedData);
     } catch (error) {
@@ -119,26 +126,13 @@ const BaseTable = ({
     }
   };
 
-  const resetFilters = () => {
-    setFilterColumn("");
-    setFilterValue("");
-    setFilterType(2);
-    setSortColumn("");
-    //setSortCriteria(1);
-    fetchData();
-  };
-
-  const handlePaginationChange = (e, newPage) => {
-    console.log("newPage", newPage);
-    console.log("***********************");
-    console.log("e", e);
-    setPageNumber(newPage);
+  const handlePaginationChange = (newPageNumber) => {
+    setPageNumber(newPageNumber);
   };
 
   const onGridReady = (params) => {
     setGridApi(params.api);
     gridApiRef.current = params;
-    params.api.sizeColumnsToFit();
   };
   const exportToExcel = () => {
     gridApi.exportDataAsCsv();
@@ -216,9 +210,9 @@ const BaseTable = ({
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
             >
-              <MenuItem value={0}>Equal</MenuItem>
-              <MenuItem value={1}>Contains</MenuItem>
-              <MenuItem value={2}>Not Equal</MenuItem>
+              <MenuItem value={"EQUAL"}>Equal</MenuItem>
+              <MenuItem value={"NOT_EQUAL"}>Contains</MenuItem>
+              <MenuItem value={"CONTAINS"}>Not Equal</MenuItem>
             </Menu>
             <Divider />
             <div className="flex flex-col item-center p-4 mt-3">
@@ -274,55 +268,45 @@ const BaseTable = ({
           </div>
           <Button
             variant="contained"
-            sx={{ ml: 2, width: "80%", mr: 2, mt: "-24px" }}
+            sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
             onClick={handleFilters}
           >
             Apply Filters
           </Button>
-          <Button
-            variant="outlined"
-            sx={{ ml: 2, width: "80%", mr: 2, mt: 2 }}
-            onClick={resetFilters}
-          >
-            Reset Filters
-          </Button>
         </Collapse>
-        <div className="flex justify-around flex-col">
-          <div
-            className="ag-theme-quartz"
-            style={{
-              height: "65vh",
-              marginTop: "20px",
-
-              width: openFilter ? "calc(100vw - 500px)" : "90vw",
+        <div
+          className="ag-theme-quartz"
+          style={{
+            height: "75vh",
+            marginTop: "20px",
+            width: openFilter ? "calc(100vw - 500px)" : "90vw",
+          }}
+        >
+          <AgGridReact
+            columnDefs={columnDefs}
+            rowData={rowData}
+            pagination={false}
+            domLayout="autoHeight"
+            paginationPageSize={pageSize}
+            onGridReady={(params) => {
+              params.api.sizeColumnsToFit();
+              onGridReady(params);
+              gridApiRef.current.api.showLoadingOverlay();
             }}
-          >
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-              pagination={false}
-              domLayout="autoHeight"
-              // paginationPageSize={pageSize}
-              onGridReady={(params) => {
-                params.api.sizeColumnsToFit();
-                onGridReady(params);
-                gridApiRef.current.api.showLoadingOverlay();
-              }}
-              // onPaginationChanged={(params) =>
-              //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-              // }
-              onRowClicked={(e) => {
-                setOpenBaseCard(true);
-                setClickedItem(e.data);
-                // setUserClicked(e.data);
-                //handleClickUser(e.data);
-              }}
-            />
-          </div>
+            onPaginationChanged={(params) =>
+              handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
+            }
+            onRowClicked={(e) => {
+              setOpenBaseCard(true);
+              setClickedItem(e.data);
+              // setUserClicked(e.data);
+              //handleClickUser(e.data);
+            }}
+          />
           {/* PAGINATION */}
           <Box
             sx={{
-              mt: "-30px",
+              // mt: "-30px",
               display: "flex",
               justifyContent: "center",
             }}
@@ -332,7 +316,7 @@ const BaseTable = ({
               showLastButton
               count={totalPages}
               page={pageNumber}
-              onChange={handlePaginationChange}
+              onChange={handlePageChange}
               color="primary"
               variant="outlined"
               shape="rounded"
