@@ -292,8 +292,9 @@ const BaseTable = ({
             className="ag-theme-quartz"
             style={{
               height: "65vh",
-              marginTop: "20px",
 
+              maxHeight: "85%",
+              overflowY: "auto",
               width: openFilter ? "calc(100vw - 500px)" : "90vw",
             }}
           >
@@ -302,6 +303,7 @@ const BaseTable = ({
               rowData={rowData}
               pagination={false}
               domLayout="autoHeight"
+              alwaysShowHorizontalScroll={true}
               // paginationPageSize={pageSize}
               onGridReady={(params) => {
                 params.api.sizeColumnsToFit();
@@ -320,6 +322,7 @@ const BaseTable = ({
             />
           </div>
           {/* PAGINATION */}
+
           <Box
             sx={{
               mt: "-30px",
