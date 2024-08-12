@@ -325,7 +325,6 @@ const BaseTable = ({
 
           <Box
             sx={{
-              mt: "-30px",
               display: "flex",
               justifyContent: "center",
             }}
