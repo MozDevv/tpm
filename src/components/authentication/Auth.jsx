@@ -50,6 +50,12 @@ function Auth() {
     severity: "success",
   });
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent default form submission
+      handleSignIn();
+    }
+  };
   // Function to handle user sign-in
   const handleSignIn = async () => {
     setLoading(true);
@@ -120,7 +126,7 @@ function Auth() {
   return (
     <div className="">
       {/* Login Form Section */}
-      <form action="" className="pt-10">
+      <form action="" className="pt-10" onKeyDown={handleKeyDown}>
         {resetPassword ? (
           <>
             <Typography

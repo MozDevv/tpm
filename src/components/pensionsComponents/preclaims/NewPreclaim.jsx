@@ -236,7 +236,23 @@ function NewPreclaim({
         error =
           "Date of confirmation cannot be before date of first appointment";
       }
-    } else if (
+    } else if (name === "tax_exempt_certificate_number" && value === "") {
+      if (formData.pwd === 0 && value === "") {
+        error = "Tax Exempt Certificate Number is required";
+      }
+    } else if (name === "tax_exempt_certificate_date" && value === "") {
+      if (formData.pwd === 0 && value === "") {
+        error = "Tax Exempt Certificate Date is required";
+      }
+    }
+    // if (formData.pwd === 0 && !formData.tax_exempt_certificate_number) {
+    //   error = "Tax Exempt Certificate Number is required";
+    // }
+
+    // if (formData.pwd === 0 && !formData.tax_exempt_certificate_date) {
+    //   error = "Tax Exempt Certificate Date is required";
+    // }
+    else if (
       name === "authority_for_retirement_dated" &&
       value &&
       formData.date_of_first_appointment
@@ -426,6 +442,34 @@ function NewPreclaim({
     }
   };
 
+  const [activePensionCap, setActivePensionCap] = useState("");
+
+  const fetchMdas = async () => {
+    try {
+      const res = await apiService.get(endpoints.mdas, {
+        "paging.pageSize": 100,
+      });
+
+      const userMda = res.data.data.find((mda) => mda.id === mdaId);
+
+      const currentCap = userMda?.pensionCap?.id;
+
+      // setCurrentMda(userMda);
+
+      setActivePensionCap(currentCap);
+
+      console.log("Current MDA: ********", currentCap);
+    } catch (error) {
+      console.error("Error fetching MDAs:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (mdaId) {
+      fetchMdas();
+    }
+  }, [mdaId]);
+
   useEffect(() => {
     fetchGrades();
     fetchPensionAwards();
@@ -467,17 +511,17 @@ function NewPreclaim({
         },
 
         {
-          label: "Alive/Dead",
+          label: "Deaceased",
           name: "mortality_status",
           type: "select",
           children: [
             {
               id: 1,
-              name: "Alive",
+              name: "Yes",
             },
             {
               id: 2,
-              name: "Dead",
+              name: "No",
             },
           ],
         },
@@ -645,10 +689,18 @@ function NewPreclaim({
           label: "Pension Award",
           name: "pension_award_id",
           type: "select",
-          children: pensionAwards.map((award) => ({
-            id: award.id,
-            name: award.name,
-          })),
+          children:
+            mdaId && activePensionCap
+              ? pensionAwards
+                  .filter((award) => award.pensionCap.id === activePensionCap)
+                  .map((award) => ({
+                    id: award.id,
+                    name: award.name,
+                  }))
+              : pensionAwards.map((award) => ({
+                  id: award.id,
+                  name: award.name,
+                })),
         },
         {
           label: "Date of First Appointment",
@@ -686,6 +738,35 @@ function NewPreclaim({
           name: "last_basic_salary_amount",
           type: "number",
         },
+        {
+          label: "Person With Disability",
+          name: "pwd",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "Yes",
+            },
+            {
+              id: 1,
+              name: "No",
+            },
+          ],
+        },
+        ...(formData.pwd === 0
+          ? [
+              {
+                label: "Tax Exempt Certificate Number",
+                name: "tax_exempt_certificate_number",
+                type: "text",
+              },
+              {
+                label: "Tax Exempt Certificate Date",
+                name: "tax_exempt_certificate_date",
+                type: "date",
+              },
+            ]
+          : []),
       ],
     },
   ];
@@ -976,82 +1057,96 @@ function NewPreclaim({
                       </div>
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
-                          {section.fields.map((field, fieldIndex) => (
-                            <div key={fieldIndex} className="flex flex-col">
-                              <label className="text-xs font-semibold text-gray-600">
-                                {field.label}
-                              </label>
-                              {field.type === "select" ? (
-                                <TextField
-                                  select
-                                  variant="outlined"
-                                  size="small"
-                                  fullWidth
-                                  name={field.name}
-                                  value={formData[field.name]}
-                                  onChange={handleInputChange}
-                                  error={!!errors[field.name]} // Show error style if there is an error
-                                  helperText={errors[field.name]} // Display the error message
-                                >
-                                  <MenuItem value="">
-                                    Select {field.label}
-                                  </MenuItem>
-                                  {field?.children?.map((option) => (
-                                    <MenuItem
-                                      key={option?.id}
-                                      value={option?.id}
-                                    >
-                                      {option?.code
-                                        ? `${option.name} - ${option.code}`
-                                        : option.name}
+                          {section.fields
+                            .filter((field) => {
+                              if (
+                                field.name ===
+                                "authority_for_retirement_reference"
+                              ) {
+                                return (
+                                  formData.notification_status !== 0 &&
+                                  formData.notification_status !== 2 &&
+                                  formData.notification_status !== ""
+                                );
+                              }
+                              return true;
+                            })
+                            .map((field, fieldIndex) => (
+                              <div key={fieldIndex} className="flex flex-col">
+                                <label className="text-xs font-semibold text-gray-600">
+                                  {field.label}
+                                </label>
+                                {field.type === "select" ? (
+                                  <TextField
+                                    select
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    name={field.name}
+                                    value={formData[field.name]}
+                                    onChange={handleInputChange}
+                                    error={!!errors[field.name]} // Show error style if there is an error
+                                    helperText={errors[field.name]} // Display the error message
+                                  >
+                                    <MenuItem value="">
+                                      Select {field.label}
                                     </MenuItem>
-                                  ))}
-                                </TextField>
-                              ) : field.type === "autocomplete" ? (
-                                <Autocomplete
-                                  options={field.children}
-                                  getOptionLabel={(option) => option.name}
-                                  onChange={(event, newValue) => {
-                                    handleInputChange({
-                                      target: {
-                                        name: field.name,
-                                        value: newValue ? newValue.id : "",
-                                      },
-                                    });
-                                  }}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      variant="outlined"
-                                      size="small"
-                                      fullWidth
-                                      name={field.name}
-                                      error={!!errors[field.name]}
-                                      helperText={errors[field.name]}
-                                    />
-                                  )}
-                                  value={
-                                    field.children.find(
-                                      (option) =>
-                                        option.id === formData[field.name]
-                                    ) || null
-                                  }
-                                />
-                              ) : (
-                                <TextField
-                                  type={field.type}
-                                  name={field.name}
-                                  variant="outlined"
-                                  size="small"
-                                  value={formData[field.name]}
-                                  onChange={handleInputChange}
-                                  error={!!errors[field.name]} // Show error style if there is an error
-                                  helperText={errors[field.name]} // Display the error message
-                                  fullWidth
-                                />
-                              )}
-                            </div>
-                          ))}
+                                    {field?.children?.map((option) => (
+                                      <MenuItem
+                                        key={option?.id}
+                                        value={option?.id}
+                                      >
+                                        {option?.code
+                                          ? `${option.name} - ${option.code}`
+                                          : option.name}
+                                      </MenuItem>
+                                    ))}
+                                  </TextField>
+                                ) : field.type === "autocomplete" ? (
+                                  <Autocomplete
+                                    options={field.children}
+                                    getOptionLabel={(option) => option.name}
+                                    onChange={(event, newValue) => {
+                                      handleInputChange({
+                                        target: {
+                                          name: field.name,
+                                          value: newValue ? newValue.id : "",
+                                        },
+                                      });
+                                    }}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        size="small"
+                                        fullWidth
+                                        name={field.name}
+                                        error={!!errors[field.name]}
+                                        helperText={errors[field.name]}
+                                      />
+                                    )}
+                                    value={
+                                      field.children.find(
+                                        (option) =>
+                                          option.id === formData[field.name]
+                                      ) || null
+                                    }
+                                  />
+                                ) : (
+                                  <TextField
+                                    type={field.type}
+                                    name={field.name}
+                                    variant="outlined"
+                                    size="small"
+                                    value={formData[field.name]}
+                                    onChange={handleInputChange}
+                                    error={!!errors[field.name]} // Show error style if there is an error
+                                    helperText={errors[field.name]} // Display the error message
+                                    fullWidth
+                                  />
+                                )}
+                              </div>
+                            ))}
                         </div>
                       </Collapse>
                     </div>

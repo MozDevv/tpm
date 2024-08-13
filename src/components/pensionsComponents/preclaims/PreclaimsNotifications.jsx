@@ -13,7 +13,8 @@ import preClaimsEndpoints, {
 import endpoints from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 import { useMda } from "@/context/MdaContext";
-import { message } from "antd";
+import { List, message } from "antd";
+import { useAuth } from "@/context/AuthContext";
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -55,7 +56,14 @@ function PreclaimsNotifications({
     fetchMdas();
   }, []); // [2]
 
+  const { auth } = useAuth();
+
   const handleSend = async () => {
+    // setComments(
+    //   `Notification sent to retirees at ${new Date().toLocaleString()} by ${
+    //     auth?.user?.email
+    //   }`
+    // );
     const ids = selectedRows.map((row) => row.id);
     const currentDate = new Date();
     const oneMinuteLater = new Date(currentDate.getTime() + 60000); // Adding 1 minute
@@ -109,6 +117,49 @@ function PreclaimsNotifications({
 
   const [mdas, setMdas] = useState([]); // [1
 
+  const [awardDocuments, setAwardDocuments] = useState([]);
+
+  const fetchAwardDocuments = async (ids) => {
+    try {
+      const allDocuments = [];
+
+      for (const id of ids.map((row) => row.id)) {
+        const res = await apiService.get(
+          preClaimsEndpoints.getAwardDocuments(id)
+        );
+        const documents =
+          res.data?.data[0]?.prospectivePensionerDocumentSelections
+            ?.map((selection) => ({
+              id: selection.id,
+              name: selection.documentType.name,
+              description: selection.documentType.description,
+              required: selection.required,
+              pensioner_upload: selection.pensioner_upload,
+            }))
+            .filter((doc) => doc.pensioner_upload) || [];
+
+        allDocuments.push(...documents);
+      }
+
+      console.log("allDocuments", allDocuments);
+      setAwardDocuments(allDocuments);
+    } catch (error) {
+      console.error("Error fetching award documents:", error);
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedRows.length > 0) {
+      fetchAwardDocuments(selectedRows);
+      console.log(
+        "prospectivePensionerDocumentSelections",
+        selectedRows.map((r) => r.id)
+      );
+    }
+  }, [selectedRows]);
+
   return (
     <Dialog
       open={
@@ -119,10 +170,11 @@ function PreclaimsNotifications({
       maxWidth="sm"
       sx={{
         padding: "20px",
+        maxHeight: "90vh",
       }}
     >
+      {/* {JSON.stringify(awardDocuments)} */}
       <div className="p-8">
-        {" "}
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <h5 className="text-[19px] text-primary font-semibold">
@@ -130,42 +182,29 @@ function PreclaimsNotifications({
             </h5>
           </div>
         </div>
-        <div className="p-6">
-          {/* <div className="mb-4">
-            <label
-              htmlFor="scheduleStartDate"
-              className="block text-xs font-medium text-gray-700"
-            >
-              Schedule Start Date
-            </label>
 
-            <TextField
-              variant="outlined"
+        {awardDocuments.length > 0 && (
+          <div className="py-3 mx-5">
+            <div className="text-primary mt-5 text-[15px] font-normal mb-4">
+              List of all documents to be uploaded by the retiree(s)
+            </div>
+            <List
               size="small"
-              value={scheduleStartDate}
-              onChange={(e) => setScheduleStartDate(e.target.value)}
-              required
-              type="datetime-local"
-              fullWidth
+              bordered
+              style={{
+                overflowY: "auto",
+                mx: "20px",
+              }}
+              dataSource={awardDocuments}
+              renderItem={(doc) => (
+                <List.Item>
+                  <p className="font-montserrat">{doc.name}</p>
+                </List.Item>
+              )}
             />
           </div>
-          <div className="mb-4">
-            <label
-              htmlFor="periodEndDate"
-              className=" text-xs font-medium text-gray-700"
-            >
-              Period End Date
-            </label>
-            <TextField
-              type="datetime-local"
-              variant="outlined"
-              size="small"
-              value={periodEndDate}
-              onChange={(e) => setPeriodEndDate(e.target.value)}
-              required
-              fullWidth
-            />
-          </div> */}
+        )}
+        <div className="p-6">
           <div>
             <label
               htmlFor="comments"
@@ -186,38 +225,13 @@ function PreclaimsNotifications({
               }}
             />
           </div>
-          {/* <div className="flex flex-col gap-1">
-            <label
-              htmlFor="comments"
-              className=" text-xs font-medium text-gray-700 pt-3 pb-2"
-            >
-              Select MDA
-            </label>
-            <TextField
-              select
-              variant="outlined"
-              size="small"
-              fullWidth
-              name="mda_id"
-              value={mdaId}
-              onChange={(e) => setMdaId(e.target.value)}
-              className="mt-1 block w-full bg-gray-100 rounded-md border-gray-400"
-            >
-              <MenuItem value="">Select Mda</MenuItem>
-              {mdas.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>{" "} */}
         </div>
-        <div className="flex gap-8 w-full justify-between px-5 mt-3">
+        <div className="flex gap-8 w-full justify-between px-5 mt-2">
           <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
           <Button variant="contained" color="primary" onClick={handleSend}>
-            Send
+            Notify
           </Button>
         </div>
       </div>

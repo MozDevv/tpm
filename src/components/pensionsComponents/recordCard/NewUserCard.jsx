@@ -23,7 +23,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const [selectedAdminType, setSelectedAdminType] = useState("");
   const [selectedMDA, setSelectedMDA] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [errors, setErrors] = useState({});
 
+  const [designationId, setDesignationId] = useState("");
+  const [gradeId, setGradeId] = useState("");
   const { isLoading, setIsLoading } = useIsLoading();
 
   const validateForm = (userData) => {
@@ -36,6 +39,21 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     if (!userData.id_number) formErrors.id_number = "Id Number is required";
     if (!userData.phoneNumber)
       formErrors.phoneNumber = "Phone Number is required";
+    if (
+      userData.phoneNumber &&
+      !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(userData.phoneNumber)
+    ) {
+      message.error("Phone Number is invalid");
+      formErrors.phoneNumber = "Phone Number is invalid";
+    }
+    if (userData.email && !/\S+@\S+\.\S+/.test(userData.email)) {
+      message.error("Email is invalid");
+      formErrors.email = "Email is invalid";
+    }
+    if (userData.id_number && !/^\d+$/.test(userData.id_number)) {
+      message.error("Id Number is invalid");
+      formErrors.id_number = "Id Number is invalid";
+    }
     if (!userData.email) formErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(userData.email))
       formErrors.email = "Email is invalid";
@@ -46,7 +64,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const router = useRouter();
 
   const handleSubmit = async (event) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     event.preventDefault();
     const formData = new FormData(event.target);
     const userData = {
@@ -71,7 +89,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     const formErrors = validateForm(userData);
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      setIsLoading(false);
+      // setIsLoading(false);
       return;
     }
 
@@ -98,13 +116,14 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
       message.error(error.response.data.message);
     } finally {
-      setIsLoading(false);
+      //setIsLoading(false);
     }
   };
 
   const [departments, setDepartments] = useState([]);
   const [rolesList, setRolesList] = useState([]);
   const [mdas, setMDAs] = useState([]); // State to store MDA options
+  const [identificationType, setIdentificationType] = useState(1);
 
   const fetchRoles = async () => {
     try {
@@ -144,19 +163,50 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       console.error("Error fetching MDAs:", error);
     }
   };
+  const [grades, setGrades] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const fetchGrades = async () => {
+    try {
+      const res = await apiService.get(endpoints.getAllGrades, {
+        "paging.pageSize": 1000,
+      });
+      if (res.status === 200) {
+        setGrades(
+          res.data.data.map((item, index) => ({ ...item, no: index + 1 }))
+        );
+
+        console.log(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
+  const fetchDesignations = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDesignations, {
+        "paging.pageSize": 1000,
+      });
+      setDesignations(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Designations:", error);
+    }
+  };
 
   useEffect(() => {
+    fetchDesignations();
+    fetchGrades();
     fetchDepartments();
     fetchRoles();
     fetchMDAs(); // Fetch MDA options on component mount
   }, []);
 
   return (
-    <div className="p-2 mt-1 h-[75vh] grid grid-cols-12 gap-2">
-      <div className="col-span-12 bg-white  rounded-2xl px-4">
+    <div className="px-2 pb-6 mt-1 h-[75vh] grid grid-cols-12 gap-2 ">
+      <div className="col-span-12 bg-white  rounded-2xl px-4 max-h-[95vh] overflow-y-auto">
         <div className="px-6">
           <form id="new-user-form" onSubmit={handleSubmit}>
-            <div className="flex items-center justify-between p-2 mb-3">
+            <div className="flex items-center justify-between p-2 mb-3 sticky top-0 bg-white">
               <div className="flex items-center gap-2">
                 <h5 className="text-xl font-semibold ml-4 text-primary"></h5>
               </div>
@@ -318,7 +368,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                     <h6 className="font-semibold text-primary text-sm">Bio</h6>
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
-                  <div className="p-4">
+                  <div className="px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4">
                       <div className="flex flex-col">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
@@ -361,19 +411,113 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         />
                       </div>
 
+                      <div className="flex flex-col mt-[-10px]">
+                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                          Choose Identification Type
+                        </label>
+                        <select
+                          name="role"
+                          value={identificationType}
+                          onChange={(e) => {
+                            setIdentificationType(parseInt(e.target.value));
+                            console.log(identificationType);
+                          }}
+                          className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
+                          required
+                        >
+                          <option value={1}>National Id</option>
+                          <option value={2}>Passport Number</option>
+                        </select>
+                      </div>
+
+                      {identificationType === 1 ? (
+                        <div className="flex flex-col mt-[-25px]">
+                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                            Id Number
+                            <div className="text-red-600 text-base mt-[3px]">
+                              *
+                            </div>
+                          </label>
+                          <input
+                            type="number"
+                            name="id_number"
+                            className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                            required
+                          />
+                          {errors.id_number && (
+                            <div className="text-red-600 text-sm mt-[1px]">
+                              {errors.id_number}
+                            </div>
+                          )}
+                        </div>
+                      ) : identificationType === 2 ? (
+                        <div className="flex flex-col mt-[-25px]">
+                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                            Passport Number
+                            <div className="text-red-600 text-base mt-[3px]">
+                              *
+                            </div>
+                          </label>
+                          <input
+                            type="text"
+                            name="passport_number"
+                            className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                       <div className="flex flex-col mt-[-15px]">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Id Number
-                          <div className="text-red-600 text-base mt-[3px]">
-                            *
-                          </div>
+                          Employee Number
+                          <div className="text-red-600 text-base mt-[3px]"></div>
                         </label>
                         <input
-                          type="number"
-                          name="id_number"
+                          type="text"
+                          name="employeeNumber"
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         />
+                      </div>
+
+                      <div className="flex flex-col mt-[-15px]">
+                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                          Designation
+                        </label>
+                        <select
+                          name="designation"
+                          value={designationId}
+                          onChange={(e) => setDesignationId(e.target.value)}
+                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                        >
+                          {designations.map((designation) => (
+                            <option key={designation.id} value={designation.id}>
+                              {designation.name}
+                            </option>
+                          ))}{" "}
+                        </select>
+                      </div>
+                      <div className="flex flex-col mt-[-15px]">
+                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                          Grade
+                        </label>
+                        <select
+                          name="grade"
+                          value={gradeId}
+                          onChange={(e) => setGradeId(e.target.value)}
+                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                        >
+                          {grades
+                            .filter(
+                              (grade) => grade.designation_id === designationId
+                            )
+                            .map((grade) => (
+                              <option key={grade.id} value={grade.id}>
+                                {grade.grade}
+                              </option>
+                            ))}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -385,7 +529,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                     </h6>
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
-                  <div className="flex justify-evenly gap-4 px-4">
+                  <div className="flex gap-4 px-4">
                     <div className="flex justify-evenly w-1/3 px-3 ml-1">
                       <div className="flex flex-col flex-1">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
@@ -400,22 +544,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         />
-                      </div>
-                    </div>
-                    <div className="flex justify-evenly w-1/3 px-3 ml-1">
-                      <div className="flex flex-col flex-1">
-                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Employee Number
-                          <div className="text-red-600 text-base mt-[3px]">
-                            *
+                        {errors.email && (
+                          <div className="text-red-600 text-sm mt-[1px]">
+                            {errors.email}
                           </div>
-                        </label>
-                        <input
-                          type="text"
-                          name="employeeNumber"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
-                        />
+                        )}
                       </div>
                     </div>
 
@@ -432,7 +565,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="phoneNumber"
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                           required
+                          error={errors.phoneNumber}
                         />
+                        {errors.phoneNumber && (
+                          <div className="text-red-600 text-sm mt-[1px]">
+                            {errors.phoneNumber}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
