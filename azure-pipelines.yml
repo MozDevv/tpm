@@ -28,7 +28,11 @@ steps:
 
 
         # Pull the latest code from the repository
+        git reset --hard origin/main
+
         git pull
+
+
 
         sudo docker image prune -af
 
