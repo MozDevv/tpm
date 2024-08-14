@@ -9,10 +9,13 @@ function page() {
   return (
     <div>
       <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
-        Retiree Listi
+        Retiree List
       </div>
-      <CustomBreadcrumbsList currentTitle="Retirees List" />
-      <Preclaims />
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse doloribus
+      enim pariatur minus, aut fuga explicabo possimus maiores nihil ut qui
+      quaerat soluta, animi odio. Repudiandae sequi magni odit debitis!
+      {/* <CustomBreadcrumbsList currentTitle="Retirees List" />
+      <Preclaims /> */}
     </div>
   );
 }

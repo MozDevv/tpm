@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+#
+workflow.yml
+
 # production
 /build
 
