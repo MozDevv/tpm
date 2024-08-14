@@ -374,7 +374,6 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           type="text"
                           name="employeeNumber"
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
                         />
                       </div>
                       <div className="flex flex-col">
