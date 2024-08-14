@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { message } from "antd";
 import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const BaseInputCard = ({
   fields,
@@ -245,6 +247,22 @@ const BaseInputCard = ({
                 }
                 label={formData[field.name] ? "Yes" : "No"}
               />
+            ) : field.type === "date" ? (
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="en-au"
+              >
+                <TextField
+                  name={field.name}
+                  type="date"
+                  variant="outlined"
+                  size="small"
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </LocalizationProvider>
             ) : (
               <TextField
                 type={field.type}

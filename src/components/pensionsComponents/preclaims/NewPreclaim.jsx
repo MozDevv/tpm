@@ -28,6 +28,11 @@ import { useAlert } from "@/context/AlertContext";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { message } from "antd";
 import { useMda } from "@/context/MdaContext";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+import "dayjs/locale/en-au";
 
 dayjs.extend(isSameOrBefore);
 
@@ -491,7 +496,6 @@ function NewPreclaim({
         { label: "Surname", name: "surname", type: "text" },
         { label: "Other Name", name: "other_name", type: "text" },
         { label: "Email Address", name: "email_address", type: "email" },
-
         { label: "Phone Number", name: "phone_number", type: "text" },
         { label: "Date of Birth", name: "dob", type: "date" },
         {
@@ -1132,6 +1136,22 @@ function NewPreclaim({
                                       ) || null
                                     }
                                   />
+                                ) : field.type === "date" ? (
+                                  <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="en-au" // Use the locale here
+                                  >
+                                    <TextField
+                                      name={field.name}
+                                      type="date"
+                                      variant="outlined"
+                                      size="small"
+                                      error={!!errors[field.name]}
+                                      helperText={errors[field.name]}
+                                      onChange={handleInputChange}
+                                      fullWidth
+                                    />
+                                  </LocalizationProvider>
                                 ) : (
                                   <TextField
                                     type={field.type}
@@ -1140,8 +1160,8 @@ function NewPreclaim({
                                     size="small"
                                     value={formData[field.name]}
                                     onChange={handleInputChange}
-                                    error={!!errors[field.name]} // Show error style if there is an error
-                                    helperText={errors[field.name]} // Display the error message
+                                    error={!!errors[field.name]}
+                                    helperText={errors[field.name]}
                                     fullWidth
                                   />
                                 )}

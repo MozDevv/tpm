@@ -370,6 +370,18 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                   </div>
                   <div className="px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4">
+                      <div className="flex flex-col mt-2">
+                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                          Employee Number
+                          <div className="text-red-600 text-base mt-[3px]"></div>
+                        </label>
+                        <input
+                          type="text"
+                          name="employeeNumber"
+                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          required
+                        />
+                      </div>
                       <div className="flex flex-col">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                           First Name
@@ -400,8 +412,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         />
                       </div>
 
-                      <div className="flex flex-col mt-2">
-                        <label className="text-xs font-semibold text-gray-600 mt-1">
+                      <div className="flex flex-col mb-2 ">
+                        <label className="text-xs font-semibold text-gray-600 ">
                           Other Name
                         </label>
                         <input
@@ -411,7 +423,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         />
                       </div>
 
-                      <div className="flex flex-col mt-[-10px]">
+                      <div className="flex flex-col mb-2">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                           Choose Identification Type
                         </label>
@@ -431,12 +443,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                       </div>
 
                       {identificationType === 1 ? (
-                        <div className="flex flex-col mt-[-25px]">
+                        <div className="flex flex-col mt-[-12px]">
                           <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                             Id Number
-                            <div className="text-red-600 text-base mt-[3px]">
-                              *
-                            </div>
+                            <div className="text-red-600 text-base ">*</div>
                           </label>
                           <input
                             type="number"
@@ -451,7 +461,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           )}
                         </div>
                       ) : identificationType === 2 ? (
-                        <div className="flex flex-col mt-[-25px]">
+                        <div className="flex flex-col mt-[-12px]">
                           <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                             Passport Number
                             <div className="text-red-600 text-base mt-[3px]">
@@ -468,18 +478,6 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                       ) : (
                         <></>
                       )}
-                      <div className="flex flex-col mt-[-15px]">
-                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Employee Number
-                          <div className="text-red-600 text-base mt-[3px]"></div>
-                        </label>
-                        <input
-                          type="text"
-                          name="employeeNumber"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
-                        />
-                      </div>
 
                       <div className="flex flex-col mt-[-15px]">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
