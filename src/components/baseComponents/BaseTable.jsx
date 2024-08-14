@@ -20,6 +20,7 @@ import ListNavigation from "@/components/baseComponents/ListNavigation";
 import { useRouter } from "next/navigation";
 import { FilterList, SortByAlpha } from "@mui/icons-material";
 import BaseCard from "./BaseCard";
+import { useSearch } from "@/context/SearchContext";
 
 const BaseTable = ({
   columnDefs,
@@ -143,6 +144,35 @@ const BaseTable = ({
   const exportToExcel = () => {
     gridApi.exportDataAsCsv();
   };
+
+  const { searchedKeyword, setSearchedKeyword } = useSearch();
+  const [filteredData, setFilteredData] = useState(rowData);
+
+  const applyKeywordFilter = () => {
+    if (!searchedKeyword) {
+      setFilteredData(rowData);
+      return;
+    }
+
+    const lowercasedKeyword = searchedKeyword.toLowerCase();
+
+    const filtered = rowData.filter((row) =>
+      Object.values(row).some(
+        (value) =>
+          value !== null &&
+          value !== undefined &&
+          value.toString().toLowerCase().includes(lowercasedKeyword)
+      )
+    );
+
+    setFilteredData(filtered);
+  };
+
+  useEffect(() => {
+    // Apply keyword filter when searchedKeyword changes
+    applyKeywordFilter();
+  }, [rowData, searchedKeyword]);
+
   return (
     <div>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
@@ -300,7 +330,7 @@ const BaseTable = ({
           >
             <AgGridReact
               columnDefs={columnDefs}
-              rowData={rowData}
+              rowData={filteredData}
               pagination={false}
               domLayout="autoHeight"
               alwaysShowHorizontalScroll={true}

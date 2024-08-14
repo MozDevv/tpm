@@ -48,6 +48,7 @@ import { useMda } from "@/context/MdaContext";
 import ListNavigation from "@/components/baseComponents/ListNavigation";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import CreateProspectivePensioner from "./createProspective/CreateProspectivePensioner";
+import { useSearch } from "@/context/SearchContext";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -604,6 +605,34 @@ const Preclaims = ({ status }) => {
     setPageNumber(newPageNumber);
   };
 
+  const { searchedKeyword, setSearchedKeyword } = useSearch();
+  const [filteredData, setFilteredData] = useState(rowData);
+
+  const applyKeywordFilter = () => {
+    if (!searchedKeyword) {
+      setFilteredData(rowData);
+      return;
+    }
+
+    const lowercasedKeyword = searchedKeyword.toLowerCase();
+
+    const filtered = rowData.filter((row) =>
+      Object.values(row).some(
+        (value) =>
+          value !== null &&
+          value !== undefined &&
+          value.toString().toLowerCase().includes(lowercasedKeyword)
+      )
+    );
+
+    setFilteredData(filtered);
+  };
+
+  useEffect(() => {
+    // Apply keyword filter when searchedKeyword changes
+    applyKeywordFilter();
+  }, [rowData, searchedKeyword]);
+
   return (
     <>
       {loading ? (
@@ -789,7 +818,7 @@ const Preclaims = ({ status }) => {
                 <AgGridReact
                   paginationPageSize={pageSize}
                   //  pagination={true}
-                  rowData={rowData}
+                  rowData={filteredData}
                   columnDefs={colDefs}
                   rowSelection="multiple"
                   onSelectionChanged={onSelectionChanged}

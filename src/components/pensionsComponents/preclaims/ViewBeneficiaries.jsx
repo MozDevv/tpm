@@ -53,6 +53,10 @@ function ViewBeneficiaries({
       field: "other_name",
     },
     {
+      headerName: "Percentage",
+      field: "percentage",
+    },
+    {
       headerName: "Age",
       field: "age",
     },

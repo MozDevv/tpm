@@ -211,12 +211,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                 <h5 className="text-xl font-semibold ml-4 text-primary"></h5>
               </div>
               <div className="flex gap-8 mr-4">
-                <button
-                  className="bg-gray-200 text-primary text-sm font-medium px-4 py-2 rounded-md"
-                  onClick={() => setOpenDialog(true)}
-                >
-                  Cancel
-                </button>
+                <button onClick={() => setOpenDialog(true)}></button>
                 <button
                   className="bg-primary text-sm font-medium text-white px-4 py-2 rounded-md"
                   type="submit"
@@ -489,11 +484,20 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           onChange={(e) => setDesignationId(e.target.value)}
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         >
-                          {designations.map((designation) => (
-                            <option key={designation.id} value={designation.id}>
-                              {designation.name}
-                            </option>
-                          ))}{" "}
+                          {designations
+
+                            .filter(
+                              (designation) =>
+                                designation.mda_id === selectedMDA
+                            )
+                            .map((designation) => (
+                              <option
+                                key={designation.id}
+                                value={designation.id}
+                              >
+                                {designation.name}
+                              </option>
+                            ))}{" "}
                         </select>
                       </div>
                       <div className="flex flex-col mt-[-15px]">
@@ -528,7 +532,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                     <hr className="flex-grow border-blue-500 border-opacity-20" />
                   </div>
                   <div className="flex gap-4 px-4">
-                    <div className="flex justify-evenly w-1/3 px-3 ml-1">
+                    <div className="flex justify-evenly w-1/3 pl-4 pr-5 ml-1">
                       <div className="flex flex-col flex-1">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                           Email Address
@@ -550,7 +554,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                       </div>
                     </div>
 
-                    <div className="flex justify-evenly w-1/3 px-3 ml-1">
+                    <div className="flex justify-evenly w-1/3 pl-2 pr-7">
                       <div className="flex flex-col flex-1">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
                           Phone Number

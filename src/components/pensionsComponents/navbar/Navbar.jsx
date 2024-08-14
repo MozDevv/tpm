@@ -34,6 +34,7 @@ import NotificationMenu from "./NotificationMenu";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { BASE_CORE_API } from "@/utils/constants";
+import { useSearch } from "@/context/SearchContext";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -86,6 +87,8 @@ function Navbar() {
     router.push("/");
   };
 
+  const { searchedKeyword, setSearchedKeyword } = useSearch();
+
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
@@ -100,6 +103,7 @@ function Navbar() {
           <div>
             <TextField
               type="text"
+              onChange={(e) => setSearchedKeyword(e.target.value)}
               size="small"
               sx={{
                 "&.MuiOutlinedInput-root": {
@@ -184,7 +188,7 @@ function Navbar() {
                     fontWeight: 700,
                   }}
                 >
-                  {auth?.user?.name.split(" ")[0]}
+                  {auth?.user?.name?.split(" ")[0]}
                 </h6>
               </Box>
               <h6

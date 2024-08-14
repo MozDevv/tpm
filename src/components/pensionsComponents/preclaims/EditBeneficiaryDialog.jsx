@@ -37,13 +37,14 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary }) {
     { label: "First Name", name: "first_name", type: "text" },
     { label: "Surname", name: "surname", type: "text" },
     { label: "Identification Number", name: "identifier", type: "text" },
-    { label: "Identifier Type", name: "identifier_type", type: "text" },
+
     { label: "National ID", name: "national_id", type: "text" },
     { label: "Email Address", name: "email_address", type: "email" },
     { label: "Phone", name: "mobile_number", type: "text" },
     { label: "Address", name: "address", type: "text" },
     { label: "City", name: "city", type: "text" },
     { label: "Date of Birth", name: "dob", type: "date" },
+    { label: "Percentage", name: "percentage", type: "number" },
     { label: "Date of Death", name: "date_of_death", type: "date" },
     { label: "Guardian Surname", name: ["guardian", "surname"], type: "text" },
     {

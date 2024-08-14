@@ -11,6 +11,7 @@ import { AlertProvider } from "@/context/AlertContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { MdaProvider } from "@/context/MdaContext";
 import { RetireeIdProvider } from "@/context/RetireeContext";
+import { SearchContext, SearchContextProvider } from "@/context/SearchContext";
 
 export const metadata = {
   title: "TPMIS",
@@ -34,9 +35,9 @@ export default function RootLayout({ children }) {
               <RetireeIdProvider>
                 <SelectedItemProvider>
                   <ThemeProvider theme={baselightTheme}>
-                    <AlertProvider>
-                      <Suspense fallback={<Spinner />}> {children}</Suspense>
-                    </AlertProvider>
+                    <SearchContextProvider>
+                      <AlertProvider>{children}</AlertProvider>
+                    </SearchContextProvider>
                   </ThemeProvider>
                 </SelectedItemProvider>
               </RetireeIdProvider>
