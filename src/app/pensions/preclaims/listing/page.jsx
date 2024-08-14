@@ -9,7 +9,7 @@ function page() {
   return (
     <div>
       <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
-        Retiree List
+        Retiree Listi
       </div>
       <CustomBreadcrumbsList currentTitle="Retirees List" />
       <Preclaims />
