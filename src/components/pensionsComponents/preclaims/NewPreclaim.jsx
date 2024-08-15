@@ -723,7 +723,7 @@ function NewPreclaim({
         },
         {
           label: "Retirement Date",
-          name: "authority_for_retirement_dated",
+          name: "retirement_date",
           type: "date",
         },
         {
@@ -733,7 +733,7 @@ function NewPreclaim({
         },
         {
           label: "Last Pay Date",
-          name: "retirement_date",
+          name: "last_pay_date",
           type: "date",
         },
 
@@ -936,30 +936,33 @@ function NewPreclaim({
     }
   };
 
-  // useEffect(() => {
-  //   if (formData.retirement_date) {
-  //     const lastPayDate = dayjs(formData.retirement_date);
-  //     const nextDay = lastPayDate.add(1, "day").format("YYYY-MM-DD");
-  //     setFormData({
-  //       ...formData,
-  //       date_from_which_pension_will_commence: nextDay,
-  //     });
-  //   }
-  // }, [formData.retirement_date]);
   useEffect(() => {
-    if (formData.authority_for_retirement_dated) {
-      const authority_for_retirement_dated = dayjs(
-        formData.authority_for_retirement_dated
-      );
-      const nextDay = authority_for_retirement_dated
-        .add(1, "day")
-        .format("YYYY-MM-DD");
+    if (formData.retirement_date) {
+      const lastPayDate = dayjs(formData.retirement_date);
+      const nextDay = lastPayDate.add(1, "day").format("YYYY-MM-DD");
       setFormData({
         ...formData,
         date_from_which_pension_will_commence: nextDay,
       });
     }
-  }, [formData.authority_for_retirement_dated]);
+  }, [
+    formData.retirement_date,
+    formData.date_from_which_pension_will_commence,
+  ]);
+  // useEffect(() => {
+  //   if (formData.authority_for_retirement_dated) {
+  //     const authority_for_retirement_dated = dayjs(
+  //       formData.authority_for_retirement_dated
+  //     );
+  //     const nextDay = authority_for_retirement_dated
+  //       .add(1, "day")
+  //       .format("YYYY-MM-DD");
+  //     setFormData({
+  //       ...formData,
+  //       date_from_which_pension_will_commence: nextDay,
+  //     });
+  //   }
+  // }, [formData.authority_for_retirement_dated]);
 
   // useEffect(() => {
   //   if (formData.dob) {
@@ -1136,23 +1139,23 @@ function NewPreclaim({
                                       ) || null
                                     }
                                   />
-                                ) : field.type === "date" ? (
-                                  <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                    adapterLocale="en-au" // Use the locale here
-                                  >
-                                    <TextField
-                                      name={field.name}
-                                      type="date"
-                                      variant="outlined"
-                                      size="small"
-                                      error={!!errors[field.name]}
-                                      helperText={errors[field.name]}
-                                      onChange={handleInputChange}
-                                      fullWidth
-                                    />
-                                  </LocalizationProvider>
                                 ) : (
+                                  // ) : field.type === "date" ? (
+                                  //   <LocalizationProvider
+                                  //     dateAdapter={AdapterDayjs}
+                                  //     adapterLocale="en-au" // Use the locale here
+                                  //   >
+                                  //     <TextField
+                                  //       name={field.name}
+                                  //       type="date"
+                                  //       variant="outlined"
+                                  //       size="small"
+                                  //       error={!!errors[field.name]}
+                                  //       helperText={errors[field.name]}
+                                  //       onChange={handleInputChange}
+                                  //       fullWidth
+                                  //     />
+                                  //   </LocalizationProvider>
                                   <TextField
                                     type={field.type}
                                     name={field.name}

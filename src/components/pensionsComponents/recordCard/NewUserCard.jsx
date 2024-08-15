@@ -34,8 +34,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
     if (!userData.firstName) formErrors.firstName = "First Name is required";
     if (!userData.lastName) formErrors.lastName = "Last Name is required";
-    if (!userData.employeeNumber)
+    if (!userData.employeeNumber) {
       formErrors.employeeNumber = "Employee Number is required";
+    } else if (isNaN(userData.employeeNumber)) {
+      message.error("Employee Number must be a number");
+      formErrors.employeeNumber = "Employee Number must be a number";
+    }
+
     if (!userData.id_number) formErrors.id_number = "Id Number is required";
     if (!userData.phoneNumber)
       formErrors.phoneNumber = "Phone Number is required";
@@ -371,10 +376,15 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           <div className="text-red-600 text-base mt-[3px]"></div>
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           name="employeeNumber"
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         />
+                        {errors.employeeNumber && (
+                          <div className="text-red-600 text-sm mt-[1px]">
+                            {errors.employeeNumber}
+                          </div>
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
