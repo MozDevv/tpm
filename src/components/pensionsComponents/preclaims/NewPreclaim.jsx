@@ -694,9 +694,24 @@ function NewPreclaim({
           name: "pension_award_id",
           type: "select",
           children:
-            mdaId && activePensionCap
+            mdaId && activePensionCap && formData.mortality_status === 1
               ? pensionAwards
                   .filter((award) => award.pensionCap.id === activePensionCap)
+
+                  .map((award) => ({
+                    id: award.id,
+                    name: award.name,
+                  }))
+              : mdaId && activePensionCap && formData.mortality_status === 2
+              ? pensionAwards
+                  .filter((award) => award.pensionCap.id === activePensionCap)
+                  .filter(
+                    (award) =>
+                      award.name !== "DEATH GRATUITY" &&
+                      award.name !== "DEATH IN SERVICE" &&
+                      award.name !== "KILLED ON DUTY"
+                  )
+
                   .map((award) => ({
                     id: award.id,
                     name: award.name,
