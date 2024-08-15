@@ -811,10 +811,11 @@ function NewPreclaim({
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (
-        formData[key] === undefined ||
-        formData[key] === null ||
-        formData[key] === "" ||
-        formData[key] === false
+        key !== "other_name" &&
+        (formData[key] === undefined ||
+          formData[key] === null ||
+          formData[key] === "" ||
+          formData[key] === false)
       ) {
         newErrors[key] = "This field is required";
       }

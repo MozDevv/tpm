@@ -101,10 +101,11 @@ export const colDefs = [
     filter: true,
   },
   {
-    headerName: "Other Name",
-    field: "other_name",
+    headerName: "Surname",
+    field: "surname",
     width: 150,
   },
+
   {
     headerName: "Email Address",
     field: "email_address",
@@ -163,11 +164,6 @@ export const colDefs = [
     field: "personal_number",
     width: 180,
   },
-  {
-    headerName: "Surname",
-    field: "surname",
-    width: 150,
-  },
 
   {
     headerName: "Pension Award",
@@ -177,6 +173,11 @@ export const colDefs = [
   {
     headerName: "Name",
     field: "name",
+    width: 150,
+  },
+  {
+    headerName: "Other Name",
+    field: "other_name",
     width: 150,
   },
   {
@@ -259,21 +260,7 @@ export const colDefs = [
     field: "pensionAward_description",
     width: 250,
   },
-  {
-    headerName: "Pension Award Start Date",
-    field: "pensionAward_start_date",
-    width: 200,
-  },
-  {
-    headerName: "Pension Award End Date",
-    field: "pensionAward_end_date",
-    width: 200,
-  },
-  {
-    headerName: "Pension Award Pension Cap Code",
-    field: "pensionAward_pensionCap_code",
-    width: 250,
-  },
+
   {
     headerName: "Pension Award Pension Cap Name",
     field: "pensionAward_pensionCap_name",
