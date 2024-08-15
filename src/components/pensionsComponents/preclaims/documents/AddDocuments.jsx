@@ -43,8 +43,12 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
         );
 
       //  .filter((doc) => !doc.pensioner_upload) || [];
+      const sortedDocuments = documents.sort(
+        (a, b) => a.pensioner_upload - b.pensioner_upload
+      );
 
-      setAwardDocuments(documents);
+      setAwardDocuments(sortedDocuments);
+      // setAwardDocuments(documents);
     } catch (error) {
       console.log("Error fetching award documents:", error);
       //message.error("Failed to fetch award documents.");
@@ -176,14 +180,18 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
       render: (_, record) =>
         record.edms_id ? (
           record.pensioner_upload ? (
-            <Button sx={{ color: "green", fontSize: "12px" }}>
+            <Button sx={{ color: "green", fontSize: "12px", fontWeight: 500 }}>
               Uploaded by retiree
             </Button>
           ) : (
-            <Button sx={{ fontSize: "12px" }}>Uploaded by MDA user</Button>
+            <Button sx={{ fontSize: "12px", fontWeight: 500 }}>
+              Uploaded by MDA user
+            </Button>
           )
         ) : (
-          <Button sx={{ color: "red", fontSize: "12px" }}>Not Uploaded</Button>
+          <Button sx={{ color: "red", fontSize: "12px", fontWeight: 500 }}>
+            Not Uploaded
+          </Button>
         ),
     },
     {
@@ -220,7 +228,7 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             size="small"
             disabled={record.pensioner_upload}
           >
-            Select File
+            {record.edms_id ? "Update File" : "Select File"}
           </Button>
         </Upload>
       ),
