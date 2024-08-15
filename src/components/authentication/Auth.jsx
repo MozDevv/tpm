@@ -80,16 +80,17 @@ function Auth() {
         router.push("/pensions");
       }
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error?.response?.data?.message);
 
       // Handle login errors
-      if (error.response.data.message === "Wrong username or password") {
+      if (error?.response?.data?.message === "Wrong username or password") {
         setErrors({
           status: true,
           message: "Incorrect Username or Password. Please try again!",
         });
       } else if (
-        error.response.data.message === "Please change your password to LogIn"
+        error?.response?.data?.message ===
+        "Please change your password to LogIn"
       ) {
         await handleResetPassword();
         // alert("Please reset your password before proceeding");
@@ -98,11 +99,17 @@ function Auth() {
           status: false,
           message: "",
         });
+      } else if (
+        error?.response?.status === 502 ||
+        error?.response?.status === 503
+      ) {
+        message.error("Service Unavailable, Please try again later");
+      } else if (error?.response?.status === 404) {
+        message.error("Resource not found");
+      } else if (error?.response?.status === 401) {
+        message.error("Unauthorized access");
       } else {
-        setErrors({
-          status: true,
-          message: "An unexpected error occured! Please try again.",
-        });
+        message.error("An unexpected error occurred, Please try again later");
       }
     } finally {
       setLoading(false);
