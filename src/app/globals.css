@@ -50,3 +50,6 @@ a:hover {
 .ag-theme-quartz {
   --ag-selected-row-background-color: #b2e9ede4;
 }
+.ant-spin-dot-item {
+  color: #006990 !important;
+}

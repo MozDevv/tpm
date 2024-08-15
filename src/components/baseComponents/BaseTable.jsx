@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { FilterList, SortByAlpha } from "@mui/icons-material";
 import BaseCard from "./BaseCard";
 import { useSearch } from "@/context/SearchContext";
+import BaseLoadingOverlay from "./BaseLoadingOverlay";
 
 const BaseTable = ({
   columnDefs,
@@ -172,6 +173,10 @@ const BaseTable = ({
     // Apply keyword filter when searchedKeyword changes
     applyKeywordFilter();
   }, [rowData, searchedKeyword]);
+
+  const loadingOverlayComponentParams = useMemo(() => {
+    return { loadingMessage: "Loading..." };
+  }, []);
 
   return (
     <div>
@@ -334,6 +339,8 @@ const BaseTable = ({
               pagination={false}
               domLayout="autoHeight"
               alwaysShowHorizontalScroll={true}
+              loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+              loadingOverlayComponentParams={loadingOverlayComponentParams}
               // paginationPageSize={pageSize}
               onGridReady={(params) => {
                 params.api.sizeColumnsToFit();

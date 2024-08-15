@@ -273,17 +273,17 @@ function NewPreclaim({
       if (retirementAuthorityDate.isAfter(dayjs())) {
         error = "Date of authority of retirement should not exceed today";
       }
-    } else if (
-      name === "retirement_date" &&
-      value &&
-      formData.authority_for_retirement_dated
-    ) {
-      const authorityDate = dayjs(formData.authority_for_retirement_dated);
-      const retirementDate = dayjs(value);
-      if (retirementDate.isBefore(authorityDate)) {
-        error =
-          "Date of last pay cannot be before the date of authority of retirement";
-      }
+      // } else if (
+      //   name === "retirement_date" &&
+      //   value &&
+      //   formData.authority_for_retirement_dated
+      // ) {
+      //   const authorityDate = dayjs(formData.authority_for_retirement_dated);
+      //   const retirementDate = dayjs(value);
+      //   if (retirementDate.isBefore(authorityDate)) {
+      //     error =
+      //       "Date of last pay cannot be before the date of authority of retirement";
+      //   }
       // } else if (
       //   name === "date_from_which_pension_will_commence" &&
       //   value &&
@@ -754,7 +754,8 @@ function NewPreclaim({
         },
         {
           label: "Last Pay Date",
-          name: "authority_for_retirement_dated",
+          name: "last_pay_date",
+          // name: "authority_for_retirement_dated",
           type: "date",
         },
 
@@ -967,10 +968,7 @@ function NewPreclaim({
         date_from_which_pension_will_commence: nextDay,
       });
     }
-  }, [
-    formData.retirement_date,
-    formData.date_from_which_pension_will_commence,
-  ]);
+  }, [formData.retirement_date]);
   // useEffect(() => {
   //   if (formData.authority_for_retirement_dated) {
   //     const authority_for_retirement_dated = dayjs(

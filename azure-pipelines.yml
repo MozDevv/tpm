@@ -32,9 +32,9 @@ steps:
 
         git pull
 
-
-
-        sudo docker image prune -af
+        # Install the latest dependencies
+        npm install
+        
 
         # Build the Docker image
         sudo docker build -t pmis .
@@ -45,6 +45,8 @@ steps:
 
         # Run the new Docker container
         sudo docker run --name pmis-core -p 4000:3000 -d pmis
+
+        sudo docker image prune -af
 
         sudo systemctl restart nginx
 

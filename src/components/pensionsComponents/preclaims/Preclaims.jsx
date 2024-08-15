@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -49,6 +49,8 @@ import ListNavigation from "@/components/baseComponents/ListNavigation";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import CreateProspectivePensioner from "./createProspective/CreateProspectivePensioner";
 import { useSearch } from "@/context/SearchContext";
+import { Spin } from "antd";
+import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -620,6 +622,10 @@ const Preclaims = ({ status }) => {
     applyKeywordFilter();
   }, [rowData, searchedKeyword]);
 
+  const loadingOverlayComponentParams = useMemo(() => {
+    return { loadingMessage: "Loading NOT..." };
+  }, []);
+
   return (
     <>
       {loading ? (
@@ -804,6 +810,8 @@ const Preclaims = ({ status }) => {
               >
                 <AgGridReact
                   paginationPageSize={pageSize}
+                  loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+                  loadingOverlayComponentParams={loadingOverlayComponentParams}
                   //  pagination={true}
                   rowData={filteredData}
                   columnDefs={colDefs}
