@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, DialogContent, DialogActions } from "@mui/material";
+import { DialogContent } from "@mui/material";
 import EditBeneficiaryDialog from "./EditBeneficiaryDialog";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -17,14 +17,26 @@ function ViewBeneficiaries({
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [beneficiaries, setBeneficiaries] = useState([]);
+  const [guardians, setGuardians] = useState([]);
 
   const getBeneficiaries = async () => {
     try {
       const res = await apiService.get(
-        preClaimsEndpoints.getBeneficiaries(clickedItem.id)
+        "https://tntportalapi.agilebiz.co.ke/portal/getBeneficiaries/03a7bc99-d03c-4fa1-905c-887792c4eb60"
       );
 
-      setBeneficiaries(res.data.data);
+      const beneficiariesData = res.data;
+
+      // Collect guardians from all children arrays
+      const guardiansData = beneficiariesData.reduce((acc, item) => {
+        if (item.children && Array.isArray(item.children)) {
+          return acc.concat(item.children);
+        }
+        return acc;
+      }, []);
+
+      setBeneficiaries(beneficiariesData);
+      setGuardians(guardiansData);
     } catch (error) {
       console.log(error);
     }
@@ -35,39 +47,21 @@ function ViewBeneficiaries({
   }, [clickedItem]);
 
   const columnDefs = [
-    {
-      headerName: "Relationship",
-      field: "relationship.name",
-      pinnned: "left",
-    },
-    {
-      headerName: "Surname",
-      field: "surname",
-    },
-    {
-      headerName: "First Name",
-      field: "first_name",
-    },
-    {
-      headerName: "Other Name",
-      field: "other_name",
-    },
-    {
-      headerName: "Percentage",
-      field: "percentage",
-    },
-    {
-      headerName: "Age",
-      field: "age",
-    },
+    { headerName: "Relationship", field: "relationship" },
+    { headerName: "Surname", field: "surname" },
+    { headerName: "First Name", field: "first_name" },
+    { headerName: "Other Name", field: "other_name" },
+    { headerName: "Percentage", field: "share_percentage" },
+    { headerName: "Age", field: "age" },
     {
       headerName: "Date of Birth",
-      field: "dob",
-      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+      field: "date_of_birth",
+      valueFormatter: (params) =>
+        params.value ? new Date(params.value).toLocaleDateString() : "N/A",
     },
     {
       headerName: "Date of Death",
-      field: "date_of_death",
+      field: "deceased",
       valueFormatter: (params) =>
         params.value ? new Date(params.value).toLocaleDateString() : "N/A",
     },
@@ -78,11 +72,11 @@ function ViewBeneficiaries({
     setEditDialogOpen(true);
   };
 
+  const [isGuardian, setIsGuardian] = useState(false);
+
   return (
     <>
-      <p className="text-primary my-5 text-lg px-6 font-bold">
-        Beneficiaries & Guardians
-      </p>
+      <p className="text-primary my-5 text-lg px-6 font-bold">Beneficiaries</p>
       <DialogContent>
         <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
           <AgGridReact
@@ -95,23 +89,30 @@ function ViewBeneficiaries({
           />
         </div>
       </DialogContent>
-      {/* <DialogActions>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#f00",
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#f00",
-            },
-          }}
-          onClick={() => setViewBeneficiaries(false)}
-        >
-          Close
-        </Button>
-      </DialogActions> */}
+
+      <p className="text-primary mt-[-40px] text-lg px-6 font-bold">
+        Guardians
+      </p>
+      <DialogContent>
+        <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
+          <AgGridReact
+            rowData={guardians}
+            columnDefs={columnDefs}
+            domLayout="autoHeight"
+            pagination={false}
+            rowSelection="single"
+            onRowClicked={(e) => {
+              setIsGuardian(true);
+              setSelectedBeneficiary(e.data);
+              setEditDialogOpen(true);
+            }}
+          />
+        </div>
+      </DialogContent>
+
       <EditBeneficiaryDialog
         open={editDialogOpen}
+        isGuardian={isGuardian}
         onClose={() => setEditDialogOpen(false)}
         beneficiary={selectedBeneficiary}
       />

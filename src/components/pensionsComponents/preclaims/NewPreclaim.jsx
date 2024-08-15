@@ -819,8 +819,14 @@ function NewPreclaim({
           formData[key] === false)
       ) {
         newErrors[key] = "This field is required";
+        message.error(`This field is required: ${key}`);
       }
     });
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
     Object.keys(formData).forEach((key) => {
       const error = validateField(key, formData[key], formData);
       if (error) {
