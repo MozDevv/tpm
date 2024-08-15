@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 
 const AddDocuments = ({ id, moveToPreviousTab }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
+
+  //const [awardDocumentsFromPortal, setAwardDocumentsFromPortal] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewContent, setPreviewContent] = useState(null);
@@ -25,8 +27,8 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
         preClaimsEndpoints.getAwardDocuments(id)
       );
       const documents =
-        res.data?.data[0]?.prospectivePensionerDocumentSelections
-          ?.map((selection) => ({
+        res.data?.data[0]?.prospectivePensionerDocumentSelections?.map(
+          (selection) => ({
             id: selection.id,
             name: selection.documentType.name,
             description: selection.documentType.description,
@@ -37,9 +39,10 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             side: selection.side,
             has_two_sides: selection.documentType.has_two_sides,
             uploadedDetails: selection?.uploadedDocumentDetails?.document_name,
-          }))
+          })
+        );
 
-          .filter((doc) => !doc.pensioner_upload) || [];
+      //  .filter((doc) => !doc.pensioner_upload) || [];
 
       setAwardDocuments(documents);
     } catch (error) {
@@ -172,7 +175,13 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
       key: "uploaded",
       render: (_, record) =>
         record.edms_id ? (
-          <Button sx={{ color: "green", fontSize: "12px" }}>Uploaded</Button>
+          record.pensioner_upload ? (
+            <Button sx={{ color: "green", fontSize: "12px" }}>
+              Uploaded by retiree
+            </Button>
+          ) : (
+            <Button sx={{ fontSize: "12px" }}>Uploaded by MDA user</Button>
+          )
         ) : (
           <Button sx={{ color: "red", fontSize: "12px" }}>Not Uploaded</Button>
         ),
@@ -182,6 +191,18 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
       dataIndex: "extensions",
       key: "extensions",
     },
+    // {
+    //   title: "Uploaded By",
+    //   dataIndex: "pensioner_upload",
+    //   key: "uploaded",
+    //   render: (_, record) =>
+    //     record.pensioner_upload ? (
+    //       <Button sx={{ fontSize: "12px" }}>Uploaded By Retiree</Button>
+    //     ) : (
+    //       <Button sx={{ color: "red", fontSize: "12px" }}></Button>
+    //     ),
+    // },
+
     {
       title: "Select File",
       dataIndex: "select",
@@ -191,11 +212,13 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
           name="file"
           showUploadList={false}
           onChange={(info) => handleChange(info, record)}
+          disabled={record.pensioner_upload}
         >
           <Button
             startIcon={<UploadOutlined />}
             variant="outlined"
             size="small"
+            disabled={record.pensioner_upload}
           >
             Select File
           </Button>
@@ -274,6 +297,44 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             dataSource={awardDocuments}
             pagination={false}
             scroll={{ x: "max-content" }}
+            style={{
+              borderCollapse: "collapse",
+            }}
+            components={{
+              header: {
+                cell: (props) => (
+                  <th
+                    {...props}
+                    style={{
+                      ...props.style,
+                      // Header background color
+                      color: "#333", // Header text color
+                      fontWeight: "bold", // Header font weight
+                    }}
+                  />
+                ),
+              },
+              body: {
+                row: (props) => (
+                  <tr
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: "40px", // Adjust row height
+                    }}
+                  />
+                ),
+                cell: (props) => (
+                  <td
+                    {...props}
+                    style={{
+                      ...props.style,
+                      padding: "8px", // Adjust cell padding
+                    }}
+                  />
+                ),
+              },
+            }}
           />
           <Modal
             visible={previewVisible}

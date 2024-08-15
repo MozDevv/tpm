@@ -520,12 +520,12 @@ function NewPreclaim({
           type: "select",
           children: [
             {
-              id: 1,
-              name: "Yes",
-            },
-            {
               id: 2,
               name: "No",
+            },
+            {
+              id: 1,
+              name: "Yes",
             },
           ],
         },
