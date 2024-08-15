@@ -697,6 +697,12 @@ function NewPreclaim({
             mdaId && activePensionCap && formData.mortality_status === 1
               ? pensionAwards
                   .filter((award) => award.pensionCap.id === activePensionCap)
+                  .filter(
+                    (award) =>
+                      award.name === "DEATH GRATUITY" ||
+                      award.name === "DEATH IN SERVICE" ||
+                      award.name === "KILLED ON DUTY"
+                  )
 
                   .map((award) => ({
                     id: award.id,
@@ -748,7 +754,7 @@ function NewPreclaim({
         },
         {
           label: "Last Pay Date",
-          name: "last_pay_date",
+          name: "authority_for_retirement_dated",
           type: "date",
         },
 
