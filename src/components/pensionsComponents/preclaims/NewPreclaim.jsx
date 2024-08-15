@@ -754,8 +754,8 @@ function NewPreclaim({
         },
         {
           label: "Last Pay Date",
-          name: "last_pay_date",
-          // name: "authority_for_retirement_dated",
+          // name: "last_pay_date",
+          name: "authority_for_retirement_dated",
           type: "date",
         },
 
