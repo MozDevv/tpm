@@ -470,7 +470,7 @@ function MixedServicePost({ id, loading, setLoading }) {
               <TableRow key={item.id}>
                 <TableCell>{dayjs(item.date).format("DD/MM/YYYY")}</TableCell>
                 <TableCell>
-                  {dayjs(item.end_date).format("DD/MM/YYYY")}
+                  {dayjs(item.enddate).format("DD/MM/YYYY")}
                 </TableCell>
                 <TableCell>{item.post}</TableCell>
                 <TableCell>{item.was_pensionable ? "Yes" : "No"}</TableCell>

@@ -11,7 +11,8 @@ import {
   MenuItem,
   Autocomplete,
 } from "@mui/material";
-import { ExpandLess, KeyboardArrowRight } from "@mui/icons-material";
+import { ExpandLess, KeyboardArrowRight, Launch } from "@mui/icons-material";
+import { Modal } from "antd";
 
 function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
   const [formData, setFormData] = React.useState(beneficiary || {});
@@ -87,11 +88,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
       { label: "Guardian City", name: ["guardian", "city"], type: "text" },
 
       { label: "Timestamp", name: "timestamp", type: "text" },
-      {
-        label: "Birth Certificate Number",
-        name: "birth_cert_no",
-        type: "text",
-      },
+
       // { label: "Preview URL", name: "preview_url", type: "text" },
       { label: "Share Percentage", name: "share_percentage", type: "number" },
       {
@@ -112,6 +109,11 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
       { label: "Is Guardian", name: "is_guardian", type: "text" },
 
       { label: "Deceased", name: "deceased", type: "text" },
+      {
+        label: "Birth Certificate Number",
+        name: "birth_cert_no",
+        type: "text",
+      },
     ],
     paymentDetails: [
       { label: "Bank", name: "bank", type: "text" },
@@ -126,6 +128,42 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
       ...prevSections,
       [section]: !prevSections[section],
     }));
+  };
+
+  const [previewVisible, setPreviewVisible] = React.useState(false);
+  const [previewContent, setPreviewContent] = React.useState(null);
+  const [previewTitle, setPreviewTitle] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+
+  const handlePreviewBirthCertificate = async () => {
+    if (!formData.birth_cert_no) return;
+
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `https://your-api-endpoint/getBirthCertificate?birth_cert_no=${formData.birth_cert_no}`
+      );
+      const base64Data = res.data?.base64Data; // Adjust this based on your API response
+      if (base64Data) {
+        setPreviewContent(
+          <embed
+            src={`data:application/pdf;base64,${base64Data}`}
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          />
+        );
+        setPreviewTitle("Birth Certificate");
+        setPreviewVisible(true);
+      } else {
+        alert("No preview available for this document.");
+      }
+    } catch (error) {
+      console.error("Error fetching birth certificate:", error);
+      alert("Failed to fetch birth certificate.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -243,14 +281,41 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
                       </div>
                     );
                   })}
+
+                  {formData.birth_cert_no &&
+                    sectionKey === "personalDetails" && (
+                      <Button
+                        startIcon={<Launch />}
+                        variant="outlined"
+                        onClick={handlePreviewBirthCertificate}
+                        size="small"
+                        sx={{ mt: 2 }}
+                      >
+                        Preview Birth Certificate
+                      </Button>
+                    )}
                 </div>
               </Collapse>
             </div>
           ))}
         </DialogContent>
+
+        {/* Modal for Preview */}
+        <Modal
+          open={previewVisible}
+          onClose={() => setPreviewVisible(false)}
+          title={previewTitle}
+          footer={null}
+          width="80%"
+          bodyStyle={{ height: 1000, overflowY: "auto" }}
+          style={{ top: 20, height: 850, overflowY: "auto", zIndex: 2000 }}
+        >
+          {loading ? <div>Loading...</div> : previewContent}
+        </Modal>
+
         <DialogActions>
           <Button onClick={onClose} variant="contained" color="error">
-            Cancel
+            Close
           </Button>
           {/* <Button onClick={handleSave} variant="contained" color="primary">
             Save

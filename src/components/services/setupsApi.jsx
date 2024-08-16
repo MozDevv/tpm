@@ -14,6 +14,8 @@ const endpoints = {
   //PENSION-CAPS
   pensionCaps: "/api/Setups/GetPensionCaps",
 
+  getExitGrounds: "/api/Setups/GetExitGround",
+
   //getGrades
   getGrades: (id) => `/api/Setups/GetGradeSetups?designationId=${id}`,
 

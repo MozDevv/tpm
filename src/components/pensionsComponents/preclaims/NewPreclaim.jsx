@@ -123,6 +123,7 @@ function NewPreclaim({
         last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
         last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
         disability_status: retiree?.disability_status ?? "",
+        exit_grounds: retiree?.exit_grounds ?? "",
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
         tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
@@ -190,6 +191,7 @@ function NewPreclaim({
     last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
     disability_status: retiree?.disability_status ?? "",
     tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
+    exit_grounds: retiree?.exit_grounds ?? "",
     tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
       ? new Date(retiree.tax_exempt_certificate_date)
           .toISOString()
@@ -360,6 +362,44 @@ function NewPreclaim({
   //   }
   // };
 
+  // children:
+  // mdaId && activePensionCap && formData.mortality_status === 1
+  //   ? pensionAwardsData
+  //       .filter((award) => award.pensionCap.id === activePensionCap)
+  //       .filter(
+  //         (award) =>
+  //           award.name === "DEATH GRATUITY" ||
+  //           award.name === "DEATH IN SERVICE" ||
+  //           award.name === "KILLED ON DUTY"
+  //       )
+
+  //       .map((award) => ({
+  //         id: award.id,
+  //         name: award.name,
+  //       }))
+  //   : mdaId && activePensionCap && formData.mortality_status === 2
+  //   ? pensionAwardsData
+  //       .filter((award) => award.pensionCap.id === activePensionCap)
+  //       .filter(
+  //         (award) =>
+  //           award.name !== "DEATH GRATUITY" &&
+  //           award.name !== "DEATH IN SERVICE" &&
+  //           award.name !== "KILLED ON DUTY"
+  //       )
+
+  //       .map((award) => ({
+  //         id: award.id,
+  //         name: award.name,
+  //       }))
+  //   ?pensionAwardsData.map((award) => ({
+  //       id: award.id,
+  //       name: award.name,
+  //     })),
+  //   : pensionAwardsData.map((award) => ({
+  //       id: award.id,
+  //       name: award.name,
+  //     })),
+
   const fetchPensionAwards = async () => {
     try {
       const res = await apiService.get(endpoints.pensionAwards, {
@@ -378,6 +418,7 @@ function NewPreclaim({
   const { alert, setAlert } = useAlert();
   const [designations, setDesignations] = useState([]);
   const [postalAddress, setPostalAddress] = useState([]);
+  const [exitGrounds, setExitGrounds] = useState([]);
   const fetchCountiesAndContituencies = async () => {
     try {
       const res = await apiService.get(endpoints.getCounties, {
@@ -435,6 +476,17 @@ function NewPreclaim({
       setDesignations(res.data.data);
     } catch (error) {
       console.error("Error fetching Designations:", error);
+    }
+  };
+
+  const fetchExitGrounds = async () => {
+    try {
+      const res = await apiService.get(endpoints.getExitGrounds, {
+        "paging.pageSize": 1000,
+      });
+      setExitGrounds(res.data.data);
+    } catch (error) {
+      console.error("Error fetching Exit Grounds:", error);
     }
   };
 
@@ -499,6 +551,7 @@ function NewPreclaim({
   }, [mdaId]);
 
   useEffect(() => {
+    fetchExitGrounds();
     fetchGrades();
     fetchPensionAwards();
     fetchPostalAddress();
@@ -507,6 +560,16 @@ function NewPreclaim({
     fetchCountries();
     fetchDesignations();
   }, []);
+
+  const [pensionAwardsData, setPensionAwardsData] = useState([]);
+
+  useEffect(() => {
+    const filteredExitGrounds = exitGrounds.filter(
+      (exitGround) => exitGround.id === formData.exit_grounds
+    );
+
+    setPensionAwardsData(filteredExitGrounds);
+  }, [formData.exit_grounds]);
 
   const sections = [
     {
@@ -713,38 +776,28 @@ function NewPreclaim({
       state: useState(true),
       fields: [
         {
+          label: "Exit Ground",
+          name: "exit_grounds",
+          type: "select",
+          children: exitGrounds.map((exitGround) => ({
+            id: exitGround.id,
+            name: exitGround.name,
+          })),
+        },
+        {
           label: "Pension Award",
           name: "pension_award_id",
           type: "select",
           children:
-            mdaId && activePensionCap && formData.mortality_status === 1
-              ? pensionAwards
-                  .filter((award) => award.pensionCap.id === activePensionCap)
-                  .filter(
-                    (award) =>
-                      award.name === "DEATH GRATUITY" ||
-                      award.name === "DEATH IN SERVICE" ||
-                      award.name === "KILLED ON DUTY"
+            exitGrounds.length > 0
+              ? exitGrounds
+                  .filter((grounds) => grounds.id === formData.exit_grounds)
+                  .flatMap((grounds) =>
+                    grounds.pensionAwards.map((award) => ({
+                      id: award.id,
+                      name: award.name,
+                    }))
                   )
-
-                  .map((award) => ({
-                    id: award.id,
-                    name: award.name,
-                  }))
-              : mdaId && activePensionCap && formData.mortality_status === 2
-              ? pensionAwards
-                  .filter((award) => award.pensionCap.id === activePensionCap)
-                  .filter(
-                    (award) =>
-                      award.name !== "DEATH GRATUITY" &&
-                      award.name !== "DEATH IN SERVICE" &&
-                      award.name !== "KILLED ON DUTY"
-                  )
-
-                  .map((award) => ({
-                    id: award.id,
-                    name: award.name,
-                  }))
               : pensionAwards.map((award) => ({
                   id: award.id,
                   name: award.name,
