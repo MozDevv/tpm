@@ -759,11 +759,7 @@ function NewPreclaim({
           name: "date_of_confirmation",
           type: "date",
         },
-        {
-          label: "Authority of retirement Ref No.",
-          name: "authority_for_retirement_reference",
-          type: "text",
-        },
+
         {
           label: "Retirement Date",
           name: "retirement_date",
@@ -774,11 +770,22 @@ function NewPreclaim({
           name: "date_from_which_pension_will_commence",
           type: "date",
         },
-        // {
-        //   label: "Authority for Retirement Dated",
-        //   name: "authority_for_retirement_dated",
-        //   type: "date",
-        // },
+
+        ...(formData.notification_status
+          ? [
+              {
+                label: "Authority of retirement Ref No.",
+                name: "authority_for_retirement_reference",
+                type: "text",
+              },
+              {
+                label: "Authority for Retirement Dated",
+                name: "authority_for_retirement_dated",
+                type: "date",
+              },
+            ]
+          : []),
+
         {
           label: "Last Pay Date",
           name: "last_pay_date",
