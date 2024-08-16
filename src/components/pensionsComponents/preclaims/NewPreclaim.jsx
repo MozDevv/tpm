@@ -121,7 +121,7 @@ function NewPreclaim({
                 .split("T")[0]
             : "",
         last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
-        last_pay_date: retiree?.last_pay_date,
+        last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
         disability_status: retiree?.disability_status ?? "",
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
@@ -187,7 +187,7 @@ function NewPreclaim({
             .split("T")[0]
         : "",
     last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
-    last_pay_date: retiree?.last_pay_date,
+    last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
     disability_status: retiree?.disability_status ?? "",
     tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
     tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
