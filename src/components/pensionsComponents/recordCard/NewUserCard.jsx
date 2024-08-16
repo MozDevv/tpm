@@ -87,7 +87,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       mdaid: selectedMDA, // Include the MDA ID in the user data
       //adminType: selectedAdminType, // Include the admin type in the user data
       isMDA: selectedAdminType === "MDA" ? true : false,
-      idNumber: formData.get("id_number"),
+      idNumber: Number(formData.get("id_number")),
     };
     console.log(userData);
 
