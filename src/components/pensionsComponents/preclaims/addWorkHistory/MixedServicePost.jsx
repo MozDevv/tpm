@@ -153,7 +153,7 @@ function MixedServicePost({ id, loading, setLoading }) {
   const fields = [
     //{label: "Date Of First Appointment", value: "date_of_first_appointment", type: "date"},
     { label: "Start Date", value: "date", type: "date" },
-    { label: "End Date", value: "end_date", type: "date" },
+    { label: "End Date", value: "enddate", type: "date" },
 
     {
       label: "Post",
