@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import PostAndNature from "./PostAndNature";
 import PensionableSalary from "./PensionableSalary";
 import PeriodsOfAbsence from "./PeriodsOfAbscence";
@@ -10,6 +10,7 @@ import { Close } from "@mui/icons-material";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
+import MixedServicePost from "./MixedServicePost";
 
 function AddPensionersWorkHistory({
   id,
@@ -32,6 +33,7 @@ function AddPensionersWorkHistory({
   const [retiree, setRetiree] = useState({});
 
   const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+  const [pensionAward, setPensionAward] = useState(false);
 
   const fetchRetiree = async () => {
     try {
@@ -39,6 +41,9 @@ function AddPensionersWorkHistory({
         preClaimsEndpoints.getProspectivePensioner(id)
       );
       const data = res?.data?.data[0]; // Get the retiree data
+      setPensionAward(
+        res.data.data[0]?.pensionAward?.prefix === "MIXED SERVICE"
+      );
 
       setDateOfFirstAppointment(data.date_of_first_appointment);
       setRetiree(data);
@@ -46,6 +51,10 @@ function AddPensionersWorkHistory({
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchRetiree();
+  }, []);
 
   return (
     <div className="p-2 w-full  max-h-[100vh] overflow-hidden flex flex-col">
@@ -71,12 +80,21 @@ function AddPensionersWorkHistory({
       <hr className="border-[1px] border-black-900 my-2 w-full" />
       <div className="flex-1 overflow-y-auto pb-[200px] max-h-full">
         <Suspense fallback={<Spinner />}>
-          <PostAndNature
-            id={id}
-            loading={loading}
-            setLoading={setLoading}
-            dateOfFirstAppointment={dateOfFirstAppointment}
-          />
+          {pensionAward ? (
+            <MixedServicePost
+              id={id}
+              loading={loading}
+              setLoading={setLoading}
+              dateOfFirstAppointment={dateOfFirstAppointment}
+            />
+          ) : (
+            <PostAndNature
+              id={id}
+              loading={loading}
+              setLoading={setLoading}
+              dateOfFirstAppointment={dateOfFirstAppointment}
+            />
+          )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
           <PensionableSalary id={id} />

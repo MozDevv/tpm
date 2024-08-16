@@ -476,6 +476,11 @@ function NewPreclaim({
 
       const currentCap = userMda?.pensionCap?.id;
 
+      console.log("Current MDA: ********", userMda);
+
+      console.log("Current CAP: ********", currentCap);
+
+      console.log("MDA ID: ********", mdaId);
       // setCurrentMda(userMda);
 
       setActivePensionCap(currentCap);
@@ -769,6 +774,11 @@ function NewPreclaim({
           name: "date_from_which_pension_will_commence",
           type: "date",
         },
+        // {
+        //   label: "Authority for Retirement Dated",
+        //   name: "authority_for_retirement_dated",
+        //   type: "date",
+        // },
         {
           label: "Last Pay Date",
           name: "last_pay_date",
@@ -836,13 +846,9 @@ function NewPreclaim({
           formData[key] === false)
       ) {
         newErrors[key] = "This field is required";
-        message.error(`This field is required: ${key}`);
+        // message.error(`This field is required: ${key}`);
       }
     });
-
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
 
     Object.keys(formData).forEach((key) => {
       const error = validateField(key, formData[key], formData);

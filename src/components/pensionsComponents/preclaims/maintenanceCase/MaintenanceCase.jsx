@@ -8,6 +8,10 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { formatDate } from "@/utils/dateFormatter";
 import { Button } from "@mui/material";
+import { AgGridReact } from "ag-grid-react";
+
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 const columnDefs = [
   {
@@ -134,7 +138,7 @@ const MaintenanceCase = (id) => {
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => ({
       id: item.id,
-      //   no: index + 1 + (pageNumber - 1) * pageSize,
+      no: index + 1,
       maintainee_name: item.maintainee_name,
       national_id: item.national_id,
       kra_pin: item.kra_pin,
@@ -222,6 +226,12 @@ const MaintenanceCase = (id) => {
       type: "select",
     },
     {
+      name: "phone_number",
+      label: "Phone Number",
+      type: "number",
+    },
+
+    {
       name: "account_number",
       label: "Account Number",
       type: "text",
@@ -247,30 +257,53 @@ const MaintenanceCase = (id) => {
     }
   };
 
+  const [filteredData, setFilteredData] = useState([]);
+
+  const gridApiRef = React.useRef(null);
+
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const fetchMaintenance = async () => {
+    try {
+      const res = await apiService.get(endpoints.getMaintenance(id.id));
+      const data = res.data.data;
+      setFilteredData(transformData(data));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaintenance();
+  }, []);
+  useEffect(() => {
+    fetchMaintenance();
+  }, [openBaseCard]);
+
   useEffect(() => {
     fetchDepartments();
   }, []);
 
   return (
-    <div className="mt-[-60px] relative">
+    <div className="relative">
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteMaintenance(clickedItem?.id)}
+        deleteApiEndpoint={endpoints.deleteMaintenance(id?.id)}
         deleteApiService={apiService.post}
         isSecondaryCard={true}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateMaintenance(clickedItem.id)}
+            apiEndpoint={endpoints.updateMaintenance}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={false}
+            useRequestBody={true}
           />
         ) : (
           <BaseInputCard
@@ -293,25 +326,46 @@ const MaintenanceCase = (id) => {
           setOpenBaseCard(true);
           setClickedItem(null);
         }}
-        sx={{ position: "absolute", top: 65, left: 0 }}
+        sx={{
+          my: 2,
+        }}
       >
         Add New Maintenance Case
       </Button>
-      <BaseTable
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        handlers={{}}
-        isMaintenance={true}
-        id={id}
-        fetchApiEndpoint={endpoints.maintenanceCase}
-        fetchApiService={apiService.post}
-        transformData={transformData}
-        isSecondaryTable={true}
-        pageSize={30}
-      />
+
+      <div
+        className="ag-theme-quartz"
+        style={{
+          height: "60vh",
+
+          mt: "20px",
+
+          overflowY: "auto",
+          width: "90vw",
+        }}
+      >
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={filteredData}
+          pagination={false}
+          domLayout="autoHeight"
+          alwaysShowHorizontalScroll={true}
+          // paginationPageSize={pageSize}
+          onGridReady={(params) => {
+            params.api.sizeColumnsToFit();
+            // onGridReady(params);
+          }}
+          // onPaginationChanged={(params) =>
+          //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
+          // }
+          onRowClicked={(e) => {
+            setOpenBaseCard(true);
+            setClickedItem(e.data);
+            // setUserClicked(e.data);
+            //handleClickUser(e.data);
+          }}
+        />
+      </div>
     </div>
   );
 };

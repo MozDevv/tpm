@@ -23,6 +23,8 @@ export const MdaProvider = ({ children }) => {
         console.log("mdata", res.data.data.mdaId);
         setMdaId(res.data.data.mdaId);
       }
+
+      console.log("User details fetched successfully:", res.data);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }

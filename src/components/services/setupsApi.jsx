@@ -202,7 +202,7 @@ const endpoints = {
   maintenanceCase: "/api/ProspectivePensioners/GetPensionerMaintenances",
 
   getMaintenance: (id) =>
-    `/api/ProspectivePensioners/GetPensionerMaintenances/${id}`,
+    `/api/ProspectivePensioners/GetPensionerMaintenances?prospective_pensioner_id=${id}`,
 
   createMaintenance: "/api/ProspectivePensioners/CreatePensionerMaintenance",
 

@@ -29,15 +29,19 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 
-function PostAndNature({ id, loading, setLoading }) {
+function MixedServicePost({ id, loading, setLoading }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
+    enddate: "",
     post: "",
     was_pensionable: false,
     nature_of_salary_scale: "",
     nature_of_service: "",
+    salaryP_a: "",
+    pensionableAllowanceNature: "",
+    pensionableAllowanceRateP_a: "",
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -149,6 +153,8 @@ function PostAndNature({ id, loading, setLoading }) {
   const fields = [
     //{label: "Date Of First Appointment", value: "date_of_first_appointment", type: "date"},
     { label: "Start Date", value: "date", type: "date" },
+    { label: "End Date", value: "end_date", type: "date" },
+
     {
       label: "Post",
       value: "post",
@@ -175,6 +181,21 @@ function PostAndNature({ id, loading, setLoading }) {
       value: "nature_of_service",
       type: "select",
       options: natureOfServiceOptions[cap] || [],
+    },
+    {
+      label: "Salary Per Annum",
+      value: "salaryP_a",
+      type: "number",
+    },
+    {
+      label: "Pensionable Allowance Nature",
+      value: "pensionableAllowanceNature",
+      type: "text",
+    },
+    {
+      label: "Pensionable Allowance Rate P.a",
+      value: "pensionableAllowanceRateP_a",
+      type: "number",
     },
   ];
 
@@ -431,37 +452,39 @@ function PostAndNature({ id, loading, setLoading }) {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>Start Date</TableCell>
+              <TableCell>End Date</TableCell>
+
               <TableCell>Post</TableCell>
               <TableCell>Was Pensionable</TableCell>
               <TableCell>Nature of Salary Scale</TableCell>
               <TableCell>Nature of Service</TableCell>
+              <TableCell>Salary Per Annum</TableCell>
+              <TableCell>Pensionable Allowance Nature</TableCell>
+              <TableCell>Pensionable Allowance Rate P.a</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {postAndNatureData.map((item, index) => (
+            {postAndNatureData.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{dayjs(item.date).format("DD/MM/YYYY")}</TableCell>
                 <TableCell>
-                  {new Date(item.date).toLocaleDateString()}
+                  {dayjs(item.end_date).format("DD/MM/YYYY")}
                 </TableCell>
                 <TableCell>{item.post}</TableCell>
                 <TableCell>{item.was_pensionable ? "Yes" : "No"}</TableCell>
                 <TableCell>{item.nature_of_salary_scale}</TableCell>
                 <TableCell>{item.nature_of_service}</TableCell>
+                <TableCell>{item.salaryP_a}</TableCell>
+                <TableCell>{item.pensionableAllowanceNature}</TableCell>
+                <TableCell>{item.pensionableAllowanceRateP_a}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(item)}>
                     <Edit />
                   </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      setOpenDeleteDialog(item.id);
-                      setRecordId(item.id);
-                    }}
-                  >
-                    <Delete sx={{ color: "crimson" }} />
+                  <IconButton onClick={() => handleDelete(item)}>
+                    <Delete />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -473,4 +496,4 @@ function PostAndNature({ id, loading, setLoading }) {
   );
 }
 
-export default PostAndNature;
+export default MixedServicePost;

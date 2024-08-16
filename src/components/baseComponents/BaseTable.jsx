@@ -104,17 +104,14 @@ const BaseTable = ({
   };
 
   const fetchData = async (filter) => {
+    console.log("fetchData called", fetchApiEndpoint);
     try {
       let res;
-      !isMaintenance
-        ? (res = await fetchApiService(fetchApiEndpoint, {
-            "paging.pageNumber": pageNumber,
-            "paging.pageSize": 10,
-            ...filter,
-          }))
-        : (res = await fetchApiService(fetchApiEndpoint, {
-            prospective_pensioner_id: id,
-          }));
+      res = await fetchApiService(fetchApiEndpoint, {
+        "paging.pageNumber": pageNumber,
+        "paging.pageSize": 10,
+        ...filter,
+      });
       const { data, totalCount, totalPages } = res.data;
 
       const transformedData = transformData(data);
@@ -125,6 +122,7 @@ const BaseTable = ({
       console.log("Data fetched successfully:", transformedData);
     } catch (error) {
       console.log("", error);
+
       console.error("Error fetching data:", error.response);
     }
   };

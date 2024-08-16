@@ -42,7 +42,7 @@ function CreateProspectivePensioner({ clickedItem }) {
             <Tabs
               activeKey={activeKey}
               onChange={handleTabChange}
-              className="!bg-transparent" // Remove default background
+              className="!bg-transparent z-50" // Remove default background
               tabBarExtraContent={<div className="!bg-primary h-1" />} // Custom ink bar style
             >
               <TabPane
@@ -126,7 +126,9 @@ function CreateProspectivePensioner({ clickedItem }) {
                       }
                       key="6"
                     >
-                      <MaintenanceCase id={clickedItem.id} />
+                      <div className="z-10">
+                        <MaintenanceCase id={clickedItem.id} />
+                      </div>
                     </TabPane>
                     <TabPane
                       tab={
