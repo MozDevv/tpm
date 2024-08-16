@@ -266,30 +266,30 @@ function NewPreclaim({
       if (formData.pwd === 0 && value === "") {
         error = "Tax Exempt Certificate Date is required";
       }
-    }
-    // if (formData.pwd === 0 && !formData.tax_exempt_certificate_number) {
-    //   error = "Tax Exempt Certificate Number is required";
-    // }
 
-    // if (formData.pwd === 0 && !formData.tax_exempt_certificate_date) {
-    //   error = "Tax Exempt Certificate Date is required";
-    // }
-    else if (
-      name === "authority_for_retirement_dated" &&
-      value &&
-      formData.date_of_first_appointment
-    ) {
-      const appointmentDate = dayjs(formData.date_of_first_appointment);
-      const authorityOfRetirement = dayjs(value);
-      if (authorityOfRetirement.isBefore(appointmentDate)) {
-        error =
-          "Authority of retirement date cannot be before date of first appointment";
-      }
-    } else if (name === "authority_for_retirement_dated" && value) {
-      const retirementAuthorityDate = dayjs(value);
-      if (retirementAuthorityDate.isAfter(dayjs())) {
-        error = "Date of authority of retirement should not exceed today";
-      }
+      // if (formData.pwd === 0 && !formData.tax_exempt_certificate_number) {
+      //   error = "Tax Exempt Certificate Number is required";
+      // }
+
+      // if (formData.pwd === 0 && !formData.tax_exempt_certificate_date) {
+      //   error = "Tax Exempt Certificate Date is required";
+      // }
+      // else if (
+      //   name === "authority_for_retirement_dated" &&
+      //   value &&
+      //   formData.date_of_first_appointment
+      // ) {
+      //   const appointmentDate = dayjs(formData.date_of_first_appointment);
+      //   const authorityOfRetirement = dayjs(value);
+      //   if (authorityOfRetirement.isBefore(appointmentDate)) {
+      //     error =
+      //       "Authority of retirement date cannot be before date of first appointment";
+      //   }
+      // } else if (name === "authority_for_retirement_dated" && value) {
+      //   const retirementAuthorityDate = dayjs(value);
+      //   if (retirementAuthorityDate.isAfter(dayjs())) {
+      //     error = "Date of authority of retirement should not exceed today";
+      //   }
       // } else if (
       //   name === "retirement_date" &&
       //   value &&

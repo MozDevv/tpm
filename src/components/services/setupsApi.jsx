@@ -211,6 +211,18 @@ const endpoints = {
   deleteMaintenance: (id) =>
     `/api/ProspectivePensioners/DeletePensionerMaintenance/${id}`,
 
+  //MixedServiceWorkHistory
+
+  getMixedServiceWorkHistory: (id) =>
+    `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalariesSalaryMixedService?prospective_pensioner_id=${id}`,
+
+  createMixedServiceWorkHistory:
+    "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalaryMixedService",
+
+  updateMixedServiceWorkHistory:
+    "/api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalarySalaryMixedService",
+  deleteMixedServiceWorkHistory: (id) =>
+    `/api/ProspectivePensioners/DeleteProspectivePensionerPostAndNatureofSalarySalaryMixedService/${id}`,
   //getPro
 };
 

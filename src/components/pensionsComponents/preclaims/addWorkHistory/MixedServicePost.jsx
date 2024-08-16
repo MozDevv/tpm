@@ -52,8 +52,8 @@ function MixedServicePost({ id, loading, setLoading }) {
 
   const fetchPostandNature = async () => {
     try {
-      const res = await axios.get(
-        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+      const res = await apiService.get(
+        endpoints.getMixedServiceWorkHistory(id)
       );
       if (res.status === 200) {
         const sortedData = res.data.data.sort(
@@ -230,12 +230,12 @@ function MixedServicePost({ id, loading, setLoading }) {
       if (isEditMode) {
         const data = { ...formattedFormData, id: editId };
         res = await apiService.post(
-          preClaimsEndpoints.updatePostAndNature,
+          endpoints.updateMixedServiceWorkHistory,
           data
         );
       } else {
         res = await apiService.post(
-          preClaimsEndpoints.createPostAndNatureOfService,
+          endpoints.createMixedServiceWorkHistory,
           formattedFormData
         );
       }
@@ -280,7 +280,7 @@ function MixedServicePost({ id, loading, setLoading }) {
 
   const handleDelete = async () => {
     try {
-      await apiService.post(preClaimsEndpoints.deletePostAndNature(recordId));
+      await apiService.post(endpoints.deleteMixedServiceWorkHistory(recordId));
       fetchPostandNature();
       setAlert({
         open: true,
