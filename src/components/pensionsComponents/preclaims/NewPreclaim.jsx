@@ -26,7 +26,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { message } from "antd";
+import { message, notification } from "antd";
 import { useMda } from "@/context/MdaContext";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
@@ -90,6 +90,7 @@ function NewPreclaim({
         phone_number: retiree?.phone_number ?? "",
         grade_id: retiree?.grade_id ?? "",
         designation_id: retiree?.designation_id ?? "",
+
         country_id:
           retiree?.country?.id ?? "94ece052-7142-477a-af0f-c3909402d247",
         county_id: retiree?.constituency?.county_id ?? "",
@@ -121,9 +122,11 @@ function NewPreclaim({
                 .split("T")[0]
             : "",
         last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
-        last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
+        last_pay_date: retiree.last_pay_date
+          ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
+          : "",
         disability_status: retiree?.disability_status ?? "",
-        exit_grounds: retiree?.exit_grounds ?? "",
+        exit_grounds: retiree?.exit_ground_id ?? "",
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
         tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
@@ -188,10 +191,12 @@ function NewPreclaim({
             .split("T")[0]
         : "",
     last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
-    last_pay_date: retiree?.last_pay_date || retiree?.date_of_last_pay,
+    last_pay_date: retiree.last_pay_date
+      ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
+      : "",
     disability_status: retiree?.disability_status ?? "",
     tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
-    exit_grounds: retiree?.exit_grounds ?? "",
+    exit_grounds: retiree?.exit_ground_id ?? "",
     tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
       ? new Date(retiree.tax_exempt_certificate_date)
           .toISOString()
@@ -789,14 +794,19 @@ function NewPreclaim({
           name: "pension_award_id",
           type: "select",
           children:
-            exitGrounds.length > 0
+            exitGrounds.length > 0 && !formData.notification_status
               ? exitGrounds
                   .filter((grounds) => grounds.id === formData.exit_grounds)
                   .flatMap((grounds) =>
-                    grounds.pensionAwards.map((award) => ({
-                      id: award.id,
-                      name: award.name,
-                    }))
+                    grounds.pensionAwards
+                      .filter(
+                        (award) => award.pensionCap.id === activePensionCap
+                      ) // Filtering by activePensionCap
+                      .map((filteredAward) => ({
+                        id: filteredAward.id,
+                        name: filteredAward.name,
+                        pensionCap: filteredAward.pensionCap.id,
+                      }))
                   )
               : pensionAwards.map((award) => ({
                   id: award.id,
