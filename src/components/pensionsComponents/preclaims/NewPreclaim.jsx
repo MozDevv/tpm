@@ -235,6 +235,7 @@ function NewPreclaim({
       name.includes("date") &&
       name !== "date_from_which_pension_will_commence" &&
       name !== "retirement_date" &&
+      name !== "last_pay_date" &&
       value &&
       dayjs(value).isAfter(dayjs())
     ) {
