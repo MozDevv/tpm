@@ -26,6 +26,7 @@ const BaseInputCard = ({
   inputTitle,
   id,
   idLabel,
+  setSelectedBank,
   setOpenAction,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
@@ -43,6 +44,7 @@ const BaseInputCard = ({
   useEffect(() => {
     if (clickedItem) {
       // Populate form data with clickedItem values directly
+      // setSelectedBank(clickedItem?.bank_id || "");
       setFormData(clickedItem);
     } else {
       // Reset form data if no clickedItem
@@ -52,6 +54,10 @@ const BaseInputCard = ({
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, multiple } = e.target;
+
+    if (name === "bank_id") {
+      setSelectedBank(value);
+    }
     if (multiple) {
       const values = Array.from(
         e.target.selectedOptions,
@@ -123,8 +129,10 @@ const BaseInputCard = ({
         console.log("DATA TO SEND: ", dataToSend);
 
         if (id && idLabel) {
-          dataToSend[idLabel] = id;
+          dataToSend = { ...dataToSend, prospective_pensioner_id: id.id };
         }
+
+        console.log("DATA TO SEND: ", dataToSend);
 
         if (!useRequestBody) {
           const formDataObj = new FormData();

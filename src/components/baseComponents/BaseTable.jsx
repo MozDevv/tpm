@@ -37,6 +37,9 @@ const BaseTable = ({
   transformData,
   refreshData,
   openBaseCard,
+  isSecondaryTable,
+  isMaintenance,
+  id,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -102,12 +105,16 @@ const BaseTable = ({
 
   const fetchData = async (filter) => {
     try {
-      const res = await fetchApiService(fetchApiEndpoint, {
-        "paging.pageNumber": pageNumber,
-        "paging.pageSize": 10,
-
-        ...filter,
-      });
+      let res;
+      !isMaintenance
+        ? (res = await fetchApiService(fetchApiEndpoint, {
+            "paging.pageNumber": pageNumber,
+            "paging.pageSize": 10,
+            ...filter,
+          }))
+        : (res = await fetchApiService(fetchApiEndpoint, {
+            prospective_pensioner_id: id,
+          }));
       const { data, totalCount, totalPages } = res.data;
 
       const transformedData = transformData(data);
@@ -117,7 +124,8 @@ const BaseTable = ({
 
       console.log("Data fetched successfully:", transformedData);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log("", error);
+      console.error("Error fetching data:", error.response);
     }
   };
 
@@ -196,7 +204,9 @@ const BaseTable = ({
           </h6>
           <CustomBreadcrumbsList currentTitle={currentTitle} />
           <div className="w-[80vw]">
-            <ListNavigation handlers={adjustedHandlers} />
+            <ListNavigation
+              handlers={!isSecondaryTable ? adjustedHandlers : handlers}
+            />
           </div>
         </Box>
       </Box>

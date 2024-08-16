@@ -198,6 +198,19 @@ const endpoints = {
   //updateMenuRole
   updateMenuRole: "/api/RoleMenuItemSetup/CreatePermissionRole",
 
+  //getMaintennace\
+  maintenanceCase: "/api/ProspectivePensioners/GetPensionerMaintenances",
+
+  getMaintenance: (id) =>
+    `/api/ProspectivePensioners/GetPensionerMaintenances/${id}`,
+
+  createMaintenance: "/api/ProspectivePensioners/CreatePensionerMaintenance",
+
+  updateMaintenance: "/api/ProspectivePensioners/UpdatePensionerMaintenance",
+
+  deleteMaintenance: (id) =>
+    `/api/ProspectivePensioners/DeletePensionerMaintenance/${id}`,
+
   //getPro
 };
 

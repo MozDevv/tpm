@@ -121,6 +121,15 @@ function NewPreclaim({
                 .split("T")[0]
             : "",
         last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
+        last_pay_date: retiree?.last_pay_date,
+        disability_status: retiree?.disability_status ?? "",
+        tax_exempt_certificate_number:
+          retiree?.tax_exempt_certificate_number ?? "",
+        tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
+          ? new Date(retiree.tax_exempt_certificate_date)
+              .toISOString()
+              .split("T")[0]
+          : "",
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -178,6 +187,14 @@ function NewPreclaim({
             .split("T")[0]
         : "",
     last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
+    last_pay_date: retiree?.last_pay_date,
+    disability_status: retiree?.disability_status ?? "",
+    tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
+    tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
+      ? new Date(retiree.tax_exempt_certificate_date)
+          .toISOString()
+          .split("T")[0]
+      : "",
   });
   const router = useRouter();
 
@@ -754,8 +771,8 @@ function NewPreclaim({
         },
         {
           label: "Last Pay Date",
-          // name: "last_pay_date",
-          name: "authority_for_retirement_dated",
+          name: "last_pay_date",
+          // name: "authority_for_retirement_dated",
           type: "date",
         },
 
@@ -766,7 +783,7 @@ function NewPreclaim({
         },
         {
           label: "Person With Disability",
-          name: "pwd",
+          name: "disability_status",
           type: "select",
           children: [
             {
@@ -779,7 +796,7 @@ function NewPreclaim({
             },
           ],
         },
-        ...(formData.pwd === 0
+        ...(formData.disability_status === 0
           ? [
               {
                 label: "Tax Exempt Certificate Number",

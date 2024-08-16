@@ -6,6 +6,7 @@ import AddPensionersWorkHistory from "../addWorkHistory/AddPensionersWorkHistory
 import AddBankDetails from "../AddBankDetails";
 import AddDocuments from "../documents/AddDocuments";
 import ViewBeneficiaries from "../ViewBeneficiaries";
+import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
 
 const { TabPane } = Tabs;
 
@@ -114,7 +115,6 @@ function CreateProspectivePensioner({ clickedItem }) {
                         </span>
                       }
                       key="5"
-                      
                     >
                       <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>
@@ -126,11 +126,7 @@ function CreateProspectivePensioner({ clickedItem }) {
                       }
                       key="6"
                     >
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Exercitationem ipsam vitae nihil molestiae porro
-                      necessitatibus velit quasi, similique voluptatibus sunt
-                      fugit, eveniet repudiandae voluptas deleniti asperiores
-                      amet dolor ratione fugiat.
+                      <MaintenanceCase id={clickedItem.id} />
                     </TabPane>
                     <TabPane
                       tab={

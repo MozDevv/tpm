@@ -40,6 +40,7 @@ function BaseCard({
   dialogType,
   deleteApiEndpoint,
   deleteApiService,
+  isSecondaryCard,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -57,9 +58,19 @@ function BaseCard({
       minWidth: "95vw",
       maxWidth: "95vw",
     },
+    secondary: {
+      minHeight: "85vh",
+      maxHeight: "75vh",
+      minWidth: "40vw",
+      maxWidth: "70vw",
+    },
   };
 
-  const currentSize = isExpanded ? expandSizes.expanded : expandSizes.default;
+  const currentSize = isSecondaryCard
+    ? expandSizes.secondary
+    : isExpanded
+    ? expandSizes.expanded
+    : expandSizes.default;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { auth } = useAuth();

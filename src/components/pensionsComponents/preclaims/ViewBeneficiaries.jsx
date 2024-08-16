@@ -22,7 +22,7 @@ function ViewBeneficiaries({
   const getBeneficiaries = async () => {
     try {
       const res = await apiService.get(
-        "https://tntportalapi.agilebiz.co.ke/portal/getBeneficiaries/03a7bc99-d03c-4fa1-905c-887792c4eb60"
+        `https://tntportalapi.agilebiz.co.ke/portal/getBeneficiaries/${clickedItem.id}`
       );
 
       const beneficiariesData = res.data;
@@ -78,7 +78,10 @@ function ViewBeneficiaries({
     <>
       <p className="text-primary my-5 text-lg px-6 font-bold">Beneficiaries</p>
       <DialogContent>
-        <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
+        <div
+          className="ag-theme-quartz"
+          style={{ height: 400, width: "100%", marginBottom: "-30px" }}
+        >
           <AgGridReact
             rowData={beneficiaries}
             columnDefs={columnDefs}
@@ -90,7 +93,7 @@ function ViewBeneficiaries({
         </div>
       </DialogContent>
 
-      <p className="text-primary mt-[-40px] text-lg px-6 font-bold">
+      <p className="text-primary mt-[-100px] text-lg px-6 font-bold">
         Guardians
       </p>
       <DialogContent>
