@@ -132,7 +132,7 @@ const Users = () => {
       required: true,
     },
     {
-      name: "id_number",
+      name: "idNumber",
       label: "ID Number",
       type: "text",
     },
