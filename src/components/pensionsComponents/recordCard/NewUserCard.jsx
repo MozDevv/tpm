@@ -42,8 +42,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     }
 
     if (!userData.id_number) formErrors.id_number = "Id Number is required";
-    if (!userData.phoneNumber)
-      formErrors.phoneNumber = "Phone Number is required";
+    // if (!userData.phoneNumber)
+    //   formErrors.phoneNumber = "Phone Number is required";
     if (
       userData.phoneNumber &&
       !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(userData.phoneNumber)
