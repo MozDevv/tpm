@@ -7,7 +7,7 @@ export const generalInfoFields = [
     validations: [
       {
         error: "required",
-        message: "This field is required.",
+        message: "This field not is required.",
       },
     ],
   },
