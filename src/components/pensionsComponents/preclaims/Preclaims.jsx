@@ -471,8 +471,6 @@ const Preclaims = ({ status }) => {
           filteredMinistriesData =
             status === 5
               ? rawData
-              : auth?.user?.email === "super@mail.com"
-              ? rawData
               : rawData.filter((item) => item.mda_id === mdaId);
         } else {
           filteredMinistriesData = rawData;
