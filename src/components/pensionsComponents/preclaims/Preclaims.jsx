@@ -646,6 +646,7 @@ const Preclaims = ({ status }) => {
             fetchAllPreclaims={fetchAllPreclaims}
           >
             <CreateProspectivePensioner
+              setOpenBaseCard={setOpenBaseCard}
               openBaseCard={openBaseCard}
               clickedItem={clickedItem}
             />

@@ -10,7 +10,7 @@ import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
 
 const { TabPane } = Tabs;
 
-function CreateProspectivePensioner({ clickedItem }) {
+function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
   console.log("clickedItem", clickedItem);
 
   const [retireeId, setRetireeId] = useState(null);
@@ -55,6 +55,7 @@ function CreateProspectivePensioner({ clickedItem }) {
               >
                 <div className="">
                   <NewPreclaim
+                    setOpenBaseCard={setOpenBaseCard}
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}
                     moveToNextTab={moveToNextTab}

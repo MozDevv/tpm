@@ -44,6 +44,7 @@ function NewPreclaim({
   permissions,
   retireeId,
   setRetireeId,
+  setOpenBaseCard,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -949,7 +950,10 @@ function NewPreclaim({
     // setIsLoading(true);
     const formattedFormData = { ...formData };
     Object.keys(formattedFormData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (
+        (dayjs(formattedFormData[key]).isValid() && key.includes("date")) ||
+        key === "dob"
+      ) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
           "YYYY-MM-DDTHH:mm:ss[Z]"
         );
@@ -987,6 +991,7 @@ function NewPreclaim({
           });
           fetchRetiree();
           setEditMode(false);
+          setOpenBaseCard(false);
         }
         if (
           res?.data?.messages[0] ===
