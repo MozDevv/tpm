@@ -433,6 +433,11 @@ const Preclaims = ({ status }) => {
   // alert("auth?.user?.email ***********", auth);
 
   const fetchAllPreclaims = async (sort, filter) => {
+    if (gridApiRef.current) {
+      // Show the loading overlay when the page changes
+      gridApiRef.current.api.showLoadingOverlay();
+    }
+
     const adjustedFilter =
       status || status === 0
         ? {
@@ -498,6 +503,10 @@ const Preclaims = ({ status }) => {
     } finally {
       // setLoading(false);
       openFilter && setOpenFilter(false);
+      if (gridApiRef.current) {
+        // Hide the loading overlay after data is loaded
+        gridApiRef.current.api.hideOverlay();
+      }
     }
   };
 
