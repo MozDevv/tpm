@@ -67,6 +67,7 @@ const Users = () => {
       departmentId: item.departmentId,
       roleId: item.roleId,
       emailConfirmed: item.emailConfirmed,
+
       phoneNumberConfirmed: item.phoneNumberConfirmed,
       twoFactorEnabled: item.twoFactorEnabled,
       lockoutEnd: item.lockoutEnd,

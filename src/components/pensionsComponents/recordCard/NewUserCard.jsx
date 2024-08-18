@@ -119,7 +119,33 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     } catch (error) {
       console.log(error.response);
 
-      message.error(error.response.data.message);
+      // Extracting and displaying the error message
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+
+        // Extracting and displaying the error message
+        if (errorData.errors) {
+          const validationErrors = errorData.errors;
+          const errorMessages = [];
+
+          for (const field in validationErrors) {
+            if (validationErrors.hasOwnProperty(field)) {
+              errorMessages.push(
+                `${field}: ${validationErrors[field].join(", ")}`
+              );
+            }
+          }
+
+          // Display all validation errors as a single message
+          message.error(errorMessages.join(" | "));
+        } else if (errorData.title) {
+          // Display the general error message
+          message.error(errorData.title);
+        }
+      } else {
+        // Handle other errors (network issues, etc.)
+        message.error("An error occurred. Please try again.");
+      }
     } finally {
       //setIsLoading(false);
     }
