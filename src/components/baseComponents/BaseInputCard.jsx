@@ -28,6 +28,7 @@ const BaseInputCard = ({
   idLabel,
   setSelectedBank,
   setOpenAction,
+  isBranch,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -129,7 +130,11 @@ const BaseInputCard = ({
         console.log("DATA TO SEND: ", dataToSend);
 
         if (id && idLabel) {
-          dataToSend = { ...dataToSend, prospective_pensioner_id: id.id };
+          if (isBranch) {
+            dataToSend[idLabel] = id;
+          } else {
+            dataToSend = { ...dataToSend, prospective_pensioner_id: id.id };
+          }
         }
 
         console.log("DATA TO SEND: ", dataToSend);

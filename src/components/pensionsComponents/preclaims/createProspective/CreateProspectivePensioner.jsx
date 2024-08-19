@@ -137,6 +137,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                           Deductions
                         </span>
                       }
+                      disabled
                       key="7"
                     >
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.

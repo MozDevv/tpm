@@ -250,6 +250,7 @@ function BaseCard({
           idLabel={idLabel}
           setOpenBaseCard={setOpenBaseCard}
           useRequestBody={useRequestBody}
+          isBranch={true}
         />
       </Dialog>
       <Dialog

@@ -168,7 +168,6 @@ const Banks = () => {
         idLabel="bank_id"
         useRequestBody={true}
         dialogType={dialogType}
-        //
         secondaryFields={bankTypeFields}
         secondaryApiEndpoint={endpoints.createBankType}
         secondaryPostApiFunction={apiService.post}

@@ -316,6 +316,7 @@ const MaintenanceCase = (id) => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            isBranch={false}
           />
         )}
       </BaseCard>
