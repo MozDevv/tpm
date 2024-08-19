@@ -73,7 +73,15 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
   const handleChange = async (info, record) => {
     const { file } = info;
 
+    const maxSize = 2 * 1024 * 1024; // 2MB size limit
+
     if (file.status === "uploading") return;
+
+    // Validate file size
+    if (file.size > maxSize) {
+      message.error("File size exceeds 2MB. Please upload a smaller file.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("id", id);

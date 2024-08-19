@@ -1,9 +1,12 @@
-import React from 'react'
+import EditableTable from "@/components/baseComponents/EditableTable";
+import React from "react";
 
 function page() {
   return (
-    <div>page</div>
-  )
+    <div>
+      <EditableTable />
+    </div>
+  );
 }
 
-export default page
+export default page;
