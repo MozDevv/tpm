@@ -34,21 +34,15 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
       // Check if the retiree has bank details
       if (res?.data?.data[0]?.bankDetails?.length > 0) {
         setHasBankDetails(true);
+        console.log("Existing bank details:", data.bankDetails);
       }
 
       setFormData({
-        bankId: data.bankDetails[0]?.bankBranch?.bank_id,
-        branchId: data.bankDetails[0]?.bank_branch_id,
+        bankId: data.bankDetails[0]?.bankBranch?.bank?.name,
+        branchId: data.bankDetails[0]?.bankBranch?.name,
         accountNumber: data.bankDetails[0]?.account_number,
         accountName: data.bankDetails[0]?.account_name,
       });
-
-      setSelectedBank(data.bankDetails[0]?.bankBranch?.bank_id);
-
-      console.log("DATA", data.bankDetails[0].bankBranch);
-      console.log("formData", formData);
-      console.log("SELECTED BANK", selectedBank);
-
       console.log("Existing bank details:", data.bankDetails);
     } catch (error) {
       console.log("Error fetching existing bank details:", error);
@@ -179,7 +173,7 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full p-2 mt-8">
+    <form className="w-full p-2 mt-2">
       <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
         <div className="flex items-center justify-between px-6 py-3 w-[100%]">
           <div className="flex items-center gap-2">
@@ -211,53 +205,36 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
         <hr className="border-[1px] border-black-900 my-2" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2 p-10">
           <div className="flex flex-col mb-4">
-            <label className="text-xs font-semibold text-gray-600">
-              Bank Name
-            </label>
-            <select
-              name="bankId"
-              value={formData.bankId}
-              onChange={handleInputChange}
-              className={`border bg-gray-100 border-gray-300 rounded-md p-2 text-sm ${
-                errors.bankId ? "border-red-500" : ""
-              }`}
-              required
-            >
-              <option value="">Select Bank Name</option>
-              {banks.map((bank) => (
-                <option key={bank.id} value={bank.id}>
-                  {bank.name}
-                </option>
-              ))}
-            </select>
-            {errors.bankId && (
-              <span className="text-xs text-red-500">{errors.bankId}</span>
-            )}
+            <div className="flex flex-col mb-4">
+              <label className="text-xs font-semibold text-gray-600">
+                Bank
+              </label>
+              <input
+                type="text"
+                name="accountNumber"
+                value={formData.bankId}
+                onChange={handleInputChange}
+                className={`border bg-gray-100 border-gray-300 rounded-md p-2 text-sm ${
+                  errors.accountNumber ? "border-red-500" : ""
+                }`}
+                required
+              />
+            </div>
           </div>
           <div className="flex flex-col mb-4">
             <label className="text-xs font-semibold text-gray-600">
-              Branch Name
+              Branch
             </label>
-            <select
-              name="branchId"
+            <input
+              type="text"
+              name="accountNumber"
               value={formData.branchId}
               onChange={handleInputChange}
               className={`border bg-gray-100 border-gray-300 rounded-md p-2 text-sm ${
-                errors.branchId ? "border-red-500" : ""
+                errors.accountNumber ? "border-red-500" : ""
               }`}
               required
-              disabled={!selectedBank}
-            >
-              <option value="">Select Branch Name</option>
-              {filteredBranches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-            {errors.branchId && (
-              <span className="text-xs text-red-500">{errors.branchId}</span>
-            )}
+            />
           </div>
           <div className="flex flex-col mb-4">
             <label className="text-xs font-semibold text-gray-600">

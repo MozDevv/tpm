@@ -521,16 +521,42 @@ const Preclaims = ({ status }) => {
     //  params.api.sizeColumnsToFit();
   };
 
-  useEffect(() => {
-    fetchAllPreclaims();
-  }, [pageNumber]);
+  // useEffect(() => {
+  //   fetchAllPreclaims();
+  // }, [pageNumber]);
 
   const handlePageChange = (event, newPage) => {
     setPageNumber(newPage);
   };
 
   useEffect(() => {
-    fetchAllPreclaims();
+    const filter = status
+      ? {
+          "filterCriterion.criterions[0].propertyName": "notification_status",
+          "filterCriterion.criterions[0].propertyValue": status,
+          "filterCriterion.criterions[0].criterionType": 0,
+        }
+      : {
+          ...(filterColumn && {
+            "filterCriterion.criterions[0].propertyName": filterColumn,
+          }),
+          ...(filterValue && {
+            "filterCriterion.criterions[0].propertyValue": filterValue,
+          }),
+          ...(filterType && {
+            "filterCriterion.criterions[0].criterionType": filterType,
+          }),
+        };
+    const sort = {
+      ...(sortColumn && {
+        "sortProperties.propertyName": sortColumn,
+      }),
+      ...(sortCriteria !== 0 && {
+        "sortProperties.sortCriteria": sortCriteria,
+      }),
+    };
+
+    fetchAllPreclaims(sort, filter);
   }, [pageNumber, pageSize]);
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -565,7 +591,33 @@ const Preclaims = ({ status }) => {
   const [openAction, setOpenAction] = useState(false);
 
   useEffect(() => {
-    fetchAllPreclaims();
+    const filter = status
+      ? {
+          "filterCriterion.criterions[0].propertyName": "notification_status",
+          "filterCriterion.criterions[0].propertyValue": status,
+          "filterCriterion.criterions[0].criterionType": 0,
+        }
+      : {
+          ...(filterColumn && {
+            "filterCriterion.criterions[0].propertyName": filterColumn,
+          }),
+          ...(filterValue && {
+            "filterCriterion.criterions[0].propertyValue": filterValue,
+          }),
+          ...(filterType && {
+            "filterCriterion.criterions[0].criterionType": filterType,
+          }),
+        };
+    const sort = {
+      ...(sortColumn && {
+        "sortProperties.propertyName": sortColumn,
+      }),
+      ...(sortCriteria !== 0 && {
+        "sortProperties.sortCriteria": sortCriteria,
+      }),
+    };
+
+    fetchAllPreclaims(sort, filter);
   }, [openBaseCard]);
 
   const handlers = {
