@@ -106,6 +106,8 @@ function Auth() {
         message.error("Service Unavailable, Please try again later");
       } else if (error?.response?.status === 404) {
         message.error("Resource not found");
+      } else if (error.response.data.isSuccess === false) {
+        message.error(error.response.data.message);
       } else if (error?.response?.status === 401) {
         message.error("Unauthorized access");
       } else {
