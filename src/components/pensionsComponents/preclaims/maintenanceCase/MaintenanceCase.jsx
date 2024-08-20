@@ -38,7 +38,7 @@ const columnDefs = [
     headerName: "KRA PIN",
     width: 120,
     filter: true,
-    cellRenderer: "checkboxRenderer", // Assuming you want a checkbox for boolean values
+    // Assuming you want a checkbox for boolean values
   },
   {
     field: "email_address",
@@ -109,7 +109,9 @@ const MaintenanceCase = (id) => {
 
   const fetchBanksAndBranches = async () => {
     try {
-      const res = await apiService.get(endpoints.getBanks);
+      const res = await apiService.get(endpoints.getBanks, {
+        "paging.pageSize": 1000,
+      });
       const rawData = res.data.data;
 
       const banksData = rawData.map((bank) => ({
@@ -189,7 +191,7 @@ const MaintenanceCase = (id) => {
       pinned: "left",
     },
     { name: "national_id", label: "National ID", type: "text", required: true },
-    { name: "kra_pin", label: "KRA PIN", type: "number" },
+    { name: "kra_pin", label: "KRA PIN", type: "text" },
     {
       name: "email_address",
       label: "Email Address",
@@ -206,7 +208,7 @@ const MaintenanceCase = (id) => {
     {
       name: "postal_code_id",
       label: "Postal Code",
-      type: "select",
+      type: "autocomplete",
       options: postalAddress.map((address) => ({
         id: address.id,
         name: address.code,
@@ -218,7 +220,7 @@ const MaintenanceCase = (id) => {
       label: "Monthly Pension Rate",
       type: "number",
     },
-    { name: "bank_id", label: "Bank", type: "select", options: banks },
+    { name: "bank_id", label: "Bank", type: "autocomplete", options: banks },
     {
       name: "bank_branch_id",
       label: "Bank Branch",

@@ -9,6 +9,7 @@ import {
   Select,
   Checkbox,
   ListItemText,
+  Autocomplete,
 } from "@mui/material";
 import { message } from "antd";
 import dayjs from "dayjs";
@@ -75,27 +76,75 @@ const BaseInputCard = ({
       }));
     }
     setIsEditing(true);
+    // validateForm();
   };
 
   const validateForm = () => {
     const newErrors = {};
+
     fields.forEach((field) => {
+      const value = formData[field.name];
+
+      // Required field validation
       if (
         field.required &&
-        (formData[field.name] === undefined ||
-          formData[field.name] === null ||
-          formData[field.name] === "")
+        (value === undefined || value === null || value === "")
       ) {
         newErrors[field.name] = `${field.label} is required`;
       }
-      if (field.type === "date" && formData[field.name]) {
-        if (!dayjs(formData[field.name], "YYYY-MM-DD", true).isValid()) {
+
+      // Date validation
+      if (field.type === "date" && value) {
+        if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
           newErrors[field.name] = `${field.label} is not a valid date`;
         } else {
-          formData[field.name] = dayjs(formData[field.name]).toISOString();
+          formData[field.name] = dayjs(value).toISOString();
+        }
+      }
+
+      // KRA PIN validation
+      if (field.name === "kra_pin" && value) {
+        const kraPinPattern = /^[A-Z]{1}[0-9]{9}[A-Z]{1}$/;
+        if (value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
+          newErrors[field.name] = `${field.label} is not valid`;
+        }
+      }
+
+      // National ID validation
+      if (field.name === "national_id" && value) {
+        const nationalIdPattern = /^[0-9]{8}$/; // Adjust the pattern as per your requirements
+        if (value && !/^\d+$/.test(value)) {
+          newErrors[field.name] = `${field.label} is not valid`;
+        }
+      }
+
+      // Email validation
+      if ((field.name === "email" || field.name === "email_address") && value) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors[field.name] = `${field.label} is not a valid email`;
+        }
+      }
+
+      // Phone number validation
+      if (field.name === "phone_number" && value) {
+        const phoneNumberPattern = /^\+?[0-9]{10,13}$/; // Adjust pattern for your locale
+        if (value && !/^\d+$/.test(value)) {
+          newErrors[field.name] = `${field.label} is not a valid phone number`;
+        }
+      }
+
+      // Account number validation
+      if (field.name === "account_number" && value) {
+        const accountNumberPattern = /^[0-9]{10,20}$/; // Adjust pattern for account number format
+        if (!accountNumberPattern.test(value)) {
+          newErrors[
+            field.name
+          ] = `${field.label} is not a valid account number`;
         }
       }
     });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -276,6 +325,35 @@ const BaseInputCard = ({
                   fullWidth
                 />
               </LocalizationProvider>
+            ) : field.type === "autocomplete" ? (
+              <Autocomplete
+                options={field.options}
+                getOptionLabel={(option) => option.name}
+                onChange={(event, newValue) => {
+                  handleInputChange({
+                    target: {
+                      name: field.name,
+                      value: newValue ? newValue.id : "",
+                    },
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name={field.name}
+                    error={!!errors[field.name]}
+                    helperText={errors[field.name]}
+                  />
+                )}
+                value={
+                  field.options.find(
+                    (option) => option.id === formData[field.name]
+                  ) || null
+                }
+              />
             ) : (
               <TextField
                 type={field.type}
