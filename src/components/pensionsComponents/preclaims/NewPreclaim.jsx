@@ -1086,11 +1086,26 @@ function NewPreclaim({
     const dob = dayjs(formData.dob); // Assuming dob is in "YYYY-MM-DD" format
     const retirementDate = dayjs(formData.retirement_date);
 
-    if (!pensionAward || !dob.isValid() || !retirementDate.isValid()) {
+    if (!dob.isValid() || !retirementDate.isValid()) {
       return;
     }
 
-    if (pensionAward.name === "RETIREMENT ON AGE GROUNDS") {
+    const minRetirementAge = 50;
+    const minRetirementDate = dob.add(minRetirementAge, "year");
+
+    if (retirementDate.isBefore(minRetirementDate)) {
+      setDobError(true);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        retirement_date: `Retirement date should be at least ${minRetirementAge} years after the date of birth.`,
+      }));
+      message.error(
+        `Retirement date should be at least ${minRetirementAge} years after the date of birth.`
+      );
+      return; // Exit early if the minimum retirement age is not met
+    }
+
+    if (pensionAward && pensionAward.name === "RETIREMENT ON AGE GROUNDS") {
       const retirementAge = formData.disability_status === 0 ? 65 : 60;
       const expectedRetirementDate = dob.add(retirementAge, "year");
 
@@ -1112,6 +1127,7 @@ function NewPreclaim({
       }
     }
   };
+
   useEffect(() => {
     if (formData.retirement_date) {
       const lastPayDate = dayjs(formData.retirement_date);
