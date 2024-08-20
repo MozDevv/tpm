@@ -939,12 +939,16 @@ function NewPreclaim({
       }
     }
 
-    const errors = validateRetirementDate();
+    const errors = validateRetirementDate() || {};
+
+    if (dobError) {
+      return;
+    }
 
     // Check if there are any errors
     if (Object.keys(errors).length > 0) {
-      setErrors(errors); // Set the errors state if validation fails
-      return; // Return early to prevent submission
+      setErrors(errors);
+      return;
     }
 
     setErrors(newErrors);
@@ -1072,6 +1076,8 @@ function NewPreclaim({
     }
   };
 
+  const [dobError, setDobError] = useState(null);
+
   const validateRetirementDate = () => {
     const pensionAward = pensionAwards.find(
       (award) => award.id === formData.pension_award_id
@@ -1089,6 +1095,7 @@ function NewPreclaim({
       const expectedRetirementDate = dob.add(retirementAge, "year");
 
       if (retirementDate.isBefore(expectedRetirementDate)) {
+        setDobError(true);
         setErrors((prevErrors) => ({
           ...prevErrors,
           retirement_date: `Retirement date should be at least ${retirementAge} years after the date of birth.`,
@@ -1097,6 +1104,7 @@ function NewPreclaim({
           `Retirement date should be at least ${retirementAge} years after the date of birth.`
         );
       } else {
+        setDobError(false);
         setErrors((prevErrors) => {
           const { retirement_date, ...restErrors } = prevErrors;
           return restErrors;
