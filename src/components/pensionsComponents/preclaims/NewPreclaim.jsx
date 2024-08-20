@@ -18,6 +18,7 @@ import {
   Icon,
   Tooltip,
   Autocomplete,
+  Paper,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -655,7 +656,7 @@ function NewPreclaim({
         {
           label: "Designation",
           name: "designation_id",
-          type: "select",
+          type: "autocomplete",
           children: designations
             .filter((designation) =>
               mdaId ? designation?.mda?.id === mdaId : designation
@@ -1268,6 +1269,15 @@ function NewPreclaim({
                                         },
                                       });
                                     }}
+                                    PaperComponent={(props) => (
+                                      <Paper
+                                        {...props}
+                                        style={{
+                                          maxHeight: 300,
+                                          overflow: "auto",
+                                        }}
+                                      />
+                                    )}
                                     renderInput={(params) => (
                                       <TextField
                                         {...params}
