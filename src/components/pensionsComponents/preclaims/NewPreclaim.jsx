@@ -1086,25 +1086,6 @@ function NewPreclaim({
     const dob = dayjs(formData.dob); // Assuming dob is in "YYYY-MM-DD" format
     const retirementDate = dayjs(formData.retirement_date);
 
-    if (!dob.isValid() || !retirementDate.isValid()) {
-      return;
-    }
-
-    const minRetirementAge = 50;
-    const minRetirementDate = dob.add(minRetirementAge, "year");
-
-    if (retirementDate.isBefore(minRetirementDate)) {
-      setDobError(true);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        retirement_date: `Retirement date should be at least ${minRetirementAge} years after the date of birth.`,
-      }));
-      message.error(
-        `Retirement date should be at least ${minRetirementAge} years after the date of birth.`
-      );
-      return; // Exit early if the minimum retirement age is not met
-    }
-
     if (pensionAward && pensionAward.name === "RETIREMENT ON AGE GROUNDS") {
       const retirementAge = formData.disability_status === 0 ? 65 : 60;
       const expectedRetirementDate = dob.add(retirementAge, "year");
@@ -1113,10 +1094,10 @@ function NewPreclaim({
         setDobError(true);
         setErrors((prevErrors) => ({
           ...prevErrors,
-          retirement_date: `Retirement date should be at least ${retirementAge} years after the date of birth.`,
+          retirement_date: `Retirement age should be at least ${retirementAge} years.`,
         }));
         message.error(
-          `Retirement date should be at least ${retirementAge} years after the date of birth.`
+          `Retirement age should be at least ${retirementAge} years.`
         );
       } else {
         setDobError(false);
