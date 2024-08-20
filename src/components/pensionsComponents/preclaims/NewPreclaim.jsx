@@ -512,9 +512,7 @@ function NewPreclaim({
     try {
       const res = await apiService.get(endpoints.getAllGrades);
       if (res.status === 200) {
-        setGrades(
-          res.data.data.map((item, index) => ({ ...item, no: index + 1 }))
-        );
+        setGrades(res.data.data);
 
         console.log(res.data.data);
       }
@@ -671,8 +669,9 @@ function NewPreclaim({
           label: "Grade",
           name: "grade_id",
           type: "select",
-          children: grades
-            .filter((grade) => grade.designation_id === formData.designation_id)
+          children: designations
+            .filter((designation) => designation.id === formData.designation_id)
+            .flatMap((designation) => designation.grades)
             .map((grade) => ({
               id: grade.id,
               name: grade.grade,
