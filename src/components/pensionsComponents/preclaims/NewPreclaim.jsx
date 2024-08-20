@@ -939,6 +939,14 @@ function NewPreclaim({
       }
     }
 
+    const errors = validateRetirementDate();
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors); // Set the errors state if validation fails
+      return; // Return early to prevent submission
+    }
+
     setErrors(newErrors);
 
     /*  if (Object.keys(newErrors).length > 0) {
@@ -1064,6 +1072,38 @@ function NewPreclaim({
     }
   };
 
+  const validateRetirementDate = () => {
+    const pensionAward = pensionAwards.find(
+      (award) => award.id === formData.pension_award_id
+    );
+
+    const dob = dayjs(formData.dob); // Assuming dob is in "YYYY-MM-DD" format
+    const retirementDate = dayjs(formData.retirement_date);
+
+    if (!pensionAward || !dob.isValid() || !retirementDate.isValid()) {
+      return;
+    }
+
+    if (pensionAward.name === "RETIREMENT ON AGE GROUNDS") {
+      const retirementAge = formData.disability_status === 0 ? 65 : 60;
+      const expectedRetirementDate = dob.add(retirementAge, "year");
+
+      if (retirementDate.isBefore(expectedRetirementDate)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          retirement_date: `Retirement date should be at least ${retirementAge} years after the date of birth.`,
+        }));
+        message.error(
+          `Retirement date should be at least ${retirementAge} years after the date of birth.`
+        );
+      } else {
+        setErrors((prevErrors) => {
+          const { retirement_date, ...restErrors } = prevErrors;
+          return restErrors;
+        });
+      }
+    }
+  };
   useEffect(() => {
     if (formData.retirement_date) {
       const lastPayDate = dayjs(formData.retirement_date);
@@ -1074,37 +1114,15 @@ function NewPreclaim({
       });
     }
   }, [formData.retirement_date]);
-  // useEffect(() => {
-  //   if (formData.authority_for_retirement_dated) {
-  //     const authority_for_retirement_dated = dayjs(
-  //       formData.authority_for_retirement_dated
-  //     );
-  //     const nextDay = authority_for_retirement_dated
-  //       .add(1, "day")
-  //       .format("YYYY-MM-DD");
-  //     setFormData({
-  //       ...formData,
-  //       date_from_which_pension_will_commence: nextDay,
-  //     });
-  //   }
-  // }, [formData.authority_for_retirement_dated]);
 
-  // useEffect(() => {
-  //   if (formData.dob) {
-  //     const dobDate = dayjs(formData.dob);
-  //     const firstAppointmentDate = dobDate
-  //       .add(18, "years")
-  //       .format("YYYY-MM-DD");
-  //     setFormData({
-  //       ...formData,
-  //       date_of_first_appointment: firstAppointmentDate,
-  //     });
-  //   }
-  // }, [formData.dob]);
-
-  // const handleNext = () => {
-  //   !editMode && retireeId && moveToNextTab();
-  // };
+  useEffect(() => {
+    validateRetirementDate();
+  }, [
+    formData.pension_award_id,
+    formData.dob,
+    formData.retirement_date,
+    formData.disability_status,
+  ]);
 
   return (
     <div className="max-h-[100vh]  overflow-y-auto pb-[250px]">
