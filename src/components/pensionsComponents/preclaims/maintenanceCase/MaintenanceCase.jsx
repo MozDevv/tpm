@@ -20,6 +20,7 @@ const columnDefs = [
     headerClass: "prefix-header",
     width: 90,
     filter: true,
+    pinned: "left",
   },
   {
     field: "maintainee_name",
@@ -58,12 +59,12 @@ const columnDefs = [
     width: 200,
     filter: true,
   },
-  {
-    field: "postal_code_id",
-    headerName: "Postal Code",
-    width: 120,
-    filter: true,
-  },
+  // {
+  //   field: "postal_code_id",
+  //   headerName: "Postal Code",
+  //   width: 120,
+  //   filter: true,
+  // },
   {
     field: "gratuity_rate",
     headerName: "Gratuity Rate",
@@ -344,7 +345,6 @@ const MaintenanceCase = (id) => {
           mt: "20px",
 
           overflowY: "auto",
-          width: "90vw",
         }}
       >
         <AgGridReact
