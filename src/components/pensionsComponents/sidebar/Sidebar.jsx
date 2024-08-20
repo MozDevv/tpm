@@ -40,12 +40,23 @@ function Sidebar() {
 
   useEffect(() => {
     const allItems = [...menuItems, ...adminItems];
-    const allChildren = allItems
-      .filter((item) => item.children)
-      .flatMap((item) =>
-        item.children.map((child) => ({ ...child, parent: item.title }))
-      );
 
+    // Flatten all children and subchildren with their parents
+    const allChildren = allItems.flatMap((item) =>
+      item.children
+        ? item.children.flatMap((child) =>
+            child.subChildren
+              ? child.subChildren.map((subChild) => ({
+                  ...subChild,
+                  parent: item.title,
+                  childParent: child.title,
+                }))
+              : [{ ...child, parent: item.title }]
+          )
+        : []
+    );
+
+    // Find the selected item in subchildren
     const selectedChild = allChildren.find(
       (child) => child.title === selectedItem
     );
@@ -54,6 +65,7 @@ function Sidebar() {
       setOpen((prevOpen) => ({
         ...prevOpen,
         [selectedChild.parent]: true,
+        [selectedChild.childParent]: true, // Open child as well
       }));
     }
   }, [selectedItem]);

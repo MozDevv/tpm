@@ -163,7 +163,7 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
       console.log("Error submitting bank details:", error);
     }
   };
-
+  g;
   const filteredBranches = selectedBank
     ? branches.filter((branch) => branch.bankId === selectedBank)
     : [];
