@@ -102,13 +102,13 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
       { label: "Postal Code", name: "postal_code", type: "text" },
 
       { label: "Postal Code Name", name: "postal_code_name", type: "text" },
-      { label: "Gender", name: "gender", type: "number" },
+      { label: "Gender", name: "gender", type: "text" },
       { label: "Parent Name", name: "parent_name", type: "text" },
       { label: "Relationship", name: "relationship", type: "text" },
       { label: "KRA PIN", name: "kra_pin", type: "text" },
       { label: "Is Guardian", name: "is_guardian", type: "text" },
 
-      { label: "Deceased", name: "deceased", type: "text" },
+      // { label: "Deceased", name: "deceased", type: "" },
       {
         label: "Birth Certificate Number",
         name: "birth_cert_no",
@@ -273,7 +273,13 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
                             name={field.name}
                             variant="outlined"
                             size="small"
-                            value={fieldValue || ""}
+                            value={
+                              (fieldValue === 2
+                                ? "Female"
+                                : fieldValue === 1
+                                ? "Male"
+                                : fieldValue) || ""
+                            }
                             onChange={handleChange}
                             fullWidth
                           />

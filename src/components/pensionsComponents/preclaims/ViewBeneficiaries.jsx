@@ -51,7 +51,7 @@ function ViewBeneficiaries({
     { headerName: "Surname", field: "surname" },
     { headerName: "First Name", field: "first_name" },
     { headerName: "Other Name", field: "other_name" },
-    { headerName: "Percentage", field: "share_percentage" },
+    { headerName: "Percentage Share (%)", field: "share_percentage" },
     { headerName: "Age", field: "age" },
     {
       headerName: "Date of Birth",
@@ -93,25 +93,32 @@ function ViewBeneficiaries({
         </div>
       </DialogContent>
 
-      <p className="text-primary mt-[-100px] text-lg px-6 font-bold">
-        Guardians
-      </p>
-      <DialogContent>
-        <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
-          <AgGridReact
-            rowData={guardians}
-            columnDefs={columnDefs}
-            domLayout="autoHeight"
-            pagination={false}
-            rowSelection="single"
-            onRowClicked={(e) => {
-              setIsGuardian(true);
-              setSelectedBeneficiary(e.data);
-              setEditDialogOpen(true);
-            }}
-          />
-        </div>
-      </DialogContent>
+      {guardians.length > 0 && (
+        <>
+          <p className="text-primary mt-[-100px] text-lg px-6 font-bold">
+            Guardians
+          </p>
+          <DialogContent>
+            <div
+              className="ag-theme-quartz"
+              style={{ height: 400, width: "100%" }}
+            >
+              <AgGridReact
+                rowData={guardians}
+                columnDefs={columnDefs}
+                domLayout="autoHeight"
+                pagination={false}
+                rowSelection="single"
+                onRowClicked={(e) => {
+                  setIsGuardian(true);
+                  setSelectedBeneficiary(e.data);
+                  setEditDialogOpen(true);
+                }}
+              />
+            </div>
+          </DialogContent>
+        </>
+      )}
 
       <EditBeneficiaryDialog
         open={editDialogOpen}

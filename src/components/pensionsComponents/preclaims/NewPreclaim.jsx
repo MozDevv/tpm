@@ -815,6 +815,65 @@ function NewPreclaim({
                 })),
         },
         {
+          label: "Women & Children Pension Scheme (WCPS)",
+          name: "wcps",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "Yes",
+            },
+            {
+              id: 1,
+              name: "No",
+            },
+          ],
+        },
+        {
+          label: "Maintenance Case",
+          name: "maintenance_case",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "Yes",
+            },
+            {
+              id: 1,
+              name: "No",
+            },
+          ],
+        },
+        {
+          label: "Person With Disability",
+          name: "disability_status",
+          type: "select",
+          children: [
+            {
+              id: 0,
+              name: "Yes",
+            },
+            {
+              id: 1,
+              name: "No",
+            },
+          ],
+        },
+        ...(formData.disability_status === 0
+          ? [
+              {
+                label: "Tax Exempt Certificate Number",
+                name: "tax_exempt_certificate_number",
+                type: "text",
+              },
+              {
+                label: "Tax Exempt Certificate Date",
+                name: "tax_exempt_certificate_date",
+                type: "date",
+              },
+            ]
+          : []),
+        {
           label: "Date of First Appointment",
           name: "date_of_first_appointment",
           type: "date",
@@ -863,35 +922,6 @@ function NewPreclaim({
           name: "last_basic_salary_amount",
           type: "number",
         },
-        {
-          label: "Person With Disability",
-          name: "disability_status",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "Yes",
-            },
-            {
-              id: 1,
-              name: "No",
-            },
-          ],
-        },
-        ...(formData.disability_status === 0
-          ? [
-              {
-                label: "Tax Exempt Certificate Number",
-                name: "tax_exempt_certificate_number",
-                type: "text",
-              },
-              {
-                label: "Tax Exempt Certificate Date",
-                name: "tax_exempt_certificate_date",
-                type: "date",
-              },
-            ]
-          : []),
       ],
     },
   ];
@@ -909,27 +939,40 @@ function NewPreclaim({
     }
 
     const newErrors = {};
-    Object.keys(formData).forEach((key) => {
+    for (const key of Object.keys(formData)) {
       if (
         key !== "other_name" &&
+        key !== "postal_code" &&
+        key !== "notification_status" &&
+        key !== "designation_grade" &&
+        key !== "postal_address" &&
+        key !== "city_town" &&
+        key !== "country_id" &&
+        key !== "county_id" &&
+        key !== "constituency_id" &&
+        key !== "authority_for_retirement_reference" &&
+        key !== "authority_for_retirement_dated" &&
+        key !== "tax_exempt_certificate_number" &&
+        key !== "tax_exempt_certificate_date" &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === "" ||
           formData[key] === false)
       ) {
         newErrors[key] = "This field is required";
-        // message.error(`This field is required: ${key}`);
+        message.error(`This field is required: ${key}`);
+        return; // Exit the function or block to stop further processing
       }
-    });
+    }
 
-    Object.keys(formData).forEach((key) => {
+    for (const key of Object.keys(formData)) {
       const error = validateField(key, formData[key], formData);
       if (error) {
         newErrors[key] = error;
         message.error(error);
-        return;
+        return; // Exit the function or block to stop further processing
       }
-    });
+    }
 
     if (formData.dob) {
       const dobDate = dayjs(formData.dob);
@@ -1001,9 +1044,9 @@ function NewPreclaim({
               "Prospective pensioner Information & Contact Details updated successfully",
             severity: "success",
           });
+          setOpenBaseCard(false);
           fetchRetiree();
           setEditMode(false);
-          setOpenBaseCard(false);
         }
         if (
           res?.data?.messages[0] ===
@@ -1043,9 +1086,12 @@ function NewPreclaim({
         //     "Prospective pensioner Information & Contact Details added successfully",
         //   severity: "success",
         // });
-
-        message.success("Prospective pensioner Information added successfully");
-        // router.push(
+        setOpenBaseCard(false);
+        setAlert({
+          open: true,
+          message: "Prospective pensioner created successfully",
+          severity: "success",
+        }); // router.push(
         //   `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         // );
 
@@ -1073,6 +1119,7 @@ function NewPreclaim({
       }
     } catch (error) {
       console.log("API Error:", error);
+    } finally {
     }
   };
 

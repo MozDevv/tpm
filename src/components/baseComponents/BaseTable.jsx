@@ -338,7 +338,7 @@ const BaseTable = ({
 
               maxHeight: "85%",
               overflowY: "auto",
-              width: openFilter ? "calc(100vw - 500px)" : "90vw",
+              width: openFilter ? "calc(100vw - 500px)" : "80vw",
             }}
           >
             <AgGridReact
@@ -347,6 +347,8 @@ const BaseTable = ({
               pagination={false}
               domLayout="autoHeight"
               alwaysShowHorizontalScroll={true}
+              // alwaysShowVerticalScroll={true}
+
               loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
               loadingOverlayComponentParams={loadingOverlayComponentParams}
               // paginationPageSize={pageSize}
