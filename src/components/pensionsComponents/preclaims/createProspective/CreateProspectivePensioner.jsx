@@ -89,6 +89,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       key="3"
                     >
                       <AddPensionersWorkHistory
+                        status={clickedItem.notification_status}
                         id={activeRetireeId}
                         name={clickedItem ? clickedItem.first_name : undefined}
                         moveToNextTab={moveToNextTab}
@@ -104,6 +105,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       key="4"
                     >
                       <AddDocuments
+                        status={clickedItem.notification_status}
                         id={activeRetireeId}
                         moveToNextTab={moveToNextTab}
                         moveToPreviousTab={moveToPreviousTab}

@@ -19,12 +19,12 @@ import {
   FormControl,
   IconButton,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, Visibility } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 
-function PeriodsOfAbsence({ id }) {
+function PeriodsOfAbsence({ id, status }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -257,7 +257,7 @@ function PeriodsOfAbsence({ id }) {
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[18px] font-semibold">
+      <p className="my-2 mt-6 text-primary text-[16px] font-montserrat font-semibold">
         Periods of Absence
       </p>
       <Button
@@ -265,6 +265,7 @@ function PeriodsOfAbsence({ id }) {
         sx={{
           mt: 2,
           mb: 2,
+          display: status === 5 ? "none" : "block",
         }}
         onClick={() => {
           setFormData({});
@@ -302,12 +303,19 @@ function PeriodsOfAbsence({ id }) {
                 <TableCell>{item.number_of_days}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(item)}>
-                    <Edit />
+                    {status === 5 ? (
+                      <Visibility />
+                    ) : (
+                      <Edit sx={{ color: "gray" }} />
+                    )}
                   </IconButton>
                   <IconButton
                     onClick={() => {
                       setOpenDeleteDialog(true);
                       setRecordId(item.id);
+                    }}
+                    sx={{
+                      display: status === 5 ? "none" : "block",
                     }}
                   >
                     <Delete sx={{ color: "crimson" }} />

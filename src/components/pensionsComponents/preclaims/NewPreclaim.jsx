@@ -1176,6 +1176,11 @@ function NewPreclaim({
     formData.disability_status,
   ]);
 
+  const canEdit =
+    formData.notification_status === 0 ||
+    formData.notification_status === 2 ||
+    formData.notification_status === "";
+
   return (
     <div className="max-h-[100vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -1195,30 +1200,34 @@ function NewPreclaim({
         </IconButton>
         <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
           <form onSubmit={handleSubmit} className="">
-            <div className="pt-6 sticky top-0 bg-inherit  pb-2 bg-white z-50">
+            <div className="pt-2 sticky top-0 bg-inherit  pb-2 bg-white z-50">
               <div className="flex items-center justify-between px-6 w-[100%]">
                 <div className="flex items-center gap-2"></div>
                 <div className="flex ">
                   {" "}
-                  <div className="flex gap-8 mr-4">
-                    <div className=""></div>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      //  onClick={handleNext}
-                      type="submit"
-                      sx={{ maxHeight: "40px", mt: "5px" }}
-                    >
-                      {formData.notification_status
-                        ? "Next"
-                        : editMode
-                        ? "Update"
-                        : "Save"}
-                    </Button>{" "}
-                  </div>
+                  {canEdit && (
+                    <div className="flex gap-8 mr-4 ">
+                      <div className=""></div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        //  onClick={handleNext}
+                        type="submit"
+                        sx={{
+                          maxHeight: "40px",
+                          mt: "5px",
+                        }}
+                      >
+                        {formData.notification_status
+                          ? "Next"
+                          : editMode
+                          ? "Update"
+                          : "Save"}
+                      </Button>{" "}
+                    </div>
+                  )}
                 </div>
               </div>
-              <hr className="border-[1px] border-black-900 my-2" />
             </div>
 
             <div className="p-2 mt-[-15px] ">
@@ -1285,6 +1294,7 @@ function NewPreclaim({
                                     size="small"
                                     fullWidth
                                     name={field.name}
+                                    disabled={!canEdit}
                                     value={formData[field.name]}
                                     onChange={handleInputChange}
                                     error={!!errors[field.name]} // Show error style if there is an error
@@ -1332,6 +1342,7 @@ function NewPreclaim({
                                         size="small"
                                         fullWidth
                                         name={field.name}
+                                        disabled={!canEdit}
                                         error={!!errors[field.name]}
                                         helperText={errors[field.name]}
                                       />
@@ -1364,6 +1375,7 @@ function NewPreclaim({
                                     type={field.type}
                                     name={field.name}
                                     variant="outlined"
+                                    disabled={!canEdit}
                                     size="small"
                                     value={formData[field.name]}
                                     onChange={handleInputChange}

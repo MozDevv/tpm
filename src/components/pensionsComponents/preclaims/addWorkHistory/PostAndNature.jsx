@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { message } from "antd";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Visibility } from "@mui/icons-material";
 import axios from "axios";
 import preClaimsEndpoints, {
   apiService,
@@ -29,7 +29,7 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 
-function PostAndNature({ id, loading, setLoading }) {
+function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -300,6 +300,7 @@ function PostAndNature({ id, loading, setLoading }) {
               variant="contained"
               onClick={handleDelete}
               sx={{ backgroundColor: "crimson", color: "white" }}
+              disabled={status === 5}
             >
               Delete
             </Button>
@@ -401,13 +402,18 @@ function PostAndNature({ id, loading, setLoading }) {
                 )}
               </div>
             ))}
-            <Button variant="contained" onClick={handleSubmit} sx={{ mt: 4 }}>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{ mt: 4 }}
+              disabled={status === 5}
+            >
               {isEditMode ? "Update" : "Submit"}
             </Button>
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[18px] font-semibold">
+      <p className="my-2 mt-4 text-primary text-[16px] font-semibold font-montserrat">
         Nature and Post of Service
       </p>
       <Button
@@ -415,6 +421,7 @@ function PostAndNature({ id, loading, setLoading }) {
         sx={{
           mt: 2,
           mb: 2,
+          display: status === 5 ? "none" : "block",
         }}
         onClick={() => {
           setFormData({});
@@ -453,13 +460,18 @@ function PostAndNature({ id, loading, setLoading }) {
                 <TableCell>{item.nature_of_service}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(item)}>
-                    <Edit />
+                    {status === 5 ? (
+                      <Visibility />
+                    ) : (
+                      <Edit sx={{ color: "gray" }} />
+                    )}
                   </IconButton>
                   <IconButton
                     onClick={() => {
                       setOpenDeleteDialog(item.id);
                       setRecordId(item.id);
                     }}
+                    sx={{ display: status === 5 ? "none" : "block" }}
                   >
                     <Delete sx={{ color: "crimson" }} />
                   </IconButton>

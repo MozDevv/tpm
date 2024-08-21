@@ -35,6 +35,18 @@ const baselightTheme = createTheme({
         },
       },
     },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiInputBase-input.Mui-disabled, & .MuiOutlinedInput-input.Mui-disabled":
+            {
+              color: "rgba(0, 0, 0, 0.7)",
+              fontWeight: 500,
+              WebkitTextFillColor: "rgba(0, 0, 0, 0.7)",
+            },
+        },
+      },
+    },
   },
 
   typography,

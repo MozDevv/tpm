@@ -9,7 +9,7 @@ import preClaimsEndpoints, {
 import Spinner from "@/components/spinner/Spinner";
 import { useRouter } from "next/navigation";
 
-const AddDocuments = ({ id, moveToPreviousTab }) => {
+const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
 
   //const [awardDocumentsFromPortal, setAwardDocumentsFromPortal] = useState([]);
@@ -219,30 +219,32 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
     //     ),
     // },
 
+    status !== 5
+      ? {
+          title: "Select File",
+          dataIndex: "select",
+          key: "select",
+          render: (_, record) => (
+            <Upload
+              name="file"
+              showUploadList={false}
+              onChange={(info) => handleChange(info, record)}
+              disabled={record.pensioner_upload}
+            >
+              <Button
+                startIcon={<UploadOutlined />}
+                variant="outlined"
+                size="small"
+                disabled={record.pensioner_upload}
+              >
+                {record.edms_id ? "Update File" : "Select File"}
+              </Button>
+            </Upload>
+          ),
+        }
+      : {},
     {
-      title: "Select File",
-      dataIndex: "select",
-      key: "select",
-      render: (_, record) => (
-        <Upload
-          name="file"
-          showUploadList={false}
-          onChange={(info) => handleChange(info, record)}
-          disabled={record.pensioner_upload}
-        >
-          <Button
-            startIcon={<UploadOutlined />}
-            variant="outlined"
-            size="small"
-            disabled={record.pensioner_upload}
-          >
-            {record.edms_id ? "Update File" : "Select File"}
-          </Button>
-        </Upload>
-      ),
-    },
-    {
-      title: "Selected File",
+      title: "Uploaded File",
       dataIndex: "selectedFile",
       key: "selectedFile",
       width: 250,
@@ -251,7 +253,7 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
         const file = fileList.find((f) => f.uid === record.id);
         const fileName = file
           ? file.name
-          : record?.uploadedDetails || "No file selected";
+          : record?.uploadedDetails || "No file uploaded";
         return (
           <Tooltip title={fileName}>
             <span>
@@ -292,22 +294,6 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-8 mb-3 justify-end mr-8">
-            <Button variant="outlined" onClick={handlePrevious}>
-              Previous
-            </Button>
-            {/* <Button
-              variant="contained"
-              color="primary"
-              onClick={handleUpload}
-              disabled={uploadButtonDisabled}
-              sx={{
-                backgroundColor: uploadButtonDisabled ? "#ccc" : undefined,
-              }}
-            >
-              Upload
-            </Button> */}
-          </div>
           <Table
             columns={columns}
             dataSource={awardDocuments}
@@ -315,6 +301,7 @@ const AddDocuments = ({ id, moveToPreviousTab }) => {
             scroll={{ x: "max-content" }}
             style={{
               borderCollapse: "collapse",
+              marginTop: "40px",
             }}
             components={{
               header: {

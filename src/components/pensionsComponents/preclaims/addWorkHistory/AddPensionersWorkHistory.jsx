@@ -16,6 +16,7 @@ function AddPensionersWorkHistory({
   id,
   name,
   moveToNextTab,
+  status,
   moveToPreviousTab,
 }) {
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,7 @@ function AddPensionersWorkHistory({
       );
 
       setDateOfFirstAppointment(data.date_of_first_appointment);
+
       setRetiree(data);
     } catch (error) {
       console.log(error);
@@ -60,7 +62,7 @@ function AddPensionersWorkHistory({
     <div className="p-2 w-full  max-h-[100vh] overflow-hidden flex flex-col">
       <div className="flex justify-between items-center px-6 sticky top-0 bg-white z-10">
         <div></div>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Button
             variant="outlined"
             sx={{ mb: 3, mt: 2 }}
@@ -75,13 +77,14 @@ function AddPensionersWorkHistory({
           >
             Next
           </Button>
-        </div>
+        </div> */}
       </div>
-      <hr className="border-[1px] border-black-900 my-2 w-full" />
+
       <div className="flex-1 overflow-y-auto pb-[200px] max-h-full">
         <Suspense fallback={<Spinner />}>
           {pensionAward ? (
             <MixedServicePost
+              status={status}
               id={id}
               loading={loading}
               setLoading={setLoading}
@@ -90,6 +93,7 @@ function AddPensionersWorkHistory({
           ) : (
             <PostAndNature
               id={id}
+              status={status}
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
@@ -97,10 +101,10 @@ function AddPensionersWorkHistory({
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
-          <PensionableSalary id={id} />
+          <PensionableSalary id={id} status={status} />
         </Suspense>
         <Suspense fallback={<Spinner />}>
-          <PeriodsOfAbsence id={id} />
+          <PeriodsOfAbsence id={id} status={status} />
         </Suspense>
       </div>
     </div>

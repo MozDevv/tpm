@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { message } from "antd";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Visibility } from "@mui/icons-material";
 import axios from "axios";
 import preClaimsEndpoints, {
   apiService,
@@ -29,7 +29,7 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 
-function MixedServicePost({ id, loading, setLoading }) {
+function MixedServicePost({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -428,7 +428,7 @@ function MixedServicePost({ id, loading, setLoading }) {
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[18px] font-semibold">
+      <p className="my-2 mt-4 text-primary text-[16px] font-montserrat font-semibold">
         Nature and Post of Service
       </p>
       <Button
@@ -436,6 +436,7 @@ function MixedServicePost({ id, loading, setLoading }) {
         sx={{
           mt: 2,
           mb: 2,
+          display: status === 5 ? "none" : "block",
         }}
         onClick={() => {
           setFormData({});
@@ -481,9 +482,16 @@ function MixedServicePost({ id, loading, setLoading }) {
                 <TableCell>{item.pensionableAllowanceRateP_a}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(item)}>
-                    <Edit />
+                    {status === 5 ? (
+                      <Visibility />
+                    ) : (
+                      <Edit sx={{ color: "gray" }} />
+                    )}
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(item)}>
+                  <IconButton
+                    sx={{ display: status === 5 ? "none" : "block" }}
+                    onClick={() => handleDelete(item)}
+                  >
                     <Delete />
                   </IconButton>
                 </TableCell>

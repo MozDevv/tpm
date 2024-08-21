@@ -79,7 +79,7 @@ const columnDefs = [
     filter: true,
   },
   {
-    field: "bank_branch_id",
+    field: "bank_branch_name",
     headerName: "Bank Branch",
     width: 150,
     filter: true,
@@ -151,10 +151,12 @@ const MaintenanceCase = (id) => {
       postal_code_id: item.postal_code_id,
       gratuity_rate: item.gratuity_rate,
       monthly_pension_rate: item.monthly_pension_rate,
+      bank_branch_name: item.bankBranch.name,
       bank_branch_id: item.bank_branch_id,
       account_number: item.account_number,
       account_name: item.account_name,
       created_date: item.created_date,
+      bank_id: item.bankBranch.bank_id,
     }));
   };
 

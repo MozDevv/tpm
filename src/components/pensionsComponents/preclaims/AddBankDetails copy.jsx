@@ -192,18 +192,12 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
   return (
     <form className="w-full p-2" onSubmit={handleSubmit}>
       <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
-        <p className="mt-3 ml-4 mb-5 text-primary text-[16px] font-montserrat font-semibold">
-          Bank Details
-        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
           {fields.map((field, index) => (
-            <div key={index} className="flex flex-col">
-              <label className="text-xs font-semibold text-gray-600">
-                {field.label}
-              </label>
-
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <TextField
                 type={field.type}
+                label={field.label}
                 name={field.name}
                 variant="outlined"
                 size="small"
@@ -213,10 +207,17 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
                 helperText={errors[field.name]}
                 required={field.required}
                 fullWidth
-                disabled={hasBankDetails}
               />
-            </div>
+            </Grid>
           ))}
+        </div>
+        <div className="flex justify-between mt-4">
+          <Button variant="outlined" onClick={handlePrevious}>
+            Previous
+          </Button>
+          <Button variant="contained" type="submit">
+            Next
+          </Button>
         </div>
       </div>
     </form>

@@ -15,12 +15,12 @@ import {
   Dialog,
   IconButton,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, Visibility } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 
-function PensionableSalary({ id }) {
+function PensionableSalary({ id, status }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -174,6 +174,7 @@ function PensionableSalary({ id }) {
               variant="contained"
               onClick={handleDelete}
               sx={{ backgroundColor: "crimson", color: "white" }}
+              disabled={status === 5}
             >
               Delete
             </Button>
@@ -200,13 +201,17 @@ function PensionableSalary({ id }) {
                 />
               </div>
             ))}
-            <Button variant="contained" onClick={handleSubmit} sx={{ mt: 4 }}>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{ mt: 4, display: status === 5 ? "none" : "block" }}
+            >
               {isEditMode ? "Update" : "Submit"}
             </Button>
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[18px] font-semibold">
+      <p className="my-2 mt-4 text-primary text-[16px] font-semibold font-montserrat">
         Pensionable Salary
       </p>
       <Button
@@ -214,6 +219,7 @@ function PensionableSalary({ id }) {
         sx={{
           mt: 2,
           mb: 2,
+          display: status === 5 ? "none" : "block",
         }}
         onClick={() => {
           setFormData({});
@@ -252,13 +258,18 @@ function PensionableSalary({ id }) {
                 <TableCell>{item.pensionable_allowance}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(item)}>
-                    <Edit />
+                    {status === 5 ? (
+                      <Visibility />
+                    ) : (
+                      <Edit sx={{ color: "gray" }} />
+                    )}
                   </IconButton>
                   <IconButton
                     onClick={() => {
                       setOpenDeleteDialog(true);
                       setRecordId(item.id);
                     }}
+                    sx={{ display: status === 5 ? "none" : "block" }}
                   >
                     <Delete sx={{ color: "crimson" }} />
                   </IconButton>
