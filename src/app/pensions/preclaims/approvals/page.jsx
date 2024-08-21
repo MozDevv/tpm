@@ -12,8 +12,8 @@ function page() {
         <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
           Pending Approvals
         </div>
-        <Preclaims status={5} />
         <CustomBreadcrumbsList currentTitle="Pending Approvals" />
+        <Preclaims status={5} />
       </React.Suspense>
     </div>
   );

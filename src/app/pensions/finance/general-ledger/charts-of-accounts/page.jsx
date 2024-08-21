@@ -1,12 +1,12 @@
-"use client";
 import ChartsOfAccountsList from "@/components/financeComponents/generalLedger/chartsOfAccounts/chartsOfAccountsList/ChartsOfAccountsList";
+import React from "react";
 
-function ChartsOfAccountsList1() {
+function page() {
   return (
-    <div className="h-[98vh] w-[95vw]">
+    <div>
       <ChartsOfAccountsList />
     </div>
   );
 }
 
-export default ChartsOfAccountsList1;
+export default page;
