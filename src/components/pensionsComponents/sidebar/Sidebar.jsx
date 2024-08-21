@@ -167,6 +167,7 @@ function Sidebar() {
       path: "/pensions/assessment",
       icon: <BarChart />,
     },
+
     {
       title: "Directorate",
       path: "/pensions/directorate",

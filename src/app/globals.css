@@ -53,3 +53,9 @@ a:hover {
 .ant-spin-dot-item {
   color: #006990 !important;
 }
+.ant-tabs-ink-bar {
+  background-color: #006990 !important; /* Customize ink bar color */
+}
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  font-weight: 500;
+}

@@ -92,13 +92,9 @@ function PensionableSalary({ id, status }) {
       if (res.status === 200 && res.data.succeeded) {
         fetchPensionableSalary();
         setOpen(false);
-        setAlert({
-          open: true,
-          message: `Pensionable Salary ${
-            isEditMode ? "updated" : "added"
-          } successfully`,
-          severity: "success",
-        });
+        message.success(
+          `Pensionable Salary ${isEditMode ? "updated" : "added"} successfully`
+        );
       } else if (
         res.data.validationErrors &&
         res.data.validationErrors.length > 0
@@ -135,11 +131,7 @@ function PensionableSalary({ id, status }) {
         preClaimsEndpoints.deletePensionableSalary(recordId)
       );
       fetchPensionableSalary();
-      setAlert({
-        open: true,
-        message: "Pensionable Salary deleted successfully",
-        severity: "success",
-      });
+      message.success("Pensionable Salary deleted successfully");
       setOpenDeleteDialog(false);
     } catch (error) {
       console.log(error);
@@ -211,7 +203,7 @@ function PensionableSalary({ id, status }) {
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[16px] font-semibold font-montserrat">
+      <p className="my-6 mt-5 text-primary text-[16px] font-semibold font-montserrat">
         Pensionable Salary
       </p>
       <Button
@@ -256,7 +248,7 @@ function PensionableSalary({ id, status }) {
                 </TableCell>
                 <TableCell>{item.salary}</TableCell>
                 <TableCell>{item.pensionable_allowance}</TableCell>
-                <TableCell>
+                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
                   <IconButton onClick={() => handleEdit(item)}>
                     {status === 5 ? (
                       <Visibility />

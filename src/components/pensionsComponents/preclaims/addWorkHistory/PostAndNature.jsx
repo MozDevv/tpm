@@ -413,7 +413,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-4 text-primary text-[16px] font-semibold font-montserrat">
+      <p className="my-2 mt-4 pb-3 text-primary text-[16px] font-semibold font-montserrat">
         Nature and Post of Service
       </p>
       <Button
@@ -458,7 +458,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
                 <TableCell>{item.was_pensionable ? "Yes" : "No"}</TableCell>
                 <TableCell>{item.nature_of_salary_scale}</TableCell>
                 <TableCell>{item.nature_of_service}</TableCell>
-                <TableCell>
+                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
                   <IconButton onClick={() => handleEdit(item)}>
                     {status === 5 ? (
                       <Visibility />

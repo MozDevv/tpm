@@ -38,12 +38,12 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto">
       <div>
         <div>
-          <div className="px-5 mt-[-20px]">
+          <div className="px-5 mt-[-10px]">
             <Tabs
               activeKey={activeKey}
               onChange={handleTabChange}
-              className="!bg-transparent z-50" // Remove default background
-              tabBarExtraContent={<div className="!bg-primary h-1" />} // Custom ink bar style
+              className="!bg-transparent z-50"
+              tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
               <TabPane
                 tab={

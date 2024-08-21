@@ -242,13 +242,11 @@ function MixedServicePost({ id, loading, setLoading, status }) {
 
       if (res.status === 200 && res.data.succeeded) {
         fetchPostandNature();
-        setAlert({
-          open: true,
-          message: `Post and Nature of Service ${
+        message.success(
+          `Post and Nature of Service ${
             isEditMode ? "updated" : "added"
-          } successfully`,
-          severity: "success",
-        });
+          } successfully`
+        );
         setOpen(false);
       }
       if (res.data.validationErrors) {
@@ -480,7 +478,7 @@ function MixedServicePost({ id, loading, setLoading, status }) {
                 <TableCell>{item.salaryP_a}</TableCell>
                 <TableCell>{item.pensionableAllowanceNature}</TableCell>
                 <TableCell>{item.pensionableAllowanceRateP_a}</TableCell>
-                <TableCell>
+                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
                   <IconButton onClick={() => handleEdit(item)}>
                     {status === 5 ? (
                       <Visibility />

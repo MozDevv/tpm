@@ -47,6 +47,24 @@ const baselightTheme = createTheme({
         },
       },
     },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          height: "30px", // Adjust row height
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: "2px 6px", // Adjust cell padding
+        },
+        head: {
+          height: "30px", // Adjust header cell height if needed
+          padding: "2px 6px", // Adjust header cell padding if needed
+        },
+      },
+    },
   },
 
   typography,

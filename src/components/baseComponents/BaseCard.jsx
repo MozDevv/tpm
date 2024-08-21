@@ -110,6 +110,7 @@ function BaseCard({
           minWidth: currentSize.minWidth,
           maxWidth: currentSize.maxWidth,
           transition: "all 0.3s ease",
+          overflowY: "hidden",
         },
       }}
     >
@@ -333,7 +334,7 @@ function BaseCard({
         >
           {" "}
           <div
-            className={`col-span-${isDetailsVisible ? "12" : "9"} `}
+            className={`col-span-${isDetailsVisible ? "12" : "9"}`}
             // className="col-span-9"
           >
             {children}

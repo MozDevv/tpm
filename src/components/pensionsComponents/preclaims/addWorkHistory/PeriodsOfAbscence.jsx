@@ -96,11 +96,7 @@ function PeriodsOfAbsence({ id, status }) {
         if (res.status === 200 && res.data.succeeded) {
           fetchPeriodsOfAbsence();
           setOpen(false);
-          setAlert({
-            open: true,
-            message: "Period of Absence updated successfully",
-            severity: "success",
-          });
+          message.success("Period of Absence updated successfully");
         } else if (res.data.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
@@ -123,11 +119,8 @@ function PeriodsOfAbsence({ id, status }) {
         if (res.status === 200 && res.data.succeeded) {
           fetchPeriodsOfAbsence();
           setOpen(false);
-          setAlert({
-            open: true,
-            message: "Period of Absence added successfully",
-            severity: "success",
-          });
+
+          message.success("Period of Absence added successfully");
         }
         if (res.data.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
@@ -257,7 +250,7 @@ function PeriodsOfAbsence({ id, status }) {
           </div>
         </div>
       </Dialog>
-      <p className="my-2 mt-6 text-primary text-[16px] font-montserrat font-semibold">
+      <p className="my-4 mt-6 text-primary text-[16px] font-montserrat font-semibold">
         Periods of Absence
       </p>
       <Button
@@ -301,7 +294,7 @@ function PeriodsOfAbsence({ id, status }) {
                 </TableCell>
                 <TableCell>{item.cause_of_absence}</TableCell>
                 <TableCell>{item.number_of_days}</TableCell>
-                <TableCell>
+                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
                   <IconButton onClick={() => handleEdit(item)}>
                     {status === 5 ? (
                       <Visibility />
@@ -315,7 +308,7 @@ function PeriodsOfAbsence({ id, status }) {
                       setRecordId(item.id);
                     }}
                     sx={{
-                      display: status === 5 ? "none" : "block",
+                      display: status === 5 ? "none" : "flex",
                     }}
                   >
                     <Delete sx={{ color: "crimson" }} />

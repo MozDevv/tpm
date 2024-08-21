@@ -80,7 +80,7 @@ function AddPensionersWorkHistory({
         </div> */}
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-[200px] max-h-full">
+      <div className="flex-1 overflow-y-auto pb-[200px] max-h-[90vh]">
         <Suspense fallback={<Spinner />}>
           {pensionAward ? (
             <MixedServicePost
@@ -103,9 +103,11 @@ function AddPensionersWorkHistory({
         <Suspense fallback={<Spinner />}>
           <PensionableSalary id={id} status={status} />
         </Suspense>
-        <Suspense fallback={<Spinner />}>
-          <PeriodsOfAbsence id={id} status={status} />
-        </Suspense>
+        <div className="pb-15">
+          <Suspense fallback={<Spinner />}>
+            <PeriodsOfAbsence id={id} status={status} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
