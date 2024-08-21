@@ -11,10 +11,13 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import {
+  AccountBalance,
+  AccountBalanceWallet,
   DragIndicator,
   KeyboardArrowRight,
   PeopleAltOutlined,
   Person,
+  Wallet,
   Widgets,
 } from "@mui/icons-material";
 import styles from "./sidebar.module.css";
@@ -169,7 +172,7 @@ function Sidebar() {
     },
     {
       title: "Finance",
-      icon: <ArticleOutlinedIcon />,
+      icon: <AccountBalanceWallet />,
       children: [
         {
           title: "General Ledger",

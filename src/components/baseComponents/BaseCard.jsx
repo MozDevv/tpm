@@ -41,6 +41,7 @@ function BaseCard({
   deleteApiEndpoint,
   deleteApiService,
   isSecondaryCard,
+  glAccountName,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -298,7 +299,9 @@ function BaseCard({
             >
               <ArrowBack sx={{ color: "#006990" }} />
             </IconButton>
-            <p className="text-lg text-primary font-semibold">{title}</p>
+            <p className="text-lg text-primary font-semibold">
+              {glAccountName !== null ? glAccountName : title}
+            </p>
           </div>
           <div className="flex items-center">
             <IconButton onClick={() => setIsExpanded(!isExpanded)}>

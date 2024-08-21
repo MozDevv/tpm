@@ -55,6 +55,37 @@ export const menuItems = [
     path: "/pensions/assessment",
   },
   {
+    title: "Finance",
+
+    children: [
+      {
+        title: "General Ledger",
+        subChildren: [
+          {
+            title: "Chart of Accounts",
+            path: "/pensions/finance/general-ledger/charts-of-accounts",
+          },
+        ],
+      },
+      {
+        title: "Payments",
+        path: "/finance/payments",
+      },
+      {
+        title: "Recievables",
+        path: "/finance/payments",
+      },
+      {
+        title: "Payables",
+        path: "/finance/recievables",
+      },
+      // {
+      //   title: "Verification",
+      //   path: "/pensions/claims-approval",
+      // },
+    ],
+  },
+  {
     title: "Directorate",
     path: "/pensions/directorate",
   },

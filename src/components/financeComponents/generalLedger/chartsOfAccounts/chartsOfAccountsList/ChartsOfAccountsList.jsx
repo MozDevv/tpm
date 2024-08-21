@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import { colDefsDataCharts, rowDataCharts } from "../chartsData/ChartsData";
 
 const flattenData = (data, level = 0) =>
@@ -42,7 +42,7 @@ function ChartsOfAccountsList() {
   }));
 
   return (
-    <div className="ag-theme-alpine" style={{ height: "100%", width: "100%" }}>
+    <div className="ag-theme-quartz" style={{ height: "100vh", width: "99%" }}>
       <AgGridReact
         rowData={flattenedData}
         columnDefs={columnDefs}
