@@ -19,42 +19,20 @@ function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
   const [colDefs] = useState([
     { headerName: "Account No.", field: "accountNo" },
-
     { headerName: "Account Name", field: "accountName" },
     { headerName: "Account Code", field: "accountCode" },
     { headerName: "Amount", field: "amount" },
     { headerName: "Sub Group Name", field: "subGroupName" },
-
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting" },
     { headerName: "Reconciliation", field: "isReconciliation" },
   ]);
 
-  const processRowData = (data) => {
-    const hierarchy = [];
-    data.forEach((account) => {
-      if (account.accountTypeName === "HEADING") {
-        hierarchy.push({ ...account, children: [] });
-      } else if (account.accountTypeName === "BEGIN_TOTAL") {
-        const parent = hierarchy[hierarchy.length - 1];
-        if (parent) parent.children.push({ ...account, children: [] });
-      } else if (account.accountTypeName === "POSTING") {
-        const parent = hierarchy[hierarchy.length - 1];
-        const child = parent?.children[parent.children.length - 1];
-        if (child) child.children.push(account);
-      } else if (account.accountTypeName === "END_TOTAL") {
-        const parent = hierarchy[hierarchy.length - 1];
-        parent?.children.push(account);
-      }
-    });
-    return hierarchy;
-  };
-
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts);
-      const flattenedData = processRowData(response.data.data);
-      setRowData(flattenedData);
+      // No need to process data if you are not handling hierarchical data
+      setRowData(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -67,7 +45,6 @@ function ChartsOfAccounts() {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-    // create: () => router.push("/pensions/preclaims/listing/new"),
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -78,22 +55,35 @@ function ChartsOfAccounts() {
     notify: () => setOpenNotification(true),
   };
 
-  const renderTableCell = (field, value, indentLevel, accountTypeName) => {
+  const renderTableCell = (field, value, accountTypeName) => {
     const isAccountName = field === "accountName";
     const isPostingType = accountTypeName === "POSTING";
+    const isBeginTotalorEndTotal =
+      accountTypeName === "END_TOTAL" || accountTypeName === "BEGIN_TOTAL";
     const isAccountNo = field === "accountNo";
     const formattedValue =
       typeof value === "number" && value === 0 ? "0.00" : value;
 
-    //////////////////////////////////////////////////////////
+    const getCellPadding = (
+      isAccountName,
+      isPostingType,
+      isBeginTotalorEndTotal
+    ) => {
+      if (isAccountName && isPostingType) return "25px";
+      if (isBeginTotalorEndTotal && isAccountName) return "15px";
+      return "4px";
+    };
 
-    ////////////////////////////////////////////////////////
     return (
       <TableCell
-        className={`table-cell`}
+        className="table-cell"
         style={{
-          fontWeight: isAccountName && !isPostingType ? "bold" : "normal", // Bold only if accountName and not POSTING
-          paddingLeft: isAccountName ? `${indentLevel * 20}px` : undefined,
+          paddingLeft: getCellPadding(
+            isAccountName,
+            isPostingType,
+            isBeginTotalorEndTotal
+          ),
+          fontWeight: isAccountName && !isPostingType ? "bold" : "normal",
           fontSize: isAccountName && !isPostingType ? "14px" : "13px",
         }}
         key={field}
@@ -114,33 +104,34 @@ function ChartsOfAccounts() {
       </TableCell>
     );
   };
+
   const handleRowClick = (row) => {
     console.log("Row clicked:", row); // Handle row click and access row data here
     setClickedItem(row);
     setOpenBaseCard(true);
   };
-  const renderRow = (row, indentLevel = 0) => (
-    <React.Fragment key={row.id}>
-      <TableRow
-        className="table-row cursor-pointer"
-        onClick={() => handleRowClick(row)}
-      >
-        {colDefs.map((colDef) =>
-          renderTableCell(
-            colDef.field,
-            row[colDef.field],
-            colDef.field === "accountCode" ? 0 : indentLevel,
-            row.accountTypeName // Pass the accountTypeName here
-          )
-        )}
-      </TableRow>
-      {row.children?.map((child) => renderRow(child, indentLevel + 1))}
-    </React.Fragment>
+
+  const renderRow = (row) => (
+    <TableRow
+      key={row.id}
+      className="table-row cursor-pointer"
+      onClick={() => handleRowClick(row)}
+    >
+      {colDefs.map((colDef) =>
+        renderTableCell(
+          colDef.field,
+          row[colDef.field],
+          row.accountTypeName // Pass the accountTypeName here
+        )
+      )}
+    </TableRow>
   );
 
   const [openBaseCard, setOpenBaseCard] = useState(false);
   const [clickedItem, setClickedItem] = useState(null);
   const [accountTypes, setAccountTypes] = useState([]);
+  const [groupTypes, setGroupTypes] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const fetchAccountTypes = async () => {
     try {
@@ -153,9 +144,22 @@ function ChartsOfAccounts() {
     }
   };
 
+  const fetchAccountGroupTypes = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getAccountGroupTypes
+      );
+      setGroupTypes(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchAccountTypes();
+    fetchAccountGroupTypes();
   }, []);
+
   const fields = [
     {
       name: "accountCode",
@@ -206,35 +210,45 @@ function ChartsOfAccounts() {
 
   const inputFields = [
     {
-      name: "accountNo",
+      name: "glAccountNo",
       label: "Account No",
       type: "text",
     },
     {
-      name: "accountName",
+      name: "glAccountName",
       label: "Account Name",
       type: "text",
     },
     {
       name: "group",
-      label: "Category ",
-      type: "text",
+      label: "Category",
+      type: "select",
+      options: groupTypes?.map((type) => ({
+        id: type.id,
+        name: type.groupName,
+      })),
     },
     {
-      name: "subGroupName",
-      label: "Sub Category ",
-      type: "text",
+      name: "accountSubgroupId",
+      label: "Sub Category",
+      type: "select",
+      options:
+        groupTypes
+          ?.find((group) => group.id === selectedGroup)
+          ?.subgroups.map((subgroup) => ({
+            id: subgroup.id,
+            name: subgroup.subGroupName,
+          })) || [],
     },
     {
       name: "glAccountType",
       label: "GL Account Type",
-      type: "select",
+      type: "autocomplete",
       options: accountTypes.map((type) => ({
         id: type.value,
         name: type.name,
       })),
     },
-
     {
       name: "isDirectPosting",
       label: "Direct Posting",
@@ -270,7 +284,10 @@ function ChartsOfAccounts() {
           />
         ) : (
           <BaseInputCard
+            fetchData={fetchGlAccounts}
             fields={inputFields}
+            selectedLabel={"group"}
+            setSelectedValue={setSelectedGroup}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
             apiEndpoint={financeEndpoints.createGlAccount}
@@ -293,7 +310,15 @@ function ChartsOfAccounts() {
             </TableRow>
           </TableHead>
           <TableBody className="table-body">
-            {rowData.map((row) => renderRow(row))}
+            {rowData.length > 0 ? (
+              rowData.map((row) => renderRow(row))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={colDefs.length}>
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

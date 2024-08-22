@@ -22,6 +22,7 @@ const financeEndpoints = {
   fetchGlAccounts: "/Accounts/GetGLAccounts",
   fetchGlAccountTypes: "/AccountsSetup/GetGLAccountTypes",
   createGlAccount: "/Accounts/AddGLAccount",
+  getAccountGroupTypes: "/AccountsSetup/GetAccountGroups",
 };
 
 export const apiService = {

@@ -30,6 +30,9 @@ const BaseInputCard = ({
   setSelectedBank,
   setOpenAction,
   isBranch,
+  selectedLabel,
+  setSelectedValue,
+  fetchData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -45,8 +48,6 @@ const BaseInputCard = ({
 
   useEffect(() => {
     if (clickedItem) {
-      // Populate form data with clickedItem values directly
-      // setSelectedBank(clickedItem?.bank_id || "");
       setFormData(clickedItem);
     } else {
       // Reset form data if no clickedItem
@@ -56,6 +57,10 @@ const BaseInputCard = ({
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, multiple } = e.target;
+
+    if (name === selectedLabel) {
+      setSelectedValue(value);
+    }
 
     if (name === "bank_id") {
       setSelectedBank(value);
@@ -94,13 +99,13 @@ const BaseInputCard = ({
       }
 
       // Date validation
-      if (field.type === "date" && value) {
-        if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
-          newErrors[field.name] = `${field.label} is not a valid date`;
-        } else {
-          formData[field.name] = dayjs(value).toISOString();
-        }
-      }
+      // if (field.type === "date" && value) {
+      //   if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
+      //     newErrors[field.name] = `${field.label} is not a valid date`;
+      //   } else {
+      //     formData[field.name] = dayjs(value).toISOString();
+      //   }
+      // }
 
       // KRA PIN validation
       if (field.name === "kra_pin" && value) {
@@ -208,6 +213,7 @@ const BaseInputCard = ({
           res.status === 204 ||
           res.data.succeeded === true
         ) {
+          fetchData && fetchData();
           message.success("Record saved successfully");
           // setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
