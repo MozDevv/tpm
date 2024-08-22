@@ -96,7 +96,7 @@ function NewPreclaim({
         country_id:
           retiree?.country?.id ?? "94ece052-7142-477a-af0f-c3909402d247",
         county_id: retiree?.constituency?.county_id ?? "",
-        constituency_id: retiree?.constituency?.id ?? "",
+        constituency_id: retiree?.constituency?.constituency_name ?? "",
         city_town: retiree?.city_town ?? "",
         pension_award_id: retiree?.pensionAward?.id ?? "",
         date_of_first_appointment: retiree?.date_of_first_appointment
@@ -167,7 +167,7 @@ function NewPreclaim({
     country_id:
       (retiree?.country?.id || "94ece052-7142-477a-af0f-c3909402d247") ?? "",
     county_id: "",
-    constituency_id: retiree?.constituency?.id ?? "",
+    constituency_id: retiree?.constituency?.constituency_name ?? "",
     city_town: retiree?.city_town ?? "",
     pension_award_id: retiree?.pensionAward?.id ?? "",
     date_of_first_appointment: retiree?.date_of_first_appointment
@@ -722,22 +722,22 @@ function NewPreclaim({
         {
           label: "Counstituency",
           name: "constituency_id",
-          type: "select",
-          children:
-            formData.county_id !== ""
-              ? constituencies
-                  .filter(
-                    (constituency) =>
-                      constituency.county_id === formData.county_id
-                  )
-                  .map((constituency) => ({
-                    id: constituency.id,
-                    name: constituency.constituency_name,
-                  }))
-              : constituencies.map((constituency) => ({
-                  id: constituency.id,
-                  name: constituency.constituency_name,
-                })),
+          type: "text",
+          // children:
+          //   formData.county_id !== ""
+          //     ? constituencies
+          //         .filter(
+          //           (constituency) =>
+          //             constituency.county_id === formData.county_id
+          //         )
+          //         .map((constituency) => ({
+          //           id: constituency.id,
+          //           name: constituency.constituency_name,
+          //         }))
+          //     : constituencies.map((constituency) => ({
+          //         id: constituency.id,
+          //         name: constituency.constituency_name,
+          //       })),
         },
         // placeholder: formData.constituency_name,
         //   children: formData.county_id

@@ -300,7 +300,7 @@ function BaseCard({
               <ArrowBack sx={{ color: "#006990" }} />
             </IconButton>
             <p className="text-lg text-primary font-semibold">
-              {glAccountName !== null ? glAccountName : title}
+              {glAccountName || title}
             </p>
           </div>
           <div className="flex items-center">
