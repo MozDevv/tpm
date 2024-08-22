@@ -225,6 +225,20 @@ const endpoints = {
     "/api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalarySalaryMixedService",
   deleteMixedServiceWorkHistory: (id) =>
     `/api/ProspectivePensioners/DeleteProspectivePensionerPostAndNatureofSalarySalaryMixedService/${id}`,
+
+  getDeductions: (id) =>
+    `/api/ProspectivePensioners/GetPensionerDeductions?prospective_pensioner_id=${id}`,
+
+  createDeductions: "/api/ProspectivePensioners/CreatePensionerDeduction",
+
+  createParliamentContributions:
+    "/api/ProspectivePensioners/CreateParliamentaryContributions",
+  getParliamentaryContributions: (id) =>
+    `/api/ProspectivePensioners/GetParliamentaryContributions?prospective_pensioner_id=${id}`,
+  deleteContributions: (id) =>
+    `/api/ProspectivePensioners/DeleteParliamentaryContributions?id=${id}`,
+  updateContributions:
+    "/api/ProspectivePensioners/UpdateParliamentaryContributions",
   //getPro
 };
 

@@ -61,7 +61,19 @@ const BaseInputCard = ({
     if (name === selectedLabel) {
       setSelectedValue(value);
     }
-
+    if (type === "number") {
+      if (value === "") {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: null,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value * 1,
+        }));
+      }
+    }
     if (name === "bank_id") {
       setSelectedBank(value);
     }
@@ -139,6 +151,10 @@ const BaseInputCard = ({
         }
       }
 
+      if (field.type === "number" && value) {
+        formData[field.name] = value * 1;
+      }
+
       // Account number validation
       if (field.name === "account_number" && value) {
         const accountNumberPattern = /^[0-9]{10,20}$/; // Adjust pattern for account number format
@@ -179,6 +195,7 @@ const BaseInputCard = ({
             ).toISOString();
           }
         });
+
         dataToSend = formattedFormData;
 
         console.log("DATA TO SEND: ", dataToSend);

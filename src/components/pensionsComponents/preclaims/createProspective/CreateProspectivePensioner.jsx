@@ -7,6 +7,8 @@ import AddBankDetails from "../AddBankDetails";
 import AddDocuments from "../documents/AddDocuments";
 import ViewBeneficiaries from "../ViewBeneficiaries";
 import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
+import Deductions from "../deductions/Deductions";
+import ParliamentContributions from "../Contributions/ParliamentContributions";
 
 const { TabPane } = Tabs;
 
@@ -139,14 +141,19 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                           Deductions
                         </span>
                       }
-                      disabled
                       key="7"
                     >
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Exercitationem ipsam vitae nihil molestiae porro
-                      necessitatibus velit quasi, similique voluptatibus sunt
-                      fugit, eveniet repudiandae voluptas deleniti asperiores
-                      amet dolor ratione fugiat.
+                      <Deductions id={clickedItem?.id} />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Parliament Contributions
+                        </span>
+                      }
+                      key="8"
+                    >
+                      <ParliamentContributions id={clickedItem?.id} />
                     </TabPane>
                   </>
                 )}

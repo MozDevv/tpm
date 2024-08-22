@@ -128,7 +128,7 @@ const EditableTable = ({ handleSave }) => {
   return (
     <div className="flex items-center justify-center w-full h-full my-4">
       <div
-        className="ag-theme-alpine"
+        className="ag-theme-quartz"
         style={{
           height: "320px",
           width: "100%",

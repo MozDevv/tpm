@@ -34,6 +34,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import "dayjs/locale/en-au";
+import { createSections } from "./CreateSections";
 
 dayjs.extend(isSameOrBefore);
 
@@ -276,53 +277,6 @@ function NewPreclaim({
       if (formData.pwd === 0 && value === "") {
         error = "Tax Exempt Certificate Date is required";
       }
-
-      // if (formData.pwd === 0 && !formData.tax_exempt_certificate_number) {
-      //   error = "Tax Exempt Certificate Number is required";
-      // }
-
-      // if (formData.pwd === 0 && !formData.tax_exempt_certificate_date) {
-      //   error = "Tax Exempt Certificate Date is required";
-      // }
-      // else if (
-      //   name === "authority_for_retirement_dated" &&
-      //   value &&
-      //   formData.date_of_first_appointment
-      // ) {
-      //   const appointmentDate = dayjs(formData.date_of_first_appointment);
-      //   const authorityOfRetirement = dayjs(value);
-      //   if (authorityOfRetirement.isBefore(appointmentDate)) {
-      //     error =
-      //       "Authority of retirement date cannot be before date of first appointment";
-      //   }
-      // } else if (name === "authority_for_retirement_dated" && value) {
-      //   const retirementAuthorityDate = dayjs(value);
-      //   if (retirementAuthorityDate.isAfter(dayjs())) {
-      //     error = "Date of authority of retirement should not exceed today";
-      //   }
-      // } else if (
-      //   name === "retirement_date" &&
-      //   value &&
-      //   formData.authority_for_retirement_dated
-      // ) {
-      //   const authorityDate = dayjs(formData.authority_for_retirement_dated);
-      //   const retirementDate = dayjs(value);
-      //   if (retirementDate.isBefore(authorityDate)) {
-      //     error =
-      //       "Date of last pay cannot be before the date of authority of retirement";
-      //   }
-      // } else if (
-      //   name === "date_from_which_pension_will_commence" &&
-      //   value &&
-      //   formData.retirement_date
-      // ) {
-      //   const retirementDate = dayjs(formData.retirement_date);
-      //   const pensionCommenceDate = dayjs(value);
-      //   if (pensionCommenceDate.isSameOrBefore(retirementDate)) {
-      //     error =
-      //       "Date from which the pension will commence must be at least a day after the day of last pay";
-      //   }
-      // }
     }
 
     return error;
@@ -356,56 +310,6 @@ function NewPreclaim({
 
   //const [mdas, setMdas] = useState([]);
   const [pensionAwards, setPensionAwards] = useState([]);
-
-  // const fetchMdas = async () => {
-  //   try {
-  //     const res = await apiService.get(endpoints.mdas, {
-  //       //"paging.pageNumber": ,
-  //       "paging.pageSize": 200,
-  //     });
-  //     setMdas(res.data.data);
-  //   } catch (error) {
-  //     console.error("Error fetching MDAs:", error);
-  //   }
-  // };
-
-  // children:
-  // mdaId && activePensionCap && formData.mortality_status === 1
-  //   ? pensionAwardsData
-  //       .filter((award) => award.pensionCap.id === activePensionCap)
-  //       .filter(
-  //         (award) =>
-  //           award.name === "DEATH GRATUITY" ||
-  //           award.name === "DEATH IN SERVICE" ||
-  //           award.name === "KILLED ON DUTY"
-  //       )
-
-  //       .map((award) => ({
-  //         id: award.id,
-  //         name: award.name,
-  //       }))
-  //   : mdaId && activePensionCap && formData.mortality_status === 2
-  //   ? pensionAwardsData
-  //       .filter((award) => award.pensionCap.id === activePensionCap)
-  //       .filter(
-  //         (award) =>
-  //           award.name !== "DEATH GRATUITY" &&
-  //           award.name !== "DEATH IN SERVICE" &&
-  //           award.name !== "KILLED ON DUTY"
-  //       )
-
-  //       .map((award) => ({
-  //         id: award.id,
-  //         name: award.name,
-  //       }))
-  //   ?pensionAwardsData.map((award) => ({
-  //       id: award.id,
-  //       name: award.name,
-  //     })),
-  //   : pensionAwardsData.map((award) => ({
-  //       id: award.id,
-  //       name: award.name,
-  //     })),
 
   const fetchPensionAwards = async () => {
     try {
@@ -576,355 +480,63 @@ function NewPreclaim({
     setPensionAwardsData(filteredExitGrounds);
   }, [formData.exit_grounds]);
 
-  const sections = [
-    {
-      title: "Personal Information",
-      state: useState(true),
-      fields: [
-        { label: "Personal Number", name: "personal_number", type: "text" },
+  ////////////////////////////////////////////////
 
-        { label: "First Name", name: "first_name", type: "text" },
-        { label: "Surname", name: "surname", type: "text" },
-        { label: "Other Name", name: "other_name", type: "text" },
-        { label: "Email Address", name: "email_address", type: "email" },
-        { label: "Phone Number", name: "phone_number", type: "text" },
-        { label: "Date of Birth", name: "dob", type: "date" },
-        {
-          label: "Gender",
-          name: "gender",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "Male",
-            },
-            {
-              id: 1,
-              name: "Female",
-            },
-          ],
-        },
+  const filteredDesignations = designations
+    .filter((designation) => (mdaId ? designation?.mda?.id === mdaId : true))
+    .map((designation) => ({
+      id: designation.id,
+      name: designation.name,
+    }));
 
-        {
-          label: "Deaceased",
-          name: "mortality_status",
-          type: "select",
-          children: [
-            {
-              id: 2,
-              name: "No",
-            },
-            {
-              id: 1,
-              name: "Yes",
-            },
-          ],
-        },
-        {
-          label: "Marital Status",
-          name: "marital_status",
-          type: "select",
-          children: [
-            { id: 0, name: "Single" },
-            { id: 1, name: "Married" },
-            { id: 2, name: "Divorced" },
-            { id: 3, name: "Widowed" },
-          ],
-        },
-        {
-          label: "Type Of Identification",
-          name: "identifier_type",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "National ID",
-            },
-            {
-              id: 1,
-              name: "Passport No",
-            },
-          ],
-        },
+  const filteredGrades = designations
+    .filter((designation) => designation.id === formData.designation_id)
+    .flatMap((designation) => designation.grades)
+    .map((grade) => ({ id: grade.id, name: grade.grade }));
 
-        {
-          label: "National ID/Passport No.",
-          name: "national_id",
-          type: "text",
-        },
-        { label: "KRA PIN", name: "kra_pin", type: "text" },
-        {
-          label: "Designation",
-          name: "designation_id",
-          type: "autocomplete",
-          children: designations
-            .filter((designation) =>
-              mdaId ? designation?.mda?.id === mdaId : designation
-            )
-            .map((designation) => ({
-              id: designation.id,
-              name: designation.name,
-            })),
-        },
-        {
-          label: "Grade",
-          name: "grade_id",
-          type: "select",
-          children: designations
-            .filter((designation) => designation.id === formData.designation_id)
-            .flatMap((designation) => designation.grades)
-            .map((grade) => ({
-              id: grade.id,
-              name: grade.grade,
-            })),
-        },
+  const filteredPostalAddresses = postalAddress.map((address) => ({
+    id: address.id,
+    name: address.code,
+  }));
 
-        // {
-        //   label: "Ministry/Department/Agency",
-        //   name: "mda_id",
-        //   type: "select",
-        //   children: mdas.map((mda) => ({
-        //     id: mda.id,
-        //     name: mda.name,
-        //   })),
-        // },
+  const exitGroundOptions = exitGrounds.map((exitGround) => ({
+    id: exitGround.id,
+    name: exitGround.name,
+  }));
 
-        // {
-        //   label: "Pension Commencement Date",
-        //   name: "pension_commencement_date",
-        //   type: "date",
-        // },
-      ],
-    },
+  const pensionAwardOptions =
+    exitGrounds.length > 0 && !formData.notification_status
+      ? exitGrounds
+          .filter((grounds) => grounds.id === formData.exit_grounds)
+          .flatMap((grounds) =>
+            grounds.pensionAwards
+              .filter((award) => award.pensionCap.id === activePensionCap)
+              .map((filteredAward) => ({
+                id: filteredAward.id,
+                name: filteredAward.name,
+                pensionCap: filteredAward.pensionCap.id,
+              }))
+          )
+      : pensionAwards.map((award) => ({
+          id: award.id,
+          name: award.name,
+          pensionCap: award.pensionCap.id,
+        }));
 
-    {
-      title: "Contact Details",
-      state: useState(true),
-      fields: [
-        {
-          label: "Country",
-          name: "country_id",
-          type: "select",
-          children: countries.map((country) => ({
-            id: country.id,
-            name: country.country_name,
-          })),
-        },
-        {
-          label: "County",
-          name: "county_id",
-          type: "select",
-          children: counties.map((county) => ({
-            id: county.id,
-            name: county.name,
-          })),
-        },
-        {
-          label: "Counstituency",
-          name: "constituency_id",
-          type: "text",
-          // children:
-          //   formData.county_id !== ""
-          //     ? constituencies
-          //         .filter(
-          //           (constituency) =>
-          //             constituency.county_id === formData.county_id
-          //         )
-          //         .map((constituency) => ({
-          //           id: constituency.id,
-          //           name: constituency.constituency_name,
-          //         }))
-          //     : constituencies.map((constituency) => ({
-          //         id: constituency.id,
-          //         name: constituency.constituency_name,
-          //       })),
-        },
-        // placeholder: formData.constituency_name,
-        //   children: formData.county_id
-        //     ? constituencies?.map((constituency) => ({
-        //         id: constituency.id,
-        //         name: constituency.name,
-        //       }))
-        //     : [{ id: "", name: "Please select a county first" }],
-        // },
-        {
-          label: "Postal Address",
-          name: "postal_address",
-          type: "number",
-        },
-        {
-          label: "Postal Code",
-          name: "postal_code",
-          type: "autocomplete",
-          // autocomplete: "on",
-          children: postalAddress.map((address) => ({
-            id: address.id,
-            name: address.code,
-          })),
-          // children: formData.county_id
-          //   ? postalAddress
-          //       .filter((address) => address.countyId === formData.county_id)
-          //       .map((address) => ({
-          //         id: address.id,
-          //         name: `${address.code} - ${address.name}`,
-          //       }))
-          //   : postalAddress.map((address) => ({
-          //       id: address.id,
-          //       name: `${address.code} - ${address.name}`,
-          //     })),
-        },
+  const sections = createSections(
+    filteredDesignations,
+    countries,
+    counties,
+    constituencies,
+    filteredPostalAddresses,
+    filteredGrades,
 
-        { label: "City/Town", name: "city_town", type: "text" },
-      ],
-    },
-    {
-      title: "Benefits",
-      state: useState(true),
-      fields: [
-        {
-          label: "Exit Ground",
-          name: "exit_grounds",
-          type: "select",
-          children: exitGrounds.map((exitGround) => ({
-            id: exitGround.id,
-            name: exitGround.name,
-          })),
-        },
-        {
-          label: "Pension Award",
-          name: "pension_award_id",
-          type: "select",
-          children:
-            exitGrounds.length > 0 && !formData.notification_status
-              ? exitGrounds
-                  .filter((grounds) => grounds.id === formData.exit_grounds)
-                  .flatMap((grounds) =>
-                    grounds.pensionAwards
-                      .filter(
-                        (award) => award.pensionCap.id === activePensionCap
-                      ) // Filtering by activePensionCap
-                      .map((filteredAward) => ({
-                        id: filteredAward.id,
-                        name: filteredAward.name,
-                        pensionCap: filteredAward.pensionCap.id,
-                      }))
-                  )
-              : pensionAwards.map((award) => ({
-                  id: award.id,
-                  name: award.name,
-                })),
-        },
-        {
-          label: "Women & Children Pension Scheme (WCPS)",
-          name: "wcps",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "Yes",
-            },
-            {
-              id: 1,
-              name: "No",
-            },
-          ],
-        },
-        {
-          label: "Maintenance Case",
-          name: "maintenance_case",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "Yes",
-            },
-            {
-              id: 1,
-              name: "No",
-            },
-          ],
-        },
-        {
-          label: "Person With Disability",
-          name: "disability_status",
-          type: "select",
-          children: [
-            {
-              id: 0,
-              name: "Yes",
-            },
-            {
-              id: 1,
-              name: "No",
-            },
-          ],
-        },
-        ...(formData.disability_status === 0
-          ? [
-              {
-                label: "Tax Exempt Certificate Number",
-                name: "tax_exempt_certificate_number",
-                type: "text",
-              },
-              {
-                label: "Tax Exempt Certificate Date",
-                name: "tax_exempt_certificate_date",
-                type: "date",
-              },
-            ]
-          : []),
-        {
-          label: "Date of First Appointment",
-          name: "date_of_first_appointment",
-          type: "date",
-        },
-        {
-          label: "Date of confirmation into pensionable Office",
-          name: "date_of_confirmation",
-          type: "date",
-        },
-
-        {
-          label: "Retirement Date",
-          name: "retirement_date",
-          type: "date",
-        },
-        {
-          label: "Date of Which Pension will Commence/Date Of Death ",
-          name: "date_from_which_pension_will_commence",
-          type: "date",
-        },
-
-        ...(formData.notification_status
-          ? [
-              {
-                label: "Authority of retirement Ref No.",
-                name: "authority_for_retirement_reference",
-                type: "text",
-              },
-              {
-                label: "Authority for Retirement Dated",
-                name: "authority_for_retirement_dated",
-                type: "date",
-              },
-            ]
-          : []),
-
-        {
-          label: "Last Pay Date",
-          name: "last_pay_date",
-          // name: "authority_for_retirement_dated",
-          type: "date",
-        },
-
-        {
-          label: "Last Basic Salary Amount",
-          name: "last_basic_salary_amount",
-          type: "number",
-        },
-      ],
-    },
-  ];
+    exitGroundOptions,
+    pensionAwardOptions,
+    activePensionCap,
+    formData,
+    mdaId
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
