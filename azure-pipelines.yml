@@ -33,7 +33,7 @@ steps:
         git pull
 
         # Install the latest dependencies
-        npm install
+       # npm install
         
 
         # Build the Docker image
