@@ -53,7 +53,7 @@ function WcpsCard({
       const rawData = res.data.data;
       setContributionLines(
         res.data.data.map((line) => ({
-          from_date: new Date(line.from_date).toLocaleDateString(),
+          from_date: new Date(line.from_date).toISOString().split("T")[0],
           to_date: new Date(line.to_date).toISOString().split("T")[0],
           salary_amount: line.salary_amount,
           total_emoluments: line.total_emoluments,

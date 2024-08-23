@@ -881,11 +881,12 @@ function NewPreclaim({
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
-                            .filter(
-                              (field) =>
-                                activeCapName &&
+                            .filter((field) => {
+                              return (
+                                !activeCapName ||
                                 field.pensionCap.includes(activeCapName)
-                            )
+                              );
+                            })
                             .filter((field) => {
                               if (
                                 field.name ===

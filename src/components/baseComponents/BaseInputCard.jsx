@@ -350,21 +350,16 @@ const BaseInputCard = ({
                 label={formData[field.name] ? "Yes" : "No"}
               />
             ) : field.type === "date" ? (
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en-au"
-              >
-                <TextField
-                  name={field.name}
-                  type="date"
-                  variant="outlined"
-                  size="small"
-                  error={!!errors[field.name]}
-                  helperText={errors[field.name]}
-                  onChange={handleInputChange}
-                  fullWidth
-                />
-              </LocalizationProvider>
+              <TextField
+                name={field.name}
+                type="date"
+                variant="outlined"
+                size="small"
+                error={!!errors[field.name]}
+                helperText={errors[field.name]}
+                onChange={handleInputChange}
+                fullWidth
+              />
             ) : field.type === "autocomplete" ? (
               <Autocomplete
                 options={field.options}
