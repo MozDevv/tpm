@@ -547,7 +547,7 @@ function NewPreclaim({
       }
     }
 
-    // const newErrors = {};
+    const newErrors = {};
     // for (const key of Object.keys(formData)) {
     //   if (
     //     key !== "other_name" &&
