@@ -138,7 +138,7 @@ const ParliamentContributions = (id) => {
       id: "contributions",
       label: "Contributions",
       name: "contributions",
-      type: "text",
+      type: "number",
       required: true,
     },
   ];
