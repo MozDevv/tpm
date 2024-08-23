@@ -137,6 +137,14 @@ function NewPreclaim({
               .toISOString()
               .split("T")[0]
           : "",
+
+        military_id: retiree?.military_id ?? "",
+        monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? "",
+        service_increment: retiree?.service_increment ?? "",
+        monthly_additional_pay: retiree?.monthly_additional_pay ?? "",
+        is_wcps: retiree?.is_wcps ?? "",
+        is_parliamentary: retiree?.is_parliamentary ?? "",
+        age_on_discharge: retiree?.age_on_discharge ?? "",
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -205,7 +213,13 @@ function NewPreclaim({
           .toISOString()
           .split("T")[0]
       : "",
-    is_parliamentary: retiree?.is_parliamentary ?? false,
+    military_id: retiree?.military_id ?? "",
+    monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? "",
+    service_increment: retiree?.service_increment ?? "",
+    monthly_additional_pay: retiree?.monthly_additional_pay ?? "",
+    is_wcps: retiree?.is_wcps ?? "",
+    is_parliamentary: retiree?.is_parliamentary ?? "",
+    age_on_discharge: retiree?.age_on_discharge ?? "",
   });
   const router = useRouter();
 

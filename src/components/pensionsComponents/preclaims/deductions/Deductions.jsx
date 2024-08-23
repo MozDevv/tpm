@@ -116,7 +116,17 @@ const Deductions = (id) => {
     {
       label: "Deduction Payee",
       name: "deduction_payee",
-      type: "number",
+      type: "select",
+      options: [
+        {
+          id: 0,
+          name: "MDA",
+        },
+        {
+          id: 1,
+          name: "Treasury",
+        },
+      ],
 
       required: true,
     },

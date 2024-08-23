@@ -350,6 +350,13 @@ export const mapRowData = (items) =>
       bankType: item.bankDetails[0]?.bankBranch?.bank?.bankType?.type,
       branch_code: item.bankDetails[0]?.bankBranch?.branch_code,
       bank_code: item.bankDetails[0]?.bankBranch?.bank.code,
+      military_id: item?.military_id,
+      monthly_salary_in_ksh: item?.monthly_salary_in_ksh,
+      service_increment: item?.service_increment,
+      monthly_additional_pay: item?.monthly_additional_pay,
+      is_wcps: item?.is_wcps,
+      is_parliamentary: item?.is_parliamentary,
+      age_on_discharge: item?.age_on_discharge,
     }));
 
 const Preclaims = ({ status }) => {
