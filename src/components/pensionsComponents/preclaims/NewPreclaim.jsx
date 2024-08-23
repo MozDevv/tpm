@@ -138,13 +138,13 @@ function NewPreclaim({
               .split("T")[0]
           : "",
 
-        military_id: retiree?.military_id ?? "",
-        monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? "",
-        service_increment: retiree?.service_increment ?? "",
-        monthly_additional_pay: retiree?.monthly_additional_pay ?? "",
-        is_wcps: retiree?.is_wcps ?? "",
-        is_parliamentary: retiree?.is_parliamentary ?? "",
-        age_on_discharge: retiree?.age_on_discharge ?? "",
+        military_id: retiree?.military_id ?? 0,
+        monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
+        service_increment: retiree?.service_increment ?? 0,
+        monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
+        is_wcps: retiree?.is_wcps ?? 0,
+        is_parliamentary: retiree?.is_parliamentary ?? 0,
+        age_on_discharge: retiree?.age_on_discharge ?? 0,
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -213,13 +213,13 @@ function NewPreclaim({
           .toISOString()
           .split("T")[0]
       : "",
-    military_id: retiree?.military_id ?? "",
-    monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? "",
-    service_increment: retiree?.service_increment ?? "",
-    monthly_additional_pay: retiree?.monthly_additional_pay ?? "",
-    is_wcps: retiree?.is_wcps ?? "",
-    is_parliamentary: retiree?.is_parliamentary ?? "",
-    age_on_discharge: retiree?.age_on_discharge ?? "",
+    military_id: retiree?.military_id ?? 0,
+    monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
+    service_increment: retiree?.service_increment ?? 0,
+    monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
+    is_wcps: retiree?.is_wcps ?? 0,
+    is_parliamentary: retiree?.is_parliamentary ?? 0,
+    age_on_discharge: retiree?.age_on_discharge ?? 0,
   });
   const router = useRouter();
 
