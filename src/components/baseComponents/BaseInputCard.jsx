@@ -15,6 +15,7 @@ import { message } from "antd";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useMda } from "@/context/MdaContext";
 
 const BaseInputCard = ({
   fields,
@@ -96,6 +97,7 @@ const BaseInputCard = ({
     // validateForm();
   };
 
+  const { mdaId } = useMda();
   const validateForm = () => {
     const newErrors = {};
 
@@ -153,6 +155,14 @@ const BaseInputCard = ({
 
       if (field.type === "number" && value) {
         formData[field.name] = value * 1;
+      }
+
+      if (field.type === "switch" && value === undefined) {
+        formData[field.name] = false;
+      }
+
+      if (field.name === "mda_id") {
+        formData[field.name] = mdaId;
       }
 
       // Account number validation
@@ -266,7 +276,13 @@ const BaseInputCard = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
         {fields.map((field, index) => (
-          <div key={index} className="flex flex-col">
+          <div
+            key={index}
+            style={{
+              flexDirection: "column",
+              display: field.hide === true ? "none" : "flex",
+            }}
+          >
             <label className="text-xs font-semibold text-gray-600">
               {field.label}
             </label>
@@ -307,6 +323,7 @@ const BaseInputCard = ({
                   size="small"
                   fullWidth
                   name={field.name}
+                  disabled={field.disabled}
                   value={formData[field.name] || ""}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}

@@ -12,6 +12,7 @@ import { AgGridReact } from "ag-grid-react";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { useMda } from "@/context/MdaContext";
 
 const columnDefs = [
   {
@@ -87,6 +88,8 @@ const Deductions = (id) => {
 
   const title = clickedItem ? "Deductions" : "Add a New Deduction";
 
+  const { mdaId } = useMda();
+
   const fields = [
     {
       label: "Name",
@@ -121,11 +124,8 @@ const Deductions = (id) => {
       label: "MDA",
       name: "mda_id",
       type: "select",
-      options: mdas.map((mda) => ({
-        id: mda.id,
-        name: mda.name,
-      })),
-      required: true,
+      disabled: false,
+      hide: true,
     },
   ];
 
