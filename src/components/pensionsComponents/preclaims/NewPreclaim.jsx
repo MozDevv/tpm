@@ -793,6 +793,8 @@ function NewPreclaim({
     formData.notification_status === 2 ||
     formData.notification_status === "";
 
+  const [open, setOpen] = useState(true);
+
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -855,7 +857,6 @@ function NewPreclaim({
                   return true;
                 })
                 .map((section, index) => {
-                  const [open, setOpen] = useState(true);
                   return (
                     <div key={index} className="gap-3 my-3">
                       <div className="flex items-center gap-2">
