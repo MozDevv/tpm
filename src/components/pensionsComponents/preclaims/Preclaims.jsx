@@ -521,9 +521,9 @@ const Preclaims = ({ status }) => {
     //  params.api.sizeColumnsToFit();
   };
 
-  // useEffect(() => {
-  //   fetchAllPreclaims();
-  // }, [pageNumber]);
+  useEffect(() => {
+    fetchAllPreclaims();
+  }, [gridApi]);
 
   const handlePageChange = (event, newPage) => {
     setPageNumber(newPage);
