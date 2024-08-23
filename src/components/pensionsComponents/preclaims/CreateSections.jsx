@@ -37,7 +37,7 @@ export const createSections = (
         type: "text",
         pensionCap: [
           "CAP189",
-          "CAP199",
+
           "CAP196",
           "APN/PK",
           "CAP190",
@@ -45,6 +45,12 @@ export const createSections = (
           "DSO/RK",
           "CAP195",
         ],
+      },
+      {
+        label: "Service Number",
+        name: "personal_number",
+        type: "text",
+        pensionCap: ["CAP199"],
       },
       {
         label: "First Name",
@@ -156,6 +162,13 @@ export const createSections = (
         ],
       },
       {
+        label: "Tribe",
+        name: "tribe",
+        type: "text",
+
+        pensionCap: ["CAP199"],
+      },
+      {
         label: "Deaceased",
         name: "mortality_status",
         type: "select",
@@ -205,7 +218,7 @@ export const createSections = (
         ],
         pensionCap: [
           "CAP189",
-          "CAP199",
+
           "CAP196",
           "APN/PK",
           "CAP190",
@@ -215,12 +228,23 @@ export const createSections = (
         ],
       },
       {
+        label: "Type Of Identification",
+        name: "identifier_type",
+        type: "select",
+        children: [
+          { id: 0, name: "Civilian ID" },
+          { id: 1, name: "Passport No" },
+          { id: 2, name: "Military ID" },
+        ],
+        pensionCap: ["CAP199"],
+      },
+      {
         label: "National ID/Passport No.",
         name: "national_id",
         type: "text",
         pensionCap: [
           "CAP189",
-          "CAP199",
+
           "CAP196",
           "APN/PK",
           "CAP190",
@@ -228,6 +252,12 @@ export const createSections = (
           "DSO/RK",
           "CAP195",
         ],
+      },
+      {
+        label: "Military ID",
+        name: "national_id",
+        type: "text",
+        pensionCap: ["CAP199"],
       },
       {
         label: "KRA PIN",
@@ -267,14 +297,19 @@ export const createSections = (
         children: filteredGrades,
         pensionCap: [
           "CAP189",
-          "CAP199",
-          "CAP196",
           "APN/PK",
           "CAP190",
           "CAP195",
           "DSO/RK",
           "CAP195",
         ],
+      },
+      {
+        label: "Ranks",
+        name: "grade_id",
+        type: "select",
+        children: filteredGrades,
+        pensionCap: ["CAP199"],
       },
     ],
   },
@@ -422,6 +457,25 @@ export const createSections = (
           "CAP195",
         ],
       },
+
+      {
+        label: "Monthly Salary in Ksh",
+        name: "monthly_salary_in_ksh",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
+      {
+        label: "Service Increment",
+        name: "service_increment",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
+      {
+        label: "Monthly Additional Pay",
+        name: "monthly_additional_pay",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
       {
         label: "Women & Children Pension Scheme (WCPS)",
         name: "wcps",
@@ -529,13 +583,25 @@ export const createSections = (
         ],
       },
       {
+        label: "Date first elected",
+        name: "date_of_first_appointment",
+        type: "date",
+        pensionCap: ["CAP196"],
+      },
+      // {
+      //   label: "Is Parliamenterian",
+      //   name: "date_of_first_appointment",
+      //   type: "date",
+      //   pensionCap: ["CAP196"],
+      // },
+      {
         label: "Date of confirmation into pensionable Office",
         name: "date_of_confirmation",
         type: "date",
         pensionCap: [
           "CAP189",
           "CAP199",
-          "CAP196",
+
           "APN/PK",
           "CAP190",
           "CAP195",
@@ -557,6 +623,12 @@ export const createSections = (
           "DSO/RK",
           "CAP195",
         ],
+      },
+      {
+        label: "Age on Discharge",
+        name: "age_on_discharge",
+        type: "number",
+        pensionCap: ["CAP199"],
       },
       {
         label: "Date of Which Pension will Commence/Date Of Death ",

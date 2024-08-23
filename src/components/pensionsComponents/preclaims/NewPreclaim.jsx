@@ -426,38 +426,7 @@ function NewPreclaim({
     }
   };
 
-  const [activePensionCap, setActivePensionCap] = useState("");
-
-  const fetchMdas = async () => {
-    try {
-      const res = await apiService.get(endpoints.mdas, {
-        "paging.pageSize": 100,
-      });
-
-      const userMda = res.data.data.find((mda) => mda.id === mdaId);
-
-      const currentCap = userMda?.pensionCap?.id;
-
-      console.log("Current MDA: ********", userMda);
-
-      console.log("Current CAP: ********", currentCap);
-
-      console.log("MDA ID: ********", mdaId);
-      // setCurrentMda(userMda);
-
-      setActivePensionCap(currentCap);
-
-      console.log("Current MDA: ********", currentCap);
-    } catch (error) {
-      console.error("Error fetching MDAs:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (mdaId) {
-      fetchMdas();
-    }
-  }, [mdaId]);
+  const { activePensionCap, activeCapName } = useMda("");
 
   useEffect(() => {
     fetchExitGrounds();
@@ -843,7 +812,6 @@ function NewPreclaim({
                 </div>
               </div>
             </div>
-
             <div className="p-2 mt-[-15px] ">
               {sections
                 .filter((section) => {
@@ -879,9 +847,13 @@ function NewPreclaim({
                         </IconButton>
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
+
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
+                            .filter((field) =>
+                              field.pensionCap.includes(activeCapName)
+                            )
                             .filter((field) => {
                               if (
                                 field.name ===
