@@ -4,6 +4,8 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 import { AgGridReact } from "ag-grid-react";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { Button } from "@mui/material";
+import BaseCard from "@/components/baseComponents/BaseCard";
 
 const { TabPane } = Tabs;
 
@@ -38,7 +40,7 @@ function WcpsCard({
   const columnDefs = [
     { headerName: "From Date", field: "from_date" },
     { headerName: "To Date", field: "to_date" },
-    { headerName: "Salary ", field: "salary Ammount" },
+    { headerName: "Salary ", field: "salary_amount" },
     { headerName: "Total Emoluments", field: "total_emoluments" },
     { headerName: "Contribution Amount", field: "contribution_amount" },
   ];
@@ -51,24 +53,56 @@ function WcpsCard({
       const rawData = res.data.data;
       setContributionLines(
         res.data.data.map((line) => ({
-          from_date: new Date(line.from_date).toISOString().split("T")[0],
+          from_date: new Date(line.from_date).toLocaleDateString(),
           to_date: new Date(line.to_date).toISOString().split("T")[0],
-          salary_ammount: line.salary_ammount,
+          salary_amount: line.salary_amount,
           total_emoluments: line.total_emoluments,
           contribution_amount: line.contribution_amount,
         }))
       );
-
-      console.log("first branch", branches);
-      console.log("res.data.data", res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [openInputCard, setOpenInputCard] = React.useState(false);
+  const [clickedWcpsLine, setClickedWcpsLine] = React.useState(null);
+
   useEffect(() => {
     fetchContributionLines();
-  }, [openAction]);
+  }, [openAction, openInputCard]);
+  const inputFields = [
+    {
+      name: "from_date",
+      label: "From Date",
+      type: "date",
+      required: true,
+    },
+    {
+      name: "to_date",
+      label: "To Date",
+      type: "date",
+      required: true,
+    },
+    {
+      name: "salary_amount",
+      label: "Salary Amount",
+      type: "number",
+      required: true,
+    },
+    {
+      name: "total_emoluments",
+      label: "Total Emoluments",
+      type: "number",
+      required: true,
+    },
+    {
+      name: "contribution_amount",
+      label: "Contribution Amount",
+      type: "number",
+      required: true,
+    },
+  ];
 
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto mt-2">
@@ -84,16 +118,66 @@ function WcpsCard({
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
-                    Contribution Lines
+                    Contributions
                   </span>
                 }
-                key="2"
+                key="1"
               >
                 <div className="ag-theme-quartz max-h-[90vh]">
-                  {" "}
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setOpenInputCard(true);
+                      setClickedWcpsLine(null);
+                    }}
+                    sx={{
+                      my: 2,
+                    }}
+                  >
+                    Add WCPS Contribution
+                  </Button>
+
+                  <BaseCard
+                    openBaseCard={openInputCard}
+                    setOpenBaseCard={setOpenInputCard}
+                    title={"WCPS Contribution"}
+                    // clickedItem={clickedItem}
+                    isUserComponent={false}
+                    deleteApiEndpoint={endpoints.deleteWcpsLine(
+                      clickedItem?.id
+                    )}
+                    deleteApiService={apiService.delete}
+                    isSecondaryCard2={true}
+                  >
+                    {clickedWcpsLine ? (
+                      <BaseInputCard
+                        fields={inputFields}
+                        apiEndpoint={endpoints.updateWcpsLine}
+                        postApiFunction={apiService.put}
+                        clickedItem={clickedWcpsLine}
+                        openBaseCard={openInputCard}
+                        setOpenBaseCard={setOpenInputCard}
+                        useRequestBody={true}
+                        id={clickedItem?.id}
+                        idLabel="wCPS_contribution_id"
+                      />
+                    ) : (
+                      <BaseInputCard
+                        id={clickedItem?.id}
+                        idLabel="wCPS_contribution_id"
+                        fields={inputFields}
+                        apiEndpoint={endpoints.createWcpsLine}
+                        postApiFunction={apiService.post}
+                        clickedItem={clickedItem}
+                        setOpenBaseCard={setOpenBaseCard}
+                        useRequestBody={true}
+                        isBranch={true}
+                      />
+                    )}
+                  </BaseCard>
                   <AgGridReact
                     columnDefs={columnDefs}
-                    rowData={constributionLines}
+                    rowData={contributionLines}
                     pagination={false}
                     domLayout="autoHeight"
                     onGridReady={(params) => {
@@ -101,8 +185,8 @@ function WcpsCard({
                       //  onGridReady(params);
                     }}
                     onRowClicked={(e) => {
-                      //  setOpenBaseCard(true);
-                      //    setClickedItem(e.data);
+                      setOpenInputCard(true);
+                      setClickedWcpsLine(e.data);
                       // setUserClicked(e.data);
                       //handleClickUser(e.data);
                     }}

@@ -547,34 +547,34 @@ function NewPreclaim({
       }
     }
 
-    const newErrors = {};
-    for (const key of Object.keys(formData)) {
-      if (
-        key !== "other_name" &&
-        key !== "postal_code" &&
-        key !== "notification_status" &&
-        key !== "designation_grade" &&
-        key !== "postal_address" &&
-        key !== "city_town" &&
-        key !== "country_id" &&
-        key !== "county_id" &&
-        key !== "constituency_id" &&
-        key !== "authority_for_retirement_reference" &&
-        key !== "authority_for_retirement_dated" &&
-        key !== "tax_exempt_certificate_number" &&
-        key !== "tax_exempt_certificate_date" &&
-        key !== "date_of_confirmation" &&
-        key !== "is_parliamentary" &&
-        (formData[key] === undefined ||
-          formData[key] === null ||
-          formData[key] === "" ||
-          formData[key] === false)
-      ) {
-        newErrors[key] = "This field is required";
-        message.error(`This field is required: ${key}`);
-        return; // Exit the function or block to stop further processing
-      }
-    }
+    // const newErrors = {};
+    // for (const key of Object.keys(formData)) {
+    //   if (
+    //     key !== "other_name" &&
+    //     key !== "postal_code" &&
+    //     key !== "notification_status" &&
+    //     key !== "designation_grade" &&
+    //     key !== "postal_address" &&
+    //     key !== "city_town" &&
+    //     key !== "country_id" &&
+    //     key !== "county_id" &&
+    //     key !== "constituency_id" &&
+    //     key !== "authority_for_retirement_reference" &&
+    //     key !== "authority_for_retirement_dated" &&
+    //     key !== "tax_exempt_certificate_number" &&
+    //     key !== "tax_exempt_certificate_date" &&
+    //     key !== "date_of_confirmation" &&
+    //     key !== "is_parliamentary" &&
+    //     (formData[key] === undefined ||
+    //       formData[key] === null ||
+    //       formData[key] === "" ||
+    //       formData[key] === false)
+    //   ) {
+    //     newErrors[key] = "This field is required";
+    //     message.error(`This field is required: ${key}`);
+    //     return; // Exit the function or block to stop further processing
+    //   }
+    // }
 
     for (const key of Object.keys(formData)) {
       const error = validateField(key, formData[key], formData);

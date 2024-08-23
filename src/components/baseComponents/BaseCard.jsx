@@ -42,6 +42,7 @@ function BaseCard({
   deleteApiService,
   isSecondaryCard,
   glAccountName,
+  isSecondaryCard2,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -65,10 +66,17 @@ function BaseCard({
       minWidth: "40vw",
       maxWidth: "70vw",
     },
+    secondary2: {
+      minHeight: "75vh",
+      maxHeight: "65vh",
+      minWidth: "30vw",
+      maxWidth: "60vw",
+    },
   };
-
   const currentSize = isSecondaryCard
     ? expandSizes.secondary
+    : isSecondaryCard2
+    ? expandSizes.secondary2
     : isExpanded
     ? expandSizes.expanded
     : expandSizes.default;

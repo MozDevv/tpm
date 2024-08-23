@@ -13,6 +13,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useMda } from "@/context/MdaContext";
+import WcpsCard from "./WcpsCard";
 
 const columnDefs = [
   {
@@ -132,7 +133,7 @@ const WomenAndChildren = (id) => {
         isSecondaryCard={true}
       >
         {clickedItem ? (
-          <BaseInputCard
+          <WcpsCard
             fields={fields}
             apiEndpoint={endpoints.updateWcps}
             postApiFunction={apiService.post}
