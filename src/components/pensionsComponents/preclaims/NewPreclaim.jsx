@@ -142,7 +142,7 @@ function NewPreclaim({
         monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
         service_increment: retiree?.service_increment ?? 0,
         monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
-        is_wcps: retiree?.is_wcps ?? false,
+        is_wcps: retiree?.is_wcps ?? 0,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: retiree?.age_on_discharge ?? 0,
       });
@@ -217,7 +217,7 @@ function NewPreclaim({
     monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
     service_increment: retiree?.service_increment ?? 0,
     monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
-    is_wcps: retiree?.is_wcps ?? false,
+    is_wcps: retiree?.is_wcps ?? 0,
     is_parliamentary: retiree?.is_parliamentary ?? false,
     age_on_discharge: retiree?.age_on_discharge ?? 0,
   });
