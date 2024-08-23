@@ -161,7 +161,7 @@ const BaseInputCard = ({
         formData[field.name] = false;
       }
 
-      if (field.name === "mda_id") {
+      if (field.name === "mda_id" && field.hide) {
         formData[field.name] = mdaId;
       }
 

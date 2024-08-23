@@ -169,6 +169,13 @@ export const createSections = (
         pensionCap: ["CAP199"],
       },
       {
+        label: "Ethnicity",
+        name: "tribe",
+        type: "text",
+
+        pensionCap: ["CAP1996"],
+      },
+      {
         label: "Deaceased",
         name: "mortality_status",
         type: "select",
@@ -297,6 +304,7 @@ export const createSections = (
         children: filteredGrades,
         pensionCap: [
           "CAP189",
+          "CAP196",
           "APN/PK",
           "CAP190",
           "CAP195",
@@ -478,7 +486,7 @@ export const createSections = (
       },
       {
         label: "Women & Children Pension Scheme (WCPS)",
-        name: "wcps",
+        name: "is_wcps",
         type: "select",
         children: [
           { id: 0, name: "Yes" },
@@ -487,7 +495,7 @@ export const createSections = (
         pensionCap: [
           "CAP189",
           "CAP199",
-          "CAP196",
+
           "APN/PK",
           "CAP190",
           "CAP195",
@@ -506,7 +514,7 @@ export const createSections = (
         pensionCap: [
           "CAP189",
           "CAP199",
-          "CAP196",
+
           "APN/PK",
           "CAP190",
           "CAP195",
@@ -574,7 +582,7 @@ export const createSections = (
         pensionCap: [
           "CAP189",
           "CAP199",
-          "CAP196",
+
           "APN/PK",
           "CAP190",
           "CAP195",
@@ -588,12 +596,13 @@ export const createSections = (
         type: "date",
         pensionCap: ["CAP196"],
       },
-      // {
-      //   label: "Is Parliamenterian",
-      //   name: "date_of_first_appointment",
-      //   type: "date",
-      //   pensionCap: ["CAP196"],
-      // },
+      {
+        label: "Is Parliamenterian",
+        name: "is_parliamentary",
+        type: "date",
+        pensionCap: ["CAP196"],
+        hide: true,
+      },
       {
         label: "Date of confirmation into pensionable Office",
         name: "date_of_confirmation",

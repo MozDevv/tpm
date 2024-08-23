@@ -3,6 +3,7 @@ import authEndpoints, { AuthApiService } from "@/components/services/authApi";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
 import { useIsLoading } from "@/context/LoadingContext";
+import { de } from "@faker-js/faker";
 import {
   Avatar,
   Button,
@@ -545,10 +546,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           onChange={(e) => setGradeId(e.target.value)}
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         >
-                          {grades
-                            .filter(
-                              (grade) => grade.designation_id === designationId
-                            )
+                          {designations
+                            // .filter((d) => d.id === designationId)
+                            .flatMap((designation) => designation.grades)
                             .map((grade) => (
                               <option key={grade.id} value={grade.id}>
                                 {grade.grade}

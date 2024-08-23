@@ -239,6 +239,20 @@ const endpoints = {
     `/api/ProspectivePensioners/DeleteParliamentaryContributions?id=${id}`,
   updateContributions:
     "/api/ProspectivePensioners/UpdateParliamentaryContributions",
+
+  getWcps: (id) =>
+    `/api/ProspectivePensioners/GetWCPSContributions?prospective_pensioner_id=${id}`,
+  createWcps: "/api/ProspectivePensioners/CreateWCPSContribution",
+  updateWcps: "/api/ProspectivePensioners/UpdateWCPSContribution",
+  deleteWcps: (id) =>
+    `/api/ProspectivePensioners/DeleteWCPSContribution?id=${id}`,
+
+  getWcpsLine: (id) =>
+    `/api/ProspectivePensioners/GetWCPSContributionLines?prospective_pensioner_id=${id}`,
+  createWcpsLine: "/api/ProspectivePensioners/CreateWCPSContributionLine",
+  updateWcpsLine: "/api/ProspectivePensioners/UpdateWCPSContributionLine",
+  deleteWcpsLine: (id) =>
+    `/api/ProspectivePensioners/DeleteWCPSContributionLine?id=${id}`,
   //getPro
 };
 

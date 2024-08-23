@@ -205,6 +205,7 @@ function NewPreclaim({
           .toISOString()
           .split("T")[0]
       : "",
+    is_parliamentary: retiree?.is_parliamentary ?? false,
   });
   const router = useRouter();
 
@@ -286,7 +287,7 @@ function NewPreclaim({
     if (retireeId) {
       setEditMode(true);
     }
-    const { name, value, type } = e.target;
+    let { name, value, type } = e.target;
     let parsedValue = type === "number" ? parseFloat(value) : value;
 
     if (type === "text") {
@@ -295,6 +296,10 @@ function NewPreclaim({
     if (type === "text" || type === "select-one") {
       parsedValue = parsedValue.toUpperCase();
     }
+    if (name === "is_parliamentary") {
+      formData.is_parliamentary = true;
+    }
+
     // if (name === "county_id") {
     //   const selectedCounty = counties.find((county) => county.id === value);
     //   if (selectedCounty) {
@@ -519,6 +524,15 @@ function NewPreclaim({
       return;
     }
 
+    for (const key of Object.keys(formData)) {
+      if (key === "is_parliamentary" && activeCapName === "CAP196") {
+        formData.is_parliamentary = true;
+      }
+      if (key === "date_of_confirmation" && activeCapName === "CAP196") {
+        formData.date_of_confirmation = formData.date_of_first_appointment;
+      }
+    }
+
     const newErrors = {};
     for (const key of Object.keys(formData)) {
       if (
@@ -535,6 +549,8 @@ function NewPreclaim({
         key !== "authority_for_retirement_dated" &&
         key !== "tax_exempt_certificate_number" &&
         key !== "tax_exempt_certificate_date" &&
+        key !== "date_of_confirmation" &&
+        key !== "is_parliamentary" &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === "" ||
@@ -851,8 +867,10 @@ function NewPreclaim({
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
-                            .filter((field) =>
-                              field.pensionCap.includes(activeCapName)
+                            .filter(
+                              (field) =>
+                                activeCapName &&
+                                field.pensionCap.includes(activeCapName)
                             )
                             .filter((field) => {
                               if (
@@ -868,7 +886,13 @@ function NewPreclaim({
                               return true;
                             })
                             .map((field, fieldIndex) => (
-                              <div key={fieldIndex} className="flex flex-col">
+                              <div
+                                key={fieldIndex}
+                                style={{
+                                  display: field.hide ? "none" : "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
                                 <label className="text-xs font-semibold text-gray-600">
                                   {field.label}
                                 </label>

@@ -9,6 +9,7 @@ import ViewBeneficiaries from "../ViewBeneficiaries";
 import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
 import Deductions from "../deductions/Deductions";
 import ParliamentContributions from "../Contributions/ParliamentContributions";
+import WomenAndChildren from "../wcps/WomenAndChildren";
 
 const { TabPane } = Tabs;
 
@@ -45,6 +46,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
               activeKey={activeKey}
               onChange={handleTabChange}
               className="!bg-transparent z-50"
+              style={{ zIndex: 999999999 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
               <TabPane
@@ -148,10 +150,20 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
-                          Parliament Contributions
+                          WCPS Contributions
                         </span>
                       }
                       key="8"
+                    >
+                      <WomenAndChildren id={clickedItem?.id} />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Parliament Contributions
+                        </span>
+                      }
+                      key="9"
                     >
                       <ParliamentContributions id={clickedItem?.id} />
                     </TabPane>
