@@ -855,7 +855,7 @@ function NewPreclaim({
                   return true;
                 })
                 .map((section, index) => {
-                  const [open, setOpen] = section.state;
+                  const [open, setOpen] = useState(true);
                   return (
                     <div key={index} className="gap-3 my-3">
                       <div className="flex items-center gap-2">

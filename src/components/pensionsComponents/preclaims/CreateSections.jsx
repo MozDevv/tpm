@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+// import { useState } from "react";
 
 // List of pension caps
 const pensionCaps = [
@@ -29,7 +29,7 @@ export const createSections = (
 ) => [
   {
     title: "Personal Information",
-    state: useState(true),
+    // state: useState(true),
     fields: [
       {
         label: "Personal Number",
@@ -281,7 +281,7 @@ export const createSections = (
 
   {
     title: "Contact Details",
-    state: useState(true),
+    // state: useState(true),
     fields: [
       {
         label: "Country",
@@ -387,7 +387,7 @@ export const createSections = (
 
   {
     title: "Benefits",
-    state: useState(true),
+    // state: useState(true),
     fields: [
       {
         label: "Exit Ground",
