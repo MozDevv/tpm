@@ -65,6 +65,10 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated: false,
       user: null,
     });
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("mdaId");
+    }
   };
 
   return (

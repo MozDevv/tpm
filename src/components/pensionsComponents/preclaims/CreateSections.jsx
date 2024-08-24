@@ -465,7 +465,41 @@ export const createSections = (
           "CAP195",
         ],
       },
+      {
+        label: "Has Commuted",
+        name: "commutation_option_selection",
+        type: "select",
+        children: [
+          { id: 0, name: "Yes", value: true },
+          { id: 1, name: "No", value: false },
+        ],
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+      {
+        label: "commutation Option Selection Date",
+        name: "commutation_option_selection_date",
+        type: "date",
 
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
       {
         label: "Monthly Salary in Ksh",
         name: "monthly_salary_in_ksh",

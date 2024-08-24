@@ -144,6 +144,10 @@ function NewPreclaim({
         is_wcps: retiree?.is_wcps ?? 0,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: retiree?.age_on_discharge ?? 0,
+        commutation_option_selection:
+          retiree?.commutation_option_selection ?? "",
+        commutation_option_selection_date:
+          retiree?.commutation_option_selection_date ?? "",
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -219,6 +223,9 @@ function NewPreclaim({
     is_wcps: retiree?.is_wcps ?? 0,
     is_parliamentary: retiree?.is_parliamentary ?? false,
     age_on_discharge: retiree?.age_on_discharge ?? 0,
+    commutation_option_selection: retiree?.commutation_option_selection ?? "",
+    commutation_option_selection_date:
+      retiree?.commutation_option_selection_date ?? "",
   });
   const router = useRouter();
 
@@ -853,6 +860,7 @@ function NewPreclaim({
                   }
                   return true;
                 })
+
                 .map((section, index) => {
                   return (
                     <div key={index} className="gap-3 my-3">
@@ -889,7 +897,10 @@ function NewPreclaim({
                             .filter((field) => {
                               if (
                                 field.name ===
-                                "authority_for_retirement_reference"
+                                  "authority_for_retirement_reference" ||
+                                field.name === "commutation_option_selection" ||
+                                field.name ===
+                                  "commutation_option_selection_date"
                               ) {
                                 return (
                                   formData.notification_status !== 0 &&

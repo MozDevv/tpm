@@ -26,9 +26,13 @@ export const MdaProvider = ({ children }) => {
       if (res.status === 200) {
         console.log("mdata", res.data.data.mdaId);
 
+        if (!res.data.data.mdaId && typeof window !== "undefined") {
+          localStorage.removeItem("mdaId");
+        }
+
         if (typeof window !== "undefined" && res.data.data.mdaId) {
           const savedItem = localStorage.setItem("mdaId", res.data.data.mdaId);
-          setMdaId(savedItem || null);
+          setMdaId(savedItem || res.data.data.mdaId);
         }
 
         fetchMdas(res.data.data.mdaId);
