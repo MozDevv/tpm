@@ -50,7 +50,7 @@ function NewPreclaim({
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 
-  const { mdaId } = useMda();
+  const mdaId = localStorage.getItem("mdaId");
   const [retiree, setRetiree] = useState({});
   const [editMode, setEditMode] = useState(false);
   //const [hasId, setHasId] = useState(false);
