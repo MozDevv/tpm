@@ -11,6 +11,7 @@ import Deductions from "../deductions/Deductions";
 import ParliamentContributions from "../Contributions/ParliamentContributions";
 import WomenAndChildren from "../wcps/WomenAndChildren";
 import WcpsCard from "../wcps/WcpsCard";
+import { useMda } from "@/context/MdaContext";
 
 const { TabPane } = Tabs;
 
@@ -38,6 +39,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
     setActiveKey(prevTab);
   };
 
+  const { activeCapName } = useMda();
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto">
       <div>
@@ -158,16 +160,18 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     >
                       <WcpsCard id={clickedItem?.id} />
                     </TabPane>
-                    <TabPane
-                      tab={
-                        <span className="text-primary font-montserrat">
-                          Parliament Contributions
-                        </span>
-                      }
-                      key="9"
-                    >
-                      <ParliamentContributions id={clickedItem?.id} />
-                    </TabPane>
+                    {activeCapName === "CAP196" && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Parliament Contributions
+                          </span>
+                        }
+                        key="9"
+                      >
+                        <ParliamentContributions id={clickedItem?.id} />
+                      </TabPane>
+                    )}
                   </>
                 )}
             </Tabs>
