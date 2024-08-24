@@ -433,7 +433,9 @@ const Preclaims = ({ status }) => {
 
   const [items, setItems] = useState([]);
 
-  const { mdaId } = useMda();
+  //const { mdaId } = useMda();
+
+  const mdaId = localStorage.getItem("mdaId");
 
   console.log("auth?.user?.email ***********", auth?.user?.email);
 

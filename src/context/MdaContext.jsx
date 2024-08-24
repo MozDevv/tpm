@@ -25,7 +25,12 @@ export const MdaProvider = ({ children }) => {
       });
       if (res.status === 200) {
         console.log("mdata", res.data.data.mdaId);
-        setMdaId(res.data.data.mdaId);
+
+        if (typeof window !== "undefined" && res.data.data.mdaId) {
+          const savedItem = localStorage.setItem("mdaId", res.data.data.mdaId);
+          setMdaId(savedItem || null);
+        }
+
         fetchMdas(res.data.data.mdaId);
       }
 

@@ -10,6 +10,7 @@ import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
 import Deductions from "../deductions/Deductions";
 import ParliamentContributions from "../Contributions/ParliamentContributions";
 import WomenAndChildren from "../wcps/WomenAndChildren";
+import WcpsCard from "../wcps/WcpsCard";
 
 const { TabPane } = Tabs;
 
@@ -155,7 +156,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       }
                       key="8"
                     >
-                      <WomenAndChildren id={clickedItem?.id} />
+                      <WcpsCard id={clickedItem?.id} />
                     </TabPane>
                     <TabPane
                       tab={
