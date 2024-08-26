@@ -77,19 +77,29 @@ function WcpsCard({
     try {
       const res = await apiService.get(endpoints.getWcpsLine(id));
       const rawData = res.data.data;
-      setContributionLines(
-        res.data.data.map((line) => ({
-          from_date: new Date(line.from_date).toISOString().split("T")[0],
-          to_date: new Date(line.to_date).toISOString().split("T")[0],
-          salary_amount: line.salary_amount,
-          total_emoluments: line.total_emoluments,
-          contribution_amount: line.contribution_amount,
-        }))
-      );
+
+      // Check if rawData exists and has at least one item
+      if (rawData && rawData.length > 0) {
+        const contributionLinesData = rawData[0].wcpsContributionLines.map(
+          (line) => ({
+            from_date: new Date(line.from_date).toISOString().split("T")[0],
+            to_date: new Date(line.to_date).toISOString().split("T")[0],
+            salary_amount: line.salary_amount,
+            total_emoluments: line.total_emoluments,
+            contribution_amount: line.contribution_amount,
+          })
+        );
+
+        setContributionLines(contributionLinesData);
+      } else {
+        console.warn("No contribution lines found for the provided ID.");
+        setContributionLines([]); // Optionally, clear the contribution lines if no data is found
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching contribution lines:", error);
     }
   };
+
   const [openInputCard, setOpenInputCard] = React.useState(false);
   const [clickedWcpsLine, setClickedWcpsLine] = React.useState(null);
 

@@ -434,7 +434,7 @@ export const createSections = (
     fields: [
       {
         label: "Exit Ground",
-        name: "exit_grounds",
+        name: "exit_ground_id",
         type: "select",
         children: exitGroundOptions,
         pensionCap: [
@@ -508,13 +508,13 @@ export const createSections = (
       },
       {
         label: "Service Increment",
-        name: "service_increment",
+        name: "service_increments",
         type: "number",
         pensionCap: ["CAP199"],
       },
       {
         label: "Monthly Additional Pay",
-        name: "monthly_additional_pay",
+        name: "monthly_aditional_pay",
         type: "number",
         pensionCap: ["CAP199"],
       },

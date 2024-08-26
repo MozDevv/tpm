@@ -23,6 +23,7 @@ import { Edit, Delete, Visibility } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
+import { useMda } from "@/context/MdaContext";
 
 function PeriodsOfAbsence({ id, status }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
@@ -170,6 +171,7 @@ function PeriodsOfAbsence({ id, status }) {
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
+  const { activeCapName } = useMda();
 
   return (
     <div>
@@ -205,7 +207,9 @@ function PeriodsOfAbsence({ id, status }) {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <div className="p-10">
           <h1 className="text-lg font-semibold text-primary py-2 mb-3">
-            Add Period of Absence
+            {activeCapName === "CAP199"
+              ? "Capped Service"
+              : "Period of Absence"}
           </h1>
           <div className="flex flex-col gap-2 w-[300px]">
             {fields.map((field) => (

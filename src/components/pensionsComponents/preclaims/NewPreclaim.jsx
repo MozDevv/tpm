@@ -128,7 +128,7 @@ function NewPreclaim({
           ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
           : "",
         disability_status: retiree?.disability_status ?? "",
-        exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+        exit_ground_id: retiree?.pensionAward?.exit_ground_id ?? "",
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
         tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
@@ -139,8 +139,9 @@ function NewPreclaim({
 
         military_id: retiree?.military_id ?? "",
         monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
-        service_increment: retiree?.service_increment ?? 0,
-        monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
+        service_increments: retiree?.service_increments ?? 0,
+        monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
+        tribe: retiree?.tribe ?? "",
         is_wcps: retiree?.is_wcps ?? 0,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: retiree?.age_on_discharge ?? 0,
@@ -210,7 +211,7 @@ function NewPreclaim({
       : "",
     disability_status: retiree?.disability_status ?? "",
     tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
-    exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+    exit_ground_id: retiree?.pensionAward?.exit_ground_id ?? "",
     tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
       ? new Date(retiree.tax_exempt_certificate_date)
           .toISOString()
@@ -218,8 +219,9 @@ function NewPreclaim({
       : "",
     military_id: retiree?.military_id ?? "",
     monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
-    service_increment: retiree?.service_increment ?? 0,
-    monthly_additional_pay: retiree?.monthly_additional_pay ?? 0,
+    service_increments: retiree?.service_increments ?? 0,
+    monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
+    tribe: retiree?.tribe ?? "",
     is_wcps: retiree?.is_wcps ?? 0,
     is_parliamentary: retiree?.is_parliamentary ?? false,
     age_on_discharge: retiree?.age_on_discharge ?? 0,
