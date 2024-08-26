@@ -72,7 +72,8 @@ const MDASetups = () => {
       id: item?.id,
       bank_account_name: item?.bank_account_name,
       bank_account_number: item?.bank_account_number,
-      bank_branch_id: item?.bank_branch_id,
+      bank_branch_id: item?.bankBranch?.id,
+      bank_id: item?.bankBranch?.bank_id,
       pensionCap: item?.pensionCap.name,
     }));
   };
@@ -155,6 +156,12 @@ const MDASetups = () => {
   useEffect(() => {
     fetchBanksAndBranches();
   }, []);
+
+  useEffect(() => {
+    if (clickedItem) {
+      setSelectedBank(clickedItem.bank_id);
+    }
+  }, [clickedItem]);
 
   const [selectedBank, setSelectedBank] = React.useState(null);
 

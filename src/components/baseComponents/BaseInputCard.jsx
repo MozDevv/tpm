@@ -273,6 +273,7 @@ const BaseInputCard = ({
           </Button>
         )}
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
         {fields.map((field, index) => (
           <div
