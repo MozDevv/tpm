@@ -22,7 +22,7 @@ const getOptionNameById = (options, id) => {
 const columnDefs = [
   {
     field: "no",
-    headerName: "No",
+    headerName: "Code",
     headerClass: "prefix-header",
     width: 90,
     filter: true,
@@ -51,6 +51,7 @@ const Liabilities = (id) => {
 
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => ({
+      no: index + 1,
       id: item.id,
       amount_in_ksh: item.amount_in_ksh,
       liability_name: item.liability_name,

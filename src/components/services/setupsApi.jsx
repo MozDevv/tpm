@@ -256,7 +256,7 @@ const endpoints = {
 
   getLiabilities: (id) =>
     `/api/ProspectivePensioners/GetLiabilties?prospective_pensioner_id=${id}`,
-  createLiabilities: "/api/ProspectivePensioners/CreateLiability",
+  createLiabilities: "/api/ProspectivePensioners/CreateLiabilities",
   updateLiabilities:
     "/api/ProspectivePensioners/UpdateProspectivePensionerLiabilities",
 
