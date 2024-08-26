@@ -12,6 +12,7 @@ import ParliamentContributions from "../Contributions/ParliamentContributions";
 import WomenAndChildren from "../wcps/WomenAndChildren";
 import WcpsCard from "../wcps/WcpsCard";
 import { useMda } from "@/context/MdaContext";
+import Liabilities from "../liabilities/Liabilities";
 
 const { TabPane } = Tabs;
 
@@ -175,6 +176,18 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         key="9"
                       >
                         <ParliamentContributions id={clickedItem?.id} />
+                      </TabPane>
+                    )}
+                    {activeCapName === "CAP199" && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Liabilities
+                          </span>
+                        }
+                        key="9"
+                      >
+                        <Liabilities id={clickedItem?.id} />
                       </TabPane>
                     )}
                   </>
