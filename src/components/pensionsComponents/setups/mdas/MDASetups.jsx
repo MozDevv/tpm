@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -70,6 +70,9 @@ const MDASetups = () => {
       short_name: item?.short_name,
       pension_cap_id: item?.pensionCap.id,
       id: item?.id,
+      bank_account_name: item?.bank_account_name,
+      bank_account_number: item?.bank_account_number,
+      bank_branch_id: item?.bank_branch_id,
       pensionCap: item?.pensionCap.name,
     }));
   };
@@ -118,8 +121,42 @@ const MDASetups = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [banks, setBanks] = React.useState([]);
+  const [branches, setBranches] = React.useState([]);
 
   const title = clickedItem ? "MDA" : "Create New MDA";
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await apiService.get(endpoints.getBanks, {
+        "paging.pageSize": 1000,
+      });
+      const rawData = res.data.data;
+
+      const banksData = rawData.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+      }));
+
+      const branchesData = rawData.flatMap((bank) =>
+        bank.branches.map((branch) => ({
+          ...branch,
+          bankId: bank.id,
+        }))
+      );
+
+      setBanks(banksData);
+      setBranches(branchesData);
+    } catch (error) {
+      console.log("Error fetching banks and branches:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanksAndBranches();
+  }, []);
+
+  const [selectedBank, setSelectedBank] = React.useState(null);
 
   const fields = [
     { name: "code", label: "Code", type: "text", required: true },
@@ -162,6 +199,28 @@ const MDASetups = () => {
       type: "text",
       required: true,
     },
+    {
+      name: "bank_id",
+      label: "Bank",
+      type: "autocomplete",
+      options: banks,
+    },
+    {
+      name: "bank_branch_id",
+      label: "Bank Branch",
+      options: branches.filter((branch) => branch.bankId === selectedBank),
+      type: "select",
+    },
+    {
+      name: "bank_account_name",
+      label: "Bank Account Name",
+      type: "text",
+    },
+    {
+      name: "bank_account_number",
+      label: "Bank Account Number",
+      type: "text",
+    },
   ];
 
   return (
@@ -184,6 +243,7 @@ const MDASetups = () => {
             clickedItem={clickedItem}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
+            setSelectedBank={setSelectedBank}
           />
         ) : (
           <BaseInputCard
@@ -193,6 +253,7 @@ const MDASetups = () => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            setSelectedBank={setSelectedBank}
           />
         )}
       </BaseCard>
