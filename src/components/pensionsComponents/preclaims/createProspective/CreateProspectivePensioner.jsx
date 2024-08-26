@@ -150,16 +150,21 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     >
                       <Deductions id={clickedItem?.id} />
                     </TabPane>
-                    <TabPane
-                      tab={
-                        <span className="text-primary font-montserrat">
-                          WCPS Contributions
-                        </span>
-                      }
-                      key="8"
-                    >
-                      <WcpsCard id={clickedItem?.id} />
-                    </TabPane>
+
+                    {clickedItem?.is_wcps === 0 &&
+                      activeCapName !== "CAP196" && (
+                        <TabPane
+                          tab={
+                            <span className="text-primary font-montserrat">
+                              WCPS Contributions
+                            </span>
+                          }
+                          key="8"
+                        >
+                          <WcpsCard id={clickedItem?.id} />
+                        </TabPane>
+                      )}
+
                     {activeCapName === "CAP196" && (
                       <TabPane
                         tab={
