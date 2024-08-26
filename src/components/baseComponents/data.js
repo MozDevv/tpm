@@ -172,6 +172,10 @@ export const menuItems = [
         path: "/pensions/setups/mdas",
       },
       {
+        title: "Exit Grounds",
+        path: "/pensions/setups/exit-grounds",
+      },
+      {
         title: "Postal Codes",
         path: "/pensions/setups/postal-codes",
       },

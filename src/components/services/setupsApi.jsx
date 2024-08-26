@@ -253,6 +253,8 @@ const endpoints = {
   updateWcpsLine: "/api/ProspectivePensioners/UpdateWCPSContributionLine",
   deleteWcpsLine: (id) =>
     `/api/ProspectivePensioners/DeleteWCPSContributionLine?id=${id}`,
+
+  mapExitGroundAwards: "/api/Setups/MapExitReasonAward",
   //getPro
 };
 

@@ -291,10 +291,10 @@ function Sidebar() {
           title: "Designation & Grades",
           path: "/pensions/setups/designation-grades",
         },
-        // {
-        //   title: "Grade Setups",
-        //   path: "/pensions/setups/grade-setups",
-        // },
+        {
+          title: "Exit Grounds",
+          path: "/pensions/setups/exit-grounds",
+        },
         {
           title: "Postal Codes",
           path: "/pensions/setups/postal-codes",
