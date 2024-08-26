@@ -14,6 +14,11 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useMda } from "@/context/MdaContext";
 
+const getOptionNameById = (options, id) => {
+  const option = options.find((opt) => opt.id === id);
+  return option ? option.name : id; // Fallback to id if no match found
+};
+
 const columnDefs = [
   {
     field: "no",
@@ -40,12 +45,27 @@ const columnDefs = [
     headerName: "Deduction Type",
     width: 150,
     filter: true,
+    cellRenderer: (params) => {
+      const options = [
+        { id: 0, name: "Salary Overpayment" },
+        { id: 1, name: "Work Deductions" },
+        { id: 2, name: "Abetement" },
+      ];
+      return getOptionNameById(options, params.value);
+    },
   },
   {
     field: "deduction_payee",
     headerName: "Deduction Payee",
     width: 150,
     filter: true,
+    cellRenderer: (params) => {
+      const options = [
+        { id: 0, name: "MDA" },
+        { id: 1, name: "Treasury" },
+      ];
+      return getOptionNameById(options, params.value);
+    },
   },
 ];
 
