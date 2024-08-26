@@ -142,7 +142,9 @@ function PostAndNature({ id, loading, setLoading, status }) {
       { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
       { id: "OneTerm", name: "1 Term" },
       { id: "TwoTerms", name: "2 Term" },
-      { id: "DSO_RK_APN_PK", name: "DSO/RK & APN/PK" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
     ],
   };
 

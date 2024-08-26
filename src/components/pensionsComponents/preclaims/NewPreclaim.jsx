@@ -787,6 +787,20 @@ function NewPreclaim({
   }, [formData.retirement_date]);
 
   useEffect(() => {
+    if (formData.retirement_date && formData.dob) {
+      const dob = dayjs(formData.dob);
+      const retirementDate = dayjs(formData.retirement_date);
+
+      const ageOfDischarge = retirementDate.diff(dob, "year");
+
+      setFormData((prevData) => ({
+        ...prevData,
+        age_on_discharge: ageOfDischarge,
+      }));
+    }
+  }, [formData.retirement_date, formData.dob]);
+
+  useEffect(() => {
     validateRetirementDate();
   }, [
     formData.pension_award_id,
@@ -930,7 +944,7 @@ function NewPreclaim({
                                     size="small"
                                     fullWidth
                                     name={field.name}
-                                    disabled={!canEdit}
+                                    disabled={!canEdit || field.disabled}
                                     value={formData[field.name]}
                                     onChange={handleInputChange}
                                     error={!!errors[field.name]} // Show error style if there is an error
@@ -1011,7 +1025,7 @@ function NewPreclaim({
                                     type={field.type}
                                     name={field.name}
                                     variant="outlined"
-                                    disabled={!canEdit}
+                                    disabled={!canEdit || field.disabled}
                                     size="small"
                                     value={formData[field.name]}
                                     onChange={handleInputChange}

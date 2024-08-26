@@ -233,7 +233,7 @@ const MaintenanceCase = (id) => {
     {
       name: "phone_number",
       label: "Phone Number",
-      type: "number",
+      type: "string",
     },
 
     {

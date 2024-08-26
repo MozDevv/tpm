@@ -241,7 +241,7 @@ const BaseInputCard = ({
         ) {
           fetchData && fetchData();
           message.success("Record saved successfully");
-          // setOpenBaseCard(false);
+          setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
           // setReFetchData(true);
         }

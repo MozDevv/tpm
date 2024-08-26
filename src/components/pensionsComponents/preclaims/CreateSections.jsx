@@ -671,7 +671,17 @@ export const createSections = (
         label: "Age on Discharge",
         name: "age_on_discharge",
         type: "number",
-        pensionCap: ["CAP199"],
+        disabled: true,
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
       },
       {
         label: "Date of Which Pension will Commence/Date Of Death ",
