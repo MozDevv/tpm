@@ -62,7 +62,17 @@ function WcpsCard({
       setEffectiveDate(data[0].effective_date);
       setReferenceNumber(data[0].reference_number);
       if (res.data.data[0].id) {
-        await fetchContributionLines(res.data.data[0].id);
+        const contributionLinesData =
+          res.data.data[0].wcpsContributionLines.map((line) => ({
+            from_date: new Date(line.from_date).toISOString().split("T")[0],
+            to_date: new Date(line.to_date).toISOString().split("T")[0],
+            salary_amount: line.salary_amount,
+            total_emoluments: line.total_emoluments,
+            contribution_amount: line.contribution_amount,
+          }));
+
+        setContributionLines(contributionLinesData);
+        // await fetchContributionLines(res.data.data[0].id);
       }
     } catch (error) {
       console.error("Error fetching data:", error);

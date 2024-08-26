@@ -470,11 +470,11 @@ function NewPreclaim({
 
   useEffect(() => {
     const filteredExitGrounds = exitGrounds.filter(
-      (exitGround) => exitGround.id === formData.exit_grounds
+      (exitGround) => exitGround.id === formData.exit_ground_id
     );
 
     setPensionAwardsData(filteredExitGrounds);
-  }, [formData.exit_grounds]);
+  }, [formData.exit_ground_id]);
 
   ////////////////////////////////////////////////
 
@@ -503,7 +503,7 @@ function NewPreclaim({
   const pensionAwardOptions =
     exitGrounds.length > 0 && !formData.notification_status
       ? exitGrounds
-          .filter((grounds) => grounds.id === formData.exit_grounds)
+          .filter((grounds) => grounds.id === formData.exit_ground_id)
           .flatMap((grounds) =>
             grounds.pensionAwards
               .filter((award) => award.pensionCap.id === activePensionCap)
