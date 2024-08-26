@@ -261,6 +261,9 @@ const endpoints = {
     "/api/ProspectivePensioners/UpdateProspectivePensionerLiabilities",
 
   mapExitGroundAwards: "/api/Setups/MapExitReasonAward",
+
+  previewBirthCertificate: (prospectiveId, birthCertNo) =>
+    `/birthCert/${prospectiveId}/${birthCertNo}`,
   //getPro
 };
 

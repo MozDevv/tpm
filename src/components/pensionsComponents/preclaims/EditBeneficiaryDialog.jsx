@@ -12,9 +12,11 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { ExpandLess, KeyboardArrowRight, Launch } from "@mui/icons-material";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
+import endpoints, { apiService } from "@/components/services/setupsApi";
+import axios from "axios";
 
-function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
+function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
   const [formData, setFormData] = React.useState(beneficiary || {});
   const [openSections, setOpenSections] = React.useState({
     personalDetails: false,
@@ -106,7 +108,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
       { label: "Parent Name", name: "parent_name", type: "text" },
       { label: "Relationship", name: "relationship", type: "text" },
       { label: "KRA PIN", name: "kra_pin", type: "text" },
-      { label: "Is Guardian", name: "is_guardian", type: "text" },
+      // { label: "Is Guardian", name: "is_guardian", type: "text" },
 
       // { label: "Deceased", name: "deceased", type: "" },
       {
@@ -141,194 +143,209 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian }) {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://your-api-endpoint/getBirthCertificate?birth_cert_no=${formData.birth_cert_no}`
+        `https://tntportalapi.agilebiz.co.ke/portal/birthCert/${id}/${formData.birth_cert_no}`,
+        {
+          responseType: "arraybuffer",
+        }
       );
-      const base64Data = res.data?.base64Data; // Adjust this based on your API response
+      const base64Data = res.data;
+      console.log("base64Data", base64Data);
       if (base64Data) {
-        setPreviewContent(
-          <embed
-            src={`data:application/pdf;base64,${base64Data}`}
-            type="application/pdf"
-            width="100%"
-            height="100%"
-          />
-        );
+        setPreviewContent(new Blob([res.data], { type: "application/pdf" }));
         setPreviewTitle("Birth Certificate");
         setPreviewVisible(true);
       } else {
-        alert("No preview available for this document.");
+        message.error("No preview available for this document.");
       }
     } catch (error) {
       console.error("Error fetching birth certificate:", error);
-      alert("Failed to fetch birth certificate.");
+      message.error("Failed to fetch birth certificate.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="lg"
-      fullWidth
-      sx={{ padding: "20px" }}
-    >
-      <div className="p-8">
-        <DialogTitle>
-          <p className="text-primary py-3 text-lg font-bold">
-            {isGuardian ? "Guardian" : "Beneficiary"} Details
-          </p>
-        </DialogTitle>
-        <DialogContent>
-          {Object.keys(fields).map((sectionKey) => (
-            <div key={sectionKey} className="p-2 ">
-              <div className="flex items-center gap-2">
-                <h6 className="font-semibold text-primary text-sm">
-                  {sectionKey.replace(/([A-Z])/g, " $1").toUpperCase()}
-                </h6>
-                <IconButton
-                  sx={{ ml: "-5px", zIndex: 1 }}
-                  onClick={() => handleToggleSection(sectionKey)}
-                >
-                  {!openSections[sectionKey] ? (
-                    <KeyboardArrowRight
-                      sx={{ color: "primary.main", fontSize: "14px" }}
-                    />
-                  ) : (
-                    <ExpandLess
-                      sx={{ color: "primary.main", fontSize: "14px" }}
-                    />
-                  )}
-                </IconButton>
-                <hr className="flex-grow border-blue-500 border-opacity-20" />
-              </div>
-              <Collapse
-                in={!openSections[sectionKey]}
-                timeout="auto"
-                unmountOnExit
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
-                  {fields[sectionKey].map((field, fieldIndex) => {
-                    const fieldValue = Array.isArray(field.name)
-                      ? field.name.reduce(
-                          (acc, key) => acc && acc[key],
-                          formData
-                        )
-                      : formData[field.name];
-
-                    if (fieldValue === undefined || fieldValue === null) {
-                      return null; // Skip rendering this field if its value is not present
-                    }
-
-                    return (
-                      <div key={fieldIndex} className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-600">
-                          {field.label}
-                        </label>
-                        {field.type === "select" ? (
-                          <TextField
-                            select
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            name={field.name}
-                            value={fieldValue || ""}
-                            onChange={handleChange}
-                            // Add logic for options if needed
-                          >
-                            <MenuItem value="">Select {field.label}</MenuItem>
-                            {/* Map options here if needed */}
-                          </TextField>
-                        ) : field.type === "autocomplete" ? (
-                          <Autocomplete
-                            options={field.children || []}
-                            getOptionLabel={(option) => option.name}
-                            onChange={(event, newValue) => {
-                              handleChange({
-                                target: {
-                                  name: field.name,
-                                  value: newValue ? newValue.id : "",
-                                },
-                              });
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                name={field.name}
-                              />
-                            )}
-                            value={
-                              field.children?.find(
-                                (option) => option.id === fieldValue
-                              ) || null
-                            }
-                          />
-                        ) : (
-                          <TextField
-                            type={field.type}
-                            name={field.name}
-                            variant="outlined"
-                            size="small"
-                            value={
-                              (fieldValue === 2
-                                ? "Female"
-                                : fieldValue === 1
-                                ? "Male"
-                                : fieldValue) || ""
-                            }
-                            onChange={handleChange}
-                            fullWidth
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-
-                  {formData.birth_cert_no &&
-                    sectionKey === "personalDetails" && (
-                      <Button
-                        startIcon={<Launch />}
-                        variant="outlined"
-                        onClick={handlePreviewBirthCertificate}
-                        size="small"
-                        sx={{ mt: 2 }}
-                      >
-                        Preview Birth Certificate
-                      </Button>
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="lg"
+        fullWidth
+        sx={{ padding: "20px" }}
+      >
+        <div className="p-8">
+          <DialogTitle>
+            <p className="text-primary py-3 text-lg font-bold">
+              {isGuardian ? "Guardian" : "Beneficiary"} Details
+            </p>
+          </DialogTitle>
+          <DialogContent>
+            {Object.keys(fields).map((sectionKey) => (
+              <div key={sectionKey} className="p-2 ">
+                <div className="flex items-center gap-2">
+                  <h6 className="font-semibold text-primary text-sm">
+                    {sectionKey.replace(/([A-Z])/g, " $1").toUpperCase()}
+                  </h6>
+                  <IconButton
+                    sx={{ ml: "-5px", zIndex: 1 }}
+                    onClick={() => handleToggleSection(sectionKey)}
+                  >
+                    {!openSections[sectionKey] ? (
+                      <KeyboardArrowRight
+                        sx={{ color: "primary.main", fontSize: "14px" }}
+                      />
+                    ) : (
+                      <ExpandLess
+                        sx={{ color: "primary.main", fontSize: "14px" }}
+                      />
                     )}
+                  </IconButton>
+                  <hr className="flex-grow border-blue-500 border-opacity-20" />
                 </div>
-              </Collapse>
-            </div>
-          ))}
-        </DialogContent>
+                <Collapse
+                  in={!openSections[sectionKey]}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
+                    {fields[sectionKey].map((field, fieldIndex) => {
+                      const fieldValue = Array.isArray(field.name)
+                        ? field.name.reduce(
+                            (acc, key) => acc && acc[key],
+                            formData
+                          )
+                        : formData[field.name];
 
-        {/* Modal for Preview */}
-        <Modal
-          open={previewVisible}
-          onClose={() => setPreviewVisible(false)}
-          title={previewTitle}
-          footer={null}
-          width="80%"
-          bodyStyle={{ height: 1000, overflowY: "auto" }}
-          style={{ top: 20, height: 850, overflowY: "auto", zIndex: 2000 }}
-        >
-          {loading ? <div>Loading...</div> : previewContent}
-        </Modal>
+                      if (fieldValue === undefined || fieldValue === null) {
+                        return null; // Skip rendering this field if its value is not present
+                      }
 
-        <DialogActions>
-          <Button onClick={onClose} variant="contained" color="error">
-            Close
-          </Button>
-          {/* <Button onClick={handleSave} variant="contained" color="primary">
+                      return (
+                        <div key={fieldIndex} className="flex flex-col">
+                          <label className="text-xs font-semibold text-gray-600">
+                            {field.label}
+                          </label>
+                          {field.type === "select" ? (
+                            <TextField
+                              select
+                              variant="outlined"
+                              size="small"
+                              fullWidth
+                              name={field.name}
+                              value={fieldValue || ""}
+                              onChange={handleChange}
+                              // Add logic for options if needed
+                            >
+                              <MenuItem value="">Select {field.label}</MenuItem>
+                              {/* Map options here if needed */}
+                            </TextField>
+                          ) : field.type === "autocomplete" ? (
+                            <Autocomplete
+                              options={field.children || []}
+                              getOptionLabel={(option) => option.name}
+                              onChange={(event, newValue) => {
+                                handleChange({
+                                  target: {
+                                    name: field.name,
+                                    value: newValue ? newValue.id : "",
+                                  },
+                                });
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  size="small"
+                                  fullWidth
+                                  name={field.name}
+                                />
+                              )}
+                              value={
+                                field.children?.find(
+                                  (option) => option.id === fieldValue
+                                ) || null
+                              }
+                            />
+                          ) : (
+                            <TextField
+                              type={field.type}
+                              name={field.name}
+                              variant="outlined"
+                              size="small"
+                              value={
+                                (fieldValue === 2
+                                  ? "Female"
+                                  : fieldValue === 1
+                                  ? "Male"
+                                  : fieldValue) || ""
+                              }
+                              onChange={handleChange}
+                              fullWidth
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {formData.birth_cert_no &&
+                      sectionKey === "personalDetails" && (
+                        <Button
+                          startIcon={<Launch />}
+                          variant="outlined"
+                          onClick={handlePreviewBirthCertificate}
+                          size="small"
+                          sx={{ mt: 2 }}
+                        >
+                          Preview Birth Certificate
+                        </Button>
+                      )}
+                  </div>
+                </Collapse>
+              </div>
+            ))}
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={onClose} variant="contained" color="error">
+              Close
+            </Button>
+            {/* <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button> */}
-        </DialogActions>
-      </div>
-    </Dialog>
+          </DialogActions>
+        </div>
+      </Dialog>
+
+      {/* <Dialog
+        open={previewVisible}
+        onClose={() => setPreviewVisible(false)}
+        maxWidth="lg"
+        fullWidth
+        sx={{ padding: "20px", height: "500px" }}
+      >
+        <DialogTitle>{previewTitle}</DialogTitle>
+        {previewContent}
+      </Dialog> */}
+
+      <Modal
+        open={previewVisible}
+        footer={null}
+        title={previewTitle}
+        onCancel={() => setPreviewVisible(false)}
+        width={800}
+        height={600}
+        bodyStyle={{ padding: 0, height: "75vh", top: 20, mt: 20 }}
+        zIndex={2000}
+      >
+        {previewContent && (
+          <iframe
+            src={URL.createObjectURL(previewContent)}
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
+      </Modal>
+    </>
   );
 }
 

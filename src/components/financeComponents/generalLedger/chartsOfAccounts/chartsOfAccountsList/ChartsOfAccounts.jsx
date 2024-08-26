@@ -31,7 +31,7 @@ function ChartsOfAccounts() {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts);
-      // No need to process data if you are not handling hierarchical data
+
       setRowData(response.data.data);
     } catch (error) {
       console.log(error);
@@ -219,6 +219,7 @@ function ChartsOfAccounts() {
       label: "Account Name",
       type: "text",
     },
+
     {
       name: "group",
       label: "Category",
@@ -266,9 +267,11 @@ function ChartsOfAccounts() {
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
-        title={"Create New GL Account"}
+        title={clickedItem?.accountName}
         isUserComponent={false}
         clickedItem={clickedItem}
+        deleteApiEndpoint={financeEndpoints.deleteGlAccount(clickedItem?.id)}
+        deleteApiService={apiService.delete}
         glAccountName={
           clickedItem
             ? `${clickedItem?.accountNo} - ${clickedItem?.accountName}`
@@ -281,6 +284,9 @@ function ChartsOfAccounts() {
             clickedItem={clickedItem}
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
+            apiEndpoint={financeEndpoints.updateGlAccount}
+            postApiFunction={apiService.post}
+            useRequestBody={true}
           />
         ) : (
           <BaseInputCard

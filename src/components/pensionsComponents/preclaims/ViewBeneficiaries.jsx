@@ -52,7 +52,7 @@ function ViewBeneficiaries({
     { headerName: "First Name", field: "first_name" },
     { headerName: "Other Name", field: "other_name" },
     { headerName: "Percentage Share (%)", field: "share_percentage" },
-    { headerName: "Age", field: "age" },
+    // { headerName: "Age", field: "age" },
     {
       headerName: "Date of Birth",
       field: "date_of_birth",
@@ -121,6 +121,7 @@ function ViewBeneficiaries({
       )}
 
       <EditBeneficiaryDialog
+        id={clickedItem?.id}
         open={editDialogOpen}
         isGuardian={isGuardian}
         onClose={() => setEditDialogOpen(false)}

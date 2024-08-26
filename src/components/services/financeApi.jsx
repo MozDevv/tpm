@@ -23,6 +23,8 @@ const financeEndpoints = {
   fetchGlAccountTypes: "/AccountsSetup/GetGLAccountTypes",
   createGlAccount: "/Accounts/AddGLAccount",
   getAccountGroupTypes: "/AccountsSetup/GetAccountGroups",
+  updateGlAccount: `/Accounts/UpdateGLAccount/`,
+  deleteGlAccount: (id) => `/Accounts/DeleteGLAccount?id=${id}`,
 };
 
 export const apiService = {

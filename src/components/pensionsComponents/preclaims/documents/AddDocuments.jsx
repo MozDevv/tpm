@@ -344,9 +344,10 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
             title={previewTitle}
             footer={null}
             onCancel={() => setPreviewVisible(false)}
-            width="80%"
-            bodyStyle={{ height: 1000, overflowY: "auto" }}
-            style={{ top: 20, height: 850, overflowY: "auto", zIndex: 2000 }} // Increased zIndex value
+            width={1000}
+            height={800}
+            bodyStyle={{ height: "80vh", overflowY: "auto" }}
+            style={{ top: 40, height: "80vh", overflowY: "auto", zIndex: 2000 }} // Increased zIndex value
             zIndex={2000} // Also add zIndex to Modal
           >
             {previewContent}
