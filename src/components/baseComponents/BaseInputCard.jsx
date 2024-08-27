@@ -331,7 +331,7 @@ const BaseInputCard = ({
                 >
                   <MenuItem value="">Select {field.label}</MenuItem>
                   {field?.options?.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
+                    <MenuItem key={option?.name} value={option?.id}>
                       {option.name}
                     </MenuItem>
                   ))}

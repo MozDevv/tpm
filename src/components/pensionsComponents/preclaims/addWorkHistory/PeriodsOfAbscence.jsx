@@ -269,7 +269,9 @@ function PeriodsOfAbsence({ id, status }) {
           setOpen(true);
         }}
       >
-        Add Period of Absence
+        {activeCapName === "CAP199"
+          ? "Add Capped Service"
+          : "Add Period of Absence"}
       </Button>
       <TableContainer
         //component={Paper}

@@ -146,7 +146,14 @@ function MixedServicePost({ id, loading, setLoading, status }) {
       { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
       { id: "OneTerm", name: "1 Term" },
       { id: "TwoTerms", name: "2 Term" },
-      { id: "DSO_RK_APN_PK", name: "DSO/RK & APN/PK" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
+    ],
+    "APN/PK": [
+      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
     ],
   };
 
@@ -331,8 +338,8 @@ function MixedServicePost({ id, loading, setLoading, status }) {
             {isEditMode ? "Edit" : "Add"} Post and Nature of Service
           </h1>
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-gray-600">
-              Date Of Confirmation
+            {/* <label className="text-xs font-semibold text-gray-600">
+              Date First Elected
             </label>
             <input
               type="date"
@@ -340,9 +347,9 @@ function MixedServicePost({ id, loading, setLoading, status }) {
               value={dateOfConfirmation}
               disabled
               className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm`}
-            />
+            /> */}
             <label className="text-xs font-semibold text-gray-600">
-              Date Of First Appointment
+              Date Of First Elected
             </label>
             <input
               type="date"

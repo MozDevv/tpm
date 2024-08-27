@@ -11,6 +11,7 @@ import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 import MixedServicePost from "./MixedServicePost";
+import { useMda } from "@/context/MdaContext";
 
 function AddPensionersWorkHistory({
   id,
@@ -35,6 +36,8 @@ function AddPensionersWorkHistory({
 
   const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
   const [pensionAward, setPensionAward] = useState(false);
+
+  const { activePensionCap, activeCapName } = useMda("");
 
   const fetchRetiree = async () => {
     try {
@@ -83,6 +86,14 @@ function AddPensionersWorkHistory({
       <div className="flex-1 overflow-y-auto pb-[200px] max-h-[90vh]">
         <Suspense fallback={<Spinner />}>
           {pensionAward ? (
+            <MixedServicePost
+              status={status}
+              id={id}
+              loading={loading}
+              setLoading={setLoading}
+              dateOfFirstAppointment={dateOfFirstAppointment}
+            />
+          ) : activeCapName === "CAP196" ? (
             <MixedServicePost
               status={status}
               id={id}

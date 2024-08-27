@@ -19,6 +19,8 @@ import {
   Tooltip,
   Autocomplete,
   Paper,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -27,13 +29,16 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { message, notification } from "antd";
+import { message, notification, Select } from "antd";
 import { useMda } from "@/context/MdaContext";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import "dayjs/locale/en-au";
 import { createSections } from "./CreateSections";
+import PhoneInput from "react-phone-input-2";
+import "./ag-theme.css";
+import MuiPhoneNumber from "mui-phone-number";
 
 dayjs.extend(isSameOrBefore);
 
@@ -250,8 +255,8 @@ function NewPreclaim({
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     ) {
       error = "Invalid email format";
-    } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
-      error = "Must be a valid phone number";
+      // } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
+      //   error = "Must be a valid phone number";
     } else if (name === "dob" && value) {
       const dobDate = dayjs(value);
       const age = dayjs().diff(dobDate, "year");
@@ -268,12 +273,12 @@ function NewPreclaim({
       error = "Must be a valid KRA PIN";
     } else if (name === "last_basic_salary_amount" && value && isNaN(value)) {
       error = "Must be a valid number";
-    } else if (
-      name === "phone_number" &&
-      value &&
-      !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
-    ) {
-      error = "Must be a valid phone number";
+      // } else if (
+      //   name === "phone_number" &&
+      //   value &&
+      //   !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
+      // ) {
+      //   error = "Must be a valid phone number";
     } else if (
       name.includes("date") &&
       name !== "date_from_which_pension_will_commence" &&
@@ -557,10 +562,20 @@ function NewPreclaim({
     }
 
     for (const key of Object.keys(formData)) {
-      if (key === "is_parliamentary" && activeCapName === "CAP196") {
+      if (
+        key === "is_parliamentary" &&
+        (activeCapName === "CAP196" ||
+          activeCapName === "DSO/RK" ||
+          activeCapName === "APN/PK")
+      ) {
         formData.is_parliamentary = true;
       }
-      if (key === "date_of_confirmation" && activeCapName === "CAP196") {
+      if (
+        key === "date_of_confirmation" &&
+        (activeCapName === "CAP196" ||
+          activeCapName === "DSO/RK" ||
+          activeCapName === "APN/PK")
+      ) {
         formData.date_of_confirmation = formData.date_of_first_appointment;
       }
     }
@@ -824,6 +839,35 @@ function NewPreclaim({
     }
   }, [formData.retirement_date, formData.dob]);
 
+  const [countriesArr, setCountriesArr] = useState([]);
+
+  useEffect(() => {
+    // Fetch country data from the API
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        const countryData = response.data
+          .map((country) => ({
+            name: country.name.common,
+            code:
+              country.idd.root +
+              (country.idd.suffixes ? country.idd.suffixes[0] : ""),
+          }))
+          .filter((country) => country.code); // Filter countries with valid codes
+        setCountriesArr(countryData);
+      })
+      .catch((error) => console.error("Error fetching country codes:", error));
+  }, []);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+254");
+  const handleCountryChange = (event) => {
+    setSelectedCountryCode(event.target.value);
+    setFormData({
+      ...formData,
+      phone_number: event.target.value + formData.phone_number,
+    });
+  };
+
   useEffect(() => {
     validateRetirementDate();
   }, [
@@ -961,7 +1005,41 @@ function NewPreclaim({
                                 <label className="text-xs font-semibold text-gray-600">
                                   {field.label}
                                 </label>
-                                {field.type === "select" ? (
+                                {field.name === "phone_number" ? (
+                                  <MuiPhoneNumber
+                                    defaultCountry="ke" // Kenya as the default country
+                                    name="phoneNumber"
+                                    value={formData.phone_number}
+                                    onChange={(value) =>
+                                      handleInputChange({
+                                        target: { name: "phone_number", value },
+                                      })
+                                    }
+                                    error={!!errors.phone_number}
+                                    helperText={errors.phone_number}
+                                    disabled={!canEdit}
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    dropdownClass="custom-dropdown" // Custom class for the dropdown
+                                    MenuProps={{
+                                      PaperProps: {
+                                        style: {
+                                          maxHeight: "120px", // Set max height for the dropdown
+                                          overflowY: "auto",
+                                        },
+                                      },
+                                      anchorOrigin: {
+                                        vertical: "bottom",
+                                        horizontal: "left",
+                                      },
+                                      transformOrigin: {
+                                        vertical: "top",
+                                        horizontal: "left",
+                                      },
+                                    }}
+                                  />
+                                ) : field.type === "select" ? (
                                   <TextField
                                     select
                                     variant="outlined"
