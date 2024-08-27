@@ -30,6 +30,12 @@ const columnDefs = [
     hide: false,
   },
   {
+    field: "idNumber",
+    headerName: "ID Number",
+    filter: true,
+    width: 150,
+  },
+  {
     field: "phoneNumber",
     headerName: "Phone Number",
     filter: true,
@@ -59,7 +65,7 @@ const Users = () => {
       lastName: item.lastName,
       email: item.email,
       phoneNumber: item.phoneNumber,
-      id_number: item.idNumber,
+      idNumber: item.idNumber,
       roleId: item.roles,
       employeeNumber: item.employeeNumber,
       defaultPasswordChanged: item.defaultPasswordChanged,
