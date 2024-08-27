@@ -11,7 +11,7 @@ steps:
       secureFile: "sammymathenge-web.pem"
 
   - script: |
-      # Set correct permissions for the private key
+      # Set correct permissions for the private key a
       chmod 600 $(Agent.TempDirectory)/sammymathenge-web.pem
 
       # Start SSH agent
