@@ -128,8 +128,8 @@ function NewPreclaim({
           ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
           : "",
         disability_status: retiree?.disability_status ?? "",
-        exit_ground_id: retiree?.pensionAward?.exit_ground_id ?? "",
-        exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+        exit_grounds: retiree?.pensionAward?.exit_grounds ?? "",
+        exit_grounds: retiree?.pensionAward?.exit_grounds ?? "",
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
         tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
@@ -212,8 +212,8 @@ function NewPreclaim({
       : "",
     disability_status: retiree?.disability_status ?? "",
     tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
-    exit_ground_id: retiree?.pensionAward?.exit_ground_id ?? "",
-    exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+    exit_grounds: retiree?.pensionAward?.exit_grounds ?? "",
+    exit_grounds: retiree?.pensionAward?.exit_grounds ?? "",
     tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
       ? new Date(retiree.tax_exempt_certificate_date)
           .toISOString()
@@ -505,7 +505,7 @@ function NewPreclaim({
   const pensionAwardOptions =
     exitGrounds.length > 0 && !formData.notification_status
       ? exitGrounds
-          .filter((grounds) => grounds.id === formData.exit_ground_id)
+          .filter((grounds) => grounds.id === formData.exit_grounds)
           .flatMap((grounds) =>
             grounds.pensionAwards
               .filter((award) => award.pensionCap.id === activePensionCap)
