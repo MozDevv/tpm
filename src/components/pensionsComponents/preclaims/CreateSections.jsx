@@ -434,7 +434,7 @@ export const createSections = (
     fields: [
       {
         label: "Exit Ground",
-        name: "exit_ground_id",
+        name: "exit_grounds",
         type: "select",
         children: exitGroundOptions,
         pensionCap: [
