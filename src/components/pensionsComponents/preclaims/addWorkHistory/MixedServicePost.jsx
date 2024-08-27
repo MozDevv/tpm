@@ -151,7 +151,6 @@ function MixedServicePost({ id, loading, setLoading, status }) {
       { id: "FiveTerms", name: "5 Term" },
     ],
     "APN/PK": [
-      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
       { id: "OneTerm", name: "1 Term" },
       { id: "TwoTerms", name: "2 Term" },
     ],

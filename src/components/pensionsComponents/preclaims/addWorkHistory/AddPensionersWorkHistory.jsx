@@ -93,7 +93,7 @@ function AddPensionersWorkHistory({
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
             />
-          ) : activeCapName === "CAP196" ? (
+          ) : activeCapName === "APN/PK" ? (
             <MixedServicePost
               status={status}
               id={id}
