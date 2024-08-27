@@ -472,11 +472,11 @@ function NewPreclaim({
 
   useEffect(() => {
     const filteredExitGrounds = exitGrounds.filter(
-      (exitGround) => exitGround.id === formData.exit_ground_id
+      (exitGround) => exitGround.id === formData.exit_grounds
     );
 
     setPensionAwardsData(filteredExitGrounds);
-  }, [formData.exit_ground_id]);
+  }, [formData.exit_grounds]);
 
   ////////////////////////////////////////////////
 
