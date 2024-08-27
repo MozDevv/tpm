@@ -37,7 +37,7 @@ steps:
         
 
         # Build the Docker image
-        sudo docker build -t pmis .
+        sudo docker build --no-cache -t pmis .
 
         # Stop and remove the existing container if it exists
         sudo docker stop pmis-core || true
