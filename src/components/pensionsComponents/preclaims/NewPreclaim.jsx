@@ -149,7 +149,11 @@ function NewPreclaim({
         commutation_option_selection:
           retiree?.commutation_option_selection ?? "",
         commutation_option_selection_date:
-          retiree?.commutation_option_selection_date ?? "",
+          retiree?.commutation_option_selection_date
+            ? new Date(retiree?.commutation_option_selection_date)
+                .toISOString()
+                .split("T")[0]
+            : "",
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -229,7 +233,11 @@ function NewPreclaim({
     age_on_discharge: retiree?.age_on_discharge ?? 0,
     commutation_option_selection: retiree?.commutation_option_selection ?? "",
     commutation_option_selection_date:
-      retiree?.commutation_option_selection_date ?? "",
+      retiree?.commutation_option_selection_date
+        ? new Date(retiree?.commutation_option_selection_date)
+            .toISOString()
+            .split("T")[0]
+        : "",
   });
   const router = useRouter();
 
@@ -787,6 +795,20 @@ function NewPreclaim({
       });
     }
   }, [formData.retirement_date]);
+
+  useEffect(() => {
+    if (formData.commutation_option_selection) {
+      setFormData({
+        ...formData,
+        commutation_option_selection: "Yes",
+      });
+    } else {
+      setFormData({
+        ...formData,
+        commutation_option_selection: "No",
+      });
+    }
+  }, [formData.commutation_option_selection]);
 
   useEffect(() => {
     if (formData.retirement_date && formData.dob) {
