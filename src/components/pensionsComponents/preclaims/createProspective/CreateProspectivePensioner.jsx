@@ -129,18 +129,20 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     >
                       <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>
-                    <TabPane
-                      tab={
-                        <span className="text-primary font-montserrat">
-                          Maintenance Case
-                        </span>
-                      }
-                      key="6"
-                    >
-                      <div className="z-10">
-                        <MaintenanceCase id={clickedItem.id} />
-                      </div>
-                    </TabPane>
+                    {clickedItem?.maintenance_case === 0 && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Maintenance Case
+                          </span>
+                        }
+                        key="6"
+                      >
+                        <div className="z-10">
+                          <MaintenanceCase id={clickedItem.id} />
+                        </div>
+                      </TabPane>
+                    )}
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">

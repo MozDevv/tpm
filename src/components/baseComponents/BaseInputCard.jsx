@@ -61,6 +61,12 @@ const BaseInputCard = ({
     if (name === selectedLabel) {
       setSelectedValue(value);
     }
+    if (type === "text") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value.toUpperCase(),
+      }));
+    }
     if (type === "number") {
       if (value === "") {
         setFormData((prev) => ({
@@ -104,6 +110,11 @@ const BaseInputCard = ({
       const value = formData[field.name];
 
       // Required field validation
+
+      if (field.name === "accountCode" && value) {
+      }
+      if (field.name === "accountName" && value) {
+      }
       if (
         field.required &&
         (value === undefined || value === null || value === "")
@@ -179,6 +190,15 @@ const BaseInputCard = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  useEffect(() => {
+    if (formData.total_emoluments) {
+      setFormData((prev) => ({
+        ...prev,
+        contribution_amount: (prev.total_emoluments * 0.02).toFixed(2),
+      }));
+    }
+  }, [formData.total_emoluments]);
+
   const handleSave = async () => {
     console.log("Base Input Card: form data to be sent: ", formData);
 
@@ -206,6 +226,16 @@ const BaseInputCard = ({
         });
 
         dataToSend = formattedFormData;
+
+        if (dataToSend.accountName) {
+          dataToSend.glAccountName = dataToSend.accountName;
+          delete dataToSend.accountName;
+        }
+
+        if (dataToSend.accountNo) {
+          dataToSend.glAccountNo = dataToSend.accountNo;
+          delete dataToSend.accountNo;
+        }
 
         console.log("DATA TO SEND: ", dataToSend);
 
@@ -324,7 +354,7 @@ const BaseInputCard = ({
                   fullWidth
                   name={field.name}
                   disabled={field.disabled}
-                  value={formData[field.name] || ""}
+                  value={formData[field.name] || field.default}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}
                   helperText={errors[field.name]}
@@ -356,6 +386,7 @@ const BaseInputCard = ({
                 variant="outlined"
                 size="small"
                 error={!!errors[field.name]}
+                value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
                 helperText={errors[field.name]}
                 onChange={handleInputChange}
                 fullWidth
@@ -400,6 +431,7 @@ const BaseInputCard = ({
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}
                 required={field.required}
+                disabled={field.disabled}
                 fullWidth
               />
             )}

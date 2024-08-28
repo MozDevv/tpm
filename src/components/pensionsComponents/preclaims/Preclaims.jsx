@@ -357,6 +357,7 @@ export const mapRowData = (items) =>
       is_wcps: item?.is_wcps,
       is_parliamentary: item?.is_parliamentary,
       age_on_discharge: item?.age_on_discharge,
+      maintenance_case: item?.maintenance_case,
     }));
 
 const Preclaims = ({ status }) => {
@@ -448,10 +449,25 @@ const Preclaims = ({ status }) => {
     }
 
     const adjustedFilter =
-      status || status === 0
+      (status || status === 0) && status !== 5
         ? {
             "filterCriterion.criterions[0].propertyName": "notification_status",
             "filterCriterion.criterions[0].propertyValue": status,
+            "filterCriterion.criterions[0].criterionType": 0,
+            "filterCriterion.criterions[1].propertyName": "mda_id",
+            "filterCriterion.criterions[1].propertyValue": mdaId,
+            "filterCriterion.criterions[1].criterionType": 0,
+          }
+        : status === 5
+        ? {
+            "filterCriterion.criterions[0].propertyName": "notification_status",
+            "filterCriterion.criterions[0].propertyValue": status,
+            "filterCriterion.criterions[0].criterionType": 0,
+          }
+        : !status && status !== 0
+        ? {
+            "filterCriterion.criterions[0].propertyName": "mda_id",
+            "filterCriterion.criterions[0].propertyValue": mdaId,
             "filterCriterion.criterions[0].criterionType": 0,
           }
         : filter;
@@ -460,6 +476,7 @@ const Preclaims = ({ status }) => {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
         "paging.pageNumber": pageNumber,
         "paging.pageSize": pageSize,
+
         ...sort,
         ...adjustedFilter,
       });
@@ -473,31 +490,31 @@ const Preclaims = ({ status }) => {
         console.log(res.data.data);
         const rawData = res.data.data;
 
-        let filteredMinistriesData = [];
+        // let filteredMinistriesData = [];
 
-        // Filter data by mdaId
-        if (mdaId) {
-          filteredMinistriesData =
-            status === 5
-              ? rawData
-              : rawData.filter((item) => item.mda_id === mdaId);
-        } else {
-          filteredMinistriesData = rawData;
-        }
+        // // Filter data by mdaId
+        // if (mdaId) {
+        //   filteredMinistriesData =
+        //     status === 5
+        //       ? rawData
+        //       : rawData.filter((item) => item.mda_id === mdaId);
+        // } else {
+        //   filteredMinistriesData = rawData;
+        // }
 
         setTotalRecords(res.data.totalCount);
         setTotalPages(res.data.totalPages);
 
         if (status || status === 0) {
-          const filteredApprovals = filteredMinistriesData.filter(
-            (item) => item.notification_status === status
-          );
+          // const filteredApprovals = filteredMinistriesData.filter(
+          //   (item) => item.notification_status === status
+          // );
 
-          setItems(filteredApprovals);
-          const data = mapRowData(filteredApprovals);
+          // setItems(filteredApprovals);
+          const data = mapRowData(res.data.data);
           setRowData(data);
         } else {
-          const data = mapRowData(filteredMinistriesData);
+          const data = mapRowData(res.data.data);
           setRowData(data);
           console.log("first, state", status);
         }

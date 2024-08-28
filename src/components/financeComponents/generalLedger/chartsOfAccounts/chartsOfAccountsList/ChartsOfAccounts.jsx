@@ -133,6 +133,10 @@ function ChartsOfAccounts() {
   const [groupTypes, setGroupTypes] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
 
+  useEffect(() => {
+    fetchGlAccounts();
+  }, [openBaseCard]);
+
   const fetchAccountTypes = async () => {
     try {
       const response = await apiService.get(

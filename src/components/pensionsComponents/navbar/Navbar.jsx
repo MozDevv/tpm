@@ -178,30 +178,40 @@ function Navbar() {
             </Badge>
           </IconButton>
           <Box sx={{ display: "flex", gap: "5px", alignItems: "center" }}>
-            <Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ height: "36px", width: "36px" }} />
               <Box
                 sx={{ display: "flex", gap: "4px", fontSize: "15px", mr: 3 }}
               >
-                <h6>Hi,</h6>
-                <h6
-                  style={{
-                    fontWeight: 700,
-                  }}
-                >
-                  {auth?.user?.name?.split(" ")[0]}
-                </h6>
+                <div className="flex flex-col ml-3">
+                  <div className="flex items-center">
+                    <h6>Hi,</h6>
+                    <h6
+                      style={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {auth?.user?.name?.split(" ")[0]}
+                    </h6>
+                  </div>
+                  <h6
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "rgb(153, 153, 153)",
+                    }}
+                  >
+                    {role}
+                  </h6>
+                </div>
               </Box>
-              <h6
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  color: "rgb(153, 153, 153)",
-                }}
-              >
-                {role}
-              </h6>
             </Box>{" "}
-            <Avatar sx={{ height: "36px", width: "36px" }} />
             <IconButton
               size="large"
               aria-label="show 11 new notifications"

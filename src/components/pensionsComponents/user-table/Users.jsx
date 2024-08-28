@@ -13,9 +13,9 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 const columnDefs = [
   { field: "no", headerName: "No", width: 90, filter: true },
-  { field: "email", headerName: "Email", filter: true, width: 200, hide: true },
-  { field: "firstName", headerName: "First Name", filter: true, width: 200 },
-  { field: "lastName", headerName: "Last Name", filter: true, width: 200 },
+  { field: "email", headerName: "Email", filter: true, width: 150, hide: true },
+  { field: "firstName", headerName: "First Name", filter: true, width: 150 },
+  { field: "lastName", headerName: "Last Name", filter: true, width: 150 },
   {
     field: "employeeNumber",
     headerName: "Employee Number",
@@ -73,7 +73,7 @@ const Users = () => {
       departmentId: item.departmentId,
       roleId: item.roleId,
       emailConfirmed: item.emailConfirmed,
-
+      mdaId: item.mdaId,
       phoneNumberConfirmed: item.phoneNumberConfirmed,
       twoFactorEnabled: item.twoFactorEnabled,
       lockoutEnd: item.lockoutEnd,
@@ -115,6 +115,7 @@ const Users = () => {
   const [departments, setDepartments] = React.useState([]);
 
   const [refreshData, setRefreshData] = React.useState(false);
+  const [mdas, setMdas] = React.useState([]);
 
   const pageNumber = 1;
   const pageSize = 12;
@@ -167,6 +168,17 @@ const Users = () => {
         name: d.name,
       })),
     },
+    {
+      name: "mdaId",
+      label: "MDA",
+      type: "select",
+      default: "N/A",
+      disabled: true,
+      options: mdas.map((m) => ({
+        id: m.id,
+        name: m.name,
+      })),
+    },
 
     {
       name: "lockoutEnabled",
@@ -193,6 +205,24 @@ const Users = () => {
       console.error("Error fetching data:", error);
     }
   };
+  const fetchMdas = async () => {
+    try {
+      const res = await apiService.get(endpoints.mdas, {
+        "paging.pageSize": 1000,
+      });
+      if (res.status === 200) {
+        setMdas(res.data.data);
+
+        console.log(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchMdas();
+  }, []);
 
   const fetchRoles = async () => {
     try {

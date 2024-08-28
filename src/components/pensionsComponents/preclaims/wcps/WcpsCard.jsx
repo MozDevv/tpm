@@ -92,8 +92,9 @@ function WcpsCard({
       if (rawData && rawData.length > 0) {
         const contributionLinesData = rawData[0].wcpsContributionLines.map(
           (line) => ({
-            from_date: new Date(line.from_date).toISOString().split("T")[0],
-            to_date: new Date(line.to_date).toISOString().split("T")[0],
+            // from_date: new Date(line.from_date).toISOString().split("T")[0],
+            //to_date: new Date(line.to_date).toISOString().split("T")[0],
+            from_date: line.from_date,
             salary_amount: line.salary_amount,
             total_emoluments: line.total_emoluments,
             contribution_amount: line.contribution_amount,
@@ -147,6 +148,7 @@ function WcpsCard({
     {
       name: "contribution_amount",
       label: "Contribution Amount",
+      disabled: true,
       type: "number",
       required: true,
     },
