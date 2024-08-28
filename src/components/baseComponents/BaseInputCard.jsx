@@ -131,6 +131,13 @@ const BaseInputCard = ({
       //   }
       // }
 
+      if ((field.type === "date" || field.name === "dob") && value) {
+        if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
+          newErrors[field.name] = `${field.label} is not a valid date`;
+        } else {
+          formData[field.name] = dayjs(value).format("YYYY-MM-DDTHH:mm:ss[Z]");
+        }
+      }
       // KRA PIN validation
       if (field.name === "kra_pin" && value) {
         const kraPinPattern = /^[A-Z]{1}[0-9]{9}[A-Z]{1}$/;
@@ -218,10 +225,14 @@ const BaseInputCard = ({
 
         const formattedFormData = { ...dataToSend };
         Object.keys(formattedFormData).forEach((key) => {
-          if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
-            formattedFormData[key] = dayjs(
-              formattedFormData[key]
-            ).toISOString();
+          const value = formattedFormData[key];
+
+          if (dayjs(value).isValid() && key.includes("date")) {
+            console.log(`Formatting Date for Key: ${key}, Value: ${value}`);
+            formattedFormData[key] = dayjs(value).format(
+              "YYYY-MM-DDTHH:mm:ss[Z]"
+            );
+            console.log(`Formatted Date: ${formattedFormData[key]}`);
           }
         });
 

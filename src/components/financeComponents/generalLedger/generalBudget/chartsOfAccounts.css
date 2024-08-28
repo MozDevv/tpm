@@ -1,0 +1,38 @@
+.table-container {
+  margin: 20px;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  font-size: 20px;
+}
+
+.table-head {
+  background-color: #ffffff;
+  padding: 4px 20px !important;
+}
+
+.table-header {
+  font-weight: bold;
+  text-align: left;
+  padding: 10px 10px !important;
+}
+
+.table-body {
+  background-color: #ffffff;
+}
+
+.table-row {
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 16px;
+}
+
+/* .table-cell {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+} */
+
+.indented-cell {
+  font-weight: bold;
+}

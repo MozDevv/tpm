@@ -229,7 +229,8 @@ function BaseCard({
           setOpenAction={setOpenAction}
           //clickedItem={clickedItem.id}
           id={clickedItem?.id}
-          idLabel={idLabel}
+          isBranch={true}
+          idLabel="numberSeriesId"
           setOpenBaseCard={setOpenBaseCard}
           useRequestBody={useRequestBody}
         />

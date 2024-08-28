@@ -232,6 +232,7 @@ const NoSeries = () => {
         apiEndpoint={endpoints.createNumberSeriesLine}
         postApiFunction={apiService.post}
         inputTitle="Create New Number Series Line"
+        id={clickedItem?.id}
         idLabel="numberSeriesId"
         useRequestBody={true}
       >

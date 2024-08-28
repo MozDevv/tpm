@@ -65,6 +65,10 @@ export const menuItems = [
             title: "Chart of Accounts",
             path: "/pensions/finance/general-ledger/charts-of-accounts",
           },
+          {
+            title: "General Budget",
+            path: "/pensions/finance/general-ledger/charts-of-accounts",
+          },
         ],
       },
       {
