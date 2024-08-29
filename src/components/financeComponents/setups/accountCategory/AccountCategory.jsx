@@ -206,7 +206,7 @@ const AccountCategory = () => {
               setOpenBaseCard={setOpenBaseCard}
             />
             <div className="text-primary font-semibold text-base my-2 px-3">
-              {clickedItem?.groupName} Categories
+              {clickedItem?.groupName}Sub Categories
             </div>
             <Button
               variant="text"
@@ -214,7 +214,7 @@ const AccountCategory = () => {
               sx={{ my: 2, ml: 1 }}
               onClick={() => setOpenSubGroup(true)}
             >
-              New SubGroup
+              New Sub Category
             </Button>
             <div
               className="ag-theme-quartz"
