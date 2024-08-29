@@ -159,20 +159,22 @@ const GeneralBudget = () => {
           />
         )}
       </BaseCard>
-      <BaseTable
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getBudget}
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="General Budget"
-        currentTitle="General Budget"
-      />
+      <div className="h-[80vh] overflow-y-auto">
+        <BaseTable
+          openBaseCard={openBaseCard}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          setOpenBaseCard={setOpenBaseCard}
+          columnDefs={columnDefs}
+          fetchApiEndpoint={financeEndpoints.getBudget}
+          fetchApiService={apiService.get}
+          transformData={transformData}
+          pageSize={30}
+          handlers={handlers}
+          breadcrumbTitle="General Budget"
+          currentTitle="General Budget"
+        />
+      </div>
     </div>
   );
 };

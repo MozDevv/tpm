@@ -214,12 +214,12 @@ function ChartsOfAccounts() {
 
   const inputFields = [
     {
-      name: "glAccountNo",
+      name: "accountNo",
       label: "Account No",
       type: "text",
     },
     {
-      name: "glAccountName",
+      name: "accountName",
       label: "Account Name",
       type: "text",
     },

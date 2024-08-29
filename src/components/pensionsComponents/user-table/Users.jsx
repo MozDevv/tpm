@@ -173,7 +173,7 @@ const Users = () => {
       label: "MDA",
       type: "select",
       default: "N/A",
-      disabled: true,
+      disabled: false,
       options: mdas.map((m) => ({
         id: m.id,
         name: m.name,

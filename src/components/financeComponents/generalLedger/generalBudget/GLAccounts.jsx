@@ -96,6 +96,11 @@ function GLAccounts({ clickedBudget }) {
     const isAccountNo = field === "accountNo";
     const formattedValue =
       typeof value === "number" && value === 0 ? "0.00" : value;
+    const isBudgetedAmount = field === "budgetedAmount";
+    const budgetAmountValue = row.budgetAmount || 0;
+    const endDateValue = row.endDate || 0;
+
+    const cumulativeBudgetAmount = budgetAmountValue * 1 + endDateValue * 1;
 
     const handleInputChange = (e) => {
       const newValue = e.target.value;
@@ -108,7 +113,7 @@ function GLAccounts({ clickedBudget }) {
 
     const saveOrUpdateBudgetAmount = async () => {
       const data = {
-        id: row.budgetId || null,
+        id: row.budgetLineId || null,
         budgetId: clickedBudget.id,
         glAccountId: row.id,
         budgetType: 0,
@@ -120,7 +125,7 @@ function GLAccounts({ clickedBudget }) {
       setLoading((prevLoading) => ({ ...prevLoading, [row.id]: true })); // Set loading state for the field
 
       try {
-        if (row.budgetId) {
+        if (row.budgetLineId) {
           await apiService.post(financeEndpoints.updateBudgetLine, data);
         } else {
           await apiService.post(financeEndpoints.addBudgetLines, data);
@@ -184,6 +189,8 @@ function GLAccounts({ clickedBudget }) {
           <p className="underline text-primary font-semibold">
             {formattedValue}
           </p>
+        ) : isBudgetedAmount ? (
+          <p className=" text-primary ">{cumulativeBudgetAmount * 1}</p>
         ) : typeof value === "boolean" ? (
           value ? (
             "Yes"

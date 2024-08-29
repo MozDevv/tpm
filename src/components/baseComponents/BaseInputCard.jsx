@@ -238,15 +238,15 @@ const BaseInputCard = ({
 
         dataToSend = formattedFormData;
 
-        if (dataToSend.accountName) {
-          dataToSend.glAccountName = dataToSend.accountName;
-          delete dataToSend.accountName;
-        }
+        // if (dataToSend.accountName) {
+        //   dataToSend.glAccountName = dataToSend.accountName;
+        //   delete dataToSend.accountName;
+        // }
 
-        if (dataToSend.accountNo) {
-          dataToSend.glAccountNo = dataToSend.accountNo;
-          delete dataToSend.accountNo;
-        }
+        // if (dataToSend.accountNo) {
+        //   dataToSend.glAccountNo = dataToSend.accountNo;
+        //   delete dataToSend.accountNo;
+        // }
 
         console.log("DATA TO SEND: ", dataToSend);
 
