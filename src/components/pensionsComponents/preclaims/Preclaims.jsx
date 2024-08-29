@@ -464,12 +464,20 @@ const Preclaims = ({ status }) => {
             "filterCriterion.criterions[0].propertyValue": status,
             "filterCriterion.criterions[0].criterionType": 0,
           }
-        : !status && status !== 0
+        : !status && status !== 0 && mdaId
         ? {
             "filterCriterion.criterions[0].propertyName": "mda_id",
             "filterCriterion.criterions[0].propertyValue": mdaId,
             "filterCriterion.criterions[0].criterionType": 0,
           }
+        : !mdaId && status
+        ? {
+            "filterCriterion.criterions[0].propertyName": "notification_status",
+            "filterCriterion.criterions[0].propertyValue": status,
+            "filterCriterion.criterions[0].criterionType": 0,
+          }
+        : !mdaId && !status
+        ? {}
         : filter;
     //  setLoading(true);
     try {

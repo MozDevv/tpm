@@ -51,6 +51,7 @@ function GLAccounts({ clickedBudget }) {
           headerName: startDateYear, // Set headerName to the year
           field: "startDate",
           editable: true,
+          width: 100,
         });
       }
     }
@@ -63,6 +64,7 @@ function GLAccounts({ clickedBudget }) {
           headerName: endDateYear, // Set headerName to the year
           field: "endDate",
           editable: true,
+          width: 100,
         });
       }
     }
@@ -118,6 +120,7 @@ function GLAccounts({ clickedBudget }) {
       try {
         await apiService.post(financeEndpoints.addBudgetLines, data);
         // Handle response if needed
+        fetchGlAccounts();
       } catch (error) {
         console.log(error);
       } finally {
@@ -134,6 +137,7 @@ function GLAccounts({ clickedBudget }) {
           paddingTop: 0,
           paddingBottom: 0,
           position: "relative", // Required to position CircularProgress
+          borderRight: "1px solid #ccc", // Add a border on the right
         }}
         key={field}
       >
@@ -147,8 +151,9 @@ function GLAccounts({ clickedBudget }) {
               style={{
                 width: "100%",
                 padding: "5px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
+                marginTop: "-15px",
+                marginBottom: "-15px",
+                //border: "1px solid #ddd",
               }}
             />
             {loading[row.id] && (
