@@ -30,7 +30,7 @@ const financeEndpoints = {
   getBudget: "/Accounts/GetBudget",
 
   addBudgetLines: "/Accounts/AddBudgetLines",
-  updateBudget: "Accounts/UpdateBudget",
+  updateBudgetLine: "/Accounts/UpdateBudgetLines",
 };
 
 export const apiService = {

@@ -476,6 +476,94 @@ export const createSections = (
     // state: useState(true),
     fields: [
       {
+        label: "Date of First Appointment",
+        name: "date_of_first_appointment",
+        type: "date",
+        pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
+      },
+      {
+        label: "Date first elected",
+        name: "date_of_first_appointment",
+        type: "date",
+        pensionCap: ["CAP196", "DSO/RK", "APN/PK"],
+      },
+      {
+        label: "Is Parliamenterian",
+        name: "is_parliamentary",
+        type: "date",
+        pensionCap: ["CAP196", "DSO/RK", "APN/PK"],
+        hide: true,
+      },
+      {
+        label: "Date of confirmation into pensionable Office",
+        name: "date_of_confirmation",
+        type: "date",
+        pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
+      },
+      {
+        label: "Retirement Date",
+        name: "retirement_date",
+        type: "date",
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+      {
+        label: "Age on Discharge",
+        name: "age_on_discharge",
+        type: "number",
+        disabled: true,
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+
+      {
+        label: "Date of Which Pension will Commence/Date Of Death ",
+        name: "date_from_which_pension_will_commence",
+        type: "date",
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+      {
+        label: "Last Pay Date",
+        name: "last_pay_date",
+        type: "date",
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+
+      {
         label: "Exit Ground",
         name: "exit_grounds",
         type: "select",
@@ -509,59 +597,6 @@ export const createSections = (
         ],
       },
       {
-        label: "Has Commuted",
-        name: "commutation_option_selection",
-        type: "text",
-        children: [
-          { id: 0, name: "Yes", value: true },
-          { id: 1, name: "No", value: false },
-        ],
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-
-          "CAP195",
-        ],
-      },
-      {
-        label: "commutation Option Selection Date",
-        name: "commutation_option_selection_date",
-        type: "date",
-
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-
-          "CAP195",
-        ],
-      },
-      {
-        label: "Monthly Salary in Ksh",
-        name: "monthly_salary_in_ksh",
-        type: "number",
-        pensionCap: ["CAP199"],
-      },
-      {
-        label: "Service Increment",
-        name: "service_increments",
-        type: "number",
-        pensionCap: ["CAP199"],
-      },
-      {
-        label: "Monthly Additional Pay",
-        name: "monthly_aditional_pay",
-        type: "number",
-        pensionCap: ["CAP199"],
-      },
-      {
         label: "Women & Children Pension Scheme (WCPS)",
         name: "is_wcps",
         type: "select",
@@ -571,8 +606,9 @@ export const createSections = (
         ],
         pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
       },
+
       {
-        label: "Maintenance Case",
+        label: "Maintenance Allowance",
         name: "maintenance_case",
         type: "select",
         children: [
@@ -634,78 +670,7 @@ export const createSections = (
             },
           ]
         : []),
-      {
-        label: "Date of First Appointment",
-        name: "date_of_first_appointment",
-        type: "date",
-        pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
-      },
-      {
-        label: "Date first elected",
-        name: "date_of_first_appointment",
-        type: "date",
-        pensionCap: ["CAP196", "DSO/RK", "APN/PK"],
-      },
-      {
-        label: "Is Parliamenterian",
-        name: "is_parliamentary",
-        type: "date",
-        pensionCap: ["CAP196", "DSO/RK", "APN/PK"],
-        hide: true,
-      },
-      {
-        label: "Date of confirmation into pensionable Office",
-        name: "date_of_confirmation",
-        type: "date",
-        pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
-      },
-      {
-        label: "Retirement Date",
-        name: "retirement_date",
-        type: "date",
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
 
-      {
-        label: "Date of Which Pension will Commence/Date Of Death ",
-        name: "date_from_which_pension_will_commence",
-        type: "date",
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
-      {
-        label: "Age on Discharge",
-        name: "age_on_discharge",
-        type: "number",
-        disabled: true,
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
       ...(formData.notification_status
         ? [
             {
@@ -724,7 +689,7 @@ export const createSections = (
               ],
             },
             {
-              label: "Authority for Retirement Dated",
+              label: "Authority for Retirement Date",
               name: "authority_for_retirement_dated",
               type: "date",
               pensionCap: [
@@ -741,20 +706,59 @@ export const createSections = (
           ]
         : []),
       {
-        label: "Last Pay Date",
-        name: "last_pay_date",
-        type: "date",
+        label: "Has Commuted",
+        name: "commutation_option_selection",
+        type: "text",
+        children: [
+          { id: 0, name: "Yes", value: true },
+          { id: 1, name: "No", value: false },
+        ],
         pensionCap: [
           "CAP189",
           "CAP199",
-          "CAP196",
+
           "APN/PK",
           "CAP190",
           "CAP195",
-          "DSO/RK",
+
           "CAP195",
         ],
       },
+      {
+        label: "Commutation Confirmation Date",
+        name: "commutation_option_selection_date",
+        type: "date",
+
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+
+          "CAP195",
+        ],
+      },
+      {
+        label: "Monthly Salary in Ksh",
+        name: "monthly_salary_in_ksh",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
+      {
+        label: "Service Increment",
+        name: "service_increments",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
+      {
+        label: "Monthly Additional Pay",
+        name: "monthly_aditional_pay",
+        type: "number",
+        pensionCap: ["CAP199"],
+      },
+
       {
         label: "Last Basic Salary Amount",
         name: "last_basic_salary_amount",

@@ -49,7 +49,7 @@ function GLAccounts({ clickedBudget }) {
       if (!newColDefs.find((col) => col.field === "startDate")) {
         newColDefs.push({
           headerName: startDateYear, // Set headerName to the year
-          field: "startDate",
+          field: "budgetAmount",
           editable: true,
           width: 100,
         });
@@ -106,20 +106,25 @@ function GLAccounts({ clickedBudget }) {
       );
     };
 
-    const saveBudgetAmount = async () => {
+    const saveOrUpdateBudgetAmount = async () => {
       const data = {
+        id: row.budgetId || null,
         budgetId: clickedBudget.id,
         glAccountId: row.id,
         budgetType: 0,
-        amount: row[field] * 1, // Use row's value directly
+        amount: row[field] * 1,
         periodStart: clickedBudget.startDate,
         periodEnd: clickedBudget.endDate,
       };
 
       setLoading((prevLoading) => ({ ...prevLoading, [row.id]: true })); // Set loading state for the field
+
       try {
-        await apiService.post(financeEndpoints.addBudgetLines, data);
-        // Handle response if needed
+        if (row.budgetId) {
+          await apiService.post(financeEndpoints.updateBudgetLine, data);
+        } else {
+          await apiService.post(financeEndpoints.addBudgetLines, data);
+        }
         fetchGlAccounts();
       } catch (error) {
         console.log(error);
@@ -147,12 +152,19 @@ function GLAccounts({ clickedBudget }) {
               type="text"
               value={value || ""}
               onChange={handleInputChange}
-              onBlur={saveBudgetAmount} // Trigger save on blur
+              onBlur={() => {
+                if (value !== "" || value !== null) {
+                  saveOrUpdateBudgetAmount();
+                }
+              }} // Trigger save on blur
               style={{
                 width: "100%",
                 padding: "5px",
+
+                outlineWidth: "3px",
                 marginTop: "-15px",
                 marginBottom: "-15px",
+
                 //border: "1px solid #ddd",
               }}
             />
