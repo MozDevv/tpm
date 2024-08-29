@@ -156,6 +156,14 @@ export const menuItems = [
 
     children: [
       {
+        title: "Accounting Period",
+        path: "/pensions/setups/accounting-period",
+      },
+      {
+        title: "Account Category",
+        path: "/pensions/setups/account-category",
+      },
+      {
         title: "No. Series",
         path: "/pensions/setups/no-series",
       },

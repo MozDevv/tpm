@@ -282,6 +282,14 @@ function Sidebar() {
           title: "No. Series",
           path: "/pensions/setups/no-series",
         },
+        {
+          title: "Account Category",
+          path: "/pensions/setups/account-category",
+        },
+        {
+          title: "Accounting Period",
+          path: "/pensions/setups/accounting-period",
+        },
 
         {
           title: "Document Types",

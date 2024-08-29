@@ -31,6 +31,23 @@ const financeEndpoints = {
 
   addBudgetLines: "/Accounts/AddBudgetLines",
   updateBudgetLine: "/Accounts/UpdateBudgetLines",
+
+  addAccountGroup: "/AccountsSetup/AddAccountGroup",
+  getAccountGroups: "/AccountsSetup/GetAccountGroups",
+  updateAccountGroup: "/AccountsSetup/UpdateAccountGroup",
+  deleteAccountGroup: (id) => `/AccountsSetup/DeleteAccountGroup?id=${id}`,
+
+  getAccountSubGroups: "/AccountsSetup/GetAccountSubGroups",
+  addAccountSubGroup: "/AccountsSetup/AddAccountSubGroup",
+  updateAccountSubGroup: "/AccountsSetup/UpdateAccountSubGroup",
+  deleteAccountSubGroup: (id) =>
+    `/AccountsSetup/DeleteAccountSubGroup?id=${id}`,
+
+  addAccountingPeriod: "/AccountsSetup/AddAccountingPeriod",
+  getAccountingPeriods: "/AccountsSetup/GetAccountingPeriod",
+  updateAccountingPeriod: "/AccountsSetup/UpdateAccountingPeriod",
+  deleteAccountingPeriod: (id) =>
+    `/AccountsSetup/DeleteAccountingPeriod?id=${id}`,
 };
 
 export const apiService = {

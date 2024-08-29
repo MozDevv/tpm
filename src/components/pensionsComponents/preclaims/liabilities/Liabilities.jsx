@@ -186,19 +186,12 @@ const Liabilities = (id) => {
           pagination={false}
           domLayout="autoHeight"
           alwaysShowHorizontalScroll={true}
-          // paginationPageSize={pageSize}
           onGridReady={(params) => {
             params.api.sizeColumnsToFit();
-            // onGridReady(params);
           }}
-          // onPaginationChanged={(params) =>
-          //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-          // }
           onRowClicked={(e) => {
             setOpenBaseCard(true);
             setClickedItem(e.data);
-            // setUserClicked(e.data);
-            //handleClickUser(e.data);
           }}
         />
       </div>

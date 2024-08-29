@@ -99,8 +99,9 @@ function GLAccounts({ clickedBudget }) {
     const isBudgetedAmount = field === "budgetedAmount";
     const budgetAmountValue = row.budgetAmount || 0;
     const endDateValue = row.endDate || 0;
-
     const cumulativeBudgetAmount = budgetAmountValue * 1 + endDateValue * 1;
+
+    const isEndTotal = row.accountTypeName === "END_TOTAL";
 
     const handleInputChange = (e) => {
       const newValue = e.target.value;
@@ -205,13 +206,17 @@ function GLAccounts({ clickedBudget }) {
   };
 
   const handleRowClick = (row) => {
-    console.log("Row clicked:", row); // Handle row click and access row data here
+    console.log("Row clicked:", row);
     setClickedItem(row);
     setOpenBaseCard(true);
   };
 
   const renderRow = (row) => (
-    <TableRow key={row.id} className="table-row cursor-pointer">
+    <TableRow
+      key={row.id}
+      className="table-row cursor-pointer"
+      onDoubleClick={() => handleRowClick(row)}
+    >
       {colDefs.map((colDef) => renderTableCell(colDef, row))}
     </TableRow>
   );
