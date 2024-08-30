@@ -726,6 +726,15 @@ const Preclaims = ({ status }) => {
     return { loadingMessage: "Loading NOT..." };
   }, []);
 
+  const resetFilters = () => {
+    setFilterColumn(null);
+    setFilterValue(null);
+    setFilterType(2);
+    setSortColumn(null);
+    setSortCriteria(0);
+    fetchAllPreclaims();
+  };
+
   return (
     <>
       {loading ? (
@@ -899,6 +908,13 @@ const Preclaims = ({ status }) => {
                   onClick={handleFilters}
                 >
                   Apply Filters
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ ml: 2, width: "80%", mr: 2, mt: 2 }}
+                  onClick={resetFilters}
+                >
+                  Reset Filters
                 </Button>
               </Collapse>
               <div
