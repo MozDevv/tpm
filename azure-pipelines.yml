@@ -25,6 +25,9 @@ steps:
 
         # Navigate to the project directory
         cd pmis
+
+        sudo docker builder prune -f
+
         sudo docker image prune -af
 
         # Pull the latest code from the repository
