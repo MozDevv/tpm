@@ -179,7 +179,7 @@ const BankAccount = () => {
         clickedItem={clickedItem}
         isUserComponent={false}
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
-        deleteApiService={apiService.post}
+        deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BaseInputCard
