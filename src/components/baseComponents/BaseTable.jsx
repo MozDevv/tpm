@@ -40,6 +40,7 @@ const BaseTable = ({
   isSecondaryTable,
   isMaintenance,
   id,
+  openSubGroup,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -179,6 +180,10 @@ const BaseTable = ({
     // Apply keyword filter when searchedKeyword changes
     applyKeywordFilter();
   }, [rowData, searchedKeyword]);
+
+  useEffect(() => {
+    fetchData();
+  }, [openSubGroup]);
 
   const loadingOverlayComponentParams = useMemo(() => {
     return { loadingMessage: "Loading..." };

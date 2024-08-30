@@ -41,6 +41,11 @@ const AccountCategory = () => {
       no: index + 1,
       id: item?.id,
       groupName: item?.groupName,
+      subGroups: item?.subgroups.map((subgroup) => ({
+        id: subgroup.id,
+        subGroupName: subgroup.subGroupName,
+        groupOrder: subgroup.groupOrder,
+      })),
 
       // roles: item.roles,
     }));
@@ -78,6 +83,7 @@ const AccountCategory = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
   const [openSubGroup, setOpenSubGroup] = React.useState(false);
   const [clickedSubGroup, setClickedSubGroup] = React.useState(null);
+  const [postedData, setPostedData] = React.useState(null);
 
   const title = clickedItem
     ? clickedItem?.groupName
@@ -94,20 +100,6 @@ const AccountCategory = () => {
   ];
 
   const [subGroups, setSubGroups] = React.useState([]);
-
-  const fetchSubGroups = async () => {
-    try {
-      const res = await apiService.get(financeEndpoints.getAccountSubGroups);
-      const { data } = res.data;
-      setSubGroups(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchSubGroups();
-  }, []);
 
   const subgroupFields = [
     { name: "subGroupName", label: "Name", type: "text", required: true },
@@ -144,8 +136,13 @@ const AccountCategory = () => {
   ];
 
   useEffect(() => {
-    fetchSubGroups();
-  }, [openSubGroup]);
+    if (postedData) {
+      setClickedItem({
+        ...clickedItem,
+        subGroups: [postedData, ...clickedItem?.subGroups],
+      });
+    }
+  }, [postedData]);
   return (
     <div className="">
       <div className="relative">
@@ -172,6 +169,7 @@ const AccountCategory = () => {
             />
           ) : (
             <BaseInputCard
+              setPostedData={setPostedData}
               id={clickedItem?.id}
               idLabel="accountGroupId"
               fields={subgroupFields}
@@ -206,13 +204,17 @@ const AccountCategory = () => {
               setOpenBaseCard={setOpenBaseCard}
             />
             <div className="text-primary font-semibold text-base my-2 px-3">
-              {clickedItem?.groupName}Sub Categories
+              {clickedItem?.groupName} Sub Categories
             </div>
+
             <Button
               variant="text"
               startIcon={<Add />}
               sx={{ my: 2, ml: 1 }}
-              onClick={() => setOpenSubGroup(true)}
+              onClick={() => {
+                setOpenSubGroup(true);
+                setClickedSubGroup(null);
+              }}
             >
               New Sub Category
             </Button>
@@ -229,7 +231,7 @@ const AccountCategory = () => {
             >
               <AgGridReact
                 columnDefs={subGroupColumnDefs}
-                rowData={subGroups}
+                rowData={clickedItem?.subGroups}
                 pagination={false}
                 domLayout="autoHeight"
                 alwaysShowHorizontalScroll={true}
@@ -259,6 +261,7 @@ const AccountCategory = () => {
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
+        openSubGroup={openSubGroup}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
         fetchApiEndpoint={financeEndpoints.getAccountGroups}

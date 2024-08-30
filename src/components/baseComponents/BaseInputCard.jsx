@@ -33,6 +33,7 @@ const BaseInputCard = ({
   selectedLabel,
   setSelectedValue,
   fetchData,
+  setPostedData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -267,6 +268,9 @@ const BaseInputCard = ({
           });
 
           dataToSend = formDataObj;
+        }
+        if (setPostedData) {
+          setPostedData(dataToSend);
         }
 
         const res = await postApiFunction(apiEndpoint, dataToSend);

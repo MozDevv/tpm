@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -6,8 +6,10 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
+import { dateFormatter, formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
+import BaseSecondaryTable from "@/components/baseComponents/BaseSecondaryTable";
+import BaseSecondaryCard from "@/components/baseComponents/BaseSecondaryCard";
 
 const columnDefs = [
   {
@@ -28,7 +30,7 @@ const columnDefs = [
     field: "fromDate",
     headerName: "From Date",
     headerClass: "prefix-header",
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
     width: 250,
   },
@@ -37,7 +39,7 @@ const columnDefs = [
     field: "toDate",
     headerName: "To Date",
     headerClass: "prefix-header",
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
     width: 250,
   },
@@ -65,6 +67,14 @@ const AccountingPeriod = () => {
       fromDate: item.fromDate,
       finYearName: item.finYearName,
       isClosed: item.isClosed,
+      subGroups: item.accountingPeriodLines.map((subgroup) => ({
+        id: subgroup.id,
+        startDate: subgroup.startDate,
+        monthName: subgroup.monthName,
+        description: subgroup.description,
+        isDateLocked: subgroup.isDateLocked,
+        isInventoryPeriodClosed: subgroup.isInventoryPeriodClosed,
+      })),
 
       // roles: item.roles,
     }));
@@ -100,6 +110,9 @@ const AccountingPeriod = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [openSubGroup, setOpenSubGroup] = React.useState(false);
+  const [clickedSubGroup, setClickedSubGroup] = React.useState(null);
+  const [postedData, setPostedData] = React.useState(null);
 
   const title = clickedItem
     ? "Accounting Period"
@@ -131,86 +144,91 @@ const AccountingPeriod = () => {
       required: true,
     },
   ];
+  const subGroupColumnDefs = [
+    {
+      field: "startDate",
+      headerName: "Start Date",
+      headerClass: "prefix-header",
+      filter: true,
+      valueFormatter: (params) => dateFormatter(params.value),
+    },
+    {
+      field: "monthName",
+      headerName: "Month Name",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+    {
+      field: "isDateLocked",
+      headerName: "Is Date Locked",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+    {
+      field: "isInventoryPeriodClosed",
+      headerName: "Is Inventory Period Closed",
+      headerClass: "prefix-header",
+      filter: true,
+    },
+  ];
+
+  const subgroupFields = [
+    { name: "startDate", label: "Start Date", type: "date", required: true },
+    { name: "monthName", label: "Month Name", type: "text", required: true },
+    { name: "description", label: "Description", type: "text", required: true },
+    {
+      name: "isDateLocked",
+      label: "Is Date Locked",
+      type: "switch",
+      required: true,
+    },
+    {
+      name: "isInventoryPeriodClosed",
+      label: "Is Inventory Period Closed",
+      type: "switch",
+      required: true,
+    },
+  ];
+  useEffect(() => {
+    if (postedData) {
+      setClickedItem({
+        ...clickedItem,
+        subGroups: [postedData, ...clickedItem?.subGroups],
+      });
+    }
+  }, [postedData]);
 
   return (
     <div className="">
-      {/* <div className="relative">
-        <BaseCard
-          openBaseCard={openSubGroup}
-          setOpenBaseCard={setOpenSubGroup}
-          title={clickedSubGroup ? "Edit SubGroup" : "Create New SubGroup"}
-          clickedItem={clickedSubGroup}
-          isUserComponent={false}
-          deleteApiEndpoint={financeEndpoints.deleteAccountSubGroup(
-            clickedSubGroup?.id
-          )}
-          deleteApiService={apiService.delete}
-          isSecondaryCard={true}
-        >
-          {clickedSubGroup ? (
-            <div className="">
-              <BaseInputCard
-                fields={subgroupFields}
-                apiEndpoint={financeEndpoints.updateAccountSubGroup}
-                postApiFunction={apiService.post}
-                clickedItem={clickedSubGroup}
-                setOpenBaseCard={setOpenSubGroup}
-                useRequestBody={true}
-              />{" "}
-              <div className="text-primary font-semibold text-base my-2 px-3">
-                {clickedItem?.groupName} Categories
-              </div>
-              <Button
-                variant="text"
-                startIcon={<Add />}
-                sx={{ my: 2, ml: 1 }}
-                onClick={() => setOpenSubGroup(true)}
-              >
-                New SubGroup
-              </Button>
-              <div
-                className="ag-theme-quartz"
-                style={{
-                  height: "60vh",
-
-                  mt: "20px",
-                  px: "10px",
-
-                  overflowY: "auto",
-                }}
-              >
-                <AgGridReact
-                  columnDefs={subGroupColumnDefs}
-                  rowData={subGroups}
-                  pagination={false}
-                  domLayout="autoHeight"
-                  alwaysShowHorizontalScroll={true}
-                  onGridReady={(params) => {
-                    params.api.sizeColumnsToFit();
-                  }}
-                  onRowClicked={(e) => {
-                    console.log("Row clicked", e.data);
-                    setClickedSubGroup(e.data);
-                    setOpenSubGroup(true);
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <BaseInputCard
-              id={clickedItem?.id}
-              idLabel="accountGroupId"
-              fields={subgroupFields}
-              apiEndpoint={financeEndpoints.addAccountSubGroup}
-              postApiFunction={apiService.post}
-              clickedItem={clickedSubGroup}
-              setOpenBaseCard={setOpenSubGroup}
-              useRequestBody={true}
-              isBranch={true}
-            />
-          )}
-        </BaseCard>
-      </div> */}
+      <BaseSecondaryCard
+        openBaseCard={openSubGroup}
+        setOpenBaseCard={setOpenSubGroup}
+        title={
+          clickedSubGroup
+            ? "Edit Accounting Period"
+            : "Create New Accounting Period"
+        }
+        clickedItem={clickedSubGroup}
+        deleteApiEndpoint={financeEndpoints.deleteAccountingPeriodLines(
+          clickedSubGroup?.id
+        )}
+        deleteApiService={apiService.delete}
+        fields={subgroupFields}
+        updateEndpoint={financeEndpoints.updateAccountingPeriodLines}
+        createEndpoint={financeEndpoints.addAccountingPeriodLines}
+        postApiFunction={apiService.post}
+        setPostedData={setPostedData}
+        id={clickedItem?.id}
+        idLabel="accountingPeriodId"
+        isBranch={true}
+        setClickedItem={setClickedSubGroup}
+      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -224,14 +242,30 @@ const AccountingPeriod = () => {
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updateAccountingPeriod}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <div className="">
+            <BaseInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.updateAccountingPeriod}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />
+            <BaseSecondaryTable
+              columnDefs={subGroupColumnDefs}
+              rowData={clickedItem?.subGroups}
+              onRowClicked={(e) => {
+                console.log("Row clicked", e.data);
+                setClickedSubGroup(e.data);
+                setOpenSubGroup(true);
+              }}
+              handleButtonClick={() => {
+                setOpenSubGroup(true);
+                setClickedSubGroup(null);
+              }}
+              title={"Accounting Period Lines"}
+            />
+          </div>
         ) : (
           <BaseInputCard
             fields={fields}
