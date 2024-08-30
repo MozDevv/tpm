@@ -188,6 +188,15 @@ function Sidebar() {
           ],
         },
         {
+          title: "Cash Management",
+          subChildren: [
+            {
+              title: "Bank Account",
+              path: "/pensions/finance/cash-management/bank-account",
+            },
+          ],
+        },
+        {
           title: "Payments",
           path: "/finance/payments",
         },

@@ -34,6 +34,7 @@ const BaseInputCard = ({
   setSelectedValue,
   fetchData,
   setPostedData,
+  banks,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -81,6 +82,30 @@ const BaseInputCard = ({
         }));
       }
     }
+    // Assuming 'banks' is your data array and 'branch_id' is the id of the branch you're filtering by
+    if (name === "bank_id" && banks && value) {
+      // Find the bank that has a branch matching the given branch_id
+      const bankWithBranch = banks.find(
+        (bank) => bank.branches.some((branch) => branch.id === value) // assuming 'value' is the branch_id
+      );
+
+      if (bankWithBranch) {
+        setSelectedBank(bankWithBranch.bank_id); // Set the selected bank's ID
+        setFormData((prev) => ({
+          ...prev,
+          bank_id: bankWithBranch.bank_id, // Update the form with the filtered bank's ID
+        }));
+      } else {
+        // Handle the case where no matching bank is found
+        setSelectedBank(null);
+        setFormData((prev) => ({
+          ...prev,
+          bank_id: null,
+        }));
+      }
+      console.log("formData", formData);
+    }
+
     if (name === "bank_id") {
       setSelectedBank(value);
     }

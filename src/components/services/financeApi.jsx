@@ -54,6 +54,11 @@ const financeEndpoints = {
   updateAccountingPeriodLines: "/AccountsSetup/UpdateAccountingPeriodLine",
   deleteAccountingPeriodLines: (id) =>
     `/AccountsSetup/DeleteAccountingPeriodLine?id=${id}`,
+
+  addBankAccount: "/Accounts/AddBankAccount",
+  getBankAccounts: "/Accounts/GetBankAccount",
+  updateBankAccount: "/Accounts/UpdateBankAccount",
+  deleteBankAccount: (id) => `/Accounts/DeleteBankAccount?id=${id}`,
 };
 
 export const apiService = {

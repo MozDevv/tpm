@@ -177,7 +177,8 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         <div className="p-8">
           <DialogTitle>
             <p className="text-primary py-3 text-lg font-bold">
-              {isGuardian ? "Guardian" : "Beneficiary"} Details
+              {isGuardian ? "Guardian" : "Beneficiary"} :{" "}
+              {beneficiary?.relationship}
             </p>
           </DialogTitle>
           <DialogContent>
