@@ -17,7 +17,7 @@ const columnDefs = [
     field: "bankAccountName",
     headerName: "Bank Account Name",
     headerClass: "prefix-header",
-    width: 90,
+
     filter: true,
   },
   {
