@@ -403,23 +403,32 @@ const Preclaims = ({ status }) => {
   console.log("auth ****************", auth?.user?.permissions);
 
   const handleFilters = async () => {
-    const filter = status
-      ? {
-          "filterCriterion.criterions[0].propertyName": "notification_status",
-          "filterCriterion.criterions[0].propertyValue": status,
-          "filterCriterion.criterions[0].criterionType": 0,
-        }
-      : {
-          ...(filterColumn && {
-            "filterCriterion.criterions[0].propertyName": filterColumn,
-          }),
-          ...(filterValue && {
-            "filterCriterion.criterions[0].propertyValue": filterValue,
-          }),
-          ...(filterType && {
-            "filterCriterion.criterions[0].criterionType": filterType,
-          }),
-        };
+    const filter =
+      filterColumn && filterValue && (status || status === 0)
+        ? {
+            ...(filterColumn && {
+              "filterCriterion.criterions[2].propertyName": filterColumn,
+            }),
+            ...(filterValue && {
+              "filterCriterion.criterions[2].propertyValue": filterValue,
+            }),
+            ...(filterType && {
+              "filterCriterion.criterions[2].criterionType": filterType,
+            }),
+          }
+        : filterColumn && filterValue
+        ? {
+            ...(filterColumn && {
+              "filterCriterion.criterions[1].propertyName": filterColumn,
+            }),
+            ...(filterValue && {
+              "filterCriterion.criterions[1].propertyValue": filterValue,
+            }),
+            ...(filterType && {
+              "filterCriterion.criterions[1].criterionType": filterType,
+            }),
+          }
+        : {};
     const sort = {
       ...(sortColumn && {
         "sortProperties.propertyName": sortColumn,
@@ -449,7 +458,7 @@ const Preclaims = ({ status }) => {
     }
 
     const adjustedFilter =
-      (status || status === 0) && status !== 5
+      (status || status === 0) && status !== 5 && mdaId
         ? {
             "filterCriterion.criterions[0].propertyName": "notification_status",
             "filterCriterion.criterions[0].propertyValue": status,
@@ -487,6 +496,7 @@ const Preclaims = ({ status }) => {
 
         ...sort,
         ...adjustedFilter,
+        ...filter,
       });
 
       console.log("mdaId***********", mdaId);
@@ -534,7 +544,7 @@ const Preclaims = ({ status }) => {
       return []; // Return an empty array or handle error as needed
     } finally {
       // setLoading(false);
-      openFilter && setOpenFilter(false);
+      // openFilter && setOpenFilter(false);
       if (gridApiRef.current) {
         // Hide the loading overlay after data is loaded
         gridApiRef.current.api.hideOverlay();
@@ -564,23 +574,20 @@ const Preclaims = ({ status }) => {
   };
 
   useEffect(() => {
-    const filter = status
-      ? {
-          "filterCriterion.criterions[0].propertyName": "notification_status",
-          "filterCriterion.criterions[0].propertyValue": status,
-          "filterCriterion.criterions[0].criterionType": 0,
-        }
-      : {
-          ...(filterColumn && {
-            "filterCriterion.criterions[0].propertyName": filterColumn,
-          }),
-          ...(filterValue && {
-            "filterCriterion.criterions[0].propertyValue": filterValue,
-          }),
-          ...(filterType && {
-            "filterCriterion.criterions[0].criterionType": filterType,
-          }),
-        };
+    const filter =
+      filterColumn && filterValue
+        ? {
+            ...(filterColumn && {
+              "filterCriterion.criterions[2].propertyName": filterColumn,
+            }),
+            ...(filterValue && {
+              "filterCriterion.criterions[2].propertyValue": filterValue,
+            }),
+            ...(filterType && {
+              "filterCriterion.criterions[2].criterionType": filterType,
+            }),
+          }
+        : {};
     const sort = {
       ...(sortColumn && {
         "sortProperties.propertyName": sortColumn,

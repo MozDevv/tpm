@@ -9,34 +9,32 @@ const MenuList = ({ roleId, roleName }) => {
   const [treeData, setTreeData] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const { setAlert } = useAlert();
+  const fetchData = async () => {
+    try {
+      const [menuItemsResponse, menuRolesResponse] = await Promise.all([
+        axios.get(`${BASE_CORE_API}/api/MenuItemsSetup/GetMenuItems`),
+        apiService.get(endpoints.getMenuRole(roleId)),
+      ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [menuItemsResponse, menuRolesResponse] = await Promise.all([
-          axios.get(`${BASE_CORE_API}/api/MenuItemsSetup/GetMenuItems`),
-          apiService.get(endpoints.getMenuRole(roleId)),
-        ]);
+      if (
+        menuItemsResponse.data.isSuccess &&
+        menuRolesResponse.data.isSuccess
+      ) {
+        const formattedData = formatData(
+          menuItemsResponse.data.data,
+          menuRolesResponse.data.data
+        );
+        setTreeData(formattedData);
+        setCheckedKeys(findCheckedKeys(formattedData));
 
-        if (
-          menuItemsResponse.data.isSuccess &&
-          menuRolesResponse.data.isSuccess
-        ) {
-          const formattedData = formatData(
-            menuItemsResponse.data.data,
-            menuRolesResponse.data.data
-          );
-          setTreeData(formattedData);
-          setCheckedKeys(findCheckedKeys(formattedData));
-
-          console.log("formattedData:**************", treeData);
-          console.log("CheckedKeys***********", treeData);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("formattedData:**************", treeData);
+        console.log("CheckedKeys***********", treeData);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, [roleId]);
 
@@ -63,7 +61,10 @@ const MenuList = ({ roleId, roleName }) => {
         key: item.menuItemId.toString(),
         children:
           item.children.length > 0 ? traverseAndCheck(item.children) : [],
-        checked: menuRoles.some((role) => role.name === item.name),
+        checked: menuRoles.some((role) => role.name === item.name)
+          ? true
+          : false,
+        // checked: checkedKeys.includes(item.menuItemId.toString()),
       }));
     };
 
@@ -90,12 +91,26 @@ const MenuList = ({ roleId, roleName }) => {
     return checkedKeys;
   };
 
+  const handleChildren = (children, isChecked) => {
+    children.forEach((child) => {
+      handleRoleMenuChange(child.key, isChecked);
+      if (child.children && child.children.length > 0) {
+        handleChildren(child.children, isChecked);
+      }
+    });
+  };
+
   const onCheck = (checkedKeysValue, { node }) => {
     const menuItemId = node.key;
     const isChecked = checkedKeysValue.includes(menuItemId);
 
     setCheckedKeys(checkedKeysValue);
+
     handleRoleMenuChange(menuItemId, isChecked);
+
+    if (node.children && node.children.length > 0) {
+      handleChildren(node.children, isChecked);
+    }
 
     console.log("checkedKeysValue:", checkedKeysValue);
     console.log("node:", node);
