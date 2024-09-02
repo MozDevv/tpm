@@ -95,7 +95,7 @@ const PensionCaps = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Pension Cap Details"
+    ? clickedItem?.name
     : "Create New Pension Cap Details";
 
   const fields = [

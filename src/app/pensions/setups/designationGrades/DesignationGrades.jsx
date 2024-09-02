@@ -143,7 +143,7 @@ const DesignationGrades = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Designation" : "Create New Designation";
+  const title = clickedItem ? clickedItem?.name : "Create New Designation";
 
   const fields = [
     {

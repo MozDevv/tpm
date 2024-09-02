@@ -125,7 +125,7 @@ const MDASetups = () => {
   const [banks, setBanks] = React.useState([]);
   const [branches, setBranches] = React.useState([]);
 
-  const title = clickedItem ? "MDA" : "Create New MDA";
+  const title = clickedItem ? clickedItem?.name : "Create New MDA";
 
   const fetchBanksAndBranches = async () => {
     try {
