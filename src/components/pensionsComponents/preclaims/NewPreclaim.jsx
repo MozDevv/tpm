@@ -768,6 +768,8 @@ function NewPreclaim({
         //   `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
         // );
 
+        localStorage.removeItem("retireeFormData");
+
         clickedItem && moveToNextTab();
 
         setRetireeId(res.data.data);
