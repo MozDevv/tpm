@@ -271,6 +271,11 @@ const endpoints = {
     `/api/PasswordRulesSetUp/UpdatePasswordRule/${id}`,
   deletePasswordRules: (id) =>
     `/api/PasswordRulesSetUp/DeletePasswordRule/${id}`,
+
+  createCity: "/api/Setups/AddCity",
+  getCities: "/api/Setups/GetCity",
+  updateCity: "/api/Setups/UpdateCity",
+  deleteCity: (id) => `/api/Setups/DeleteCity?id=${id}`,
   //getPro
 };
 

@@ -112,7 +112,7 @@ const PasswordRules = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      id: item.passwordRuleId,
+      id: item.passwordRulesId,
       requiredLength: item.requiredLength,
       requiredUniqueChars: item.requiredUniqueChars,
       requireNonAlphanumeric: item.requireNonAlphanumeric,
@@ -175,26 +175,14 @@ const PasswordRules = () => {
       required: true,
     },
     {
-      name: "requireNonAlphanumeric",
-      label: "Require Non Alphanumeric",
-      type: "switch",
-      required: true,
-    },
-    {
-      name: "requireUppercase",
-      label: "Require Uppercase",
-      type: "switch",
-      required: true,
-    },
-    {
-      name: "requireLowercase",
-      label: "Require Lowercase",
-      type: "switch",
-      required: true,
-    },
-    {
       name: "passExpieryDurationInDays",
       label: "Pass Expiery Duration In Days",
+      type: "number",
+      required: true,
+    },
+    {
+      name: "defaultPasswordGracePeriod",
+      label: "Default Password Grace Period",
       type: "number",
       required: true,
     },
@@ -219,19 +207,32 @@ const PasswordRules = () => {
     {
       name: "requireDigit",
       label: "Require Digit",
-      type: "number",
+      type: "switch",
       required: true,
     },
+    {
+      name: "requireNonAlphanumeric",
+      label: "Require Non Alphanumeric",
+      type: "switch",
+      required: true,
+    },
+    {
+      name: "requireUppercase",
+      label: "Require Uppercase",
+      type: "switch",
+      required: true,
+    },
+    {
+      name: "requireLowercase",
+      label: "Require Lowercase",
+      type: "switch",
+      required: true,
+    },
+
     {
       name: "isActive",
       label: "Is Active",
-      type: "number",
-      required: true,
-    },
-    {
-      name: "defaultPasswordGracePeriod",
-      label: "Default Password Grace Period",
-      type: "number",
+      type: "switch",
       required: true,
     },
   ];
@@ -253,7 +254,10 @@ const PasswordRules = () => {
             fields={fields}
             apiEndpoint={endpoints.updatePasswordRules(clickedItem.id)}
             postApiFunction={apiService.post}
+            id={clickedItem?.id}
+            idLabel="passwordRulesId"
             clickedItem={clickedItem}
+            isBranch={true}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
           />

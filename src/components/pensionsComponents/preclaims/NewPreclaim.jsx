@@ -55,17 +55,8 @@ function NewPreclaim({
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 
-  const [mdaId, setMdaId] = useState("");
-  useEffect(() => {
-    const mda = localStorage.getItem("mdaId");
-    const clickedMdaId = localStorage.getItem("clickedMdaId");
+  const mdaId = localStorage.getItem("mdaId");
 
-    if (mda) {
-      setMdaId(mda);
-    } else if (clickedMdaId) {
-      setMdaId(clickedMdaId);
-    }
-  }, [mdaId]);
   const [retiree, setRetiree] = useState({});
   const [editMode, setEditMode] = useState(false);
   //const [hasId, setHasId] = useState(false);
@@ -177,85 +168,85 @@ function NewPreclaim({
     }
   };
 
-  const [formData, setFormData] = useState({
-    personal_number: retiree?.personal_number ?? "",
-    first_name: retiree?.first_name ?? "",
-    surname: retiree?.surname ?? "",
-    other_name: retiree?.other_name ?? "",
-    postal_code: retiree?.postal_code ?? "",
-    dob: retiree?.dob ? new Date(retiree.dob).toISOString().split("T")[0] : "",
-    notification_status: retiree?.notification_status ?? "",
-    mortality_status: retiree?.mortality_status ?? "",
-    marital_status: retiree?.marital_status ?? "",
-    gender: retiree?.gender ?? "",
-    identifier_type: retiree?.identifier_type ?? "",
-    national_id: retiree?.national_id ?? "",
-    grade_id: retiree?.grade_id ?? "",
-    kra_pin: retiree?.kra_pin ?? "",
-    designation_id: retiree?.designation_id ?? "",
-    designation_grade: retiree?.designation_grade ?? "",
-    email_address: retiree?.email_address ?? "",
-    postal_address: retiree?.postal_address ?? "",
-    postal_code: retiree?.postal_code_id ?? "",
-    phone_number: retiree?.phone_number ?? "",
-    country_id:
-      (retiree?.country?.id || "94ece052-7142-477a-af0f-c3909402d247") ?? "",
-    county_id: "",
-    constituency_id: retiree?.constituency?.constituency_name ?? "",
-    city_town: retiree?.city_town ?? "",
-    pension_award_id: retiree?.pensionAward?.id ?? "",
-    date_of_first_appointment: retiree?.date_of_first_appointment
-      ? new Date(retiree.date_of_first_appointment).toISOString().split("T")[0]
-      : "",
-    date_of_confirmation: retiree?.date_of_confirmation
-      ? new Date(retiree.date_of_confirmation).toISOString().split("T")[0]
-      : "",
-    authority_for_retirement_reference:
-      retiree?.authority_for_retirement_reference ?? "",
-    authority_for_retirement_dated: retiree?.authority_for_retirement_dated
-      ? new Date(retiree.authority_for_retirement_dated)
-          .toISOString()
-          .split("T")[0]
-      : "",
-    retirement_date: retiree?.retirement_date
-      ? new Date(retiree.retirement_date).toISOString().split("T")[0]
-      : "",
-    date_from_which_pension_will_commence:
-      retiree?.date_from_which_pension_will_commence
-        ? new Date(retiree.date_from_which_pension_will_commence)
-            .toISOString()
-            .split("T")[0]
-        : "",
-    last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
-    last_pay_date: retiree.last_pay_date
-      ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
-      : "",
-    disability_status: retiree?.disability_status ?? "",
-    maintenance_case: retiree?.maintenance_case ?? 1,
-    tax_exempt_certificate_number: retiree?.tax_exempt_certificate_number ?? "",
-    exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+  const getInitialFormData = () => {
+    try {
+      const savedFormData = localStorage.getItem("retireeFormData");
+      if (savedFormData) {
+        const parsedData = JSON.parse(savedFormData);
+        if (parsedData && typeof parsedData === "object") {
+          return parsedData;
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing saved form data: ", error);
+    }
 
-    tax_exempt_certificate_date: retiree?.tax_exempt_certificate_date
-      ? new Date(retiree.tax_exempt_certificate_date)
-          .toISOString()
-          .split("T")[0]
-      : "",
-    military_id: retiree?.military_id ?? "",
-    monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
-    service_increments: retiree?.service_increments ?? 0,
-    monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
-    tribe: retiree?.tribe ?? "",
-    is_wcps: retiree?.is_wcps ?? 0,
-    is_parliamentary: retiree?.is_parliamentary ?? false,
-    age_on_discharge: retiree?.age_on_discharge ?? 0,
-    commutation_option_selection: retiree?.commutation_option_selection ?? "",
-    commutation_option_selection_date:
-      retiree?.commutation_option_selection_date
-        ? new Date(retiree?.commutation_option_selection_date)
-            .toISOString()
-            .split("T")[0]
-        : "",
-  });
+    // Fallback to retiree data if no valid saved form data is found
+    return {
+      personal_number: retiree?.personal_number ?? "",
+      first_name: retiree?.first_name ?? "",
+      surname: retiree?.surname ?? "",
+      other_name: retiree?.other_name ?? "",
+      postal_code: retiree?.postal_code ?? "",
+      dob: parseDate(retiree?.dob),
+      notification_status: retiree?.notification_status ?? "",
+      mortality_status: retiree?.mortality_status ?? "",
+      marital_status: retiree?.marital_status ?? "",
+      gender: retiree?.gender ?? "",
+      identifier_type: retiree?.identifier_type ?? "",
+      national_id: retiree?.national_id ?? "",
+      grade_id: retiree?.grade_id ?? "",
+      kra_pin: retiree?.kra_pin ?? "",
+      designation_id: retiree?.designation_id ?? "",
+      designation_grade: retiree?.designation_grade ?? "",
+      email_address: retiree?.email_address ?? "",
+      postal_address: retiree?.postal_address ?? "",
+      postal_code: retiree?.postal_code_id ?? "",
+      phone_number: retiree?.phone_number ?? "",
+      country_id:
+        retiree?.country?.id || "94ece052-7142-477a-af0f-c3909402d247",
+      county_id: "",
+      constituency_id: retiree?.constituency?.constituency_name ?? "",
+      city_town: retiree?.city_town ?? "",
+      pension_award_id: retiree?.pensionAward?.id ?? "",
+      date_of_first_appointment: parseDate(retiree?.date_of_first_appointment),
+      date_of_confirmation: parseDate(retiree?.date_of_confirmation),
+      authority_for_retirement_reference:
+        retiree?.authority_for_retirement_reference ?? "",
+      authority_for_retirement_dated: parseDate(
+        retiree?.authority_for_retirement_dated
+      ),
+      retirement_date: parseDate(retiree?.retirement_date),
+      date_from_which_pension_will_commence: parseDate(
+        retiree?.date_from_which_pension_will_commence
+      ),
+      last_basic_salary_amount: retiree?.last_basic_salary_amount ?? "",
+      last_pay_date: parseDate(retiree?.last_pay_date),
+      disability_status: retiree?.disability_status ?? "",
+      maintenance_case: retiree?.maintenance_case ?? 1,
+      tax_exempt_certificate_number:
+        retiree?.tax_exempt_certificate_number ?? "",
+      exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+      tax_exempt_certificate_date: parseDate(
+        retiree?.tax_exempt_certificate_date
+      ),
+      military_id: retiree?.military_id ?? "",
+      monthly_salary_in_ksh: retiree?.monthly_salary_in_ksh ?? 0,
+      service_increments: retiree?.service_increments ?? 0,
+      monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
+      tribe: retiree?.tribe ?? "",
+      is_wcps: retiree?.is_wcps ?? 0,
+      is_parliamentary: retiree?.is_parliamentary ?? false,
+      age_on_discharge: retiree?.age_on_discharge ?? 0,
+      commutation_option_selection: retiree?.commutation_option_selection ?? "",
+      commutation_option_selection_date: parseDate(
+        retiree?.commutation_option_selection_date
+      ),
+    };
+  };
+
+  // State for form data
+  const [formData, setFormData] = useState(getInitialFormData());
   const router = useRouter();
 
   const validateField = (name, value, formData) => {
@@ -357,10 +348,36 @@ function NewPreclaim({
     //     setConstituencies([]);
     //   }
     // }
-    setFormData({ ...formData, [name]: parsedValue });
     const error = validateField(name, parsedValue, formData);
     setErrors({ ...errors, [name]: error });
+    const updatedFormData = { ...formData, [name]: parsedValue };
+    setFormData(updatedFormData);
+
+    localStorage.setItem("retireeFormData", JSON.stringify(updatedFormData));
   };
+
+  useEffect(() => {
+    try {
+      const savedFormData = localStorage.getItem("retireeFormData");
+      console.log("Saved Form Data: ", savedFormData);
+      if (savedFormData) {
+        const parsedData = JSON.parse(savedFormData);
+        console.log("Parsed Form Data: ", parsedData);
+        setFormData(parsedData);
+        if (parsedData && typeof parsedData === "object") {
+          setFormData(parsedData);
+        } else {
+          console.error("Invalid saved form data structure");
+          fetchRetiree();
+        }
+      } else {
+        fetchRetiree();
+      }
+    } catch (error) {
+      console.error("Error parsing saved form data: ", error);
+      fetchRetiree();
+    }
+  }, []);
 
   //const [mdas, setMdas] = useState([]);
   const [pensionAwards, setPensionAwards] = useState([]);
@@ -980,6 +997,8 @@ function NewPreclaim({
                         </IconButton>
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
+
+                      {/* {JSON.stringify(formData)} */}
 
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">

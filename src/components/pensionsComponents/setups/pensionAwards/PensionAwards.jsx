@@ -130,7 +130,7 @@ const PensionAwards = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      prefix: transformString(item.prefix),
+      prefix: transformString(item.prefix).toUpperCase(),
       name: item.name,
       pensionCap: item.pensionCap.id,
       id: item.id,

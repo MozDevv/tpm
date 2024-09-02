@@ -197,6 +197,10 @@ function Sidebar() {
           ],
         },
         {
+          title: "Vendor",
+          path: "/pensions/finance/vendor",
+        },
+        {
           title: "Payments",
           path: "/finance/payments",
         },
@@ -303,7 +307,10 @@ function Sidebar() {
           title: "Accounting Period",
           path: "/pensions/setups/accounting-period",
         },
-
+        {
+          title: "Cities",
+          path: "/pensions/setups/cities",
+        },
         {
           title: "Document Types",
           path: "/pensions/setups/document-types",

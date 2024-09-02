@@ -81,6 +81,10 @@ export const menuItems = [
         ],
       },
       {
+        title: "Vendor",
+        path: "/pensions/finance/vendor",
+      },
+      {
         title: "Payments",
         path: "/finance/payments",
       },
@@ -177,6 +181,10 @@ export const menuItems = [
         path: "/pensions/setups/account-category",
       },
       {
+        title: "City Setups",
+        path: "/pensions/setups/city-setups",
+      },
+      {
         title: "No. Series",
         path: "/pensions/setups/no-series",
       },
@@ -191,6 +199,10 @@ export const menuItems = [
       {
         title: "Terms of Service",
         path: "/pensions/setups/termsofservice",
+      },
+      {
+        title: "Cities",
+        path: "/pensions/setups/cities",
       },
       {
         title: "MDAs",
