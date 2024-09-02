@@ -55,7 +55,17 @@ function NewPreclaim({
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
 
-  const mdaId = localStorage.getItem("mdaId");
+  const [mdaId, setMdaId] = useState("");
+  useEffect(() => {
+    const mda = localStorage.getItem("mdaId");
+    const clickedMdaId = localStorage.getItem("clickedMdaId");
+
+    if (mda) {
+      setMdaId(mda);
+    } else if (clickedMdaId) {
+      setMdaId(clickedMdaId);
+    }
+  }, [mdaId]);
   const [retiree, setRetiree] = useState({});
   const [editMode, setEditMode] = useState(false);
   //const [hasId, setHasId] = useState(false);

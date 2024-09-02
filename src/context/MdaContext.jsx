@@ -81,7 +81,9 @@ export const MdaProvider = ({ children }) => {
     <MdaContext.Provider
       value={{
         mdaId,
+        setMdaId,
         activePensionCap,
+        setActiveCapName,
         setActivePensionCap,
         activeCapName,
       }}

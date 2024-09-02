@@ -312,6 +312,7 @@ export const mapRowData = (items) =>
       mda_code: item.mda?.code,
       mda_description: item.mda?.description,
       mda_pensionCap_code: item.mda?.pensionCap?.code,
+      mda_id: item.mda_id,
       // mda_id: item.mda?.pensionCap?.code,
       mda_pensionCap_name: item.mda?.pensionCap?.name,
       mda_pensionCap_description: item.mda?.pensionCap?.description,
@@ -343,6 +344,7 @@ export const mapRowData = (items) =>
       pension_commencement_date: item?.pension_commencement_date,
       postal_address: item?.postal_address,
       id: item.id,
+
       bank_name: item.bankDetails[0]?.bankBranch?.bank?.name,
       branch_name: item.bankDetails[0]?.bankBranch?.name,
       account_number: item.bankDetails[0]?.account_number,
@@ -443,7 +445,7 @@ const Preclaims = ({ status }) => {
 
   const [items, setItems] = useState([]);
 
-  //const { mdaId } = useMda();
+  const { setActiveCapName } = useMda();
 
   const mdaId = localStorage.getItem("mdaId");
 
@@ -568,6 +570,8 @@ const Preclaims = ({ status }) => {
   useEffect(() => {
     fetchAllPreclaims();
   }, [gridApi]);
+
+  const { setMdaId } = useMda();
 
   const handlePageChange = (event, newPage) => {
     setPageNumber(newPage);
@@ -941,6 +945,9 @@ const Preclaims = ({ status }) => {
                   onCellDoubleClicked={(event) => {
                     setOpenBaseCard(true);
                     setClickedItem(event.data); // Update selected item
+
+                    console.log("event.data", event.data);
+                    setActiveCapName(event.data.mda_pensionCap_name);
                   }}
                 />
                 {/*************PAGINATION *************/}
