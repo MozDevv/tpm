@@ -181,6 +181,13 @@ function NewPreclaim({
       console.error("Error parsing saved form data: ", error);
     }
 
+    const parseDate = (date) => {
+      if (date) {
+        return new Date(date).toISOString().split("T")[0];
+      }
+      return "";
+    };
+
     // Fallback to retiree data if no valid saved form data is found
     return {
       personal_number: retiree?.personal_number ?? "",
