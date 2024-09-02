@@ -59,11 +59,11 @@ function PreclaimsNotifications({
   const { auth } = useAuth();
 
   const handleSend = async () => {
-    // setComments(
-    //   `Notification sent to retirees at ${new Date().toLocaleString()} by ${
-    //     auth?.user?.email
-    //   }`
-    // );
+    setComments(
+      `Notification sent to prospective retiree at ${new Date().toLocaleString()} by ${
+        auth?.user?.email
+      }`
+    );
     const ids = selectedRows.map((row) => row.id);
     const currentDate = new Date();
     const oneMinuteLater = new Date(currentDate.getTime() + 60000); // Adding 1 minute
@@ -178,7 +178,7 @@ function PreclaimsNotifications({
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <h5 className="text-[19px] text-primary font-semibold">
-              Send Notifications
+              Notify Prospective Retiree(s)
             </h5>
           </div>
         </div>
@@ -186,7 +186,7 @@ function PreclaimsNotifications({
         {awardDocuments.length > 0 && (
           <div className="py-3 mx-5">
             <div className="text-primary mt-5 text-[15px] font-normal mb-4">
-              List of all documents to be uploaded by the retiree(s)
+              List of documents to be uploaded by the retiree(s)
             </div>
             <List
               size="small"
@@ -204,7 +204,7 @@ function PreclaimsNotifications({
             />
           </div>
         )}
-        <div className="p-6">
+        {/* <div className="p-6">
           <div>
             <label
               htmlFor="comments"
@@ -225,8 +225,8 @@ function PreclaimsNotifications({
               }}
             />
           </div>
-        </div>
-        <div className="flex gap-8 w-full justify-between px-5 mt-2">
+        </div> */}
+        <div className="flex gap-8 w-full justify-between px-5 mt-7">
           <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
