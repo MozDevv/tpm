@@ -270,6 +270,10 @@ function Sidebar() {
           path: "/pensions/users/roles-permissions",
         },
         {
+          title: "Password Rules",
+          path: "/pensions/users/password-rules",
+        },
+        {
           title: "Counties",
           path: "/pensions/setups/counties",
         },

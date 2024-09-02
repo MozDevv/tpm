@@ -155,6 +155,10 @@ export const menuItems = [
         path: "/pensions/setups/constituencies",
       },
       {
+        title: "Password Rules",
+        path: "/pensions/setups/password-rules",
+      },
+      {
         title: "Leave Management",
         path: "/pensions/users/leave-management",
       },

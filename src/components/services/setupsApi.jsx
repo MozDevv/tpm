@@ -264,6 +264,13 @@ const endpoints = {
 
   previewBirthCertificate: (prospectiveId, birthCertNo) =>
     `/birthCert/${prospectiveId}/${birthCertNo}`,
+
+  createPasswordRules: "/api/PasswordRulesSetUp/CreatePasswordRules",
+  getPasswordRules: "/api/PasswordRulesSetUp/GetPasswordRules",
+  updatePasswordRules: (id) =>
+    `/api/PasswordRulesSetUp/UpdatePasswordRule/${id}`,
+  deletePasswordRules: (id) =>
+    `/api/PasswordRulesSetUp/DeletePasswordRule/${id}`,
   //getPro
 };
 
