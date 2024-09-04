@@ -149,7 +149,6 @@ function MixedServicePost({
       { id: "NonReckonableService", name: "Non-Reckonable Service" },
     ],
     CAP196: [
-      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
       { id: "OneTerm", name: "1 Term" },
       { id: "TwoTerms", name: "2 Term" },
       { id: "ThreeTerms", name: "3 Term" },
@@ -176,7 +175,11 @@ function MixedServicePost({
     {
       label: "Whether Pensionable(Yes/No)",
       value: "was_pensionable",
-      type: "radio",
+      type: "select",
+      options: [
+        { id: true, name: "Yes" },
+        { id: false, name: "No" },
+      ],
     },
     {
       label: "Nature of Salary Scale",
@@ -188,7 +191,13 @@ function MixedServicePost({
       label: "Nature of Service",
       value: "nature_of_service",
       type: "select",
-      options: natureOfServiceOptions[cap] || [],
+      options: [
+        { id: "OneTerm", name: "1 Term" },
+        { id: "TwoTerms", name: "2 Term" },
+        { id: "ThreeTerms", name: "3 Term" },
+        { id: "FourTerms", name: "4 Term" },
+        { id: "FiveTerms", name: "5 Term" },
+      ],
     },
     ...(mixedService
       ? [
@@ -228,7 +237,7 @@ function MixedServicePost({
   };
 
   const handleSubmit = async (data) => {
-    const formattedFormData = { ...formData, prospective_pensioner_id: id };
+    const formattedFormData = { ...data, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
       if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(

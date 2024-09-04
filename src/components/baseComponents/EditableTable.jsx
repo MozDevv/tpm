@@ -214,7 +214,6 @@ const EditableTable = ({
 
       console.log("Edited data:", editedData);
 
-      // Prepare a new row based on the fields definition
       const newRow = fields.reduce((acc, field) => {
         acc[field.value] = ""; // Initialize new row values based on fields
         return acc;
