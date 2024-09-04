@@ -28,6 +28,7 @@ import preClaimsEndpoints, {
 } from "@/components/services/preclaimsApi";
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
+import { th } from "@faker-js/faker";
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
@@ -146,6 +147,13 @@ function PostAndNature({ id, loading, setLoading, status }) {
       { id: "FourTerms", name: "4 Term" },
       { id: "FiveTerms", name: "5 Term" },
     ],
+    "APN/PK": [
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
+    ],
   };
 
   const fields = [
@@ -196,8 +204,8 @@ function PostAndNature({ id, loading, setLoading, status }) {
     setFormData(updatedFormData);
   };
 
-  const handleSubmit = async () => {
-    const formattedFormData = { ...formData, prospective_pensioner_id: id };
+  const handleSubmit = async (data) => {
+    const formattedFormData = { ...data, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
       if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
@@ -211,12 +219,12 @@ function PostAndNature({ id, loading, setLoading, status }) {
       if (isEditMode) {
         const data = { ...formattedFormData, id: editId };
         res = await apiService.post(
-          preClaimsEndpoints.updatePostAndNature,
+          endpoints.updateMixedServiceWorkHistory,
           data
         );
       } else {
         res = await apiService.post(
-          preClaimsEndpoints.createPostAndNatureOfService,
+          endpoints.createMixedServiceWorkHistory,
           formattedFormData
         );
       }
@@ -240,9 +248,11 @@ function PostAndNature({ id, loading, setLoading, status }) {
           });
         });
         setValidationErrors(errors);
+        throw new Error("Validation Error");
       }
     } catch (error) {
       console.log(error);
+      throw error;
     }
   };
 
@@ -276,213 +286,51 @@ function PostAndNature({ id, loading, setLoading, status }) {
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
+  const validators = {
+    date: (value) => {
+      if (!value) {
+        return "Date is required";
+      }
+    },
+    post: (value) => {
+      if (!value) {
+        return "Post is required";
+      }
+    },
+    was_pensionable: (value) => {
+      if (value === null) {
+        return "Pensionable is required";
+      }
+    },
+    nature_of_salary_scale: (value) => {
+      if (!value) {
+        return "Nature of Salary Scale is required";
+      }
+    },
+    nature_of_service: (value) => {
+      if (!value) {
+        return "Nature of Service is required";
+      }
+    },
+  };
+
+  const handleError = (errors) => {
+    console.log("Errors:", errors);
+  };
 
   return (
-    <div>
-      <Dialog
-        open={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-      >
-        <div className="p-6">
-          <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            Delete Confirmation
-          </h1>
-          <p className="text-gray-600 mb-3">
-            Are you sure you want to delete this record?
-          </p>
-          <div className="flex justify-between w-full mt-5">
-            <Button
-              variant="outlined"
-              onClick={() => setOpenDeleteDialog(false)}
-              sx={{ mr: 2 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleDelete}
-              sx={{ backgroundColor: "crimson", color: "white" }}
-              disabled={status === 5}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <div className="p-10">
-          <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            {isEditMode ? "Edit" : "Add"} Post and Nature of Service
-          </h1>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-gray-600">
-              Date Of Confirmation
-            </label>
-            <input
-              type="date"
-              name="date"
-              value={dateOfConfirmation}
-              disabled
-              className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm`}
-            />
-            <label className="text-xs font-semibold text-gray-600">
-              Date Of First Appointment
-            </label>
-            <input
-              type="date"
-              name="date"
-              value={dateOfFirstAppointment}
-              disabled
-              className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm`}
-            />
-            {fields.map((field) => (
-              <div key={field.value}>
-                <label className="text-xs font-semibold text-gray-600">
-                  {field.label}
-                </label>
-                {field.type === "checkbox" ? (
-                  <input
-                    type="checkbox"
-                    name={field.value}
-                    onChange={handleInputChange}
-                    className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
-                      validationErrors[field.value] ? "border-red-500" : ""
-                    }`}
-                  />
-                ) : field.type === "radio" ? (
-                  <RadioGroup
-                    name={field.value}
-                    onChange={handleInputChange}
-                    value={formData[field.value] ? "true" : "false"}
-                    className="flex flex-row gap-2"
-                  >
-                    <FormControlLabel
-                      value="true"
-                      control={<Radio />}
-                      label="Yes"
-                    />
-                    <FormControlLabel
-                      value="false"
-                      control={<Radio />}
-                      label="No"
-                    />
-                  </RadioGroup>
-                ) : field.type === "select" ? (
-                  <FormControl fullWidth>
-                    <TextField
-                      select
-                      name={field.value}
-                      onChange={handleInputChange}
-                      value={formData[field.value] || ""}
-                      size="small"
-                      className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
-                        validationErrors[field.value] ? "border-red-500" : ""
-                      }`}
-                    >
-                      {field.options.map((option) => (
-                        <MenuItem key={option.id} value={option.name}>
-                          {option.name}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </FormControl>
-                ) : (
-                  <input
-                    type={field.type || "text"}
-                    name={field.value}
-                    value={formData[field.value] || ""}
-                    onChange={handleInputChange}
-                    className={`border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm ${
-                      validationErrors[field.value] ? "border-red-500" : ""
-                    }`}
-                  />
-                )}
-                {validationErrors[field.value] && (
-                  <span className="text-xs text-red-500">
-                    {validationErrors[field.value]}
-                  </span>
-                )}
-              </div>
-            ))}
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              sx={{ mt: 4 }}
-              disabled={status === 5}
-            >
-              {isEditMode ? "Update" : "Submit"}
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-      <p className="my-2 mt-4 pb-3 text-primary text-[16px] font-semibold font-montserrat">
-        Nature and Post of Service
-      </p>
-      <Button
-        variant="contained"
-        sx={{
-          mt: 2,
-          mb: 2,
-          display: status === 5 ? "none" : "block",
-        }}
-        onClick={() => {
-          setFormData({});
-          setIsEditMode(false);
-          setOpen(true);
-        }}
-      >
-        Add Post and Nature of Service
-      </Button>
-      <TableContainer
-        // component={Paper}
-        sx={{ boxShadow: "none", width: "100%", height: "100%" }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Post</TableCell>
-              <TableCell>Was Pensionable</TableCell>
-              <TableCell>Nature of Salary Scale</TableCell>
-              <TableCell>Nature of Service</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {postAndNatureData.map((item, index) => (
-              <TableRow key={item.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  {new Date(item.date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{item.post}</TableCell>
-                <TableCell>{item.was_pensionable ? "Yes" : "No"}</TableCell>
-                <TableCell>{item.nature_of_salary_scale}</TableCell>
-                <TableCell>{item.nature_of_service}</TableCell>
-                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
-                  <IconButton onClick={() => handleEdit(item)}>
-                    {status === 5 ? (
-                      <Visibility />
-                    ) : (
-                      <Edit sx={{ color: "gray" }} />
-                    )}
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      setOpenDeleteDialog(item.id);
-                      setRecordId(item.id);
-                    }}
-                    sx={{ display: status === 5 ? "none" : "block" }}
-                  >
-                    <Delete sx={{ color: "crimson" }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <div className="">
+      <EditableTable
+        title="Post and Nature of Salary"
+        fetchData={fetchPostandNature}
+        fields={fields}
+        //  initialData={initialData}
+        validators={validators}
+        handleSave={handleSubmit}
+        handleUpdate={handleSubmit}
+        handleError={handleError}
+        validationErrorsFromApi={validationErrors}
+      />
     </div>
   );
 }

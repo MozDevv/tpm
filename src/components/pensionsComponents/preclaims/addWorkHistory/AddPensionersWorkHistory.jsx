@@ -93,6 +93,7 @@ function AddPensionersWorkHistory({
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
+              mixedService={true}
             />
           ) : activeCapName === "APN/PK" ? (
             <MixedServicePost
@@ -101,6 +102,7 @@ function AddPensionersWorkHistory({
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
+              isParliamentarian={true}
             />
           ) : (
             <PostAndNature

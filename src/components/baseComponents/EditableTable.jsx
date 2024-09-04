@@ -19,15 +19,14 @@ const EditableTable = ({
 }) => {
   // Initialize rowData with initialData
   const [rowData, setRowData] = useState(() => {
-    // Create two empty rows based on the fields structure
     const emptyRows = Array.from({ length: 1 }, () =>
       fields.reduce((acc, field) => {
-        acc[field.value] = ""; // Initialize each field to an empty string
+        acc[field.value] = "";
         return acc;
       }, {})
     );
 
-    return [...initialData, ...emptyRows]; // Append empty rows to the initial data
+    return [...initialData, ...emptyRows];
   });
 
   const [rowErrors, setRowErrors] = useState({});
@@ -207,31 +206,41 @@ const EditableTable = ({
   const onAddRow = async () => {
     if (gridApiRef.current) {
       const editedData = [];
+
+      // Check if there are existing rows
       gridApiRef.current.forEachNode((node) => {
         editedData.push(node.data);
       });
 
       console.log("Edited data:", editedData);
 
-      if (editedData.length > 0) {
-        const newRow = fields.reduce((acc, field) => {
-          acc[field.value] = "";
-          return acc;
-        }, {});
+      // Prepare a new row based on the fields definition
+      const newRow = fields.reduce((acc, field) => {
+        acc[field.value] = ""; // Initialize new row values based on fields
+        return acc;
+      }, {});
 
-        setRowData((prevRowData) => {
-          if (prevRowData === undefined) {
-            console.error("Previous row data is undefined");
-            return [];
-          }
-          return [...prevRowData, newRow];
-        });
-        message.info("New row added!");
-      }
+      // Update the row data state
+      setRowData((prevRowData) => {
+        // Initialize prevRowData if it's undefined
+        if (!prevRowData) {
+          console.error(
+            "Previous row data is undefined. Initializing with an empty array."
+          );
+          prevRowData = [];
+        }
+
+        // Add the new row to the existing data
+        const updatedRowData = [...prevRowData, newRow];
+        return updatedRowData;
+      });
+
+      message.info("New row added!");
     } else {
       message.error("Unable to add a new row. Grid is not ready.");
     }
   };
+
   const refreshData = async () => {
     try {
       const newData = await fetchData();
@@ -246,7 +255,7 @@ const EditableTable = ({
       <div className="text-primary font-montserrat text-base font-semibold mb-2">
         {title}
       </div>
-      <div className="flex flex-row gap-5 ml-[-20px]">
+      <div className="flex flex-row gap-5 ml-[-15px]">
         <Button
           onClick={onAddRow}
           variant="text"
