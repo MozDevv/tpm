@@ -13,6 +13,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useMda } from "@/context/MdaContext";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const getOptionNameById = (options, id) => {
   const option = options.find((opt) => opt.id === id);
@@ -108,24 +109,24 @@ const Deductions = (id) => {
 
   const title = clickedItem ? "Deductions" : "Add a New Deduction";
 
-  const { mdaId } = useMda();
+  const mdaId = localStorage.getItem("mdaId");
 
   const fields = [
     {
       label: "Name",
-      name: "name",
+      value: "name",
       type: "text",
       required: true,
     },
     {
       label: "Amount",
-      name: "amount",
+      value: "amount",
       type: "number",
       required: true,
     },
     {
       label: "Deduction Type",
-      name: "deduction_type",
+      value: "deduction_type",
       type: "select",
       options: [
         { id: 0, name: "Salary Overpayment" },
@@ -135,7 +136,7 @@ const Deductions = (id) => {
     },
     {
       label: "Deduction Payee",
-      name: "deduction_payee",
+      value: "deduction_payee",
       type: "select",
       options: [
         {
@@ -152,10 +153,16 @@ const Deductions = (id) => {
     },
     {
       label: "MDA",
-      name: "mda_id",
+      value: "mda_id",
       type: "select",
+      options: mdas
+        .filter((mda) => mda.id === mdaId)
+        .map((mda) => ({
+          id: mda.id,
+          name: mda.name,
+        })), // Add the correct options here
       disabled: false,
-      hide: true,
+      hide: false,
     },
   ];
 
@@ -187,86 +194,98 @@ const Deductions = (id) => {
   }, []);
 
   return (
-    <div className="relative">
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        title={title}
-        clickedItem={clickedItem}
-        isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteMaintenance(id?.id)}
-        deleteApiService={apiService.post}
-        isSecondaryCard={true}
-      >
-        {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateMaintenance}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
-        ) : (
-          <BaseInputCard
-            id={id}
-            idLabel="prospective_pensioner_id"
-            fields={fields}
-            apiEndpoint={endpoints.createDeductions}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            isBranch={false}
-          />
-        )}
-      </BaseCard>
+    // <div className="relative">
+    //   <BaseCard
+    //     openBaseCard={openBaseCard}
+    //     setOpenBaseCard={setOpenBaseCard}
+    //     title={title}
+    //     clickedItem={clickedItem}
+    //     isUserComponent={false}
+    //     deleteApiEndpoint={endpoints.deleteMaintenance(id?.id)}
+    //     deleteApiService={apiService.post}
+    //     isSecondaryCard={true}
+    //   >
+    //     {clickedItem ? (
+    //       <BaseInputCard
+    //         fields={fields}
+    //         apiEndpoint={endpoints.updateMaintenance}
+    //         postApiFunction={apiService.post}
+    //         clickedItem={clickedItem}
+    //         setOpenBaseCard={setOpenBaseCard}
+    //         useRequestBody={true}
+    //       />
+    //     ) : (
+    //       <BaseInputCard
+    //         id={id}
+    //         idLabel="prospective_pensioner_id"
+    //         fields={fields}
+    //         apiEndpoint={endpoints.createDeductions}
+    //         postApiFunction={apiService.post}
+    //         clickedItem={clickedItem}
+    //         setOpenBaseCard={setOpenBaseCard}
+    //         useRequestBody={true}
+    //         isBranch={false}
+    //       />
+    //     )}
+    //   </BaseCard>
 
-      <Button
-        variant="contained"
-        onClick={() => {
-          setOpenBaseCard(true);
-          setClickedItem(null);
-        }}
-        sx={{
-          my: 2,
-        }}
-      >
-        Add Deductions
-      </Button>
+    //   <Button
+    //     variant="contained"
+    //     onClick={() => {
+    //       setOpenBaseCard(true);
+    //       setClickedItem(null);
+    //     }}
+    //     sx={{
+    //       my: 2,
+    //     }}
+    //   >
+    //     Add Deductions
+    //   </Button>
 
-      <div
-        className="ag-theme-quartz"
-        style={{
-          height: "60vh",
+    //   <div
+    //     className="ag-theme-quartz"
+    //     style={{
+    //       height: "60vh",
 
-          mt: "20px",
+    //       mt: "20px",
 
-          overflowY: "auto",
-        }}
-      >
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={filteredData}
-          pagination={false}
-          domLayout="autoHeight"
-          alwaysShowHorizontalScroll={true}
-          // paginationPageSize={pageSize}
-          onGridReady={(params) => {
-            params.api.sizeColumnsToFit();
-            // onGridReady(params);
-          }}
-          // onPaginationChanged={(params) =>
-          //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-          // }
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
-            // setUserClicked(e.data);
-            //handleClickUser(e.data);
-          }}
-        />
-      </div>
+    //       overflowY: "auto",
+    //     }}
+    //   >
+    //     <AgGridReact
+    //       columnDefs={columnDefs}
+    //       rowData={filteredData}
+    //       pagination={false}
+    //       domLayout="autoHeight"
+    //       alwaysShowHorizontalScroll={true}
+    //       // paginationPageSize={pageSize}
+    //       onGridReady={(params) => {
+    //         params.api.sizeColumnsToFit();
+    //         // onGridReady(params);
+    //       }}
+    //       // onPaginationChanged={(params) =>
+    //       //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
+    //       // }
+    //       onRowClicked={(e) => {
+    //         setOpenBaseCard(true);
+    //         setClickedItem(e.data);
+    //         // setUserClicked(e.data);
+    //         //handleClickUser(e.data);
+    //       }}
+    //     />
+    //   </div>
+    // </div>
+    <div className="">
+      <BaseInputTable
+        title="Deductions"
+        fields={fields}
+        id={id}
+        idLabel="prospective_pensioner_id"
+        apiService={apiService}
+        getEndpoint={endpoints.getDeductions(id.id)}
+        postEndpoint={endpoints.createDeductions}
+        putEndpoint={endpoints.updateGovernmentSalary}
+      />
     </div>
   );
 };

@@ -59,12 +59,13 @@ const BaseInputTable = ({
   }, []);
 
   const isRowComplete = (row) => {
-    return fields.every(
-      (field) =>
+    return fields.every((field) => {
+      return (
         row[field.value] !== undefined &&
         row[field.value] !== null &&
         row[field.value] !== ""
-    );
+      );
+    });
   };
 
   const deleteRow = async (rowId) => {
@@ -109,10 +110,16 @@ const BaseInputTable = ({
     }
   };
 
+  const mdaId = localStorage.getItem("mdaId");
+
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
     if (id) {
       formattedFormData[idLabel] = id;
+    }
+
+    if (formattedFormData.mdaId) {
+      formattedFormData[mdaId] = mdaId;
     }
     Object.keys(formattedFormData).forEach((key) => {
       if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
@@ -232,7 +239,7 @@ const BaseInputTable = ({
           // Parse the user input into a date
           return parseDate(params.newValue);
         };
-      } else if (col.type === "select") {
+      } else if (col.type === "select" && col.options && col.options.length) {
         const options = col.options.map((option) => option.name);
 
         columnDef.cellEditor = "agSelectCellEditor";
@@ -253,6 +260,8 @@ const BaseInputTable = ({
           );
           return selectedOption ? selectedOption.id : params.newValue;
         };
+      } else if (col.hide) {
+        columnDef.hide = true;
       }
 
       columnDef.onCellValueChanged = async (params) => {
@@ -278,6 +287,7 @@ const BaseInputTable = ({
         if (data.designationId) {
           setSelectedValue(data.designationId);
         }
+
         console.log("Cell Value Changed:", params);
         console.log("Updated Data:", data);
 
