@@ -29,6 +29,7 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 import { th } from "@faker-js/faker";
+import EditableTable from "@/components/baseComponents/EditableTable";
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);

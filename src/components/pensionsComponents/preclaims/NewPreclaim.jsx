@@ -150,7 +150,7 @@ function NewPreclaim({
         monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
         tribe: retiree?.tribe ?? "",
         maintenance_case: retiree?.maintenance_case ?? 1,
-        is_wcps: retiree?.is_wcps ?? 0,
+        is_wcps: retiree?.is_wcps ?? 1,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: retiree?.age_on_discharge ?? 0,
         commutation_option_selection:
@@ -242,7 +242,7 @@ function NewPreclaim({
       service_increments: retiree?.service_increments ?? 0,
       monthly_aditional_pay: retiree?.monthly_aditional_pay ?? 0,
       tribe: retiree?.tribe ?? "",
-      is_wcps: retiree?.is_wcps ?? 0,
+      is_wcps: retiree?.is_wcps ?? 1,
       is_parliamentary: retiree?.is_parliamentary ?? false,
       age_on_discharge: retiree?.age_on_discharge ?? 0,
       commutation_option_selection: retiree?.commutation_option_selection ?? "",
