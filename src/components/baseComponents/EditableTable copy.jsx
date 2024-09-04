@@ -14,22 +14,11 @@ const EditableTable = ({
   validators = {},
   handleSave,
   handleUpdate,
-  title,
+  validationErrorsFromApi,
   fetchData,
 }) => {
   // Initialize rowData with initialData
-  const [rowData, setRowData] = useState(() => {
-    // Create two empty rows based on the fields structure
-    const emptyRows = Array.from({ length: 1 }, () =>
-      fields.reduce((acc, field) => {
-        acc[field.value] = ""; // Initialize each field to an empty string
-        return acc;
-      }, {})
-    );
-
-    return [...initialData, ...emptyRows]; // Append empty rows to the initial data
-  });
-
+  const [rowData, setRowData] = useState(initialData);
   const [rowErrors, setRowErrors] = useState({});
 
   useEffect(() => {
@@ -218,14 +207,7 @@ const EditableTable = ({
           acc[field.value] = "";
           return acc;
         }, {});
-
-        setRowData((prevRowData) => {
-          if (prevRowData === undefined) {
-            console.error("Previous row data is undefined");
-            return [];
-          }
-          return [...prevRowData, newRow];
-        });
+        setRowData((prevRowData) => [...prevRowData, newRow]);
         message.info("New row added!");
       }
     } else {
@@ -242,10 +224,10 @@ const EditableTable = ({
   };
 
   return (
-    <div className="ag-theme-quartz">
-      <div className="text-primary font-montserrat text-base font-semibold mb-2">
-        {title}
-      </div>
+    <div
+      className="ag-theme-quartz"
+      style={{ maxHeight: "400px", width: "100%", height: "300px" }}
+    >
       <div className="flex flex-row gap-5 ml-[-20px]">
         <Button
           onClick={onAddRow}
@@ -264,21 +246,13 @@ const EditableTable = ({
           Delete Lines
         </Button>
       </div>
-      <div className="" style={{ maxHeight: "500px", width: "100%" }}>
-        <AgGridReact
-          ref={gridApiRef}
-          rowData={rowData}
-          columnDefs={headers}
-          defaultColDef={{
-            flex: 1,
-            minWidth: 150,
-            height: "400px",
-            minHehight: "100px",
-          }}
-          onGridReady={onGridReady}
-          domLayout="autoHeight"
-        />
-      </div>
+      <AgGridReact
+        ref={gridApiRef}
+        rowData={rowData}
+        columnDefs={headers}
+        defaultColDef={{ flex: 1, minWidth: 150, height: "100%" }}
+        onGridReady={onGridReady}
+      />
     </div>
   );
 };

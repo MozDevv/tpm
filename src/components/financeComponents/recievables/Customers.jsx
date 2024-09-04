@@ -6,8 +6,13 @@ import BaseTable from "@/components/baseComponents/BaseTable";
 import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
+import financeEndpoints from "@/components/services/financeApi";
+
+import { API_BASE_URL } from "@/components/services/setupsApi";
+
+import axios from "axios";
 
 const columnDefs = [
   {
@@ -18,21 +23,43 @@ const columnDefs = [
     filter: true,
   },
   {
-    field: "city_name",
-    headerName: "City Name",
+    field: "customerName",
+    headerName: "Customer Name",
     headerClass: "prefix-header",
     filter: true,
     width: 250,
   },
   {
-    field: "country_id",
+    field: "customerEmail",
+    headerName: "Customer Email",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 250,
+  },
+  {
+    field: "customerPhoneNumber",
+    headerName: "Customer Phone Number",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 100,
+  },
+  {
+    field: "countryId",
     headerName: "Country",
     headerClass: "prefix-header",
     filter: true,
+    width: 100,
+  },
+  {
+    field: "cityId",
+    headerName: "City",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 100,
   },
 ];
 
-const Cities = () => {
+const Customers = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -43,7 +70,11 @@ const Cities = () => {
     return data.map((item, index) => ({
       no: index + 1,
       id: item.id,
-      city_name: item.city_name,
+      customerName: item.customerName,
+      customerEmail: item.customerEmail,
+      customerPhoneNumber: item.customerPhone,
+      countryId: item.customerCountry,
+      cityId: item.customerCity,
 
       // roles: item.roles,
     }));
@@ -80,10 +111,11 @@ const Cities = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
   const [countries, setCountries] = React.useState([]);
+  const [cities, setCities] = React.useState([]);
 
   const fetchCountries = async () => {
     try {
-      const res = await apiService.get(endpoints.getCountries, {
+      const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCountries`, {
         "paging.pageSize": 100,
       });
 
@@ -94,23 +126,63 @@ const Cities = () => {
       console.log(error.response);
     }
   };
+  const fetchCities = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCity`, {
+        "paging.pageSize": 100,
+      });
+
+      setCities(res.data.data);
+
+      console.log("countries", res.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   useEffect(() => {
     fetchCountries();
+    fetchCities();
   }, []);
 
-  const title = clickedItem ? "City" : "Create New City";
+  const title = clickedItem ? clickedItem?.customerName : "Create New Customer";
 
   const fields = [
-    { name: "city_name", label: "Name", type: "text", required: true },
     {
-      name: "country_id",
+      name: "customerName",
+      label: "Customer Name",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "customerEmail",
+      label: "Customer Email",
+      type: "text",
+      required: true,
+    },
+
+    {
+      name: "customerPhoneNumber",
+      label: "Customer Phone Number",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "countryId",
       label: "Country",
       type: "select",
-      required: true,
-      options: countries.map((item) => ({
-        id: item.id,
-        name: item.country_name,
+      options: countries.map((type) => ({
+        id: type.id,
+        name: type.country_name,
+      })),
+    },
+    {
+      name: "cityId",
+      label: "City",
+      type: "select",
+      options: cities.map((type) => ({
+        id: type.id,
+        name: type.city_name,
       })),
     },
   ];
@@ -124,13 +196,13 @@ const Cities = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteCity(clickedItem?.id)}
+        deleteApiEndpoint={financeEndpoints.deleteCustomer(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateCity}
+            apiEndpoint={financeEndpoints.updateCustomer}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -139,7 +211,7 @@ const Cities = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createCity}
+            apiEndpoint={financeEndpoints.addCustomer}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -147,22 +219,23 @@ const Cities = () => {
           />
         )}
       </BaseCard>
+
       <BaseTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getCities}
+        fetchApiEndpoint={financeEndpoints.getCustomers}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Cities"
-        currentTitle="Cities"
+        breadcrumbTitle="Customers"
+        currentTitle="Customers"
       />
     </div>
   );
 };
 
-export default Cities;
+export default Customers;

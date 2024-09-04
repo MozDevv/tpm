@@ -1,14 +1,18 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
 import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
+
+import { API_BASE_URL } from "@/components/services/setupsApi";
+
+import axios from "axios";
 
 const columnDefs = [
   {
@@ -39,20 +43,20 @@ const columnDefs = [
     filter: true,
     width: 100,
   },
-  {
-    field: "countryId",
-    headerName: "Country",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-  {
-    field: "cityId",
-    headerName: "City",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
+  // {
+  //   field: "countryId",
+  //   headerName: "Country",
+  //   headerClass: "prefix-header",
+  //   filter: true,
+  //   width: 100,
+  // },
+  // {
+  //   field: "cityId",
+  //   headerName: "City",
+  //   headerClass: "prefix-header",
+  //   filter: true,
+  //   width: 100,
+  // },
 ];
 
 const Vendor = () => {
@@ -106,6 +110,40 @@ const Vendor = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [countries, setCountries] = React.useState([]);
+  const [cities, setCities] = React.useState([]);
+
+  const fetchCountries = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCountries`, {
+        "paging.pageSize": 100,
+      });
+
+      setCountries(res.data.data);
+
+      console.log("countries", res.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+  const fetchCities = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCity`, {
+        "paging.pageSize": 100,
+      });
+
+      setCities(res.data.data);
+
+      console.log("countries", res.data.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    fetchCountries();
+    fetchCities();
+  }, []);
 
   const title = clickedItem ? clickedItem?.vendorName : "Create New Vendor";
 
@@ -131,14 +169,21 @@ const Vendor = () => {
     {
       name: "countryId",
       label: "Country",
-      type: "text",
-      required: true,
+      type: "select",
+      options: countries.map((country) => ({
+        id: country.id,
+        name: country.country_name,
+      })),
     },
     {
       name: "cityId",
       label: "City",
-      type: "text",
+      type: "select",
       required: true,
+      options: cities.map((city) => ({
+        id: city.id,
+        name: city.city_name,
+      })),
     },
   ];
 
@@ -157,7 +202,7 @@ const Vendor = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.updateVendor(clickedItem.id)}
+            apiEndpoint={financeEndpoints.updateVendor}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -174,19 +219,20 @@ const Vendor = () => {
           />
         )}
       </BaseCard>
+
       <BaseTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getVendors}
+        fetchApiEndpoint={financeEndpoints.getVendors}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Vendor"
-        currentTitle="Vendor"
+        breadcrumbTitle="Vendors"
+        currentTitle="Vendors"
       />
     </div>
   );

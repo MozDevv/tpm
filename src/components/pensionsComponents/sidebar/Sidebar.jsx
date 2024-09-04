@@ -197,21 +197,29 @@ function Sidebar() {
           ],
         },
         {
-          title: "Vendor",
-          path: "/pensions/finance/vendor",
+          title: "Recievables",
+          subChildren: [
+            {
+              title: "Customers",
+              path: "/pensions/finance/customers",
+            },
+          ],
         },
+        {
+          title: "Payables",
+          subChildren: [
+            {
+              title: "Vendors",
+              path: "/pensions/finance/vendor",
+            },
+          ],
+        },
+
         {
           title: "Payments",
           path: "/finance/payments",
         },
-        {
-          title: "Recievables",
-          path: "/finance/payments",
-        },
-        {
-          title: "Payables",
-          path: "/finance/recievables",
-        },
+
         // {
         //   title: "Verification",
         //   path: "/pensions/claims-approval",

@@ -60,3 +60,7 @@ a:hover {
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   font-weight: 500;
 }
+.ag-theme-quartz .ag-cell-inline-editing {
+  height: 50px;
+  box-shadow: none;
+}

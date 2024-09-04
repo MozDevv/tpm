@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
-import PostAndNature from "./PostAndNature";
+
 import PensionableSalary from "./PensionableSalary";
 import PeriodsOfAbsence from "./PeriodsOfAbscence";
 import Spinner from "@/components/spinner/Spinner";
@@ -12,6 +12,7 @@ import preClaimsEndpoints, {
 } from "@/components/services/preclaimsApi";
 import MixedServicePost from "./MixedServicePost";
 import { useMda } from "@/context/MdaContext";
+import PostAndNature from "./PostAndNature copy";
 
 function AddPensionersWorkHistory({
   id,

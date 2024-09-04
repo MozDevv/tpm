@@ -19,6 +19,7 @@ import { Edit, Delete, Visibility } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
+import EditableTable from "@/components/baseComponents/EditableTable";
 
 function PensionableSalary({ id, status }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -37,6 +38,7 @@ function PensionableSalary({ id, status }) {
       setPensionableSalary(res.data.data);
       setLoading(false);
       console.log("Pensionable Salary", res.data.data);
+      return res.data.data;
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -58,8 +60,8 @@ function PensionableSalary({ id, status }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
-    const formattedFormData = { ...formData, prospective_pensioner_id: id };
+  const handleSubmit = async (data) => {
+    const formattedFormData = { ...data, prospective_pensioner_id: id };
 
     // Format date fields
     Object.keys(formData).forEach((key) => {
@@ -73,7 +75,7 @@ function PensionableSalary({ id, status }) {
     try {
       let res;
 
-      if (isEditMode) {
+      if (data.id) {
         res = await apiService.post(
           preClaimsEndpoints.updatePensionableSalary,
           {
@@ -104,8 +106,10 @@ function PensionableSalary({ id, status }) {
             message.error(`${error.field}: ${err}`);
           });
         });
+        throw new Error("An error occurred while submitting the data.");
       }
     } catch (error) {
+      throw error;
       console.error("Submission error:", error);
       message.error("An error occurred while submitting the data.");
     }
@@ -142,135 +146,149 @@ function PensionableSalary({ id, status }) {
   const [recordId, setRecordId] = useState();
 
   return (
-    <div>
-      <Dialog
-        open={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-      >
-        <div className="p-6">
-          <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            Delete Confirmation
-          </h1>
-          <p className="text-gray-600 mb-3">
-            Are you sure you want to delete this record?
-          </p>
-          <div className="flex justify-between w-full mt-5">
-            <Button
-              variant="outlined"
-              onClick={() => setOpenDeleteDialog(false)}
-              sx={{ mr: 2 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleDelete}
-              sx={{ backgroundColor: "crimson", color: "white" }}
-              disabled={status === 5}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <div className="p-6">
-          <h1 className="text-base font-semibold text-primary py-2 mb-3">
-            {isEditMode ? "Edit" : "Add"} Pensionable Salary
-          </h1>
-          <div className="flex flex-col gap-3">
-            {fields.map((field) => (
-              <div key={field.value}>
-                <label className="text-xs font-semibold text-gray-600">
-                  {field.label}
-                </label>
-                <input
-                  type={field.type}
-                  name={field.value}
-                  value={formData[field.value] || ""}
-                  onChange={handleInputChange}
-                  className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
-                />
-              </div>
-            ))}
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              sx={{ mt: 4, display: status === 5 ? "none" : "block" }}
-            >
-              {isEditMode ? "Update" : "Submit"}
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-      <p className="my-6 mt-5 text-primary text-[16px] font-semibold font-montserrat">
-        Pensionable Salary
-      </p>
-      <Button
-        variant="contained"
-        sx={{
-          mt: 2,
-          mb: 2,
-          display: status === 5 ? "none" : "block",
-        }}
-        onClick={() => {
-          setFormData({});
-          setIsEditMode(false);
-          setOpen(true);
-        }}
-      >
-        Add Pensionable Salary
-      </Button>
-      <TableContainer
-        //component={Paper}
-        sx={{ boxShadow: "none" }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Start Date</TableCell>
-              <TableCell>End Date</TableCell>
-              <TableCell>Salary</TableCell>
-              <TableCell>Pensionable Allowance</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {pensionableSalary.map((item, index) => (
-              <TableRow key={item.prospective_pensioner_id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  {new Date(item.start_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(item.end_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{item.salary}</TableCell>
-                <TableCell>{item.pensionable_allowance}</TableCell>
-                <TableCell sx={{ display: "flex", flexDirection: "row" }}>
-                  <IconButton onClick={() => handleEdit(item)}>
-                    {status === 5 ? (
-                      <Visibility />
-                    ) : (
-                      <Edit sx={{ color: "gray" }} />
-                    )}
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      setOpenDeleteDialog(true);
-                      setRecordId(item.id);
-                    }}
-                    sx={{ display: status === 5 ? "none" : "block" }}
-                  >
-                    <Delete sx={{ color: "crimson" }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    // <div>
+    //   <Dialog
+    //     open={openDeleteDialog}
+    //     onClose={() => setOpenDeleteDialog(false)}
+    //   >
+    //     <div className="p-6">
+    //       <h1 className="text-base font-semibold text-primary py-2 mb-3">
+    //         Delete Confirmation
+    //       </h1>
+    //       <p className="text-gray-600 mb-3">
+    //         Are you sure you want to delete this record?
+    //       </p>
+    //       <div className="flex justify-between w-full mt-5">
+    //         <Button
+    //           variant="outlined"
+    //           onClick={() => setOpenDeleteDialog(false)}
+    //           sx={{ mr: 2 }}
+    //         >
+    //           Cancel
+    //         </Button>
+    //         <Button
+    //           variant="contained"
+    //           onClick={handleDelete}
+    //           sx={{ backgroundColor: "crimson", color: "white" }}
+    //           disabled={status === 5}
+    //         >
+    //           Delete
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </Dialog>
+    //   <Dialog open={open} onClose={() => setOpen(false)}>
+    //     <div className="p-6">
+    //       <h1 className="text-base font-semibold text-primary py-2 mb-3">
+    //         {isEditMode ? "Edit" : "Add"} Pensionable Salary
+    //       </h1>
+    //       <div className="flex flex-col gap-3">
+    //         {fields.map((field) => (
+    //           <div key={field.value}>
+    //             <label className="text-xs font-semibold text-gray-600">
+    //               {field.label}
+    //             </label>
+    //             <input
+    //               type={field.type}
+    //               name={field.value}
+    //               value={formData[field.value] || ""}
+    //               onChange={handleInputChange}
+    //               className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
+    //             />
+    //           </div>
+    //         ))}
+    //         <Button
+    //           variant="contained"
+    //           onClick={handleSubmit}
+    //           sx={{ mt: 4, display: status === 5 ? "none" : "block" }}
+    //         >
+    //           {isEditMode ? "Update" : "Submit"}
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </Dialog>
+    //   <p className="my-6 mt-5 text-primary text-[16px] font-semibold font-montserrat">
+    //     Pensionable Salary
+    //   </p>
+    //   <Button
+    //     variant="contained"
+    //     sx={{
+    //       mt: 2,
+    //       mb: 2,
+    //       display: status === 5 ? "none" : "block",
+    //     }}
+    //     onClick={() => {
+    //       setFormData({});
+    //       setIsEditMode(false);
+    //       setOpen(true);
+    //     }}
+    //   >
+    //     Add Pensionable Salary
+    //   </Button>
+    //   <TableContainer
+    //     //component={Paper}
+    //     sx={{ boxShadow: "none" }}
+    //   >
+    //     <Table>
+    //       <TableHead>
+    //         <TableRow>
+    //           <TableCell>No.</TableCell>
+    //           <TableCell>Start Date</TableCell>
+    //           <TableCell>End Date</TableCell>
+    //           <TableCell>Salary</TableCell>
+    //           <TableCell>Pensionable Allowance</TableCell>
+    //           <TableCell>Actions</TableCell>
+    //         </TableRow>
+    //       </TableHead>
+    //       <TableBody>
+    //         {pensionableSalary.map((item, index) => (
+    //           <TableRow key={item.prospective_pensioner_id}>
+    //             <TableCell>{index + 1}</TableCell>
+    //             <TableCell>
+    //               {new Date(item.start_date).toLocaleDateString()}
+    //             </TableCell>
+    //             <TableCell>
+    //               {new Date(item.end_date).toLocaleDateString()}
+    //             </TableCell>
+    //             <TableCell>{item.salary}</TableCell>
+    //             <TableCell>{item.pensionable_allowance}</TableCell>
+    //             <TableCell sx={{ display: "flex", flexDirection: "row" }}>
+    //               <IconButton onClick={() => handleEdit(item)}>
+    //                 {status === 5 ? (
+    //                   <Visibility />
+    //                 ) : (
+    //                   <Edit sx={{ color: "gray" }} />
+    //                 )}
+    //               </IconButton>
+    //               <IconButton
+    //                 onClick={() => {
+    //                   setOpenDeleteDialog(true);
+    //                   setRecordId(item.id);
+    //                 }}
+    //                 sx={{ display: status === 5 ? "none" : "block" }}
+    //               >
+    //                 <Delete sx={{ color: "crimson" }} />
+    //               </IconButton>
+    //             </TableCell>
+    //           </TableRow>
+    //         ))}
+    //       </TableBody>
+    //     </Table>
+    //   </TableContainer>
+    // </div>
+
+    <div className="mt-4">
+      <EditableTable
+        fetchData={fetchPensionableSalary}
+        fields={fields}
+        initialData={pensionableSalary}
+        title="Pensionable Salary"
+        // validators={validators}
+        handleSave={handleSubmit}
+        handleUpdate={handleSubmit}
+        //handleError={handleError}
+        //validationErrorsFromApi={validationErrors}
+      />
     </div>
   );
 }

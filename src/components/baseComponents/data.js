@@ -80,10 +80,7 @@ export const menuItems = [
           },
         ],
       },
-      {
-        title: "Vendor",
-        path: "/pensions/finance/vendor",
-      },
+
       {
         title: "Payments",
         path: "/finance/payments",
@@ -91,10 +88,22 @@ export const menuItems = [
       {
         title: "Recievables",
         path: "/finance/payments",
+        subChildren: [
+          {
+            title: "Customers",
+            path: "/pensions/finance/customers",
+          },
+        ],
       },
       {
         title: "Payables",
         path: "/finance/recievables",
+        subChildren: [
+          {
+            title: "Vendors",
+            path: "/pensions/finance/vendor",
+          },
+        ],
       },
       // {
       //   title: "Verification",

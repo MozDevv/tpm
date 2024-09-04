@@ -64,6 +64,11 @@ const financeEndpoints = {
   getVendors: "/Accounts/GetVendors",
   updateVendor: "/Accounts/UpdateVendor",
   deleteVendor: (id) => `/Accounts/DeleteVendor?id=${id}`,
+
+  addCustomer: "/Accounts/AddCustomer",
+  getCustomers: "/Accounts/GetCustomer",
+  updateCustomer: "/Accounts/UpdateCustomer",
+  deleteCustomer: (id) => `/Accounts/DeleteCustomer?id=${id}`,
 };
 
 export const apiService = {

@@ -12,6 +12,8 @@ import { AgGridReact } from "ag-grid-react";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import EditableTable from "@/components/baseComponents/EditableTable";
 
 const columnDefs = [
   {
@@ -185,7 +187,7 @@ const MaintenanceCase = (id) => {
 
   const title = clickedItem ? "Maintenance Case" : "Create a  Maintenance Case";
 
-  const fields = [
+  const fields2 = [
     {
       name: "maintainee_name",
       label: "Name",
@@ -289,6 +291,87 @@ const MaintenanceCase = (id) => {
     fetchDepartments();
   }, []);
 
+  const saveRow = (data) => {
+    console.log("Saved row data:", data);
+  };
+  const fields = [
+    { title: "First Name", value: "firstName", type: "text" },
+    { title: "Last Name", value: "lastName", type: "text" },
+    { title: "ID", value: "id", type: "number" },
+    { title: "Date of Birth", value: "dob", type: "date" },
+    {
+      title: "Role",
+      value: "role",
+      type: "select",
+      options: ["Admin", "User", "Guest"],
+    },
+    { title: "Email", value: "email", type: "text" },
+  ];
+
+  // Initial row data
+  const initialData = [
+    {
+      firstName: "John",
+      lastName: "Doe",
+      id: 1,
+      dob: new Date(),
+      role: 1,
+      email: "john.doe@example.com",
+    },
+    {
+      firstName: "Jane",
+      lastName: "Smith",
+      id: 2,
+      dob: new Date(),
+      role: 2,
+      email: "jane.smith@example.com",
+    },
+  ];
+
+  // Validator functions for each field
+  const validators = {
+    firstName: (value) => {
+      if (!value || value.length < 2)
+        return "First Name must be at least 2 characters.";
+      return null;
+    },
+    lastName: (value) => {
+      if (!value || value.length < 2)
+        return "Last Name must be at least 2 characters.";
+      return null;
+    },
+    email: (value) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return "Invalid email format.";
+      return null;
+    },
+    id: (value) => {
+      if (!value || isNaN(value)) return "ID must be a number.";
+      return null;
+    },
+    dob: (value) => {
+      if (!value || isNaN(new Date(value).getTime())) return "Invalid date.";
+      return null;
+    },
+  };
+
+  // Save function
+  const handleSave = (data) => {
+    console.log("Data saved:", data);
+    // Perform save operation, such as API call or local storage update
+  };
+
+  // Update function for handling data changes
+  const handleUpdate = (updatedData) => {
+    console.log("Data updated:", updatedData);
+    // Perform update operation, such as API call or state update
+  };
+
+  // Error handling function
+  const handleError = (errorMessage, params) => {
+    alert(`Error in field "${params.colDef.headerName}": ${errorMessage}`);
+    // Additional error handling actions can be added here
+  };
   return (
     <div className="relative">
       <BaseCard
@@ -349,7 +432,7 @@ const MaintenanceCase = (id) => {
           overflowY: "auto",
         }}
       >
-        <AgGridReact
+        {/* <AgGridReact
           columnDefs={columnDefs}
           rowData={filteredData}
           pagination={false}
@@ -369,7 +452,17 @@ const MaintenanceCase = (id) => {
             // setUserClicked(e.data);
             //handleClickUser(e.data);
           }}
+        /> */}
+        <EditableTable
+          fields={fields}
+          initialData={initialData}
+          validators={validators}
+          handleSave={handleSave}
+          handleUpdate={handleUpdate}
+          handleError={handleError}
         />
+
+        <EditableTable />
       </div>
     </div>
   );
