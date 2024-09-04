@@ -82,10 +82,8 @@ const EditableTable = ({
       columnDef.valueFormatter = (params) =>
         params.value ? new Date(params.value).toLocaleDateString("en-us") : "";
 
-      // Parser to handle shorthand date inputs
       columnDef.valueParser = (params) => {
         const parseDate = (input) => {
-          // Example input: 22024 should parse to 2/20/2024
           if (/^\d{5,6}$/.test(input)) {
             const month = parseInt(input.slice(0, 2), 10) - 1;
             const day = parseInt(input.slice(2, 4), 10);
@@ -93,16 +91,14 @@ const EditableTable = ({
               input.length === 5 ? `20${input.slice(4)}` : input.slice(4);
             const parsedDate = new Date(year, month, day);
 
-            // Check if the date is valid
             if (!isNaN(parsedDate.getTime())) {
-              return parsedDate.toISOString(); // Return ISO string to store in the grid
+              return parsedDate.toISOString();
             }
           }
 
-          // Fall back to the default behavior
           const fallbackDate = new Date(input);
           return isNaN(fallbackDate.getTime())
-            ? input // If not a valid date, return input as is
+            ? input
             : fallbackDate.toISOString();
         };
 
@@ -215,13 +211,11 @@ const EditableTable = ({
       console.log("Edited data:", editedData);
 
       const newRow = fields.reduce((acc, field) => {
-        acc[field.value] = ""; // Initialize new row values based on fields
+        acc[field.value] = "";
         return acc;
       }, {});
 
-      // Update the row data state
       setRowData((prevRowData) => {
-        // Initialize prevRowData if it's undefined
         if (!prevRowData) {
           console.error(
             "Previous row data is undefined. Initializing with an empty array."
@@ -229,7 +223,6 @@ const EditableTable = ({
           prevRowData = [];
         }
 
-        // Add the new row to the existing data
         const updatedRowData = [...prevRowData, newRow];
         return updatedRowData;
       });

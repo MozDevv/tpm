@@ -276,7 +276,13 @@ const endpoints = {
   getCities: "/api/Setups/GetCity",
   updateCity: "/api/Setups/UpdateCity",
   deleteCity: (id) => `/api/Setups/DeleteCity?id=${id}`,
-  //getPro
+
+  createGovernmentSalary: "/api/ProspectivePensioners/CreateGovernmentSalary",
+  getGovernmentSalary: (id) =>
+    `/api/ProspectivePensioners/GetGovernmentSalary?prospective_pensioner_id=${id}`,
+  updateGovernmentSalary: "/api/ProspectivePensioners/UpdateGovernmentSalary",
+  deleteGovernmentSalary: (id) =>
+    `/api/ProspectivePensioners/DeleteGovernmentSalary/${id}`,
 };
 
 export const apiService = {

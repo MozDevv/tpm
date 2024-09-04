@@ -13,6 +13,7 @@ import WomenAndChildren from "../wcps/WomenAndChildren";
 import WcpsCard from "../wcps/WcpsCard";
 import { useMda } from "@/context/MdaContext";
 import Liabilities from "../liabilities/Liabilities";
+import GovernmentSalary from "../governmentSalary/GovernmentSalary";
 
 const { TabPane } = Tabs;
 
@@ -166,6 +167,16 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         <WcpsCard id={clickedItem?.id} />
                       </TabPane>
                     )}
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Government Salary
+                        </span>
+                      }
+                      key="9"
+                    >
+                      <GovernmentSalary id={clickedItem?.id} />
+                    </TabPane>
 
                     {activeCapName === "CAP196" && (
                       <TabPane
@@ -174,7 +185,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                             Parliament Contributions
                           </span>
                         }
-                        key="9"
+                        key="10"
                       >
                         <ParliamentContributions id={clickedItem?.id} />
                       </TabPane>
@@ -186,7 +197,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                             Liabilities
                           </span>
                         }
-                        key="9"
+                        key="11"
                       >
                         <Liabilities id={clickedItem?.id} />
                       </TabPane>
