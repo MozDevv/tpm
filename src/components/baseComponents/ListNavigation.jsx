@@ -187,7 +187,7 @@ const ListNavigation = ({ handlers, status }) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: "20px",
+        marginTop: "15px",
         paddingRight: "20px",
         marginLeft: "10px",
       }}

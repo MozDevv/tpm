@@ -921,6 +921,7 @@ const Preclaims = ({ status }) => {
                 style={{
                   height: "70vh",
                   padding: "20px",
+                  marginLeft: "-10px",
                   width: openFilter ? "calc(100vw - 300px)" : "100vw",
                 }}
               >
