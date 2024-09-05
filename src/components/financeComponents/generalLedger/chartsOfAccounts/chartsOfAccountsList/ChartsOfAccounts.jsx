@@ -47,6 +47,7 @@ function ChartsOfAccounts() {
     },
     { headerName: "Account Code", field: "accountCode" },
     { headerName: "Amount", field: "amount" },
+    { headerName: "Budget Amount", field: "budgetAmount" },
     { headerName: "Sub Group Name", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting" },
@@ -129,6 +130,10 @@ function ChartsOfAccounts() {
       name: "amount",
       label: "Amount",
       type: "number",
+    },
+    {
+      name: "budgetAmount",
+      label: "Budget Amount",
     },
     {
       name: "subGroupName",
@@ -258,7 +263,7 @@ function ChartsOfAccounts() {
       </BaseCard>
 
       <ListNavigation handlers={handlers} />
-      <div className="mt-10">
+      <div className="mt-6">
         <AgGridReact
           columnDefs={colDefs}
           rowData={rowData}
