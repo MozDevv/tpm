@@ -187,9 +187,9 @@ const ListNavigation = ({ handlers, status }) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: "25px",
+        marginTop: "20px",
         paddingRight: "20px",
-        marginLeft: "20px",
+        marginLeft: "10px",
       }}
     >
       <div className="flex gap-6 items-center">{renderButtons()}</div>

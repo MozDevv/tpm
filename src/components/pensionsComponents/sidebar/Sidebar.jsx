@@ -85,8 +85,6 @@ function Sidebar() {
       );
 
       setFetchedMenuItems(res.data.data);
-
-      console.log("sidebar Items", res.data);
     } catch (error) {
       if (error.response) {
         // Server responded with a status other than 200 range

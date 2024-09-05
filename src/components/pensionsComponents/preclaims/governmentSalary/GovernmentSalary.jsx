@@ -66,8 +66,11 @@ function GovernmentSalary({ id }) {
         fields={fields}
         id={id}
         idLabel="prospective_pensioner_id"
+        getApiService={apiService.get}
+        postApiService={apiService.post}
+        putApiService={apiService.put}
         apiService={apiService}
-        getEndpoint={endpoints.getGovernmentSalary}
+        getEndpoint={endpoints.getGovernmentSalary(id)}
         postEndpoint={endpoints.createGovernmentSalary}
         putEndpoint={endpoints.updateGovernmentSalary}
         setSelectedValue={setSelectedDesignation}

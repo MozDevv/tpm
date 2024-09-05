@@ -206,7 +206,7 @@ const BaseTable = ({
             {breadcrumbTitle}
           </h6>
           <CustomBreadcrumbsList currentTitle={currentTitle} />
-          <div className="w-[80vw]">
+          <div className="w-[100vw]">
             <ListNavigation
               handlers={!isSecondaryTable ? adjustedHandlers : handlers}
             />

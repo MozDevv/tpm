@@ -16,6 +16,9 @@ const BaseInputTable = ({
   idLabel,
   initialData = [],
   apiService,
+  putApiService,
+  postApiService,
+  getApiService,
   postEndpoint,
   putEndpoint,
   getEndpoint,
@@ -36,18 +39,24 @@ const BaseInputTable = ({
   const [rowErrors, setRowErrors] = useState({});
 
   const fetchData = async () => {
+    console.log(
+      "Fetching Data from Editable Table",
+      getEndpoint,
+      getApiService
+    );
     try {
-      const res = await apiService.get(getEndpoint);
-      return res.data.data;
+      const res = await getApiService(getEndpoint);
+      if (res.status === 200) {
+        console.log("Fecthed Data from Editable Table", res.data.data);
+        setRowData(res.data.data);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchData().then((data) => {
-      setRowData(data);
-    });
+    fetchData();
   }, []);
 
   const gridApiRef = useRef(null);
@@ -127,7 +136,7 @@ const BaseInputTable = ({
     });
     try {
       if (data.id) {
-        const res = await apiService.put(putEndpoint, {
+        const res = await putApiService(putEndpoint, {
           ...formattedFormData,
           id: data.id,
         });
@@ -136,10 +145,16 @@ const BaseInputTable = ({
           refreshData();
 
           message.success("Record updated successfully");
-        } else if (res.data.validationErrors.length > 0) {
+        } else if (
+          res?.data?.validationErrors &&
+          res?.validationErrors?.length > 0
+        ) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
+            });
+            setRowErrors((prevErrors) => {
+              return { ...prevErrors, [data.id]: true };
             });
           });
         } else if (
@@ -147,27 +162,36 @@ const BaseInputTable = ({
           !res.data.succeeded &&
           res.data.message.length > 0
         ) {
+          setRowErrors((prevErrors) => {
+            return { ...prevErrors, [data.id]: true };
+          });
           message.error(res.data.message[0]);
           throw new Error(res.data.message[0]);
         }
       } else {
-        const res = await apiService.post(postEndpoint, formattedFormData);
+        const res = await postApiService(postEndpoint, formattedFormData);
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
 
           message.success("Record added successfully");
         }
-        if (res.data.validationErrors.length > 0) {
+        if (res?.data?.validationErrors && res?.validationErrors?.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
             });
           });
+          setRowErrors((prevErrors) => {
+            return { ...prevErrors, [data.id]: true };
+          });
           throw new Error("An error occurred while submitting the data.");
         }
       }
     } catch (error) {
+      setRowErrors((prevErrors) => {
+        return { ...prevErrors, [data.id]: true };
+      });
       console.log(error);
       throw error;
     }
@@ -177,11 +201,12 @@ const BaseInputTable = ({
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
-      width: 20,
+      width: 10,
       headerCheckboxSelectionFilteredOnly: true,
-      maxHeight: 30,
+      maxWidth: 40,
       flex: 0,
       suppressSizeToFit: true,
+      cellStyle: { width: "50px", borderRight: "1px solid #f0f0f0" },
     },
     ...fields.map((col, index) => {
       let columnDef = {
@@ -201,7 +226,9 @@ const BaseInputTable = ({
               border: "1px solid red",
             };
           }
-          return {};
+          return {
+            borderRight: "1px solid #f0f0f0",
+          };
         },
       };
 
@@ -296,28 +323,20 @@ const BaseInputTable = ({
         }
 
         if (isRowComplete(data)) {
-          try {
-            if (data.id) {
-              await handleSave(data);
-            } else {
-              await handleSave(data);
-            }
-            await refreshData();
-
-            message.success("Row saved successfully!");
-
-            setRowErrors((prevErrors) => {
-              const updatedErrors = { ...prevErrors };
-              delete updatedErrors[data.id];
-              return updatedErrors;
-            });
-          } catch (error) {
-            message.error("Error saving row: " + error.message);
-
-            setRowErrors((prevErrors) => {
-              return { ...prevErrors, [data.id]: true };
-            });
+          if (data.id) {
+            await handleSave(data);
+          } else {
+            await handleSave(data);
           }
+          await refreshData();
+
+          message.success("Row saved successfully!");
+
+          setRowErrors((prevErrors) => {
+            const updatedErrors = { ...prevErrors };
+            delete updatedErrors[data.id];
+            return updatedErrors;
+          });
         }
       };
 
@@ -417,6 +436,7 @@ const BaseInputTable = ({
           }}
           onGridReady={onGridReady}
           domLayout="autoHeight"
+          singleClickEdit={true}
         />
       </div>
     </div>

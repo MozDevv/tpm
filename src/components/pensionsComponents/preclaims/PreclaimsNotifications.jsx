@@ -30,8 +30,6 @@ function PreclaimsNotifications({
 
   const { mdaId } = useMda();
 
-  console.log("selected Rows notifi *******", selectedRows);
-
   const handleCancel = () => {
     setOpenNotification(false);
   };

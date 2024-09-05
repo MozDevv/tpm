@@ -402,8 +402,6 @@ const Preclaims = ({ status }) => {
 
   const { auth } = useAuth();
 
-  console.log("auth ****************", auth?.user?.permissions);
-
   const handleFilters = async () => {
     const filter =
       filterColumn && filterValue && (status || status === 0)
@@ -507,7 +505,6 @@ const Preclaims = ({ status }) => {
         `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
       );*/
       if (res.data.succeeded === true) {
-        console.log(res.data.data);
         const rawData = res.data.data;
 
         // let filteredMinistriesData = [];
@@ -539,8 +536,6 @@ const Preclaims = ({ status }) => {
           console.log("first, state", status);
         }
       }
-
-      console.log("mappedData", res.data.data);
     } catch (error) {
       console.error("Error fetching preclaims:", error);
       return []; // Return an empty array or handle error as needed

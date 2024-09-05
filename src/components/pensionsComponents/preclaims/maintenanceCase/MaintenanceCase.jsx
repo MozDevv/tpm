@@ -432,7 +432,7 @@ const MaintenanceCase = (id) => {
           overflowY: "auto",
         }}
       >
-        {/* <AgGridReact
+        <AgGridReact
           columnDefs={columnDefs}
           rowData={filteredData}
           pagination={false}
@@ -452,17 +452,7 @@ const MaintenanceCase = (id) => {
             // setUserClicked(e.data);
             //handleClickUser(e.data);
           }}
-        /> */}
-        <EditableTable
-          fields={fields}
-          initialData={initialData}
-          validators={validators}
-          handleSave={handleSave}
-          handleUpdate={handleUpdate}
-          handleError={handleError}
         />
-
-        <EditableTable />
       </div>
     </div>
   );
