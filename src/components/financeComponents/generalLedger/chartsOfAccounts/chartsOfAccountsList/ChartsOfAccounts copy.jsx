@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { AgGridReact } from "ag-grid-react"; // Import Ag-Grid
-import "ag-grid-community/styles/ag-grid.css"; // Import Ag-Grid CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Import Ag-Grid Theme CSS
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Divider,
+} from "@mui/material";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
 import "./chartsOfAccounts.css"; // Import the stylesheet
 import ListNavigation from "@/components/baseComponents/ListNavigation";
@@ -10,59 +17,126 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
-  const [openBaseCard, setOpenBaseCard] = useState(false);
-  const [clickedItem, setClickedItem] = useState(null);
-  const [accountTypes, setAccountTypes] = useState([]);
-  const [groupTypes, setGroupTypes] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState(null);
-
-  const colDefs = [
-    {
-      headerName: "Account No.",
-      field: "accountNo",
-      width: 150,
-      cellStyle: ({ data }) => ({
-        paddingLeft: "10px",
-        textDecoration:
-          data.accountTypeName !== "POSTING" ? "underline" : "none",
-        color: data.accountTypeName !== "POSTING" ? "#006990" : "inherit",
-
-        fontWeight: data.accountTypeName !== "POSTING" ? 700 : 600,
-      }),
-    },
-    {
-      headerName: "Account Name",
-      field: "accountName",
-      cellStyle: ({ data }) => ({
-        paddingLeft:
-          data.accountTypeName === "POSTING"
-            ? "25px"
-            : data.accountTypeName === "BEGIN_TOTAL" ||
-              data.accountTypeName === "END_TOTAL"
-            ? "15px"
-            : "4px",
-        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
-        fontSize: "14px",
-      }),
-    },
+  const [colDefs] = useState([
+    { headerName: "Account No.", field: "accountNo" },
+    { headerName: "Account Name", field: "accountName" },
     { headerName: "Account Code", field: "accountCode" },
     { headerName: "Amount", field: "amount" },
     { headerName: "Sub Group Name", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting" },
     { headerName: "Reconciliation", field: "isReconciliation" },
-  ];
+  ]);
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 100,
-      });
+      const response = await apiService.get(financeEndpoints.fetchGlAccounts);
+
       setRowData(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchGlAccounts();
+  }, []);
+
+  const handlers = {
+    filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
+    openInExcel: () => exportData(),
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => setOpenNotification(true),
+  };
+
+  const renderTableCell = (field, value, accountTypeName) => {
+    const isAccountName = field === "accountName";
+    const isPostingType = accountTypeName === "POSTING";
+    const isBeginTotalorEndTotal =
+      accountTypeName === "END_TOTAL" || accountTypeName === "BEGIN_TOTAL";
+    const isAccountNo = field === "accountNo";
+    const formattedValue =
+      typeof value === "number" && value === 0 ? "0.00" : value;
+
+    const getCellPadding = (
+      isAccountName,
+      isPostingType,
+      isBeginTotalorEndTotal
+    ) => {
+      if (isAccountName && isPostingType) return "25px";
+      if (isBeginTotalorEndTotal && isAccountName) return "15px";
+      return "4px";
+    };
+
+    return (
+      <TableCell
+        className="table-cell"
+        style={{
+          paddingLeft: getCellPadding(
+            isAccountName,
+            isPostingType,
+            isBeginTotalorEndTotal
+          ),
+          fontWeight: isAccountName && !isPostingType ? "bold" : "normal",
+          fontSize: isAccountName && !isPostingType ? "14px" : "13px",
+        }}
+        key={field}
+      >
+        {isAccountNo && !isPostingType ? (
+          <p className="underline text-primary font-semibold">
+            {formattedValue}
+          </p>
+        ) : typeof value === "boolean" ? (
+          value ? (
+            "Yes"
+          ) : (
+            "No"
+          )
+        ) : (
+          formattedValue
+        )}
+      </TableCell>
+    );
+  };
+
+  const handleRowClick = (row) => {
+    console.log("Row clicked:", row); // Handle row click and access row data here
+    setClickedItem(row);
+    setOpenBaseCard(true);
+  };
+
+  const renderRow = (row) => (
+    <TableRow
+      key={row.id}
+      className="table-row cursor-pointer"
+      onClick={() => handleRowClick(row)}
+    >
+      {colDefs.map((colDef) =>
+        renderTableCell(
+          colDef.field,
+          row[colDef.field],
+          row.accountTypeName // Pass the accountTypeName here
+        )
+      )}
+    </TableRow>
+  );
+
+  const [openBaseCard, setOpenBaseCard] = useState(false);
+  const [clickedItem, setClickedItem] = useState(null);
+  const [accountTypes, setAccountTypes] = useState([]);
+  const [groupTypes, setGroupTypes] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+
+  useEffect(() => {
+    fetchGlAccounts();
+  }, [openBaseCard]);
+
   const fetchAccountTypes = async () => {
     try {
       const response = await apiService.get(
@@ -88,27 +162,8 @@ function ChartsOfAccounts() {
   useEffect(() => {
     fetchAccountTypes();
     fetchAccountGroupTypes();
-    fetchGlAccounts();
   }, []);
 
-  const handlers = {
-    filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
-    openInExcel: () => exportData(),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => setOpenNotification(true),
-  };
-
-  const handleRowClick = (row) => {
-    console.log("Row clicked:", row); // Handle row click and access row data here
-    setClickedItem(row);
-    setOpenBaseCard(true);
-  };
   const fields = [
     {
       name: "accountCode",
@@ -211,14 +266,8 @@ function ChartsOfAccounts() {
     },
   ];
 
-  useEffect(() => {
-    fetchGlAccounts();
-  }, [openBaseCard]);
   return (
-    <div
-      className="ag-theme-quartz mt-[-5px] overflow-hidden mr-5"
-      style={{ height: "100vh", width: "100%" }}
-    >
+    <div className="mt-[-5px] overflow-hidden mr-5">
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -258,18 +307,31 @@ function ChartsOfAccounts() {
       </BaseCard>
 
       <ListNavigation handlers={handlers} />
-      <div className="mt-10">
-        <AgGridReact
-          columnDefs={colDefs}
-          rowData={rowData}
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
-          }}
-          domLayout="autoHeight"
-          rowHeight={40}
-        />
-      </div>
+      <Divider sx={{ my: 2 }} />
+      <TableContainer className="table-container ">
+        <Table className="table pl-2">
+          <TableHead className="table-head">
+            <TableRow>
+              {colDefs.map((colDef) => (
+                <TableCell key={colDef.field} className="table-header py-2">
+                  {colDef.headerName}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody className="table-body">
+            {rowData.length > 0 ? (
+              rowData.map((row) => renderRow(row))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={colDefs.length}>
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }

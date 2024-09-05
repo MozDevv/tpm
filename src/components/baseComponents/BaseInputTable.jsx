@@ -118,9 +118,6 @@ const BaseInputTable = ({
       formattedFormData[idLabel] = id;
     }
 
-    if (formattedFormData.mdaId) {
-      formattedFormData[mdaId] = mdaId;
-    }
     Object.keys(formattedFormData).forEach((key) => {
       if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
@@ -298,25 +295,25 @@ const BaseInputTable = ({
           }
         }
 
-        // Autosave if the row is complete
         if (isRowComplete(data)) {
           try {
             if (data.id) {
-              await handleUpdate(data);
-              refreshData();
+              await handleSave(data);
             } else {
               await handleSave(data);
-              refreshData();
             }
+            await refreshData();
+
             message.success("Row saved successfully!");
 
             setRowErrors((prevErrors) => {
-              const existingErrors = { ...prevErrors };
-              delete existingErrors[data.id];
-              return existingErrors;
+              const updatedErrors = { ...prevErrors };
+              delete updatedErrors[data.id];
+              return updatedErrors;
             });
           } catch (error) {
             message.error("Error saving row: " + error.message);
+
             setRowErrors((prevErrors) => {
               return { ...prevErrors, [data.id]: true };
             });

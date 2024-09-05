@@ -194,97 +194,17 @@ const Deductions = (id) => {
   }, []);
 
   return (
-    // <div className="relative">
-    //   <BaseCard
-    //     openBaseCard={openBaseCard}
-    //     setOpenBaseCard={setOpenBaseCard}
-    //     title={title}
-    //     clickedItem={clickedItem}
-    //     isUserComponent={false}
-    //     deleteApiEndpoint={endpoints.deleteMaintenance(id?.id)}
-    //     deleteApiService={apiService.post}
-    //     isSecondaryCard={true}
-    //   >
-    //     {clickedItem ? (
-    //       <BaseInputCard
-    //         fields={fields}
-    //         apiEndpoint={endpoints.updateMaintenance}
-    //         postApiFunction={apiService.post}
-    //         clickedItem={clickedItem}
-    //         setOpenBaseCard={setOpenBaseCard}
-    //         useRequestBody={true}
-    //       />
-    //     ) : (
-    //       <BaseInputCard
-    //         id={id}
-    //         idLabel="prospective_pensioner_id"
-    //         fields={fields}
-    //         apiEndpoint={endpoints.createDeductions}
-    //         postApiFunction={apiService.post}
-    //         clickedItem={clickedItem}
-    //         setOpenBaseCard={setOpenBaseCard}
-    //         useRequestBody={true}
-    //         isBranch={false}
-    //       />
-    //     )}
-    //   </BaseCard>
-
-    //   <Button
-    //     variant="contained"
-    //     onClick={() => {
-    //       setOpenBaseCard(true);
-    //       setClickedItem(null);
-    //     }}
-    //     sx={{
-    //       my: 2,
-    //     }}
-    //   >
-    //     Add Deductions
-    //   </Button>
-
-    //   <div
-    //     className="ag-theme-quartz"
-    //     style={{
-    //       height: "60vh",
-
-    //       mt: "20px",
-
-    //       overflowY: "auto",
-    //     }}
-    //   >
-    //     <AgGridReact
-    //       columnDefs={columnDefs}
-    //       rowData={filteredData}
-    //       pagination={false}
-    //       domLayout="autoHeight"
-    //       alwaysShowHorizontalScroll={true}
-    //       // paginationPageSize={pageSize}
-    //       onGridReady={(params) => {
-    //         params.api.sizeColumnsToFit();
-    //         // onGridReady(params);
-    //       }}
-    //       // onPaginationChanged={(params) =>
-    //       //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-    //       // }
-    //       onRowClicked={(e) => {
-    //         setOpenBaseCard(true);
-    //         setClickedItem(e.data);
-    //         // setUserClicked(e.data);
-    //         //handleClickUser(e.data);
-    //       }}
-    //     />
-    //   </div>
-    // </div>
     <div className="">
       <BaseInputTable
         title="Deductions"
         fields={fields}
-        id={id}
+        id={id.id}
         idLabel="prospective_pensioner_id"
         apiService={apiService}
         getEndpoint={endpoints.getDeductions(id.id)}
         postEndpoint={endpoints.createDeductions}
         putEndpoint={endpoints.updateGovernmentSalary}
+        passProspectivePensionerId={true}
       />
     </div>
   );
