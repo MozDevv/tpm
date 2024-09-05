@@ -209,12 +209,20 @@ const MaintenanceCase = (id) => {
       type: "email",
       required: true,
     },
-    // {
-    //   value: "phone_number",
-    //   label: "Phone Number",
-    //   type: "number",
-    //   required: true,
-    // },
+    {
+      value: "temporary_postal_address",
+      label: "Temporary Postal Address",
+      type: "number",
+    },
+    {
+      value: "temporaty_postal_code_id",
+      label: "Temporary Postal Code",
+      type: "select",
+      options: postalAddress.map((address) => ({
+        id: address.id,
+        name: address.code,
+      })),
+    },
     {
       value: "permanent_postal_address",
       label: "Permanent Postal Address",

@@ -183,7 +183,7 @@ function PeriodsOfAbsence({ id, status }) {
     <div className="">
       <div className="mt-4">
         <BaseInputTable
-          title="Pensionable Salary"
+          title="Periods of Absence"
           fields={fields}
           id={id}
           idLabel="prospective_pensioner_id"
