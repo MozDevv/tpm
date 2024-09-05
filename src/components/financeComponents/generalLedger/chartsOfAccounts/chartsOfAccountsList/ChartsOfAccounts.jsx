@@ -20,7 +20,8 @@ function ChartsOfAccounts() {
     {
       headerName: "Account No.",
       field: "accountNo",
-      width: 150,
+      width: 120,
+      pinned: "left",
       cellStyle: ({ data }) => ({
         paddingLeft: "10px",
         textDecoration:
@@ -33,6 +34,8 @@ function ChartsOfAccounts() {
     {
       headerName: "Account Name",
       field: "accountName",
+
+      width: 350,
       cellStyle: ({ data }) => ({
         paddingLeft:
           data.accountTypeName === "POSTING"
@@ -45,15 +48,18 @@ function ChartsOfAccounts() {
         fontSize: "14px",
       }),
     },
-    { headerName: "Account Code", field: "accountCode" },
-    { headerName: "Amount", field: "amount" },
-    { headerName: "Budget Amount", field: "budgetAmount" },
+    { headerName: "Account Code", field: "accountCode", width: 150 },
+    { headerName: "Amount", field: "amount", width: 150 },
+    { headerName: "Budget Amount", field: "budgetAmount", width: 150 },
     { headerName: "Sub Group Name", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
-    { headerName: "Direct Posting", field: "isDirectPosting" },
-    { headerName: "Reconciliation", field: "isReconciliation" },
+    { headerName: "Direct Posting", field: "isDirectPosting", width: 90 },
+    { headerName: "Reconciliation", field: "isReconciliation", width: 90 },
   ];
 
+  const onGridReady = (params) => {
+    params.api.sizeColumnsToFit();
+  };
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
@@ -221,7 +227,7 @@ function ChartsOfAccounts() {
   }, [openBaseCard]);
   return (
     <div
-      className="ag-theme-quartz mt-[-5px] overflow-hidden mr-5"
+      className="ag-theme-quartz mt-[15px] overflow-hidden mr-5"
       style={{ height: "100vh", width: "100%" }}
     >
       <BaseCard
@@ -271,6 +277,7 @@ function ChartsOfAccounts() {
             setOpenBaseCard(true);
             setClickedItem(e.data);
           }}
+          onGridReady={onGridReady}
           domLayout="autoHeight"
           rowHeight={40}
         />

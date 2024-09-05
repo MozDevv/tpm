@@ -14,6 +14,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const columnDefs = [
   {
@@ -189,63 +190,74 @@ const MaintenanceCase = (id) => {
 
   const fields2 = [
     {
-      name: "maintainee_name",
+      value: "maintainee_name",
       label: "Name",
       type: "text",
       required: true,
       pinned: "left",
     },
-    { name: "national_id", label: "National ID", type: "text", required: true },
-    { name: "kra_pin", label: "KRA PIN", type: "text" },
     {
-      name: "email_address",
+      value: "national_id",
+      label: "National ID",
+      type: "text",
+      required: true,
+    },
+    { value: "kra_pin", label: "KRA PIN", type: "text" },
+    {
+      value: "email_address",
       label: "Email Address",
       type: "email",
       required: true,
     },
     // {
-    //   name: "phone_number",
+    //   value: "phone_number",
     //   label: "Phone Number",
     //   type: "number",
     //   required: true,
     // },
-    { name: "postal_address", label: "Postal Address", type: "number" },
     {
-      name: "postal_code_id",
-      label: "Postal Code",
-      type: "autocomplete",
+      value: "permanent_postal_address",
+      label: "Permanent Postal Address",
+      type: "number",
+    },
+    {
+      value: "permanent_postal_code_id",
+      label: "Permanent Postal Code",
+      type: "select",
       options: postalAddress.map((address) => ({
         id: address.id,
         name: address.code,
       })),
     },
-    { name: "gratuity_rate", label: "Gratuity Rate", type: "number" },
+    { value: "gratuity_rate", label: "Gratuity Rate", type: "number" },
     {
-      name: "monthly_pension_rate",
+      value: "monthly_pension_rate",
       label: "Monthly Pension Rate",
       type: "number",
     },
-    { name: "bank_id", label: "Bank", type: "autocomplete", options: banks },
+    { value: "bank_id", label: "Bank", type: "select", options: banks },
     {
-      name: "bank_branch_id",
+      value: "bank_branch_id",
       label: "Bank Branch",
-      options: branches.filter((branch) => branch.bankId === selectedBank),
+      type: "select",
+      options: branches,
+      // options: branches.filter((branch) => branch.bankId === selectedBank),
       type: "select",
     },
     {
-      name: "phone_number",
+      value: "phone_number",
       label: "Phone Number",
       type: "string",
     },
 
     {
-      name: "account_number",
+      value: "account_number",
       label: "Account Number",
       type: "text",
       required: true,
     },
     {
-      name: "account_name",
+      value: "account_name",
       label: "Account Name",
       type: "text",
       required: true,
@@ -409,7 +421,7 @@ const MaintenanceCase = (id) => {
         )}
       </BaseCard>
 
-      <Button
+      {/* <Button
         variant="contained"
         onClick={() => {
           setOpenBaseCard(true);
@@ -420,7 +432,7 @@ const MaintenanceCase = (id) => {
         }}
       >
         Add New Maintenance Case
-      </Button>
+      </Button> */}
 
       <div
         className="ag-theme-quartz"
@@ -432,7 +444,7 @@ const MaintenanceCase = (id) => {
           overflowY: "auto",
         }}
       >
-        <AgGridReact
+        {/* <AgGridReact
           columnDefs={columnDefs}
           rowData={filteredData}
           pagination={false}
@@ -452,6 +464,22 @@ const MaintenanceCase = (id) => {
             // setUserClicked(e.data);
             //handleClickUser(e.data);
           }}
+        /> */}
+
+        <BaseInputTable
+          title="Maintenance Case"
+          fields={fields2}
+          id={id.id}
+          idLabel="prospective_pensioner_id"
+          getApiService={apiService.get}
+          postApiService={apiService.post}
+          putApiService={apiService.put}
+          apiService={apiService}
+          deleteEndpoint={endpoints.deleteMaintenance(id.id)}
+          getEndpoint={endpoints.getMaintenance(id.id)}
+          postEndpoint={endpoints.createMaintenance}
+          putEndpoint={endpoints.updateMaintenance}
+          passProspectivePensionerId={true}
         />
       </div>
     </div>
