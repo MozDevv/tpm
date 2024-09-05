@@ -25,6 +25,7 @@ import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 import { useMda } from "@/context/MdaContext";
 import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 function PeriodsOfAbsence({ id, status }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
@@ -60,13 +61,13 @@ function PeriodsOfAbsence({ id, status }) {
       value: "cause_of_absence",
       type: "select",
       options: [
-        "Absenteeism",
-        "Suspension",
-        "Interdiction",
-        "Unpaid Maternity Leave",
-        "Study Leave",
-        "Sick Leave",
-        "Condoned Leave",
+        { id: "Absenteeism", name: "Absenteeism" },
+        { id: "Suspension", name: "Suspension" },
+        { id: "Interdiction", name: "Interdiction" },
+        { id: "Unpaid Maternity Leave", name: "Unpaid Maternity Leave" },
+        { id: "Study Leave", name: "Study Leave" },
+        { id: "Sick Leave", name: "Sick Leave" },
+        { id: "Condoned Leave", name: "Condoned Leave" },
       ],
     },
   ];
@@ -181,13 +182,19 @@ function PeriodsOfAbsence({ id, status }) {
   return (
     <div className="">
       <div className="mt-4">
-        <EditableTable
-          fetchData={fetchPeriodsOfAbsence}
+        <BaseInputTable
+          title="Pensionable Salary"
           fields={fields}
-          initialData={periodsOfAbsence}
-          title="Periods of Absence"
-          handleSave={handleSubmit}
-          handleUpdate={handleSubmit}
+          id={id}
+          idLabel="prospective_pensioner_id"
+          getApiService={apiService.get}
+          postApiService={apiService.post}
+          putApiService={apiService.put}
+          getEndpoint={preClaimsEndpoints.getPeriodsOfAbsence(id)}
+          postEndpoint={preClaimsEndpoints.createPeriodsOfAbsence}
+          putEndpoint={preClaimsEndpoints.UpdatePeriodsOfAbsence}
+          deleteEndpoint={preClaimsEndpoints.deletePeriodsOfAbsence(id)}
+          passProspectivePensionerId={true}
         />
       </div>
     </div>

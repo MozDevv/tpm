@@ -167,7 +167,7 @@ const BaseInputTable = ({
           message.success("Record updated successfully");
         } else if (
           res?.data?.validationErrors &&
-          res?.validationErrors?.length > 0
+          res?.data?.validationErrors?.length > 0
         ) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
@@ -196,7 +196,10 @@ const BaseInputTable = ({
 
           message.success("Record added successfully");
         }
-        if (res?.data?.validationErrors && res?.validationErrors?.length > 0) {
+        if (
+          res?.data?.validationErrors &&
+          res?.data?.validationErrors?.length > 0
+        ) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
@@ -419,8 +422,7 @@ const BaseInputTable = ({
 
   const refreshData = async () => {
     try {
-      const newData = await fetchData();
-      setRowData(newData);
+      await fetchData();
     } catch (error) {
       message.error("Error refreshing data: " + error.message);
     }

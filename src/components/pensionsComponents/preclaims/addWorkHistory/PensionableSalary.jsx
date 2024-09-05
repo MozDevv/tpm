@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 function PensionableSalary({ id, status }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -277,17 +278,20 @@ function PensionableSalary({ id, status }) {
     //   </TableContainer>
     // </div>
 
-    <div className="mt-4">
-      <EditableTable
-        fetchData={fetchPensionableSalary}
-        fields={fields}
-        initialData={pensionableSalary}
+    <div className="">
+      <BaseInputTable
         title="Pensionable Salary"
-        // validators={validators}
-        handleSave={handleSubmit}
-        handleUpdate={handleSubmit}
-        //handleError={handleError}
-        //validationErrorsFromApi={validationErrors}
+        fields={fields}
+        id={id}
+        idLabel="prospective_pensioner_id"
+        getApiService={apiService.get}
+        postApiService={apiService.post}
+        putApiService={apiService.put}
+        getEndpoint={preClaimsEndpoints.getPensionableSalary(id)}
+        postEndpoint={preClaimsEndpoints.createPensionableSalary}
+        putEndpoint={preClaimsEndpoints.updatePensionableSalary}
+        deleteEndpoint={preClaimsEndpoints.deletePensionableSalary(id)}
+        passProspectivePensionerId={true}
       />
     </div>
   );

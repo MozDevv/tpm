@@ -97,8 +97,7 @@ function AddPensionersWorkHistory({
             />
           ) : activeCapName === "APN/PK" ||
             activeCapName === "CAP196" ||
-            activeCapName ||
-            "DSO/RK" ? (
+            activeCapName === "DSO/RK" ? (
             <MixedServicePost
               status={status}
               id={id}

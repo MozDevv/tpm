@@ -29,6 +29,7 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 function MixedServicePost({
   id,
@@ -186,7 +187,11 @@ function MixedServicePost({
       value: "nature_of_salary_scale",
       type: "text",
     },
-
+    {
+      label: "Salary P/A",
+      value: "salaryP_a",
+      type: "number",
+    },
     {
       label: "Nature of Service",
       value: "nature_of_service",
@@ -201,11 +206,6 @@ function MixedServicePost({
     },
     ...(mixedService
       ? [
-          {
-            label: "Salary P/A",
-            value: "salaryP_a",
-            type: "number",
-          },
           {
             label: "Pensionable Allowance Nature",
             value: "pensionableAllowanceNature",
@@ -348,13 +348,20 @@ function MixedServicePost({
   return (
     <>
       <div className="">
-        <EditableTable
-          title="Post and Nature of Salary"
-          fetchData={fetchPostandNature}
+        {JSON.stringify(dateOfConfirmation)}
+        {JSON.stringify(dateOfFirstAppointment)}
+        <BaseInputTable
+          title="Post and Nature of Service"
           fields={fields}
-          initialData={initialData}
-          handleSave={handleSubmit}
-          handleUpdate={handleSubmit}
+          id={id}
+          idLabel="prospective_pensioner_id"
+          getApiService={apiService.get}
+          postApiService={apiService.post}
+          putApiService={apiService.put}
+          getEndpoint={endpoints.getMixedServiceWorkHistory(id)}
+          postEndpoint={endpoints.createMixedServiceWorkHistory}
+          putEndpoint={endpoints.updateMixedServiceWorkHistory}
+          passProspectivePensionerId={true}
         />
       </div>
     </>

@@ -29,6 +29,7 @@ import preClaimsEndpoints, {
 import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
@@ -368,16 +369,19 @@ function PostAndNature({ id, loading, setLoading, status }) {
   };
   return (
     <div className="">
-      <EditableTable
-        title="Post and Nature of Salary"
-        fetchData={fetchPostandNature}
+      <BaseInputTable
+        title="Post and Nature of Service"
         fields={fields}
-        initialData={initialData}
-        validators={validators}
-        handleSave={handleSubmit}
-        handleUpdate={handleSubmit}
-        handleError={handleError}
-        validationErrorsFromApi={validationErrors}
+        id={id}
+        idLabel="prospective_pensioner_id"
+        getApiService={apiService.get}
+        postApiService={apiService.post}
+        putApiService={apiService.put}
+        getEndpoint={preClaimsEndpoints.getPostandNatureofSalaries(id)}
+        postEndpoint={preClaimsEndpoints.createPostAndNatureOfService}
+        putEndpoint={preClaimsEndpoints.updatePostAndNature}
+        deleteEndpoint={preClaimsEndpoints.deletePostAndNature(id)}
+        passProspectivePensionerId={true}
       />
     </div>
   );
