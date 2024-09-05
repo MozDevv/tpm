@@ -248,7 +248,7 @@ const endpoints = {
     `/api/ProspectivePensioners/DeleteWCPSContribution?id=${id}`,
 
   getWcpsLine: (id) =>
-    `/api/ProspectivePensioners/GetWCPSContributions?prospective_pensioner_id=${id}`,
+    `/api/ProspectivePensioners/GetWCPSContributionLines?prospective_pensioner_id=${id}`,
   createWcpsLine: "/api/ProspectivePensioners/CreateWCPSContributionLine",
   updateWcpsLine: "/api/ProspectivePensioners/UpdateWCPSContributionLine",
   deleteWcpsLine: (id) =>

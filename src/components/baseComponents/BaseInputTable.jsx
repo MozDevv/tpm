@@ -1,12 +1,19 @@
 "use client";
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import { message } from "antd";
 import { Add, Api, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
+import BaseLoadingOverlay from "./BaseLoadingOverlay";
 
 const BaseInputTable = ({
   fields = [],
@@ -26,14 +33,14 @@ const BaseInputTable = ({
   setSelectedValue,
 }) => {
   const [rowData, setRowData] = useState(() => {
-    const emptyRows = Array.from({ length: 1 }, () =>
+    const defaultRows = Array.from({ length: 2 }, () =>
       fields.reduce((acc, field) => {
         acc[field.value] = "";
         return acc;
       }, {})
     );
 
-    return [...initialData, ...emptyRows];
+    return [...defaultRows, ...initialData];
   });
 
   const [rowErrors, setRowErrors] = useState({});
@@ -48,7 +55,17 @@ const BaseInputTable = ({
       const res = await getApiService(getEndpoint);
       if (res.status === 200) {
         console.log("Fecthed Data from Editable Table", res.data.data);
-        setRowData(res.data.data);
+        //  setRowData(res.data.data);
+        setRowData((prevRowData) => {
+          const defaultRows = Array.from({ length: 2 }, () =>
+            fields.reduce((acc, field) => {
+              acc[field.value] = "";
+              return acc;
+            }, {})
+          );
+
+          return [...res.data.data, ...defaultRows];
+        });
       }
     } catch (error) {
       console.log(error);
@@ -79,10 +96,13 @@ const BaseInputTable = ({
 
   const deleteRow = async (rowId) => {
     try {
-      const res = await apiService.delete(`${deleteEndpoint}/${rowId}`);
+      const res = await apiService.delete(deleteEndpoint(rowId));
       if (res.status === 200 && res.data.succeeded) {
         refreshData();
         message.success("Record deleted successfully");
+        setRowData((prevData) => {
+          return prevData.filter((row) => row.id !== rowId);
+        });
       } else {
         message.error("An error occurred while deleting the record.");
       }
@@ -105,7 +125,6 @@ const BaseInputTable = ({
       setRowData((prevData = []) => {
         return prevData.filter((row) => !rowsWithoutId.includes(row));
       });
-
       setRowErrors((prevErrors = {}) => {
         rowsWithoutId.forEach((row) => {
           delete prevErrors[row.id];
@@ -134,6 +153,7 @@ const BaseInputTable = ({
         );
       }
     });
+
     try {
       if (data.id) {
         const res = await putApiService(putEndpoint, {
@@ -194,6 +214,7 @@ const BaseInputTable = ({
       });
       console.log(error);
       throw error;
+    } finally {
     }
   };
 
@@ -399,6 +420,9 @@ const BaseInputTable = ({
       message.error("Error refreshing data: " + error.message);
     }
   };
+  const loadingOverlayComponentParams = useMemo(() => {
+    return { loadingMessage: "Loading..." };
+  }, []);
 
   return (
     <div className="ag-theme-quartz">
@@ -412,7 +436,7 @@ const BaseInputTable = ({
           startIcon={<Add />}
           style={{ marginLeft: "10px", marginBottom: "10px" }}
         >
-          Add Lines
+          Add Line
         </Button>
         <Button
           onClick={handleDeleteSelectedRows}
@@ -423,6 +447,7 @@ const BaseInputTable = ({
           Delete Lines
         </Button>
       </div>
+
       <div className="" style={{ maxHeight: "500px", width: "100%" }}>
         <AgGridReact
           ref={gridApiRef}
@@ -435,6 +460,8 @@ const BaseInputTable = ({
             minHehight: "100px",
           }}
           onGridReady={onGridReady}
+          loadingOverlayComponent={BaseLoadingOverlay}
+          loadingOverlayComponentParams={loadingOverlayComponentParams}
           domLayout="autoHeight"
           singleClickEdit={true}
         />

@@ -7,6 +7,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button, Tooltip } from "@mui/material";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import { dateFormatter, formatDate } from "@/utils/dateFormatter";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const { TabPane } = Tabs;
 
@@ -122,31 +123,31 @@ function WcpsCard({
 
   const inputFields = [
     {
-      name: "from_date",
+      value: "from_date",
       label: "From Date",
       type: "date",
       required: true,
     },
     {
-      name: "to_date",
+      value: "to_date",
       label: "To Date",
       type: "date",
       required: true,
     },
     {
-      name: "salary_amount",
+      value: "salary_amount",
       label: "Salary Amount",
       type: "number",
       required: true,
     },
     {
-      name: "total_emoluments",
+      value: "total_emoluments",
       label: "Total Emoluments",
       type: "number",
       required: true,
     },
     {
-      name: "contribution_amount",
+      value: "contribution_amount",
       label: "Contribution Amount",
       disabled: true,
       type: "number",
@@ -173,38 +174,30 @@ function WcpsCard({
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto mt-2">
       <div>
         <div>
-          <div className="px-5 mt-[-20px]">
+          <div className="px-5 mt-[20px]">
             <div className="ag-theme-quartz max-h-[90vh]">
-              <div className="flex flex-row gap-2">
-                {!referenceId ? (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setOpenAddReference(true);
-                    }}
-                    sx={{
-                      my: 2,
-                    }}
-                  >
-                    Add a Reference
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setOpenInputCard(true);
-                      setClickedWcpsLine(null);
-                    }}
-                    sx={{
-                      my: 2,
-                    }}
-                  >
-                    Add WCPS Contribution
-                  </Button>
-                )}
+              <div className="">
+                <div className="text-primary font-montserrat text-base font-semibold mb-2">
+                  WCPS Contribution Reference
+                </div>
+                <div className="flex flex-row gap-2">
+                  {!referenceId && (
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        setOpenAddReference(true);
+                      }}
+                      sx={{
+                        my: 2,
+                      }}
+                    >
+                      Add a Reference
+                    </Button>
+                  )}
+                </div>
               </div>
-              {referenceId && (
-                <div className="p-4 bg-white rounded-lg  border border-gray-200 mb-2">
+              {
+                <div className="p-4 bg-white rounded-lg  border border-gray-200 mb-10">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
                     <div className="flex flex-row items-center gap-2">
                       <div className="text-gray-600 text-sm ">
@@ -212,7 +205,7 @@ function WcpsCard({
                         Reference Number:
                       </div>
                       <div className="text-lg font-montserrat font-semibold text-gray-800">
-                        {referenceNumber}
+                        {referenceNumber && referenceNumber}
                       </div>
                     </div>
                     <div className="w-full sm:w-auto sm:ml-auto flex flex-row items-center gap-3">
@@ -221,12 +214,12 @@ function WcpsCard({
                         Effective Date:
                       </div>
                       <div className="text-base font-semibold text-gray-800 font-montserrat">
-                        {dateFormatter(effective_date)}
+                        {effective_date ? dateFormatter(effective_date) : "N/A"}
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+              }
 
               <BaseCard
                 openBaseCard={openAddReference}
@@ -287,22 +280,23 @@ function WcpsCard({
                   />
                 )}
               </BaseCard>
-              <AgGridReact
-                columnDefs={columnDefs}
-                rowData={contributionLines}
-                pagination={false}
-                domLayout="autoHeight"
-                onGridReady={(params) => {
-                  params.api.sizeColumnsToFit();
-                  //  onGridReady(params);
-                }}
-                onRowClicked={(e) => {
-                  setOpenInputCard(true);
-                  setClickedWcpsLine(e.data);
-                  // setUserClicked(e.data);
-                  //handleClickUser(e.data);
-                }}
-              />
+              {referenceId && (
+                <BaseInputTable
+                  title="WCPS Contributions Lines"
+                  fields={inputFields}
+                  id={referenceId}
+                  idLabel="wCPS_contribution_id"
+                  getApiService={apiService.get}
+                  postApiService={apiService.post}
+                  putApiService={apiService.put}
+                  apiService={apiService}
+                  deleteEndpoint={endpoints.deleteWcpsLine}
+                  getEndpoint={endpoints.getWcpsLine(id)}
+                  postEndpoint={endpoints.createWcpsLine}
+                  putEndpoint={endpoints.updateWcpsLine}
+                  passProspectivePensionerId={true}
+                />
+              )}
             </div>
           </div>
         </div>

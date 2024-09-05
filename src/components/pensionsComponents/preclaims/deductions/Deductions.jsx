@@ -200,7 +200,9 @@ const Deductions = (id) => {
         fields={fields}
         id={id.id}
         idLabel="prospective_pensioner_id"
-        apiService={apiService}
+        getApiService={apiService.get}
+        postApiService={apiService.post}
+        putApiService={apiService.put}
         getEndpoint={endpoints.getDeductions(id.id)}
         postEndpoint={endpoints.createDeductions}
         putEndpoint={endpoints.updateGovernmentSalary}

@@ -159,7 +159,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
-                            WCPS Contributions
+                            Women & Children Contributions Scheme
                           </span>
                         }
                         key="8"
