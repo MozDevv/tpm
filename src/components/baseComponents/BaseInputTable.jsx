@@ -233,7 +233,7 @@ const BaseInputTable = ({
       let columnDef = {
         headerName: col.label,
         field: col.value,
-        editable: true,
+        editable: !col.disabled,
         sortable: true,
 
         filter: true,
@@ -331,6 +331,11 @@ const BaseInputTable = ({
 
         if (data.designationId) {
           setSelectedValue(data.designationId);
+        }
+
+        if (data.total_emoluments) {
+          data.contribution_amount =
+            (data.total_emoluments * 0.02).toFixed(2) * 1;
         }
 
         console.log("Cell Value Changed:", params);

@@ -152,6 +152,7 @@ function WcpsCard({
       disabled: true,
       type: "number",
       required: true,
+      disabled: true,
     },
   ];
 
@@ -244,42 +245,6 @@ function WcpsCard({
                 />
               </BaseCard>
 
-              <BaseCard
-                openBaseCard={openInputCard}
-                setOpenBaseCard={setOpenInputCard}
-                title={"WCPS Contribution"}
-                // clickedItem={clickedItem}
-                isUserComponent={false}
-                deleteApiEndpoint={endpoints.deleteWcpsLine(clickedItem?.id)}
-                deleteApiService={apiService.delete}
-                isSecondaryCard2={true}
-              >
-                {clickedWcpsLine ? (
-                  <BaseInputCard
-                    fields={inputFields}
-                    apiEndpoint={endpoints.updateWcpsLine}
-                    postApiFunction={apiService.put}
-                    clickedItem={clickedWcpsLine}
-                    openBaseCard={openInputCard}
-                    setOpenBaseCard={setOpenInputCard}
-                    useRequestBody={true}
-                    id={referenceId}
-                    idLabel="wCPS_contribution_id"
-                  />
-                ) : (
-                  <BaseInputCard
-                    id={referenceId}
-                    idLabel="wCPS_contribution_id"
-                    fields={inputFields}
-                    apiEndpoint={endpoints.createWcpsLine}
-                    postApiFunction={apiService.post}
-                    clickedItem={clickedItem}
-                    setOpenBaseCard={setOpenBaseCard}
-                    useRequestBody={true}
-                    isBranch={true}
-                  />
-                )}
-              </BaseCard>
               {referenceId && (
                 <BaseInputTable
                   title="WCPS Contributions Lines"
