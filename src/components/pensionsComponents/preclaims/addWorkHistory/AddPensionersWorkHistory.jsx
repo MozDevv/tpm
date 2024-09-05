@@ -46,10 +46,9 @@ function AddPensionersWorkHistory({
         preClaimsEndpoints.getProspectivePensioner(id)
       );
       const data = res?.data?.data[0]; // Get the retiree data
-      setPensionAward(
-        res.data.data[0]?.pensionAward?.prefix === "MIXED SERVICE"
-      );
+      setPensionAward(res.data.data[0]?.pensionAward?.name === "MIXED SERVICE");
 
+      console.log("pensionAward", pensionAward);
       setDateOfFirstAppointment(data.date_of_first_appointment);
 
       setRetiree(data);

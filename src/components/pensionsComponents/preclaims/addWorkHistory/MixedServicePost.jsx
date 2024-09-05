@@ -187,11 +187,7 @@ function MixedServicePost({
       value: "nature_of_salary_scale",
       type: "text",
     },
-    {
-      label: "Salary P/A",
-      value: "salaryP_a",
-      type: "number",
-    },
+
     {
       label: "Nature of Service",
       value: "nature_of_service",
@@ -206,6 +202,11 @@ function MixedServicePost({
     },
     ...(mixedService
       ? [
+          {
+            label: "Salary P/A",
+            value: "salaryP_a",
+            type: "number",
+          },
           {
             label: "Pensionable Allowance Nature",
             value: "pensionableAllowanceNature",
@@ -348,8 +349,6 @@ function MixedServicePost({
   return (
     <>
       <div className="">
-        {JSON.stringify(dateOfConfirmation)}
-        {JSON.stringify(dateOfFirstAppointment)}
         <BaseInputTable
           title="Post and Nature of Service"
           fields={fields}
