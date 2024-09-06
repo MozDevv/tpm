@@ -7,6 +7,7 @@ import "./chartsOfAccounts.css"; // Import the stylesheet
 import ListNavigation from "@/components/baseComponents/ListNavigation";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -22,6 +23,7 @@ function ChartsOfAccounts() {
       field: "accountNo",
       width: 120,
       pinned: "left",
+
       cellStyle: ({ data }) => ({
         paddingLeft: "10px",
         textDecoration:
@@ -252,61 +254,66 @@ function ChartsOfAccounts() {
     fetchGlAccounts();
   }, [openBaseCard]);
   return (
-    <div
-      className="ag-theme-quartz mt-[15px] overflow-hidden mr-5"
-      style={{ height: "100vh", width: "100%" }}
-    >
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        title={clickedItem?.accountName}
-        isUserComponent={false}
-        clickedItem={clickedItem}
-        deleteApiEndpoint={financeEndpoints.deleteGlAccount(clickedItem?.id)}
-        deleteApiService={apiService.delete}
-        glAccountName={
-          clickedItem
-            ? `${clickedItem?.accountNo} - ${clickedItem?.accountName}`
-            : "Create New GL Account"
-        }
+    <div className="flex flex-col">
+      <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
+      <div
+        className="ag-theme-quartz mt-[15px] mr-5"
+        style={{ height: "75vh", width: "100%", overflowY: "hidden" }}
       >
-        {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            clickedItem={clickedItem}
-            openBaseCard={openBaseCard}
-            setOpenBaseCard={setOpenBaseCard}
-            apiEndpoint={financeEndpoints.updateGlAccount}
-            postApiFunction={apiService.post}
-            useRequestBody={true}
-          />
-        ) : (
-          <BaseInputCard
-            fetchData={fetchGlAccounts}
-            fields={inputFields}
-            selectedLabel={"group"}
-            setSelectedValue={setSelectedGroup}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-            apiEndpoint={financeEndpoints.createGlAccount}
-            postApiFunction={apiService.post}
-          />
-        )}
-      </BaseCard>
+        <BaseCard
+          openBaseCard={openBaseCard}
+          setOpenBaseCard={setOpenBaseCard}
+          title={clickedItem?.accountName}
+          isUserComponent={false}
+          clickedItem={clickedItem}
+          deleteApiEndpoint={financeEndpoints.deleteGlAccount(clickedItem?.id)}
+          deleteApiService={apiService.delete}
+          glAccountName={
+            clickedItem
+              ? `${clickedItem?.accountNo} - ${clickedItem?.accountName}`
+              : "Create New GL Account"
+          }
+        >
+          {clickedItem ? (
+            <BaseInputCard
+              fields={fields}
+              clickedItem={clickedItem}
+              openBaseCard={openBaseCard}
+              setOpenBaseCard={setOpenBaseCard}
+              apiEndpoint={financeEndpoints.updateGlAccount}
+              postApiFunction={apiService.post}
+              useRequestBody={true}
+            />
+          ) : (
+            <BaseInputCard
+              fetchData={fetchGlAccounts}
+              fields={inputFields}
+              selectedLabel={"group"}
+              setSelectedValue={setSelectedGroup}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+              apiEndpoint={financeEndpoints.createGlAccount}
+              postApiFunction={apiService.post}
+            />
+          )}
+        </BaseCard>
 
-      <ListNavigation handlers={handlers} />
-      <div className="mt-6">
-        <AgGridReact
-          columnDefs={colDefs}
-          rowData={rowData}
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
-          }}
-          onGridReady={onGridReady}
-          domLayout="autoHeight"
-          rowHeight={40}
-        />
+        <ListNavigation handlers={handlers} />
+        <div className="mt-6 overflow-auto max-h-[90vh]">
+          <div className="h-[1000px] w-[100%]">
+            <AgGridReact
+              columnDefs={colDefs}
+              rowData={rowData}
+              onRowClicked={(e) => {
+                setOpenBaseCard(true);
+                setClickedItem(e.data);
+              }}
+              onGridReady={onGridReady}
+              // domLayout="autoHeight"
+              rowHeight={40}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

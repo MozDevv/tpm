@@ -10,7 +10,7 @@ function page() {
       <div className="text-primary mt-5 ml-3 mb-3 font-bold text-xl">
         Chart of Accounts
       </div>
-      <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
+
       <ChartsOfAccounts />
     </div>
   );

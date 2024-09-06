@@ -36,3 +36,24 @@
 .indented-cell {
   font-weight: bold;
 }
+.ag-theme-quartz {
+  height: 75vh; /* Adjust the height of the container */
+}
+
+.ag-header {
+  position: sticky; /* Make header sticky */
+  top: 0;
+  background-color: #fff; /* Ensure background color for header */
+  z-index: 1; /* Make sure it sits above the table body */
+}
+
+.ag-body-viewport {
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+.my-custom-grid .ag-header {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 10;
+  border-bottom: 1px solid #ddd;
+}
