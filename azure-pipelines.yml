@@ -50,7 +50,7 @@ steps:
         sudo docker run --name pmis-core -p 4000:3000 -d pmis
 
         sudo docker image prune -af
-        sudo docker builder prune -f
+        #sudo docker builder prune -f
 
         sudo systemctl restart nginx
 

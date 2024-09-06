@@ -61,6 +61,32 @@ a:hover {
   font-weight: 500;
 }
 .ag-theme-quartz .ag-cell-inline-editing {
-  height: 50px;
+  height: 40px;
+  box-shadow: none;
+}
+/* Remove the default border and padding to unify the look */
+.ag-theme-quartz .ag-cell-inline-editing {
+  border: none;
+  padding: 0;
+  display: flex; /* Ensures that the input takes the full width */
+  align-items: center; /* Centers the input vertically */
+}
+
+/* Style the inner input element to look like a single unified cell */
+.ag-theme-quartz .ag-cell-inline-editing input {
+  width: 100%;
+  border: none;
+  outline: none;
+  height: 100%;
+  margin-bottom: -10px;
+  font-size: inherit;
+  background: transparent; /* Matches the cell background */
+  box-shadow: none; /* Removes inner box shadow */
+  height: 100%; /* Makes the input fill the entire cell */
+}
+
+/* Optional: Adjust focus state for a cleaner look */
+.ag-theme-quartz .ag-cell-inline-editing input:focus {
+  border: none;
   box-shadow: none;
 }

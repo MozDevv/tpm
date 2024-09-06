@@ -278,7 +278,7 @@ function PensionableSalary({ id, status }) {
     //   </TableContainer>
     // </div>
 
-    <div className="">
+    <div className="mt-5">
       <BaseInputTable
         title="Pensionable Salary"
         fields={fields}

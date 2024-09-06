@@ -14,6 +14,7 @@ import { message } from "antd";
 import { Add, Api, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
+import "./editabletable.css";
 
 const BaseInputTable = ({
   fields = [],
@@ -373,19 +374,6 @@ const BaseInputTable = ({
     }),
   ];
 
-  const onSave = () => {
-    if (gridApiRef.current) {
-      const allRowData = [];
-      gridApiRef.current.forEachNode((node) => {
-        allRowData.push(node.data);
-      });
-      handleSave(allRowData);
-      message.success("Changes saved successfully!");
-    } else {
-      message.error("Unable to save. Grid is not ready.");
-    }
-  };
-
   const onAddRow = async () => {
     if (gridApiRef.current) {
       const editedData = [];
@@ -431,6 +419,24 @@ const BaseInputTable = ({
     return { loadingMessage: "Loading..." };
   }, []);
 
+  const onCellKeyDown = (event) => {
+    if (event.event.key === "Enter") {
+      event.api.stopEditing(); // Stop editing the current cell
+
+      event.api.tabToNextCell();
+
+      const nextCell = event.api.getFocusedCell();
+
+      if (nextCell) {
+        event.api.startEditingCell({
+          rowIndex: nextCell.rowIndex,
+          colKey: nextCell.column.getId(),
+        });
+      }
+      event.event.preventDefault();
+    }
+  };
+
   return (
     <div className="ag-theme-quartz">
       <div className="text-primary font-montserrat text-base font-semibold mb-2">
@@ -466,6 +472,7 @@ const BaseInputTable = ({
             height: "400px",
             minHehight: "100px",
           }}
+          onCellKeyDown={onCellKeyDown}
           onGridReady={onGridReady}
           loadingOverlayComponent={BaseLoadingOverlay}
           loadingOverlayComponentParams={loadingOverlayComponentParams}
