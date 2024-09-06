@@ -13,6 +13,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { he } from "@faker-js/faker";
+import Contributions from "./Contributions";
 
 const columnDefs = [
   { headerName: "No", field: "no", sortable: true, filter: true },
@@ -165,9 +166,8 @@ const ParliamentContributions = (id) => {
             useRequestBody={true}
           />
         ) : (
-          <BaseInputCard
+          <Contributions
             id={id}
-            idLabel="prospective_pensioner_id"
             fields={inputFields}
             apiEndpoint={endpoints.createParliamentContributions}
             postApiFunction={apiService.post}
