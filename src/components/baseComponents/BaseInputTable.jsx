@@ -32,6 +32,7 @@ const BaseInputTable = ({
   getEndpoint,
   deleteEndpoint,
   setSelectedValue,
+  refetchDataFromAnotherComponent,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -194,7 +195,7 @@ const BaseInputTable = ({
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
-
+          refetchDataFromAnotherComponent();
           message.success("Record added successfully");
         }
         if (

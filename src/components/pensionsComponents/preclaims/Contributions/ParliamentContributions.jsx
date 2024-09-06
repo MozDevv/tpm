@@ -143,10 +143,11 @@ const ParliamentContributions = (id) => {
         isSecondaryCard={true}
       >
         <Contributions
-          id={id}
+          id={id.id}
           apiEndpoint={endpoints.createParliamentContributions}
           postApiFunction={apiService.post}
           clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           useRequestBody={true}
           isBranch={false}
