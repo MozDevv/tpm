@@ -12,45 +12,22 @@ import { AgGridReact } from "ag-grid-react";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { he } from "@faker-js/faker";
 
 const columnDefs = [
+  { headerName: "No", field: "no", sortable: true, filter: true },
+  { headerName: "Year", field: "year", sortable: true, filter: true },
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
-    pinned: "left",
-  },
-  {
-    field: "post",
-    headerName: "Post",
-    width: 150,
+    headerName: "Total Contributions",
+    field: "total_contributions",
+    sortable: true,
     filter: true,
   },
+  { headerName: "Interest", field: "intrest", sortable: true, filter: true },
   {
-    field: "start_date",
-    headerName: "Start Date",
-    width: 150,
-    filter: true,
-  },
-  {
-    field: "end_date",
-    headerName: "End Date",
-    width: 150,
-    filter: true,
-  },
-  {
-    field: "salary",
-    headerName: "Salary",
-    width: 150,
-    filter: true,
-  },
-
-  {
-    field: "allowance",
-    headerName: "Allowance",
-    width: 150,
+    headerName: "Total Contributions With Interest",
+    field: "total_contributions_with_intrest",
+    sortable: true,
     filter: true,
   },
 ];
@@ -64,14 +41,11 @@ const ParliamentContributions = (id) => {
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => ({
       id: item.id,
-      no: index + 1,
-      post: item.post,
-      start_date: formatDate(item.start_date),
-      end_date: formatDate(item.end_date),
-      salary: item.salary,
-      allowance: item.allowance,
-      salary: item.salary,
-      contributions: item.contributions,
+      no: index + 1 + pageSize * (pageNumber - 1),
+      year: item.year,
+      total_contributions: item.total_contributions,
+      intrest: item.intrest,
+      total_contributions_with_intrest: item.total_contributions_with_intrest,
     }));
   };
 
@@ -100,46 +74,43 @@ const ParliamentContributions = (id) => {
 
   const fields = [
     {
-      id: "post",
-      label: "Post",
-      name: "post",
-      type: "text",
-      required: true,
-    },
-    {
-      id: "start_date",
-      label: "Start Date",
-      name: "start_date",
-      type: "date",
-      required: true,
-    },
-    {
-      id: "end_date",
-      label: "End Date",
-      name: "end_date",
-      type: "date",
-      required: true,
-    },
-    {
-      id: "salary",
-      label: "Salary",
-      name: "salary",
+      id: "year",
+      label: "Year",
+      name: "year",
       type: "number",
-      required: true,
     },
     {
-      id: "allowance",
-      label: "Allowance",
-      name: "allowance",
+      id: "total_contributions",
+      label: "Total Contributions",
+      name: "total_contributions",
       type: "number",
-      required: true,
     },
     {
-      id: "contributions",
-      label: "Contributions",
-      name: "contributions",
+      id: "intrest",
+      label: "Interest",
+      name: "intrest",
       type: "number",
-      required: true,
+    },
+    {
+      id: "total_contributions_with_intrest",
+      label: "Total Contributions With Interest",
+      name: "total_contributions_with_intrest",
+      type: "number",
+    },
+  ];
+
+  const inputFields = [
+    {
+      id: "year",
+      label: "Year",
+      name: "year",
+      type: "number",
+    },
+    {
+      id: "intrest",
+      label: "Interest",
+      name: "intrest",
+      type: "number",
     },
   ];
 
@@ -197,7 +168,7 @@ const ParliamentContributions = (id) => {
           <BaseInputCard
             id={id}
             idLabel="prospective_pensioner_id"
-            fields={fields}
+            fields={inputFields}
             apiEndpoint={endpoints.createParliamentContributions}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}

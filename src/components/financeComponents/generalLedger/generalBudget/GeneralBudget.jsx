@@ -137,7 +137,7 @@ const GeneralBudget = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-10 overflow-auto max-h-[80vh]">
             <BaseInputCard
               fields={fields}
               apiEndpoint={endpoints.updateDepartment(clickedItem.id)}

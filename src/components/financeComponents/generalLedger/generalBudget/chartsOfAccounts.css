@@ -1,5 +1,7 @@
 .table-container {
   margin: 20px;
+  max-height: 400px; /* Adjust based on your needs */
+  overflow: auto; /* Enable scrolling for the table body */
 }
 
 .table {
@@ -18,11 +20,16 @@
   text-align: left;
   padding: 10px 10px !important;
   border: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* Ensure background color is the same as the table container */
+  z-index: 1; /* Ensure the header is on top */
 }
 
 .table-body {
   background-color: #ffffff;
   border-left: 1px solid #e0e0e0;
+  overflow: auto;
 }
 
 .table-row {

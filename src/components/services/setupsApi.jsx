@@ -240,6 +240,15 @@ const endpoints = {
   updateContributions:
     "/api/ProspectivePensioners/UpdateParliamentaryContributions",
 
+  createParliamentContributionsLine:
+    "/api/ProspectivePensioners/CreateParliamentaryContributionLines",
+  getParliamentaryContributionsLine: (id) =>
+    `/api/ProspectivePensioners/GetParliamentaryContributionLines?paliamentary_contribution_id=${id}`,
+  deleteContributionsLine: (id) =>
+    `/api/ProspectivePensioners/DeleteParliamentaryContributionLines?id=${id}`,
+  updateContributionsLine:
+    "/api/ProspectivePensioners/UpdateParliamentaryContributionLines",
+
   getWcps: (id) =>
     `/api/ProspectivePensioners/GetWCPSContributions?prospective_pensioner_id=${id}`,
   createWcps: "/api/ProspectivePensioners/CreateWCPSContribution",
