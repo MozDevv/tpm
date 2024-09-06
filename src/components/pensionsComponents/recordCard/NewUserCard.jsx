@@ -547,7 +547,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         >
                           {designations
-                            // .filter((d) => d.id === designationId)
+                            .filter((d) => d.id === designationId)
                             .flatMap((designation) => designation.grades)
                             .map((grade) => (
                               <option key={grade.id} value={grade.id}>

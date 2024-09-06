@@ -260,13 +260,24 @@ const BaseInputTable = ({
       if (col.type === "date") {
         columnDef.cellEditor = "agDateStringCellEditor";
 
-        columnDef.valueFormatter = (params) =>
-          params.value
-            ? new Date(params.value).toLocaleDateString("en-us")
-            : "";
+        // Format the date to 'dd/mm/yyyy'
+        columnDef.valueFormatter = (params) => {
+          if (!params.value) return "";
+
+          const date = new Date(params.value);
+          if (isNaN(date.getTime())) return params.value;
+
+          // Format to 'dd/mm/yyyy'
+          const day = String(date.getDate()).padStart(2, "0");
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const year = date.getFullYear();
+
+          return `${day}/${month}/${year}`;
+        };
 
         columnDef.valueParser = (params) => {
           const parseDate = (input) => {
+            // Parse 'MMDDYY' or 'MMDDYYYY' formats
             if (/^\d{5,6}$/.test(input)) {
               const month = parseInt(input.slice(0, 2), 10) - 1;
               const day = parseInt(input.slice(2, 4), 10);
@@ -279,6 +290,7 @@ const BaseInputTable = ({
               }
             }
 
+            // Attempt fallback parsing
             const fallbackDate = new Date(input);
             return isNaN(fallbackDate.getTime())
               ? input

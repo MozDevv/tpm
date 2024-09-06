@@ -101,6 +101,12 @@ function PensionerDetailSummary({ clickedItem }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <h6 className="font-medium text-primary text-xs">Retirement Date</h6>
+          <span className="text-xs">
+            {parseDate(clickedItem?.retirement_date)}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Pension Award: </h6>
           <span className="text-xs">{clickedItem?.pension_award}</span>
         </div>

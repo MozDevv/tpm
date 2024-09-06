@@ -204,7 +204,7 @@ function MixedServicePost({
     ...(mixedService
       ? [
           {
-            label: "Salary P/A",
+            label: "Salary Per Annum",
             value: "salaryP_a",
             type: "number",
           },
