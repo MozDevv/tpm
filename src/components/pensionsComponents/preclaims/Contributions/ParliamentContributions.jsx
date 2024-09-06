@@ -47,6 +47,7 @@ const ParliamentContributions = (id) => {
       total_contributions: item.total_contributions,
       intrest: item.intrest,
       total_contributions_with_intrest: item.total_contributions_with_intrest,
+      intrest_amount: item.intrest_amount,
     }));
   };
 
@@ -100,24 +101,6 @@ const ParliamentContributions = (id) => {
     },
   ];
 
-  const inputFields = [
-    {
-      label: "Year",
-      name: "year",
-      type: "number",
-    },
-    {
-      label: "Interest",
-      name: "intrest",
-      type: "number",
-    },
-    {
-      label: "Interest Amount",
-      name: "intrest_amount",
-      type: "number",
-    },
-  ];
-
   const [filteredData, setFilteredData] = useState([]);
 
   const gridApiRef = React.useRef(null);
@@ -159,27 +142,15 @@ const ParliamentContributions = (id) => {
         deleteApiService={apiService.delete}
         isSecondaryCard={true}
       >
-        {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateContributions}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
-        ) : (
-          <Contributions
-            id={id}
-            fields={inputFields}
-            apiEndpoint={endpoints.createParliamentContributions}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            isBranch={false}
-          />
-        )}
+        <Contributions
+          id={id}
+          apiEndpoint={endpoints.createParliamentContributions}
+          postApiFunction={apiService.post}
+          clickedItem={clickedItem}
+          setOpenBaseCard={setOpenBaseCard}
+          useRequestBody={true}
+          isBranch={false}
+        />
       </BaseCard>
 
       <Button

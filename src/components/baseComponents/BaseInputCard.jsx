@@ -35,6 +35,7 @@ const BaseInputCard = ({
   fetchData,
   setPostedData,
   banks,
+  refreshData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -309,9 +310,10 @@ const BaseInputCard = ({
           res.status === 204 ||
           res.data.succeeded === true
         ) {
+          refreshData && refreshData(res.data.data.id);
           fetchData && fetchData();
           message.success("Record saved successfully");
-          setOpenBaseCard(false);
+          !refreshData && setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
           // setReFetchData(true);
         }

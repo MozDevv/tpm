@@ -794,7 +794,7 @@ export const createSections = (
       },
 
       {
-        label: "Last Basic Salary Amount",
+        label: "Last Basic Salary Amount in k£",
         name: "last_basic_salary_amount",
         type: "number",
         pensionCap: [
