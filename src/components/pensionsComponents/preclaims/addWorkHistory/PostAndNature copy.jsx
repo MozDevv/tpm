@@ -172,7 +172,13 @@ function PostAndNature({ id, loading, setLoading, status }) {
     {
       label: "Nature of Salary Scale",
       value: "nature_of_salary_scale",
-      type: "text",
+      type: "select",
+      options: [
+        { id: "P", name: "Pensionable" },
+        { id: "Prob", name: "Probation" },
+        { id: "T", name: "Temporary" },
+        { id: "C", name: "Contract" },
+      ],
     },
     {
       label: "Nature of Service",

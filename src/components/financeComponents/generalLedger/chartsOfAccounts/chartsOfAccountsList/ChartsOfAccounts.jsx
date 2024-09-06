@@ -170,6 +170,10 @@ function ChartsOfAccounts() {
       label: "Budget Amount",
     },
     {
+      name: "budgetBalance",
+      label: "Budget Balance",
+    },
+    {
       name: "subGroupName",
       label: "Sub Group Name",
       type: "text",
