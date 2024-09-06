@@ -102,15 +102,18 @@ const ParliamentContributions = (id) => {
 
   const inputFields = [
     {
-      id: "year",
       label: "Year",
       name: "year",
       type: "number",
     },
     {
-      id: "intrest",
       label: "Interest",
       name: "intrest",
+      type: "number",
+    },
+    {
+      label: "Interest Amount",
+      name: "intrest_amount",
       type: "number",
     },
   ];
