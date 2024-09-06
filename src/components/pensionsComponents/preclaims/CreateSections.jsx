@@ -237,6 +237,40 @@ export const createSections = (
           "CAP195",
         ],
       },
+      ...(formData.mortality_status === 1
+        ? [
+            {
+              label: "Date of Death",
+              name: "date_of_death",
+              type: "date",
+              pensionCap: [
+                "CAP189",
+                "CAP199",
+                "CAP196",
+                "APN/PK",
+                "CAP190",
+                "CAP195",
+                "DSO/RK",
+                "CAP195",
+              ],
+            },
+            {
+              label: "Death Certificate Number",
+              name: "death_certificate_number",
+              type: "text",
+              pensionCap: [
+                "CAP189",
+                "CAP199",
+                "CAP196",
+                "APN/PK",
+                "CAP190",
+                "CAP195",
+                "DSO/RK",
+                "CAP195",
+              ],
+            },
+          ]
+        : []),
       {
         label: "Marital Status",
         name: "marital_status",
