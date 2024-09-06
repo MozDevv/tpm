@@ -644,6 +644,13 @@ function NewPreclaim({
     //     return; // Exit the function or block to stop further processing
     //   }
     // }
+    for (const key of Object.keys(formData)) {
+      if (key === "phone_number" && formData[key] === "") {
+        newErrors[key] = "This field is required";
+        message.error("Phone number is required, Please fill in the field");
+        return; // Exit the function or block to stop further processing
+      }
+    }
 
     for (const key of Object.keys(formData)) {
       const error = validateField(key, formData[key], formData);
