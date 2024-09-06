@@ -49,8 +49,29 @@ function ChartsOfAccounts() {
       }),
     },
     { headerName: "Account Code", field: "accountCode", width: 150 },
-    { headerName: "Amount", field: "amount", width: 150 },
-    { headerName: "Budget Amount", field: "budgetAmount", width: 150 },
+    {
+      headerName: "Net Amount",
+      field: "amount",
+      width: 150,
+      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+
+      cellStyle: { textAlign: "center" },
+    },
+    {
+      headerName: "Budget Amount",
+      field: "budgetAmount",
+      width: 150,
+      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+      cellStyle: { textAlign: "center" },
+    },
+    {
+      headerName: "Budget Balance",
+      field: "budgetBalance",
+      width: 150,
+
+      cellStyle: { textAlign: "center" },
+      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+    },
     { headerName: "Sub Group Name", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting", width: 90 },
@@ -65,7 +86,12 @@ function ChartsOfAccounts() {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
         "paging.pageSize": 100,
       });
-      setRowData(response.data.data);
+
+      const accounts = response.data.data.map((account) => ({
+        ...account,
+        budgetBalance: (account.budgetAmount || 0) - (account.amount || 0),
+      }));
+      setRowData(accounts);
     } catch (error) {
       console.log(error);
     }
