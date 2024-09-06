@@ -43,6 +43,7 @@ function BaseCard({
   isSecondaryCard,
   glAccountName,
   isSecondaryCard2,
+  isClaim,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -357,16 +358,12 @@ function BaseCard({
                 <>
                   <UserDetailCard clickedItem={clickedItem} />
                 </>
+              ) : isClaim ? (
+                <>
+                  <PensionerDetailSummary clickedItem={clickedItem} />
+                </>
               ) : (
                 <></>
-                // <div className="flex items-center flex-col justify-center p-2 gap-2">
-                //   <Avatar sx={{ height: "100px", width: "100px" }} />
-                // </div>
-
-                // <>
-                //   <PensionerDetailSummary clickedItem={clickedItem} />
-                //   <Divider sx={{ mt: 3 }} />
-                // </>
               )}
             </div>
           )}

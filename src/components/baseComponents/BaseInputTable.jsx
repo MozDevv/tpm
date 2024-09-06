@@ -58,7 +58,7 @@ const BaseInputTable = ({
         console.log("Fecthed Data from Editable Table", res.data.data);
         //  setRowData(res.data.data);
         setRowData((prevRowData) => {
-          const defaultRows = Array.from({ length: 2 }, () =>
+          const defaultRows = Array.from({ length: 1 }, () =>
             fields.reduce((acc, field) => {
               acc[field.value] = "";
               return acc;

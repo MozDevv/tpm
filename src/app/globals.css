@@ -61,32 +61,60 @@ a:hover {
   font-weight: 500;
 }
 .ag-theme-quartz .ag-cell-inline-editing {
-  height: 40px;
+  height: 50px;
   box-shadow: none;
 }
-/* Remove the default border and padding to unify the look */
 .ag-theme-quartz .ag-cell-inline-editing {
   border: none;
   padding: 0;
-  display: flex; /* Ensures that the input takes the full width */
-  align-items: center; /* Centers the input vertically */
+  display: flex;
+  align-items: center;
 }
 
-/* Style the inner input element to look like a single unified cell */
 .ag-theme-quartz .ag-cell-inline-editing input {
   width: 100%;
   border: none;
   outline: none;
   height: 100%;
-  margin-bottom: -10px;
+  margin-bottom: -14px;
   font-size: inherit;
-  background: transparent; /* Matches the cell background */
-  box-shadow: none; /* Removes inner box shadow */
-  height: 100%; /* Makes the input fill the entire cell */
+  background: transparent;
+  box-shadow: none;
+  height: 100%;
+  z-index: 999999999999999;
+  height: 70px;
+  margin-top: -14px;
 }
 
-/* Optional: Adjust focus state for a cleaner look */
 .ag-theme-quartz .ag-cell-inline-editing input:focus {
   border: none;
-  box-shadow: none;
+
+  height: 50px;
+}
+/* General style adjustments for the select element inside AG Grid editing cells */
+.ag-theme-quartz .ag-cell-inline-editing select {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 5px; /* Adjust padding to match input fields */
+  background: transparent;
+  font-size: inherit; /* Match the font size to the rest of the cell */
+  appearance: none; /* Removes default browser styles */
+  box-shadow: none; /* Remove any box shadow */
+  border-radius: 0; /* Remove rounded corners */
+  cursor: pointer;
+  z-index: 999999999999999;
+}
+
+/* Optional: Custom styles for the select's dropdown arrow */
+.ag-theme-quartz .ag-cell-inline-editing select::-ms-expand {
+  display: none; /* Hide default dropdown arrow in IE */
+}
+
+/* Optional: Styling for focus state */
+.ag-theme-quartz .ag-cell-inline-editing select:focus {
+  border: none;
+  outline: none;
+  box-shadow: none; /* Prevents shadow on focus */
 }

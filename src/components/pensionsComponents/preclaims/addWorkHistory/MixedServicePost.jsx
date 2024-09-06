@@ -156,6 +156,13 @@ function MixedServicePost({
       { id: "FourTerms", name: "4 Term" },
       { id: "FiveTerms", name: "5 Term" },
     ],
+    "DSO/RK": [
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
+    ],
   };
 
   const fields = [
@@ -192,13 +199,7 @@ function MixedServicePost({
       label: "Nature of Service",
       value: "nature_of_service",
       type: "select",
-      options: [
-        { id: "OneTerm", name: "1 Term" },
-        { id: "TwoTerms", name: "2 Term" },
-        { id: "ThreeTerms", name: "3 Term" },
-        { id: "FourTerms", name: "4 Term" },
-        { id: "FiveTerms", name: "5 Term" },
-      ],
+      options: natureOfServiceOptions[cap] || [],
     },
     ...(mixedService
       ? [

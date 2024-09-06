@@ -15,3 +15,12 @@ export const dateFormatter = (dateS) => {
 
   return formattedDate;
 };
+
+//1960-10-10T00:00:00Z to 1960-10-10
+
+export const parseDate = (date) => {
+  if (date) {
+    return new Date(date).toISOString().split("T")[0];
+  }
+  return "";
+};

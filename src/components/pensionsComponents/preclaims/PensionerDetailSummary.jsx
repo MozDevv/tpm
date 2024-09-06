@@ -7,6 +7,8 @@ import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
 
+import { parseDate } from "@/utils/dateFormatter";
+
 function PensionerDetailSummary({ clickedItem }) {
   const id = clickedItem?.id;
 
@@ -83,11 +85,27 @@ function PensionerDetailSummary({ clickedItem }) {
           <span className="text-xs">{clickedItem?.personal_number}</span>
         </div>
         <div className="flex items-center gap-2">
+          <h6 className="font-medium text-primary text-xs">
+            Date of First Appointment
+          </h6>
+          <span className="text-xs">
+            {parseDate(clickedItem?.date_of_first_appointment)}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <h6 className="font-medium text-primary text-xs">
+            Date of Confirmation
+          </h6>
+          <span className="text-xs">
+            {parseDate(clickedItem?.date_of_confirmation)}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Pension Award: </h6>
           <span className="text-xs">{clickedItem?.pension_award}</span>
         </div>
         <div className="flex items-center gap-2">
-          <h6 className="font-medium text-primary text-xs">Status</h6>
+          <h6 className="font-medium text-primary text-xs">Status:</h6>
           <span className="text-xs">
             {notificationStatusMap[clickedItem?.notification_status]?.name}
           </span>

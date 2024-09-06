@@ -752,6 +752,7 @@ const Preclaims = ({ status }) => {
             openAction={openAction}
             setOpenAction={setOpenAction}
             fetchAllPreclaims={fetchAllPreclaims}
+            isClaim={true}
           >
             <CreateProspectivePensioner
               setOpenBaseCard={setOpenBaseCard}
