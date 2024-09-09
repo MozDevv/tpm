@@ -98,7 +98,7 @@ const Deductions = (id) => {
   const fetchMdas = async () => {
     try {
       const res = await apiService.get(endpoints.mdas, {
-        paging: { pageNumber, pageSize: 200 },
+        "paging.pageSize": 1000,
       });
       const { data, totalCount } = res.data;
       setMdas(data);

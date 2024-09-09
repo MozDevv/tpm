@@ -741,7 +741,7 @@ const Preclaims = ({ status }) => {
           <Spinner />
         </p>
       ) : (
-        <div className="table-container relative h-[80vh] w-full overflow-y-auto">
+        <div className="table-container relative h-[80vh] w-full overflow-hidden">
           <BaseCard
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
@@ -920,7 +920,6 @@ const Preclaims = ({ status }) => {
               <div
                 className="ag-theme-quartz flex flex-col"
                 style={{
-                  height: "70vh",
                   padding: "20px",
                   marginLeft: "-10px",
                   width: openFilter ? "calc(100vw - 300px)" : "100vw",
@@ -949,24 +948,26 @@ const Preclaims = ({ status }) => {
                 />
                 {/*************PAGINATION *************/}
 
-                <Box
-                  sx={{
-                    // mt: "-30px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Pagination
-                    showFirstButton
-                    showLastButton
-                    count={totalPages}
-                    page={pageNumber}
-                    onChange={handlePageChange}
-                    color="primary"
-                    variant="outlined"
-                    shape="rounded"
-                  />
-                </Box>
+                {totalPages > 1 && (
+                  <Box
+                    sx={{
+                      mt: "40px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Pagination
+                      showFirstButton
+                      showLastButton
+                      count={totalPages}
+                      page={pageNumber}
+                      onChange={handlePageChange}
+                      color="primary"
+                      variant="outlined"
+                      shape="rounded"
+                    />
+                  </Box>
+                )}
               </div>
             </div>
           </div>
