@@ -210,6 +210,11 @@ const MaintenanceCase = (id) => {
       required: true,
     },
     {
+      value: "phone_number",
+      label: "Phone Number",
+      type: "string",
+    },
+    {
       value: "temporary_postal_address",
       label: "Temporary Postal Address",
       type: "number",
@@ -253,20 +258,14 @@ const MaintenanceCase = (id) => {
       type: "select",
     },
     {
-      value: "phone_number",
-      label: "Phone Number",
-      type: "string",
-    },
-
-    {
-      value: "account_number",
-      label: "Account Number",
+      value: "account_name",
+      label: "Account Name",
       type: "text",
       required: true,
     },
     {
-      value: "account_name",
-      label: "Account Name",
+      value: "account_number",
+      label: "Account Number",
       type: "text",
       required: true,
     },
