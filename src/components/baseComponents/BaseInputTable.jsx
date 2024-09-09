@@ -290,12 +290,59 @@ const BaseInputTable = ({
           const { value, data, colDef } = params;
           const field = colDef.field;
           const rowId = data.id;
+          const options = col.options || [];
 
-          // Check for error related to the specific cell field
+          console.log("Params", params);
+          console.log("COL", colDef);
+          console.log("DATA", data);
+
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
           const error = `Your Entry of "${value}" is not valid. ${
             hasError ? rowErrors[rowId][field] : ""
           }`;
+
+          const formatDate = (dateString) => {
+            const date = new Date(dateString);
+
+            if (!isNaN(date.getTime())) {
+              return date.toLocaleDateString("en-GB");
+            }
+            return dateString;
+          };
+          const getNameById = (id) => {
+            // Find the field that matches the current column definition field
+            const selectedField = fields.find(
+              (field) => field.value === colDef.field
+            );
+
+            // Check if the selectedField and options are defined before trying to access them
+            if (!selectedField || !selectedField.options) {
+              console.log(
+                "No matching field or options found for:",
+                colDef.field
+              );
+              return id; // Return the id if no matching field or options are found
+            }
+
+            // Find the option with the matching id
+            const selectedOption = selectedField.options.find(
+              (option) => option.id === id
+            );
+
+            // Debug log to verify correct matching
+            console.log("Selected Option:", selectedOption);
+
+            // Return the name if found, otherwise return the id
+            return selectedOption ? selectedOption.name : id;
+          };
+
+          // Determine how to display the value based on column type
+          const displayValue =
+            col.type === "date"
+              ? formatDate(value)
+              : col.type === "select"
+              ? getNameById(value)
+              : value;
 
           return (
             <div style={{ position: "relative", display: "flex" }}>
@@ -341,7 +388,7 @@ const BaseInputTable = ({
                   </IconButton>
                 </Tooltip>
               )}
-              {params.value}
+              {displayValue}
             </div>
           );
         },
@@ -361,37 +408,19 @@ const BaseInputTable = ({
       if (col.type === "date") {
         columnDef.cellEditor = "agDateStringCellEditor";
 
-        // Format the date to 'dd/mm/yyyy'
         columnDef.valueFormatter = (params) => {
           if (!params.value) return "";
 
-          const date = new Date(params.value);
-          if (isNaN(date.getTime())) return params.value;
-
-          // Format to 'dd/mm/yyyy'
-          const day = String(date.getDate()).padStart(2, "0");
-          const month = String(date.getMonth() + 1).padStart(2, "0");
-          const year = date.getFullYear();
-
-          return `${day}/${month}/${year}`;
+          // Using dayjs to format the date
+          const formattedDate = dayjs(params.value).format("DD/MM/YYYY");
+          return formattedDate === "Invalid Date"
+            ? params.value
+            : formattedDate;
         };
 
         columnDef.valueParser = (params) => {
           const parseDate = (input) => {
-            // Parse 'MMDDYY' or 'MMDDYYYY' formats
-            if (/^\d{5,6}$/.test(input)) {
-              const month = parseInt(input.slice(0, 2), 10) - 1;
-              const day = parseInt(input.slice(2, 4), 10);
-              const year =
-                input.length === 5 ? `20${input.slice(4)}` : input.slice(4);
-              const parsedDate = new Date(year, month, day);
-
-              if (!isNaN(parsedDate.getTime())) {
-                return parsedDate.toISOString();
-              }
-            }
-
-            // Attempt fallback parsing
+            // Parsing logic as per your requirements
             const fallbackDate = new Date(input);
             return isNaN(fallbackDate.getTime())
               ? input
