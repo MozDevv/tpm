@@ -8,7 +8,7 @@ function page() {
   // const [loading, setLoading] = useState(false);
   return (
     <div>
-      <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
+      <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl h-full">
         Retiree List
       </div>
       <CustomBreadcrumbsList currentTitle="Retirees List" />
