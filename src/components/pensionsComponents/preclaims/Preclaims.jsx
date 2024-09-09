@@ -741,7 +741,7 @@ const Preclaims = ({ status }) => {
           <Spinner />
         </p>
       ) : (
-        <div className="table-container relative h-full w-full overflow-hidden">
+        <div className=" relative h-full w-full overflow-hidden">
           <BaseCard
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}

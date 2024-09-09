@@ -311,7 +311,7 @@ const BaseInputTable = ({
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
           const error = `
           <div>
-            <strong style="display: block; margin-bottom: 8px;">Validation Error:</strong>
+            <strong style="display: block; margin-bottom: 8px;">⚠️  Validation Error:</strong>
             <span style="font-weight: normal;">Your Entry of 
               <strong style="">"${
                 value && isValidDateString(value) ? parseDate(value) : value
