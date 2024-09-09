@@ -9,12 +9,13 @@ import React, {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { Button, Divider } from "@mui/material";
+import { Button, Divider, IconButton, Tooltip } from "@mui/material";
 import { message } from "antd";
-import { Add, Api, Delete } from "@mui/icons-material";
+import { Add, Api, Cancel, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
 import "./editabletable.css";
+import { baseValidatorFn } from "./BaseValidatorFn";
 
 const BaseInputTable = ({
   fields = [],
@@ -240,6 +241,27 @@ const BaseInputTable = ({
     } finally {
     }
   };
+  const setCellError = (rowId, field, error) => {
+    setRowErrors((prevErrors) => ({
+      ...prevErrors,
+      [rowId]: {
+        ...prevErrors[rowId],
+        [field]: error,
+      },
+    }));
+  };
+  const handleClearError = (data, field) => {
+    setRowErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      if (updatedErrors[data.id]) {
+        delete updatedErrors[data.id][field];
+        if (Object.keys(updatedErrors[data.id]).length === 0) {
+          delete updatedErrors[data.id];
+        }
+      }
+      return updatedErrors;
+    });
+  };
 
   const headers = [
     {
@@ -264,6 +286,77 @@ const BaseInputTable = ({
           const isError = rowErrors[params.column.getColId()];
           return isError ? "error-header" : "";
         },
+        cellRenderer: (params) => {
+          const { value, data, colDef } = params;
+          const field = colDef.field;
+          const rowId = data.id;
+
+          // Check for error related to the specific cell field
+          const hasError = rowErrors[rowId] && rowErrors[rowId][field];
+          const error = `Your Entry of "${value}" is not valid. ${
+            hasError ? rowErrors[rowId][field] : ""
+          }`;
+
+          console.log(
+            "**********************************888",
+            params,
+            hasError
+          );
+          console.log(
+            "##################################################",
+            rowErrors,
+            rowId
+          );
+
+          return (
+            <div style={{ position: "relative" }}>
+              {hasError && (
+                <Tooltip
+                  title={error}
+                  arrow
+                  PopperProps={{
+                    sx: {
+                      "& .MuiTooltip-tooltip": {
+                        fontSize: "0.75rem",
+                        padding: "0.5rem",
+                        borderRadius: "4px",
+                        maxWidth: "200px",
+                        wordWrap: "break-word",
+                      },
+                    },
+                  }}
+                >
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                    size="small"
+                    onClick={() => {
+                      // Clear the error
+                      setRowErrors((prevErrors) => {
+                        const updatedErrors = { ...prevErrors };
+                        if (updatedErrors[rowId]) {
+                          delete updatedErrors[rowId][field];
+                          if (Object.keys(updatedErrors[rowId]).length === 0) {
+                            delete updatedErrors[rowId];
+                          }
+                        }
+                        return updatedErrors;
+                      });
+                    }}
+                  >
+                    <Cancel fontSize="small" sx={{ color: "crimson" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {params.value}
+            </div>
+          );
+        },
+
         cellStyle: (params) => {
           if (rowErrors[params.data.id]) {
             return {
@@ -342,11 +435,31 @@ const BaseInputTable = ({
         };
       } else if (col.hide) {
         columnDef.hide = true;
+      } else if (col.value === "phone_number") {
+        const defaultPhoneNumberValue = "+254";
+        columnDef.valueFormatter = (params) => {
+          if (!params.value) return "";
+          return params.value.startsWith("0")
+            ? defaultPhoneNumberValue + params.value.slice(1)
+            : params.value;
+        };
       }
 
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue } = params;
         const field = colDef.field;
+
+        const validator = baseValidatorFn[field];
+        if (validator) {
+          const error = validator(newValue);
+          if (error) {
+            message.error(`Validation Error on ${field}: ${error}`);
+            setCellError(data.id, field, error);
+            return;
+          } else {
+            handleClearError(data, field);
+          }
+        }
 
         if (colDef.cellEditor === "agSelectCellEditor") {
           const selectField = fields.find(
@@ -506,7 +619,7 @@ const BaseInputTable = ({
           startIcon={<Add />}
           style={{ marginLeft: "10px", marginBottom: "10px" }}
         >
-          Add Line
+          New Line
         </Button>
         <Button
           onClick={handleDeleteSelectedRows}
@@ -534,6 +647,7 @@ const BaseInputTable = ({
           loadingOverlayComponent={BaseLoadingOverlay}
           loadingOverlayComponentParams={loadingOverlayComponentParams}
           domLayout="autoHeight"
+          rowSelection="multiple"
           singleClickEdit={true}
         />
       </div>
