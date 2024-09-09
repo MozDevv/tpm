@@ -100,7 +100,7 @@ function GovernmentSalary({ id }) {
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
-        putApiService={apiService.put}
+        putApiService={apiService.post}
         apiService={apiService}
         getEndpoint={endpoints.getGovernmentSalary(id)}
         postEndpoint={endpoints.createGovernmentSalary}

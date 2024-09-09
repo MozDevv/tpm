@@ -345,6 +345,32 @@ const BaseInputTable = ({
               data[field] = selectedOption.id;
             }
           }
+
+          columnDef.valueFormatter = (params) => {
+            if (!params.value) return ""; // Handle empty or undefined values
+            const selectedOption = col.options.find(
+              (option) => option.id === params.value
+            );
+            return selectedOption ? selectedOption.name : params.value; // Display name or the value if not found
+          };
+
+          // Parse displayed name back to ID
+          columnDef.valueParser = (params) => {
+            const selectedOption = col.options.find(
+              (option) => option.name === params.newValue
+            );
+            return selectedOption ? selectedOption.id : params.newValue; // Return ID if matched, else raw input
+          };
+
+          // Ensure that the initial values (default) are correctly formatted
+          columnDef.getQuickFilterText = (params) => {
+            const selectedOption = col.options.find(
+              (option) => option.id === params.value
+            );
+            return selectedOption ? selectedOption.name : params.value; // Use name for filtering
+          };
+        }
+        if (colDef.cellEditor === "agSelectCellEditor") {
         }
 
         if (data.designationId) {
