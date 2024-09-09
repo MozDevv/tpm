@@ -186,7 +186,11 @@ const BaseInputTable = ({
           refreshData();
           message.success("Record updated successfully");
           // Clear errors upon successful submission
-          handleClear(data.id);
+          setRowErrors((prevErrors) => {
+            const updatedErrors = { ...prevErrors };
+            delete updatedErrors[data.id];
+            return updatedErrors;
+          });
         } else if (
           res?.data?.validationErrors &&
           res?.data?.validationErrors?.length > 0
