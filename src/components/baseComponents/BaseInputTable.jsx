@@ -297,19 +297,8 @@ const BaseInputTable = ({
             hasError ? rowErrors[rowId][field] : ""
           }`;
 
-          console.log(
-            "**********************************888",
-            params,
-            hasError
-          );
-          console.log(
-            "##################################################",
-            rowErrors,
-            rowId
-          );
-
           return (
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative", display: "flex" }}>
               {hasError && (
                 <Tooltip
                   title={error}

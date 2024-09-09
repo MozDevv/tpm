@@ -52,6 +52,23 @@ export const baseValidatorFn = {
     if (!nameRegex.test(value)) return "Please enter a valid name";
     return null;
   },
+  number: (value) => {
+    const numberRegex = /^[0-9]+$/; // Example: number
+    if (!numberRegex.test(value)) return "Please enter a valid number";
+    return null;
+  },
+  permanent_postal_address: (value) => {
+    const permanentPostalAddressRegex = /^[0-9]+$/; // Example: permanent postal address
+    if (!permanentPostalAddressRegex.test(value))
+      return "Please enter a valid permanent postal address, e.g. 123456";
+    return null;
+  },
+  temporary_postal_address: (value) => {
+    const temporaryPostalAddressRegex = /^[0-9]+$/; // Example: temporary postal address
+    if (!temporaryPostalAddressRegex.test(value))
+      return "Please enter a valid temporary postal address, e.g. 123456";
+    return null;
+  },
 
   // Add more validators as needed
 };
