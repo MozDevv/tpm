@@ -108,6 +108,19 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
+                          Government Salary
+                        </span>
+                      }
+                      key="9"
+                    >
+                      <GovernmentSalary
+                        id={clickedItem?.id}
+                        clickedItem={clickedItem}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
                           Documents
                         </span>
                       }
@@ -167,16 +180,6 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         <WcpsCard id={clickedItem?.id} />
                       </TabPane>
                     )}
-                    <TabPane
-                      tab={
-                        <span className="text-primary font-montserrat">
-                          Government Salary
-                        </span>
-                      }
-                      key="9"
-                    >
-                      <GovernmentSalary id={clickedItem?.id} />
-                    </TabPane>
 
                     {activeCapName === "CAP196" && (
                       <TabPane

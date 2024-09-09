@@ -1,21 +1,36 @@
 "use client";
 import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { useMda } from "@/context/MdaContext";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
-function GovernmentSalary({ id }) {
+function GovernmentSalary({ id, clickedItem }) {
   const [designations, setDesignations] = useState([]);
   const [grades, setGrades] = useState([]);
   const [selectedDesignation, setSelectedDesignation] = useState(null);
   const mdaId = localStorage.getItem("mdaId");
+  const [postNames, setPostNames] = useState([]);
 
-  const fetchDesignations = async () => {
+  const fetchDesignations = async (postNames) => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
         "paging.pageSize": 1000,
       });
-      setDesignations(res.data.data);
+      if (postNames.length > 0) {
+        const filteredDesignations = res.data.data.filter((designation) =>
+          postNames.includes(designation.name)
+        );
 
+        console.log("Post Names:", postNames);
+        console.log("Filtered Designations:", filteredDesignations);
+        setDesignations(
+          //  postNames.length > 0 ? filteredDesignations : res.data.data
+          filteredDesignations
+        );
+      } else {
+        setDesignations(res.data.data);
+      }
       return res.data.data;
     } catch (error) {
       console.error("Error fetching Designations:", error);
@@ -63,9 +78,75 @@ function GovernmentSalary({ id }) {
   //   setGrades(filteredGrades);
   // }, [selectedDesignation, designations]);
 
+  const extractPosts = (data) => {
+    return data.map((item) => item.post);
+  };
+
+  const fetchMixedServicePosts = async () => {
+    try {
+      const res = await apiService.get(
+        endpoints.getMixedServiceWorkHistory(id)
+      );
+      if (res.status === 200) {
+        const sortedData = res.data.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setPostNames(extractPosts(sortedData));
+        console.log("Post and Nature Posts:", extractPosts(sortedData));
+      }
+    } catch (error) {
+      console.log(error);
+      // setLoading(false);
+    }
+  };
+
+  const fetchPostandNature = async () => {
+    try {
+      const res = await axios.get(
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+      );
+      if (res.status === 200) {
+        const sortedData = res.data.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+
+        //  console.log("Post and Nature Data:", sortedData);
+        setPostNames(extractPosts(sortedData));
+        console.log("Post and Nature Posts:", extractPosts(sortedData));
+
+        //return res.data.data;
+      }
+    } catch (error) {
+      console.log(error);
+      // setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchDesignations();
-  }, []);
+    if (
+      clickedItem?.pension_award === "MIXED SERVICE" ||
+      clickedItem?.mda_pensionCap_name === "APN/PK" ||
+      clickedItem?.mda_pensionCap_name === "CAP196" ||
+      clickedItem?.mda_pensionCap_name === "DSO/RK"
+    ) {
+      fetchMixedServicePosts();
+    } else {
+      console.log("Pen", clickedItem?.pension_award);
+      fetchPostandNature();
+    }
+  }, [clickedItem]);
+
+  // useEffect(() => {
+  //   fetchDesignations();
+  // }, []);
+
+  useEffect(() => {
+    if (postNames.length > 0) {
+      fetchDesignations(postNames);
+    } else {
+      fetchDesignations();
+    }
+  }, [postNames]);
   const fields = [
     { label: "From Date", value: "fromDate", type: "date" },
     { label: "To Date", value: "toDate", type: "date" },

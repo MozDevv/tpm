@@ -382,7 +382,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
-        putApiService={apiService.put}
+        putApiService={apiService.post}
         getEndpoint={preClaimsEndpoints.getPostandNatureofSalaries(id)}
         postEndpoint={preClaimsEndpoints.createPostAndNatureOfService}
         putEndpoint={preClaimsEndpoints.updatePostAndNature}

@@ -86,7 +86,7 @@ function ChartsOfAccounts() {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 100,
+        "paging.pageSize": 1000,
       });
 
       const accounts = response.data.data.map((account) => ({

@@ -47,6 +47,22 @@ const BaseInputTable = ({
 
   const [rowErrors, setRowErrors] = useState({});
 
+  const sortData = (data) => {
+    const dateField = data[0]?.date
+      ? "date"
+      : data[0]?.startDate
+      ? "startDate"
+      : data[0]?.start_date
+      ? "start_date"
+      : null;
+
+    const sortedData = dateField
+      ? data.sort((a, b) => new Date(a[dateField]) - new Date(b[dateField]))
+      : data.sort((a, b) => a.id - b.id);
+
+    return sortedData;
+  };
+
   const fetchData = async () => {
     console.log(
       "Fetching Data from Editable Table",
@@ -66,7 +82,8 @@ const BaseInputTable = ({
             }, {})
           );
 
-          return [...res.data.data, ...defaultRows];
+          const sortedData = sortData(res.data.data);
+          return [...sortedData, ...defaultRows];
         });
       }
     } catch (error) {
