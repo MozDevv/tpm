@@ -179,6 +179,7 @@ const BaseInputTable = ({
               return { ...prevErrors, [data.id]: true };
             });
           });
+          throw new Error("An error occurred while submitting the data.");
         } else if (
           res.status === 200 &&
           !res.data.succeeded &&
@@ -195,7 +196,7 @@ const BaseInputTable = ({
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
-          refetchDataFromAnotherComponent();
+          refetchDataFromAnotherComponent?.();
           message.success("Record added successfully");
         }
         if (

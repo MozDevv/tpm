@@ -357,7 +357,7 @@ function MixedServicePost({
           idLabel="prospective_pensioner_id"
           getApiService={apiService.get}
           postApiService={apiService.post}
-          putApiService={apiService.put}
+          putApiService={apiService.post}
           getEndpoint={endpoints.getMixedServiceWorkHistory(id)}
           postEndpoint={endpoints.createMixedServiceWorkHistory}
           putEndpoint={endpoints.updateMixedServiceWorkHistory}

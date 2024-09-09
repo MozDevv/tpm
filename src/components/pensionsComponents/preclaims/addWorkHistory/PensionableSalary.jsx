@@ -286,7 +286,7 @@ function PensionableSalary({ id, status }) {
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
-        putApiService={apiService.put}
+        putApiService={apiService.post}
         getEndpoint={preClaimsEndpoints.getPensionableSalary(id)}
         postEndpoint={preClaimsEndpoints.createPensionableSalary}
         putEndpoint={preClaimsEndpoints.updatePensionableSalary}

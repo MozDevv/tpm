@@ -19,6 +19,11 @@ const endpoints = {
   //getGrades
   getGrades: (id) => `/api/Setups/GetGradeSetups?designationId=${id}`,
 
+  getAllGrades: "/api/Setups/GetGradeSetups?paging.pageSize=1000",
+
+  getGradesByDesignation: (id) =>
+    `api/Setups/GetGradeSetups?paging.pageSize=1000&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].propertyName=designation_id`,
+
   getAllGrades: "/api/Setups/GetGradeSetups",
 
   //createGrade

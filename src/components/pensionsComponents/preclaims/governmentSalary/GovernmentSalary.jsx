@@ -21,15 +21,47 @@ function GovernmentSalary({ id }) {
       console.error("Error fetching Designations:", error);
     }
   };
+  const fetchGrades = async () => {
+    if (selectedDesignation) {
+      try {
+        const res = await apiService.get(
+          endpoints.getGradesByDesignation(selectedDesignation)
+        );
+        const data = res.data.data;
+        setGrades(
+          res.data.data.map((grade) => ({ id: grade.id, name: grade.grade }))
+        );
+      } catch (error) {
+        console.error("Error fetching Grades:", error);
+      }
+    } else {
+      try {
+        const res = await apiService.get(endpoints.getAllGrades, {
+          "paging.pageSize": 1000,
+        });
+        setGrades(
+          res.data.data.map((grade) => ({ id: grade.id, name: grade.grade }))
+        );
+
+        return res.data.data;
+      } catch (error) {
+        console.error("Error fetching Grades:", error);
+      }
+    }
+  };
 
   useEffect(() => {
-    const filteredGrades = designations
-      .filter((designation) => designation.id === selectedDesignation)
-      .flatMap((designation) => designation.grades || [])
-      .map((grade) => ({ id: grade.id, name: grade.grade }));
+    fetchGrades();
+  }, [selectedDesignation, designations, mdaId]);
 
-    setGrades(filteredGrades);
-  }, [selectedDesignation, designations]);
+  // useEffect(() => {
+  //   const filteredGrades = designations
+  //     .filter((designation) => designation.id === selectedDesignation)
+  //     .flatMap((designation) => designation.grades || [])
+  //     .map((grade) => ({ id: grade.id, name: grade.grade }));
+
+  //   setGrades(filteredGrades);
+  // }, [selectedDesignation, designations]);
 
   useEffect(() => {
     fetchDesignations();
