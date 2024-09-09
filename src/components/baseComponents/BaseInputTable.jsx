@@ -56,6 +56,8 @@ const BaseInputTable = ({
       ? "startDate"
       : data[0]?.start_date
       ? "start_date"
+      : data[0]?.from_date
+      ? "from_date"
       : null;
 
     const sortedData = dateField
@@ -307,9 +309,19 @@ const BaseInputTable = ({
           };
 
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
-          const error = `Your Entry of "${
-            value && isValidDateString(value) ? parseDate(value) : value
-          }" is not valid. ${hasError ? rowErrors[rowId][field] : ""}`;
+          const error = `
+          <div>
+            <strong style="display: block; margin-bottom: 8px;">Validation Error:</strong>
+            <span style="font-weight: normal;">Your Entry of 
+              <strong style="">"${
+                value && isValidDateString(value) ? parseDate(value) : value
+              }</strong>
+          
+            "</span> is not an acceptable value for 
+            <strong>${colDef.headerName}</strong>. 
+            ${hasError ? rowErrors[rowId][field] : ""}
+          </div>
+        `;
 
           const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -358,11 +370,12 @@ const BaseInputTable = ({
             <div style={{ position: "relative", display: "flex" }}>
               {hasError && (
                 <Tooltip
-                  title={error}
+                  title={<div dangerouslySetInnerHTML={{ __html: error }} />}
                   arrow
                   PopperProps={{
                     sx: {
                       "& .MuiTooltip-tooltip": {
+                        //   borderLeft: "2px solid crimson",
                         fontSize: "0.75rem",
                         padding: "0.5rem",
                         borderRadius: "4px",
