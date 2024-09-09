@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
 import "./editabletable.css";
 import { baseValidatorFn } from "./BaseValidatorFn";
+import { parseDate } from "@/utils/dateFormatter";
 
 const BaseInputTable = ({
   fields = [],
@@ -183,8 +184,9 @@ const BaseInputTable = ({
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
-
           message.success("Record updated successfully");
+          // Clear errors upon successful submission
+          handleClear(data.id);
         } else if (
           res?.data?.validationErrors &&
           res?.data?.validationErrors?.length > 0
@@ -192,9 +194,8 @@ const BaseInputTable = ({
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
-            });
-            setRowErrors((prevErrors) => {
-              return { ...prevErrors, [data.id]: true };
+              // Set specific cell errors using setCellError
+              setCellError(data.id, error.field, err);
             });
           });
           throw new Error("An error occurred while submitting the data.");
@@ -203,10 +204,8 @@ const BaseInputTable = ({
           !res.data.succeeded &&
           res.data.message.length > 0
         ) {
-          setRowErrors((prevErrors) => {
-            return { ...prevErrors, [data.id]: true };
-          });
           message.error(res.data.message[0]);
+          setCellError(data.id, null, res.data.message[0]); // Set generic row error
           throw new Error(res.data.message[0]);
         }
       } else {
@@ -216,29 +215,32 @@ const BaseInputTable = ({
           refreshData();
           refetchDataFromAnotherComponent?.();
           message.success("Record added successfully");
-        }
-        if (
+          // Clear errors upon successful submission
+
+          setRowErrors((prevErrors) => {
+            const updatedErrors = { ...prevErrors };
+            delete updatedErrors[data.id];
+            return updatedErrors;
+          });
+        } else if (
           res?.data?.validationErrors &&
           res?.data?.validationErrors?.length > 0
         ) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
+              // Set specific cell errors using setCellError
+              setCellError(data.id, error.field, err);
             });
-          });
-          setRowErrors((prevErrors) => {
-            return { ...prevErrors, [data.id]: true };
           });
           throw new Error("An error occurred while submitting the data.");
         }
       }
     } catch (error) {
-      setRowErrors((prevErrors) => {
-        return { ...prevErrors, [data.id]: true };
-      });
+      // Log the error and set a generic row error if needed
+      setCellError(data.id, null, error.message || "An unknown error occurred");
       console.log(error);
       throw error;
-    } finally {
     }
   };
   const setCellError = (rowId, field, error) => {
@@ -295,11 +297,15 @@ const BaseInputTable = ({
           console.log("Params", params);
           console.log("COL", colDef);
           console.log("DATA", data);
+          const isValidDateString = (dateString) => {
+            const date = new Date(dateString);
+            return !isNaN(date.getTime());
+          };
 
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
-          const error = `Your Entry of "${value}" is not valid. ${
-            hasError ? rowErrors[rowId][field] : ""
-          }`;
+          const error = `Your Entry of "${
+            value && isValidDateString(value) ? parseDate(value) : value
+          }" is not valid. ${hasError ? rowErrors[rowId][field] : ""}`;
 
           const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -564,20 +570,43 @@ const BaseInputTable = ({
 
   const onAddRow = async () => {
     if (gridApiRef.current) {
+      let hasErrors = false;
+
+      // Check if there are errors in the existing rows
+      gridApiRef.current.forEachNode((node) => {
+        const rowId = node.data.id; // Assuming each row has a unique `id`
+        if (rowErrors[rowId] && Object.keys(rowErrors[rowId]).length > 0) {
+          hasErrors = true;
+          return; // Stop checking further as we found an error
+        }
+      });
+
+      if (hasErrors) {
+        message.error(
+          "Please resolve errors in the current line before adding a new line."
+        );
+        return; // Exit the function without adding a new row
+      }
+
       const editedData = [];
 
-      // Check if there are existing rows
+      // Collect existing row data
       gridApiRef.current.forEachNode((node) => {
         editedData.push(node.data);
       });
 
       console.log("Edited data:", editedData);
 
+      // Initialize new row data
       const newRow = fields.reduce((acc, field) => {
         acc[field.value] = "";
         return acc;
       }, {});
 
+      // Initialize new row errors to an empty object
+      const newRowErrors = {};
+
+      // Update row data state
       setRowData((prevRowData) => {
         if (!prevRowData) {
           console.error(
@@ -588,6 +617,13 @@ const BaseInputTable = ({
 
         const updatedRowData = [...prevRowData, newRow];
         return updatedRowData;
+      });
+
+      // Update row errors state
+      setRowErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        updatedErrors[newRow.id] = newRowErrors; // Assuming newRow has an id
+        return updatedErrors;
       });
 
       message.info("New row added!");
