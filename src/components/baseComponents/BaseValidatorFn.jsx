@@ -69,6 +69,11 @@ export const baseValidatorFn = {
       return "Please enter a valid temporary postal address, e.g. 123456";
     return null;
   },
+  amount: (value) => {
+    const amountRegex = /^[0-9]+$/; // Example: amount
+    if (!amountRegex.test(value)) return "Please enter a valid amount";
+    return null;
+  },
 
   // Add more validators as needed
 };

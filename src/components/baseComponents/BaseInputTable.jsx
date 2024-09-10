@@ -311,7 +311,7 @@ const BaseInputTable = ({
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
           const error = `
           <div>
-            <strong style="display: block; margin-bottom: 8px;">⚠️  Validation Error:</strong>
+            <strong style="display: block; margin-bottom: 8px;">⚠️ Validation Error:</strong>
             <span style="font-weight: normal;">Your Entry of 
               <strong style="">"${
                 value && isValidDateString(value) ? parseDate(value) : value
@@ -332,33 +332,27 @@ const BaseInputTable = ({
             return dateString;
           };
           const getNameById = (id) => {
-            // Find the field that matches the current column definition field
             const selectedField = fields.find(
               (field) => field.value === colDef.field
             );
 
-            // Check if the selectedField and options are defined before trying to access them
             if (!selectedField || !selectedField.options) {
               console.log(
                 "No matching field or options found for:",
                 colDef.field
               );
-              return id; // Return the id if no matching field or options are found
+              return id;
             }
 
-            // Find the option with the matching id
             const selectedOption = selectedField.options.find(
               (option) => option.id === id
             );
 
-            // Debug log to verify correct matching
             console.log("Selected Option:", selectedOption);
 
-            // Return the name if found, otherwise return the id
             return selectedOption ? selectedOption.name : id;
           };
 
-          // Determine how to display the value based on column type
           const displayValue =
             col.type === "date"
               ? formatDate(value)
