@@ -520,6 +520,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           onChange={(e) => setDesignationId(e.target.value)}
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         >
+                          {" "}
+                          <option value="">--------------</option>
                           {designations
 
                             .filter(
@@ -527,12 +529,14 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                                 designation.mda_id === selectedMDA
                             )
                             .map((designation) => (
-                              <option
-                                key={designation.id}
-                                value={designation.id}
-                              >
-                                {designation.name}
-                              </option>
+                              <>
+                                <option
+                                  key={designation.id}
+                                  value={designation.id}
+                                >
+                                  {designation.name}
+                                </option>
+                              </>
                             ))}{" "}
                         </select>
                       </div>
@@ -546,13 +550,16 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           onChange={(e) => setGradeId(e.target.value)}
                           className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
                         >
+                          <option value="">----------------</option>
                           {designations
                             .filter((d) => d.id === designationId)
                             .flatMap((designation) => designation.grades)
                             .map((grade) => (
-                              <option key={grade.id} value={grade.id}>
-                                {grade.grade}
-                              </option>
+                              <>
+                                <option key={grade.id} value={grade.id}>
+                                  {grade.grade}
+                                </option>
+                              </>
                             ))}
                         </select>
                       </div>

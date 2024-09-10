@@ -149,8 +149,8 @@ function GLAccounts({ clickedBudget }) {
           fontSize: isAccountName && !isPostingType ? "14px" : "13px",
           paddingTop: 0,
           paddingBottom: 0,
-          position: "relative", // Required to position CircularProgress
-          borderRight: "1px solid #ccc", // Add a border on the right
+          position: "relative",
+          borderRight: "1px solid #ccc",
         }}
         key={field}
       >

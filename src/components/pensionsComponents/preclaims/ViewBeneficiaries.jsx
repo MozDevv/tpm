@@ -60,10 +60,10 @@ function ViewBeneficiaries({
         params.value ? new Date(params.value).toLocaleDateString() : "N/A",
     },
     {
-      headerName: "Date of Death",
+      headerName: "Is Deaceased",
       field: "deceased",
       valueFormatter: (params) =>
-        params.value ? new Date(params.value).toLocaleDateString() : "N/A",
+        params.value === null ? "No" : params.value ? "Yes" : "No",
     },
   ];
 
