@@ -366,6 +366,7 @@ const BaseTable = ({
               //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
               // }
               onRowClicked={(e) => {
+                console.log("e.data", e.data);
                 setOpenBaseCard(true);
                 setClickedItem(e.data);
                 // setUserClicked(e.data);

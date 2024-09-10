@@ -54,67 +54,6 @@ const columnDefs = [
   },
 
   {},
-  // {
-  //   field: "commutable",
-  //   headerName: "Commutable",
-  //   headerClass: "prefix-header",
-  //   filter: false,
-  //   cellRenderer: (params) => {
-  //     const index = params.value;
-  //     const current_data = rowData[index];
-  //     const has_commutation = current_data.has_commutation;
-
-  //     return (
-  //       <Button
-  //         variant="outlined"
-  //         sx={{
-  //           ml: 3,
-  //           borderColor: has_commutation ? "#3498db" : "#e67e22",
-  //           maxHeight: "22px",
-  //           cursor: "pointer",
-  //           color: has_commutation ? "#3498db" : "#e67e22",
-  //           fontSize: "10px",
-  //           fontWeight: "bold",
-  //         }}
-  //       >
-  //         {has_commutation ? "Yes" : "No"}
-  //       </Button>
-  //     );
-  //   },
-  // },
-  // {
-  //   field: "mapDocs",
-  //   headerName: "Map Documents",
-  //   headerClass: "prefix-header",
-  //   filter: false,
-  //   cellRenderer: (params) => {
-  //     const index = params.value;
-  //     const current_data = rowData[index];
-  //     // const id = params[index].value;
-  //     const document_nos = current_data.awardDocuments.length;
-
-  //     return (
-  //       <Button
-  //         variant="outlined"
-  //         onClick={() => {
-  //           setOpenAward(true);
-  //           setRowClicked(current_data);
-  //         }}
-  //         sx={{
-  //           ml: 3,
-  //           borderColor: "#3498db",
-  //           maxHeight: "22px",
-  //           cursor: "pointer",
-  //           color: "#3498db",
-  //           fontSize: "10px",
-  //           fontWeight: "bold",
-  //         }}
-  //       >
-  //         Map Documents ({document_nos})
-  //       </Button>
-  //     );
-  //   },
-  // },
 ];
 
 const PensionAwards = () => {
@@ -132,7 +71,7 @@ const PensionAwards = () => {
       no: index + 1,
       prefix: transformString(item.prefix).toUpperCase(),
       name: item.name,
-      pensionCap: item.pensionCap.id,
+      pensionCap: item.pensionCap.name,
       id: item.id,
       description: transformString(item.description),
       commutable: index,
@@ -197,15 +136,21 @@ const PensionAwards = () => {
   const fields = [
     { name: "prefix", label: "Prefix", type: "text", required: true },
     { name: "name", label: "Name", type: "text", required: true },
+    // {
+    //   name: "pensionCap",
+    //   label: "Pension Cap",
+    //   type: "select",
+    //   required: true,
+    //   options: pensionCaps.map((item) => ({
+    //     id: item.id,
+    //     name: item.name,
+    //   })),
+    // },
     {
       name: "pensionCap",
       label: "Pension Cap",
-      type: "select",
+      type: "text",
       required: true,
-      options: pensionCaps.map((item) => ({
-        id: item.id,
-        name: item.name,
-      })),
     },
     {
       name: "description",
@@ -213,18 +158,18 @@ const PensionAwards = () => {
       type: "text",
       required: true,
     },
-    {
-      name: "start_date",
-      label: "Start Date",
-      type: "date",
-      //  required: true,
-    },
-    {
-      name: "end_date",
-      label: "End Date",
-      type: "date",
-      // required: true,
-    },
+    // {
+    //   name: "start_date",
+    //   label: "Start Date",
+    //   type: "date",
+    //   //  required: true,
+    // },
+    // {
+    //   name: "end_date",
+    //   label: "End Date",
+    //   type: "date",
+    //   // required: true,
+    // },
     {
       name: "has_commutation",
       label: "Commutable",

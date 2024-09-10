@@ -4,3 +4,4 @@ next.config.mjs
 nginx.conf
 README.md
 Dockerfile
+zdeploy.yaml
