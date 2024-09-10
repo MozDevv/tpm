@@ -51,7 +51,7 @@ steps:
         sudo docker rm pmis-core || true
 
         # Run the new Docker container
-        sudo docker run --name pmis-core -p 4000:3000 -d pmis
+        sudo docker run --name pmis-core -p 4000:3000 -d agilesam/pmis:latest
 
         # Clean up Docker images and builder
         sudo docker image prune -af

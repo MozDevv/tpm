@@ -63,7 +63,7 @@ function GLAccounts({ clickedBudget }) {
       const endDateYear = new Date(clickedBudget.endDate).getFullYear();
       if (!newColDefs.find((col) => col.field === "endDate")) {
         newColDefs.push({
-          headerName: endDateYear, // Set headerName to the year
+          headerName: `Financial Year(${endDateYear})`, // Set headerName to the year
           field: "endDate",
           editable: true,
           width: 100,
