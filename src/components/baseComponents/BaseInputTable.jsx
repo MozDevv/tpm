@@ -670,7 +670,7 @@ const BaseInputTable = ({
         return updatedErrors;
       });
 
-      message.info("New row added!");
+      //  message.info("New row added!");
     } else {
       message.error("Unable to add a new row. Grid is not ready.");
     }
