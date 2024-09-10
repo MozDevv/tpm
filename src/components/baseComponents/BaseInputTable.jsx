@@ -58,6 +58,8 @@ const BaseInputTable = ({
       ? "start_date"
       : data[0]?.from_date
       ? "from_date"
+      : data[0]?.fromDate
+      ? "fromDate"
       : null;
 
     const sortedData = dateField
@@ -454,14 +456,12 @@ const BaseInputTable = ({
         columnDef.cellEditorParams = {
           values: options,
         };
-
         columnDef.valueFormatter = (params) => {
           const selectedOption = col.options.find(
             (option) => option.id === params.value
           );
           return selectedOption ? selectedOption.name : params.value;
         };
-
         columnDef.valueParser = (params) => {
           const selectedOption = col.options.find(
             (option) => option.name === params.newValue
@@ -479,20 +479,53 @@ const BaseInputTable = ({
             : params.value;
         };
       }
+      const datePairs = [
+        { start: "startDate", end: "endDate" },
+        { start: "from_date", end: "to_date" },
+        { start: "fromDate", end: "toDate" },
+        { start: "date", end: "endDate" },
+        { start: "start_date", end: "end_date" },
+      ];
+
+      const findDatePair = (field) => {
+        return datePairs.find(
+          (pair) => pair.start === field || pair.end === field
+        );
+      };
 
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue } = params;
         const field = colDef.field;
 
-        const validator = baseValidatorFn[field];
-        if (validator) {
-          const error = validator(newValue);
+        const datePair = findDatePair(field);
+
+        if (datePair) {
+          const currentStartDate = data[datePair.start];
+          const currentEndDate = data[datePair.end];
+
+          const startDate =
+            field === datePair.start ? newValue : currentStartDate;
+          const endDate = field === datePair.end ? newValue : currentEndDate;
+
+          const error = baseValidatorFn.endDate(endDate, startDate);
           if (error) {
             message.error(`Validation Error on ${field}: ${error}`);
             setCellError(data.id, field, error);
             return;
           } else {
             handleClearError(data, field);
+          }
+        } else {
+          const validator = baseValidatorFn[field];
+          if (validator) {
+            const error = validator(newValue);
+            if (error) {
+              message.error(`Validation Error on ${field}: ${error}`);
+              setCellError(data.id, field, error);
+              return;
+            } else {
+              handleClearError(data, field);
+            }
           }
         }
 

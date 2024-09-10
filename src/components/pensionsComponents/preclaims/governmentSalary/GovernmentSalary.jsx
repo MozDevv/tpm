@@ -186,6 +186,7 @@ function GovernmentSalary({ id, clickedItem }) {
         getEndpoint={endpoints.getGovernmentSalary(id)}
         postEndpoint={endpoints.createGovernmentSalary}
         putEndpoint={endpoints.updateGovernmentSalary}
+        deleteEndpoint={endpoints.deleteGovernmentSalary}
         setSelectedValue={setSelectedDesignation}
       />
     </div>

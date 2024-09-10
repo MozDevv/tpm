@@ -75,5 +75,18 @@ export const baseValidatorFn = {
     return null;
   },
 
+  endDate: (endDate, startDate) => {
+    if (dayjs(endDate).isBefore(dayjs(startDate))) {
+      return "End date should not be earlier than start date";
+    }
+    return null;
+  },
+  account_number: (value) => {
+    const accountNumberRegex = /^[0-9]{10}$/;
+    if (!accountNumberRegex.test(value))
+      return "Please enter a valid account number";
+    return null;
+  },
+
   // Add more validators as needed
 };

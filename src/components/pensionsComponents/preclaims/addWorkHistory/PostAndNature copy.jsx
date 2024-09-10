@@ -386,7 +386,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
         getEndpoint={preClaimsEndpoints.getPostandNatureofSalaries(id)}
         postEndpoint={preClaimsEndpoints.createPostAndNatureOfService}
         putEndpoint={preClaimsEndpoints.updatePostAndNature}
-        deleteEndpoint={preClaimsEndpoints.deletePostAndNature(id)}
+        deleteEndpoint={preClaimsEndpoints.deletePostAndNature}
         passProspectivePensionerId={true}
       />
     </div>
