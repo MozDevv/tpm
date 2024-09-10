@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Chip,
   Dialog,
   MenuItem,
   TextField,
@@ -133,6 +134,8 @@ function PreclaimsNotifications({
               description: selection.documentType.description,
               required: selection.required,
               pensioner_upload: selection.pensioner_upload,
+              side: selection.side,
+              has_two_sides: selection.documentType.has_two_sides,
             }))
             .filter((doc) => doc.pensioner_upload) || [];
 
@@ -196,7 +199,23 @@ function PreclaimsNotifications({
               dataSource={awardDocuments}
               renderItem={(doc) => (
                 <List.Item>
-                  <p className="font-montserrat">{doc.name}</p>
+                  <p className="font-montserrat flex gap-2">
+                    {doc.name}{" "}
+                    {doc.has_two_sides && (
+                      <Chip
+                        label={doc.side}
+                        size="small"
+                        variant="contained"
+                        sx={{
+                          maxHeight: "20px",
+                          fontSize: "9px",
+                          mb: "10px",
+                          borderWidth: "2px",
+                        }}
+                        color={doc.side === "Front" ? "primary" : "secondary"}
+                      />
+                    )}
+                  </p>
                 </List.Item>
               )}
             />

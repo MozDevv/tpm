@@ -62,8 +62,19 @@ function ViewBeneficiaries({
     {
       headerName: "Is Deaceased",
       field: "deceased",
-      valueFormatter: (params) =>
-        params.value === null ? "No" : params.value ? "Yes" : "No",
+      cellRenderer: (params) => {
+        if (params.value === null || params.value === false) {
+          return "No";
+        } else if (params.value === true) {
+          return "Yes";
+        }
+        return "No"; // Default case
+      },
+      cellStyle: (params) => ({
+        color: params.value ? "red" : "green",
+        fontWeight: "normal",
+        paddingLeft: "50px",
+      }),
     },
   ];
 
