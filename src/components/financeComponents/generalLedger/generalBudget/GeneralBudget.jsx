@@ -7,7 +7,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
-import { formatDate } from "@/utils/dateFormatter";
+import { formatDate, parseDate } from "@/utils/dateFormatter";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
 import endpoints from "@/components/services/setupsApi";
 import GLAccounts from "./GLAccounts";
@@ -40,7 +40,7 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
     width: 100,
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => parseDate(params.value),
   },
   {
     field: "endDate",
@@ -48,7 +48,7 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
     width: 100,
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => parseDate(params.value),
   },
 ];
 
