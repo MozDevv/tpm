@@ -50,7 +50,7 @@ function GLAccounts({ clickedBudget }) {
       const startDateYear = new Date(clickedBudget.startDate).getFullYear();
       if (!newColDefs.find((col) => col.field === "startDate")) {
         newColDefs.push({
-          headerName: startDateYear, // Set headerName to the year
+          headerName: `Financial Year (${startDateYear})`, // Set headerName to the year
           field: "budgetAmount",
           editable: true,
           width: 100,
@@ -59,17 +59,17 @@ function GLAccounts({ clickedBudget }) {
     }
 
     // Check and add endDate column if it exists
-    if (clickedBudget?.endDate) {
-      const endDateYear = new Date(clickedBudget.endDate).getFullYear();
-      if (!newColDefs.find((col) => col.field === "endDate")) {
-        newColDefs.push({
-          headerName: `Financial Year(${endDateYear})`, // Set headerName to the year
-          field: "endDate",
-          editable: true,
-          width: 100,
-        });
-      }
-    }
+    // if (clickedBudget?.endDate) {
+    //   const endDateYear = new Date(clickedBudget.endDate).getFullYear();
+    //   if (!newColDefs.find((col) => col.field === "endDate")) {
+    //     newColDefs.push({
+    //       headerName: `Financial Year(${endDateYear})`, // Set headerName to the year
+    //       field: "endDate",
+    //       editable: true,
+    //       width: 100,
+    //     });
+    //   }
+    // }
 
     setColDefs(newColDefs); // Update the column definitions
   }, [clickedBudget]);

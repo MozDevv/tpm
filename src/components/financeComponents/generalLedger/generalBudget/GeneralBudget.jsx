@@ -159,7 +159,7 @@ const GeneralBudget = () => {
           />
         )}
       </BaseCard>
-      <div className="h-[80vh] overflow-y-auto">
+      <div className="">
         <BaseTable
           openBaseCard={openBaseCard}
           clickedItem={clickedItem}
