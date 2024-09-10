@@ -38,7 +38,7 @@ steps:
         sudo docker build --no-cache -t pmis .
 
         # Tag the Docker image for Docker Hub
-        sudo docker tag pmis your_dockerhub_username/pmis:latest
+        sudo docker tag pmis agilesam/pmis:latest
 
         # Log in to Docker Hub
         echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
