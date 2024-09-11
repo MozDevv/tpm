@@ -311,6 +311,8 @@ const ClaimsTable = () => {
 
         stage: item?.stage,
         comments: item?.comments,
+        maintenance_case: item?.prospectivePensioner?.maintenance_case,
+        is_wcps: item?.prospectivePensioner?.is_wcps,
         email_address: item?.prospectivePensioner?.email_address,
         notification_status: item?.prospectivePensioner?.notification_status,
         gender: item?.prospectivePensioner?.gender,

@@ -181,7 +181,8 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       </TabPane>
                     )}
 
-                    {activeCapName === "CAP196" && (
+                    {(activeCapName === "CAP196" ||
+                      clickedItem?.mda_pensionCap_name === "CAP196") && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
