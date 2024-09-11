@@ -13,6 +13,7 @@ import endpoints, { apiService } from "../services/setupsApi";
 import BaseInputCard from "./BaseInputCard";
 import CreateClaim from "../pensionsComponents/preclaims/CreateClaim";
 import BaseDeleteDialog from "./BaseDeleteDialog";
+import ReturnToPreclaims from "../pensionsComponents/ClaimsManagementTable/ReturnToPreclaims";
 
 function BaseCard({
   openBaseCard,
@@ -44,6 +45,7 @@ function BaseCard({
   glAccountName,
   isSecondaryCard2,
   isClaim,
+  isClaimManagement,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -156,6 +158,13 @@ function BaseCard({
             clickedItem={clickedItem}
             fetchAllPreclaims={fetchAllPreclaims}
           />
+        ) : status === 6 ? (
+          <ReturnToPreclaims
+            setOpenPreclaimDialog={setOpenPreclaimDialog}
+            setOpenCreateClaim={setOpenCreateClaim}
+            clickedItem={clickedItem}
+            moveStatus={status}
+          />
         ) : status === 5 ? (
           <CreateClaim
             setOpenPreclaimDialog={setOpenBaseCard}
@@ -164,6 +173,32 @@ function BaseCard({
             fetchAllPreclaims={fetchAllPreclaims}
           />
         ) : null}
+      </Dialog>
+      <Dialog
+        open={
+          (status === 0 || status === 1 || status === 2) &&
+          isClaimManagement &&
+          (openAction === 0 ||
+            openAction === 1 ||
+            openAction === 2 ||
+            openAction === 4)
+        }
+        onClose={() => setOpenAction(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            height: "300px",
+            width: "600px",
+          },
+          p: 4,
+        }}
+      >
+        <ReturnToPreclaims
+          setOpenPreclaimDialog={setOpenBaseCard}
+          setOpenCreateClaim={setOpenAction}
+          moveTo={openAction}
+          clickedItem={clickedItem}
+          moveStatus={openAction}
+        />
       </Dialog>
       {/* <Dialog
         maxWidth="lg"

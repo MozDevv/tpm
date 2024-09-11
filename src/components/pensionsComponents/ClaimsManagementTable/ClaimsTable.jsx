@@ -403,6 +403,7 @@ const ClaimsTable = () => {
   const [openNotification, setOpenNotification] = useState(false);
 
   const [clickedItem, setClickedItem] = useState(null);
+  const [openAction, setOpenAction] = useState(false);
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const handlers = {
@@ -423,234 +424,235 @@ const ClaimsTable = () => {
     edit: () => console.log("Edit clicked"),
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
-    notify: () => {
-      setOpenNotification(true);
-    },
+
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
+    movetoMDA: () => setOpenAction(1),
+    movetoValidation: () => setOpenAction(0),
+    movetoVerification: () => setOpenAction(1),
+    moveToApproval: () => setOpenAction(0),
   };
+
+  useEffect(() => {
+    fetchAllPreclaims();
+  }, [openPreclaimDialog]);
 
   return (
     <>
-      {loading ? (
-        <>
-          <Spinner />
-        </>
-      ) : (
-        <div className="table-container relative h-[80vh] w-full">
-          <ClaimDialog
-            clickedItem={clickedItem}
-            setOpenPreclaimDialog={setOpenPreclaimDialog}
-            openPreclaimDialog={openPreclaimDialog}
-            setOpenNotification={setOpenNotification}
-          />
-          <BaseCard
-            openBaseCard={openPreclaimDialog}
+      <div className="table-container relative h-[80vh] w-full">
+        <ClaimDialog
+          clickedItem={clickedItem}
+          setOpenPreclaimDialog={setOpenPreclaimDialog}
+          openPreclaimDialog={openPreclaimDialog}
+          setOpenNotification={setOpenNotification}
+        />
+        <BaseCard
+          openBaseCard={openPreclaimDialog}
+          setOpenBaseCard={setOpenPreclaimDialog}
+          handlers={baseCardHandlers}
+          title={clickedItem ? clickedItem?.claim_id : "Create Claim"}
+          clickedItem={clickedItem}
+          status={clickedItem?.stage}
+          // openAction={openAction}
+          // setOpenAction={setOpenAction}
+          fetchAllPreclaims={fetchAllPreclaims}
+          openAction={openAction}
+          setOpenAction={setOpenAction}
+          isClaim={true}
+          isClaimManagement={true}
+        >
+          <CreateProspectivePensioner
             setOpenBaseCard={setOpenPreclaimDialog}
-            handlers={baseCardHandlers}
-            title={clickedItem ? clickedItem?.claim_id : "Create Claim"}
+            openBaseCard={openPreclaimDialog}
             clickedItem={clickedItem}
-            // openAction={openAction}
-            // setOpenAction={setOpenAction}
-            fetchAllPreclaims={fetchAllPreclaims}
-            isClaim={true}
-          >
-            <CreateProspectivePensioner
-              setOpenBaseCard={setOpenPreclaimDialog}
-              openBaseCard={openPreclaimDialog}
-              clickedItem={clickedItem}
-            />
-          </BaseCard>
-          <div className="h-full w-full">
-            <div className="flex justify-between flex-row mt-2">
-              <div className="flex gap-2 items-center pl-3">
-                <div className="flex items-center gap-2 mt-2 ml-2">
-                  <Button
-                    onClick={() => exportData()}
-                    sx={{ maxHeight: "25px" }}
+          />
+        </BaseCard>
+        <div className="h-full w-full">
+          <div className="flex justify-between flex-row mt-2">
+            <div className="flex gap-2 items-center pl-3">
+              <div className="flex items-center gap-2 mt-2 ml-2">
+                <Button onClick={() => exportData()} sx={{ maxHeight: "25px" }}>
+                  <img
+                    src="/excel.png"
+                    alt="Open in Excel"
+                    height={20}
+                    width={20}
+                  />
+                  <p className="font-medium text-gray text-sm ">
+                    Open in Excel
+                  </p>
+                </Button>
+                <div className="">
+                  <IconButton
+                    onClick={() =>
+                      setOpenFilter((prevOpenFilter) => !prevOpenFilter)
+                    }
                   >
-                    <img
-                      src="/excel.png"
-                      alt="Open in Excel"
-                      height={20}
-                      width={20}
-                    />
-                    <p className="font-medium text-gray text-sm ">
-                      Open in Excel
-                    </p>
-                  </Button>
-                  <div className="">
-                    <IconButton
-                      onClick={() =>
-                        setOpenFilter((prevOpenFilter) => !prevOpenFilter)
-                      }
-                    >
-                      <Tooltip title="filter items" placement="top">
-                        <FilterAlt sx={{ color: "primary.main" }} />
-                      </Tooltip>
-                    </IconButton>
-                  </div>
+                    <Tooltip title="filter items" placement="top">
+                      <FilterAlt sx={{ color: "primary.main" }} />
+                    </Tooltip>
+                  </IconButton>
                 </div>
               </div>
             </div>
-            <Divider sx={{ mt: 1, mb: 1 }} />
+          </div>
+          <Divider sx={{ mt: 1, mb: 1 }} />
 
-            <div className="flex">
-              {/* Custom Drawer */}
-              <Collapse
-                in={openFilter}
-                sx={{
-                  bgcolor: "white",
-                  mt: 2,
-                  borderRadius: "10px",
-                  color: "black",
-                  borderRadius: "10px",
-                }}
-                timeout="auto"
-                unmountOnExit
-              >
-                <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-                  <p className="text-md font-medium text-primary p-3">
-                    Filter By:
-                  </p>
-                  <Divider sx={{ px: 2 }} />
-                  <div className="p-3">
-                    <label className="text-xs font-semibold text-gray-600">
-                      Keyword
-                    </label>
-                    <div className="flex">
-                      <input
-                        type="text"
-                        className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                        required
-                      />
+          <div className="flex">
+            {/* Custom Drawer */}
+            <Collapse
+              in={openFilter}
+              sx={{
+                bgcolor: "white",
+                mt: 2,
+                borderRadius: "10px",
+                color: "black",
+                borderRadius: "10px",
+              }}
+              timeout="auto"
+              unmountOnExit
+            >
+              <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
+                <p className="text-md font-medium text-primary p-3">
+                  Filter By:
+                </p>
+                <Divider sx={{ px: 2 }} />
+                <div className="p-3">
+                  <label className="text-xs font-semibold text-gray-600">
+                    Keyword
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
+                      required
+                    />
 
-                      <IconButton onClick={handleClick}>
-                        <FilterList />
-                      </IconButton>
-                    </div>
+                    <IconButton onClick={handleClick}>
+                      <FilterList />
+                    </IconButton>
                   </div>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
+                </div>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem>Equal</MenuItem>
+                  <MenuItem>Contains</MenuItem>
+                  <MenuItem>Not Equal</MenuItem>
+                </Menu>
+                <Divider />
+                <div className="flex flex-col item-center p-4 mt-3">
+                  <label className="text-xs font-semibold text-gray-600">
+                    Select Column
+                  </label>
+                  <select
+                    name="role"
+                    //value={selectedRole}
+                    //onChange={(e) => setSelectedRole(e.target.value)}
+                    className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
+                    required
                   >
-                    <MenuItem>Equal</MenuItem>
-                    <MenuItem>Contains</MenuItem>
-                    <MenuItem>Not Equal</MenuItem>
-                  </Menu>
-                  <Divider />
-                  <div className="flex flex-col item-center p-4 mt-3">
-                    <label className="text-xs font-semibold text-gray-600">
-                      Select Column
-                    </label>
+                    <option value="Board Member">All</option>
+                    <option value="Admin">Id</option>
+                    <option value="Business Admin">Email Address</option>
+                    <option value="Support">Full Name</option>
+                  </select>
+                </div>
+                <div className="flex flex-col item-center p-4 mt-3">
+                  <label className="text-xs font-semibold text-gray-600 w-[100%]">
+                    Sort By:
+                  </label>
+                  <div className="flex items-center ">
+                    {" "}
                     <select
                       name="role"
                       //value={selectedRole}
                       //onChange={(e) => setSelectedRole(e.target.value)}
-                      className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
+                      className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
                       required
                     >
                       <option value="Board Member">All</option>
-                      <option value="Admin">Id</option>
-                      <option value="Business Admin">Email Address</option>
-                      <option value="Support">Full Name</option>
+                      <option value="id">Id</option>
+                      <option value="email_address">Email Address</option>
+                      <option value="fullName">Full Name</option>
                     </select>
-                  </div>
-                  <div className="flex flex-col item-center p-4 mt-3">
-                    <label className="text-xs font-semibold text-gray-600 w-[100%]">
-                      Sort By:
-                    </label>
-                    <div className="flex items-center ">
-                      {" "}
-                      <select
-                        name="role"
-                        //value={selectedRole}
-                        //onChange={(e) => setSelectedRole(e.target.value)}
-                        className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
-                        required
+                    <Tooltip
+                      title={
+                        sortCriteria === 1
+                          ? "Ascending Order"
+                          : "Desceding Order"
+                      }
+                      placement="top"
+                    >
+                      <IconButton
+                        sx={{ mr: "-10px", ml: "-4px" }}
+                        onClick={() => {
+                          setSortCriteria(sortCriteria === 1 ? 2 : 1);
+                        }}
                       >
-                        <option value="Board Member">All</option>
-                        <option value="id">Id</option>
-                        <option value="email_address">Email Address</option>
-                        <option value="fullName">Full Name</option>
-                      </select>
-                      <Tooltip
-                        title={
-                          sortCriteria === 1
-                            ? "Ascending Order"
-                            : "Desceding Order"
-                        }
-                        placement="top"
-                      >
-                        <IconButton
-                          sx={{ mr: "-10px", ml: "-4px" }}
-                          onClick={() => {
-                            setSortCriteria(sortCriteria === 1 ? 2 : 1);
-                          }}
-                        >
-                          <SortByAlpha />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
+                        <SortByAlpha />
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 </div>
-                <Button
-                  variant="contained"
-                  sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
-                >
-                  Apply Filters
-                </Button>
-              </Collapse>
-              <div
-                className="ag-theme-quartz flex flex-col"
-                style={{
-                  height: "80vh",
-                  padding: "20px",
-                  width: openFilter ? "calc(100vw - 300px)" : "100vw",
+              </div>
+              <Button
+                variant="contained"
+                sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
+              >
+                Apply Filters
+              </Button>
+            </Collapse>
+            <div
+              className="ag-theme-quartz flex flex-col"
+              style={{
+                height: "80vh",
+                padding: "20px",
+                width: openFilter ? "calc(100vw - 300px)" : "100vw",
+              }}
+            >
+              <AgGridReact
+                rowData={rowData}
+                columnDefs={colDefs}
+                rowSelection="multiple"
+                onSelectionChanged={onSelectionChanged}
+                domLayout="autoHeight"
+                onGridReady={onGridReady}
+                onRowClicked={(event) => {
+                  setClickedItem(event.data); // Update selected item
+                  setOpenPreclaimDialog(true); // Open dialog
+                }}
+              />{" "}
+              <Box
+                sx={{
+                  mt: "-10px",
+                  display: "flex",
+                  justifyContent: "center",
                 }}
               >
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={colDefs}
-                  rowSelection="multiple"
-                  onSelectionChanged={onSelectionChanged}
-                  domLayout="autoHeight"
-                  onGridReady={onGridReady}
-                  onRowClicked={(event) => {
-                    setClickedItem(event.data); // Update selected item
-                    setOpenPreclaimDialog(true); // Open dialog
-                  }}
-                />{" "}
-                <Box
-                  sx={{
-                    mt: "-10px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Pagination
-                    count={totalPages}
-                    page={pageNumber}
-                    onChange={handlePageChange}
-                    color="primary"
-                    variant="outlined"
-                    shape="rounded"
-                  />
-                </Box>
-              </div>
+                <Pagination
+                  count={totalPages}
+                  page={pageNumber}
+                  onChange={handlePageChange}
+                  color="primary"
+                  variant="outlined"
+                  shape="rounded"
+                />
+              </Box>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };

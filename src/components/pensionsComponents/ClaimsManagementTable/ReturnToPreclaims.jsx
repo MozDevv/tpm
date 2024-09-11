@@ -9,6 +9,7 @@ function ReturnToPreclaims({
   setOpenPreclaimDialog,
   setOpenCreateClaim,
   moveStatus,
+  moveTo,
 }) {
   const [comments, setComments] = useState("");
 
@@ -47,8 +48,8 @@ function ReturnToPreclaims({
           open: true,
           message:
             moveStatus === 1
-              ? "Claim has been returned to preclaims"
-              : "Claim has been moved to Validation",
+              ? "Claim has been returned Successfully"
+              : "Claim has been moved to the next stage",
           severity: "success",
         });
         console.log(response.data);
@@ -65,12 +66,23 @@ function ReturnToPreclaims({
     }
   };
 
+  const title =
+    clickedItem?.stage === 0 && moveStatus === 1
+      ? "Return Claim to MDA"
+      : clickedItem?.stage === 0 && moveStatus === 0
+      ? "Move Claim to Validation"
+      : clickedItem?.stage === 1 && moveStatus === 1
+      ? "Return to Verification"
+      : clickedItem?.stage === 1 && moveStatus === 0
+      ? "Move to Approval"
+      : "Approve Claim";
+
   return (
     <div>
       {" "}
       <div className="p-8 h-[100%]">
-        <p className="text-primary relative font-semibold text-lg mb-2">
-          Return to Preclaims
+        <p className="text-primary relative font-semibold text-lg mb-5">
+          {title}
         </p>
 
         <div>

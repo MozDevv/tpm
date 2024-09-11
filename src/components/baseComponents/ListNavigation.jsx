@@ -19,6 +19,8 @@ import {
   AddCircleOutline,
   Info,
   FormatListNumbered,
+  KeyboardReturn,
+  Undo,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -80,6 +82,42 @@ const ListNavigation = ({ handlers, status }) => {
       action: "submit",
       requiredPermissions: ["preclaims.execute.send_preclaim_for_approval"],
       status: [3],
+    },
+    {
+      name: "Return to MDA for Clarification",
+      icon: Undo,
+      action: "movetoMDA",
+      requiredPermissions: [],
+      status: [0],
+    },
+    {
+      name: "Move to Validation",
+      icon: Send,
+      action: "movetoValidation",
+      requiredPermissions: [],
+      status: [0],
+    },
+    {
+      name: "Return to Verification",
+      icon: Undo,
+      action: "movetoVerification",
+      requiredPermissions: [],
+      status: [1],
+    },
+    {
+      name: "Move to Approval",
+      icon: Send,
+      action: "moveToApproval",
+      requiredPermissions: [],
+      status: [1],
+    },
+
+    {
+      name: "Approve Claim",
+      icon: Send,
+      action: "moveStatus",
+      requiredPermissions: [],
+      status: [2],
     },
     {
       name: "Create Branch",

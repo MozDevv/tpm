@@ -702,6 +702,7 @@ const Claims = ({ status }) => {
     },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
+    moveStatus: () => setOpenAction(true),
   };
 
   const title = clickedItem
@@ -764,7 +765,7 @@ const Claims = ({ status }) => {
           <BaseCard
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
-            status={status}
+            status={6}
             handlers={baseCardHandlers}
             title={title}
             clickedItem={clickedItem}
