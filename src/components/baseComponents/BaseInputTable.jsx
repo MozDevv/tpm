@@ -11,12 +11,14 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { Button, Divider, IconButton, Tooltip } from "@mui/material";
 import { message } from "antd";
-import { Add, Api, Cancel, Delete } from "@mui/icons-material";
+import { Add, Api, Cancel, CloudUpload, Delete } from "@mui/icons-material";
 import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
 import "./editabletable.css";
 import { baseValidatorFn } from "./BaseValidatorFn";
 import { parseDate } from "@/utils/dateFormatter";
+import * as XLSX from "xlsx";
+import { VisuallyHiddenInput } from "@/utils/handyComponents";
 
 const BaseInputTable = ({
   fields = [],
@@ -35,6 +37,7 @@ const BaseInputTable = ({
   deleteEndpoint,
   setSelectedValue,
   refetchDataFromAnotherComponent,
+  useExcel,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -302,9 +305,9 @@ const BaseInputTable = ({
           const rowId = data.id;
           const options = col.options || [];
 
-          console.log("Params", params);
-          console.log("COL", colDef);
-          console.log("DATA", data);
+          // console.log("Params", params);
+          // console.log("COL", colDef);
+          // console.log("DATA", data);
           const isValidDateString = (dateString) => {
             const date = new Date(dateString);
             return !isNaN(date.getTime());
@@ -579,6 +582,12 @@ const BaseInputTable = ({
           data.contribution_amount =
             (data.total_emoluments * 0.02).toFixed(2) * 1;
         }
+        if (data.start_date && data.end_date) {
+          data.number_of_days = dayjs(data.end_date).diff(
+            dayjs(data.start_date),
+            "days"
+          );
+        }
 
         console.log("Cell Value Changed:", params);
         console.log("Updated Data:", data);
@@ -704,6 +713,43 @@ const BaseInputTable = ({
       event.event.preventDefault();
     }
   };
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      console.log("JSON Data:", jsonData);
+      console.log("Sheet Name:", sheetName);
+      console.log("Sheet Data:", sheet);
+
+      setRowData((prevData) => {
+        const transformedData = jsonData.map((item) => {
+          return fields.reduce((acc, field) => {
+            acc[field.value] = item[field.label];
+            return acc;
+          }, {});
+        });
+
+        return [...transformedData, ...prevData];
+      });
+      if (jsonData.length > 0) {
+        for (const row of jsonData) {
+          setTimeout(async () => {
+            await handleSave(row);
+          }, 1500);
+        }
+      }
+      console.log("Row Data:", rowData);
+    };
+    reader.readAsArrayBuffer(file);
+  };
 
   return (
     <div className="ag-theme-quartz">
@@ -727,6 +773,24 @@ const BaseInputTable = ({
         >
           Delete Lines
         </Button>
+
+        {useExcel && (
+          <Button
+            variant="text"
+            tabIndex={-1}
+            startIcon={<CloudUpload />}
+            sx={{ mt: "-13px" }}
+            component="label"
+            role={undefined}
+          >
+            Import excel
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleFileUpload}
+              multiple
+            />
+          </Button>
+        )}
       </div>
 
       <div className="" style={{ maxHeight: "500px", width: "100%" }}>

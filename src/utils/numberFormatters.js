@@ -5,3 +5,12 @@ export const formatInThousands = (value) => {
     maximumFractionDigits: 2,
   });
 };
+
+// Formats to two decimal places && adds commas e.g. 1,000.00
+export const formatNumber = (value) => {
+  const number = value || "0.00";
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number);
+};

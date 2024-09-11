@@ -70,6 +70,12 @@ function PeriodsOfAbsence({ id, status }) {
         { id: "Condoned Leave", name: "Condoned Leave" },
       ],
     },
+    {
+      label: "Number of Days",
+      value: "number_of_days",
+      type: "number",
+      disabled: true,
+    },
   ];
 
   const handleInputChange = (e) => {

@@ -15,6 +15,7 @@ import { message } from "antd";
 import dayjs from "dayjs";
 
 import { useMda } from "@/context/MdaContext";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const BaseInputCard = ({
   fields,
@@ -127,6 +128,16 @@ const BaseInputCard = ({
     }
     setIsEditing(true);
     // validateForm();
+  };
+
+  const handleAmountChange = (e) => {
+    const { name, value } = e.target;
+    const numericValue = parseFloat(value.replace(/,/g, ""));
+    const formattedValue = isNaN(numericValue) ? "" : numericValue.toFixed(2);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formattedValue,
+    }));
   };
 
   const { mdaId } = useMda();
@@ -461,6 +472,24 @@ const BaseInputCard = ({
                     (option) => option.id === formData[field.name]
                   ) || null
                 }
+              />
+            ) : field.type === "amount" ? (
+              <TextField
+                name={field.name}
+                variant="outlined"
+                size="small"
+                type="text"
+                value={formatNumber(formData[field.name])}
+                //value={formData[field.name]}
+                onChange={handleAmountChange}
+                error={!!errors[field.name]}
+                helperText={errors[field.name]}
+                required={field.required}
+                disabled={field.disabled}
+                fullWidth
+                inputProps={{
+                  style: { textAlign: "right" }, // Aligns the text to the right
+                }}
               />
             ) : (
               <TextField

@@ -52,18 +52,22 @@ const BankAccount = () => {
   const [selectedBank, setSelectedBank] = React.useState(null);
 
   const transformData = (data) => {
-    return data.map((item, index) => ({
-      no: index + 1,
-      id: item.id,
-      bankAccountName: item.bankAccountName,
-      bankAccountDescription: item.bankAccountDescription,
-      bankAccountNo: item.bankAccountNo,
-      isBlocked: item.isBlocked,
-      bankBranchId: item.bankBranchId,
-      branchName: branches.find((branch) => branch.id === item.bankBranchId),
+    return data.map((item, index) => {
+      const branch = branches.find((branch) => branch.id === item.bankBranchId);
+      return {
+        no: index + 1,
+        id: item.id,
+        bankAccountName: item.bankAccountName,
+        bankAccountDescription: item.bankAccountDescription,
+        bankAccountNo: item.bankAccountNo,
+        isBlocked: item.isBlocked,
+        bankBranchId: item.bankBranchId,
+        branchName: branch ? branch.name : "",
+        bank_id: branch ? branch.bankId : "",
 
-      // roles: item.roles,
-    }));
+        // roles: item.roles,
+      };
+    });
   };
 
   const handlers = {
@@ -164,8 +168,10 @@ const BankAccount = () => {
     {
       name: "bankBranchId",
       label: "Bank Branch Id",
-      options: branches.filter((branch) => branch.bankId === selectedBank),
-      type: "select",
+      options: branches.filter((branch) =>
+        selectedBank ? branch.bankId === selectedBank : true
+      ),
+      type: "autocomplete",
     },
   ];
 

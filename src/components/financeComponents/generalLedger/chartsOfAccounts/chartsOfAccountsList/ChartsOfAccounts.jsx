@@ -8,6 +8,7 @@ import ListNavigation from "@/components/baseComponents/ListNavigation";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
+import { formatNumber } from "@/utils/numberFormatters";
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -55,7 +56,7 @@ function ChartsOfAccounts() {
       headerName: "Net Amount",
       field: "amount",
       width: 150,
-      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+      valueFormatter: (params) => formatNumber(params.value),
 
       cellStyle: { textAlign: "right" },
     },
@@ -63,7 +64,7 @@ function ChartsOfAccounts() {
       headerName: "Budget Amount",
       field: "budgetAmount",
       width: 150,
-      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+      valueFormatter: (params) => formatNumber(params.value),
       cellStyle: { textAlign: "right" },
     },
     {
@@ -72,7 +73,7 @@ function ChartsOfAccounts() {
       width: 150,
 
       cellStyle: { textAlign: "right" },
-      valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
+      valueFormatter: (params) => formatNumber(params.value),
     },
     { headerName: "Sub Group Name", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
@@ -146,11 +147,6 @@ function ChartsOfAccounts() {
   };
   const fields = [
     {
-      name: "accountCode",
-      label: "Account Code",
-      type: "text",
-    },
-    {
       name: "accountName",
       label: "Account Name",
       type: "text",
@@ -163,15 +159,17 @@ function ChartsOfAccounts() {
     {
       name: "amount",
       label: "Amount",
-      type: "number",
+      type: "amount",
     },
     {
       name: "budgetAmount",
       label: "Budget Amount",
+      type: "amount",
     },
     {
       name: "budgetBalance",
       label: "Budget Balance",
+      type: "amount",
     },
     {
       name: "subGroupName",

@@ -142,6 +142,7 @@ function Contributions({ id, clickedItem, setOpenBaseCard, setClickedItem }) {
             putEndpoint={endpoints.updateContributionsLine}
             passProspectivePensionerId={true}
             refetchDataFromAnotherComponent={fetchClickedItem}
+            useExcel={true}
           />
         </div>
       )}
