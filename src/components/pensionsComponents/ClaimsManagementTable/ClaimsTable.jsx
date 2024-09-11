@@ -33,6 +33,8 @@ import claimsEndpoints from "@/components/services/claimsApi";
 import { useIsLoading } from "@/context/LoadingContext";
 import Spinner from "@/components/spinner/Spinner";
 import ClaimDialog from "./ClaimDialog";
+import CreateProspectivePensioner from "../preclaims/createProspective/CreateProspectivePensioner";
+import BaseCard from "@/components/baseComponents/BaseCard";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -106,11 +108,7 @@ const colDefs = [
       );
     },
   },
-  {
-    headerName: "Comments",
-    field: "comments",
-    width: 150,
-  },
+
   {
     headerName: "Email Address",
     field: "email_address",
@@ -224,6 +222,11 @@ const colDefs = [
     field: "pensionAward_code",
     width: 180,
   },
+  {
+    headerName: "Comments",
+    field: "comments",
+    width: 150,
+  },
 
   {
     headerName: "Pension Award Start Date",
@@ -300,7 +303,7 @@ const ClaimsTable = () => {
       setTotalRecords(res.data.totalCount);
 
       const mappedData = rawData.map((item) => ({
-        retiree: item?.prospectivePensioner?.retiree?.id,
+        retiree: item?.prospectivePensioner?.id,
         //  id: item?.claim_id,
         claim_id: item?.claim_id,
 
@@ -308,18 +311,18 @@ const ClaimsTable = () => {
 
         stage: item?.stage,
         comments: item?.comments,
-        email_address: item?.prospectivePensioner?.retiree?.email_address,
+        email_address: item?.prospectivePensioner?.email_address,
         notification_status: item?.prospectivePensioner?.notification_status,
-        gender: item?.prospectivePensioner?.retiree?.gender,
-        phone_number: item?.prospectivePensioner?.retiree?.phone_number,
+        gender: item?.prospectivePensioner?.gender,
+        phone_number: item?.prospectivePensioner?.phone_number,
         personal_number: item?.prospectivePensioner?.personal_number,
-        surname: item?.prospectivePensioner?.retiree?.surname,
-        first_name: item?.prospectivePensioner?.retiree?.first_name,
-        other_name: item?.prospectivePensioner?.retiree?.other_name,
+        surname: item?.prospectivePensioner?.surname,
+        first_name: item?.prospectivePensioner?.first_name,
+        other_name: item?.prospectivePensioner?.other_name,
         pension_award: item?.prospectivePensioner?.mda?.name,
         name: item?.prospectivePensioner?.pension_award?.name,
-        national_id: item?.prospectivePensioner?.retiree?.national_id,
-        kra_pin: item?.prospectivePensioner?.retiree?.kra_pin,
+        national_id: item?.prospectivePensioner?.national_id,
+        kra_pin: item?.prospectivePensioner?.kra_pin,
         retirement_date: item?.prospectivePensioner?.retirement_date,
         dob: item?.prospectivePensioner?.dob,
         date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
@@ -368,19 +371,6 @@ const ClaimsTable = () => {
           item?.prospectivePensioner?.pension_commencement_date,
         postal_address: item?.prospectivePensioner?.postal_address,
         id: item.prospectivePensioner?.id,
-        bank_name:
-          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank?.name,
-        branch_name:
-          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.name,
-        account_number:
-          item.prospectivePensioner?.bankDetails[0]?.account_number,
-        bankType:
-          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank?.bankType
-            ?.type,
-        branch_code:
-          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.branch_code,
-        bank_code:
-          item.prospectivePensioner?.bankDetails[0]?.bankBranch?.bank.code,
       }));
 
       setRowData(mappedData);
@@ -415,6 +405,30 @@ const ClaimsTable = () => {
   const [clickedItem, setClickedItem] = useState(null);
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
+  const handlers = {
+    filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
+    openInExcel: () => exportData(),
+    // create: () => router.push("/pensions/preclaims/listing/new"),
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => setOpenNotification(true),
+  };
+
+  const baseCardHandlers = {
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => {
+      setOpenNotification(true);
+    },
+    submit: () => setOpenAction(true),
+    createClaim: () => setOpenAction(true),
+  };
 
   return (
     <>
@@ -430,6 +444,23 @@ const ClaimsTable = () => {
             openPreclaimDialog={openPreclaimDialog}
             setOpenNotification={setOpenNotification}
           />
+          <BaseCard
+            openBaseCard={openPreclaimDialog}
+            setOpenBaseCard={setOpenPreclaimDialog}
+            handlers={baseCardHandlers}
+            title={clickedItem ? clickedItem?.claim_id : "Create Claim"}
+            clickedItem={clickedItem}
+            // openAction={openAction}
+            // setOpenAction={setOpenAction}
+            fetchAllPreclaims={fetchAllPreclaims}
+            isClaim={true}
+          >
+            <CreateProspectivePensioner
+              setOpenBaseCard={setOpenPreclaimDialog}
+              openBaseCard={openPreclaimDialog}
+              clickedItem={clickedItem}
+            />
+          </BaseCard>
           <div className="h-full w-full">
             <div className="flex justify-between flex-row mt-2">
               <div className="flex gap-2 items-center pl-3">

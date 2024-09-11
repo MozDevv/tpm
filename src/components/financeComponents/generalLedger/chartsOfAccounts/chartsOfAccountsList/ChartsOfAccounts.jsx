@@ -57,21 +57,21 @@ function ChartsOfAccounts() {
       width: 150,
       valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
 
-      cellStyle: { textAlign: "center" },
+      cellStyle: { textAlign: "right" },
     },
     {
       headerName: "Budget Amount",
       field: "budgetAmount",
       width: 150,
       valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
-      cellStyle: { textAlign: "center" },
+      cellStyle: { textAlign: "right" },
     },
     {
       headerName: "Budget Balance",
       field: "budgetBalance",
       width: 150,
 
-      cellStyle: { textAlign: "center" },
+      cellStyle: { textAlign: "right" },
       valueFormatter: (params) => params.value?.toFixed(2) || "0.00", // Format to 2 decimal places
     },
     { headerName: "Sub Group Name", field: "subGroupName" },
