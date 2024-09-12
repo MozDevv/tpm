@@ -75,7 +75,7 @@ function ChartsOfAccounts() {
       cellStyle: { textAlign: "right" },
       valueFormatter: (params) => formatNumber(params.value),
     },
-    { headerName: "Sub Group Name", field: "subGroupName" },
+    { headerName: "Account Category", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting", width: 90 },
     { headerName: "Reconciliation", field: "isReconciliation", width: 90 },
@@ -160,25 +160,29 @@ function ChartsOfAccounts() {
       name: "amount",
       label: "Amount",
       type: "amount",
+      disabled: true,
     },
     {
       name: "budgetAmount",
       label: "Budget Amount",
       type: "amount",
+      disabled: true,
     },
+
     {
       name: "budgetBalance",
       label: "Budget Balance",
       type: "amount",
+      disabled: true,
     },
     {
       name: "subGroupName",
-      label: "Sub Group Name",
+      label: "Account Category",
       type: "text",
     },
     {
       name: "glAccountType",
-      label: "GL Account Type",
+      label: "Account Sub Category",
       type: "text",
     },
     {
@@ -233,7 +237,7 @@ function ChartsOfAccounts() {
     },
     {
       name: "glAccountType",
-      label: "GL Account Type",
+      label: "Account Sub Category",
       type: "autocomplete",
       options: accountTypes.map((type) => ({
         id: type.value,

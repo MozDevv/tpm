@@ -256,15 +256,17 @@ const Users = () => {
       >
         {clickedItem ? (
           // <RecordCard id={clickedItem.id} editUser={editUser} />
-          <BaseInputCard
-            setRefreshData={setRefreshData}
-            fields={fields}
-            apiEndpoint={authEndpoints.updateUser(clickedItem.id)}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={false}
-          />
+          <>
+            <BaseInputCard
+              setRefreshData={setRefreshData}
+              fields={fields}
+              apiEndpoint={authEndpoints.updateUser(clickedItem.id)}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={false}
+            />
+          </>
         ) : (
           <NewUserCard setOpenBaseCard={setOpenBaseCard} />
         )}

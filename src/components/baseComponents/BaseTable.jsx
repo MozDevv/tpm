@@ -182,7 +182,9 @@ const BaseTable = ({
   }, [rowData, searchedKeyword]);
 
   useEffect(() => {
-    fetchData();
+    if (openSubGroup) {
+      fetchData();
+    }
   }, [openSubGroup]);
 
   const loadingOverlayComponentParams = useMemo(() => {

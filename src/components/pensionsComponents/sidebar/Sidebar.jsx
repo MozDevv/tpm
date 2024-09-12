@@ -302,16 +302,38 @@ function Sidebar() {
       icon: <Widgets />,
       children: [
         {
+          title: "Finance Setup",
+          subChildren: [
+            {
+              title: "Account Categories",
+              path: "/pensions/setups/account-category",
+            },
+            {
+              title: "Accounting Period",
+              path: "/pensions/setups/accounting-period",
+            },
+            {
+              title: "Customer Posting Groups",
+              path: "/pensions/setups/customer-posting-groups",
+            },
+            {
+              title: "Bank Posting Groups",
+              path: "/pensions/setups/bank-posting-groups",
+            },
+            {
+              title: "Vendor Posting Group",
+              path: "/pensions/setups/vendor-posting-groups",
+            },
+          ],
+        },
+        {
           title: "No. Series",
           path: "/pensions/setups/no-series",
         },
+
         {
-          title: "Account Category",
-          path: "/pensions/setups/account-category",
-        },
-        {
-          title: "Accounting Period",
-          path: "/pensions/setups/accounting-period",
+          title: "Vendor Posting Groups",
+          path: "/pensions/setups/vendor-posting-groups",
         },
         {
           title: "Cities",

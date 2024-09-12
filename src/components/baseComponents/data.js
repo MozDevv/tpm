@@ -182,12 +182,29 @@ export const menuItems = [
 
     children: [
       {
-        title: "Accounting Period",
-        path: "/pensions/setups/accounting-period",
-      },
-      {
-        title: "Account Category",
-        path: "/pensions/setups/account-category",
+        title: "Finance Setup",
+        subChildren: [
+          {
+            title: "Vendor Posting Group",
+            path: "/pensions/setups/vendor-posting-groups",
+          },
+          {
+            title: "Account Categories",
+            path: "/pensions/setups/account-category",
+          },
+          {
+            title: "Accounting Period",
+            path: "/pensions/setups/accounting-period",
+          },
+          {
+            title: "Customer Posting Groups",
+            path: "/pensions/setups/customer-posting-groups",
+          },
+          {
+            title: "Bank Posting Groups",
+            path: "/pensions/setups/bank-posting-groups",
+          },
+        ],
       },
       {
         title: "City Setups",

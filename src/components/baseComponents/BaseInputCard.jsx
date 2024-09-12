@@ -132,11 +132,10 @@ const BaseInputCard = ({
 
   const handleAmountChange = (e) => {
     const { name, value } = e.target;
-    const numericValue = parseFloat(value.replace(/,/g, ""));
-    const formattedValue = isNaN(numericValue) ? "" : numericValue.toFixed(2);
+
     setFormData((prev) => ({
       ...prev,
-      [name]: formattedValue,
+      [name]: value.replace(/,/g, ""),
     }));
   };
 
@@ -356,7 +355,6 @@ const BaseInputCard = ({
           </Button>
         )}
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
         {fields.map((field, index) => (
           <div
@@ -407,14 +405,14 @@ const BaseInputCard = ({
                   fullWidth
                   name={field.name}
                   disabled={field.disabled}
-                  value={formData[field.name] || field.default}
+                  value={formData[field.name]}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}
                   helperText={errors[field.name]}
                 >
                   <MenuItem value="">Select {field.label}</MenuItem>
                   {field?.options?.map((option) => (
-                    <MenuItem key={option?.name} value={option?.id}>
+                    <MenuItem key={option?.id} value={option?.id}>
                       {option.name}
                     </MenuItem>
                   ))}
@@ -509,6 +507,7 @@ const BaseInputCard = ({
           </div>
         ))}
       </div>
+
       <Divider sx={{ my: 2 }} />
     </div>
   );

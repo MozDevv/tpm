@@ -69,6 +69,24 @@ const financeEndpoints = {
   getCustomers: "/Accounts/GetCustomer",
   updateCustomer: "/Accounts/UpdateCustomer",
   deleteCustomer: (id) => `/Accounts/DeleteCustomer?id=${id}`,
+
+  getVendorPostingGroups: "/PostingSetup/GetVendorPostingGroups",
+  updateVendorPostingGroup: "/PostingSetup/UpdateVendorPostingGroup",
+  addVendorPostingGroup: "/PostingSetup/AddVendorPostingGroup",
+  deleteVendorPostingGroup: (id) =>
+    `/PostingSetup/DeleteVendorPostingGroup?id=${id}`,
+
+  getCustomerPostingGroup: "/PostingSetup/GetCustomerPostingGroups",
+  updateCustomerPostingGroup: "/PostingSetup/UpdateCustomerPostingGroup",
+  addCustomerPostingGroup: "/PostingSetup/AddCustomerPostingGroup",
+  deleteCustomerPostingGroup: (id) =>
+    `/PostingSetup/DeleteCustomerPostingGroup?id=${id}`,
+
+  getBankPostingGroups: "/PostingSetup/GetBankPostingGroups",
+  updateBankPostingGroup: "/PostingSetup/UpdateBankPostingGroup",
+  addBankPostingGroup: "/PostingSetup/AddBankPostingGroup",
+  deleteBankPostingGroup: (id) =>
+    `/PostingSetup/DeleteBankPostingGroup?id=${id}`,
 };
 
 export const apiService = {
