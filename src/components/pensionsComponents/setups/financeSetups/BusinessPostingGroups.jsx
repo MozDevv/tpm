@@ -10,63 +10,36 @@ import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
 
-const BankPostingGroups = () => {
+const columnDefs = [
+  {
+    field: "no",
+    headerName: "No",
+    headerClass: "prefix-header",
+    width: 90,
+    filter: true,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 250,
+  },
+  {
+    field: "description",
+    headerName: "Description",
+    filter: true,
+  },
+];
+
+const BusinessPostingGroups = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
     });
   };
 
-  const columnDefs = [
-    {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
-      width: 90,
-      filter: true,
-    },
-    {
-      field: "groupName",
-      headerName: "Group Name",
-      headerClass: "prefix-header",
-      filter: true,
-      width: 250,
-    },
-    {
-      field: "glAccountId",
-      headerName: "GL Account",
-      headerClass: "prefix-header",
-      filter: true,
-      valueGetter: (params) => getAccountName(params.data.glAccountId),
-    },
-  ];
-
   const [glAccounts, setGlAccounts] = React.useState([]);
-
-  const fetchGlAccounts = async () => {
-    try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 150,
-      });
-
-      const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
-      );
-
-      setGlAccounts(
-        accounts.map((account) => ({
-          id: account.id,
-          name: account.accountName,
-        }))
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchGlAccounts();
-  }, []);
 
   const getAccountName = (id) => {
     return glAccounts?.find((acc) => acc.id === id).name;
@@ -76,9 +49,8 @@ const BankPostingGroups = () => {
     return data.map((item, index) => ({
       no: index + 1,
       id: item.id,
-      groupName: item.groupName,
-      glAccountId: item.glAccountId,
-      
+      name: item.name,
+      description: item.description,
     }));
   };
 
@@ -114,17 +86,16 @@ const BankPostingGroups = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Bank Posting Group"
-    : "Create New Bank Posting Group";
+    ? "Business Posting Group"
+    : "Create New Business Posting Group";
 
   const fields = [
-    { name: "groupName", label: "Group Name", type: "text", required: true },
+    { name: "name", label: "Name", type: "text", required: true },
     {
-      name: "glAccountId",
-      label: "GL Account",
-      type: "select",
+      name: "description",
+      label: "Description",
+      type: "text",
       required: true,
-      options: glAccounts,
     },
   ];
 
@@ -137,7 +108,7 @@ const BankPostingGroups = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={financeEndpoints.deleteBankPostingGroup(
+        deleteApiEndpoint={financeEndpoints.deleteBusinessPostingGroup(
           clickedItem?.id
         )}
         deleteApiService={apiService.delete}
@@ -145,7 +116,7 @@ const BankPostingGroups = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.updateBankPostingGroup}
+            apiEndpoint={financeEndpoints.updateBusinessPostingGroup}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -154,7 +125,7 @@ const BankPostingGroups = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addBankPostingGroup}
+            apiEndpoint={financeEndpoints.addBusinessPostingGroup}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -168,16 +139,16 @@ const BankPostingGroups = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getBankPostingGroups}
+        fetchApiEndpoint={financeEndpoints.getBusinessPostingGroups}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Bank Posting Groups"
-        currentTitle="Bank Posting Groups"
+        breadcrumbTitle="Business Posting Groups"
+        currentTitle="Business Posting Groups"
       />
     </div>
   );
 };
 
-export default BankPostingGroups;
+export default BusinessPostingGroups;

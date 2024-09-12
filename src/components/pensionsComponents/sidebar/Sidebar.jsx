@@ -313,13 +313,18 @@ function Sidebar() {
               path: "/pensions/setups/accounting-period",
             },
             {
-              title: "Customer Posting Groups",
-              path: "/pensions/setups/customer-posting-groups",
-            },
-            {
               title: "Bank Posting Groups",
               path: "/pensions/setups/bank-posting-groups",
             },
+            {
+              title: "Business Posting Groups",
+              path: "/pensions/setups/business-posting-groups",
+            },
+            {
+              title: "Customer Posting Groups",
+              path: "/pensions/setups/customer-posting-groups",
+            },
+
             {
               title: "Vendor Posting Group",
               path: "/pensions/setups/vendor-posting-groups",

@@ -87,6 +87,12 @@ const financeEndpoints = {
   addBankPostingGroup: "/PostingSetup/AddBankPostingGroup",
   deleteBankPostingGroup: (id) =>
     `/PostingSetup/DeleteBankPostingGroup?id=${id}`,
+
+  addBusinessPostingGroup: "/PostingSetup/AddBusinessPostingGroup",
+  getBusinessPostingGroups: "/PostingSetup/GetBusinessPostingGroups",
+  updateBusinessPostingGroup: "/PostingSetup/UpdateBusinessPostingGroup",
+  deleteBusinessPostingGroup: (id) =>
+    `/PostingSetup/DeleteBusinessPostingGroup?id=${id}`,
 };
 
 export const apiService = {

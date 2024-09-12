@@ -10,138 +10,148 @@ import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
 
-const columnDefs = [
-  {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
-  },
-  {
-    field: "groupCode",
-    headerName: "Group Code",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "viewAll",
-    headerName: "View All",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-
-  {
-    field: "recievableAccountName",
-    headerName: "Recievable Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "paymentDiscDrAccountName",
-    headerName: "Payment Discount Debit Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "paymentDiscCrAccountName",
-    headerName: "Payment Discount Credit Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "interestAccountName",
-    headerName: "Interest Account",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-  {
-    field: "feePerLineAccountName",
-    headerName: "Fee Per Line Account",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-  {
-    field: "serviceChargeAccountName",
-    headerName: "Service Charge Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "invoiceRoundingAccountName",
-    headerName: "Invoice Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "drCurrencyRoundingAccountName",
-    headerName: "Debit Currency Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "crCurrencyRoundingAccountName",
-    headerName: "Credit Currency Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "drRoundingAccountName",
-    headerName: "Debit Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "crRoundingAccountName",
-    headerName: "Credit Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-];
-
 const CustomerPostingGroups = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
     });
   };
-
   const [glAccounts, setGlAccounts] = React.useState([]);
+
+  const findAccountName = (accountId) => {
+    const account = glAccounts?.find((acc) => acc.id === accountId);
+    return account ? account.name : ""; // Return the account name or an empty string if not found
+  };
+  const columnDefs = [
+    {
+      field: "no",
+      headerName: "No",
+      headerClass: "prefix-header",
+      width: 90,
+      filter: true,
+    },
+    {
+      field: "groupCode",
+      headerName: "Group Code",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "viewAll",
+      headerName: "View All",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 100,
+    },
+
+    {
+      field: "recievableAccount",
+      headerName: "Recievable Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) => findAccountName(params.data.recievableAccount),
+    },
+    {
+      field: "paymentDiscDrAccount",
+      headerName: "Payment Discount Debit Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.paymentDiscDrAccount),
+    },
+    {
+      field: "paymentDiscCrAccount",
+      headerName: "Payment Discount Credit Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.paymentDiscCrAccount),
+    },
+    {
+      field: "interestAccount",
+      headerName: "Interest Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) => findAccountName(params.data.interestAccount),
+    },
+    {
+      field: "feePerLineAccount",
+      headerName: "Fee Per Line Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) => findAccountName(params.data.feePerLineAccount),
+    },
+    {
+      field: "serviceChargeAccount",
+      headerName: "Service Charge Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.serviceChargeAccount),
+    },
+    {
+      field: "invoiceRoundingAccount",
+      headerName: "Invoice Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.invoiceRoundingAccount),
+    },
+    {
+      field: "drCurrencyRoundingAccount",
+      headerName: "Dr Currency Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.drCurrencyRoundingAccount),
+    },
+    {
+      field: "crCurrencyRoundingAccount",
+      headerName: "Cr Currency Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) =>
+        findAccountName(params.data.crCurrencyRoundingAccount),
+    },
+    {
+      field: "drRoundingAccount",
+      headerName: "Dr Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) => findAccountName(params.data.drRoundingAccount),
+    },
+    {
+      field: "crRoundingAccount",
+      headerName: "Cr Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      valueGetter: (params) => findAccountName(params.data.crRoundingAccount),
+    },
+  ];
 
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 10000,
+        "paging.pageSize": 150,
       });
 
       const accounts = response.data.data.filter(
         (acc) => acc.accountTypeName === "POSTING"
       );
+      const account2 = accounts.map((account) => ({
+        id: account.id,
+        name: account.accountName,
+      }));
 
-      setGlAccounts(
-        accounts.map((account) => ({
-          id: account.id,
-          name: account.accountName,
-        }))
-      );
+      setGlAccounts(account2);
     } catch (error) {
       console.log(error);
     }
@@ -152,61 +162,35 @@ const CustomerPostingGroups = () => {
   }, []);
 
   const getAccountName = (id) => {
-    return glAccounts.find((acc) => acc.id === id).name;
+    return glAccounts?.find((acc) => acc.id === id).name;
   };
 
   const transformData = (data) => {
-    return data.map((item, index) => ({
-      no: index + 1,
-      id: item.id,
-      groupCode: item.groupCode,
-      description: transformString(item.description),
-      viewAll: item.viewAll,
-      recievableAccount: item.recievableAccount,
-      paymentDiscDrAccount: item.paymentDiscDrAccount,
-      paymentDiscCrAccount: item.paymentDiscCrAccount,
-      interestAccount: item.interestAccount,
-      feePerLineAccount: item.feePerLineAccount,
-      serviceChargeAccount: item.serviceChargeAccount,
-      invoiceRoundingAccount: item.invoiceRoundingAccount,
-      drCurrencyRoundingAccount: item.drCurrencyRoundingAccount,
-      crCurrencyRoundingAccount: item.crCurrencyRoundingAccount,
-      drRoundingAccount: item.drRoundingAccount,
-      crRoundingAccount: item.crRoundingAccount,
-      recievableAccountName: glAccounts.find(
-        (acc) => acc.id === item.recievableAccount
-      ).name,
-      paymentDiscDrAccountName: glAccounts.find(
-        (acc) => acc.id === item.paymentDiscDrAccount
-      ).name,
-      paymentDiscCrAccountName: glAccounts.find(
-        (acc) => acc.id === item.paymentDiscCrAccount
-      ).name,
-      interestAccountName: glAccounts.find(
-        (acc) => acc.id === item.interestAccount
-      ).name,
-      feePerLineAccountName: glAccounts.find(
-        (acc) => acc.id === item.feePerLineAccount
-      ).name,
-      serviceChargeAccountName: glAccounts.find(
-        (acc) => acc.id === item.serviceChargeAccount
-      ).name,
-      invoiceRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.invoiceRoundingAccount
-      ).name,
-      drCurrencyRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.drCurrencyRoundingAccount
-      ).name,
-      crCurrencyRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.crCurrencyRoundingAccount
-      ).name,
-      drRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.drRoundingAccount
-      ).name,
-      crRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.crRoundingAccount
-      ).name,
-    }));
+    return data.map((item, index) => {
+      const findAccountName = (accountId) => {
+        const account = glAccounts?.find((acc) => acc.id === accountId);
+        return account ? account.name : ""; // Return the account name or an empty string if not found
+      };
+
+      return {
+        no: index + 1,
+        id: item.id,
+        groupCode: item.groupCode,
+        description: transformString(item.description),
+        viewAll: item.viewAll,
+        recievableAccount: item.recievableAccount,
+        paymentDiscDrAccount: item.paymentDiscDrAccount,
+        paymentDiscCrAccount: item.paymentDiscCrAccount,
+        interestAccount: item.interestAccount,
+        feePerLineAccount: item.feePerLineAccount,
+        serviceChargeAccount: item.serviceChargeAccount,
+        invoiceRoundingAccount: item.invoiceRoundingAccount,
+        drCurrencyRoundingAccount: item.drCurrencyRoundingAccount,
+        crCurrencyRoundingAccount: item.crCurrencyRoundingAccount,
+        drRoundingAccount: item.drRoundingAccount,
+        crRoundingAccount: item.crRoundingAccount,
+      };
+    });
   };
 
   const handlers = {
@@ -370,6 +354,7 @@ const CustomerPostingGroups = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
+        fetchGlAccounts={fetchGlAccounts}
         fetchApiEndpoint={financeEndpoints.getCustomerPostingGroup}
         fetchApiService={apiService.get}
         transformData={transformData}

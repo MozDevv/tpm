@@ -10,88 +10,98 @@ import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
 
-const columnDefs = [
-  {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
-  },
-  {
-    field: "groupName",
-    headerName: "Group Name",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "viewAll",
-    headerName: "View All",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-
-  {
-    field: "payableAccountName",
-    headerName: "Payable Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "serviceChargeAccountName",
-    headerName: "Service Charge Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "invoiceRoundingAccountName",
-    headerName: "Invoice Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "drCurrencyRoundingAccountName",
-    headerName: "Dr Currency Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "crCurrencyRoundingAccountName",
-    headerName: "Cr Currency Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "drRoundingAccountName",
-    headerName: "Dr Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "crRoundingAccountName",
-    headerName: "Cr Rounding Account",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-];
-
 const VendorPostingGroups = () => {
+  const columnDefs = [
+    {
+      field: "no",
+      headerName: "No",
+      headerClass: "prefix-header",
+      width: 90,
+      filter: true,
+    },
+    {
+      field: "groupName",
+      headerName: "Group Name",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+    },
+    {
+      field: "viewAll",
+      headerName: "View All",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 100,
+    },
+    {
+      field: "payableAccount",
+      headerName: "Payable Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) => getAccountName(params.data.payableAccount),
+    },
+
+    {
+      field: "serviceChargeAccount",
+      headerName: "Service Charge Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) => getAccountName(params.data.serviceChargeAccount),
+    },
+    {
+      field: "invoiceRoundingAccount",
+      headerName: "Invoice Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) =>
+        getAccountName(params.data.invoiceRoundingAccount),
+    },
+    {
+      field: "drCurrencyRoundingAccount",
+      headerName: "Debit Currency Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) =>
+        getAccountName(params.data.drCurrencyRoundingAccount),
+    },
+    {
+      field: "crCurrencyRoundingAccount",
+      headerName: "Credit Currency Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) =>
+        getAccountName(params.data.crCurrencyRoundingAccount),
+    },
+    {
+      field: "drRoundingAccount",
+      headerName: "Debit Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) => getAccountName(params.data.drRoundingAccount),
+    },
+    {
+      field: "crRoundingAccount",
+      headerName: "Credit Rounding Account",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) => getAccountName(params.data.crRoundingAccount),
+    },
+  ];
+
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -103,7 +113,7 @@ const VendorPostingGroups = () => {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 10000,
+        "paging.pageSize": 150,
       });
 
       const accounts = response.data.data.filter(
@@ -126,7 +136,7 @@ const VendorPostingGroups = () => {
   }, []);
 
   const getAccountName = (id) => {
-    return glAccounts.find((acc) => acc.id === id).name;
+    return glAccounts?.find((acc) => acc.id === id).name;
   };
 
   const transformData = (data) => {
@@ -143,28 +153,6 @@ const VendorPostingGroups = () => {
       crCurrencyRoundingAccount: item.crCurrencyRoundingAccount,
       drRoundingAccount: item.drRoundingAccount,
       crRoundingAccount: item.crRoundingAccount,
-
-      payableAccountName: glAccounts.find(
-        (acc) => acc.id === item.payableAccount
-      ).name,
-      serviceChargeAccountName: glAccounts.find(
-        (acc) => acc.id === item.serviceChargeAccount
-      ).name,
-      invoiceRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.invoiceRoundingAccount
-      ).name,
-      drCurrencyRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.drCurrencyRoundingAccount
-      ).name,
-      crCurrencyRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.crCurrencyRoundingAccount
-      ).name,
-      drRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.drRoundingAccount
-      ).name,
-      crRoundingAccountName: glAccounts.find(
-        (acc) => acc.id === item.crRoundingAccount
-      ).name,
     }));
   };
 

@@ -204,6 +204,10 @@ export const menuItems = [
             title: "Bank Posting Groups",
             path: "/pensions/setups/bank-posting-groups",
           },
+          {
+            title: "Business Posting Groups",
+            path: "/pensions/setups/business-posting-groups",
+          },
         ],
       },
       {
