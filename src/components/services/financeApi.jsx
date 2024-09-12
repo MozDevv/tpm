@@ -99,6 +99,34 @@ const financeEndpoints = {
   updateProductPostingGroup: "/PostingSetup/UpdateProductPostingGroup",
   deleteProductPostingGroup: (id) =>
     `/PostingSetup/DeleteProductPostingGroup?id=${id}`,
+
+  addGeneralBusinessPostingGroup:
+    "/PostingSetup/AddGeneralBusinessPostingGroup",
+  getGeneralBusinessPostingGroups:
+    "/PostingSetup/GetGeneralBusinessPostingGroups",
+  updateGeneralBusinessPostingGroup:
+    "/PostingSetup/UpdateGeneralBusinessPostingGroup",
+  deleteGeneralBusinessPostingGroup: (id) =>
+    `/PostingSetup/DeleteGeneralBusinessPostingGroup?id=${id}`,
+
+  addGeneralProductPostingGroup: "/PostingSetup/AddGeneralProductPostingGroup",
+  getGeneralProductPostingGroups:
+    "/PostingSetup/GetGeneralProductPostingGroups",
+  updateGeneralProductPostingGroup:
+    "/PostingSetup/UpdateGeneralProductPostingGroup",
+  deleteGeneralProductPostingGroup: (id) =>
+    `/PostingSetup/DeleteGeneralProductPostingGroup?id=${id}`,
+
+  addGeneralPostingGroup: "/PostingSetup/AddGeneralPostingSetup",
+  getGeneralPostingGroups: "/PostingSetup/GetGeneralPostingSetups",
+  updateGeneralPostingGroup: "/PostingSetup/UpdateGeneralPostingSetup",
+  deleteGeneralPostingGroup: (id) =>
+    `/PostingSetup/DeleteGeneralPostingSetup?id=${id}`,
+
+  addVatSetup: "/PostingSetup/AddVATPostingSetup",
+  getVatSetups: "/PostingSetup/GetVATPostingSetups",
+  updateVatSetup: "/PostingSetup/UpdateVATPostingSetup",
+  deleteVatSetup: (id) => `/PostingSetup/DeleteVATPostingSetup?id=${id}`,
 };
 
 export const apiService = {

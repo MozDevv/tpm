@@ -329,10 +329,26 @@ function Sidebar() {
               title: "Vendor Posting Group",
               path: "/pensions/setups/vendor-posting-groups",
             },
+            {
+              title: "VAT Postings",
+              path: "/pensions/setups/vat-postings",
+            },
 
             {
               title: "Product Posting Groups",
               path: "/pensions/setups/product-posting-groups",
+            },
+            {
+              title: "General Posting Groups",
+              path: "/pensions/setups/general-posting-groups",
+            },
+            {
+              title: "General Business Posting Groups",
+              path: "/pensions/setups/general-business-posting-groups",
+            },
+            {
+              title: "General Product Posting Groups",
+              path: "/pensions/setups/general-product-posting-groups",
             },
           ],
         },

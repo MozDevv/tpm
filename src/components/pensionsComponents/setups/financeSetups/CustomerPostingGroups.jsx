@@ -149,6 +149,7 @@ const CustomerPostingGroups = () => {
       const account2 = accounts.map((account) => ({
         id: account.id,
         name: account.accountName,
+        accountNo: account.accountNo,
       }));
 
       setGlAccounts(account2);
@@ -241,6 +242,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "paymentDiscDrAccount",
@@ -248,6 +250,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "paymentDiscCrAccount",
@@ -255,6 +258,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "interestAccount",
@@ -262,6 +266,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "feePerLineAccount",
@@ -269,6 +274,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "serviceChargeAccount",
@@ -276,6 +282,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "invoiceRoundingAccount",
@@ -283,6 +290,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "drCurrencyRoundingAccount",
@@ -290,6 +298,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "crCurrencyRoundingAccount",
@@ -297,6 +306,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "drRoundingAccount",
@@ -304,6 +314,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "crRoundingAccount",
@@ -311,6 +322,7 @@ const CustomerPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
   ];
 

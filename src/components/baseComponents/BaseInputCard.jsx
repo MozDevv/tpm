@@ -10,6 +10,10 @@ import {
   Checkbox,
   ListItemText,
   Autocomplete,
+  Box,
+  Typography,
+  ListItem,
+  Popper,
 } from "@mui/material";
 import { message } from "antd";
 import dayjs from "dayjs";
@@ -397,6 +401,94 @@ const BaseInputCard = ({
                     </MenuItem>
                   ))}
                 </Select>
+              ) : field.table ? (
+                <Autocomplete
+                  options={field.options}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, newValue) => {
+                    handleInputChange({
+                      target: {
+                        name: field.name,
+                        value: newValue ? newValue.id : "",
+                      },
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name={field.name}
+                      error={!!errors[field.name]}
+                      helperText={errors[field.name]}
+                    />
+                  )}
+                  value={
+                    field.options.find(
+                      (option) => option.id === formData[field.name]
+                    ) || null
+                  }
+                  renderOption={(props, option, { selected }) => (
+                    <div className="">
+                      <li
+                        {...props}
+                        style={{
+                          border: "none",
+                          boxShadow: "none",
+                          backgroundColor: selected ? "#B2E9ED" : "white",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: "100%",
+                            pr: "40px",
+
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: 3,
+                            }}
+                          >
+                            {" "}
+                            <p className=" text-primary font-normal text-[12px]">
+                              {option.accountNo}
+                            </p>
+                            <Typography variant="body2" fontSize={12}>
+                              {option.name}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </li>
+                    </div>
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      padding: 0,
+                      "& ul": {
+                        padding: 0,
+                        margin: 0,
+                      },
+                      // Additional styling for the listbox
+                    },
+                  }}
+                  PopperComponent={(props) => (
+                    <Popper {...props}>
+                      {/* Header */}
+                      <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                        <p className="text-xs font-normal">No.</p>
+                        <p className="text-xs font-normal">Name</p>
+                      </li>
+
+                      {props.children}
+                    </Popper>
+                  )}
+                />
               ) : (
                 <TextField
                   select
