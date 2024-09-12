@@ -329,6 +329,11 @@ function Sidebar() {
               title: "Vendor Posting Group",
               path: "/pensions/setups/vendor-posting-groups",
             },
+
+            {
+              title: "Product Posting Groups",
+              path: "/pensions/setups/product-posting-groups",
+            },
           ],
         },
         {

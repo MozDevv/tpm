@@ -208,6 +208,10 @@ export const menuItems = [
             title: "Business Posting Groups",
             path: "/pensions/setups/business-posting-groups",
           },
+          {
+            title: "Product Posting Groups",
+            path: "/pensions/setups/product-posting-groups",
+          },
         ],
       },
       {
