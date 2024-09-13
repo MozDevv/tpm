@@ -183,7 +183,7 @@ const VatPostings = () => {
     {
       name: "vatCalculationType",
       label: "VAT Calculation Type",
-      type: "text",
+      type: "number",
       required: true,
     },
     {
@@ -191,7 +191,6 @@ const VatPostings = () => {
       label: "Sales Vat Account",
       type: "select",
       required: true,
-
       options: glAccounts,
       table: true,
     },

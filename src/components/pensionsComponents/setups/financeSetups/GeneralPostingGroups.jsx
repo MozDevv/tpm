@@ -190,7 +190,7 @@ const GeneralPostingGroups = () => {
     const fetchGeneralPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getGeneralPostingGroups,
+          financeEndpoints.getGeneralProductPostingGroups,
           {
             "paging.pageSize": 150,
           }
@@ -246,7 +246,6 @@ const GeneralPostingGroups = () => {
       type: "text",
       required: true,
     },
-    { name: "viewAll", label: "View All", type: "switch", required: true },
 
     {
       name: "salesAccount",
@@ -294,6 +293,7 @@ const GeneralPostingGroups = () => {
       required: true,
       options: generalBusinessAcc,
     },
+    { name: "viewAll", label: "View All", type: "switch", required: true },
   ];
 
   return (
