@@ -89,7 +89,7 @@ function Contributions({ id, clickedItem, setOpenBaseCard, setClickedItem }) {
       name: "intrest_amount",
       type: "number",
     },
-    ...(clickedItem
+    ...(contributionId
       ? [
           {
             label: "Total Contributions",

@@ -43,11 +43,15 @@ const GeneralProductPostingGroups = () => {
       filter: true,
     },
     {
-      field: "productPostingGroupId",
+      field: "prodPostingGroupId",
       headerName: "Business Posting Group",
       filter: true,
-      valueGetter: (params) =>
-        getAccountName(params.data.productPostingGroupId),
+      valueGetter: (params) => {
+        const account = glAccounts?.find(
+          (acc) => acc.id === params.data.prodPostingGroupId
+        );
+        return account?.name ?? "N/A";
+      },
     },
   ];
 
@@ -66,7 +70,7 @@ const GeneralProductPostingGroups = () => {
         response.data.data.map((ac) => ({
           id: ac.id,
           name: ac.name,
-          accountNo: account.accountNo,
+          description: ac.description,
         }))
       );
     } catch (error) {
@@ -89,7 +93,7 @@ const GeneralProductPostingGroups = () => {
       name: item.name,
       description: item.description,
       autoInsert: item.autoInsert,
-      productPostingGroupId: item.productPostingGroupId,
+      prodPostingGroupId: item.prodPostingGroupId,
     }));
   };
 
@@ -125,8 +129,8 @@ const GeneralProductPostingGroups = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "General Business Posting Group"
-    : "Create New General Business Posting Group";
+    ? "General Product Posting Group"
+    : "Create New General Product Posting Group";
 
   const fields = [
     { name: "name", label: "Name", type: "text", required: true },
@@ -143,7 +147,7 @@ const GeneralProductPostingGroups = () => {
       required: true,
     },
     {
-      name: "productPostingGroupId",
+      name: "prodPostingGroupId",
       label: "Product Posting Group",
       type: "select",
       required: true,

@@ -14,3 +14,10 @@ export const formatNumber = (value) => {
     maximumFractionDigits: 2,
   }).format(number);
 };
+
+// formats a string to proper case e.g. "hello world" => "Hello World"
+export const toProperCase = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/(?:^|\s)\S/g, (match) => match.toUpperCase());
+};

@@ -750,11 +750,10 @@ export const createSections = (
         pensionCap: [
           "CAP189",
           "CAP199",
-
+          "CAP196",
           "APN/PK",
           "CAP190",
           "CAP195",
-
           "CAP195",
         ],
       },

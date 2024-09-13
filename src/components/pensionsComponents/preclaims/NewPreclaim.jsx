@@ -39,6 +39,7 @@ import { createSections } from "./CreateSections";
 import PhoneInput from "react-phone-input-2";
 import "./ag-theme.css";
 import MuiPhoneNumber from "mui-phone-number";
+import { toProperCase } from "@/utils/numberFormatters";
 
 dayjs.extend(isSameOrBefore);
 
@@ -338,10 +339,10 @@ function NewPreclaim({
     let parsedValue = type === "number" ? parseFloat(value) : value;
 
     if (type === "text") {
-      parsedValue = parsedValue.toUpperCase();
+      parsedValue = toProperCase(parsedValue);
     }
     if (type === "text" || type === "select-one") {
-      parsedValue = parsedValue.toUpperCase();
+      parsedValue = toProperCase(parsedValue);
     }
     if (name === "is_parliamentary") {
       formData.is_parliamentary = true;
