@@ -15,6 +15,7 @@ export const MdaProvider = ({ children }) => {
   const userId = auth?.user?.userId;
   const [mdaId, setMdaId] = useState("");
   const [activePensionCap, setActivePensionCap] = useState("");
+  const [mdaName, setMdaName] = useState("");
 
   const [activeCapName, setActiveCapName] = useState("");
 
@@ -54,6 +55,7 @@ export const MdaProvider = ({ children }) => {
 
       const currentCap = userMda?.pensionCap?.id;
       const currentCapName = userMda?.pensionCap?.name;
+      const currentMdaName = userMda?.name;
       setActiveCapName(currentCapName);
 
       console.log("Current MDA: ********", userMda);
@@ -64,6 +66,8 @@ export const MdaProvider = ({ children }) => {
       // setCurrentMda(userMda);
 
       setActivePensionCap(currentCap);
+
+      setMdaName(currentMdaName);
 
       console.log("Current MDA: ********", currentCap);
     } catch (error) {
@@ -86,6 +90,7 @@ export const MdaProvider = ({ children }) => {
         setActiveCapName,
         setActivePensionCap,
         activeCapName,
+        mdaName,
       }}
     >
       {children}

@@ -35,6 +35,8 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { BASE_CORE_API } from "@/utils/constants";
 import { useSearch } from "@/context/SearchContext";
+import { useMda } from "@/context/MdaContext";
+import { toProperCase } from "@/utils/numberFormatters";
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -89,44 +91,51 @@ function Navbar() {
 
   const { searchedKeyword, setSearchedKeyword } = useSearch();
 
+  const { mdaName } = useMda();
+
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
         <div className={styles.left}>
-          {selectedItem === "Dashboard" && (
+          {selectedItem === "Dashboard" ? (
             <div className={styles.heading}>
               <h1>DashBoard</h1>
               <p>Welcome Back!</p>
             </div>
+          ) : mdaName ? (
+            <p className="text-primary text-[22px] font-bold font-montserrat mx-3 mr-10">
+              {toProperCase(mdaName)}
+            </p>
+          ) : (
+            ""
           )}
-
-          <div>
-            <TextField
-              type="text"
-              onChange={(e) => setSearchedKeyword(e.target.value)}
-              size="small"
-              sx={{
-                "&.MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderRadius: "30px", // Set your desired border radius
-                  },
+        </div>
+        <div>
+          <TextField
+            type="text"
+            onChange={(e) => setSearchedKeyword(e.target.value)}
+            size="small"
+            sx={{
+              "&.MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderRadius: "30px", // Set your desired border radius
                 },
-              }}
-              InputProps={{
-                style: {
-                  backgroundColor: "white",
-                  width: "400px",
-                  borderRadius: "30px",
-                },
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchOutlined color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              placeholder="Search"
-            />
-          </div>
+              },
+            }}
+            InputProps={{
+              style: {
+                backgroundColor: "white",
+                width: "500px",
+                borderRadius: "30px",
+              },
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchOutlined color="primary" />
+                </InputAdornment>
+              ),
+            }}
+            placeholder="Search"
+          />
         </div>
         <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
           <IconButton
@@ -189,7 +198,7 @@ function Navbar() {
               <Box
                 sx={{ display: "flex", gap: "4px", fontSize: "15px", mr: 3 }}
               >
-                <div className="flex flex-col ml-3">
+                <div className="flex flex-col ml-1">
                   <div className="flex items-center">
                     <h6>Hi,</h6>
                     <h6

@@ -51,7 +51,7 @@ function ChartsOfAccounts() {
         fontSize: "14px",
       }),
     },
-    { headerName: "Account Code", field: "accountCode", width: 150 },
+    // { headerName: "Account Code", field: "accountCode", width: 150 },
     {
       headerName: "Net Amount",
       field: "amount",

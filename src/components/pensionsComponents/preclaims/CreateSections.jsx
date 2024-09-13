@@ -638,7 +638,7 @@ export const createSections = (
           { id: 0, name: "Yes" },
           { id: 1, name: "No" },
         ],
-        pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
+        pensionCap: ["CAP189", "CAP190", "CAP195", "CAP195"],
       },
 
       {
@@ -742,10 +742,10 @@ export const createSections = (
       {
         label: "Has Commuted",
         name: "commutation_option_selection",
-        type: "text",
+        type: "select",
         children: [
-          { id: 0, name: "Yes", value: true },
-          { id: 1, name: "No", value: false },
+          { id: 1, name: "Yes" },
+          { id: 2, name: "No" },
         ],
         pensionCap: [
           "CAP189",
@@ -765,11 +765,10 @@ export const createSections = (
         pensionCap: [
           "CAP189",
           "CAP199",
-
+          "CAP196",
           "APN/PK",
           "CAP190",
           "CAP195",
-
           "CAP195",
         ],
       },

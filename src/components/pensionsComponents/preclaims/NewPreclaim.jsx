@@ -154,14 +154,16 @@ function NewPreclaim({
         is_wcps: retiree?.is_wcps ?? 1,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: retiree?.age_on_discharge ?? 0,
-        commutation_option_selection:
-          retiree?.commutation_option_selection ?? "",
+        commutation_option_selection: retiree?.commutation_option_selection
+          ? 1
+          : 2,
         commutation_option_selection_date:
           retiree?.commutation_option_selection_date
             ? new Date(retiree?.commutation_option_selection_date)
                 .toISOString()
                 .split("T")[0]
             : "",
+        isCommutable: retiree?.pensionAward?.has_commutation ?? false,
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -246,10 +248,15 @@ function NewPreclaim({
       is_wcps: retiree?.is_wcps ?? 1,
       is_parliamentary: retiree?.is_parliamentary ?? false,
       age_on_discharge: retiree?.age_on_discharge ?? 0,
-      commutation_option_selection: retiree?.commutation_option_selection ?? "",
+      commutation_option_selection: retiree?.commutation_option_selection
+        ? 1
+        : 2,
+
       commutation_option_selection_date: parseDate(
         retiree?.commutation_option_selection_date
       ),
+
+      isCommutable: retiree?.pensionAward?.has_commutation ?? false,
     };
   };
 
@@ -1040,6 +1047,18 @@ function NewPreclaim({
                                   formData.notification_status !== ""
                                 );
                               }
+                              return true;
+                            })
+                            .filter((field) => {
+                              if (!formData.isCommutable) {
+                                return (
+                                  field.name !==
+                                    "commutation_option_selection" &&
+                                  field.name !==
+                                    "commutation_option_selection_date"
+                                );
+                              }
+
                               return true;
                             })
                             .map((field, fieldIndex) => (
