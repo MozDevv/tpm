@@ -96,46 +96,48 @@ function Navbar() {
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
-        <div className={styles.left}>
-          {selectedItem === "Dashboard" ? (
-            <div className={styles.heading}>
-              <h1>DashBoard</h1>
-              <p>Welcome Back!</p>
-            </div>
-          ) : mdaName ? (
-            <p className="text-primary text-[22px] font-bold font-montserrat mx-3 mr-10">
-              {toProperCase(mdaName)}
-            </p>
-          ) : (
-            ""
-          )}
-        </div>
-        <div>
-          <TextField
-            type="text"
-            onChange={(e) => setSearchedKeyword(e.target.value)}
-            size="small"
-            sx={{
-              "&.MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderRadius: "30px", // Set your desired border radius
+        <div className="flex justify-between w-[950px] ml-5">
+          <div className={styles.left}>
+            {selectedItem === "Dashboard" ? (
+              <div className={styles.heading}>
+                <h1>DashBoard</h1>
+                <p>Welcome Back!</p>
+              </div>
+            ) : (
+              mdaName && (
+                <p className="text-primary text-[22px] font-bold font-montserrat mx-3 mr-10">
+                  {toProperCase(mdaName)}
+                </p>
+              )
+            )}
+          </div>
+          <div>
+            <TextField
+              type="text"
+              onChange={(e) => setSearchedKeyword(e.target.value)}
+              size="small"
+              sx={{
+                "&.MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderRadius: "30px", // Set your desired border radius
+                  },
                 },
-              },
-            }}
-            InputProps={{
-              style: {
-                backgroundColor: "white",
-                width: "500px",
-                borderRadius: "30px",
-              },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchOutlined color="primary" />
-                </InputAdornment>
-              ),
-            }}
-            placeholder="Search"
-          />
+              }}
+              InputProps={{
+                style: {
+                  backgroundColor: "white",
+                  width: "500px",
+                  borderRadius: "30px",
+                },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchOutlined color="primary" />
+                  </InputAdornment>
+                ),
+              }}
+              placeholder="Search"
+            />
+          </div>
         </div>
         <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
           <IconButton
