@@ -881,7 +881,7 @@ function NewPreclaim({
   }, [formData.retirement_date]);
 
   useEffect(() => {
-    if (formData.commutation_option_selection) {
+    if (formData.commutation_option_selection === true) {
       setFormData({
         ...formData,
         commutation_option_selection: "Yes",
@@ -955,9 +955,6 @@ function NewPreclaim({
 
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
-      ********************************************************
-      {JSON.stringify(formData.commutation_option_selection)}
-      ********************************************************
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
         <IconButton
           sx={{
@@ -1040,8 +1037,6 @@ function NewPreclaim({
                         </IconButton>
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
-
-                      {/* {JSON.stringify(formData)} */}
 
                       <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
