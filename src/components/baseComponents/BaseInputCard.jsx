@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 
 import { useMda } from "@/context/MdaContext";
 import { formatNumber } from "@/utils/numberFormatters";
+import BaseAmountInput from "./BaseAmountInput";
 
 const BaseInputCard = ({
   fields,
@@ -569,16 +570,26 @@ const BaseInputCard = ({
                 variant="outlined"
                 size="small"
                 type="text"
-                value={formatNumber(formData[field.name])}
+                value={formData[field.name]}
                 //value={formData[field.name]}
+                disabled={field.disabled}
                 onChange={handleAmountChange}
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}
                 required={field.required}
-                disabled={field.disabled}
                 fullWidth
                 inputProps={{
                   style: { textAlign: "right" }, // Aligns the text to the right
+                }}
+                InputProps={{
+                  inputComponent: BaseAmountInput,
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
+                    {
+                      border: "none",
+                      backgroundColor: "rgba(0, 0, 0, 0.06)",
+                    },
                 }}
               />
             ) : (

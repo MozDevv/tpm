@@ -56,15 +56,24 @@ function ChartsOfAccounts() {
       headerName: "Net Amount",
       field: "amount",
       width: 150,
-      valueFormatter: (params) => formatNumber(params.value),
-
+      valueFormatter: (params) => {
+        const accountType = params.data.accountTypeName;
+        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
+          ? ""
+          : formatNumber(params.value);
+      },
       cellStyle: { textAlign: "right" },
     },
     {
       headerName: "Budget Amount",
       field: "budgetAmount",
       width: 150,
-      valueFormatter: (params) => formatNumber(params.value),
+      valueFormatter: (params) => {
+        const accountType = params.data.accountTypeName;
+        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
+          ? ""
+          : formatNumber(params.value);
+      },
       cellStyle: { textAlign: "right" },
     },
     {
@@ -73,7 +82,12 @@ function ChartsOfAccounts() {
       width: 150,
 
       cellStyle: { textAlign: "right" },
-      valueFormatter: (params) => formatNumber(params.value),
+      valueFormatter: (params) => {
+        const accountType = params.data.accountTypeName;
+        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
+          ? ""
+          : formatNumber(params.value);
+      },
     },
     { headerName: "Account Category", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
