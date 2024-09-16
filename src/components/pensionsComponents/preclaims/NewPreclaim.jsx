@@ -68,6 +68,15 @@ function NewPreclaim({
     }
   }, [retireeId]);
 
+  const computeAgeOfDischarge = (dob, retirementDate) => {
+    if (dob && retirementDate) {
+      const dobDate = dayjs(dob);
+      const retirementDateObj = dayjs(retirementDate);
+      return retirementDateObj.diff(dobDate, "year");
+    }
+    return 0;
+  };
+
   const fetchRetiree = async () => {
     try {
       const res = await apiService.get(
@@ -75,6 +84,11 @@ function NewPreclaim({
       );
       const retiree = res.data.data[0];
       setRetiree(retiree);
+
+      const ageOnDischarge = computeAgeOfDischarge(
+        retiree?.dob,
+        retiree?.retirement_date
+      );
       setFormData({
         personal_number: retiree?.personal_number ?? "",
         first_name: retiree?.first_name ?? "",
@@ -153,7 +167,7 @@ function NewPreclaim({
         maintenance_case: retiree?.maintenance_case ?? 1,
         is_wcps: retiree?.is_wcps ?? 1,
         is_parliamentary: retiree?.is_parliamentary ?? false,
-        age_on_discharge: retiree?.age_on_discharge ?? 0,
+        age_on_discharge: ageOnDischarge,
         commutation_option_selection: retiree?.commutation_option_selection
           ? 1
           : 2,
@@ -191,6 +205,10 @@ function NewPreclaim({
       return "";
     };
 
+    const ageOnDischarge = computeAgeOfDischarge(
+      retiree?.dob,
+      retiree?.retirement_date
+    );
     // Fallback to retiree data if no valid saved form data is found
     return {
       personal_number: retiree?.personal_number ?? "",
@@ -247,7 +265,7 @@ function NewPreclaim({
       tribe: retiree?.tribe ?? "",
       is_wcps: retiree?.is_wcps ?? 1,
       is_parliamentary: retiree?.is_parliamentary ?? false,
-      age_on_discharge: retiree?.age_on_discharge ?? 0,
+      age_on_discharge: ageOnDischarge,
       commutation_option_selection: retiree?.commutation_option_selection
         ? 1
         : 2,
