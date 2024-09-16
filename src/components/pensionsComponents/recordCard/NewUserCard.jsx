@@ -14,6 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import { message } from "antd";
+import MuiPhoneNumber from "mui-phone-number";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -47,11 +48,12 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       formErrors.phoneNumber = "Phone Number is required";
     if (
       userData.phoneNumber &&
-      !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(userData.phoneNumber)
+      !/^\+\d{1,4}\d{9}$|^0\d{9}$/.test(userData.phoneNumber)
     ) {
       message.error("Phone Number is invalid");
       formErrors.phoneNumber = "Phone Number is invalid";
     }
+
     if (userData.email && !/\S+@\S+\.\S+/.test(userData.email)) {
       message.error("Email is invalid");
       formErrors.email = "Email is invalid";
@@ -271,7 +273,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                     name="adminType"
                     value={selectedAdminType}
                     onChange={(e) => setSelectedAdminType(e.target.value)}
-                    className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                    className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                     required
                   >
                     <option value="">Select User Type</option>
@@ -305,7 +307,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="mda"
                           value={selectedMDA}
                           onChange={(e) => setSelectedMDA(e.target.value)}
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         >
                           <option value="">Select MDA</option>
@@ -343,7 +345,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             onChange={(e) =>
                               setSelectedDepartment(e.target.value)
                             }
-                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100 "
+                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-white "
                             required
                           >
                             <option value="">Select Department</option>
@@ -370,7 +372,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             name="role"
                             value={selectedRole}
                             onChange={(e) => setSelectedRole(e.target.value)}
-                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
+                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-white"
                             required
                           >
                             <option value="">Select Role</option>
@@ -405,7 +407,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="number"
                           name="employeeNumber"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                         />
                         {errors.employeeNumber && (
                           <div className="text-red-600 text-sm mt-[1px]">
@@ -423,7 +425,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="firstName"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         />
                       </div>
@@ -438,7 +440,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="lastName"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         />
                       </div>
@@ -450,7 +452,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="middleName"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                         />
                       </div>
 
@@ -465,7 +467,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             setIdentificationType(parseInt(e.target.value));
                             console.log(identificationType);
                           }}
-                          className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-gray-100"
+                          className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-white"
                           required
                         >
                           <option value={1}>National Id</option>
@@ -482,7 +484,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           <input
                             type="number"
                             name="id_number"
-                            className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                            className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                             required
                           />
                           {errors.id_number && (
@@ -502,7 +504,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           <input
                             type="text"
                             name="passport_number"
-                            className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                            className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                             required
                           />
                         </div>
@@ -518,7 +520,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="designation"
                           value={designationId}
                           onChange={(e) => setDesignationId(e.target.value)}
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                         >
                           {" "}
                           <option value="">--------------</option>
@@ -548,7 +550,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="grade"
                           value={gradeId}
                           onChange={(e) => setGradeId(e.target.value)}
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                         >
                           <option value="">----------------</option>
                           {designations
@@ -585,7 +587,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="email"
                           name="email"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
+                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
                         />
                         {errors.email && (
@@ -604,18 +606,38 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             *
                           </div>
                         </label>
-                        <input
-                          type="text"
+
+                        <MuiPhoneNumber
+                          defaultCountry="ke" // Kenya as the default country
                           name="phoneNumber"
-                          className="border bg-gray-100 border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
+                          // onChange={(value) =>
+                          //   handleInputChange({
+                          //     target: { name: "phone_number", value },
+                          //   })
+                          // }
                           error={errors.phoneNumber}
+                          helperText={errors.phoneNumber}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          dropdownClass="custom-dropdown" // Custom class for the dropdown
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: "120px", // Set max height for the dropdown
+                                overflowY: "auto",
+                              },
+                            },
+                            anchorOrigin: {
+                              vertical: "bottom",
+                              horizontal: "left",
+                            },
+                            transformOrigin: {
+                              vertical: "top",
+                              horizontal: "left",
+                            },
+                          }}
                         />
-                        {errors.phoneNumber && (
-                          <div className="text-red-600 text-sm mt-[1px]">
-                            {errors.phoneNumber}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
