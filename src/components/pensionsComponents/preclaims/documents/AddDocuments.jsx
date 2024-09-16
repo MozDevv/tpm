@@ -159,7 +159,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
       render: (name, record) => (
         <>
           {name}{" "}
-          {record.has_two_sides && (
+          {record.has_two_sides && record.side && (
             <Chip
               label={record.side}
               size="small"

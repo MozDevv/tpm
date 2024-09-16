@@ -44,7 +44,7 @@ const baselightTheme = createTheme({
               fontWeight: 500,
 
               WebkitTextFillColor: "rgba(0, 0, 0, 0.9)",
-              backgroundColor: "rgba(0, 0, 0, 0.025)",
+              backgroundColor: "rgba(0, 0, 0, 0.018)",
             },
         },
       },

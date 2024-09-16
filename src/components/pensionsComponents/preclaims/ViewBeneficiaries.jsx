@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DialogContent } from "@mui/material";
+import { Collapse, DialogContent, IconButton } from "@mui/material";
 import EditBeneficiaryDialog from "./EditBeneficiaryDialog";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -8,6 +8,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
+import { ExpandLess, KeyboardArrowRight } from "@mui/icons-material";
 
 function ViewBeneficiaries({
   viewBeneficiaries,
@@ -84,53 +85,103 @@ function ViewBeneficiaries({
   };
 
   const [isGuardian, setIsGuardian] = useState(false);
+  const [openSections, setOpenSections] = useState({});
+
+  const handleToggleSection = (sectionKey) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey],
+    }));
+  };
 
   return (
     <>
-      <p className="text-primary my-5 text-lg px-6 font-bold">Beneficiaries</p>
-      <DialogContent>
-        <div
-          className="ag-theme-quartz"
-          style={{ height: 400, width: "100%", marginBottom: "-30px" }}
-        >
-          <AgGridReact
-            rowData={beneficiaries}
-            columnDefs={columnDefs}
-            domLayout="autoHeight"
-            pagination={false}
-            rowSelection="single"
-            onRowClicked={handleRowClick}
-          />
-        </div>
-      </DialogContent>
+      <div className="flex items-center">
+        <p className="text-primary my-5 text-lg px-6 font-bold">
+          Beneficiaries
+        </p>
 
+        <IconButton
+          sx={{ ml: "-18px", zIndex: 1, mt: "3px" }}
+          onClick={() => handleToggleSection("beneficiaries")}
+        >
+          {!openSections["beneficiaries"] ? (
+            <KeyboardArrowRight
+              sx={{ color: "primary.main", fontSize: "14px" }}
+            />
+          ) : (
+            <ExpandLess sx={{ color: "primary.main", fontSize: "14px" }} />
+          )}
+        </IconButton>
+        <hr className="flex-grow border-blue-500 border-opacity-20 mt-1" />
+      </div>
+      <Collapse
+        in={!openSections["beneficiaries"]}
+        timeout="auto"
+        unmountOnExit
+      >
+        <DialogContent>
+          <div
+            className="ag-theme-quartz"
+            style={{ height: 400, width: "100%", marginBottom: "-30px" }}
+          >
+            <AgGridReact
+              rowData={beneficiaries}
+              columnDefs={columnDefs}
+              domLayout="autoHeight"
+              pagination={false}
+              rowSelection="single"
+              onRowClicked={handleRowClick}
+            />
+          </div>
+        </DialogContent>
+      </Collapse>{" "}
       {guardians.length > 0 && (
         <>
-          <p className="text-primary mt-[-100px] text-lg px-6 font-bold">
-            Guardians
-          </p>
-          <DialogContent>
-            <div
-              className="ag-theme-quartz"
-              style={{ height: 400, width: "100%" }}
+          <div className="flex items-center mt-[-120px]">
+            <p className="text-primary  text-lg px-6 font-bold">Guardians</p>
+
+            <IconButton
+              sx={{ ml: "-18px", zIndex: 1, mt: "3px" }}
+              onClick={() => handleToggleSection("guardians")}
             >
-              <AgGridReact
-                rowData={guardians}
-                columnDefs={columnDefs}
-                domLayout="autoHeight"
-                pagination={false}
-                rowSelection="single"
-                onRowClicked={(e) => {
-                  setIsGuardian(true);
-                  setSelectedBeneficiary(e.data);
-                  setEditDialogOpen(true);
-                }}
-              />
-            </div>
-          </DialogContent>
+              {!openSections["guardians"] ? (
+                <KeyboardArrowRight
+                  sx={{ color: "primary.main", fontSize: "14px" }}
+                />
+              ) : (
+                <ExpandLess sx={{ color: "primary.main", fontSize: "14px" }} />
+              )}
+            </IconButton>
+            <hr className="flex-grow border-blue-500 border-opacity-20 mt-1" />
+          </div>
+          <Collapse
+            in={!openSections["guardians"]}
+            timeout="auto"
+            unmountOnExit
+          >
+            <DialogContent>
+              <div
+                className="ag-theme-quartz"
+                style={{ height: 400, width: "100%" }}
+              >
+                <AgGridReact
+                  rowData={guardians}
+                  columnDefs={columnDefs}
+                  domLayout="autoHeight"
+                  pagination={false}
+                  rowSelection="single"
+                  onRowClicked={(e) => {
+                    setIsGuardian(true);
+                    setSelectedBeneficiary(e.data);
+                    setEditDialogOpen(true);
+                  }}
+                />
+              </div>
+            </DialogContent>
+          </Collapse>
         </>
       )}
-
       <EditBeneficiaryDialog
         id={clickedItem?.id}
         open={editDialogOpen}

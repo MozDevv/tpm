@@ -201,7 +201,7 @@ function PreclaimsNotifications({
                 <List.Item>
                   <p className="font-montserrat flex gap-2">
                     {doc.name}{" "}
-                    {doc.has_two_sides && (
+                    {doc.has_two_sides && doc.side && (
                       <Chip
                         label={doc.side}
                         size="small"

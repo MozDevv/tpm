@@ -156,6 +156,17 @@ function GLAccounts({ clickedBudget }) {
       >
         {editable && isPostingType ? (
           <>
+            {loading[row.id] && (
+              <CircularProgress
+                size={24}
+                style={{
+                  position: "absolute",
+                  left: 10,
+                  top: "50%",
+                  marginTop: -12, // Center spinner vertically
+                }}
+              />
+            )}
             <input
               type="text"
               value={value || ""}
@@ -172,28 +183,22 @@ function GLAccounts({ clickedBudget }) {
                 outlineWidth: "3px",
                 marginTop: "-15px",
                 marginBottom: "-15px",
+                textAlign: "right",
 
                 //border: "1px solid #ddd",
               }}
             />
-            {loading[row.id] && (
-              <CircularProgress
-                size={24}
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  top: "50%",
-                  marginTop: -12, // Center spinner vertically
-                }}
-              />
-            )}
           </>
+        ) : !isPostingType && !isAccountName && !isAccountNo ? (
+          <></>
         ) : isAccountNo && !isPostingType ? (
           <p className="underline text-primary font-semibold">
             {formattedValue}
           </p>
         ) : isBudgetedAmount ? (
-          <p className=" text-primary ">{cumulativeBudgetAmount * 1}</p>
+          <p className=" text-primary text-right">
+            {cumulativeBudgetAmount * 1}
+          </p>
         ) : typeof value === "boolean" ? (
           value ? (
             "Yes"

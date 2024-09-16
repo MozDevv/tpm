@@ -91,73 +91,97 @@ const BaseInputTable = ({
     return sortedData;
   };
 
+  const [dataAdded, setDataAdded] = useState(false);
   const fetchData = async () => {
     console.log(
       "Fetching Data from Editable Table",
       getEndpoint,
       getApiService
     );
-    try {
-      const res = await getApiService(getEndpoint);
-      if (res.status === 200) {
-        console.log("Fetched Data from Editable Table", res.data.data);
+    if (dataAdded) {
+      try {
+        const res = await getApiService(getEndpoint);
+        if (res.status === 200) {
+          console.log("Fetched Data from Editable Table", res.data.data);
 
-        setRowData((prevRowData) => {
-          const datePairs = [
-            { start: "startDate", end: "endDate" },
-            { start: "from_date", end: "to_date" },
-            { start: "fromDate", end: "toDate" },
-            { start: "date", end: "endDate" },
-            { start: "date", end: "enddate" },
-            { start: "start_date", end: "end_date" },
-          ];
+          setRowData((prevRowData) => {
+            const datePairs = [
+              { start: "startDate", end: "endDate" },
+              { start: "from_date", end: "to_date" },
+              { start: "fromDate", end: "toDate" },
+              { start: "date", end: "endDate" },
+              { start: "date", end: "enddate" },
+              { start: "start_date", end: "end_date" },
+            ];
 
-          const defaultRows = Array.from({ length: 1 }, () =>
-            fields.reduce((acc, field) => {
-              acc[field.value] = "";
-              return acc;
-            }, {})
-          );
-
-          const sortedData = sortData(res.data.data);
-
-          let lastEndDate = null;
-          let matchingStartField = null; // To store the correct start field
-
-          if (sortedData.length > 0) {
-            const lastRow = sortedData[sortedData.length - 1];
-
-            console.log("Last Row:", lastRow);
-
-            // Find the end date and corresponding start date
-            for (const { start, end } of datePairs) {
-              if (lastRow[end]) {
-                lastEndDate = lastRow[end];
-                matchingStartField = start; // Store the correct start field
-                break;
-              }
-            }
-
-            console.log("Last End Date Before Formatting:", lastEndDate);
-          }
-
-          // Use the correct start field to set the date, formatting it correctly
-          if (lastEndDate && matchingStartField) {
-            // Format the lastEndDate to the desired format using dayjs
-            const formattedEndDate = dayjs(lastEndDate).format(
-              "YYYY-MM-DDTHH:mm:ss[Z]"
+            const defaultRows = Array.from({ length: 1 }, () =>
+              fields.reduce((acc, field) => {
+                acc[field.value] = "";
+                return acc;
+              }, {})
             );
 
-            defaultRows[0][matchingStartField] = formattedEndDate;
-          }
+            const sortedData = sortData(res.data.data);
 
-          console.log("Default Rows:", defaultRows);
-          // Return the updated row data
-          return [...sortedData, ...defaultRows];
-        });
+            let lastEndDate = null;
+            let matchingStartField = null; // To store the correct start field
+
+            if (sortedData.length > 0) {
+              const lastRow = sortedData[sortedData.length - 1];
+
+              console.log("Last Row:", lastRow);
+
+              // Find the end date and corresponding start date
+              for (const { start, end } of datePairs) {
+                if (lastRow[end]) {
+                  lastEndDate = lastRow[end];
+                  matchingStartField = start; // Store the correct start field
+                  break;
+                }
+              }
+
+              console.log("Last End Date Before Formatting:", lastEndDate);
+            }
+
+            // Use the correct start field to set the date, formatting it correctly
+            if (lastEndDate && matchingStartField) {
+              // Format the lastEndDate to the desired format using dayjs
+              const formattedEndDate = dayjs(lastEndDate).format(
+                "YYYY-MM-DDTHH:mm:ss[Z]"
+              );
+
+              defaultRows[0][matchingStartField] = formattedEndDate;
+            }
+
+            console.log("Default Rows:", defaultRows);
+            // Return the updated row data
+            return [...sortedData, ...defaultRows];
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const res = await getApiService(getEndpoint);
+        if (res.status === 200) {
+          console.log("Fecthed Data from Editable Table", res.data.data);
+          //  setRowData(res.data.data);
+          setRowData((prevRowData) => {
+            const defaultRows = Array.from({ length: 1 }, () =>
+              fields.reduce((acc, field) => {
+                acc[field.value] = "";
+                return acc;
+              }, {})
+            );
+
+            const sortedData = sortData(res.data.data);
+            return [...sortedData, ...defaultRows];
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -232,23 +256,17 @@ const BaseInputTable = ({
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
+    setDataAdded(true);
+
     console.log("Formatted Form Data:", formattedFormData);
     if (id) {
       formattedFormData[idLabel] = id;
     }
     Object.keys(formattedFormData).forEach((key) => {
-      if (key.includes("date") && formattedFormData[key]) {
-        let dateValue = formattedFormData[key];
-
-        if (dayjs(dateValue).isValid()) {
-          // Convert all valid dates to UTC and ensure they have a timezone offset
-          formattedFormData[key] = dayjs(dateValue)
-            .utc()
-            .format("YYYY-MM-DDTHH:mm:ss[Z]");
-        } else {
-          console.warn(`Invalid date format for ${key}:`, dateValue);
-          formattedFormData[key] = null;
-        }
+      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+        formattedFormData[key] = dayjs(formattedFormData[key]).format(
+          "YYYY-MM-DDTHH:mm:ss[Z]"
+        );
       }
     });
 
