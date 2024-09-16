@@ -1178,6 +1178,7 @@ function NewPreclaim({
                                         }}
                                       />
                                     )}
+                                    disabled={!canEdit}
                                     renderInput={(params) => (
                                       <TextField
                                         {...params}

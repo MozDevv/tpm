@@ -44,7 +44,11 @@ const baselightTheme = createTheme({
               fontWeight: 500,
 
               WebkitTextFillColor: "rgba(0, 0, 0, 0.9)",
-              backgroundColor: "rgba(0, 0, 0, 0.018)",
+              backgroundColor: "rgba(0, 0, 0, 0.030)",
+            },
+          "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
+            {
+              borderColor: "rgba(0, 0, 0, 0.12)",
             },
         },
       },
