@@ -91,7 +91,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
 
     try {
       const res = await axios.post(
-        "https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
+        "https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -122,7 +122,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     setLoading(true);
     try {
       const res = await apiService.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
       );
       const base64Data = res.data?.messages[0];
       if (base64Data) {

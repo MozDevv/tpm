@@ -36,7 +36,7 @@ function RecordCard({ id, editUser }) {
   const fetchUserDetails = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/UserManagement/GetUsers?documentID=${id}`
+        `https://tntapi.agilebiz.co.ke/api/UserManagement/GetUsers?documentID=${id}`
       );
 
       console.log(res.data.data);

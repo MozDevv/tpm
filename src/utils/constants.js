@@ -1,1 +1,1 @@
-export const BASE_CORE_API = "https://pmistest-api.treasury.go.ke/";
+export const BASE_CORE_API = "https://tntapi.agilebiz.co.ke/";

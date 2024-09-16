@@ -17,9 +17,7 @@ function AssignRole({ openPermissions, setOpenPermissions, userId }) {
 
   useEffect(() => {
     // Fetch all permissions data from the API
-    fetch(
-      "https://pmistest-api.treasury.go.ke/api/PermissionsSetup/GetPermissions"
-    )
+    fetch("https://tntapi.agilebiz.co.ke/api/PermissionsSetup/GetPermissions")
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {
@@ -32,7 +30,7 @@ function AssignRole({ openPermissions, setOpenPermissions, userId }) {
   const fetchUserPermissions = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/PermissionUserSetUp/GetPermissionsUser?userId=${userId}`
+        `https://tntapi.agilebiz.co.ke/api/PermissionUserSetUp/GetPermissionsUser?userId=${userId}`
       );
       if (res.data.isSuccess) {
         setUserPermissions(res.data.data.map((perm) => perm.permissionId));

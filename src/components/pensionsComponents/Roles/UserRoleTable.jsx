@@ -23,9 +23,7 @@ const UserRoleTable = () => {
 
   useEffect(() => {
     // Fetch permissions data from the API
-    fetch(
-      "https://pmistest-api.treasury.go.ke/api/PermissionsSetup/GetPermissions"
-    )
+    fetch("https://tntapi.agilebiz.co.ke/api/PermissionsSetup/GetPermissions")
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {

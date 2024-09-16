@@ -103,7 +103,7 @@ function GovernmentSalary({ id, clickedItem }) {
   const fetchPostandNature = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+        `https://tntapi.agilebiz.co.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
       if (res.status === 200) {
         const sortedData = res.data.data.sort(
