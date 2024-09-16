@@ -811,19 +811,65 @@ const Preclaims = ({ status }) => {
                     Filter By:
                   </p>
                   <Divider sx={{ px: 2 }} />
-                  <div className="p-3">
+                  <div className="flex flex-col item-center p-4 mt-3">
                     <label className="text-xs font-semibold text-gray-600">
-                      Keyword
+                      Select Column
                     </label>
+                    <select
+                      name="role"
+                      value={filterColumn}
+                      onChange={(e) => setFilterColumn(e.target.value)}
+                      className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
+                      required
+                    >
+                      {colDefs.map((col) => (
+                        <option value={col.field}>{col.headerName}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="p-3 flex">
+                    <div className="flex flex-col">
+                      <label className="text-xs font-semibold text-gray-600">
+                        Keyword
+                      </label>
+                      {filterColumn === "notification_status" ? (
+                        <>
+                          <select
+                            className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
+                            value={filterValue}
+                            onChange={(e) => setFilterValue(e.target.value)}
+                          >
+                            <option value={0}>UNNOTIFIED</option>
+                            <option value={1}>SCHEDULED</option>
+                            <option value={2}>NOTIFIED</option>
+                            <option value={3}>SUBMITTED</option>
+                            <option value={4}>IN REVIEW</option>
+                            <option value={5}>PENDING APPROVAL</option>
+                            <option value={6}>CLAIM CREATED</option>
+                          </select>
+                        </>
+                      ) : filterColumn === "gender" ? (
+                        <>
+                          <select
+                            className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
+                            value={filterValue}
+                            onChange={(e) => setFilterValue(e.target.value)}
+                          >
+                            <option value={0}>Male</option>
+                            <option value={1}>Female</option>
+                          </select>
+                        </>
+                      ) : (
+                        <input
+                          type="text"
+                          className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
+                          required
+                          value={filterValue}
+                          onChange={(e) => setFilterValue(e.target.value)}
+                        />
+                      )}
+                    </div>
                     <div className="flex">
-                      <input
-                        type="text"
-                        className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                        required
-                        value={filterValue}
-                        onChange={(e) => setFilterValue(e.target.value)}
-                      />
-
                       <IconButton onClick={handleClick}>
                         <FilterList />
                       </IconButton>
@@ -849,22 +895,7 @@ const Preclaims = ({ status }) => {
                     <MenuItem value={"CONTAINS"}>Not Equal</MenuItem>
                   </Menu>
                   <Divider />
-                  <div className="flex flex-col item-center p-4 mt-3">
-                    <label className="text-xs font-semibold text-gray-600">
-                      Select Column
-                    </label>
-                    <select
-                      name="role"
-                      value={filterColumn}
-                      onChange={(e) => setFilterColumn(e.target.value)}
-                      className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                      required
-                    >
-                      {colDefs.map((col) => (
-                        <option value={col.field}>{col.headerName}</option>
-                      ))}
-                    </select>
-                  </div>
+
                   <div className="flex flex-col item-center p-4 mt-3">
                     <label className="text-xs font-semibold text-gray-600 w-[100%]">
                       Sort By:

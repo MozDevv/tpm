@@ -55,21 +55,6 @@ export const createSections = (
         pensionCap: ["CAP199"],
       },
       {
-        label: "First Name",
-        name: "first_name",
-        type: "text",
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
-      {
         label: "Surname",
         name: "surname",
         type: "text",
@@ -85,7 +70,39 @@ export const createSections = (
         ],
       },
       {
-        label: "Other Name",
+        label: "First Name",
+        name: "first_name",
+        type: "text",
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+
+      {
+        label: "Middle Name",
+        name: "middle_name",
+        type: "text",
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+
+      {
+        label: "Other Name(s)",
         name: "other_name",
         type: "text",
         pensionCap: [

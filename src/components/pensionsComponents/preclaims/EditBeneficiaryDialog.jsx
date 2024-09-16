@@ -233,6 +233,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                               variant="outlined"
                               size="small"
                               fullWidth
+                              disabled={true}
                               name={field.name}
                               value={fieldValue || ""}
                               onChange={handleChange}
@@ -244,6 +245,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                           ) : field.type === "autocomplete" ? (
                             <Autocomplete
                               options={field.children || []}
+                              disabled={true}
                               getOptionLabel={(option) => option.name}
                               onChange={(event, newValue) => {
                                 handleChange({
@@ -272,6 +274,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                             <TextField
                               type={field.type}
                               name={field.name}
+                              disabled={true}
                               variant="outlined"
                               size="small"
                               value={

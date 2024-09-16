@@ -1089,11 +1089,12 @@ function NewPreclaim({
                               >
                                 <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
                                   {field.label}
-                                  {field.name !== "other_name" && (
-                                    <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-                                      *
-                                    </div>
-                                  )}
+                                  {field.name !== "other_name" &&
+                                    field.name !== "middle_name" && (
+                                      <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                                        *
+                                      </div>
+                                    )}
                                 </label>
                                 {field.name === "phone_number" ? (
                                   <MuiPhoneNumber

@@ -272,8 +272,6 @@ const BaseInputTable = ({
 
     console.log("Formatted Form Data After Date Handling:", formattedFormData);
 
-    // Continue with your API call logic here...
-
     console.log("Formatted Form Data:", formattedFormData);
     try {
       if (data.id) {

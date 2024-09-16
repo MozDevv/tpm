@@ -93,7 +93,7 @@ const colDefs = [
 
       return (
         <Button
-          variant="outlined"
+          variant="text"
           sx={{
             borderColor: status.color,
             maxHeight: "22px",

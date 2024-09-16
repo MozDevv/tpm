@@ -1,9 +1,28 @@
 .ag-theme-quartz .ag-cell {
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+  font-weight: 400;
+  font-size: 13px;
 }
-.header-bold .ag-header-cell-label {
-  font-weight: 600;
-}
+
 .header-gray .ag-header-cell-label {
   color: "gray";
+}
+.ag-theme-quartz .ag-header-cell {
+  font-weight: 600;
+  font-size: 13px;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+.ag-theme-quartz {
+  --ag-background-color: white;
+  --ag-header-cell-hover-background-color: #b2e9ede4;
+  --ag-input-focus-border-color: #b2e9ede4;
+}
+.ag-theme-quartz {
+  --ag-selected-row-background-color: #b2e9ede4;
+}
+.custom-dropdown {
+  width: 100%;
+  height: 450px;
+  margin-left: -17px;
 }
