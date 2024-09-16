@@ -146,9 +146,9 @@ const BaseInputTable = ({
             // Use the correct start field to set the date, formatting it correctly
             if (lastEndDate && matchingStartField) {
               // Format the lastEndDate to the desired format using dayjs
-              const formattedEndDate = dayjs(lastEndDate).format(
-                "YYYY-MM-DDTHH:mm:ss[Z]"
-              );
+              const formattedEndDate = dayjs(lastEndDate)
+                .add(1, "day")
+                .format("YYYY-MM-DDTHH:mm:ss[Z]");
 
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
