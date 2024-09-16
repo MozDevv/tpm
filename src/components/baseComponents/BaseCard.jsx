@@ -135,7 +135,7 @@ function BaseCard({
 
       <Dialog
         open={openAction && (status === 3 || status === 7 || status === 5)}
-        onClose={() => setOpenCreateClaim(false)}
+        onClose={() => setOpenAction(false)}
         sx={{
           "& .MuiDialog-paper": {
             height: "300px",

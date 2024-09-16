@@ -1,7 +1,8 @@
 import claimsEndpoints, { apiService } from "@/components/services/claimsApi";
 import preClaimsEndpoints from "@/components/services/preclaimsApi";
 import { useAlert } from "@/context/AlertContext";
-import { Button, TextareaAutosize } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Button, IconButton, TextareaAutosize } from "@mui/material";
 import React, { useState } from "react";
 
 function SendForApproval({
@@ -63,6 +64,9 @@ function SendForApproval({
     <div>
       {" "}
       <div className="p-8 h-[100%]">
+        <IconButton sx={{ position: "absolute", right: 0, top: 0 }}>
+          <Close onClick={() => setOpenCreateClaim(false)} />
+        </IconButton>
         <p className="text-primary relative font-semibold text-lg mb-3">
           Submit for Approval
         </p>
