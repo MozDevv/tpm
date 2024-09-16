@@ -168,9 +168,7 @@ function NewPreclaim({
         is_wcps: retiree?.is_wcps ?? 1,
         is_parliamentary: retiree?.is_parliamentary ?? false,
         age_on_discharge: ageOnDischarge,
-        commutation_option_selection: retiree?.commutation_option_selection
-          ? 1
-          : 2,
+        commutation_option_selection: retiree?.commutation_option_selection,
         commutation_option_selection_date:
           retiree?.commutation_option_selection_date
             ? new Date(retiree?.commutation_option_selection_date)
@@ -266,10 +264,7 @@ function NewPreclaim({
       is_wcps: retiree?.is_wcps ?? 1,
       is_parliamentary: retiree?.is_parliamentary ?? false,
       age_on_discharge: ageOnDischarge,
-      commutation_option_selection: retiree?.commutation_option_selection
-        ? 1
-        : 2,
-
+      commutation_option_selection: retiree?.commutation_option_selection,
       commutation_option_selection_date: parseDate(
         retiree?.commutation_option_selection_date
       ),
@@ -363,12 +358,15 @@ function NewPreclaim({
     let { name, value, type } = e.target;
     let parsedValue = type === "number" ? parseFloat(value) : value;
 
-    if (type === "text") {
+    if (
+      type === "text" &&
+      name !== "kra_pin" &&
+      name !== "email_address" &&
+      name !== "tribe"
+    ) {
       parsedValue = toProperCase(parsedValue);
     }
-    if (type === "text" || type === "select-one") {
-      parsedValue = toProperCase(parsedValue);
-    }
+
     if (name === "is_parliamentary") {
       formData.is_parliamentary = true;
     }
@@ -957,6 +955,9 @@ function NewPreclaim({
 
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
+      ********************************************************
+      {JSON.stringify(formData.commutation_option_selection)}
+      ********************************************************
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
         <IconButton
           sx={{

@@ -761,7 +761,7 @@ export const createSections = (
       {
         label: "Has Commuted",
         name: "commutation_option_selection",
-        type: "select",
+        type: "text",
         children: [
           { id: 1, name: "Yes" },
           { id: 2, name: "No" },
