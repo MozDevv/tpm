@@ -124,18 +124,16 @@ const BaseInputTable = ({
             const sortedData = sortData(res.data.data);
 
             let lastEndDate = null;
-            let matchingStartField = null; // To store the correct start field
-
+            let matchingStartField = null;
             if (sortedData.length > 0) {
               const lastRow = sortedData[sortedData.length - 1];
 
               console.log("Last Row:", lastRow);
 
-              // Find the end date and corresponding start date
               for (const { start, end } of datePairs) {
                 if (lastRow[end]) {
                   lastEndDate = lastRow[end];
-                  matchingStartField = start; // Store the correct start field
+                  matchingStartField = start;
                   break;
                 }
               }
@@ -143,9 +141,7 @@ const BaseInputTable = ({
               console.log("Last End Date Before Formatting:", lastEndDate);
             }
 
-            // Use the correct start field to set the date, formatting it correctly
             if (lastEndDate && matchingStartField) {
-              // Format the lastEndDate to the desired format using dayjs
               const formattedEndDate = dayjs(lastEndDate)
                 .add(1, "day")
                 .format("YYYY-MM-DDTHH:mm:ss[Z]");
@@ -154,7 +150,7 @@ const BaseInputTable = ({
             }
 
             console.log("Default Rows:", defaultRows);
-            // Return the updated row data
+
             return [...sortedData, ...defaultRows];
           });
         }
