@@ -218,6 +218,9 @@ const endpoints = {
   deleteMaintenance: (id) =>
     `/api/ProspectivePensioners/DeletePensionerMaintenance/${id}`,
 
+  deletePensionableSalary: (id) =>
+    `/api/ProspectivePensioners/DeleteProspectivePensionerPensionableSalary?id=${id}`,
+
   //MixedServiceWorkHistory
 
   getMixedServiceWorkHistory: (id) =>

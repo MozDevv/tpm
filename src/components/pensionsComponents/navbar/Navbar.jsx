@@ -96,7 +96,7 @@ function Navbar() {
   return (
     <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
       <div className={styles.navbar}>
-        <div className="flex justify-between w-[950px] ml-5">
+        <div className="flex w-[950px] ml-2 gap-15">
           <div className={styles.left}>
             {selectedItem === "Dashboard" ? (
               <div className={styles.heading}>
@@ -128,6 +128,7 @@ function Navbar() {
                   backgroundColor: "white",
                   width: "500px",
                   borderRadius: "30px",
+                  marginLeft: "auto",
                 },
                 startAdornment: (
                   <InputAdornment position="start">

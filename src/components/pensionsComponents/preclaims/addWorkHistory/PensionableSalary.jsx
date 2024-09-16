@@ -21,6 +21,7 @@ import { useAlert } from "@/context/AlertContext";
 import { message } from "antd";
 import EditableTable from "@/components/baseComponents/EditableTable";
 import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import endpoints from "@/components/services/setupsApi";
 
 function PensionableSalary({ id, status }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -284,13 +285,14 @@ function PensionableSalary({ id, status }) {
         fields={fields}
         id={id}
         idLabel="prospective_pensioner_id"
+        apiService={apiService}
         getApiService={apiService.get}
         postApiService={apiService.post}
         putApiService={apiService.post}
         getEndpoint={preClaimsEndpoints.getPensionableSalary(id)}
         postEndpoint={preClaimsEndpoints.createPensionableSalary}
         putEndpoint={preClaimsEndpoints.updatePensionableSalary}
-        deleteEndpoint={preClaimsEndpoints.deletePensionableSalary(id)}
+        deleteEndpoint={endpoints.deletePensionableSalary(id)}
         passProspectivePensionerId={true}
       />
     </div>

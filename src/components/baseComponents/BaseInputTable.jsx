@@ -81,9 +81,18 @@ const BaseInputTable = ({
     try {
       const res = await getApiService(getEndpoint);
       if (res.status === 200) {
-        console.log("Fecthed Data from Editable Table", res.data.data);
-        //  setRowData(res.data.data);
+        console.log("Fetched Data from Editable Table", res.data.data);
+
         setRowData((prevRowData) => {
+          const datePairs = [
+            { start: "startDate", end: "endDate" },
+            { start: "from_date", end: "to_date" },
+            { start: "fromDate", end: "toDate" },
+            { start: "date", end: "endDate" },
+            { start: "date", end: "enddate" },
+            { start: "start_date", end: "end_date" },
+          ];
+
           const defaultRows = Array.from({ length: 1 }, () =>
             fields.reduce((acc, field) => {
               acc[field.value] = "";
@@ -92,6 +101,39 @@ const BaseInputTable = ({
           );
 
           const sortedData = sortData(res.data.data);
+
+          let lastEndDate = null;
+          let matchingStartField = null; // To store the correct start field
+
+          if (sortedData.length > 0) {
+            const lastRow = sortedData[sortedData.length - 1];
+
+            console.log("Last Row:", lastRow);
+
+            // Find the end date and corresponding start date
+            for (const { start, end } of datePairs) {
+              if (lastRow[end]) {
+                lastEndDate = lastRow[end];
+                matchingStartField = start; // Store the correct start field
+                break;
+              }
+            }
+
+            console.log("Last End Date Before Formatting:", lastEndDate);
+          }
+
+          // Use the correct start field to set the date, formatting it correctly
+          if (lastEndDate && matchingStartField) {
+            // Format the lastEndDate to the desired format using dayjs
+            const formattedEndDate = dayjs(lastEndDate).format(
+              "YYYY-MM-DDTHH:mm:ss[Z]"
+            );
+
+            defaultRows[0][matchingStartField] = formattedEndDate;
+          }
+
+          console.log("Default Rows:", defaultRows);
+          // Return the updated row data
           return [...sortedData, ...defaultRows];
         });
       }
@@ -170,18 +212,32 @@ const BaseInputTable = ({
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
+
+    console.log("Formatted Form Data:", formattedFormData);
     if (id) {
       formattedFormData[idLabel] = id;
     }
-
     Object.keys(formattedFormData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
-        formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
-        );
+      if (key.includes("date") && formattedFormData[key]) {
+        let dateValue = formattedFormData[key];
+
+        if (dayjs(dateValue).isValid()) {
+          // Convert all valid dates to UTC and ensure they have a timezone offset
+          formattedFormData[key] = dayjs(dateValue)
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss[Z]");
+        } else {
+          console.warn(`Invalid date format for ${key}:`, dateValue);
+          formattedFormData[key] = null;
+        }
       }
     });
 
+    console.log("Formatted Form Data After Date Handling:", formattedFormData);
+
+    // Continue with your API call logic here...
+
+    console.log("Formatted Form Data:", formattedFormData);
     try {
       if (data.id) {
         const res = await putApiService(putEndpoint, {
@@ -205,7 +261,7 @@ const BaseInputTable = ({
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
-              // Set specific cell errors using setCellError
+
               setCellError(data.id, error.field, err);
             });
           });
@@ -216,7 +272,7 @@ const BaseInputTable = ({
           res.data.message.length > 0
         ) {
           message.error(res.data.message[0]);
-          setCellError(data.id, null, res.data.message[0]); // Set generic row error
+          setCellError(data.id, null, res.data.message[0]);
           throw new Error(res.data.message[0]);
         }
       } else {
@@ -226,6 +282,7 @@ const BaseInputTable = ({
           refreshData();
           refetchDataFromAnotherComponent?.();
           message.success("Record added successfully");
+
           // Clear errors upon successful submission
 
           setRowErrors((prevErrors) => {
@@ -240,7 +297,7 @@ const BaseInputTable = ({
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
-              // Set specific cell errors using setCellError
+
               setCellError(data.id, error.field, err);
             });
           });
@@ -353,7 +410,7 @@ const BaseInputTable = ({
               (option) => option.id === id
             );
 
-            console.log("Selected Option:", selectedOption);
+            // console.log("Selected Option:", selectedOption);
 
             return selectedOption ? selectedOption.name : id;
           };
@@ -625,12 +682,11 @@ const BaseInputTable = ({
     if (gridApiRef.current) {
       let hasErrors = false;
 
-      // Check if there are errors in the existing rows
       gridApiRef.current.forEachNode((node) => {
-        const rowId = node.data.id; // Assuming each row has a unique `id`
+        const rowId = node.data.id;
         if (rowErrors[rowId] && Object.keys(rowErrors[rowId]).length > 0) {
           hasErrors = true;
-          return; // Stop checking further as we found an error
+          return;
         }
       });
 
@@ -638,21 +694,47 @@ const BaseInputTable = ({
         message.error(
           "Please resolve errors in the current line before adding a new line."
         );
-        return; // Exit the function without adding a new row
+        return;
       }
 
       const editedData = [];
 
-      // Collect existing row data
       gridApiRef.current.forEachNode((node) => {
         editedData.push(node.data);
       });
 
       console.log("Edited data:", editedData);
 
+      const lastRow = editedData[editedData.length - 1];
+      let previousEndDate = null;
+
+      const datePairs = [
+        { start: "startDate", end: "endDate" },
+        { start: "from_date", end: "to_date" },
+        { start: "fromDate", end: "toDate" },
+        { start: "date", end: "endDate" },
+        { start: "start_date", end: "end_date" },
+      ];
+
+      // Loop through date pairs to find a filled end date
+      for (const { start, end } of datePairs) {
+        if (lastRow && lastRow[end]) {
+          previousEndDate = lastRow[end];
+          break;
+        }
+      }
+
       // Initialize new row data
       const newRow = fields.reduce((acc, field) => {
-        acc[field.value] = "";
+        // Auto-populate start date field with the previous end date if available
+        if (
+          previousEndDate &&
+          datePairs.some((pair) => pair.start === field.value)
+        ) {
+          acc[field.value] = previousEndDate;
+        } else {
+          acc[field.value] = "";
+        }
         return acc;
       }, {});
 
@@ -679,7 +761,7 @@ const BaseInputTable = ({
         return updatedErrors;
       });
 
-      //  message.info("New row added!");
+      // message.info("New row added!");
     } else {
       message.error("Unable to add a new row. Grid is not ready.");
     }
