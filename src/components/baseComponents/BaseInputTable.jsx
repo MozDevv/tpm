@@ -9,9 +9,17 @@ import React, {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { Button, Divider, IconButton, Tooltip } from "@mui/material";
+import { Button, Collapse, Divider, IconButton, Tooltip } from "@mui/material";
 import { message } from "antd";
-import { Add, Api, Cancel, CloudUpload, Delete } from "@mui/icons-material";
+import {
+  Add,
+  Api,
+  Cancel,
+  CloudUpload,
+  Delete,
+  ExpandLess,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
 import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
 import "./editabletable.css";
@@ -51,6 +59,17 @@ const BaseInputTable = ({
   });
 
   const [rowErrors, setRowErrors] = useState({});
+  const [openSections, setOpenSections] = useState({});
+  const [sectionKey, setSectionKey] = useState(title);
+
+  const handleToggleSection = (key) => {
+    setOpenSections((prevOpenSections) => {
+      return {
+        ...prevOpenSections,
+        [key]: !prevOpenSections[key],
+      };
+    });
+  };
 
   const sortData = (data) => {
     const dateField = data[0]?.date
@@ -834,68 +853,87 @@ const BaseInputTable = ({
   };
 
   return (
-    <div className="ag-theme-quartz">
-      <div className="text-primary font-montserrat text-base font-semibold mb-2">
-        {title}
-      </div>
-      <div className="flex flex-row gap-5 ml-[-15px]">
-        <Button
-          onClick={onAddRow}
-          variant="text"
-          startIcon={<Add />}
-          style={{ marginLeft: "10px", marginBottom: "10px" }}
+    <>
+      <div className="flex items-center gap-2">
+        <div className="text-primary font-montserrat text-base font-semibold mb-2">
+          {title}
+        </div>
+        <IconButton
+          sx={{ ml: "-5px", zIndex: 1, mt: "-6px" }}
+          onClick={() => handleToggleSection(sectionKey)}
         >
-          New Line
-        </Button>
-        <Button
-          onClick={handleDeleteSelectedRows}
-          variant="text"
-          startIcon={<Delete />}
-          style={{ marginLeft: "10px", marginBottom: "10px" }}
-        >
-          Delete Lines
-        </Button>
-
-        {useExcel && (
-          <Button
-            variant="text"
-            tabIndex={-1}
-            startIcon={<CloudUpload />}
-            sx={{ mt: "-13px" }}
-            component="label"
-            role={undefined}
-          >
-            Import excel
-            <VisuallyHiddenInput
-              type="file"
-              onChange={handleFileUpload}
-              multiple
+          {!openSections[sectionKey] ? (
+            <KeyboardArrowRight
+              sx={{ color: "primary.main", fontSize: "14px" }}
             />
-          </Button>
-        )}
+          ) : (
+            <ExpandLess sx={{ color: "primary.main", fontSize: "14px" }} />
+          )}
+        </IconButton>
+        <hr className="flex-grow border-blue-500 border-opacity-20 mt-[-5px]" />
       </div>
+      <Collapse in={!openSections[sectionKey]} timeout="auto" unmountOnExit>
+        <div className="ag-theme-quartz">
+          <div className="flex flex-row gap-5 ml-[-15px]">
+            <Button
+              onClick={onAddRow}
+              variant="text"
+              startIcon={<Add />}
+              style={{ marginLeft: "10px", marginBottom: "10px" }}
+            >
+              New Line
+            </Button>
+            <Button
+              onClick={handleDeleteSelectedRows}
+              variant="text"
+              startIcon={<Delete />}
+              style={{ marginLeft: "10px", marginBottom: "10px" }}
+            >
+              Delete Lines
+            </Button>
 
-      <div className="" style={{ maxHeight: "500px", width: "100%" }}>
-        <AgGridReact
-          ref={gridApiRef}
-          rowData={rowData}
-          columnDefs={headers}
-          defaultColDef={{
-            flex: 1,
-            minWidth: 150,
-            height: "400px",
-            minHehight: "100px",
-          }}
-          onCellKeyDown={onCellKeyDown}
-          onGridReady={onGridReady}
-          loadingOverlayComponent={BaseLoadingOverlay}
-          loadingOverlayComponentParams={loadingOverlayComponentParams}
-          domLayout="autoHeight"
-          rowSelection="multiple"
-          singleClickEdit={true}
-        />
-      </div>
-    </div>
+            {useExcel && (
+              <Button
+                variant="text"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                sx={{ mt: "-13px" }}
+                component="label"
+                role={undefined}
+              >
+                Import excel
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={handleFileUpload}
+                  multiple
+                />
+              </Button>
+            )}
+          </div>
+
+          <div className="" style={{ maxHeight: "500px", width: "100%" }}>
+            <AgGridReact
+              ref={gridApiRef}
+              rowData={rowData}
+              columnDefs={headers}
+              defaultColDef={{
+                flex: 1,
+                minWidth: 150,
+                height: "400px",
+                minHehight: "100px",
+              }}
+              onCellKeyDown={onCellKeyDown}
+              onGridReady={onGridReady}
+              loadingOverlayComponent={BaseLoadingOverlay}
+              loadingOverlayComponentParams={loadingOverlayComponentParams}
+              domLayout="autoHeight"
+              rowSelection="multiple"
+              singleClickEdit={true}
+            />
+          </div>
+        </div>
+      </Collapse>
+    </>
   );
 };
 
