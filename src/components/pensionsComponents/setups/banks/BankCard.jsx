@@ -4,6 +4,7 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 import { AgGridReact } from "ag-grid-react";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const { TabPane } = Tabs;
 
@@ -67,6 +68,23 @@ function BankCard({
     fetchBanksAndBranches();
   }, [openAction]);
 
+  const branchFields = [
+    {
+      value: "branch_code",
+      label: "Branch Code",
+      type: "text",
+      required: true,
+    },
+    {
+      value: "name",
+      label: "Name",
+      type: "text",
+      required: true,
+    },
+    { value: "address", label: "Address", type: "text", required: true },
+    { value: "city", label: "City", type: "text", required: true },
+  ];
+
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto mt-2">
       <div>
@@ -105,21 +123,22 @@ function BankCard({
               >
                 <div className="ag-theme-quartz max-h-[90vh]">
                   {" "}
-                  <AgGridReact
-                    columnDefs={columnDefs}
-                    rowData={branches}
-                    pagination={false}
-                    domLayout="autoHeight"
-                    onGridReady={(params) => {
-                      params.api.sizeColumnsToFit();
-                      //  onGridReady(params);
-                    }}
-                    onRowClicked={(e) => {
-                      //  setOpenBaseCard(true);
-                      //    setClickedItem(e.data);
-                      // setUserClicked(e.data);
-                      //handleClickUser(e.data);
-                    }}
+                  <BaseInputTable
+                    title="Branches"
+                    fields={branchFields}
+                    id={clickedItem.id}
+                    idLabel="bank_id"
+                    getApiService={apiService.get}
+                    postApiService={apiService.post}
+                    putApiService={apiService.put}
+                    getEndpoint={endpoints.getAllBranchesByBankId(
+                      clickedItem.id
+                    )}
+                    apiService={apiService}
+                    deleteEndpoint={endpoints.deleteBankBranch}
+                    postEndpoint={endpoints.createBankBranch}
+                    //putEndpoint={endpoints.}
+                    passProspectivePensionerId={true}
                   />
                 </div>
               </TabPane>

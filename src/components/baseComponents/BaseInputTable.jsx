@@ -206,7 +206,12 @@ const BaseInputTable = ({
   const deleteRow = async (rowId) => {
     try {
       const res = await apiService.delete(deleteEndpoint(rowId));
-      if (res.status === 200 && res.data.succeeded) {
+      if (
+        res.status === 200 ||
+        res.status === 204 ||
+        res.data.succeeded ||
+        res.data.message[0] === "Record deleted successfully"
+      ) {
         refreshData();
         message.success("Record deleted successfully");
         setRowData((prevData) => {
@@ -251,8 +256,6 @@ const BaseInputTable = ({
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
-
-    setDataAdded(true);
 
     console.log("Formatted Form Data:", formattedFormData);
     if (id) {
@@ -587,6 +590,8 @@ const BaseInputTable = ({
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue } = params;
         const field = colDef.field;
+
+        setDataAdded(true);
 
         const datePair = findDatePair(field);
 

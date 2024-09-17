@@ -57,6 +57,10 @@ const endpoints = {
   //BANKS
   getBankBranches: (id) => `/api/setups/GetBankBranches?id=${id}`,
 
+  getAllBranchesByBankId: (id) =>
+    `/api/setups/GetBankBranches?filterCriterion.criterions[0].propertyName=bank_id&filterCriterion.criterions[0].propertyValue=${id}&paging.pageSize=200`,
+
+  deleteBankBranch: (id) => `/api/Setups/DeleteBankBranch/${id}`,
   //get Banks
   getBanks: "/api/setups/GetBanks",
 

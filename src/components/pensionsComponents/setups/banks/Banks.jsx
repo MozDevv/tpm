@@ -98,7 +98,9 @@ const Banks = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Bank" : "Create New Bank";
+  const title = clickedItem
+    ? `${clickedItem?.code} - ${clickedItem?.name}`
+    : "Create New Bank";
 
   const [bankTypes, setBankTypes] = React.useState([]);
 
@@ -116,7 +118,7 @@ const Banks = () => {
   }, [openBaseCard]);
 
   const fields = [
-    { name: "code", label: "Bank Code", type: "number", required: true },
+    { name: "code", label: "Bank Code", type: "text", required: true },
     {
       name: "name",
       label: "Name",
