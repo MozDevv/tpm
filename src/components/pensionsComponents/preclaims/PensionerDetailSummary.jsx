@@ -59,6 +59,7 @@ function PensionerDetailSummary({ clickedItem }) {
           <h5 className="font-semibold text-primary text-base">{`${clickedItem?.first_name} ${clickedItem?.surname}`}</h5>
         </div>
       </div>
+
       <Divider />
       <div className="mt-4 p-2">
         <div className="flex items-center gap-2">
@@ -69,6 +70,7 @@ function PensionerDetailSummary({ clickedItem }) {
             {clickedItem?.phone_number}
           </h6>
         </div>
+
         <div className="flex items-center gap-2">
           <IconButton>
             <EmailOutlined />
@@ -78,7 +80,23 @@ function PensionerDetailSummary({ clickedItem }) {
           </h6>
         </div>
       </div>
+      {clickedItem?.prospectivePensionerAwards && (
+        <div className="my-3 p-2 flex gap-3 flex-col">
+          <Divider />
+          <div className="flex flex-col gap-2">
+            {clickedItem.prospectivePensionerAwards.map((award) => (
+              <div key={award.id} className="flex items-center gap-2">
+                <h6 className="font-medium text-primary text-xs">
+                  Pension Award:
+                </h6>
+                <span className="text-xs">{award.pension_award?.prefix}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <Divider />
+
       <div className="mt-8 p-2 flex gap-3 flex-col">
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Personal Number</h6>

@@ -337,6 +337,8 @@ const ClaimsTable = () => {
           item?.prospectivePensioner?.pension_commencement_date,
         postal_address: item?.prospectivePensioner?.postal_address,
         id: item.prospectivePensioner?.id,
+        prospectivePensionerAwards:
+          item?.prospectivePensioner?.prospectivePensionerAwards,
       }));
 
       setRowData(mappedData);

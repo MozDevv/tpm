@@ -97,9 +97,7 @@ const ExitGrounds = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem
-    ? `${clickedItem.name} Pension Awards`
-    : "Create New Pension Award";
+  const title = clickedItem ? `${clickedItem.name} ` : "Create New Exit Ground";
 
   const [pensionCaps, setPensionCaps] = React.useState([]);
 

@@ -36,7 +36,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
 
   const fetchDocumentTypes = async () => {
     try {
-      const res = await apiService.get(endpoints.documentTypes);
+      const res = await apiService.get(endpoints.documentTypes, {
+        "paging.pageSize": 200,
+      });
       setDocuments(res.data.data);
     } catch (error) {
       console.log(error);
@@ -169,41 +171,25 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   return (
-    <div className="mt-4">
+    <div className="mt-4 px-4">
       <div className="flex flex-col gap-3">
-        <div className="">
-          {/* <IconButton
-            sx={{
-              border: "1px solid #006990",
-              borderRadius: "50%",
-              padding: "3px",
-              marginRight: "10px",
-              color: "#006990",
-            }}
-            onClick={() => setOpenAward(false)}
-          >
-            <ArrowBack sx={{ color: "#006990" }} />
-          </IconButton> */}
-        </div>
-
-        <div className="px-5">
-          <div className="flex flex-row gap-3 justify-between items-center mb-5">
-            <p className="text-primary  mb-2 px-9 text-lg  font-semibold font-montserrat">
-              Select Documents to map to {rowClicked?.name}
+        <div className="px-5 mb-5">
+          <div className="flex flex-row gap-3 justify-between items-center">
+            <p className="text-primary mb-2 text-lg font-semibold font-montserrat">
+              Documents Required under {rowClicked.name}
             </p>
-            <div className="mb-2 ml-4">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
-            </div>
-          </div>{" "}
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ boxShadow: "none", textTransform: "none", mr: "-40px" }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </div>
         </div>
       </div>
-      <Grid container spacing={2} sx={{ ml: 3 }}>
+      <Grid container spacing={2} sx={{ ml: 1 }}>
         <Grid item xs={12}>
           <Autocomplete
             multiple
@@ -219,17 +205,27 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                 variant="outlined"
               />
             )}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                boxShadow: "none",
+              },
+            }}
           />
         </Grid>
-
         <Grid item xs={12}>
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{ boxShadow: "none", mt: 2 }}>
             <Table>
-              <TableHead sx={{ py: 1 }}>
+              <TableHead>
                 <TableRow>
-                  <TableCell>Document</TableCell>
-                  <TableCell align="center">Pensioner Upload</TableCell>
-                  <TableCell align="center">Upload Details</TableCell>
+                  <TableCell sx={{ fontWeight: "semibold" }}>
+                    Document
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "semibold" }}>
+                    Pensioner Upload
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "semibold" }}>
+                    Upload Details
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -243,7 +239,6 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                           index,
                           "pensionerUpload"
                         )}
-                        name={`pensionerUpload-${index}`}
                       />
                     </TableCell>
                     <TableCell align="center">
@@ -254,19 +249,15 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                               <Checkbox
                                 checked={doc.front}
                                 onChange={handleCheckboxChange(index, "front")}
-                                name={`required-${index}`}
                               />
                             }
                             label="Front"
                           />
-
                           <FormControlLabel
                             control={
                               <Checkbox
                                 checked={doc.back}
-                                label="back"
                                 onChange={handleCheckboxChange(index, "back")}
-                                name={`required-${index}`}
                               />
                             }
                             label="Back"
