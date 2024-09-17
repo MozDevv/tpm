@@ -570,10 +570,28 @@ function NewPreclaim({
     name: address.code,
   }));
 
-  const exitGroundOptions = exitGrounds.map((exitGround) => ({
-    id: exitGround.id,
-    name: exitGround.name,
-  }));
+  const [exitGroundOptions, setExitGroundOptions] = useState([]);
+  useEffect(() => {
+    const filteredOptions = exitGrounds
+      .filter((exitGround) => {
+        if (exitGround.pension_cap_id !== activePensionCap) {
+          return false;
+        }
+        if (formData.mortality_status === 1) {
+          return exitGround.is_death;
+        } else if (formData.mortality_status === 2) {
+          return !exitGround.is_death;
+        }
+
+        return false;
+      })
+      .map((exitGround) => ({
+        id: exitGround.id,
+        name: exitGround.name,
+      }));
+
+    setExitGroundOptions(filteredOptions);
+  }, [formData.mortality_status, exitGrounds, activePensionCap]);
 
   const pensionAwardOptions =
     exitGrounds.length > 0 && !formData.notification_status
@@ -1001,6 +1019,8 @@ function NewPreclaim({
                 </div>
               </div>
             </div>
+
+            {activePensionCap}
             <div className="p-2 mt-[-15px] ">
               {sections
                 .filter((section) => {

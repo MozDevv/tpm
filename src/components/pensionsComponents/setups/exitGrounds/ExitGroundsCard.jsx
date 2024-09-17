@@ -161,36 +161,11 @@ function ExitGroundsCard({ clickedItem }) {
   const [openDocumentDialog, setOpenDocumentDialog] = useState(false);
   return (
     <div>
-      <Button
-        variant="contained"
-        sx={{ my: 2 }}
-        onClick={() => setDialogOpen(true)}
+      <div
+        className="ag-theme-quartz"
+        style={{ height: "600px", width: "90%", ml: 2, p: 2 }}
       >
-        Add Pension Award
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ my: 2, ml: 2 }}
-        onClick={() => setOpenDocumentDialog(true)}
-      >
-        Map Documents to {clickedItem.name}
-      </Button>
-
-      <Dialog
-        open={openDocumentDialog}
-        onClose={() => setOpenDocumentDialog(false)}
-        maxWidth="lg"
-        fullWidth
-        sx={{ px: 4, py: 4 }}
-      >
-        <div
-          className="ag-theme-quartz"
-          style={{ height: "600px", width: "90%", ml: 2, p: 2 }}
-        >
-          <p className="text-primary mt-5 mb-3 px-9 text-lg pt-3 font-semibold">
-            Select Documents to map to {clickedItem.name}
-          </p>
-          {/* <DialogContent>
+        {/* <DialogContent>
             <AgGridReact
               columnDefs={documentTypesColdDefs}
               rowData={documentTypes}
@@ -202,24 +177,9 @@ function ExitGroundsCard({ clickedItem }) {
               loadingOverlayComponentParams={loadingOverlayComponentParams}
             />
           </DialogContent> */}
-          <MapPensionerAwards
-            rowClicked={clickedItem}
-            setOpenAward={setOpenDocumentDialog}
-          />
-        </div>
-      </Dialog>
-
-      <div
-        className="ag-theme-quartz"
-        style={{ height: "60vh", overflowY: "auto" }}
-      >
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={pensionAwards}
-          pagination={false}
-          domLayout="autoHeight"
-          alwaysShowHorizontalScroll={true}
-          onGridReady={onGridReady}
+        <MapPensionerAwards
+          rowClicked={clickedItem}
+          setOpenAward={setOpenDocumentDialog}
         />
       </div>
 

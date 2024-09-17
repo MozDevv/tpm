@@ -16,6 +16,8 @@ const endpoints = {
 
   getExitGrounds: "/api/Setups/GetExitGround",
 
+  editExitReason: "/api/Setups/EditExitReason",
+
   //getGrades
   getGrades: (id) => `/api/Setups/GetGradeSetups?designationId=${id}`,
 

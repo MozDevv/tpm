@@ -187,7 +187,10 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         </div>
 
         <div className="px-5">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-row gap-3 justify-between items-center mb-5">
+            <p className="text-primary  mb-2 px-9 text-lg  font-semibold font-montserrat">
+              Select Documents to map to {rowClicked?.name}
+            </p>
             <div className="mb-2 ml-4">
               <Button
                 variant="contained"
@@ -200,7 +203,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           </div>{" "}
         </div>
       </div>
-      <Grid container spacing={2} sx={{ px: 4 }}>
+      <Grid container spacing={2} sx={{ ml: 3 }}>
         <Grid item xs={12}>
           <Autocomplete
             multiple
@@ -222,7 +225,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         <Grid item xs={12}>
           <TableContainer component={Paper}>
             <Table>
-              <TableHead>
+              <TableHead sx={{ py: 1 }}>
                 <TableRow>
                   <TableCell>Document</TableCell>
                   <TableCell align="center">Pensioner Upload</TableCell>

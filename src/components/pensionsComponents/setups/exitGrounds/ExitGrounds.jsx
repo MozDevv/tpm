@@ -11,6 +11,8 @@ import { Button } from "@mui/material";
 
 import { name } from "dayjs/locale/en-au";
 import ExitGroundsCard from "./ExitGroundsCard";
+import TabPane from "antd/es/tabs/TabPane";
+import { Tabs } from "antd";
 
 const columnDefs = [
   {
@@ -35,6 +37,12 @@ const columnDefs = [
     filter: true,
     width: 250,
   },
+  {
+    field: "has_commutation",
+    headerName: "Commutable",
+    headerClass: "prefix-header",
+    filter: true,
+  },
 ];
 
 const ExitGrounds = () => {
@@ -56,6 +64,9 @@ const ExitGrounds = () => {
       name: item.name,
       id: item.id,
       awardDocuments: item.awardDocuments,
+      has_commutation: item.has_commutation ? true : false,
+      pension_cap_id: item.pension_cap_id,
+      is_death: item.is_death,
     }));
   };
 
@@ -94,7 +105,7 @@ const ExitGrounds = () => {
 
   const fetchPensionCaps = async () => {
     try {
-      const res = await apiService.get(endpoints.getExitGrounds);
+      const res = await apiService.get(endpoints.pensionCaps);
       if (res.status === 200) {
         setPensionCaps(res.data.data);
         console.log(res.data.data);
@@ -108,10 +119,10 @@ const ExitGrounds = () => {
     fetchPensionCaps();
   }, []);
   const fields = [
-    { name: "prefix", label: "Prefix", type: "text", required: true },
+    { name: "code", label: "Code", type: "text", required: true },
     { name: "name", label: "Name", type: "text", required: true },
     {
-      name: "pensionCap",
+      name: "pension_cap_id",
       label: "Pension Cap",
       type: "select",
       required: true,
@@ -126,25 +137,35 @@ const ExitGrounds = () => {
       type: "text",
       required: true,
     },
-    {
-      name: "start_date",
-      label: "Start Date",
-      type: "date",
-      //  required: true,
-    },
-    {
-      name: "end_date",
-      label: "End Date",
-      type: "date",
-      // required: true,
-    },
+    // {
+    //   name: "start_date",
+    //   label: "Start Date",
+    //   type: "date",
+    //   //  required: true,
+    // },
+    // {
+    //   name: "end_date",
+    //   label: "End Date",
+    //   type: "date",
+    //   // required: true,
+    // },
     {
       name: "has_commutation",
       label: "Commutable",
       type: "switch",
       required: true,
     },
+    {
+      name: "is_death",
+      label: "Is Death",
+      type: "switch",
+      required: true,
+    },
   ];
+  const [activeKey, setActiveKey] = React.useState("1");
+  const handleTabChange = (key) => {
+    setActiveKey(key);
+  };
 
   return (
     <div className="">
@@ -157,14 +178,63 @@ const ExitGrounds = () => {
         isUserComponent={false}
       >
         {clickedItem ? (
-          <ExitGroundsCard
-            fields={fields}
-            apiEndpoint={endpoints.editPensionAwards}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
+          <Tabs
+            activeKey={activeKey}
+            onChange={handleTabChange}
+            className="!bg-transparent ml-4"
+            tabBarExtraContent={<div className="!bg-primary h-1" />} // Custom ink bar style
+          >
+            <TabPane
+              tab={
+                <span className="text-primary font-montserrat">
+                  Exit Ground Information
+                </span>
+              }
+              key="1"
+            >
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={endpoints.editExitReason}
+                postApiFunction={apiService.put}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <span className="text-primary font-montserrat">Documents</span>
+              }
+              key="2"
+            >
+              <ExitGroundsCard
+                fields={fields}
+                apiEndpoint={endpoints.editPensionAwards}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+              />
+            </TabPane>
+            {/* <TabPane
+              tab={
+                <span className="text-primary font-montserrat">
+                  Pension Caps
+                </span>
+              }
+              disabled={true}
+              key="3"
+            >
+              <ExitGroundsCard
+                fields={fields}
+                apiEndpoint={endpoints.editPensionAwards}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+              />
+            </TabPane> */}
+          </Tabs>
         ) : (
           <BaseInputCard
             fields={fields}
