@@ -4,6 +4,7 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 import { AgGridReact } from "ag-grid-react";
 import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import endpoints, { apiService } from "@/components/services/setupsApi";
 
 const { TabPane } = Tabs;
 
@@ -80,19 +81,23 @@ function CountyCard({
                 <div className="ag-theme-quartz max-h-[90vh]">
                   <BaseInputTable
                     title="Constituencies"
-                    fields={{
-                      name: "constituency_name",
-                      label: "Constituency Name",
-                      type: "text",
-                      required: true,
-                    }}
-                    id={id.id}
-                    idLabel="prospective_pensioner_id"
+                    fields={[
+                      {
+                        value: "constituency_name",
+                        label: "Constituency Name",
+                        type: "text",
+                        required: true,
+                      },
+                    ]}
+                    id={clickedItem?.id}
+                    idLabel="county_id"
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.put}
-                    getEndpoint={endpoints.get(id.id)}
-                    postEndpoint={endpoints.createDeductions}
+                    getEndpoint={endpoints.getConstituenciesByCounty(
+                      clickedItem?.id
+                    )}
+                    postEndpoint={endpoints.createConstituency}
                     putEndpoint={endpoints.updateGovernmentSalary}
                     passProspectivePensionerId={true}
                   />
