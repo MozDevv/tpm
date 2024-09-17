@@ -40,7 +40,7 @@ function PensionAwardCard({
             <Tabs
               activeKey={activeKey}
               onChange={handleTabChange}
-              className="!bg-transparent" // Remove default background
+              className="!bg-transparent"
               tabBarExtraContent={<div className="!bg-primary h-1" />} // Custom ink bar style
             >
               <TabPane

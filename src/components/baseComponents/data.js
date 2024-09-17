@@ -86,6 +86,10 @@ export const menuItems = [
         path: "/finance/payments",
       },
       {
+        title: "General Journals",
+        path: "/pensions/finance/general-journals",
+      },
+      {
         title: "Recievables",
         path: "/finance/payments",
         subChildren: [

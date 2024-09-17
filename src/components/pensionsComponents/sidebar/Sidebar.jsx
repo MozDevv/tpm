@@ -213,6 +213,10 @@ function Sidebar() {
             },
           ],
         },
+        {
+          title: "General Journals",
+          path: "/pensions/finance/general-journals",
+        },
 
         {
           title: "Payments",

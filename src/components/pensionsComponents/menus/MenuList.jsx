@@ -8,6 +8,7 @@ import { BASE_CORE_API } from "@/utils/constants";
 const MenuList = ({ roleId, roleName }) => {
   const [treeData, setTreeData] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState([]);
+
   const { setAlert } = useAlert();
   const fetchData = async () => {
     try {
@@ -20,6 +21,8 @@ const MenuList = ({ roleId, roleName }) => {
         menuItemsResponse.data.isSuccess &&
         menuRolesResponse.data.isSuccess
       ) {
+        console.log("menuItemsResponse:", menuItemsResponse.data.data);
+        console.log("menuRolesResponse:", menuRolesResponse.data.data);
         const formattedData = formatData(
           menuItemsResponse.data.data,
           menuRolesResponse.data.data
@@ -42,15 +45,26 @@ const MenuList = ({ roleId, roleName }) => {
     const map = {};
     const treeData = [];
 
+    // Create a map of menu items
     items.forEach((item) => {
       map[item.menuItemId] = { ...item, children: [] };
     });
 
+    // Build the tree structure
     items.forEach((item) => {
-      if (item.parentMenuId) {
-        map[item.parentMenuId].children.push(map[item.menuItemId]);
+      if (item?.parentMenuId) {
+        // Ensure parentMenuId exists in the map before pushing children
+        if (map[item?.parentMenuId]) {
+          map[item?.parentMenuId].children.push(map[item?.menuItemId]);
+        } else {
+          // Handle the case where parentMenuId is missing or not in the map
+          console.warn(
+            `Parent menu item not found for parentMenuId: ${item?.parentMenuId}`
+          );
+          treeData.push(map[item?.menuItemId]);
+        }
       } else {
-        treeData.push(map[item.menuItemId]);
+        treeData.push(map[item?.menuItemId]);
       }
     });
 
@@ -64,7 +78,6 @@ const MenuList = ({ roleId, roleName }) => {
         checked: menuRoles.some((role) => role.name === item.name)
           ? true
           : false,
-        // checked: checkedKeys.includes(item.menuItemId.toString()),
       }));
     };
 
@@ -139,13 +152,15 @@ const MenuList = ({ roleId, roleName }) => {
   };
 
   return (
-    <Tree
-      style={{ marginLeft: "20px" }}
-      checkable
-      onCheck={onCheck}
-      checkedKeys={checkedKeys}
-      treeData={treeData}
-    />
+    <>
+      <Tree
+        style={{ marginLeft: "20px" }}
+        checkable
+        onCheck={onCheck}
+        checkedKeys={checkedKeys}
+        treeData={treeData}
+      />
+    </>
   );
 };
 

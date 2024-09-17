@@ -121,6 +121,43 @@ function ExitGroundsCard({ clickedItem }) {
     return { loadingMessage: "Loading data..." };
   }, []);
 
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const fetchDocumentTypes = async () => {
+    try {
+      const res = await apiService.get(endpoints.documentTypes);
+
+      setDocumentTypes(res.data.data);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    fetchDocumentTypes();
+  }, []);
+
+  const documentTypesColdDefs = [
+    {
+      field: "name",
+      headerName: "Name",
+      filter: true,
+      checkboxSelection: true,
+    },
+    { field: "description", headerName: "Description", filter: true },
+    { field: "extenstions", headerName: "Extensions", filter: true },
+    { field: "has_two_sides", headerName: "Has Two Sides", filter: true },
+    {
+      field: "max_file_size_in_mb",
+      headerName: "Max File Size (MB)",
+      filter: true,
+    },
+  ];
+
+  const handleSelectionChange2 = (event) => {
+    const selectedRow = event.api.getSelectedRows()[0];
+    setSelectedAward(selectedRow);
+    mapExitGroundtoPensionAwards(selectedRow);
+    // fetchPensionAwards();
+  };
+
+  const [openDocumentDialog, setOpenDocumentDialog] = useState(false);
   return (
     <div>
       <Button
@@ -130,6 +167,42 @@ function ExitGroundsCard({ clickedItem }) {
       >
         Add Pension Award
       </Button>
+      <Button
+        variant="contained"
+        sx={{ my: 2, ml: 2 }}
+        onClick={() => setOpenDocumentDialog(true)}
+      >
+        Map Documents to {clickedItem.name}
+      </Button>
+
+      <Dialog
+        open={openDocumentDialog}
+        onClose={() => setOpenDocumentDialog(false)}
+        maxWidth="lg"
+        fullWidth
+        sx={{ px: 4, py: 4 }}
+      >
+        <div
+          className="ag-theme-quartz"
+          style={{ height: "600px", width: "90%", ml: 2, p: 2 }}
+        >
+          <p className="text-primary mt-5 mb-3 px-9 text-lg pt-3 font-semibold">
+            Select Documents to map to {clickedItem.name}
+          </p>
+          <DialogContent>
+            <AgGridReact
+              columnDefs={documentTypesColdDefs}
+              rowData={documentTypes}
+              rowSelection="single"
+              onSelectionChanged={handleSelectionChange2}
+              onGridReady={onGridReady}
+              domLayout="autoHeight"
+              loadingOverlayComponent={BaseLoadingOverlay}
+              loadingOverlayComponentParams={loadingOverlayComponentParams}
+            />
+          </DialogContent>
+        </div>
+      </Dialog>
 
       <div
         className="ag-theme-quartz"

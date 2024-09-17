@@ -127,6 +127,21 @@ const financeEndpoints = {
   getVatSetups: "/PostingSetup/GetVATPostingSetups",
   updateVatSetup: "/PostingSetup/UpdateVATPostingSetup",
   deleteVatSetup: (id) => `/PostingSetup/DeleteVATPostingSetup?id=${id}`,
+
+  getAccountByAccountType: (accountType) =>
+    `/Accounts/GetAccounts?AccountType=${accountType}`,
+
+  getGeneralJournals: "/Posting/GetGeneralJournals",
+
+  addGeneralJournal: "/Posting/AddGeneralJournal",
+  getGeneralJournalsById: (id) => `/Posting/GetGeneralJournals?id=${id}`,
+  editGeneralJournal: "/Posting/UpdateGeneralJournal",
+  deleteGeneralJournal: (id) => `/Posting/DeleteGeneralJournal?id=${id}`,
+
+  addGeneralJournalLine: "/Posting/AddGeneralJournalLine",
+  editGeneralJournalLine: "/Posting/UpdateGeneralJournalLine",
+  deleteGeneralJournalLine: (id) =>
+    `/Posting/DeleteGeneralJournalLine?id=${id}`,
 };
 
 export const apiService = {

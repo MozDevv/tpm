@@ -6,28 +6,54 @@ import BaseTable from "@/components/baseComponents/BaseTable";
 import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import BankCard from "../banks/BankCard";
-import CountyCard from "./CountyCard";
+import { apiService } from "@/components/services/financeApi";
+
+import CountyCard from "@/components/pensionsComponents/setups/counties/CountyCard";
+import GeneralJournalCard from "./GeneralJournalCard";
+import financeEndpoints from "@/components/services/financeApi";
+import { formatDate, parseDate } from "@/utils/dateFormatter";
 
 const columnDefs = [
   {
-    field: "county_code",
-    headerName: "County Code",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
+    headerName: "Document Type",
+    field: "documentType",
+    width: 150,
   },
   {
-    field: "county_name",
-    headerName: "County Name",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
+    headerName: "Document No",
+    field: "documentNo",
+    width: 150,
+  },
+  {
+    headerName: "External Document No",
+    field: "externalDocumentNo",
+    width: 150,
+  },
+  {
+    headerName: "Posting Date",
+    field: "postingDate",
+    width: 150,
+    valueFormatter: (params) => {
+      return params.value ? parseDate(params.value) : "";
+    },
+  },
+  {
+    headerName: "VAT Date",
+    field: "vatDate",
+    width: 150,
+    valueFormatter: (params) => {
+      return params.value ? parseDate(params.value) : "";
+    },
+  },
+
+  {
+    headerName: "Amount",
+    field: "amount",
+    width: 150,
   },
 ];
 
-const Counties = () => {
+const GeneralJournals = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -36,12 +62,15 @@ const Counties = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
-      county_code: item.county_code,
-      county_name: item.county_name,
-      constituencies: item.constituencies.map((constituency) => ({
-        constituency_name: constituency.constituency_name,
-        constituency_id: constituency.id,
-      })),
+
+      documentType: item.documentType,
+      documentNo: item.documentNo,
+      externalDocumentNo: item.externalDocumentNo,
+      postingDate: item.postingDate,
+      vatDate: item.vatDate,
+
+      amount: item.amount,
+      isPosted: item.isPosted,
     }));
   };
 
@@ -84,73 +113,84 @@ const Counties = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? `${clickedItem.county_name} County`
-    : "Create New County";
-
-  const [bankTypes, setBankTypes] = React.useState([]);
-  const [countries, setCountries] = React.useState([]);
-
-  const fetchCountries = async () => {
-    try {
-      const res = await apiService.get(endpoints.getCountries);
-
-      setCountries(res.data.data);
-
-      console.log("countries", res.data.data);
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
-
-  useEffect(() => {
-    fetchCountries();
-  }, []);
+    ? `${clickedItem.documentNo}`
+    : "Create New General Journal";
 
   const fields = [
     {
-      name: "county_code",
-      label: "County Code",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "county_name",
-      label: "Name",
-      type: "text",
-      required: true,
-    },
-    {
-      name: "country_id",
-      label: "Country",
+      name: "documentTypeId",
+      label: "Document Type",
       type: "select",
-      options: countries.map((type) => ({
-        id: type.id,
-        name: type.country_name,
-      })),
+      required: true,
+      options: [
+        { id: 0, name: "Payment Voucher" },
+        { id: 1, name: "Purchase Invoice" },
+        { id: 2, name: "Sales Invoice" },
+        { id: 3, name: "Receipt" },
+        { id: 4, name: "Purchase Credit Memo" },
+        { id: 5, name: "Sales Credit Memo" },
+        { id: 6, name: "Journal Voucher" },
+      ],
     },
-  ];
-
-  const branchFields = [
     {
-      name: "constituency_name",
-      label: "Constituency Name",
+      name: "documentNo",
+      label: "Document No",
+      type: "text",
+      required: true,
+      disabled: false,
+      hide: true,
+    },
+    {
+      name: "externalDocumentNo",
+      label: "External Document No",
       type: "text",
       required: true,
     },
     {
-      name: "country_id",
-      label: "Country",
-      type: "select",
-      options: countries.map((type) => ({
-        id: type.id,
-        name: type.country_name,
-      })),
+      name: "postingDate",
+      label: "Posting Date",
+      type: "date",
+      required: true,
     },
-  ];
+    {
+      name: "vatDate",
+      label: "VAT Date",
+      type: "date",
+      required: true,
+    },
 
-  const bankTypeFields = [
-    { name: "type", label: "Bank Type", type: "text", required: true },
-    { name: "description", label: "Description", type: "text", required: true },
+    {
+      name: "currency",
+      label: "Currency",
+      type: "select",
+      required: true,
+      options: [
+        {
+          id: "usd",
+          name: "USD",
+        },
+        {
+          id: "kes",
+          name: "KES",
+        },
+        {
+          id: "eur",
+          name: "EUR",
+        },
+      ],
+    },
+    {
+      name: "amount",
+      label: "Amount",
+      type: "amount",
+      required: true,
+    },
+    {
+      name: "isPosted",
+      label: "Is Posted",
+      type: "switch",
+      required: true,
+    },
   ];
 
   return (
@@ -162,26 +202,15 @@ const Counties = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        //status={"createConstituency"}
         setOpenAction={setOpenAction}
         openAction={openAction}
-        fields={branchFields}
-        apiEndpoint={endpoints.createConstituency}
-        postApiFunction={apiService.post}
-        inputTitle="Create New Constituency"
-        idLabel="county_id"
         useRequestBody={true}
         dialogType={dialogType}
-        // //
-        // secondaryFields={bankTypeFields}
-        // secondaryApiEndpoint={endpoints.createBankType}
-        // secondaryPostApiFunction={apiService.post}
-        // secondaryInputTitle="Create New Bank Type"
       >
         {clickedItem ? (
-          <CountyCard
+          <GeneralJournalCard
             fields={fields}
-            apiEndpoint={endpoints.editPensionAwards}
+            apiEndpoint={financeEndpoints.editGeneralJournal}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -190,7 +219,7 @@ const Counties = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createCounty}
+            apiEndpoint={financeEndpoints.addGeneralJournal}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -205,16 +234,16 @@ const Counties = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getCounties}
+        fetchApiEndpoint={financeEndpoints.getGeneralJournals}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Counties"
-        currentTitle="Counties"
+        breadcrumbTitle="General Journals"
+        currentTitle="General Journals"
       />
     </div>
   );
 };
 
-export default Counties;
+export default GeneralJournals;
