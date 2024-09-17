@@ -83,7 +83,9 @@ const Counties = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "County" : "Create New County";
+  const title = clickedItem
+    ? `${clickedItem.county_name} County`
+    : "Create New County";
 
   const [bankTypes, setBankTypes] = React.useState([]);
   const [countries, setCountries] = React.useState([]);
@@ -160,7 +162,7 @@ const Counties = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        status={"createConstituency"}
+        //status={"createConstituency"}
         setOpenAction={setOpenAction}
         openAction={openAction}
         fields={branchFields}

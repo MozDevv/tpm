@@ -3,6 +3,7 @@ import { Tabs } from "antd";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
 import { AgGridReact } from "ag-grid-react";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const { TabPane } = Tabs;
 
@@ -77,22 +78,23 @@ function CountyCard({
                 key="2"
               >
                 <div className="ag-theme-quartz max-h-[90vh]">
-                  {" "}
-                  <AgGridReact
-                    columnDefs={columnDefs}
-                    rowData={clickedItem?.constituencies}
-                    pagination={false}
-                    domLayout="autoHeight"
-                    onGridReady={(params) => {
-                      params.api.sizeColumnsToFit();
-                      //  onGridReady(params);
+                  <BaseInputTable
+                    title="Constituencies"
+                    fields={{
+                      name: "constituency_name",
+                      label: "Constituency Name",
+                      type: "text",
+                      required: true,
                     }}
-                    onRowClicked={(e) => {
-                      //  setOpenBaseCard(true);
-                      //    setClickedItem(e.data);
-                      // setUserClicked(e.data);
-                      //handleClickUser(e.data);
-                    }}
+                    id={id.id}
+                    idLabel="prospective_pensioner_id"
+                    getApiService={apiService.get}
+                    postApiService={apiService.post}
+                    putApiService={apiService.put}
+                    getEndpoint={endpoints.get(id.id)}
+                    postEndpoint={endpoints.createDeductions}
+                    putEndpoint={endpoints.updateGovernmentSalary}
+                    passProspectivePensionerId={true}
                   />
                 </div>
               </TabPane>

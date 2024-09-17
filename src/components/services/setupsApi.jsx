@@ -131,6 +131,8 @@ const endpoints = {
   //getConstituencies
   getConstituencies: "/api/Setups/GetConstituencies",
 
+  getConstituenciesByCounty: (id) => `/api/Setups/GetConstituencies?id=${id}`,
+
   createConstituency: "/api/Setups/CreateConstituency",
   //Get Countries
   getCountries: "/api/Setups/GetCountries",
