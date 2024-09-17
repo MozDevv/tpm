@@ -27,6 +27,7 @@ import { useSelectedItem } from "@/context/NavItemContext";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function Sidebar() {
   const [open, setOpen] = useState({});
@@ -81,7 +82,7 @@ function Sidebar() {
         throw new Error("Role is not defined");
       }
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/MenuItemsSetup/GetMenuJSON1/${role}`
+        `${BASE_CORE_API}api/MenuItemsSetup/GetMenuJSON1/${role}`
       );
 
       setFetchedMenuItems(res.data.data);

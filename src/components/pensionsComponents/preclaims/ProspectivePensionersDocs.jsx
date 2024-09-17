@@ -11,6 +11,7 @@ import { message } from "antd";
 import preClaimsEndpoints, {
   apiService,
 } from "@/components/services/preclaimsApi";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function ProspectivePensionersDocs({ clickedItem }) {
   const id = clickedItem?.id;
@@ -52,7 +53,7 @@ function ProspectivePensionersDocs({ clickedItem }) {
     setLoading(true);
     try {
       const res = await apiService.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
+        `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${docId}`
       );
       setPdfData(res.data?.messages[0]);
       setModalOpen(true);

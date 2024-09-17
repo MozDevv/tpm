@@ -8,6 +8,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import { Button, Checkbox, Dialog, MenuItem, TextField } from "@mui/material";
 import axios from "axios";
 import { useAlert } from "@/context/AlertContext";
+import { BASE_CORE_API } from "@/utils/constants";
 
 const columnDefs = [
   {
@@ -135,15 +136,11 @@ function RolesSetups() {
     formData.append("departmentId", departmentId);
 
     try {
-      const res = await axios.post(
-        "https://pmistest-api.treasury.go.ke/CreateRole",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.post(`${BASE_CORE_API}CreateRole`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (res.status === 201) {
         setOpenCreateDepartment(false);

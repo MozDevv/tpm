@@ -30,6 +30,7 @@ import { useMda } from "@/context/MdaContext";
 import endpoints from "@/components/services/setupsApi";
 import { th } from "@faker-js/faker";
 import EditableTable from "@/components/baseComponents/EditableTable";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
@@ -51,7 +52,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const fetchPostandNature = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+        `${BASE_CORE_API}api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
       if (res.status === 200) {
         const sortedData = res.data.data.sort(

@@ -2,6 +2,7 @@
 import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useMda } from "@/context/MdaContext";
+import { BASE_CORE_API } from "@/utils/constants";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -103,7 +104,7 @@ function GovernmentSalary({ id, clickedItem }) {
   const fetchPostandNature = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
+        `${BASE_CORE_API}api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
       );
       if (res.status === 200) {
         const sortedData = res.data.data.sort(

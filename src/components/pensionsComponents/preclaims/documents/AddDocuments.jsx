@@ -8,6 +8,7 @@ import preClaimsEndpoints, {
 } from "@/components/services/preclaimsApi";
 import Spinner from "@/components/spinner/Spinner";
 import { useRouter } from "next/navigation";
+import { BASE_CORE_API } from "@/utils/constants";
 
 const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
@@ -91,7 +92,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
 
     try {
       const res = await axios.post(
-        "https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/ReceiveProspectivePensionerDocuments",
+        `${BASE_CORE_API}api/ProspectivePensioners/ReceiveProspectivePensionerDocuments`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -122,7 +123,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     setLoading(true);
     try {
       const res = await apiService.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
+        `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
       );
       const base64Data = res.data?.messages[0];
       if (base64Data) {

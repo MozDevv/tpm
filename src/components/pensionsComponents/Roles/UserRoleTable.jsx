@@ -13,6 +13,7 @@ import {
 import CreatePermission from "./CreatePermission";
 import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useAlert } from "@/context/AlertContext";
+import { BASE_CORE_API } from "@/utils/constants";
 
 const UserRoleTable = () => {
   const [clickedRole, setClickedRole] = useState(null);
@@ -23,9 +24,7 @@ const UserRoleTable = () => {
 
   useEffect(() => {
     // Fetch permissions data from the API
-    fetch(
-      "https://pmistest-api.treasury.go.ke/api/PermissionsSetup/GetPermissions"
-    )
+    fetch(`${BASE_CORE_API}api/PermissionsSetup/GetPermissions`)
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {

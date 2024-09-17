@@ -520,9 +520,6 @@ const Claims = ({ status }) => {
 
       console.log("mdaId***********", mdaId);
 
-      /*  const res = await apiService.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
-      );*/
       if (res.data.succeeded === true) {
         const rawData = res.data.data;
 

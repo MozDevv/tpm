@@ -46,19 +46,19 @@ steps:
         # Push the Docker image to Docker Hub
         sudo docker push agilesam/pmis:latest
 
-        # # Stop and remove the existing container if it exists
-        # sudo docker stop pmis-core || true
-        # sudo docker rm pmis-core || true
+        # Stop and remove the existing container if it exists
+        sudo docker stop pmis-core || true
+        sudo docker rm pmis-core || true
 
-        # # Run the new Docker container
-        # sudo docker run --name pmis-core -p 4000:3000 -d agilesam/pmis:latest
+        # Run the new Docker container
+         sudo docker run --name pmis-core -p 4000:3000 -e NEXT_PUBLIC_API_BASE_URL=https://tntapi.agilebiz.co.ke/ -d agilesam/pmis:latest
 
-        # # Clean up Docker images and builder
-        # sudo docker image prune -af
-        # sudo docker builder prune -f
+        # Clean up Docker images and builder
+        sudo docker image prune -af
+        sudo docker builder prune -f
 
-        # # Restart Nginx to apply any changes
-        # sudo systemctl restart nginx
+        # Restart Nginx to apply any changes
+        sudo systemctl restart nginx
 
         echo "Deployment completed successfully"
       EOF

@@ -1,5 +1,6 @@
 "use client";
 import endpoints, { apiService } from "@/components/services/setupsApi";
+import { BASE_CORE_API } from "@/utils/constants";
 import {
   Box,
   Checkbox,
@@ -17,9 +18,7 @@ function AssignRole({ openPermissions, setOpenPermissions, userId }) {
 
   useEffect(() => {
     // Fetch all permissions data from the API
-    fetch(
-      "https://pmistest-api.treasury.go.ke/api/PermissionsSetup/GetPermissions"
-    )
+    fetch(`${BASE_CORE_API}api/PermissionsSetup/GetPermissions`)
       .then((response) => response.json())
       .then((data) => {
         if (data.isSuccess) {
@@ -32,7 +31,7 @@ function AssignRole({ openPermissions, setOpenPermissions, userId }) {
   const fetchUserPermissions = async () => {
     try {
       const res = await axios.get(
-        `https://pmistest-api.treasury.go.ke/api/PermissionUserSetUp/GetPermissionsUser?userId=${userId}`
+        `${BASE_CORE_API}api/PermissionUserSetUp/GetPermissionsUser?userId=${userId}`
       );
       if (res.data.isSuccess) {
         setUserPermissions(res.data.data.map((perm) => perm.permissionId));

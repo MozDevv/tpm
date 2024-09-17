@@ -365,9 +365,6 @@ const Approvals = () => {
         "filterCriterion.criterions[0].criterionType": 0,
       });
 
-      /*  const res = await apiService.get(
-        `https://pmistest-api.treasury.go.ke/api/ProspectivePensioners/getProspectivePensioners?paging.pageNumber=${pageNumber}&paging.pageSize=${pageSize}`
-      );*/
       if (res.data.succeeded === true) {
         console.log(res.data.data);
         const rawData = res.data.data;
