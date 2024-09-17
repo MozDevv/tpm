@@ -149,7 +149,7 @@ function NewPreclaim({
           ? new Date(retiree.last_pay_date).toISOString().split("T")[0]
           : "",
         disability_status: retiree?.disability_status ?? "",
-        exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+        exit_grounds: retiree?.exitGround?.id ?? "",
 
         tax_exempt_certificate_number:
           retiree?.tax_exempt_certificate_number ?? "",
@@ -252,7 +252,7 @@ function NewPreclaim({
       maintenance_case: retiree?.maintenance_case ?? 1,
       tax_exempt_certificate_number:
         retiree?.tax_exempt_certificate_number ?? "",
-      exit_grounds: retiree?.pensionAward?.exit_ground_id ?? "",
+      exit_grounds: retiree?.exitGround?.id ?? "",
       tax_exempt_certificate_date: parseDate(
         retiree?.tax_exempt_certificate_date
       ),

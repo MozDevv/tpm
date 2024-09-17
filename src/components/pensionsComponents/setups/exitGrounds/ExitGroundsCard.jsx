@@ -14,6 +14,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
 import { Close } from "@mui/icons-material";
 import { message } from "antd";
+import MapPensionerAwards from "../pensionAwards/MapPensionerAwards";
 
 function ExitGroundsCard({ clickedItem }) {
   const [pensionAwards, setPensionAwards] = useState([]);
@@ -93,7 +94,7 @@ function ExitGroundsCard({ clickedItem }) {
     };
 
     try {
-      const res = await apiService.post(endpoints.mapExitGroundAwards, data);
+      const res = await apiService.post(endpoints.mapPensionerAwards, data);
       if (res.status === 200) {
         console.log("Mapping successful:", res.data.data);
         fetchPensionAwards(); // Refresh the awards list
@@ -189,7 +190,7 @@ function ExitGroundsCard({ clickedItem }) {
           <p className="text-primary mt-5 mb-3 px-9 text-lg pt-3 font-semibold">
             Select Documents to map to {clickedItem.name}
           </p>
-          <DialogContent>
+          {/* <DialogContent>
             <AgGridReact
               columnDefs={documentTypesColdDefs}
               rowData={documentTypes}
@@ -200,7 +201,11 @@ function ExitGroundsCard({ clickedItem }) {
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
             />
-          </DialogContent>
+          </DialogContent> */}
+          <MapPensionerAwards
+            rowClicked={clickedItem}
+            setOpenAward={setOpenDocumentDialog}
+          />
         </div>
       </Dialog>
 

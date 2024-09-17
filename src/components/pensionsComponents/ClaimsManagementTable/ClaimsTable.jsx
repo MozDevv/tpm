@@ -213,45 +213,9 @@ const colDefs = [
   },
 
   {
-    headerName: "Pension Award Prefix",
-    field: "pensionAward_prefix",
-    width: 200,
-  },
-  {
-    headerName: "Pension Award Code",
-    field: "pensionAward_code",
-    width: 180,
-  },
-  {
     headerName: "Comments",
     field: "comments",
     width: 150,
-  },
-
-  {
-    headerName: "Pension Award Start Date",
-    field: "pensionAward_start_date",
-    width: 200,
-  },
-  {
-    headerName: "Pension Award End Date",
-    field: "pensionAward_end_date",
-    width: 200,
-  },
-  {
-    headerName: "Pension Award Pension Cap Code",
-    field: "pensionAward_pensionCap_code",
-    width: 250,
-  },
-  {
-    headerName: "Pension Award Pension Cap Name",
-    field: "pensionAward_pensionCap_name",
-    width: 250,
-  },
-  {
-    headerName: "Pension Award Pension Cap Description",
-    field: "pensionAward_pensionCap_description",
-    width: 300,
   },
 ];
 

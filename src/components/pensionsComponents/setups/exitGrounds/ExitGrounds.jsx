@@ -55,6 +55,7 @@ const ExitGrounds = () => {
       pensionAwards: item.pensionAwards,
       name: item.name,
       id: item.id,
+      awardDocuments: item.awardDocuments,
     }));
   };
 

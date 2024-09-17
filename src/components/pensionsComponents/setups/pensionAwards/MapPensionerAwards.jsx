@@ -186,22 +186,21 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           </IconButton> */}
         </div>
 
-        <div className="flex flex-col gap-3">
-          <p className="text-primary text-xl font-semibold">
-            Map Documents to {rowClicked?.name}
-          </p>
-          <p className="text-gray-700 text-sm mb-7">
-            Choose the document you wish to map to the selected Award
-          </p>
-        </div>
-        <div className="absolute right-0 mt-6">
-          {" "}
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
+        <div className="px-5">
+          <div className="flex flex-col gap-3">
+            <div className="mb-2 ml-4">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>{" "}
         </div>
       </div>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ px: 4 }}>
         <Grid item xs={12}>
           <Autocomplete
             multiple
