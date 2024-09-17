@@ -5,3 +5,4 @@ nginx.conf
 README.md
 Dockerfile
 zdeploy.yaml
+.env.local

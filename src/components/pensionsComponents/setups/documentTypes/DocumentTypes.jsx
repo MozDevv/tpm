@@ -42,6 +42,12 @@ const columnDefs = [
     headerClass: "prefix-header",
     filter: true,
   },
+  {
+    field: "max_file_size_in_mb",
+    headerName: "Max File Size (MB)",
+    headerClass: "prefix-header",
+    filter: true,
+  },
 ];
 
 const DocumentTypes = () => {
@@ -133,6 +139,12 @@ const DocumentTypes = () => {
       name: "has_two_sides",
       label: "Has Two Sides",
       type: "switch",
+      required: true,
+    },
+    {
+      name: "max_file_size_in_mb",
+      label: "Max File Size (MB)",
+      type: "number",
       required: true,
     },
   ];
