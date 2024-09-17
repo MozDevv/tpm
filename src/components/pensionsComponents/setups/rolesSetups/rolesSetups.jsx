@@ -136,7 +136,7 @@ function RolesSetups() {
 
     try {
       const res = await axios.post(
-        "https://tntapi.agilebiz.co.ke/CreateRole",
+        "https://pmistest-api.treasury.go.ke/CreateRole",
         formData,
         {
           headers: {
