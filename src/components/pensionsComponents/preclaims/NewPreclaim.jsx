@@ -1020,7 +1020,6 @@ function NewPreclaim({
               </div>
             </div>
 
-            {activePensionCap}
             <div className="p-2 mt-[-15px] ">
               {sections
                 .filter((section) => {
