@@ -43,6 +43,10 @@ const endpoints = {
   //create Number Series Line
   createNumberSeriesLine: "/api/setups/CreateNumberSeriesLine",
 
+  editNumberSeriesLine: "/api/setups/EditNumberSeriesLineLine",
+
+  deleteNumberSeriesLine: (id) => `/api/setups/DeleteNumberSeriesLine/${id}`,
+
   //get Number Series Line
   getNumberSeriesLine: "/api/setups/GetNumberSeriesLine",
 

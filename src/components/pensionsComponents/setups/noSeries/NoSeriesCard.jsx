@@ -5,6 +5,7 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import { AgGridReact } from "ag-grid-react";
 import { formatDate } from "@/utils/dateFormatter";
 import NumberingSections from "./NumberingSections";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 
 const { TabPane } = Tabs;
 
@@ -84,39 +85,53 @@ function NoSeriesCard({
 
   const numberSeriesLinefields = [
     {
-      name: "startingDate",
-      label: "Starting No",
-      type: "number",
-    },
-    {
-      name: "startingNumber",
-      label: "Ending No",
+      value: "startingNumber",
+      label: "Starting Number",
       type: "text",
+      required: true,
     },
     {
-      name: "endingNumber",
+      value: "endingNumber",
+      label: "Ending Number",
+      type: "text",
+      required: true,
+    },
+    {
+      value: "startingDate",
+      label: "Starting Date",
+      type: "date",
+      required: true,
+    },
+    {
+      value: "incrementByNumber",
       label: "Increment By",
-      type: "text",
+      type: "number",
+      required: true,
     },
     {
-      name: "warningNumber",
+      value: "lastDateUsed",
+      label: "Last Date Used",
+      type: "date",
+    },
+
+    {
+      value: "allowGapsInNumbers",
+      label: "Allow Gaps In Numbers",
+      type: "select",
+      options: [
+        { id: true, name: "Yes" },
+        { id: false, name: "No" },
+      ],
+    },
+    {
+      value: "warningNumber",
       label: "Warning Number",
       type: "text",
     },
     {
-      name: "lastDateUsed",
-      label: "Start Date",
-      type: "date",
-    },
-    {
-      name: "incrementByNumber",
-      label: "End Date",
-      type: "number",
-    },
-    {
-      name: "allowGapsInNumbers",
-      label: "Allow Gaps In Numbers",
-      type: "switch",
+      value: "lastNumberUsed",
+      label: "Last Number Used",
+      type: "text",
     },
   ];
 
@@ -177,23 +192,24 @@ function NoSeriesCard({
                 }
                 key="2"
               >
-                {/* <BaseInputCard
+                <BaseInputTable
+                  title="Number Series Lines"
+                  fetchChildren="numberSeriesLines"
                   fields={numberSeriesLinefields}
-                  apiEndpoint={endpoints.createNumberSeries}
-                  postApiFunction={apiService.post}
-                  //clickedItem={clickedItem}
-                  useRequestBody={true}
-                  setOpenBaseCard={setOpenBaseCard}
                   id={clickedItem.id}
-                  label="numberSeriesId"
-                /> */}
-                <div className="ag-theme-quartz w-full h-full">
-                  <AgGridReact
-                    columnDefs={noSeriesLineColDefs}
-                    rowData={numberSeriesLine}
-                    domLayout="autoHeight"
-                  />
-                </div>
+                  idLabel="numberSeriesId"
+                  getApiService={apiService.get}
+                  apiService={apiService}
+                  postApiService={apiService.put}
+                  putApiService={apiService.post}
+                  getEndpoint={endpoints.getNumberSeriesLineByCode(
+                    clickedItem.code
+                  )}
+                  postEndpoint={endpoints.createNumberSeriesLine}
+                  putEndpoint={endpoints.createNumberSeriesLine}
+                  deleteEndpoint={endpoints.deleteNumberSeriesLine}
+                  passProspectivePensionerId={false}
+                />
               </TabPane>
             </Tabs>
           </div>

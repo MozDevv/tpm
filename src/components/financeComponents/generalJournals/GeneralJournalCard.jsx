@@ -113,10 +113,10 @@ function GeneralJournalCard({
     { name: "Total Balance", value: "0.00" },
   ];
   return (
-    <div className="p-2 h-[100vh] max-h-[100vh] overflow-y-auto mt-2">
+    <div className="p-2   mt-2">
       <div>
         <div>
-          <div className="px-5 mt-[-20px]">
+          <div className="px-5 mt-[-20px] h-[1200px] max-h-[1400px] overflow-y-auto">
             <div className="">
               <BaseAutoSaveInputCard
                 fields={fields}

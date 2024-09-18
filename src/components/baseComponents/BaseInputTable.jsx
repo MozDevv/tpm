@@ -46,6 +46,7 @@ const BaseInputTable = ({
   setSelectedValue,
   refetchDataFromAnotherComponent,
   useExcel,
+  fetchChildren,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -98,6 +99,7 @@ const BaseInputTable = ({
       getEndpoint,
       getApiService
     );
+
     if (dataAdded) {
       try {
         const res = await getApiService(getEndpoint);
@@ -151,7 +153,19 @@ const BaseInputTable = ({
 
             console.log("Default Rows:", defaultRows);
 
-            return [...sortedData, ...defaultRows];
+            // Determine if we should fetch and append children
+            if (fetchChildren) {
+              const childrenData = res.data.data
+                .map((item) => item[fetchChildren])
+                .flat();
+              console.log("Fetched Children Data:", childrenData);
+
+              console.log("childrenData", childrenData);
+              // Merge sortedData with childrenData
+              return [...childrenData, ...sortedData];
+            } else {
+              return [...sortedData, ...defaultRows];
+            }
           });
         }
       } catch (error) {
@@ -161,8 +175,7 @@ const BaseInputTable = ({
       try {
         const res = await getApiService(getEndpoint);
         if (res.status === 200) {
-          console.log("Fecthed Data from Editable Table", res.data.data);
-          //  setRowData(res.data.data);
+          console.log("Fetched Data from Editable Table", res.data.data);
           setRowData((prevRowData) => {
             const defaultRows = Array.from({ length: 1 }, () =>
               fields.reduce((acc, field) => {
@@ -172,7 +185,19 @@ const BaseInputTable = ({
             );
 
             const sortedData = sortData(res.data.data);
-            return [...sortedData, ...defaultRows];
+
+            // Determine if we should fetch and append children
+            if (fetchChildren) {
+              const childrenData = res.data.data
+                .map((item) => item[fetchChildren])
+                .flat();
+              console.log("Fetched Children Data:", childrenData);
+
+              // Merge sortedData with childrenData
+              return [...childrenData, ...sortedData];
+            } else {
+              return [...sortedData, ...defaultRows];
+            }
           });
         }
       } catch (error) {
@@ -514,7 +539,7 @@ const BaseInputTable = ({
           }
           return {
             borderRight: "1px solid #f0f0f0",
-            fontSize: "15px",
+            fontSize: "13px",
           };
         },
       };
