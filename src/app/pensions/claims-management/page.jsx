@@ -11,10 +11,12 @@ function page() {
   return (
     <div>
       <React.Suspense fallback={<Spinner />}>
-        <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
-          Claims Management
+        <div className="ml-4">
+          <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
+            Claims Management
+          </div>
+          <CustomBreadcrumbsList currentTitle="Claims Management" />
         </div>
-        <CustomBreadcrumbsList currentTitle="Claims Management" />
         <ClaimsTable />
       </React.Suspense>
     </div>

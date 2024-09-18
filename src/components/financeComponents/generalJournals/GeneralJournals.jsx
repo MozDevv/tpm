@@ -12,6 +12,7 @@ import CountyCard from "@/components/pensionsComponents/setups/counties/CountyCa
 import GeneralJournalCard from "./GeneralJournalCard";
 import financeEndpoints from "@/components/services/financeApi";
 import { formatDate, parseDate } from "@/utils/dateFormatter";
+import JournalInputCard from "../../baseComponents/JournalInputCard";
 
 const columnDefs = [
   {
@@ -118,7 +119,7 @@ const GeneralJournals = () => {
 
   const fields = [
     {
-      name: "documentTypeId",
+      name: "documentType",
       label: "Document Type",
       type: "select",
       required: true,
@@ -136,15 +137,13 @@ const GeneralJournals = () => {
       name: "documentNo",
       label: "Document No",
       type: "text",
-      required: true,
-      disabled: false,
-      hide: true,
+
+      disabled: true,
     },
     {
       name: "externalDocumentNo",
       label: "External Document No",
       type: "text",
-      required: true,
     },
     {
       name: "postingDate",
@@ -163,7 +162,6 @@ const GeneralJournals = () => {
       name: "currency",
       label: "Currency",
       type: "select",
-      required: true,
       options: [
         {
           id: "usd",
@@ -183,13 +181,11 @@ const GeneralJournals = () => {
       name: "amount",
       label: "Amount",
       type: "amount",
-      required: true,
     },
     {
       name: "isPosted",
       label: "Is Posted",
       type: "switch",
-      required: true,
     },
   ];
 
@@ -217,13 +213,18 @@ const GeneralJournals = () => {
             useRequestBody={true}
           />
         ) : (
-          <BaseInputCard
+          <JournalInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addGeneralJournal}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.editGeneralJournal}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
+            getApiEndpoint={financeEndpoints.getGeneralJournalsById}
+            getApiFunction={apiService.get}
+            transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            openBaseCard={openBaseCard}
           />
         )}
       </BaseCard>

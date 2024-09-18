@@ -175,7 +175,7 @@ function NewPreclaim({
                 .toISOString()
                 .split("T")[0]
             : "",
-        isCommutable: retiree?.pensionAward?.has_commutation ?? false,
+        isCommutable: retiree?.exitGround?.has_commutation ?? false,
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -269,7 +269,8 @@ function NewPreclaim({
         retiree?.commutation_option_selection_date
       ),
 
-      isCommutable: retiree?.pensionAward?.has_commutation ?? false,
+      isCommutable: retiree?.exitGround?.has_commutation,
+      pension_cap: retiree?.mda?.pensionCap?.id,
     };
   };
 
@@ -571,10 +572,31 @@ function NewPreclaim({
   }));
 
   const [exitGroundOptions, setExitGroundOptions] = useState([]);
+
   useEffect(() => {
     const filteredOptions = exitGrounds
       .filter((exitGround) => {
-        if (exitGround.pension_cap_id !== activePensionCap) {
+        const currentPensionCap =
+          activePensionCap === null ||
+          activePensionCap === undefined ||
+          activePensionCap === ""
+            ? formData.pension_cap
+            : activePensionCap;
+
+        if (
+          currentPensionCap === null ||
+          currentPensionCap === undefined ||
+          currentPensionCap === ""
+        ) {
+          if (formData.mortality_status === 1) {
+            return exitGround.is_death;
+          } else if (formData.mortality_status === 2) {
+            return !exitGround.is_death;
+          }
+          return true;
+        }
+
+        if (exitGround.pension_cap_id !== currentPensionCap) {
           return false;
         }
         if (formData.mortality_status === 1) {
@@ -591,7 +613,12 @@ function NewPreclaim({
       }));
 
     setExitGroundOptions(filteredOptions);
-  }, [formData.mortality_status, exitGrounds, activePensionCap]);
+  }, [
+    formData.mortality_status,
+    formData.pension_cap,
+    exitGrounds,
+    activePensionCap,
+  ]);
 
   const pensionAwardOptions =
     exitGrounds.length > 0 && !formData.notification_status
@@ -904,10 +931,15 @@ function NewPreclaim({
         ...formData,
         commutation_option_selection: "Yes",
       });
-    } else {
+    } else if (formData.commutation_option_selection === false) {
       setFormData({
         ...formData,
         commutation_option_selection: "No",
+      });
+    } else {
+      setFormData({
+        ...formData,
+        commutation_option_selection: "",
       });
     }
   }, [formData.commutation_option_selection]);
