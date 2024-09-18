@@ -125,7 +125,9 @@ function PensionerDetailSummary({ clickedItem }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <h6 className="font-medium text-primary text-xs">Pension Award: </h6>
+          <h6 className="font-medium text-primary text-xs">
+            Ministry / Department:{" "}
+          </h6>
           <span className="text-xs">{clickedItem?.pension_award}</span>
         </div>
         <div className="flex items-center gap-2">
