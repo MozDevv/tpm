@@ -337,6 +337,8 @@ const ClaimsTable = () => {
           item?.prospectivePensioner?.pension_commencement_date,
         postal_address: item?.prospectivePensioner?.postal_address,
         id: item.prospectivePensioner?.id,
+        exit_grounds: item?.prospectivePensioner?.exitGround.name,
+
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
       }));

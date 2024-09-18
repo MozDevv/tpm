@@ -93,8 +93,15 @@ function PensionerDetailSummary({ clickedItem }) {
               </div>
             ))}
           </div>
+          {clickedItem?.exit_grounds && (
+            <div className="flex items-center gap-2">
+              <h6 className="font-medium text-primary text-xs">Exit Reason:</h6>
+              <span className="text-xs">{clickedItem?.exit_grounds}</span>
+            </div>
+          )}
         </div>
       )}
+
       <Divider />
 
       <div className="mt-8 p-2 flex gap-3 flex-col">
@@ -124,12 +131,14 @@ function PensionerDetailSummary({ clickedItem }) {
             {parseDate(clickedItem?.retirement_date)}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <h6 className="font-medium text-primary text-xs">
-            Ministry / Department:{" "}
-          </h6>
-          <span className="text-xs">{clickedItem?.pension_award}</span>
-        </div>
+        {clickedItem?.pension_award && (
+          <div className="flex items-center gap-2">
+            <h6 className="font-medium text-primary text-xs">
+              Ministry / Department:{" "}
+            </h6>
+            <span className="text-xs">{clickedItem?.pension_award}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Status:</h6>
           <span className="text-xs">
