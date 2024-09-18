@@ -12,7 +12,7 @@ import CountyCard from "@/components/pensionsComponents/setups/counties/CountyCa
 import GeneralJournalCard from "./GeneralJournalCard";
 import financeEndpoints from "@/components/services/financeApi";
 import { formatDate, parseDate } from "@/utils/dateFormatter";
-import JournalInputCard from "../../baseComponents/JournalInputCard";
+import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
 
 const columnDefs = [
   {
@@ -211,9 +211,10 @@ const GeneralJournals = () => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            transformData={transformData}
           />
         ) : (
-          <JournalInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addGeneralJournal}
             putApiFunction={apiService.post}

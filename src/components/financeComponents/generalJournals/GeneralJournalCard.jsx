@@ -8,6 +8,7 @@ import { apiService } from "@/components/services/financeApi";
 import BaseFinanceInputCard from "@/components/baseComponents/BaseFinanceInputCard";
 import BaseFinanceInputTable from "@/components/baseComponents/BaseFinanceInputTable";
 import financeEndpoints from "@/components/services/financeApi";
+import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
 
 const { TabPane } = Tabs;
 
@@ -18,6 +19,7 @@ function GeneralJournalCard({
   clickedItem,
   setOpenBaseCard,
   useRequestBody,
+  transformData,
 }) {
   const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
   const tableFields = [
@@ -29,7 +31,7 @@ function GeneralJournalCard({
       options: [
         {
           id: 1,
-          name: "General Ledger",
+          name: "General_Ledger",
         },
         {
           id: 2,
@@ -56,9 +58,17 @@ function GeneralJournalCard({
             return {
               id: acc.id,
               name: acc.accountNo,
+              accountName: acc.name,
             };
           })
         : [{ id: null, name: "Select Account Type First" }],
+    },
+    {
+      value: "accountName",
+      label: "Account Name",
+      type: "text",
+      required: true,
+      disabled: true,
     },
     {
       value: "amount",
@@ -108,18 +118,24 @@ function GeneralJournalCard({
         <div>
           <div className="px-5 mt-[-20px]">
             <div className="">
-              <BaseFinanceInputCard
+              <BaseAutoSaveInputCard
                 fields={fields}
-                apiEndpoint={apiEndpoint}
-                postApiFunction={postApiFunction}
-                clickedItem={clickedItem}
+                apiEndpoint={financeEndpoints.addGeneralJournal}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.editGeneralJournal}
+                postApiFunction={apiService.post}
+                getApiEndpoint={financeEndpoints.getGeneralJournalsById}
+                getApiFunction={apiService.get}
+                transformData={transformData}
                 setOpenBaseCard={setOpenBaseCard}
+                clickedItem={clickedItem}
                 useRequestBody={true}
               />
             </div>
 
             <BaseFinanceInputTable
               setSelectedAccountTypeId={setSelectedAccountTypeId}
+              selectedAccountTypeId={selectedAccountTypeId}
               title="Journal Entries"
               fields={tableFields}
               id={clickedItem?.id}

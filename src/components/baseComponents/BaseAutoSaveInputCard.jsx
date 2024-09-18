@@ -29,7 +29,7 @@ import BaseAmountInput from "./BaseAmountInput";
 import "./autosave.css";
 import { Done } from "@mui/icons-material";
 
-const JournalInputCard = ({
+const BaseAutoSaveInputCard = ({
   fields,
   apiEndpoint,
   postApiFunction,
@@ -622,4 +622,4 @@ const JournalInputCard = ({
   );
 };
 
-export default JournalInputCard;
+export default BaseAutoSaveInputCard;

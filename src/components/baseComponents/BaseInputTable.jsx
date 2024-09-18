@@ -514,6 +514,7 @@ const BaseInputTable = ({
           }
           return {
             borderRight: "1px solid #f0f0f0",
+            fontSize: "15px",
           };
         },
       };

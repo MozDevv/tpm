@@ -50,6 +50,7 @@ const BaseFinanceInputTable = ({
   refetchDataFromAnotherComponent,
   useExcel,
   setSelectedAccountTypeId,
+  selectedAccountTypeId,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -509,6 +510,7 @@ const BaseFinanceInputTable = ({
           }
           return {
             borderRight: "1px solid #f0f0f0",
+            fontSize: "15px",
           };
         },
       };
@@ -588,7 +590,6 @@ const BaseFinanceInputTable = ({
 
         setDataAdded(true);
 
-        // Function to fetch new options based on accountTypeId
         const fetchNewOptions = async (accountTypeId) => {
           try {
             const res = await apiService.get(
@@ -617,6 +618,21 @@ const BaseFinanceInputTable = ({
             };
 
             api.refreshCells({ force: true });
+          }
+        }
+
+        if (field === "accountId") {
+          const selectedOption = selectedAccountTypeId.find(
+            (acc) => acc.accountNo === newValue
+          );
+
+          console.log("Options", selectedAccountTypeId);
+          console.log("Selected Option is:", selectedOption);
+
+          if (selectedOption) {
+            data.accountName = selectedOption.name;
+
+            api.refreshCells({ rowNodes: [params.node], force: true });
           }
         }
 
