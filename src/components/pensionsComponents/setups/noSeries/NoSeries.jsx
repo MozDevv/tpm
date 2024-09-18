@@ -80,7 +80,7 @@ const NoSeries = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
-    numberSeriesLine: () => setOpenAction(true),
+    //  numberSeriesLine: () => setOpenAction(true),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
