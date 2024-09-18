@@ -40,11 +40,11 @@ steps:
         # Tag the Docker image for Docker Hub
         sudo docker tag pmis agilesam/pmis:latest
 
-        # Log in to Docker Hub
-        echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+        # # Log in to Docker Hub
+        # echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
 
-        # Push the Docker image to Docker Hub
-        sudo docker push agilesam/pmis:latest
+        # # Push the Docker image to Docker Hub
+        # sudo docker push agilesam/pmis:latest
 
         # # Stop and remove the existing container if it exists
         # sudo docker stop pmis-core || true
