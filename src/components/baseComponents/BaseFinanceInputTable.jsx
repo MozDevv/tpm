@@ -126,7 +126,7 @@ const BaseFinanceInputTable = ({
             }, {})
           );
 
-          const sortedData = sortData(res.data.data.subgroups || []);
+          const sortedData = sortData(res.data.data.journalLines || []);
           console.log("Sorted Data:", sortedData);
 
           let lastEndDate = null;

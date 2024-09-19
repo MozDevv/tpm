@@ -62,19 +62,6 @@ function PensionAwardCard({
                   />
                 </div>
               </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Map Documents
-                  </span>
-                }
-                key="2"
-              >
-                <MapPensionerAwards
-                  rowClicked={clickedItem}
-                  setOpenAward={setOpenBaseCard}
-                />
-              </TabPane>
             </Tabs>
           </div>
         </div>

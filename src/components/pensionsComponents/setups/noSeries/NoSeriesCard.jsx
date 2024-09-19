@@ -108,11 +108,11 @@ function NoSeriesCard({
       type: "number",
       required: true,
     },
-    {
-      value: "lastDateUsed",
-      label: "Last Date Used",
-      type: "date",
-    },
+    // {
+    //   value: "lastDateUsed",
+    //   label: "Last Date Used",
+    //   type: "date",
+    // },
 
     {
       value: "allowGapsInNumbers",
@@ -128,11 +128,11 @@ function NoSeriesCard({
       label: "Warning Number",
       type: "text",
     },
-    {
-      value: "lastNumberUsed",
-      label: "Last Number Used",
-      type: "text",
-    },
+    // {
+    //   value: "lastNumberUsed",
+    //   label: "Last Number Used",
+    //   type: "text",
+    // },
   ];
 
   const [numberSeriesLine, setNumberSeriesLine] = useState([]);

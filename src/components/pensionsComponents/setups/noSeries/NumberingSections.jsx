@@ -22,7 +22,9 @@ function NumberingSections() {
 
   const getNumberingSections = async () => {
     try {
-      const response = await apiService.get(endpoints.getNumberingSections);
+      const response = await apiService.get(endpoints.getNumberingSections, {
+        "paging.pageSize": 1000,
+      });
       setNumberingSections(response.data.data);
     } catch (error) {
       console.error("Error fetching numbering sections:", error);
@@ -31,7 +33,9 @@ function NumberingSections() {
 
   const getNumberSeriesOptions = async () => {
     try {
-      const response = await apiService.get(endpoints.getNumberSeries);
+      const response = await apiService.get(endpoints.getNumberSeries, {
+        "paging.pageSize": 1000,
+      });
       setNumberSeriesOptions(response.data.data);
     } catch (error) {
       console.error("Error fetching number series options:", error);
