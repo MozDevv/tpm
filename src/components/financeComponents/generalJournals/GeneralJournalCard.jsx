@@ -37,6 +37,8 @@ function GeneralJournalCard({
               id: acc.id,
               name: acc.accountNo,
               accountName: acc.name,
+
+              accountType: acc.accountType,
             };
           })
         );
@@ -49,6 +51,7 @@ function GeneralJournalCard({
             id: acc.id,
             name: acc.accountNo,
             accountName: acc.name,
+            accountType: acc.accountType,
           };
         })
       );
@@ -69,19 +72,19 @@ function GeneralJournalCard({
       required: true,
       options: [
         {
-          id: 1,
+          id: 0,
           name: "General_Ledger",
         },
         {
-          id: 2,
+          id: 1,
           name: "Vendor",
         },
         {
-          id: 3,
+          id: 2,
           name: "Customer",
         },
         {
-          id: 4,
+          id: 3,
           name: "Bank",
         },
       ],
@@ -92,15 +95,16 @@ function GeneralJournalCard({
       label: "Account No",
       type: "select",
       required: true,
-      options: selectedAccountTypeId
-        ? selectedAccountTypeId.map((acc) => {
-            return {
-              id: acc.id,
-              name: acc.accountNo,
-              accountName: acc.name,
-            };
-          })
-        : allOptions && allOptions,
+      // options: selectedAccountTypeId
+      //   ? selectedAccountTypeId.map((acc) => {
+      //       return {
+      //         id: acc.id,
+      //         name: acc.accountNo,
+      //         accountName: acc.name,
+      //       };
+      //     })
+      //   : allOptions && allOptions,
+      options: allOptions && allOptions,
     },
     {
       value: "accountName",
@@ -108,13 +112,9 @@ function GeneralJournalCard({
       type: "text",
       required: true,
       disabled: true,
+      options: allOptions && allOptions,
     },
-    {
-      value: "amount",
-      label: "Amount",
-      type: "number",
-      required: true,
-    },
+
     {
       value: "debitAmount",
       label: "Debit Amount",
@@ -127,9 +127,16 @@ function GeneralJournalCard({
       type: "number",
       required: true,
     },
+    {
+      value: "amount",
+      label: "Amount",
+      type: "number",
+      required: true,
+      disabled: true,
+    },
   ];
 
-  const totalAmounts = [
+  const totalAmounts1 = [
     { name: "Number of Entries", value: 1 },
 
     { name: "Total Debit", value: "0.00" },
@@ -137,59 +144,74 @@ function GeneralJournalCard({
     { name: "Balance", value: "0.00" },
     { name: "Total Balance", value: "0.00" },
   ];
+
+  const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
   return (
     <div className="p-2   mt-2">
       <div>
         <div>
-          <div className="px-5 mt-[-20px] h-[1200px] max-h-[1400px] overflow-y-auto">
-            <div className="">
-              <BaseAutoSaveInputCard
-                fields={fields}
-                apiEndpoint={financeEndpoints.addGeneralJournal}
-                putApiFunction={apiService.post}
-                updateApiEndpoint={financeEndpoints.editGeneralJournal}
-                postApiFunction={apiService.post}
-                getApiEndpoint={financeEndpoints.getGeneralJournalsById}
-                getApiFunction={apiService.get}
-                transformData={transformData}
-                setOpenBaseCard={setOpenBaseCard}
-                clickedItem={clickedItem}
-                useRequestBody={true}
-              />
-            </div>
+          <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
+            <div className="flex flex-col">
+              <div className="flex-grow">
+                {" "}
+                {/* This allows the card to grow */}
+                <BaseAutoSaveInputCard
+                  fields={fields}
+                  apiEndpoint={financeEndpoints.addGeneralJournal}
+                  putApiFunction={apiService.post}
+                  updateApiEndpoint={financeEndpoints.editGeneralJournal}
+                  postApiFunction={apiService.post}
+                  getApiEndpoint={financeEndpoints.getGeneralJournalsById}
+                  getApiFunction={apiService.get}
+                  transformData={transformData}
+                  setOpenBaseCard={setOpenBaseCard}
+                  clickedItem={clickedItem}
+                  useRequestBody={true}
+                />
+              </div>
 
-            <BaseFinanceInputTable
-              allOptions={allOptions}
-              setSelectedAccountTypeId={setSelectedAccountTypeId}
-              selectedAccountTypeId={selectedAccountTypeId}
-              title="Journal Entries"
-              fields={tableFields}
-              id={clickedItem?.id}
-              idLabel="journalId"
-              getApiService={apiService.get}
-              postApiService={apiService.post}
-              putApiService={apiService.put}
-              getEndpoint={financeEndpoints.getGeneralJournalLines(
-                clickedItem?.id
-              )}
-              postEndpoint={financeEndpoints.addGeneralJournalLine}
-              putEndpoint={financeEndpoints.editGeneralJournalLine}
-              passProspectivePensionerId={true}
-            />
+              <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
+                <div className="flex-grow">
+                  {" "}
+                  {/* Make this grow too */}
+                  <BaseFinanceInputTable
+                    allOptions={allOptions}
+                    setSelectedAccountTypeId={setSelectedAccountTypeId}
+                    selectedAccountTypeId={selectedAccountTypeId}
+                    title="Journal Entries"
+                    fields={tableFields}
+                    id={clickedItem?.id}
+                    idLabel="journalId"
+                    getApiService={apiService.get}
+                    postApiService={apiService.post}
+                    putApiService={apiService.put}
+                    getEndpoint={financeEndpoints.getGeneralJournalLines(
+                      clickedItem?.id
+                    )}
+                    setTotalAmmounts={setTotalAmmounts}
+                    postEndpoint={financeEndpoints.addGeneralJournalLine}
+                    putEndpoint={financeEndpoints.editGeneralJournalLine}
+                    passProspectivePensionerId={true}
+                  />
+                </div>
 
-            <div className="flex justify-between mt-10 w-full">
-              <div className="flex flex-row justify-between w-full">
-                {totalAmounts.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-4 justify-between"
-                  >
-                    <span className="text-sm font-semibold text-gray-600">
-                      {item.name}
-                    </span>
-                    <span className="items-end text-right">{item.value}</span>
+                <div className="flex justify-between mt-10">
+                  <div className="flex flex-row justify-between w-full">
+                    {totalAmmounts.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col gap-4 justify-between"
+                      >
+                        <span className="text-sm font-semibold text-gray-600">
+                          {item.name}
+                        </span>
+                        <span className="items-end text-right">
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>

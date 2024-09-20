@@ -136,7 +136,9 @@ const GeneralPostingGroups = () => {
   }, []);
 
   const getAccountName = (id) => {
-    return glAccounts?.find((acc) => acc.id === id).name;
+    return Array.isArray(glAccounts) && glAccounts
+      ? glAccounts?.find((acc) => acc.id === id).name
+      : "";
   };
 
   const transformData = (data) => {

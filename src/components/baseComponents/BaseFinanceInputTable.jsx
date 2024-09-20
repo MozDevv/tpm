@@ -52,6 +52,7 @@ const BaseFinanceInputTable = ({
   setSelectedAccountTypeId,
   selectedAccountTypeId,
   allOptions,
+  setTotalAmmounts,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -109,6 +110,29 @@ const BaseFinanceInputTable = ({
       const res = await getApiService(getEndpoint);
       if (res.status === 200) {
         console.log("Fetched Data from Editable Table", res.data.data);
+
+        const entries = res.data.data; // Your array of data
+        const numberOfEntries = entries.length; // Total entries
+        const totalDebit = entries.reduce(
+          (acc, entry) => acc + entry.debitAmount,
+          0
+        ); // Total debit
+        const totalCredit = entries.reduce(
+          (acc, entry) => acc + entry.creditAmount,
+          0
+        ); // Total credit
+        const totalBalance = totalDebit - totalCredit; // Total balance
+
+        const totalAmounts = [
+          { name: "Number of Entries", value: numberOfEntries },
+          { name: "Total Debit", value: totalDebit.toFixed(2) }, // Format to 2 decimal places
+          { name: "Total Credit", value: totalCredit.toFixed(2) }, // Format to 2 decimal places
+          { name: "Balance", value: totalBalance.toFixed(2) }, // Format to 2 decimal places
+          { name: "Total Balance", value: totalBalance.toFixed(2) }, // Format to 2 decimal places
+        ];
+
+        // Set state with the totalAmounts array
+        setTotalAmmounts(totalAmounts);
 
         setRowData((prevRowData) => {
           const datePairs = [
@@ -544,27 +568,69 @@ const BaseFinanceInputTable = ({
           return parseDate(params.newValue);
         };
       } else if (col.type === "select" && col.options && col.options.length) {
-        const options = col.options.map((option) => option.name);
-
-        console.log("Options: ***********************************", options);
-        columnDef.cellEditor = "agSelectCellEditor";
-        columnDef.cellEditorParams = {
-          values: options,
+        // Fetch options based on accountTypeId
+        const fetchOptionsForAccountType = async (accountTypeId) => {
+          try {
+            const res = await apiService.get(
+              financeEndpoints.getAccountByAccountType(accountTypeId)
+            ); // Pass accountTypeId to API
+            if (res.status === 200) {
+              return res.data.data.map((acc) => ({
+                id: acc.id,
+                name: `${acc.accountNo} - ${acc.name}`,
+              }));
+            }
+            console.log(
+              `Options for Account Type: ${accountTypeId}`,
+              res.data.data
+            );
+          } catch (error) {
+            console.error("Error fetching account options:", error);
+            return [];
+          }
         };
+
+        columnDef.cellEditor = "agSelectCellEditor";
+        columnDef.cellEditorParams = (params) => {
+          const { data } = params.node; // Access the row data
+          const accountTypeId = data.accountTypeId; // Get accountTypeId from the row data
+          const accountId = data.accountId; // Get accountId from the row data
+
+          // Get the static options (for this column)
+          const options = col.options.map((option) => option.name);
+
+          // Check if the column is the 'accountId' column
+          const isAccountIdColumn = col.value === "accountId";
+
+          if (isAccountIdColumn && accountTypeId) {
+            const filteredOptions = col.options.filter(
+              (option) => option.accountType === accountTypeId
+            );
+
+            console.log("COL.OPTIONS", col.options);
+
+            console.log(
+              `Account Type ID: ${accountTypeId} - Filtered options:`,
+              filteredOptions
+            );
+
+            // Return the filtered options
+            return {
+              values: filteredOptions.map((option) => option.name),
+            };
+          }
+
+          // For other columns or if accountTypeId is not available, return all options
+          return {
+            values: options,
+          };
+        };
+
         columnDef.valueFormatter = (params) => {
           const selectedOption = col.options.find(
             (option) => option.id === params.value
           );
-          if (!selectedOption && allOptions && Array.isArray(allOptions)) {
-            const fallbackOption = allOptions.find(
-              (option) => option.id === params.value
-            );
-            if (fallbackOption) {
-              return fallbackOption.name;
-            }
-          }
-
-          return selectedOption ? selectedOption.name : "";
+          return selectedOption ? selectedOption.name : params.value;
         };
         columnDef.valueParser = (params) => {
           const selectedOption = col.options.find(
@@ -583,6 +649,7 @@ const BaseFinanceInputTable = ({
             : params.value;
         };
       }
+
       const datePairs = [
         { start: "startDate", end: "endDate" },
         { start: "from_date", end: "to_date" },
@@ -603,65 +670,85 @@ const BaseFinanceInputTable = ({
 
         setDataAdded(true);
 
-        const fetchNewOptions = async (accountTypeId) => {
-          try {
-            const res = await apiService.get(
-              financeEndpoints.getAccountByAccountType(accountTypeId)
-            ); // Pass accountTypeId to the endpoint
-            if (res.status === 200) {
-              setSelectedAccountTypeId(res.data.data);
-              return res.data.data;
-            }
-          } catch (error) {
-            console.log(error);
-            return []; // Return an empty array if an error occurs
-          }
-        };
-
-        if (field === "accountTypeId") {
-          const newOptions = await fetchNewOptions(newValue);
-
-          console.log("New Options:", newOptions);
-
-          const accountNoColumn = api.getColumnDef("accountId");
-          if (accountNoColumn) {
-            accountNoColumn.cellEditorParams = {
-              ...accountNoColumn.cellEditorParams,
-              values: newOptions.map((option) => option.name), // Set new options
-            };
-
-            api.refreshCells({ force: true });
-          }
-        }
-
         if (field === "accountId") {
-          // First, check in selectedAccountTypeId
-          let selectedOption = selectedAccountTypeId.find(
-            (acc) => acc.accountNo === newValue
-          );
+          const accountId = newValue;
 
-          console.log("Selected AccountTypeId Options:", selectedAccountTypeId);
-          console.log("Selected Option is:", selectedOption);
+          console.log("accountId", accountId);
 
-          // If not found in selectedAccountTypeId, fallback to allOptions
-          if (!selectedOption && allOptions && Array.isArray(allOptions)) {
-            selectedOption = allOptions.find(
-              (acc) => acc.accountNo === newValue
-            );
-            console.log("Selected Option from allOptions:", selectedOption);
-          }
+          const selectedOption =
+            allOptions &&
+            allOptions.find((option) => option.name === accountId);
 
-          // Update the accountName if the selectedOption is found
           if (selectedOption) {
-            data.accountName = selectedOption.name;
-
+            data.accountName = selectedOption.accountName;
             api.refreshCells({ rowNodes: [params.node], force: true });
           } else {
-            // Clear the accountName if no option is found
             data.accountName = "";
             api.refreshCells({ rowNodes: [params.node], force: true });
           }
         }
+
+        if (colDef.field === "debitAmount") {
+          const debitAmount = parseFloat(newValue) || 0;
+          if (debitAmount > 0) {
+            // Update amount with the absolute value of debitAmount
+            data.amount = debitAmount;
+          }
+        } else if (colDef.field === "creditAmount") {
+          const creditAmount = parseFloat(newValue) || 0; // Convert to float and default to 0
+          if (creditAmount > 0) {
+            // Subtract creditAmount from amount
+            data.amount = (data.amount || 0) - creditAmount;
+          }
+        }
+
+        // Refresh the cell to reflect changes
+        params.api.refreshCells({ rowNodes: [params.node], force: true });
+
+        // if (field === "accountTypeId") {
+        //   const newOptions = await fetchNewOptions(newValue);
+
+        //   console.log("New Options:", newOptions);
+
+        //   const accountNoColumn = api.getColumnDef("accountId");
+        //   if (accountNoColumn) {
+        //     accountNoColumn.cellEditorParams = {
+        //       ...accountNoColumn.cellEditorParams,
+        //       values: newOptions.map((option) => option.name), // Set new options
+        //     };
+
+        //     api.refreshCells({ force: true });
+        //   }
+        // }
+
+        // if (field === "accountId") {
+        //   // First, check in selectedAccountTypeId
+        //   let selectedOption = selectedAccountTypeId.find(
+        //     (acc) => acc.accountNo === newValue
+        //   );
+
+        //   console.log("Selected AccountTypeId Options:", selectedAccountTypeId);
+        //   console.log("Selected Option is:", selectedOption);
+
+        //   // If not found in selectedAccountTypeId, fallback to allOptions
+        //   if (!selectedOption && allOptions && Array.isArray(allOptions)) {
+        //     selectedOption = allOptions.find(
+        //       (acc) => acc.accountNo === newValue
+        //     );
+        //     console.log("Selected Option from allOptions:", selectedOption);
+        //   }
+
+        //   // Update the accountName if the selectedOption is found
+        //   if (selectedOption) {
+        //     data.accountName = selectedOption.name;
+
+        //     api.refreshCells({ rowNodes: [params.node], force: true });
+        //   } else {
+        //     // Clear the accountName if no option is found
+        //     data.accountName = "";
+        //     api.refreshCells({ rowNodes: [params.node], force: true });
+        //   }
+        // }
         console.log("Data ", data);
         console.log("New Value", newValue);
         console.log("Column Definition", colDef);
