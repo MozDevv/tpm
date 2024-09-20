@@ -51,6 +51,7 @@ const BaseFinanceInputTable = ({
   useExcel,
   setSelectedAccountTypeId,
   selectedAccountTypeId,
+  allOptions,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -126,7 +127,9 @@ const BaseFinanceInputTable = ({
             }, {})
           );
 
-          const sortedData = sortData(res.data.data.journalLines || []);
+          //setSelectedAccountTypeId(res.data.data[0].accountTypeId);
+
+          const sortedData = sortData(res.data.data || []);
           console.log("Sorted Data:", sortedData);
 
           let lastEndDate = null;
@@ -158,18 +161,18 @@ const BaseFinanceInputTable = ({
           console.log("Default Rows:", defaultRows);
 
           // Map over defaultRows correctly
-          const subgroups = defaultRows.map((row) => {
-            return {
-              id: row.id,
-              accountTypeId: row.accountTypeId,
-              accountId: row.accountId,
-              amount: row.amount,
-              debitAmount: row.debitAmount,
-              creditAmount: row.creditAmount,
-            };
-          });
+          // const subgroups = defaultRows.map((row) => {
+          //   return {
+          //     id: row.id,
+          //     accountTypeId: row.accountTypeId,
+          //     accountId: row.accountId,
+          //     amount: row.amount,
+          //     debitAmount: row.debitAmount,
+          //     creditAmount: row.creditAmount,
+          //   };
+          // });
 
-          return [...sortedData, ...subgroups];
+          return [...sortedData, ...defaultRows];
         });
       }
     } catch (error) {
@@ -543,6 +546,7 @@ const BaseFinanceInputTable = ({
       } else if (col.type === "select" && col.options && col.options.length) {
         const options = col.options.map((option) => option.name);
 
+        console.log("Options: ***********************************", options);
         columnDef.cellEditor = "agSelectCellEditor";
         columnDef.cellEditorParams = {
           values: options,
@@ -551,7 +555,16 @@ const BaseFinanceInputTable = ({
           const selectedOption = col.options.find(
             (option) => option.id === params.value
           );
-          return selectedOption ? selectedOption.name : params.value;
+          if (!selectedOption && allOptions && Array.isArray(allOptions)) {
+            const fallbackOption = allOptions.find(
+              (option) => option.id === params.value
+            );
+            if (fallbackOption) {
+              return fallbackOption.name;
+            }
+          }
+
+          return selectedOption ? selectedOption.name : "";
         };
         columnDef.valueParser = (params) => {
           const selectedOption = col.options.find(
@@ -622,21 +635,33 @@ const BaseFinanceInputTable = ({
         }
 
         if (field === "accountId") {
-          const selectedOption = selectedAccountTypeId.find(
+          // First, check in selectedAccountTypeId
+          let selectedOption = selectedAccountTypeId.find(
             (acc) => acc.accountNo === newValue
           );
 
-          console.log("Options", selectedAccountTypeId);
+          console.log("Selected AccountTypeId Options:", selectedAccountTypeId);
           console.log("Selected Option is:", selectedOption);
 
+          // If not found in selectedAccountTypeId, fallback to allOptions
+          if (!selectedOption && allOptions && Array.isArray(allOptions)) {
+            selectedOption = allOptions.find(
+              (acc) => acc.accountNo === newValue
+            );
+            console.log("Selected Option from allOptions:", selectedOption);
+          }
+
+          // Update the accountName if the selectedOption is found
           if (selectedOption) {
             data.accountName = selectedOption.name;
 
             api.refreshCells({ rowNodes: [params.node], force: true });
+          } else {
+            // Clear the accountName if no option is found
+            data.accountName = "";
+            api.refreshCells({ rowNodes: [params.node], force: true });
           }
         }
-
-        console.log("Field", field);
         console.log("Data ", data);
         console.log("New Value", newValue);
         console.log("Column Definition", colDef);

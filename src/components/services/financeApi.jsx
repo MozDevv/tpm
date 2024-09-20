@@ -131,6 +131,8 @@ const financeEndpoints = {
   getAccountByAccountType: (accountType) =>
     `/Accounts/GetAccounts?AccountType=${accountType}`,
 
+  getAllAccounts: `/Accounts/GetAccounts`,
+
   getGeneralJournals: "/Posting/GetGeneralJournals",
 
   addGeneralJournal: "/Posting/AddGeneralJournal",
@@ -142,6 +144,7 @@ const financeEndpoints = {
   editGeneralJournalLine: "/Posting/UpdateGeneralJournalLine",
   deleteGeneralJournalLine: (id) =>
     `/Posting/DeleteGeneralJournalLine?id=${id}`,
+  getGeneralJournalLines: (id) => `/Posting/GetJournalLines?JournalId=${id}`,
 };
 
 export const apiService = {

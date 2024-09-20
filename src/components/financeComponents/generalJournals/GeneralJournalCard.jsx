@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs } from "antd";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
@@ -22,6 +22,45 @@ function GeneralJournalCard({
   transformData,
 }) {
   const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
+
+  const [allOptions, setAllOptions] = useState(null);
+
+  const fetchNewOptions = async () => {
+    try {
+      const res = await apiService.get(financeEndpoints.getAllAccounts, {
+        "paging.pageSize": 2000,
+      }); // Pass accountTypeId to the endpoint
+      if (res.status === 200) {
+        setAllOptions(
+          res.data.data.map((acc) => {
+            return {
+              id: acc.id,
+              name: acc.accountNo,
+              accountName: acc.name,
+            };
+          })
+        );
+      }
+
+      console.log(
+        "All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️",
+        res.data.data.map((acc) => {
+          return {
+            id: acc.id,
+            name: acc.accountNo,
+            accountName: acc.name,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      return []; // Return an empty array if an error occurs
+    }
+  };
+
+  useEffect(() => {
+    fetchNewOptions();
+  }, []);
   const tableFields = [
     {
       value: "accountTypeId",
@@ -61,7 +100,7 @@ function GeneralJournalCard({
               accountName: acc.name,
             };
           })
-        : [{ id: null, name: "Select Account Type First" }],
+        : allOptions && allOptions,
     },
     {
       value: "accountName",
@@ -89,20 +128,6 @@ function GeneralJournalCard({
       required: true,
     },
   ];
-
-  const fetchNewOptions = async (accountTypeId) => {
-    try {
-      const res = await apiService.get(
-        financeEndpoints.getAccountByAccountType(accountTypeId)
-      ); // Pass accountTypeId to the endpoint
-      if (res.status === 200) {
-        return res.data.data;
-      }
-    } catch (error) {
-      console.log(error);
-      return []; // Return an empty array if an error occurs
-    }
-  };
 
   const totalAmounts = [
     { name: "Number of Entries", value: 1 },
@@ -134,6 +159,7 @@ function GeneralJournalCard({
             </div>
 
             <BaseFinanceInputTable
+              allOptions={allOptions}
               setSelectedAccountTypeId={setSelectedAccountTypeId}
               selectedAccountTypeId={selectedAccountTypeId}
               title="Journal Entries"
@@ -143,7 +169,7 @@ function GeneralJournalCard({
               getApiService={apiService.get}
               postApiService={apiService.post}
               putApiService={apiService.put}
-              getEndpoint={financeEndpoints.getGeneralJournalsById(
+              getEndpoint={financeEndpoints.getGeneralJournalLines(
                 clickedItem?.id
               )}
               postEndpoint={financeEndpoints.addGeneralJournalLine}

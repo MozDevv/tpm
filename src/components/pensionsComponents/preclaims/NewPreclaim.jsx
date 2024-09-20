@@ -925,24 +925,24 @@ function NewPreclaim({
     }
   }, [formData.retirement_date]);
 
-  useEffect(() => {
-    if (formData.commutation_option_selection === true) {
-      setFormData({
-        ...formData,
-        commutation_option_selection: "Yes",
-      });
-    } else if (formData.commutation_option_selection === false) {
-      setFormData({
-        ...formData,
-        commutation_option_selection: "No",
-      });
-    } else {
-      setFormData({
-        ...formData,
-        commutation_option_selection: "",
-      });
-    }
-  }, [formData.commutation_option_selection]);
+  // useEffect(() => {
+  //   if (formData.commutation_option_selection === true) {
+  //     setFormData({
+  //       ...formData,
+  //       commutation_option_selection: "Yes",
+  //     });
+  //   } else if (formData.commutation_option_selection === false) {
+  //     setFormData({
+  //       ...formData,
+  //       commutation_option_selection: "No",
+  //     });
+  //   } else {
+  //     setFormData({
+  //       ...formData,
+  //       commutation_option_selection: "",
+  //     });
+  //   }
+  // }, [formData.commutation_option_selection]);
 
   useEffect(() => {
     if (formData.retirement_date && formData.dob) {

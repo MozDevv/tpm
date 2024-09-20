@@ -761,10 +761,10 @@ export const createSections = (
       {
         label: "Has Commuted",
         name: "commutation_option_selection",
-        type: "text",
+        type: "select",
         children: [
-          { id: 1, name: "Yes" },
-          { id: 2, name: "No" },
+          { id: true, name: "Yes" },
+          { id: false, name: "No" },
         ],
         pensionCap: [
           "CAP189",

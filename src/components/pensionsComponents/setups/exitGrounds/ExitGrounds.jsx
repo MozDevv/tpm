@@ -155,7 +155,7 @@ const ExitGrounds = () => {
     },
     {
       name: "is_death",
-      label: "Is Death",
+      label: "For Deaceased Persons",
       type: "switch",
       required: true,
     },

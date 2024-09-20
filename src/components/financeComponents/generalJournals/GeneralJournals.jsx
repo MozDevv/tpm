@@ -16,15 +16,35 @@ import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
 
 const columnDefs = [
   {
-    headerName: "Document Type",
-    field: "documentType",
-    width: 150,
-  },
-  {
     headerName: "Document No",
     field: "documentNo",
-    width: 150,
+    width: 90,
+    pinned: "left", // Pinning to the left ensures it's the first column
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
   },
+  {
+    headerName: "Document Type",
+    field: "documentType",
+    width: 100,
+    valueFormatter: (params) => {
+      const options = [
+        { id: 0, name: "Payment Voucher" },
+        { id: 1, name: "Purchase Invoice" },
+        { id: 2, name: "Sales Invoice" },
+        { id: 3, name: "Receipt" },
+        { id: 4, name: "Purchase Credit Memo" },
+        { id: 5, name: "Sales Credit Memo" },
+        { id: 6, name: "Journal Voucher" },
+      ];
+
+      const selectedOption = options.find(
+        (option) => params.value === option.id
+      );
+      return selectedOption ? selectedOption.name : "";
+    },
+  },
+
   {
     headerName: "External Document No",
     field: "externalDocumentNo",
@@ -123,6 +143,7 @@ const GeneralJournals = () => {
       label: "Document Type",
       type: "select",
       required: true,
+
       options: [
         { id: 0, name: "Payment Voucher" },
         { id: 1, name: "Purchase Invoice" },
