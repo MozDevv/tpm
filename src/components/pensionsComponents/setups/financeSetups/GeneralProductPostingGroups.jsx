@@ -149,9 +149,9 @@ const GeneralProductPostingGroups = () => {
     },
     {
       name: "prodPostingGroupId",
-      label: "Product Posting Group",
+      label: "VAT Product Posting Group",
       type: "select",
-      required: true,
+      required: false,
       options: glAccounts,
       table: true,
     },
