@@ -247,6 +247,7 @@ const GeneralJournals = () => {
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
             openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
           />
         )}
       </BaseCard>
