@@ -68,11 +68,10 @@ const BankPostingGroups = () => {
   useEffect(() => {
     fetchGlAccounts();
   }, []);
-
   const getAccountName = (id) => {
-    return Array.isArray(glAccounts) && glAccounts
-      ? glAccounts?.find((acc) => acc.id === id).name
-      : "";
+    const account =
+      Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
+    return account ? account.name : "";
   };
 
   const transformData = (data) => {
