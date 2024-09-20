@@ -319,18 +319,20 @@ function ChartsOfAccounts() {
         </BaseCard>
 
         <ListNavigation handlers={handlers} />
-        <div className="mt-6 overflow-auto max-h-[100vh] h-full">
-          <AgGridReact
-            columnDefs={colDefs}
-            rowData={rowData}
-            onRowClicked={(e) => {
-              setOpenBaseCard(true);
-              setClickedItem(e.data);
-            }}
-            onGridReady={onGridReady}
-            domLayout="autoHeight"
-            rowHeight={40}
-          />
+        <div className="mt-6 overflow-auto max-h-[100vh] h-full flex-grow">
+          <div className=" max-h-[1800px] h-[1800px]">
+            <AgGridReact
+              columnDefs={colDefs}
+              rowData={rowData}
+              onRowClicked={(e) => {
+                setOpenBaseCard(true);
+                setClickedItem(e.data);
+              }}
+              onGridReady={onGridReady}
+              domLayout="autoHeight"
+              rowHeight={40}
+            />
+          </div>
         </div>
       </div>
     </div>

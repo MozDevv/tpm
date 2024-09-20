@@ -44,7 +44,7 @@ const GeneralProductPostingGroups = () => {
     },
     {
       field: "prodPostingGroupId",
-      headerName: "Business Posting Group",
+      headerName: "VAT Business Posting Group",
       filter: true,
       valueGetter: (params) => {
         const account = glAccounts?.find(
