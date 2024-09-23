@@ -42,6 +42,7 @@ const BaseTable = ({
   id,
   openSubGroup,
   onSelectionChange,
+  openPostToGL,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -75,7 +76,7 @@ const BaseTable = ({
 
   useEffect(() => {
     fetchData();
-  }, [pageNumber, openBaseCard, openAction]);
+  }, [pageNumber, openBaseCard, openAction, openPostToGL]);
 
   const handleFilters = async () => {
     const filter = {

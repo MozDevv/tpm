@@ -14,7 +14,12 @@ import {
 import { formatNumber } from "@/utils/numberFormatters";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
 
-function PostGL({ selectedRows, setSelectedRows, setOpenPostGL }) {
+function PostGL({
+  selectedRows,
+  setSelectedRows,
+  setOpenPostGL,
+  setOpenBaseCard,
+}) {
   const getDocumentName = (documentType) => {
     const options = [
       { id: 0, name: "Payment Voucher" },
@@ -56,6 +61,7 @@ function PostGL({ selectedRows, setSelectedRows, setOpenPostGL }) {
       if (res.data.succeeded && res.status === 200) {
         setSelectedRows([]);
         setOpenPostGL(false);
+        setOpenBaseCard && setOpenBaseCard(false);
         message.success("General Journal(s) posted to GL successfully");
       } else if (res.data.messages.length > 0 && res.data.succeeded === false) {
         setErrors({
@@ -75,7 +81,7 @@ function PostGL({ selectedRows, setSelectedRows, setOpenPostGL }) {
       <div className="flex  px-3 flex-col">
         <div className="flex items-center gap-2">
           <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
-            Post to Ledgers
+            Post to Ledger(s)
           </h5>
         </div>
         {errors.status && (

@@ -247,6 +247,7 @@ const GeneralJournals = () => {
         }}
       >
         <PostGL
+          setOpenBaseCard={setOpenBaseCard}
           selectedRows={selectedRows}
           setOpenPostGL={setOpenPostToGL}
           setSelectedRows={setSelectedRows}
@@ -292,6 +293,7 @@ const GeneralJournals = () => {
         )}
       </BaseCard>
       <BaseTable
+        openPostToGL={openPostToGL}
         onSelectionChange={handleSelectionChange}
         openAction={openAction}
         openBaseCard={openBaseCard}
