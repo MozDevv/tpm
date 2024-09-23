@@ -581,7 +581,7 @@ const BaseFinanceInputTable = ({
           // Check if the column is the 'accountId' column
           const isAccountIdColumn = col.value === "accountId";
 
-          if (isAccountIdColumn && accountTypeId) {
+          if (isAccountIdColumn && accountTypeId !== "") {
             const filteredOptions = col.options.filter(
               (option) => option.accountType === accountTypeId
             );

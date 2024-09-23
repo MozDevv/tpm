@@ -230,22 +230,11 @@ const LedgerEntries = ({ type }) => {
       case "Bank Account Ledger Entries":
         return [
           {
-            field: "transactionNo",
-            headerName: "Transaction No",
-            width: 150,
-            filter: true,
-          },
-          {
             field: "documentNo",
             headerName: "Document No",
             width: 150,
             filter: true,
-          },
-          {
-            field: "externalDocumentNo",
-            headerName: "External Document No",
-            width: 200,
-            filter: true,
+            pinned: "left",
           },
           {
             field: "glBankCode",
@@ -253,6 +242,20 @@ const LedgerEntries = ({ type }) => {
             width: 150,
             filter: true,
           },
+          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "externalDocumentNo",
+            headerName: "External Document No",
+            width: 200,
+            filter: true,
+          },
+          {
+            field: "transactionNo",
+            headerName: "Transaction No",
+            width: 150,
+            filter: true,
+          },
+
           {
             field: "transactionDate",
             headerName: "Transaction Date",
@@ -260,7 +263,7 @@ const LedgerEntries = ({ type }) => {
             filter: true,
             valueFormatter: (params) => formatDate(params.value),
           },
-          { field: "amount", headerName: "Amount", width: 100, filter: true },
+
           {
             field: "description",
             headerName: "Description",
@@ -272,17 +275,20 @@ const LedgerEntries = ({ type }) => {
       case "General Ledger Entries":
         return [
           {
-            field: "transactionNo",
-            headerName: "Transaction No",
-            width: 150,
-            filter: true,
-          },
-          {
             field: "documentNo",
             headerName: "Document No",
             width: 150,
             filter: true,
+            pinned: "left",
           },
+          {
+            field: "accountNo",
+            headerName: "Account No",
+            width: 150,
+            filter: true,
+          },
+          { field: "amount", headerName: "Amount", width: 100, filter: true },
+
           {
             field: "transactionDate",
             headerName: "Transaction Date",
@@ -290,10 +296,10 @@ const LedgerEntries = ({ type }) => {
             filter: true,
             valueFormatter: (params) => formatDate(params.value),
           },
-          { field: "amount", headerName: "Amount", width: 100, filter: true },
+
           {
-            field: "accountNo",
-            headerName: "Account No",
+            field: "transactionNo",
+            headerName: "Transaction No",
             width: 150,
             filter: true,
           },
