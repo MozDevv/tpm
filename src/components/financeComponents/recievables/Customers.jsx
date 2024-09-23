@@ -147,6 +147,33 @@ const Customers = () => {
 
   const title = clickedItem ? clickedItem?.customerName : "Create New Customer";
 
+  const [vendorPG, setVendorPG] = React.useState([]);
+
+  const fetchPostingGroups = async () => {
+    try {
+      const res = await apiService.get(
+        financeEndpoints.getCustomerPostingGroup,
+        {
+          "paging.pageSize": 1000,
+        }
+      );
+      setVendorPG(
+        res.data.data.map((item) => {
+          return {
+            id: item.id,
+            name: item.groupCode,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostingGroups();
+  }, []);
+
   const fields = [
     {
       name: "customerName",
@@ -165,7 +192,13 @@ const Customers = () => {
       name: "customerPhoneNumber",
       label: "Customer Phone Number",
       type: "text",
+    },
+    {
+      name: "customerPostingGroupId",
+      label: "Customer Posting Group",
+      type: "select",
       required: true,
+      options: vendorPG,
     },
     {
       name: "countryId",

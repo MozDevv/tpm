@@ -148,6 +148,32 @@ function GovernmentSalary({ id, clickedItem }) {
       fetchDesignations();
     }
   }, [postNames]);
+
+  const [allGrades, setAllGrades] = useState([]);
+
+  const fetchAllGrades = async () => {
+    try {
+      const res = await apiService.get(endpoints.getAllGrades, {
+        "paging.pageSize": 1000,
+      });
+      setAllGrades(
+        res.data.data.map((grade) => ({
+          id: grade.id,
+          name: grade.grade,
+          designationId: grade.designation_id,
+        }))
+      );
+
+      return res.data.data;
+    } catch (error) {
+      console.error("Error fetching Grades:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllGrades();
+  }, []);
+
   const fields = [
     { label: "From Date", value: "fromDate", type: "date" },
     { label: "To Date", value: "toDate", type: "date" },
@@ -168,7 +194,7 @@ function GovernmentSalary({ id, clickedItem }) {
       label: "Grade",
       value: "gradeId",
       type: "select",
-      options: grades,
+      options: allGrades,
     },
     { label: "Salary Amount", value: "salaryAmount", type: "text" },
   ];
@@ -176,6 +202,8 @@ function GovernmentSalary({ id, clickedItem }) {
   return (
     <div>
       <BaseInputTable
+        filterBy={"designationId"}
+        filterCol={"gradeId"}
         title="Government Salary"
         fields={fields}
         id={id}

@@ -188,12 +188,12 @@ const AccountingPeriod = () => {
       type: "switch",
       required: true,
     },
-    {
-      name: "isInventoryPeriodClosed",
-      label: "Is Inventory Period Closed",
-      type: "switch",
-      required: true,
-    },
+    // {
+    //   name: "isInventoryPeriodClosed",
+    //   label: "Is Inventory Period Closed",
+    //   type: "switch",
+    //   required: true,
+    // },
   ];
   useEffect(() => {
     if (postedData) {

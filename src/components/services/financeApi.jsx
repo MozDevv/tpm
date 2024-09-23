@@ -20,6 +20,7 @@ const setAuthorizationHeader = () => {
 
 const financeEndpoints = {
   fetchGlAccounts: "/Accounts/GetGLAccounts",
+  fetchGlAccountsById: (id) => `/Accounts/GetGLAccounts?budgetId=${id}`,
   fetchGlAccountTypes: "/AccountsSetup/GetGLAccountTypes",
   createGlAccount: "/Accounts/AddGLAccount",
   getAccountGroupTypes: "/AccountsSetup/GetAccountGroups",
@@ -145,6 +146,14 @@ const financeEndpoints = {
   deleteGeneralJournalLine: (id) =>
     `/Posting/DeleteGeneralJournalLine?id=${id}`,
   getGeneralJournalLines: (id) => `/Posting/GetJournalLines?JournalId=${id}`,
+
+  postGeneralJournalsToLedger: "/Posting/PostGeneralJournalToLedger",
+
+  //sub-ledgers
+  vendorSubLedger: "/api/Posting/GetVendorSubLedger",
+  customerSubLedger: "/api/Posting/GetCustomerSubLedger",
+  bankSubLedger: "/api/Posting/GetBankSubLedger",
+  glSubLedger: "/api/Posting/GetGeneralLedgerDetail",
 };
 
 export const apiService = {

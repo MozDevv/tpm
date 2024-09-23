@@ -47,6 +47,8 @@ const BaseInputTable = ({
   refetchDataFromAnotherComponent,
   useExcel,
   fetchChildren,
+  filterBy,
+  filterCol,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -570,11 +572,32 @@ const BaseInputTable = ({
           return parseDate(params.newValue);
         };
       } else if (col.type === "select" && col.options && col.options.length) {
-        const options = col.options.map((option) => option.name);
-
         columnDef.cellEditor = "agSelectCellEditor";
-        columnDef.cellEditorParams = {
-          values: options,
+        columnDef.cellEditorParams = (params) => {
+          const { data } = params.node;
+          const dynamicFilterValue = data[filterBy];
+
+          const options = col.options.map((option) => option.id);
+
+          const defaultOptions = col.options.map((option) => option.name);
+
+          const isFilteredColumn = col.value === filterCol;
+
+          if (isFilteredColumn && dynamicFilterValue) {
+            const filteredOptions = col.options.filter(
+              (option) => option[filterBy] === dynamicFilterValue
+            );
+
+            console.log("Filtered options:", col.options, filteredOptions);
+
+            return {
+              values: filteredOptions.map((option) => option.name),
+            };
+          }
+
+          return {
+            values: defaultOptions,
+          };
         };
         columnDef.valueFormatter = (params) => {
           const selectedOption = col.options.find(

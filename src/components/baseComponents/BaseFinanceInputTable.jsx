@@ -568,32 +568,10 @@ const BaseFinanceInputTable = ({
           return parseDate(params.newValue);
         };
       } else if (col.type === "select" && col.options && col.options.length) {
-        // Fetch options based on accountTypeId
-        const fetchOptionsForAccountType = async (accountTypeId) => {
-          try {
-            const res = await apiService.get(
-              financeEndpoints.getAccountByAccountType(accountTypeId)
-            ); // Pass accountTypeId to API
-            if (res.status === 200) {
-              return res.data.data.map((acc) => ({
-                id: acc.id,
-                name: `${acc.accountNo} - ${acc.name}`,
-              }));
-            }
-            console.log(
-              `Options for Account Type: ${accountTypeId}`,
-              res.data.data
-            );
-          } catch (error) {
-            console.error("Error fetching account options:", error);
-            return [];
-          }
-        };
-
         columnDef.cellEditor = "agSelectCellEditor";
         columnDef.cellEditorParams = (params) => {
-          const { data } = params.node; // Access the row data
-          const accountTypeId = data.accountTypeId; // Get accountTypeId from the row data
+          const { data } = params.node;
+          const accountTypeId = data.accountTypeId;
           const accountId = data.accountId; // Get accountId from the row data
 
           // Get the static options (for this column)

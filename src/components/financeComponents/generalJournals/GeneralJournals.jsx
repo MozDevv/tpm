@@ -13,6 +13,9 @@ import GeneralJournalCard from "./GeneralJournalCard";
 import financeEndpoints from "@/components/services/financeApi";
 import { formatDate, parseDate } from "@/utils/dateFormatter";
 import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
+import { Dialog } from "@mui/material";
+import PostGL from "./PostGL";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const columnDefs = [
   {
@@ -71,6 +74,9 @@ const columnDefs = [
     headerName: "Amount",
     field: "amount",
     width: 150,
+    valueFormatter: (params) => {
+      return params.value ? formatNumber(params.value) : "";
+    },
   },
 ];
 
@@ -95,6 +101,7 @@ const GeneralJournals = () => {
     }));
   };
 
+  const [openPostToGL, setOpenPostToGL] = React.useState(false);
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -106,6 +113,7 @@ const GeneralJournals = () => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
+    postToGL: () => setOpenPostToGL(true),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -210,8 +218,31 @@ const GeneralJournals = () => {
     },
   ];
 
+  const [selectedRows, setSelectedRows] = React.useState([]);
+
+  const handleSelectionChange = (selectedRows) => {
+    console.log("Selected rows in ParentComponent:", selectedRows);
+    setSelectedRows(selectedRows);
+  };
+
   return (
     <div className="">
+      <Dialog
+        open={openPostToGL && selectedRows.length > 0}
+        onClose={() => setOpenPostToGL(false)}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          padding: "20px",
+          maxHeight: "90vh",
+        }}
+      >
+        <PostGL
+          selectedRows={selectedRows}
+          setOpenPostGL={setOpenPostToGL}
+          setSelectedRows={setSelectedRows}
+        />
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -252,6 +283,7 @@ const GeneralJournals = () => {
         )}
       </BaseCard>
       <BaseTable
+        onSelectionChange={handleSelectionChange}
         openAction={openAction}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}

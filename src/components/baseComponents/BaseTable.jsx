@@ -41,6 +41,7 @@ const BaseTable = ({
   isMaintenance,
   id,
   openSubGroup,
+  onSelectionChange,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -116,6 +117,7 @@ const BaseTable = ({
       const { data, totalCount, totalPages } = res.data;
 
       const transformedData = transformData(data);
+
       setRowData(transformedData);
       setTotalRecords(totalCount);
       setTotalPages(totalPages);
@@ -135,6 +137,15 @@ const BaseTable = ({
     setSortColumn("");
     //setSortCriteria(1);
     fetchData();
+  };
+
+  const onSelectionChanged = (event) => {
+    const selectedNodes = event.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (onSelectionChange) {
+      onSelectionChange(selectedData);
+    }
   };
 
   const handlePaginationChange = (e, newPage) => {
@@ -368,7 +379,7 @@ const BaseTable = ({
               //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
               // }
               rowSelection="multiple"
-              //  onSelectionChanged={onSelectionChanged}
+              onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
                 console.log("e.data", e.data);
                 setOpenBaseCard(true);

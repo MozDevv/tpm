@@ -1,0 +1,404 @@
+"use client";
+import React from "react";
+
+// Assume this is your transformation function
+import BaseTable from "@/components/baseComponents/BaseTable";
+import BaseCard from "@/components/baseComponents/BaseCard";
+
+import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import endpoints, { apiService } from "@/components/services/setupsApi";
+import { formatDate } from "@/utils/dateFormatter";
+import financeEndpoints from "@/components/services/financeApi";
+
+const LedgerEntries = ({ type }) => {
+  const transformString = (str) => {
+    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
+      return a.toUpperCase();
+    });
+  };
+
+  const handlers = {
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: () => console.log("Edit clicked"),
+    delete: () => console.log("Delete clicked"),
+    reports: () => console.log("Reports clicked"),
+    notify: () => console.log("Notify clicked"),
+  };
+
+  const baseCardHandlers = {
+    create: () => {
+      setOpenBaseCard(true);
+      setClickedItem(null);
+    },
+    edit: (item) => {
+      // setOpenBaseCard(true);
+      // setClickedItem(item);
+    },
+    delete: (item) => {
+      //  setOpenBaseCard(true);
+      //  setClickedItem(item);
+    },
+  };
+
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
+
+  const title = clickedItem ? "Legder Entry" : "Create New Legder Entry";
+
+  const getSubLedgerEndpoint = (type) => {
+    switch (type) {
+      case "General Ledger Entries":
+        return financeEndpoints.glSubLedger;
+      case "Vendor Ledger Entries":
+        return financeEndpoints.vendorSubLedger;
+      case "Customer Ledger Entries":
+        return financeEndpoints.customerSubLedger;
+      case "Bank Account Ledger Entries":
+        return financeEndpoints.bankSubLedger;
+      default:
+        throw new Error(`Unknown ledger type: ${type}`);
+    }
+  };
+
+  const getFieldsByType = (type) => {
+    switch (type) {
+      case "Vendor Ledger Entries":
+      case "Customer Ledger Entries":
+        return [
+          {
+            name: "transactionNo",
+            label: "Transaction No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "documentNo",
+            label: "Document No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "externalDocumentNo",
+            label: "External Document No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "accountId",
+            label: "Account ID",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "transactionDate",
+            label: "Transaction Date",
+            type: "date",
+            required: true,
+          },
+          { name: "amount", label: "Amount", type: "number", required: true },
+          {
+            name: "description",
+            label: "Description",
+            type: "text",
+            required: true,
+          },
+        ];
+
+      case "Bank Account Ledger Entries":
+        return [
+          {
+            name: "transactionNo",
+            label: "Transaction No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "documentNo",
+            label: "Document No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "externalDocumentNo",
+            label: "External Document No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "glBankCode",
+            label: "GL Bank Code",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "transactionDate",
+            label: "Transaction Date",
+            type: "date",
+            required: true,
+          },
+          { name: "amount", label: "Amount", type: "number", required: true },
+          {
+            name: "description",
+            label: "Description",
+            type: "text",
+            required: true,
+          },
+        ];
+
+      case "General Ledger Entries":
+        return [
+          {
+            name: "transactionNo",
+            label: "Transaction No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "documentNo",
+            label: "Document No",
+            type: "text",
+            required: true,
+          },
+          {
+            name: "transactionDate",
+            label: "Transaction Date",
+            type: "date",
+            required: true,
+          },
+          { name: "amount", label: "Amount", type: "number", required: true },
+          {
+            name: "accountNo",
+            label: "Account No",
+            type: "text",
+            required: true,
+          },
+        ];
+
+      default:
+        return [];
+    }
+  };
+
+  const getColumnDefsByType = (type) => {
+    switch (type) {
+      case "Vendor Ledger Entries":
+      case "Customer Ledger Entries":
+        return [
+          {
+            field: "transactionNo",
+            headerName: "Transaction No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "documentNo",
+            headerName: "Document No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "externalDocumentNo",
+            headerName: "External Document No",
+            width: 200,
+            filter: true,
+          },
+          {
+            field: "accountId",
+            headerName: "Account ID",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "transactionDate",
+            headerName: "Transaction Date",
+            width: 150,
+            filter: true,
+            valueFormatter: (params) => formatDate(params.value),
+          },
+          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "description",
+            headerName: "Description",
+            width: 250,
+            filter: true,
+          },
+        ];
+
+      case "Bank Account Ledger Entries":
+        return [
+          {
+            field: "transactionNo",
+            headerName: "Transaction No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "documentNo",
+            headerName: "Document No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "externalDocumentNo",
+            headerName: "External Document No",
+            width: 200,
+            filter: true,
+          },
+          {
+            field: "glBankCode",
+            headerName: "GL Bank Code",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "transactionDate",
+            headerName: "Transaction Date",
+            width: 150,
+            filter: true,
+            valueFormatter: (params) => formatDate(params.value),
+          },
+          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "description",
+            headerName: "Description",
+            width: 250,
+            filter: true,
+          },
+        ];
+
+      case "General Ledger Entries":
+        return [
+          {
+            field: "transactionNo",
+            headerName: "Transaction No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "documentNo",
+            headerName: "Document No",
+            width: 150,
+            filter: true,
+          },
+          {
+            field: "transactionDate",
+            headerName: "Transaction Date",
+            width: 150,
+            filter: true,
+            valueFormatter: (params) => formatDate(params.value),
+          },
+          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "accountNo",
+            headerName: "Account No",
+            width: 150,
+            filter: true,
+          },
+        ];
+
+      default:
+        return [];
+    }
+  };
+
+  const transformDataByType = (data) => {
+    return data.map((item, index) => {
+      switch (type) {
+        case "Vendor Ledger Entries":
+        case "Customer Ledger Entries":
+          return {
+            no: index + 1,
+            id: item.id,
+            transactionNo: item.transactionNo,
+            documentNo: item.documentNo,
+            externalDocumentNo: item.externalDocumentNo,
+            accountId: item.accountId || item.accountNo,
+            transactionDate: item.transactionDate,
+            amount: item.amount,
+            description: transformString(item.description),
+          };
+
+        case "Bank Account Ledger Entries":
+          return {
+            no: index + 1,
+            id: item.id,
+            transactionNo: item.transactionNo,
+            documentNo: item.documentNo,
+            externalDocumentNo: item.externalDocumentNo,
+            glBankCode: item.glBankCode,
+            transactionDate: item.transactionDate,
+            amount: item.amount,
+            description: transformString(item.description),
+          };
+
+        case "General Ledger Entries":
+          return {
+            no: index + 1,
+            id: item.id,
+            transactionNo: item.transactionNo,
+            documentNo: item.documentNo,
+            transactionDate: item.transactionDate,
+            amount: item.amount,
+            accountNo: item.accountNo,
+          };
+
+        default:
+          return {};
+      }
+    });
+  };
+
+  return (
+    <div className="">
+      <BaseCard
+        openBaseCard={openBaseCard}
+        setOpenBaseCard={setOpenBaseCard}
+        handlers={baseCardHandlers}
+        title={title}
+        clickedItem={clickedItem}
+        isUserComponent={false}
+        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+        deleteApiService={apiService.post}
+      >
+        {clickedItem ? (
+          <BaseInputCard
+            fields={getFieldsByType(type)}
+            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
+          />
+        ) : (
+          <BaseInputCard
+            fields={getFieldsByType(type)}
+            apiEndpoint={endpoints.createDepartment}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
+          />
+        )}
+      </BaseCard>
+      <BaseTable
+        openBaseCard={openBaseCard}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        setOpenBaseCard={setOpenBaseCard}
+        columnDefs={getColumnDefsByType(type)}
+        fetchApiEndpoint={getSubLedgerEndpoint(type)}
+        fetchApiService={apiService.get}
+        transformData={transformDataByType}
+        pageSize={30}
+        handlers={handlers}
+        breadcrumbTitle={type}
+        currentTitle={type}
+      />
+    </div>
+  );
+};
+
+export default LedgerEntries;

@@ -26,9 +26,12 @@ function GLAccounts({ clickedBudget }) {
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 1000,
-      });
+      const response = await apiService.get(
+        financeEndpoints.fetchGlAccountsById(clickedBudget.id),
+        {
+          "paging.pageSize": 1000,
+        }
+      );
 
       setRowData(response.data.data);
     } catch (error) {
@@ -408,7 +411,7 @@ function GLAccounts({ clickedBudget }) {
           />
         )}
       </BaseCard>
-      <TableContainer className="table-container ">
+      <TableContainer className="table-container">
         <Table className="table pl-2">
           <TableHead className="table-head">
             <TableRow>

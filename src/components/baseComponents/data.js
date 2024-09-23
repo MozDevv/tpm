@@ -69,6 +69,10 @@ export const menuItems = [
             title: "General Budget",
             path: "/pensions/finance/general-ledger/charts-of-accounts",
           },
+          {
+            title: "General Ledger Entries",
+            path: "/pensions/finance/general-ledger/ledger-entries",
+          },
         ],
       },
       {
@@ -77,6 +81,10 @@ export const menuItems = [
           {
             title: "Bank Account",
             path: "/pensions/finance/cash-management/bank-account",
+          },
+          {
+            title: "Bank Account Ledger Entries",
+            path: "/pensions/finance/cash-management/ledger-entries",
           },
         ],
       },
@@ -97,6 +105,10 @@ export const menuItems = [
             title: "Customers",
             path: "/pensions/finance/customers",
           },
+          {
+            title: "Customer Ledger Entries",
+            path: "/pensions/finance/recievables/ledger-entries",
+          },
         ],
       },
       {
@@ -106,6 +118,10 @@ export const menuItems = [
           {
             title: "Vendors",
             path: "/pensions/finance/vendor",
+          },
+          {
+            title: "Vendor Ledger Entries",
+            path: "/pensions/finance/payables/ledger-entries",
           },
         ],
       },

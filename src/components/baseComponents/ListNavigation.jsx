@@ -21,6 +21,8 @@ import {
   FormatListNumbered,
   KeyboardReturn,
   Undo,
+  IosShare,
+  PostAdd,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -69,6 +71,7 @@ const ListNavigation = ({ handlers, status }) => {
       requiredPermissions: ["preclaims.notify.prospective_pensioner"],
       status: [0],
     },
+
     {
       name: "Approve",
       icon: CheckCircle,
@@ -158,6 +161,12 @@ const ListNavigation = ({ handlers, status }) => {
       name: "Numbering Sections",
       icon: FormatListNumbered,
       action: "numberingSections",
+      requiredPermissions: [],
+    },
+    {
+      name: "Post to General Ledger",
+      icon: PostAdd,
+      action: "postToGL",
       requiredPermissions: [],
     },
   ];

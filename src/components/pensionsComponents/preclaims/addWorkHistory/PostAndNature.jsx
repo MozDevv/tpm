@@ -183,7 +183,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
       type: "select",
       options: [
         { id: "P", name: "Pensionable" },
-        { id: "Prob", name: "Probation" },
+        { id: "Pro", name: "Probation" },
         { id: "T", name: "Temporary" },
         { id: "C", name: "Contract" },
       ],

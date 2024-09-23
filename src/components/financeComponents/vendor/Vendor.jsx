@@ -43,6 +43,7 @@ const columnDefs = [
     filter: true,
     width: 100,
   },
+
   // {
   //   field: "countryId",
   //   headerName: "Country",
@@ -69,12 +70,13 @@ const Vendor = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      id: item.departmentId,
+      id: item.id,
       vendorName: item.vendorName,
       vendorEmail: item.vendorEmail,
       vendorPhoneNumber: item.vendorPhoneNumber,
       countryId: item.countryId,
       cityId: item.cityId,
+      vendorPostingGroupId: item.vendorPostingGroupId,
 
       // roles: item.roles,
     }));
@@ -147,6 +149,33 @@ const Vendor = () => {
 
   const title = clickedItem ? clickedItem?.vendorName : "Create New Vendor";
 
+  const [vendorPG, setVendorPG] = React.useState([]);
+
+  const fetchPostingGroups = async () => {
+    try {
+      const res = await apiService.get(
+        financeEndpoints.getVendorPostingGroups,
+        {
+          "paging.pageSize": 1000,
+        }
+      );
+      setVendorPG(
+        res.data.data.map((item) => {
+          return {
+            id: item.id,
+            name: item.groupName,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostingGroups();
+  }, []);
+
   const fields = [
     {
       name: "vendorName",
@@ -165,6 +194,13 @@ const Vendor = () => {
       label: "Vendor Phone Number",
       type: "text",
       required: true,
+    },
+    {
+      name: "vendorPostingGroupId",
+      label: "Vendor Posting Group",
+      type: "select",
+      required: true,
+      options: vendorPG,
     },
     {
       name: "countryId",

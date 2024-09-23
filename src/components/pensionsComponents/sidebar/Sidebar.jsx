@@ -184,6 +184,10 @@ function Sidebar() {
               title: "General Budget",
               path: "/pensions/finance/general-ledger/general-budget",
             },
+            {
+              title: "General Ledger Entries",
+              path: "/pensions/finance/general-ledger/ledger-entries",
+            },
           ],
         },
         {
@@ -192,6 +196,10 @@ function Sidebar() {
             {
               title: "Bank Account",
               path: "/pensions/finance/cash-management/bank-account",
+            },
+            {
+              title: "Bank Account Ledger Entries",
+              path: "/pensions/finance/cash-management/ledger-entries",
             },
           ],
         },
@@ -202,6 +210,10 @@ function Sidebar() {
               title: "Customers",
               path: "/pensions/finance/customers",
             },
+            {
+              title: "Customer Ledger Entries",
+              path: "/pensions/finance/recievables/ledger-entries",
+            },
           ],
         },
         {
@@ -210,6 +222,10 @@ function Sidebar() {
             {
               title: "Vendors",
               path: "/pensions/finance/vendor",
+            },
+            {
+              title: "Vendor Ledger Entries",
+              path: "/pensions/finance/payables/ledger-entries",
             },
           ],
         },

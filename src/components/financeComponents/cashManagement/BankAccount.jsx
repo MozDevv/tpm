@@ -138,6 +138,30 @@ const BankAccount = () => {
     ? `${clickedItem?.bankAccountName}`
     : "Create New Bank Account";
 
+  const [vendorPG, setVendorPG] = React.useState([]);
+
+  const fetchPostingGroups = async () => {
+    try {
+      const res = await apiService.get(financeEndpoints.getBankPostingGroups, {
+        "paging.pageSize": 1000,
+      });
+      setVendorPG(
+        res.data.data.map((item) => {
+          return {
+            id: item.id,
+            name: item.groupName,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostingGroups();
+  }, []);
+
   const fields = [
     {
       name: "bankAccountName",
@@ -158,6 +182,13 @@ const BankAccount = () => {
       required: true,
     },
     { name: "isBlocked", label: "Is Blocked", type: "switch", required: true },
+    {
+      name: "bankPostingGroupId",
+      label: "Bank Posting Group",
+      type: "select",
+      required: true,
+      options: vendorPG,
+    },
     {
       name: "bank_id",
       label: "Bank",
