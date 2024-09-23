@@ -76,7 +76,13 @@ const BaseTable = ({
 
   useEffect(() => {
     fetchData();
-  }, [pageNumber, openBaseCard, openAction, openPostToGL]);
+  }, [pageNumber, openBaseCard, openAction]);
+
+  useEffect(() => {
+    if (!openPostToGL) {
+      fetchData();
+    }
+  }, [openPostToGL]);
 
   const handleFilters = async () => {
     const filter = {

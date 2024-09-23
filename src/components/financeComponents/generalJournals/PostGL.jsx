@@ -1,7 +1,7 @@
 import { parseDate } from "@/utils/dateFormatter";
 import { Button, DialogActions, IconButton, Typography } from "@mui/material";
 import { Alert, List, message } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -13,12 +13,14 @@ import {
 } from "@mui/material";
 import { formatNumber } from "@/utils/numberFormatters";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
+import { CheckCircleOutline } from "@mui/icons-material";
 
 function PostGL({
   selectedRows,
   setSelectedRows,
   setOpenPostGL,
   setOpenBaseCard,
+  clickedItem,
 }) {
   const getDocumentName = (documentType) => {
     const options = [
@@ -39,6 +41,12 @@ function PostGL({
     status: false,
     message: "",
   });
+
+  useEffect(() => {
+    if (clickedItem) {
+      setSelectedRows([clickedItem]);
+    }
+  }, [clickedItem, setSelectedRows]);
   const handlePostToGL = async () => {
     const selectedJournals = selectedRows.map((journal) => {
       return {
@@ -153,8 +161,9 @@ function PostGL({
           color="primary"
           variant="contained"
           size="small"
+          startIcon={<CheckCircleOutline />}
         >
-          Post to GL
+          Post Journal
         </Button>
       </DialogActions>
     </div>

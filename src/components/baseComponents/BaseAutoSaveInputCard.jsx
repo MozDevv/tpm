@@ -294,8 +294,9 @@ const BaseAutoSaveInputCard = ({
             ...formData,
             id: recordId,
           });
-          if (res.data && res.data.succeeded) {
+          if (res.data.succeeded) {
             // message.success("Record updated successfully");
+            await getInitialData(recordId);
           }
         }
       } catch (error) {

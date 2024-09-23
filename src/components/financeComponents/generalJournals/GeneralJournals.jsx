@@ -13,7 +13,7 @@ import GeneralJournalCard from "./GeneralJournalCard";
 import financeEndpoints from "@/components/services/financeApi";
 import { formatDate, parseDate } from "@/utils/dateFormatter";
 import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
-import { Dialog } from "@mui/material";
+import { Dialog, Select } from "@mui/material";
 import PostGL from "./PostGL";
 import { formatNumber } from "@/utils/numberFormatters";
 
@@ -113,7 +113,7 @@ const GeneralJournals = () => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
-    postToGL: () => setOpenPostToGL(true),
+    postToGL: () => selectedRows.length > 0 && setOpenPostToGL(true),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -237,7 +237,7 @@ const GeneralJournals = () => {
   return (
     <div className="">
       <Dialog
-        open={openPostToGL && selectedRows.length > 0}
+        open={openPostToGL}
         onClose={() => setOpenPostToGL(false)}
         fullWidth
         maxWidth="sm"
@@ -247,6 +247,7 @@ const GeneralJournals = () => {
         }}
       >
         <PostGL
+          clickedItem={clickedItem}
           setOpenBaseCard={setOpenBaseCard}
           selectedRows={selectedRows}
           setOpenPostGL={setOpenPostToGL}
@@ -273,6 +274,7 @@ const GeneralJournals = () => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            setClickedItem={setClickedItem}
             transformData={transformData}
           />
         ) : (
