@@ -136,7 +136,7 @@ function PostGL({ selectedRows, setSelectedRows, setOpenPostGL }) {
             setOpenPostGL(false);
             setSelectedRows([]);
           }}
-          color="warning"
+          color="error"
           size="small"
           variant="outlined"
         >

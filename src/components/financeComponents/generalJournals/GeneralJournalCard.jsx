@@ -146,6 +146,7 @@ function GeneralJournalCard({
   ];
 
   const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
+
   return (
     <div className="p-2   mt-2">
       <div>
@@ -184,10 +185,11 @@ function GeneralJournalCard({
                     idLabel="journalId"
                     getApiService={apiService.get}
                     postApiService={apiService.post}
-                    putApiService={apiService.put}
+                    putApiService={apiService.post}
                     getEndpoint={financeEndpoints.getGeneralJournalLines(
                       clickedItem?.id
                     )}
+                    deleteEndpoint={financeEndpoints.deleteGeneralJournalLine}
                     setTotalAmmounts={setTotalAmmounts}
                     postEndpoint={financeEndpoints.addGeneralJournalLine}
                     putEndpoint={financeEndpoints.editGeneralJournalLine}

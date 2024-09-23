@@ -30,6 +30,7 @@ import { VisuallyHiddenInput } from "@/utils/handyComponents";
 import { apiService } from "../services/financeApi";
 import financeEndpoints from "../services/financeApi";
 import { de } from "@faker-js/faker";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const BaseFinanceInputTable = ({
   fields = [],
@@ -625,6 +626,25 @@ const BaseFinanceInputTable = ({
           return params.value.startsWith("0")
             ? defaultPhoneNumberValue + params.value.slice(1)
             : params.value;
+        };
+      } else if (col.type === "amount") {
+        console.log("Column Definition", columnDef);
+
+        columnDef.valueFormatter = (params) => {
+          console.log(
+            "Value Formatter Called with:",
+            formatNumber(params.value)
+          );
+          if (!params.value) return "";
+          return formatNumber(params.value);
+        };
+        columnDef.valueParser = (params) => {
+          return parseFloat(params.newValue) || 0;
+        };
+
+        columnDef.cellStyle = {
+          textAlign: "left",
+          width: "100%",
         };
       }
 

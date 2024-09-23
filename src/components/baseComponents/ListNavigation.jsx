@@ -164,7 +164,7 @@ const ListNavigation = ({ handlers, status }) => {
       requiredPermissions: [],
     },
     {
-      name: "Post to General Ledger",
+      name: "Post to Ledger",
       icon: PostAdd,
       action: "postToGL",
       requiredPermissions: [],

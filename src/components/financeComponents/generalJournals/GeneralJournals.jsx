@@ -118,6 +118,7 @@ const GeneralJournals = () => {
 
   const [openAction, setOpenAction] = React.useState(false);
   const [dialogType, setDialogType] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
 
   const baseCardHandlers = {
     create: () => {
@@ -136,10 +137,18 @@ const GeneralJournals = () => {
       setDialogType("branch");
       setOpenAction(true);
     },
+
+    ...(clickedItem && {
+      postToGL: () => {
+        if (selectedRows.length === 0 && clickedItem) {
+          setSelectedRows([clickedItem]);
+        }
+        setOpenPostToGL(true);
+      },
+    }),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
     ? `${clickedItem.documentNo}`
