@@ -4,7 +4,7 @@ import React from "react";
 function page() {
   return (
     <div>
-      <LedgerEntries type={"Bank Account Ledger Entries"} />
+      <LedgerEntries type="Bank Account Ledger Entries" />
     </div>
   );
 }
