@@ -156,7 +156,6 @@ function GeneralJournalCard({
             <div className="flex flex-col">
               <div className="flex-grow">
                 {" "}
-                {JSON.stringify(clickedItem)}
                 {/* This allows the card to grow */}
                 <BaseAutoSaveInputCard
                   setClickedItem={setClickedItem}
