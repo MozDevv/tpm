@@ -27,7 +27,8 @@ import { useMda } from "@/context/MdaContext";
 import { formatNumber } from "@/utils/numberFormatters";
 import BaseAmountInput from "./BaseAmountInput";
 import "./autosave.css";
-import { Done } from "@mui/icons-material";
+import { Close, Done } from "@mui/icons-material";
+import { truncateMessage } from "@/utils/handyFuncs";
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -272,8 +273,10 @@ const BaseAutoSaveInputCard = ({
 
             await getInitialData(res.data.data);
           } else if (res.data.succeeded === false && res.data.messages[0]) {
-            message.error(res.data.messages[0]);
+            setSaving(3);
+            message.error(truncateMessage(res.data.messages[0], 100));
           } else {
+            setSaving(3);
             message.error("Error saving record");
           }
         } else {
@@ -288,9 +291,15 @@ const BaseAutoSaveInputCard = ({
             setSaving(2);
             // message.success("Record updated successfully");
             await getInitialData(recordId);
+          } else if (res.data.succeeded === false && res.data.messages[0]) {
+            setSaving(3);
+            message.error(truncateMessage(res.data.messages[0], 100));
+          } else {
+            setSaving(3);
           }
         }
       } catch (error) {
+        setSaving(3);
         console.error("Error in auto-save:", error);
       } finally {
       }
@@ -342,6 +351,20 @@ const BaseAutoSaveInputCard = ({
               }}
             />
             <p className="text-primary text-sm font-medium">Saved</p>
+          </div>
+        </div>
+      ) : saving === 3 ? (
+        <div className="flex justify-between w-full mt-[-10px]  pr-6">
+          <div className=""></div>
+          <div className="flex flex-row gap-2 items-center">
+            <Close
+              sx={{
+                fontSize: "20px",
+                color: "crimson",
+                marginRight: "-3px",
+              }}
+            />
+            <p className="text-[crimson] text-sm font-medium">Not Saved</p>
           </div>
         </div>
       ) : (
