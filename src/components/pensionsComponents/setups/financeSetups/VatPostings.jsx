@@ -51,6 +51,7 @@ const VatPostings = () => {
       field: "vatIdentifier",
       headerName: "Vat Identifier",
       filter: true,
+      hide: true,
     },
     {
       field: "vatPercentage",
@@ -257,6 +258,12 @@ const VatPostings = () => {
       required: true,
       options: productPostings,
     },
+    {
+      name: "description",
+      label: "Description",
+      type: "text",
+      required: true,
+    },
 
     {
       name: "vatIdentifier",
@@ -290,12 +297,7 @@ const VatPostings = () => {
       options: glAccounts,
       table: true,
     },
-    {
-      name: "description",
-      label: "Description",
-      type: "text",
-      required: true,
-    },
+
     {
       name: "purchaseVATAccountId",
       label: "Purchase VAT Account",

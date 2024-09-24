@@ -20,6 +20,29 @@ const GeneralPostingGroups = () => {
       headerClass: "prefix-header",
       width: 90,
       filter: true,
+      pinned: "left",
+    },
+    {
+      field: "generalProductPostingGroupId",
+      headerName: "General Product Posting Group",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) =>
+        generalProductAcc.find(
+          (acc) => acc.id === params.data.generalProductPostingGroupId
+        ).name,
+    },
+    {
+      field: "generalBusinessPostingGroupId",
+      headerName: "General Business Posting Group",
+      headerClass: "prefix-header",
+      filter: true,
+      width: 250,
+      valueGetter: (params) =>
+        generalBusinessAcc.find(
+          (acc) => acc.id === params.data.generalBusinessPostingGroupId
+        ).name,
     },
     {
       field: "groupName",
@@ -76,28 +99,6 @@ const GeneralPostingGroups = () => {
       width: 250,
       valueGetter: (params) =>
         getAccountName(params.data.purchaseCreditMemoAccount),
-    },
-    {
-      field: "generalProductPostingGroupId",
-      headerName: "General Product Posting Group",
-      headerClass: "prefix-header",
-      filter: true,
-      width: 250,
-      valueGetter: (params) =>
-        generalProductAcc.find(
-          (acc) => acc.id === params.data.generalProductPostingGroupId
-        ).name,
-    },
-    {
-      field: "generalBusinessPostingGroupId",
-      headerName: "General Business Posting Group",
-      headerClass: "prefix-header",
-      filter: true,
-      width: 250,
-      valueGetter: (params) =>
-        generalBusinessAcc.find(
-          (acc) => acc.id === params.data.generalBusinessPostingGroupId
-        ).name,
     },
   ];
 
@@ -242,6 +243,20 @@ const GeneralPostingGroups = () => {
 
   const fields = [
     {
+      name: "generalProductPostingGroupId",
+      label: "General Product Posting Group",
+      type: "select",
+      required: true,
+      options: generalProductAcc,
+    },
+    {
+      name: "generalBusinessPostingGroupId",
+      label: "General Business Posting Group",
+      type: "select",
+      required: true,
+      options: generalBusinessAcc,
+    },
+    {
       name: "description",
       label: "Description",
       type: "text",
@@ -280,20 +295,7 @@ const GeneralPostingGroups = () => {
       options: glAccounts,
       table: true,
     },
-    {
-      name: "generalProductPostingGroupId",
-      label: "General Product Posting Group",
-      type: "select",
-      required: true,
-      options: generalProductAcc,
-    },
-    {
-      name: "generalBusinessPostingGroupId",
-      label: "General Business Posting Group",
-      type: "select",
-      required: true,
-      options: generalBusinessAcc,
-    },
+
     { name: "viewAll", label: "View All", type: "switch", required: true },
   ];
 
