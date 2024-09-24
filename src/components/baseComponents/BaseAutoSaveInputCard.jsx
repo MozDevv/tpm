@@ -266,10 +266,15 @@ const BaseAutoSaveInputCard = ({
         if (recordId === null || recordId === undefined) {
           res = await postApiFunction(apiEndpoint, formData);
           if (res.data && res.data.succeeded) {
+            setSaving(2);
             setRecordId(res.data.data);
             // message.success("Record created successfully");
 
             await getInitialData(res.data.data);
+          } else if (res.data.succeeded === false && res.data.messages[0]) {
+            message.error(res.data.messages[0]);
+          } else {
+            message.error("Error saving record");
           }
         } else {
           console.log("Record ID exists, updating...");
@@ -280,6 +285,7 @@ const BaseAutoSaveInputCard = ({
             id: recordId,
           });
           if (res.data.succeeded) {
+            setSaving(2);
             // message.success("Record updated successfully");
             await getInitialData(recordId);
           }
@@ -287,7 +293,6 @@ const BaseAutoSaveInputCard = ({
       } catch (error) {
         console.error("Error in auto-save:", error);
       } finally {
-        setSaving(2);
       }
     }
   };

@@ -20,10 +20,45 @@ function ChartsOfAccounts() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [subGroups, setSubGroups] = useState([]);
 
+  function calculateTotals(data) {
+    let totals = {};
+    let currentTotal = 0;
+    let currentBudgetTotal = 0;
+    let sectionKey = null;
+
+    data.forEach((item) => {
+      if (item.accountTypeName === "BEGIN_TOTAL") {
+        // Initialize totals when encountering a BEGIN_TOTAL
+        sectionKey = item.id;
+        currentTotal = 0;
+        currentBudgetTotal = 0;
+      }
+
+      if (item.accountTypeName === "POSTING" && sectionKey) {
+        // Accumulate totals for POSTING accounts
+        currentTotal += item.amount || 0;
+        currentBudgetTotal += item.budgetAmount || 0;
+      }
+
+      if (item.accountTypeName === "END_TOTAL" && sectionKey) {
+        // Store totals when encountering an END_TOTAL
+        totals[item.id] = {
+          totalAmount: currentTotal,
+          totalBudget: currentBudgetTotal,
+        };
+        sectionKey = null; // Reset section key
+      }
+    });
+
+    return totals;
+  }
+
+  const totals = calculateTotals(rowData);
+
   const colDefs = [
     {
       headerName: "Account No.",
-      field: "accountNo",
+      field: "glAccountNo",
       width: 120,
       pinned: "left",
 
@@ -38,7 +73,7 @@ function ChartsOfAccounts() {
     },
     {
       headerName: "Account Name",
-      field: "accountName",
+      field: "glAccountName",
 
       width: 350,
       cellStyle: ({ data }) => ({
@@ -60,11 +95,20 @@ function ChartsOfAccounts() {
       width: 150,
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
+        const rowId = params.data.id;
+
+        if (accountType === "END_TOTAL") {
+          return formatNumber(totals[rowId]?.totalAmount || 0);
+        }
+
         return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
           ? ""
           : formatNumber(params.value);
       },
-      cellStyle: { textAlign: "right" },
+      cellStyle: ({ data }) => ({
+        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
+        textAlign: "right",
+      }),
     },
     {
       headerName: "Budget Amount",
@@ -72,24 +116,43 @@ function ChartsOfAccounts() {
       width: 150,
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
+        const rowId = params.data.id;
+
+        if (accountType === "END_TOTAL") {
+          return formatNumber(totals[rowId]?.totalBudget || 0);
+        }
+
         return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
           ? ""
           : formatNumber(params.value);
       },
-      cellStyle: { textAlign: "right" },
+      cellStyle: ({ data }) => ({
+        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
+        textAlign: "right",
+      }),
     },
     {
       headerName: "Budget Balance",
       field: "budgetBalance",
       width: 150,
-
-      cellStyle: { textAlign: "right" },
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
+        const rowId = params.data.id;
+
+        if (accountType === "END_TOTAL") {
+          const totalAmount = totals[rowId]?.totalAmount || 0;
+          const totalBudget = totals[rowId]?.totalBudget || 0;
+          return formatNumber(totalBudget - totalAmount);
+        }
+
         return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
           ? ""
           : formatNumber(params.value);
       },
+      cellStyle: ({ data }) => ({
+        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
+        textAlign: "right",
+      }),
     },
     { headerName: "Account Category", field: "subGroupName" },
     { headerName: "Account Type Name", field: "accountTypeName" },
@@ -108,6 +171,8 @@ function ChartsOfAccounts() {
 
       const accounts = response.data.data.map((account) => ({
         ...account,
+        glAccountName: account.accountName,
+        glAccountNo: account.accountNo,
         budgetBalance: (account.budgetAmount || 0) - (account.amount || 0),
       }));
       setRowData(accounts);
@@ -189,12 +254,12 @@ function ChartsOfAccounts() {
   };
   const fields = [
     {
-      name: "accountName",
+      name: "glAccountName",
       label: "Account Name",
       type: "text",
     },
     {
-      name: "accountNo",
+      name: "glAccountNo",
       label: "Account No",
       type: "text",
     },
@@ -225,7 +290,12 @@ function ChartsOfAccounts() {
     {
       name: "glAccountType",
       label: "Account Sub Category",
-      type: "text",
+      type: "autocomplete",
+      options: accountTypes.map((type) => ({
+        id: type.value,
+        name: type.name,
+      })),
+      required: true,
     },
     {
       name: "accountTypeName",
@@ -307,8 +377,8 @@ function ChartsOfAccounts() {
   const transformData = (data) => {
     return data.map((item) => ({
       id: item.id,
-      accountNo: item.accountNo,
-      accountName: item.accountName,
+      // accountNo: item.accountNo,
+      // accountName: item.accountName,
       amount: item.amount,
       budgetAmount: item.budgetAmount,
       budgetBalance: item.budgetBalance,
@@ -316,6 +386,8 @@ function ChartsOfAccounts() {
       accountTypeName: item.accountTypeName,
       isDirectPosting: item.isDirectPosting,
       isReconciliation: item.isReconciliation,
+      glAccountName: item.accountName,
+      glAccountNo: item.accountNo,
     }));
   };
 
@@ -336,7 +408,7 @@ function ChartsOfAccounts() {
           deleteApiService={apiService.delete}
           glAccountName={
             clickedItem
-              ? `${clickedItem?.accountNo} - ${clickedItem?.accountName}`
+              ? `${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`
               : "Create New GL Account"
           }
         >
