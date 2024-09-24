@@ -65,6 +65,7 @@ const BankAccount = () => {
         bankBranchId: item.bankBranchId,
         branchName: branch ? branch.name : "",
         bank_id: branch ? branch.bankId : "",
+        bankPostingGroupId: item.bankPostingGroupId,
 
         // roles: item.roles,
       };

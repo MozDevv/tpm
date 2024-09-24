@@ -35,28 +35,17 @@ const BaseAutoSaveInputCard = ({
   postApiFunction,
   clickedItem,
   setOpenBaseCard,
-  useRequestBody,
-  setReFetchData,
   inputTitle,
-  id,
-  idLabel,
   setSelectedBank,
-  setOpenAction,
-  isBranch,
   selectedLabel,
   setSelectedValue,
-  fetchData,
-  setPostedData,
   banks,
-  refreshData,
   getApiEndpoint,
   getApiFunction,
   updateApiEndpoint,
   putApiFunction,
   transformData,
-  openBaseCard,
   setClickedItem,
-  setFields,
   fieldName,
   options,
   filterKey,
@@ -201,7 +190,6 @@ const BaseAutoSaveInputCard = ({
       }
       // KRA PIN validation
       if (field.name === "kra_pin" && value) {
-        const kraPinPattern = /^[A-Z]{1}[0-9]{9}[A-Z]{1}$/;
         if (value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
         }
@@ -209,7 +197,6 @@ const BaseAutoSaveInputCard = ({
 
       // National ID validation
       if (field.name === "national_id" && value) {
-        const nationalIdPattern = /^[0-9]{8}$/; // Adjust the pattern as per your requirements
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
         }
@@ -225,7 +212,6 @@ const BaseAutoSaveInputCard = ({
 
       // Phone number validation
       if (field.name === "phone_number" && value) {
-        const phoneNumberPattern = /^\+?[0-9]{10,13}$/; // Adjust pattern for your locale
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not a valid phone number`;
         }
@@ -267,10 +253,6 @@ const BaseAutoSaveInputCard = ({
     }
   }, [formData.total_emoluments]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
   const [recordId, setRecordId] = useState(clickedItem ? clickedItem.id : null);
   const [saving, setSaving] = useState(false);
 
@@ -291,7 +273,7 @@ const BaseAutoSaveInputCard = ({
           }
         } else {
           console.log("Record ID exists, updating...");
-          console.log("PUT API Endpoint: ", updateApiEndpoint);
+          console.log("PUT API Endp oint: ", updateApiEndpoint);
 
           res = await putApiFunction(updateApiEndpoint, {
             ...formData,

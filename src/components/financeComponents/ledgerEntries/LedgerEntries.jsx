@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -7,8 +7,9 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import { formatDate, parseDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const LedgerEntries = ({ type }) => {
   const transformString = (str) => {
@@ -18,35 +19,37 @@ const LedgerEntries = ({ type }) => {
   };
 
   const handlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
+    // create: () => {
+    //   setOpenBaseCard(true);
+    //   setClickedItem(null);
+    // },
+    // edit: () => console.log("Edit clicked"),
+    // delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+    // create: () => {
+    //   setOpenBaseCard(true);
+    //   setClickedItem(null);
+    // },
+    // edit: (item) => {
+    //   // setOpenBaseCard(true);
+    //   // setClickedItem(item);
+    // },
+    // delete: (item) => {
+    //   //  setOpenBaseCard(true);
+    //   //  setClickedItem(item);
+    // },
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Legder Entry" : "Create New Legder Entry";
+  const title = clickedItem
+    ? clickedItem?.documentNo
+    : "Create New Legder Entry";
 
   const getSubLedgerEndpoint = (type) => {
     switch (type) {
@@ -88,9 +91,10 @@ const LedgerEntries = ({ type }) => {
           },
           {
             name: "accountId",
-            label: "Account ID",
-            type: "text",
+            label: "Account",
+            type: "select",
             required: true,
+            options: allOptions,
           },
           {
             name: "transactionDate",
@@ -138,6 +142,7 @@ const LedgerEntries = ({ type }) => {
             label: "Transaction Date",
             type: "date",
             required: true,
+            disabled: true,
           },
           { name: "amount", label: "Amount", type: "number", required: true },
           {
@@ -182,6 +187,33 @@ const LedgerEntries = ({ type }) => {
     }
   };
 
+  const [allOptions, setAllOptions] = React.useState([]);
+  const fetchNewOptions = async () => {
+    try {
+      const res = await apiService.get(financeEndpoints.getAccounts, {
+        "paging.pageSize": 2000,
+      }); // Pass accountTypeId to the endpoint
+      if (res.status === 200) {
+        setAllOptions(
+          res.data.data.map((acc) => {
+            return {
+              id: acc.id,
+              name: acc.accountNo,
+              accountName: acc.name,
+              accountType: acc.accountType,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      return []; // Return an empty array if an error occurs
+    }
+  };
+
+  useEffect(() => {
+    fetchNewOptions();
+  }, []);
   const getColumnDefsByType = (type) => {
     switch (type) {
       case "Vendor Ledger Entries":
@@ -207,9 +239,15 @@ const LedgerEntries = ({ type }) => {
           },
           {
             field: "accountId",
-            headerName: "Account ID",
+            headerName: "Account",
             width: 150,
             filter: true,
+            valueGetter: (params) => {
+              const account = allOptions?.find(
+                (acc) => acc.id === params.data.accountId
+              );
+              return account?.name ?? "N/A";
+            },
           },
           {
             field: "transactionDate",
@@ -218,7 +256,16 @@ const LedgerEntries = ({ type }) => {
             filter: true,
             valueFormatter: (params) => formatDate(params.value),
           },
-          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "amount",
+            headerName: "Amount",
+            width: 100,
+            filter: true,
+            valueFormatter: (params) => {
+              return formatNumber(params.value);
+            },
+            cellStyle: { textAlign: "right" },
+          },
           {
             field: "description",
             headerName: "Description",
@@ -236,13 +283,17 @@ const LedgerEntries = ({ type }) => {
             filter: true,
             pinned: "left",
           },
+
           {
-            field: "glBankCode",
-            headerName: "GL Bank Code",
-            width: 150,
+            field: "amount",
+            headerName: "Amount",
+            width: 100,
             filter: true,
+            valueFormatter: (params) => {
+              return formatNumber(params.value);
+            },
+            cellStyle: { textAlign: "right" },
           },
-          { field: "amount", headerName: "Amount", width: 100, filter: true },
           {
             field: "externalDocumentNo",
             headerName: "External Document No",
@@ -255,13 +306,19 @@ const LedgerEntries = ({ type }) => {
             width: 150,
             filter: true,
           },
+          {
+            field: "glBankCode",
+            headerName: "GL Bank Code",
+            width: 150,
+            filter: true,
+          },
 
           {
             field: "transactionDate",
             headerName: "Transaction Date",
             width: 150,
             filter: true,
-            valueFormatter: (params) => formatDate(params.value),
+            valueFormatter: (params) => parseDate(params.value),
           },
 
           {
@@ -287,14 +344,23 @@ const LedgerEntries = ({ type }) => {
             width: 150,
             filter: true,
           },
-          { field: "amount", headerName: "Amount", width: 100, filter: true },
+          {
+            field: "amount",
+            headerName: "Amount",
+            width: 100,
+            filter: true,
+            valueFormatter: (params) => {
+              return formatNumber(params.value);
+            },
+            cellStyle: { textAlign: "right" },
+          },
 
           {
             field: "transactionDate",
             headerName: "Transaction Date",
             width: 150,
             filter: true,
-            valueFormatter: (params) => formatDate(params.value),
+            valueFormatter: (params) => parseDate(params.value),
           },
 
           {
@@ -371,7 +437,10 @@ const LedgerEntries = ({ type }) => {
       >
         {clickedItem ? (
           <BaseInputCard
-            fields={getFieldsByType(type)}
+            fields={getFieldsByType(type).map((field) => ({
+              ...field,
+              disabled: true,
+            }))}
             apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}

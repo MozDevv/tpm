@@ -134,6 +134,7 @@ const financeEndpoints = {
 
   getAllAccounts: `/Accounts/GetAccounts`,
 
+  getAccounts: "/api/Accounts/GetAccounts",
   getGeneralJournals: "/Posting/GetGeneralJournals",
 
   addGeneralJournal: "/Posting/AddGeneralJournal",

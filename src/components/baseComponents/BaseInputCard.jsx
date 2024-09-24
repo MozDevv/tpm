@@ -349,17 +349,19 @@ const BaseInputCard = ({
           {inputTitle}
         </p>
       )}
-      <div className="flex justify-end gap-2 mr-5">
-        {!isEditing && clickedItem ? (
-          <Button variant="contained" onClick={handleEdit}>
-            Edit
-          </Button>
-        ) : (
-          <Button variant="contained" onClick={handleSave}>
-            Save
-          </Button>
-        )}
-      </div>
+      {fields.every((field) => !field.disabled) && (
+        <div className="flex justify-end gap-2 mr-5">
+          {!isEditing && clickedItem ? (
+            <Button variant="contained" onClick={handleEdit}>
+              Edit
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={handleSave}>
+              Save
+            </Button>
+          )}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
         {fields.map((field, index) => (
           <div
@@ -517,6 +519,7 @@ const BaseInputCard = ({
                   <Switch
                     checked={formData[field.name] === true}
                     onChange={handleInputChange}
+                    disabled={field.disabled}
                     name={field.name}
                     color="primary"
                   />
@@ -533,6 +536,7 @@ const BaseInputCard = ({
                 value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
                 helperText={errors[field.name]}
                 onChange={handleInputChange}
+                disabled={field.disabled}
                 fullWidth
               />
             ) : field.type === "autocomplete" ? (

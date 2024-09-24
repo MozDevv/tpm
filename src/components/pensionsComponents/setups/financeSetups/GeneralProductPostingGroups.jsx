@@ -43,7 +43,7 @@ const GeneralProductPostingGroups = () => {
       filter: true,
     },
     {
-      field: "prodPostingGroupId",
+      field: "productPostingGroupId",
       headerName: "VAT Business Posting Group",
       filter: true,
       valueGetter: (params) => {
@@ -94,7 +94,7 @@ const GeneralProductPostingGroups = () => {
       name: item.name,
       description: item.description,
       autoInsert: item.autoInsert,
-      prodPostingGroupId: item.prodPostingGroupId,
+      productPostingGroupId: item.productPostingGroupId,
     }));
   };
 
@@ -148,7 +148,7 @@ const GeneralProductPostingGroups = () => {
       required: true,
     },
     {
-      name: "prodPostingGroupId",
+      name: "productPostingGroupId",
       label: "VAT Product Posting Group",
       type: "select",
       required: false,

@@ -184,8 +184,14 @@ const VatPostings = () => {
     {
       name: "vatCalculationType",
       label: "VAT Calculation Type",
-      type: "number",
+      type: "select",
       required: true,
+      options: [
+        { id: 0, name: "Normal VAT" },
+        { id: 1, name: "Full VAT" },
+        { id: 2, name: "Reverse Charge VAT" },
+        { id: 3, name: "Sales VAT" },
+      ],
     },
     {
       name: "salesVATAccountId",

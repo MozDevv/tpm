@@ -104,7 +104,7 @@ const GeneralBudget = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Budget" : "Create New Budget";
+  const title = clickedItem ? clickedItem?.budgetName : "Create a New Budget";
 
   const fields = [
     { name: "budgetName", label: "Budget Name", type: "text", required: true },
