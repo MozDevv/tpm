@@ -24,6 +24,18 @@ const GeneralProductPostingGroups = () => {
       headerClass: "prefix-header",
       width: 90,
       filter: true,
+      pinned: "left",
+    },
+    {
+      field: "productPostingGroupId",
+      headerName: "Product Posting Group",
+      filter: true,
+      valueGetter: (params) => {
+        const account = glAccounts?.find(
+          (acc) => acc.id === params.data.productPostingGroupId
+        );
+        return account?.name ?? "N/A";
+      },
     },
     {
       field: "name",
@@ -41,17 +53,6 @@ const GeneralProductPostingGroups = () => {
       field: "autoInsert",
       headerName: "Auto Insert",
       filter: true,
-    },
-    {
-      field: "productPostingGroupId",
-      headerName: "VAT Business Posting Group",
-      filter: true,
-      valueGetter: (params) => {
-        const account = glAccounts?.find(
-          (acc) => acc.id === params.data.prodPostingGroupId
-        );
-        return account?.name ?? "N/A";
-      },
     },
   ];
 
@@ -142,18 +143,18 @@ const GeneralProductPostingGroups = () => {
       required: true,
     },
     {
+      name: "productPostingGroupId",
+      label: "Product Posting Group",
+      type: "autocomplete",
+      required: false,
+      options: glAccounts,
+      table: true,
+    },
+    {
       name: "autoInsert",
       label: "Auto Insert",
       type: "switch",
       required: true,
-    },
-    {
-      name: "productPostingGroupId",
-      label: "VAT Product Posting Group",
-      type: "select",
-      required: false,
-      options: glAccounts,
-      table: true,
     },
   ];
 

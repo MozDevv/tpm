@@ -44,13 +44,7 @@ const GeneralPostingGroups = () => {
           (acc) => acc.id === params.data.generalBusinessPostingGroupId
         ).name,
     },
-    {
-      field: "groupName",
-      headerName: "Group Name",
-      headerClass: "prefix-header",
-      filter: true,
-      width: 250,
-    },
+
     {
       field: "description",
       headerName: "Description",
@@ -145,6 +139,7 @@ const GeneralPostingGroups = () => {
     return data.map((item, index) => ({
       no: index + 1,
       id: item.id,
+
       description: transformString(item.description),
       blocked: item.blocked,
       viewAll: item.viewAll,
@@ -308,7 +303,7 @@ const GeneralPostingGroups = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={financeEndpoints.deleteVendorPostingGroup(
+        deleteApiEndpoint={financeEndpoints.deleteGeneralPostingGroup(
           clickedItem?.id
         )}
         deleteApiService={apiService.delete}
@@ -316,7 +311,7 @@ const GeneralPostingGroups = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.updateVendorPostingGroup}
+            apiEndpoint={financeEndpoints.updateGeneralPostingGroup}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -325,7 +320,7 @@ const GeneralPostingGroups = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addVendorPostingGroup}
+            apiEndpoint={financeEndpoints.addGeneralPostingGroup}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}

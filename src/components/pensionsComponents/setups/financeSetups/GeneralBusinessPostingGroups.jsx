@@ -24,6 +24,14 @@ const GeneralBusinessPostingGroups = () => {
       headerClass: "prefix-header",
       width: 90,
       filter: true,
+      pinned: "left",
+    },
+    {
+      field: "businessPostingGroupId",
+      headerName: "Business Posting Group",
+      filter: true,
+      valueGetter: (params) =>
+        getAccountName(params.data.businessPostingGroupId),
     },
     {
       field: "name",
@@ -41,13 +49,6 @@ const GeneralBusinessPostingGroups = () => {
       field: "autoInsert",
       headerName: "Auto Insert",
       filter: true,
-    },
-    {
-      field: "businessPostingGroupId",
-      headerName: "Business Posting Group",
-      filter: true,
-      valueGetter: (params) =>
-        getAccountName(params.data.businessPostingGroupId),
     },
   ];
 
@@ -131,6 +132,13 @@ const GeneralBusinessPostingGroups = () => {
   const fields = [
     { name: "name", label: "Name", type: "text", required: true },
     {
+      name: "businessPostingGroupId",
+      label: "Business Posting Group",
+      type: "autocomplete",
+      required: true,
+      options: glAccounts,
+    },
+    {
       name: "description",
       label: "Description",
       type: "text",
@@ -141,13 +149,6 @@ const GeneralBusinessPostingGroups = () => {
       label: "Auto Insert",
       type: "switch",
       required: true,
-    },
-    {
-      name: "businessPostingGroupId",
-      label: "Business Posting Group",
-      type: "select",
-      required: true,
-      options: glAccounts,
     },
   ];
 
