@@ -158,8 +158,59 @@ const VatPostings = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [productPostings, setProductPostings] = React.useState([]);
+  const [businessPostings, setBusinessPostings] = React.useState([]);
 
   const title = clickedItem ? "VAT Posting " : "Create New VAT Posting Group";
+
+  const fetchProductPostings = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getProductPostingGroups,
+        {
+          "paging.pageSize": 150,
+        }
+      );
+
+      setProductPostings(
+        response.data.data.map((ac) => ({
+          id: ac.id,
+          name: ac.name,
+          description: ac.description,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductPostings();
+  }, []);
+  const fetchBusinessPosting = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getBusinessPostingGroups,
+        {
+          "paging.pageSize": 150,
+        }
+      );
+
+      setBusinessPostings(
+        response.data.data.map((ac) => ({
+          id: ac.id,
+          name: ac.name,
+          description: ac.description,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusinessPosting();
+  }, []);
 
   const fields = [
     {
@@ -222,6 +273,7 @@ const VatPostings = () => {
       options: glAccounts,
       table: true,
     },
+
     {
       name: "vatClauseCode",
       label: "Vat Clause Code",
@@ -233,6 +285,20 @@ const VatPostings = () => {
       label: "Tax Category",
       type: "text",
       required: true,
+    },
+    {
+      name: "vatBusinessPostingGroupId",
+      label: "VAT Business Posting Group",
+      type: "select",
+      required: true,
+      options: businessPostings,
+    },
+    {
+      name: "vatProductPostingGroupId",
+      label: "VAT Product Posting Group",
+      type: "select",
+      required: true,
+      options: productPostings,
     },
   ];
 
