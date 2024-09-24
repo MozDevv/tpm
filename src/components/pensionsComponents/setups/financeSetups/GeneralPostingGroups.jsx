@@ -28,10 +28,12 @@ const GeneralPostingGroups = () => {
       headerClass: "prefix-header",
       filter: true,
       width: 250,
-      valueGetter: (params) =>
-        generalProductAcc.find(
-          (acc) => acc.id === params.data.generalProductPostingGroupId
-        ).name,
+      valueFormatter: (params) =>
+        generalProductAcc && generalProductAcc.length > 0
+          ? generalProductAcc.find(
+              (acc) => acc.id === params.data.generalProductPostingGroupId
+            ).name
+          : "N/A",
     },
     {
       field: "generalBusinessPostingGroupId",
@@ -39,10 +41,12 @@ const GeneralPostingGroups = () => {
       headerClass: "prefix-header",
       filter: true,
       width: 250,
-      valueGetter: (params) =>
-        generalBusinessAcc.find(
-          (acc) => acc.id === params.data.generalBusinessPostingGroupId
-        ).name,
+      valueFormatter: (params) =>
+        generalBusinessAcc && generalBusinessAcc.length > 0
+          ? generalBusinessAcc.find(
+              (acc) => acc.id === params.data.generalBusinessPostingGroupId
+            ).name
+          : "N/A",
     },
 
     {
@@ -139,7 +143,6 @@ const GeneralPostingGroups = () => {
     return data.map((item, index) => ({
       no: index + 1,
       id: item.id,
-
       description: transformString(item.description),
       blocked: item.blocked,
       viewAll: item.viewAll,
