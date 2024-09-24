@@ -9,6 +9,7 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import { apiService } from "@/components/services/financeApi";
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
+import { name } from "dayjs/locale/en-au";
 
 const VatPostings = () => {
   const columnDefs = [
@@ -18,13 +19,34 @@ const VatPostings = () => {
       headerClass: "prefix-header",
       width: 90,
       filter: true,
+      pinned: "left",
     },
 
     {
-      field: "description",
-      headerName: "Description",
+      field: "vatBusinessPostingGroupId",
+      headerName: "VAT Business Posting Group",
       filter: true,
+      valueGetter: (params) => {
+        const account = businessPostings?.find(
+          (acc) => acc.id === params.data.vatBusinessPostingGroupId
+        );
+        return account?.name ?? "N/A";
+      },
+      width: 250,
     },
+    {
+      field: "vatProductPostingGroupId",
+      headerName: "VAT Product Posting Group",
+      filter: true,
+      valueGetter: (params) => {
+        const account = productPostings?.find(
+          (acc) => acc.id === params.data.vatProductPostingGroupId
+        );
+        return account?.name ?? "N/A";
+      },
+      width: 250,
+    },
+
     {
       field: "vatIdentifier",
       headerName: "Vat Identifier",
@@ -45,12 +67,19 @@ const VatPostings = () => {
       headerName: "Sales Vat Account",
       filter: true,
       valueGetter: (params) => getAccountName(params.data.salesVATAccountId),
+      width: 250,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      filter: true,
     },
     {
       field: "purchaseVATAccountId",
       headerName: "Purchase Vat Account",
       filter: true,
       valueGetter: (params) => getAccountName(params.data.purchaseVATAccountId),
+      width: 250,
     },
     {
       field: "reverseChargeVATAccountId",
@@ -58,6 +87,7 @@ const VatPostings = () => {
       filter: true,
       valueGetter: (params) =>
         getAccountName(params.data.reverseChargeVATAccountId),
+      width: 250,
     },
     {
       field: "vatClauseCode",
@@ -125,6 +155,8 @@ const VatPostings = () => {
       reverseChargeVATAccountId: item.reverseChargeVATAccountId,
       vatClauseCode: item.vatClauseCode,
       taxCategory: item.taxCategory,
+      vatBusinessPostingGroupId: item.vatBusinessPostingGroupId,
+      vatProductPostingGroupId: item.vatProductPostingGroupId,
     }));
   };
 
@@ -176,7 +208,6 @@ const VatPostings = () => {
         response.data.data.map((ac) => ({
           id: ac.id,
           name: ac.name,
-          description: ac.description,
         }))
       );
     } catch (error) {
@@ -200,7 +231,6 @@ const VatPostings = () => {
         response.data.data.map((ac) => ({
           id: ac.id,
           name: ac.name,
-          description: ac.description,
         }))
       );
     } catch (error) {
@@ -214,10 +244,18 @@ const VatPostings = () => {
 
   const fields = [
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: "vatBusinessPostingGroupId",
+      label: "VAT Business Posting Group",
+      type: "autocomplete",
       required: true,
+      options: businessPostings,
+    },
+    {
+      name: "vatProductPostingGroupId",
+      label: "VAT Product Posting Group",
+      type: "autocomplete",
+      required: true,
+      options: productPostings,
     },
 
     {
@@ -253,6 +291,12 @@ const VatPostings = () => {
       table: true,
     },
     {
+      name: "description",
+      label: "Description",
+      type: "text",
+      required: true,
+    },
+    {
       name: "purchaseVATAccountId",
       label: "Purchase VAT Account",
       type: "select",
@@ -285,20 +329,6 @@ const VatPostings = () => {
       label: "Tax Category",
       type: "text",
       required: true,
-    },
-    {
-      name: "vatBusinessPostingGroupId",
-      label: "VAT Business Posting Group",
-      type: "select",
-      required: true,
-      options: businessPostings,
-    },
-    {
-      name: "vatProductPostingGroupId",
-      label: "VAT Product Posting Group",
-      type: "select",
-      required: true,
-      options: productPostings,
     },
   ];
 
