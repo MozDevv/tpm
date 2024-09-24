@@ -56,6 +56,11 @@ const BaseAutoSaveInputCard = ({
   transformData,
   openBaseCard,
   setClickedItem,
+  setFields,
+  fieldName,
+  options,
+  filterKey,
+  setResultFunction,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : "";
@@ -89,7 +94,7 @@ const BaseAutoSaveInputCard = ({
     if (type === "text") {
       setFormData((prev) => ({
         ...prev,
-        [name]: value.toUpperCase(),
+        [name]: value,
       }));
     }
     if (type === "number") {
@@ -105,32 +110,24 @@ const BaseAutoSaveInputCard = ({
         }));
       }
     }
-    // Assuming 'banks' is your data array and 'branch_id' is the id of the branch you're filtering by
-    if (name === "bank_id" && banks && value) {
-      // Find the bank that has a branch matching the given branch_id
-      const bankWithBranch = banks.find(
-        (bank) => bank.branches.some((branch) => branch.id === value) // assuming 'value' is the branch_id
+
+    // if (name === filterValue && fields && value) {
+    //   const options = fields.find(
+    //     (field) => field.name === filterValue
+    //   ).options;
+    // }
+
+    if (name === "bank_id" && value) {
+      const filteredBranches = banks.filter(
+        (branch) => branch.bankId === value
       );
 
-      if (bankWithBranch) {
-        setSelectedBank(bankWithBranch.bank_id); // Set the selected bank's ID
-        setFormData((prev) => ({
-          ...prev,
-          bank_id: bankWithBranch.bank_id, // Update the form with the filtered bank's ID
-        }));
-      } else {
-        // Handle the case where no matching bank is found
-        setSelectedBank(null);
-        setFormData((prev) => ({
-          ...prev,
-          bank_id: null,
-        }));
-      }
-      console.log("formData", formData);
+      setSelectedBank(filteredBranches);
     }
+    if (name === fieldName && value) {
+      const filtered = options.filter((item) => item[filterKey] === value);
 
-    if (name === "bank_id") {
-      setSelectedBank(value);
+      setResultFunction(filtered); // Set the filtered result
     }
     if (multiple) {
       const values = Array.from(
@@ -141,13 +138,19 @@ const BaseAutoSaveInputCard = ({
         ...prev,
         [name]: values,
       }));
-    } else {
+    } else if (type === "checkbox") {
       setFormData((prev) => ({
         ...prev,
         [name]: type === "checkbox" ? checked : value,
       }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
     setIsEditing(true);
+
     // validateForm();
   };
 

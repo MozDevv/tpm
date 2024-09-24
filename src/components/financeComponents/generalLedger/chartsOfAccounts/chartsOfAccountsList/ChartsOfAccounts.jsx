@@ -9,6 +9,7 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
 import { formatNumber } from "@/utils/numberFormatters";
+import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -17,6 +18,7 @@ function ChartsOfAccounts() {
   const [accountTypes, setAccountTypes] = useState([]);
   const [groupTypes, setGroupTypes] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [subGroups, setSubGroups] = useState([]);
 
   const colDefs = [
     {
@@ -130,6 +132,32 @@ function ChartsOfAccounts() {
         financeEndpoints.getAccountGroupTypes
       );
       setGroupTypes(response.data.data);
+      const flattenedData = response.data.data.flatMap((group) =>
+        group.subgroups.map((subgroup) => ({
+          ...subgroup,
+          groupId: group.id, // Attach the groupId to each subgroup
+        }))
+      );
+
+      console.log(
+        "flattenedData.map((subgroup) => subgroup.subGroupName",
+        flattenedData.map((subgroup) => {
+          return {
+            id: subgroup.id,
+            name: subgroup.subGroupName,
+            groupId: subgroup.groupId,
+          };
+        })
+      );
+      setSubGroups(
+        flattenedData.map((subgroup) => {
+          return {
+            id: subgroup.id,
+            name: subgroup.subGroupName,
+            groupId: subgroup.groupId,
+          };
+        })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -216,16 +244,20 @@ function ChartsOfAccounts() {
     },
   ];
 
+  const [filteredData, setFilteredData] = useState([]);
+
   const inputFields = [
     {
       name: "accountNo",
       label: "Account No",
       type: "text",
+      required: true,
     },
     {
       name: "accountName",
       label: "Account Name",
       type: "text",
+      required: true,
     },
 
     {
@@ -236,18 +268,15 @@ function ChartsOfAccounts() {
         id: type.id,
         name: type.groupName,
       })),
+      required: true,
     },
     {
       name: "accountSubgroupId",
       label: "Sub Category",
       type: "select",
       options:
-        groupTypes
-          ?.find((group) => group.id === selectedGroup)
-          ?.subgroups.map((subgroup) => ({
-            id: subgroup.id,
-            name: subgroup.subGroupName,
-          })) || [],
+        filteredData && filteredData.length > 0 ? filteredData : subGroups,
+      required: true,
     },
     {
       name: "glAccountType",
@@ -257,6 +286,7 @@ function ChartsOfAccounts() {
         id: type.value,
         name: type.name,
       })),
+      required: true,
     },
     {
       name: "isDirectPosting",
@@ -273,6 +303,22 @@ function ChartsOfAccounts() {
   useEffect(() => {
     fetchGlAccounts();
   }, [openBaseCard]);
+
+  const transformData = (data) => {
+    return data.map((item) => ({
+      id: item.id,
+      accountNo: item.accountNo,
+      accountName: item.accountName,
+      amount: item.amount,
+      budgetAmount: item.budgetAmount,
+      budgetBalance: item.budgetBalance,
+      subGroupName: item.subGroupName,
+      accountTypeName: item.accountTypeName,
+      isDirectPosting: item.isDirectPosting,
+      isReconciliation: item.isReconciliation,
+    }));
+  };
+
   return (
     <div className="flex flex-col">
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
@@ -295,25 +341,40 @@ function ChartsOfAccounts() {
           }
         >
           {clickedItem ? (
-            <BaseInputCard
+            <BaseAutoSaveInputCard
               fields={fields}
-              clickedItem={clickedItem}
-              openBaseCard={openBaseCard}
-              setOpenBaseCard={setOpenBaseCard}
-              apiEndpoint={financeEndpoints.updateGlAccount}
+              apiEndpoint={financeEndpoints.createGlAccount}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateGlAccount}
               postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.fetchGlAccounts}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
               useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+              clickedItem={clickedItem}
             />
           ) : (
-            <BaseInputCard
-              fetchData={fetchGlAccounts}
+            <BaseAutoSaveInputCard
               fields={inputFields}
-              selectedLabel={"group"}
-              setSelectedValue={setSelectedGroup}
-              useRequestBody={true}
-              setOpenBaseCard={setOpenBaseCard}
               apiEndpoint={financeEndpoints.createGlAccount}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateGlAccount}
               postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.fetchGlAccounts}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+              clickedItem={clickedItem}
+              fieldName="group"
+              options={subGroups}
+              setResultFunction={setFilteredData}
+              filterKey="groupId"
             />
           )}
         </BaseCard>

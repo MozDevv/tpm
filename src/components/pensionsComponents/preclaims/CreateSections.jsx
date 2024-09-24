@@ -237,59 +237,7 @@ export const createSections = (
 
         pensionCap: ["CAP1996"],
       },
-      {
-        label: "Deaceased",
-        name: "mortality_status",
-        type: "select",
-        children: [
-          { id: 2, name: "No" },
-          { id: 1, name: "Yes" },
-        ],
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
-      ...(formData.mortality_status === 1
-        ? [
-            {
-              label: "Date of Death",
-              name: "date_of_death",
-              type: "date",
-              pensionCap: [
-                "CAP189",
-                "CAP199",
-                "CAP196",
-                "APN/PK",
-                "CAP190",
-                "CAP195",
-                "DSO/RK",
-                "CAP195",
-              ],
-            },
-            {
-              label: "Death Certificate Number",
-              name: "death_certificate_number",
-              type: "text",
-              pensionCap: [
-                "CAP189",
-                "CAP199",
-                "CAP196",
-                "APN/PK",
-                "CAP190",
-                "CAP195",
-                "DSO/RK",
-                "CAP195",
-              ],
-            },
-          ]
-        : []),
+
       {
         label: "Marital Status",
         name: "marital_status",
@@ -415,6 +363,59 @@ export const createSections = (
         children: filteredGrades,
         pensionCap: ["CAP199"],
       },
+      {
+        label: "Deaceased",
+        name: "mortality_status",
+        type: "select",
+        children: [
+          { id: 2, name: "No" },
+          { id: 1, name: "Yes" },
+        ],
+        pensionCap: [
+          "CAP189",
+          "CAP199",
+          "CAP196",
+          "APN/PK",
+          "CAP190",
+          "CAP195",
+          "DSO/RK",
+          "CAP195",
+        ],
+      },
+      ...(formData.mortality_status === 1
+        ? [
+            {
+              label: "Date of Death",
+              name: "date_of_death",
+              type: "date",
+              pensionCap: [
+                "CAP189",
+                "CAP199",
+                "CAP196",
+                "APN/PK",
+                "CAP190",
+                "CAP195",
+                "DSO/RK",
+                "CAP195",
+              ],
+            },
+            {
+              label: "Death Certificate Number",
+              name: "death_certificate_number",
+              type: "text",
+              pensionCap: [
+                "CAP189",
+                "CAP199",
+                "CAP196",
+                "APN/PK",
+                "CAP190",
+                "CAP195",
+                "DSO/RK",
+                "CAP195",
+              ],
+            },
+          ]
+        : []),
     ],
   },
 

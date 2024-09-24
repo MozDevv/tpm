@@ -1,5 +1,11 @@
 import { parseDate } from "@/utils/dateFormatter";
-import { Button, DialogActions, IconButton, Typography } from "@mui/material";
+import {
+  Button,
+  DialogActions,
+  Divider,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { Alert, List, message } from "antd";
 import React, { useEffect } from "react";
 import {
@@ -89,7 +95,7 @@ function PostGL({
       <div className="flex  px-3 flex-col">
         <div className="flex items-center gap-2">
           <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
-            Post to Ledger(s)
+            Post to Ledger
           </h5>
         </div>
         {errors.status && (
@@ -97,11 +103,13 @@ function PostGL({
             <Alert message={errors.message} type="error" showIcon closable />
           </div>
         )}
+
         {selectedRows.length > 0 && (
           <div className="py-3 mx-5 flex flex-col">
             <div className="text-primary mt-3 text-[15px] font-normal mb-6">
               List of General Journal(s) to be posted
             </div>
+
             <TableContainer sx={{ maxHeight: "400px" }}>
               <Table size="small" stickyHeader>
                 <TableHead>
@@ -161,7 +169,6 @@ function PostGL({
           color="primary"
           variant="contained"
           size="small"
-          startIcon={<CheckCircleOutline />}
         >
           Post Journal
         </Button>

@@ -11,6 +11,7 @@ import { apiService as setupsApiService } from "@/components/services/setupsApi"
 import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
 import endpoints from "@/components/services/setupsApi";
+import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
 
 const columnDefs = [
   {
@@ -198,10 +199,9 @@ const BankAccount = () => {
 
     {
       name: "bankBranchId",
-      label: "Bank Branch Id",
-      options: branches.filter((branch) =>
-        selectedBank ? branch.bankId === selectedBank : true
-      ),
+      label: "Bank Branch Name",
+      options:
+        selectedBank && selectedBank.length > 0 ? selectedBank : branches,
       type: "autocomplete",
     },
   ];
@@ -219,25 +219,37 @@ const BankAccount = () => {
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.updateBankAccount}
+            apiEndpoint={financeEndpoints.addBankAccount}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateBankAccount}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+            getApiEndpoint={financeEndpoints.getBankAccounts}
+            getApiFunction={apiService.get}
+            transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
-            banks={banks}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
+            banks={branches}
             setSelectedBank={setSelectedBank}
           />
         ) : (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addBankAccount}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateBankAccount}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+            getApiEndpoint={financeEndpoints.getBankAccounts}
+            getApiFunction={apiService.get}
+            transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
-            setSelectedBank={setSelectedBank}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
           />
         )}
       </BaseCard>

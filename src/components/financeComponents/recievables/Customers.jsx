@@ -13,6 +13,8 @@ import financeEndpoints from "@/components/services/financeApi";
 import { API_BASE_URL } from "@/components/services/setupsApi";
 
 import axios from "axios";
+import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const columnDefs = [
   {
@@ -27,7 +29,17 @@ const columnDefs = [
     headerName: "Customer Name",
     headerClass: "prefix-header",
     filter: true,
-    width: 250,
+  },
+  {
+    field: "amount",
+    headerName: "Amount",
+    headerClass: "prefix-header",
+    filter: true,
+    width: 80,
+    valueFormatter: (params) => {
+      return formatNumber(params.value);
+    },
+    cellStyle: { textAlign: "right" },
   },
   {
     field: "customerEmail",
@@ -75,6 +87,7 @@ const Customers = () => {
       customerPhoneNumber: item.customerPhone,
       countryId: item.customerCountry,
       cityId: item.customerCity,
+      amount: item.amount,
 
       // roles: item.roles,
     }));
@@ -192,6 +205,7 @@ const Customers = () => {
       name: "customerPhoneNumber",
       label: "Customer Phone Number",
       type: "text",
+      required: true,
     },
     {
       name: "customerPostingGroupId",
@@ -233,23 +247,47 @@ const Customers = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updateCustomer}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        ) : (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addCustomer}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateCustomer}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+            getApiEndpoint={financeEndpoints.getCustomers}
+            getApiFunction={apiService.get}
+            transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
           />
+        ) : (
+          <>
+            <BaseAutoSaveInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.addCustomer}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateCustomer}
+              postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.getCustomers}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+            />
+            {/* 
+            <BaseInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.addCustomer}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            /> */}
+          </>
         )}
       </BaseCard>
 
