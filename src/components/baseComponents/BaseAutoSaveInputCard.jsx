@@ -625,6 +625,7 @@ const BaseAutoSaveInputCard = ({
                     target: { name: field.name, value },
                   })
                 }
+                onBlur={handleAutoSave}
                 error={!!errors[field.name]}
                 variant="outlined"
                 size="small"
