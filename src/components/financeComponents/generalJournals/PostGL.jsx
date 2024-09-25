@@ -103,6 +103,7 @@ function PostGL({
             <Alert message={errors.message} type="error" showIcon closable />
           </div>
         )}
+        {/* {JSON.stringify(selectedRows)} */}
 
         {selectedRows.length > 0 && (
           <div className="py-3 mx-5 flex flex-col">

@@ -49,6 +49,15 @@ const columnDefs = [
   },
 
   {
+    headerName: "Amount",
+    field: "amount",
+    width: 150,
+    cellStyle: { marginLeft: "50px" },
+    valueFormatter: (params) => {
+      return params.value ? formatNumber(params.value) : "0.00";
+    },
+  },
+  {
     headerName: "External Document No",
     field: "externalDocumentNo",
     width: 150,
@@ -67,15 +76,6 @@ const columnDefs = [
     width: 150,
     valueFormatter: (params) => {
       return params.value ? parseDate(params.value) : "";
-    },
-  },
-
-  {
-    headerName: "Amount",
-    field: "amount",
-    width: 150,
-    valueFormatter: (params) => {
-      return params.value ? formatNumber(params.value) : "";
     },
   },
 ];
@@ -102,6 +102,7 @@ const GeneralJournals = () => {
   };
 
   const [openPostToGL, setOpenPostToGL] = React.useState(false);
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -138,17 +139,16 @@ const GeneralJournals = () => {
       setOpenAction(true);
     },
 
-    ...(clickedItem && {
-      postToGL: () => {
-        if (selectedRows.length === 0 && clickedItem) {
-          setSelectedRows([clickedItem]);
-        }
-        setOpenPostToGL(true);
-      },
-    }),
+    ...(clickedItem &&
+      openBaseCard && {
+        postToGL: () => {
+          if (selectedRows.length === 0 && clickedItem && openBaseCard) {
+            setSelectedRows([clickedItem]);
+          }
+          setOpenPostToGL(true);
+        },
+      }),
   };
-
-  const [openBaseCard, setOpenBaseCard] = React.useState(false);
 
   const title = clickedItem
     ? `${clickedItem.documentNo}`
@@ -219,6 +219,7 @@ const GeneralJournals = () => {
       name: "amount",
       label: "Amount",
       type: "amount",
+      disabled: true,
     },
     {
       name: "isPosted",
@@ -236,6 +237,7 @@ const GeneralJournals = () => {
 
   return (
     <div className="">
+      {/* {JSON.stringify(selectedRows)} */}
       <Dialog
         open={openPostToGL}
         onClose={() => setOpenPostToGL(false)}
@@ -260,6 +262,7 @@ const GeneralJournals = () => {
         handlers={baseCardHandlers}
         title={title}
         clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
         isUserComponent={false}
         setOpenAction={setOpenAction}
         openAction={openAction}

@@ -232,17 +232,19 @@ const LedgerEntries = ({ type }) => {
       case "Customer Ledger Entries":
         return [
           {
+            field: "documentNo",
+            headerName: "Document No",
+            flex: 1,
+            filter: true,
+            pinned: "left",
+          },
+          {
             field: "transactionNo",
             headerName: "Transaction No",
             flex: 1,
             filter: true,
           },
-          {
-            field: "documentNo",
-            headerName: "Document No",
-            flex: 1,
-            filter: true,
-          },
+
           {
             field: "externalDocumentNo",
             headerName: "External Document No",

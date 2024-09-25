@@ -46,6 +46,7 @@ function BaseCard({
   isSecondaryCard2,
   isClaim,
   isClaimManagement,
+  setClickedItem,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -112,7 +113,10 @@ function BaseCard({
   return (
     <Dialog
       open={openBaseCard}
-      onClose={() => setOpenBaseCard(false)}
+      onClose={() => {
+        setOpenBaseCard(false);
+        setClickedItem && setClickedItem(null);
+      }}
       fullWidth
       maxWidth="xl"
       sx={{

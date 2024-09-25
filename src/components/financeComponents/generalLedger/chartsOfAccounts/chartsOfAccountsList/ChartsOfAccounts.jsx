@@ -154,7 +154,23 @@ function ChartsOfAccounts() {
         textAlign: "right",
       }),
     },
-    { headerName: "Account Category", field: "subGroupName" },
+    {
+      headerName: "Account Category",
+      field: "accountSubgroupId",
+
+      valueFormatter: (params) => {
+        const subgroupId = params.data.accountSubgroupId;
+        const subGroup = subGroups.find((group) => group.id === subgroupId);
+        return subGroup?.parentGroupName || "";
+      },
+      cellStyle: { marginLeft: "40px" },
+    },
+    {
+      headerName: "Account Sub Category",
+      field: "subGroupName",
+      cellStyle: { marginLeft: "20px", color: "#006990" },
+    },
+
     { headerName: "Account Type Name", field: "accountTypeName" },
     { headerName: "Direct Posting", field: "isDirectPosting", width: 90 },
     { headerName: "Reconciliation", field: "isReconciliation", width: 90 },
@@ -163,23 +179,7 @@ function ChartsOfAccounts() {
   const onGridReady = (params) => {
     params.api.sizeColumnsToFit();
   };
-  const fetchGlAccounts = async () => {
-    try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 1000,
-      });
 
-      const accounts = response.data.data.map((account) => ({
-        ...account,
-        glAccountName: account.accountName,
-        glAccountNo: account.accountNo,
-        budgetBalance: (account.budgetAmount || 0) - (account.amount || 0),
-      }));
-      setRowData(accounts);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const fetchAccountTypes = async () => {
     try {
       const response = await apiService.get(
@@ -200,6 +200,7 @@ function ChartsOfAccounts() {
       const flattenedData = response.data.data.flatMap((group) =>
         group.subgroups.map((subgroup) => ({
           ...subgroup,
+          parentGroupName: group.groupName,
           groupId: group.id, // Attach the groupId to each subgroup
         }))
       );
@@ -220,9 +221,31 @@ function ChartsOfAccounts() {
             id: subgroup.id,
             name: subgroup.subGroupName,
             groupId: subgroup.groupId,
+            parentGroupName: subgroup.parentGroupName,
           };
         })
       );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchGlAccounts = async () => {
+    try {
+      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
+        "paging.pageSize": 1000,
+      });
+
+      const accounts = response.data.data.map((account) => ({
+        ...account,
+        glCategory: subGroups.find(
+          (group) => group.id === account.accountSubgroupId
+        )?.groupId,
+        glAccountName: account.accountName,
+        glAccountNo: account.accountNo,
+        budgetBalance: (account.budgetAmount || 0) - (account.amount || 0),
+      }));
+      setRowData(accounts);
     } catch (error) {
       console.log(error);
     }
@@ -252,17 +275,19 @@ function ChartsOfAccounts() {
     setClickedItem(row);
     setOpenBaseCard(true);
   };
+  const [filteredData, setFilteredData] = useState([]);
   const fields = [
-    {
-      name: "glAccountName",
-      label: "Account Name",
-      type: "text",
-    },
     {
       name: "glAccountNo",
       label: "Account No",
       type: "text",
     },
+    {
+      name: "glAccountName",
+      label: "Account Name",
+      type: "text",
+    },
+
     {
       name: "amount",
       label: "Amount",
@@ -283,13 +308,27 @@ function ChartsOfAccounts() {
       disabled: true,
     },
     {
-      name: "subGroupName",
-      label: "Account Category",
-      type: "text",
+      name: "glCategory",
+      label: "Category",
+      type: "select",
+      options: groupTypes?.map((type) => ({
+        id: type.id,
+        name: type.groupName,
+      })),
+      required: true,
+    },
+
+    {
+      name: "accountSubgroupId",
+      label: "Sub Category",
+      type: "select",
+      options:
+        filteredData && filteredData.length > 0 ? filteredData : subGroups,
+      required: true,
     },
     {
       name: "glAccountType",
-      label: "Account Sub Category",
+      label: "Account Type",
       type: "autocomplete",
       options: accountTypes.map((type) => ({
         id: type.value,
@@ -297,11 +336,7 @@ function ChartsOfAccounts() {
       })),
       required: true,
     },
-    {
-      name: "accountTypeName",
-      label: "Account Type Name",
-      type: "text",
-    },
+
     {
       name: "isDirectPosting",
       label: "Direct Posting",
@@ -313,8 +348,6 @@ function ChartsOfAccounts() {
       type: "switch",
     },
   ];
-
-  const [filteredData, setFilteredData] = useState([]);
 
   const inputFields = [
     {
@@ -350,7 +383,7 @@ function ChartsOfAccounts() {
     },
     {
       name: "glAccountType",
-      label: "Account Sub Category",
+      label: "Account Type",
       type: "autocomplete",
       options: accountTypes.map((type) => ({
         id: type.value,
@@ -391,12 +424,23 @@ function ChartsOfAccounts() {
     }));
   };
 
+  const [gridHeight, setGridHeight] = useState(400);
+  const rowHeight = 40;
+
+  useEffect(() => {
+    const totalHeight = Math.min(
+      rowData.length * rowHeight + 50,
+      window.innerHeight - 100
+    ); // 50px for header and some margin
+    setGridHeight(totalHeight);
+  }, [rowData]);
+
   return (
     <div className="flex flex-col">
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
       <div
-        className="ag-theme-quartz mt-[15px] mr-5"
-        style={{ height: "75vh", width: "100%", overflowY: "hidden" }}
+        className=" mt-[15px] mr-5"
+        style={{ width: "100%", overflowY: "hidden" }}
       >
         <BaseCard
           openBaseCard={openBaseCard}
@@ -452,21 +496,30 @@ function ChartsOfAccounts() {
         </BaseCard>
 
         <ListNavigation handlers={handlers} />
-        <div className="mt-6 overflow-auto max-h-[100vh] h-full flex-grow">
-          <div className=" max-h-[1800px] h-[1800px]">
-            <AgGridReact
-              columnDefs={colDefs}
-              rowData={rowData}
-              onRowClicked={(e) => {
-                setOpenBaseCard(true);
-                setClickedItem(e.data);
-              }}
-              onGridReady={onGridReady}
-              domLayout="autoHeight"
-              rowHeight={40}
-            />
-          </div>
-        </div>
+        <div className="mt-6 overflow-hidden"></div>
+      </div>
+      <div
+        className="ag-theme-quartz"
+        style={{
+          height: `${gridHeight}px`,
+          width: "100%",
+          overflow: "hidden",
+          maxHeight: "600px",
+        }} // Set the height as needed
+      >
+        <AgGridReact
+          columnDefs={colDefs}
+          rowData={rowData}
+          onRowClicked={(e) => {
+            setOpenBaseCard(true);
+            setClickedItem(e.data);
+          }}
+          onGridReady={onGridReady}
+          animateRows={true}
+          rowHeight={rowHeight}
+          domLayout="normal"
+          autoHeight={rowData.length > 0 ? true : false}
+        />
       </div>
     </div>
   );

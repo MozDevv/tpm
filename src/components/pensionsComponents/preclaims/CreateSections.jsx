@@ -555,7 +555,7 @@ export const createSections = (
         pensionCap: ["CAP189", "CAP199", "CAP190", "CAP195", "CAP195"],
       },
       {
-        label: "Retirement Date",
+        label: "Retirement Date/Date of Death",
         name: "retirement_date",
         type: "date",
         pensionCap: [

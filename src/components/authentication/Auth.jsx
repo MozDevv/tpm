@@ -60,8 +60,8 @@ function Auth() {
   const handleSignIn = async () => {
     setLoading(true);
     const payload = {
-      email: username,
-      password: password,
+      email: username.trim(),
+      password: password.trim(),
     };
 
     console.log("payload", payload);
