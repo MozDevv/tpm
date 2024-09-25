@@ -28,12 +28,18 @@ const GeneralPostingGroups = () => {
       headerClass: "prefix-header",
       filter: true,
       width: 250,
-      valueFormatter: (params) =>
-        generalProductAcc && generalProductAcc.length > 0
-          ? generalProductAcc.find(
-              (acc) => acc.id === params.data.generalProductPostingGroupId
-            ).name
-          : "N/A",
+      // valueFormatter: (params) =>
+      //   generalProductAcc && generalProductAcc.length > 0
+      //     ? generalProductAcc.find(
+      //         (acc) => acc.id === params.data.generalProductPostingGroupId
+      //       ).name
+      //     : "N/A",
+      valueFormatter: (params) => {
+        const foundAccount = generalProductAcc.find(
+          (acc) => acc.id === params.data.generalProductPostingGroupId
+        );
+        return foundAccount ? foundAccount.name : "N/A";
+      },
     },
     {
       field: "generalBusinessPostingGroupId",
@@ -41,12 +47,18 @@ const GeneralPostingGroups = () => {
       headerClass: "prefix-header",
       filter: true,
       width: 250,
-      valueFormatter: (params) =>
-        generalBusinessAcc && generalBusinessAcc.length > 0
-          ? generalBusinessAcc.find(
-              (acc) => acc.id === params.data.generalBusinessPostingGroupId
-            ).name
-          : "N/A",
+      // valueFormatter: (params) => {
+      //   const foundAccount = generalProductAcc.find(
+      //     (acc) => acc.id === params.data.generalProductPostingGroupId
+      //   );
+      //   return foundAccount ? foundAccount.name : "N/A";
+      // },
+      valueFormatter: (params) => {
+        const foundAccount = generalBusinessAcc.find(
+          (acc) => acc.id === params.data.generalBusinessPostingGroupId
+        );
+        return foundAccount ? foundAccount.name : "N/A";
+      },
     },
 
     {

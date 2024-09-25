@@ -431,7 +431,7 @@ function ChartsOfAccounts() {
     const totalHeight = Math.min(
       rowData.length * rowHeight + 50,
       window.innerHeight - 100
-    ); // 50px for header and some margin
+    );
     setGridHeight(totalHeight);
   }, [rowData]);
 
@@ -518,7 +518,6 @@ function ChartsOfAccounts() {
           animateRows={true}
           rowHeight={rowHeight}
           domLayout="normal"
-          autoHeight={rowData.length > 0 ? true : false}
         />
       </div>
     </div>
