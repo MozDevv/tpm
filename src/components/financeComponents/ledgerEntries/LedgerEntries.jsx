@@ -138,6 +138,12 @@ const LedgerEntries = ({ type }) => {
             required: true,
           },
           {
+            name: "glEntryNo",
+            label: "GL Entry No",
+            type: "text",
+            required: true,
+          },
+          {
             name: "transactionDate",
             label: "Transaction Date",
             type: "date",
@@ -214,6 +220,12 @@ const LedgerEntries = ({ type }) => {
   useEffect(() => {
     fetchNewOptions();
   }, []);
+
+  const getAccountName = (no) => {
+    const account = allOptions.find((acc) => acc.no === no);
+    return account ? account.name : "";
+  };
+
   const getColumnDefsByType = (type) => {
     switch (type) {
       case "Vendor Ledger Entries":
@@ -222,25 +234,25 @@ const LedgerEntries = ({ type }) => {
           {
             field: "transactionNo",
             headerName: "Transaction No",
-            width: 150,
+            flex: 1,
             filter: true,
           },
           {
             field: "documentNo",
             headerName: "Document No",
-            width: 150,
+            flex: 1,
             filter: true,
           },
           {
             field: "externalDocumentNo",
             headerName: "External Document No",
-            width: 200,
+            flex: 1,
             filter: true,
           },
           {
             field: "accountId",
             headerName: "Account",
-            width: 150,
+            flex: 1,
             filter: true,
             valueGetter: (params) => {
               const account = allOptions?.find(
@@ -252,19 +264,19 @@ const LedgerEntries = ({ type }) => {
           {
             field: "transactionDate",
             headerName: "Transaction Date",
-            width: 150,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => formatDate(params.value),
           },
           {
             field: "amount",
             headerName: "Amount",
-            width: 100,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => {
               return formatNumber(params.value);
             },
-            cellStyle: { textAlign: "right" },
+            cellStyle: { textAlign: "center" },
           },
           {
             field: "description",
@@ -279,7 +291,7 @@ const LedgerEntries = ({ type }) => {
           {
             field: "documentNo",
             headerName: "Document No",
-            width: 150,
+            flex: 1,
             filter: true,
             pinned: "left",
           },
@@ -287,36 +299,42 @@ const LedgerEntries = ({ type }) => {
           {
             field: "amount",
             headerName: "Amount",
-            width: 100,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => {
               return formatNumber(params.value);
             },
-            cellStyle: { textAlign: "right" },
+            cellStyle: { textAlign: "center" },
           },
           {
             field: "externalDocumentNo",
             headerName: "External Document No",
-            width: 200,
+            flex: 1,
             filter: true,
           },
           {
             field: "transactionNo",
             headerName: "Transaction No",
-            width: 150,
+            flex: 1,
+            filter: true,
+          },
+          {
+            field: "glEntryNo",
+            headerName: "GL Entry No",
+            flex: 1,
             filter: true,
           },
           {
             field: "glBankCode",
             headerName: "GL Bank Code",
-            width: 150,
+            flex: 1,
             filter: true,
           },
 
           {
             field: "transactionDate",
             headerName: "Transaction Date",
-            width: 150,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => parseDate(params.value),
           },
@@ -324,7 +342,7 @@ const LedgerEntries = ({ type }) => {
           {
             field: "description",
             headerName: "Description",
-            width: 250,
+            flex: 1,
             filter: true,
           },
         ];
@@ -334,31 +352,43 @@ const LedgerEntries = ({ type }) => {
           {
             field: "documentNo",
             headerName: "Document No",
-            width: 150,
+            flex: 1,
             filter: true,
             pinned: "left",
           },
           {
             field: "accountNo",
             headerName: "Account No",
-            width: 150,
+            flex: 1,
             filter: true,
+          },
+          {
+            field: "accountName",
+            headerName: "Account Name",
+            flex: 1,
+            filter: true,
+            valueFormatter: (params) => {
+              const account = allOptions?.find(
+                (acc) => acc.name === params.data.accountNo
+              );
+              return account?.accountName ?? "N/A";
+            },
           },
           {
             field: "amount",
             headerName: "Amount",
-            width: 100,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => {
               return formatNumber(params.value);
             },
-            cellStyle: { textAlign: "right" },
+            cellStyle: { textAlign: "center" },
           },
 
           {
             field: "transactionDate",
             headerName: "Transaction Date",
-            width: 150,
+            flex: 1,
             filter: true,
             valueFormatter: (params) => parseDate(params.value),
           },
@@ -366,7 +396,7 @@ const LedgerEntries = ({ type }) => {
           {
             field: "transactionNo",
             headerName: "Transaction No",
-            width: 150,
+            flex: 1,
             filter: true,
           },
         ];
@@ -404,6 +434,7 @@ const LedgerEntries = ({ type }) => {
             transactionDate: item.transactionDate,
             amount: item.amount,
             description: transformString(item.description),
+            glEntryNo: item.glEntryNo,
           };
 
         case "General Ledger Entries":
