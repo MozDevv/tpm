@@ -334,6 +334,10 @@ function Sidebar() {
               path: "/pensions/setups/accounting-period",
             },
             {
+              title: "Payment Methods",
+              path: "/pensions/setups/payment-methods",
+            },
+            {
               title: "Bank Posting Groups",
               path: "/pensions/setups/bank-posting-groups",
             },

@@ -115,8 +115,12 @@ const BaseAutoSaveInputCard = ({
 
       setSelectedBank(filteredBranches);
     }
-    if (name === fieldName && value) {
+    if (name === fieldName && value !== "" && options) {
+      console.log("Filtering options...", options);
+
       const filtered = options.filter((item) => item[filterKey] === value);
+
+      console.log("Filtered options: ", filtered);
 
       setResultFunction(filtered); // Set the filtered result
     }

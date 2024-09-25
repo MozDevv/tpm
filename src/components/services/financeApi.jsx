@@ -155,6 +155,11 @@ const financeEndpoints = {
   customerSubLedger: "/api/Posting/GetCustomerSubLedger",
   bankSubLedger: "/api/Posting/GetBankSubLedger",
   glSubLedger: "/api/Posting/GetGeneralLedgerDetail",
+
+  addPaymentMethod: "/AccountsSetup/AddPaymentMethod",
+  getPaymentMethods: "/AccountsSetup/GetPaymentMethods",
+  updatePaymentMethod: "/AccountsSetup/UpdatePaymentMethod",
+  deletePaymentMethod: (id) => `/AccountsSetup/DeletePaymentMethod?id=${id}`,
 };
 
 export const apiService = {

@@ -213,6 +213,10 @@ export const menuItems = [
             path: "/pensions/setups/account-category",
           },
           {
+            title: "Payment Methods",
+            path: "/pensions/setups/payment-methods",
+          },
+          {
             title: "Accounting Period",
             path: "/pensions/setups/accounting-period",
           },
