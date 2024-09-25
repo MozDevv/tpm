@@ -16,61 +16,6 @@ import axios from "axios";
 import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
 import { formatNumber } from "@/utils/numberFormatters";
 
-const columnDefs = [
-  {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
-    filter: true,
-  },
-  {
-    field: "customerName",
-    headerName: "Customer Name",
-    headerClass: "prefix-header",
-    filter: true,
-  },
-  {
-    field: "amount",
-    headerName: "Amount",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 80,
-    valueFormatter: (params) => {
-      return formatNumber(params.value);
-    },
-    cellStyle: { textAlign: "right" },
-  },
-  {
-    field: "customerEmail",
-    headerName: "Customer Email",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 250,
-  },
-  {
-    field: "customerPhoneNumber",
-    headerName: "Customer Phone Number",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-  {
-    field: "countryId",
-    headerName: "Country",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-  {
-    field: "cityId",
-    headerName: "City",
-    headerClass: "prefix-header",
-    filter: true,
-    width: 100,
-  },
-];
-
 const Customers = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -84,10 +29,11 @@ const Customers = () => {
       id: item.id,
       customerName: item.customerName,
       customerEmail: item.customerEmail,
-      customerPhoneNumber: item.customerPhone,
-      countryId: item.customerCountry,
-      cityId: item.customerCity,
+      customerPhoneNumber: item.customerPhoneNumber,
+      countryId: item.countryId,
+      cityId: item.cityId,
       amount: item.amount,
+      customerPostingGroupId: item.customerPostingGroupId,
 
       // roles: item.roles,
     }));
@@ -187,6 +133,70 @@ const Customers = () => {
     fetchPostingGroups();
   }, []);
 
+  const columnDefs = [
+    {
+      field: "no",
+      headerName: "No",
+      headerClass: "prefix-header",
+      width: 90,
+      filter: true,
+      pinned: "left",
+    },
+    {
+      field: "customerName",
+      headerName: "Customer Name",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      cellStyle: { textAlign: "right" },
+    },
+    {
+      field: "customerEmail",
+      headerName: "Customer Email",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: "customerPhoneNumber",
+      headerName: "Customer Phone Number",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: "countryId",
+      headerName: "Country",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        const country = countries.find((item) => item.id === params.value);
+        return country ? country.country_name : "";
+      },
+    },
+    {
+      field: "cityId",
+      headerName: "City",
+      headerClass: "prefix-header",
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        const city = cities.find((item) => item.id === params.value);
+        return city ? city.city_name : "";
+      },
+    },
+  ];
   const fields = [
     {
       name: "customerName",
@@ -204,7 +214,7 @@ const Customers = () => {
     {
       name: "customerPhoneNumber",
       label: "Customer Phone Number",
-      type: "text",
+      type: "phonenumber",
       required: true,
     },
     {

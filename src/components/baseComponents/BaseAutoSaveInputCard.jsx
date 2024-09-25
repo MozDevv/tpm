@@ -29,6 +29,7 @@ import BaseAmountInput from "./BaseAmountInput";
 import "./autosave.css";
 import { Close, Done } from "@mui/icons-material";
 import { truncateMessage } from "@/utils/handyFuncs";
+import MuiPhoneNumber from "mui-phone-number";
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -611,6 +612,39 @@ const BaseAutoSaveInputCard = ({
                       border: "none",
                       backgroundColor: "rgba(0, 0, 0, 0.06)",
                     },
+                }}
+              />
+            ) : field.type === "phonenumber" ? (
+              <MuiPhoneNumber
+                defaultCountry="ke" // Kenya as the default country
+                name={field.name}
+                disabled={field.disabled}
+                value={formData[field.name]}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: field.name, value },
+                  })
+                }
+                error={!!errors[field.name]}
+                variant="outlined"
+                size="small"
+                fullWidth
+                dropdownClass="custom-dropdown" // Custom class for the dropdown
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "120px", // Set max height for the dropdown
+                      overflowY: "auto",
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left",
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left",
+                  },
                 }}
               />
             ) : (
