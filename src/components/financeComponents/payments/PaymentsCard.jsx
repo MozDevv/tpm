@@ -96,15 +96,7 @@ function PaymentsCard({
       label: "Account No",
       type: "select",
       required: true,
-      // options: selectedAccountTypeId
-      //   ? selectedAccountTypeId.map((acc) => {
-      //       return {
-      //         id: acc.id,
-      //         name: acc.accountNo,
-      //         accountName: acc.name,
-      //       };
-      //     })
-      //   : allOptions && allOptions,
+
       options: allOptions && allOptions,
     },
     {

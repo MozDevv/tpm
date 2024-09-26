@@ -5,6 +5,7 @@ import React, { Suspense } from "react";
 import styles from "./layout.module.css";
 import { Grid } from "@mui/material";
 import { useIsLoading } from "@/context/LoadingContext";
+import Spinner from "@/components/spinner/Spinner";
 
 function Layout({ children }) {
   const { isLoading } = useIsLoading();
