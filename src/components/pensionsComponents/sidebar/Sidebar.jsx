@@ -134,6 +134,10 @@ function Sidebar() {
               title: "Submissions",
               path: "/pensions/preclaims/listing/submissions",
             },
+            {
+              title: "Pending Approvals",
+              path: "/pensions/preclaims/approvals",
+            },
           ],
         },
         {
@@ -151,16 +155,20 @@ function Sidebar() {
       icon: <ArticleOutlinedIcon />,
       children: [
         {
-          title: "Pending Approvals",
-          path: "/pensions/preclaims/approvals",
+          title: "Claims Management",
+          path: "/pensions/claims/claims-management",
         },
         {
-          title: "Claims Management",
-          path: "/pensions/claims-management",
+          title: "Claims Verification",
+          path: "/pensions/claims/claims-verification",
+        },
+        {
+          title: "Claims Validation",
+          path: "/pensions/claims/claims-validation",
         },
         {
           title: "Claims Approval",
-          path: "/pensions/claims-approval",
+          path: "/pensions/claims/claims-approval",
         },
       ],
     },

@@ -974,7 +974,6 @@ const Preclaims = ({ status }) => {
                     setActiveCapName(event.data.mda_pensionCap_name);
                   }}
                 />
-                {/*************PAGINATION *************/}
 
                 {totalPages > 1 && (
                   <Box

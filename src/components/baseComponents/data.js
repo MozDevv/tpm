@@ -25,6 +25,10 @@ export const menuItems = [
             title: "Submissions",
             path: "/pensions/preclaims/listing/submissions",
           },
+          {
+            title: "Pending Approvals",
+            path: "/pensions/preclaims/approvals",
+          },
         ],
       },
       {
@@ -37,16 +41,24 @@ export const menuItems = [
     title: "Claims",
     children: [
       {
-        title: "Pending Approvals",
-        path: "/pensions/preclaims/approvals",
-      },
-      {
         title: "Claims Management",
         path: "/pensions/claims-management",
       },
       {
         title: "Claims Approval",
         path: "/pensions/claims-approval",
+      },
+      {
+        title: "Claims Verification",
+        path: "/pensions/claims/claims-verification",
+      },
+      {
+        title: "Claims Validation",
+        path: "/pensions/claims/claims-validation",
+      },
+      {
+        title: "Claims Approval",
+        path: "/pensions/claims/claims-approval",
       },
     ],
   },

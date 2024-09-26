@@ -12,12 +12,12 @@ function page() {
     <div>
       <React.Suspense fallback={<Spinner />}>
         <div className="ml-4">
-          <div className="text-primary mt-5 ml-3 mb-5 font-semibold text-xl">
-            Claims Management
+          <div className="text-primary mt-5 ml-3 mb-3 font-semibold text-xl">
+            Claims Validation
           </div>
-          <CustomBreadcrumbsList currentTitle="Claims Management" />
+          <CustomBreadcrumbsList currentTitle="Claims Validation" />
         </div>
-        <ClaimsTable />
+        <ClaimsTable status={1} />
       </React.Suspense>
     </div>
   );

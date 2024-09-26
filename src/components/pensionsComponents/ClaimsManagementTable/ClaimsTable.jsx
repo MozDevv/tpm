@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -15,6 +15,7 @@ import {
   MenuItem,
   Tooltip,
   Pagination,
+  Dialog,
 } from "@mui/material";
 import {
   Add,
@@ -35,6 +36,9 @@ import Spinner from "@/components/spinner/Spinner";
 import ClaimDialog from "./ClaimDialog";
 import CreateProspectivePensioner from "../preclaims/createProspective/CreateProspectivePensioner";
 import BaseCard from "@/components/baseComponents/BaseCard";
+import ListNavigation from "@/components/baseComponents/ListNavigation";
+import ReturnToPreclaims from "./ReturnToPreclaims";
+import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -78,9 +82,10 @@ const colDefs = [
 
     filter: true,
   },
+
   {
-    headerName: "Other Name",
-    field: "other_name",
+    headerName: "Surname",
+    field: "surname",
     width: 150,
   },
   {
@@ -140,16 +145,11 @@ const colDefs = [
     field: "personal_number",
     width: 180,
   },
-  {
-    headerName: "Surname",
-    field: "surname",
-    width: 150,
-  },
 
   {
-    headerName: "Pension Award",
-    field: "pension_award",
-    width: 200,
+    headerName: "Other Name(s)",
+    field: "other_name",
+    width: 150,
   },
 
   {
@@ -219,7 +219,7 @@ const colDefs = [
   },
 ];
 
-const ClaimsTable = () => {
+const ClaimsTable = ({ status }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -242,9 +242,11 @@ const ClaimsTable = () => {
 
   const [gridApi, setGridApi] = useState(null);
   const onGridReady = (params) => {
+    setGridApi(params.api);
     gridApiRef.current = params;
-  };
 
+    params.api.showLoadingOverlay();
+  };
   const exportData = () => {
     gridApi.exportDataAsCsv();
   };
@@ -254,11 +256,20 @@ const ClaimsTable = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchAllPreclaims = async () => {
+    const filters =
+      status !== null && status !== undefined
+        ? {
+            "filterCriterion.criterions[0].propertyName": "stage",
+            "filterCriterion.criterions[0].propertyValue": status,
+            "filterCriterion.criterions[0].criterionType": 0,
+          }
+        : {};
     setLoading(true);
     try {
       const res = await apiService.get(claimsEndpoints.getClaims, {
         "paging.pageNumber": pageNumber,
         "paging.pageSize": pageSize,
+        ...filters,
       });
       const rawData = res.data.data;
 
@@ -376,18 +387,35 @@ const ClaimsTable = () => {
   const [openAction, setOpenAction] = useState(false);
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
+  const [openMoveStatus, setOpenMoveStatus] = useState(false);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
     // create: () => router.push("/pensions/preclaims/listing/new"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
+    // create: () => {
+    //   setOpenBaseCard(true);
+    //   setClickedItem(null);
+    // },
+    // edit: () => console.log("Edit clicked"),
+    // delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
-    notify: () => setOpenNotification(true),
+    //notify: () => setOpenNotification(true),
+    movetoValidation: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    movetoVerification: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+    moveToApproval: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    movetoMDA: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
   };
 
   const baseCardHandlers = {
@@ -406,6 +434,9 @@ const ClaimsTable = () => {
   useEffect(() => {
     fetchAllPreclaims();
   }, [openPreclaimDialog]);
+  const loadingOverlayComponentParams = useMemo(() => {
+    return { loadingMessage: "Loading NOT..." };
+  }, []);
 
   return (
     <>
@@ -416,6 +447,28 @@ const ClaimsTable = () => {
           openPreclaimDialog={openPreclaimDialog}
           setOpenNotification={setOpenNotification}
         />
+
+        <Dialog
+          open={openMoveStatus && selectedRows.length > 0}
+          onClose={() => setOpenMoveStatus(false)}
+          sx={{
+            "& .MuiDialog-paper": {
+              height: "300px",
+              width: "600px",
+            },
+            p: 4,
+          }}
+        >
+          <ReturnToPreclaims
+            setOpenPreclaimDialog={setOpenPreclaimDialog}
+            setOpenCreateClaim={setOpenMoveStatus}
+            setSelectedRows={setSelectedRows}
+            fetchAllPreclaims={fetchAllPreclaims}
+            clickedItem={selectedRows}
+            moveStatus={openAction}
+          />
+        </Dialog>
+
         <BaseCard
           openBaseCard={openPreclaimDialog}
           setOpenBaseCard={setOpenPreclaimDialog}
@@ -437,8 +490,8 @@ const ClaimsTable = () => {
             clickedItem={clickedItem}
           />
         </BaseCard>
-        <div className="h-full w-full">
-          <div className="flex justify-between flex-row mt-2">
+        <div className="h-full w-full ml-3 mt-2">
+          {/* <div className="flex justify-between flex-row mt-2">
             <div className="flex gap-2 items-center pl-3">
               <div className="flex items-center gap-2 mt-2 ml-2">
                 <Button onClick={() => exportData()} sx={{ maxHeight: "25px" }}>
@@ -465,8 +518,13 @@ const ClaimsTable = () => {
                 </div>
               </div>
             </div>
-          </div>
-          <Divider sx={{ mt: 1, mb: 1 }} />
+          </div> */}
+          <ListNavigation
+            handlers={handlers}
+            // permissions={permissions}
+            status={status}
+          />
+          <Divider sx={{ mt: 2, mb: 1, ml: 2 }} />
 
           <div className="flex">
             {/* Custom Drawer */}
@@ -586,8 +644,8 @@ const ClaimsTable = () => {
             <div
               className="ag-theme-quartz flex flex-col"
               style={{
-                height: "80vh",
                 padding: "20px",
+                marginLeft: "-10px",
                 width: openFilter ? "calc(100vw - 300px)" : "100vw",
               }}
             >
@@ -596,29 +654,34 @@ const ClaimsTable = () => {
                 columnDefs={colDefs}
                 rowSelection="multiple"
                 onSelectionChanged={onSelectionChanged}
+                loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+                loadingOverlayComponentParams={loadingOverlayComponentParams}
                 domLayout="autoHeight"
                 onGridReady={onGridReady}
-                onRowClicked={(event) => {
+                rowHeight={36}
+                onCellDoubleClicked={(event) => {
                   setClickedItem(event.data); // Update selected item
                   setOpenPreclaimDialog(true); // Open dialog
                 }}
               />{" "}
-              <Box
-                sx={{
-                  mt: "-10px",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <Pagination
-                  count={totalPages}
-                  page={pageNumber}
-                  onChange={handlePageChange}
-                  color="primary"
-                  variant="outlined"
-                  shape="rounded"
-                />
-              </Box>
+              {totalPages > 1 && (
+                <Box
+                  sx={{
+                    mt: "50px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Pagination
+                    count={totalPages}
+                    page={pageNumber}
+                    onChange={handlePageChange}
+                    color="primary"
+                    variant="outlined"
+                    shape="rounded"
+                  />
+                </Box>
+              )}
             </div>
           </div>
         </div>

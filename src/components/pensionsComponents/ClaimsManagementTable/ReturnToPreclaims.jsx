@@ -10,76 +10,92 @@ function ReturnToPreclaims({
   setOpenCreateClaim,
   moveStatus,
   moveTo,
+  setSelectedRows,
+  fetchAllPreclaims,
 }) {
   const [comments, setComments] = useState("");
-
   const { alert, setAlert } = useAlert();
-
   const [errors, setErrors] = useState({
     status: false,
     message: "",
   });
 
   const handleCreateClaim = async () => {
+    // Validate comments before proceeding
     if (!comments || comments.length < 20) {
       setErrors({
         status: true,
-        message: "Comments must be atleast 20 characters",
+        message: "Comments must be at least 20 characters",
       });
-
       return;
     }
 
-    const data = {
-      claim_id: clickedItem?.id_claim,
-      action: moveStatus,
-      comments,
+    // Function to process each item
+    const processItem = async (item) => {
+      const data = {
+        claim_id: item.id_claim ? item.id_claim : item?.id,
+        action: moveStatus,
+        comments,
+      };
+
+      try {
+        const response = await apiService.post(
+          claimsEndpoints.moveClaimStatus,
+          data
+        );
+        console.log("Response:", response);
+        if (response.status === 200) {
+          setAlert({
+            open: true,
+            message:
+              moveStatus === 1
+                ? "Claim(s) has been returned Successfully"
+                : "Claim(s) has been moved to the next stage",
+            severity: "success",
+          });
+        }
+      } catch (error) {
+        console.error(error.response);
+      }
     };
 
     try {
-      const response = await apiService.post(
-        claimsEndpoints.moveClaimStatus,
-        data
-      );
-      console.log(response);
-      console.log("data", data);
-      if (response.status === 200) {
-        setAlert({
-          open: true,
-          message:
-            moveStatus === 1
-              ? "Claim has been returned Successfully"
-              : "Claim has been moved to the next stage",
-          severity: "success",
-        });
-        console.log(response.data);
-        console.log("data", data);
-        setOpenCreateClaim(false);
-        setOpenPreclaimDialog(false);
-        // window.location.reload();
+      if (Array.isArray(clickedItem)) {
+        for (const item of clickedItem) {
+          await processItem(item);
+        }
+      } else {
+        await processItem(clickedItem);
       }
+
+      // Close dialogs after successful processing
+      setOpenCreateClaim(false);
+      setOpenPreclaimDialog(false);
     } catch (error) {
-      console.error(error.response);
+      console.error("An error occurred:", error);
     } finally {
       setOpenCreateClaim(false);
-      // setOpenPreclaimDialog(false);
+      setSelectedRows && setSelectedRows([]); // Reset selected rows if applicable
+      fetchAllPreclaims?.(); // Refetch preclaims if the function exists
     }
   };
 
+  // Check if clickedItem is an array and use the first item for title determination
+  const itemToCheck = Array.isArray(clickedItem) ? clickedItem[0] : clickedItem;
+
   const title =
-    clickedItem?.stage === 0 && moveStatus === 1
-      ? "Return Claim to MDA"
-      : clickedItem?.stage === 0 && moveStatus === 0
-      ? "Move Claim to Validation"
-      : clickedItem?.stage === 1 && moveStatus === 1
+    itemToCheck?.stage === 0 && moveStatus === 1
+      ? "Return Claim(s) to MDA"
+      : itemToCheck?.stage === 0 && moveStatus === 0
+      ? "Move Claim(s) to Validation"
+      : itemToCheck?.stage === 1 && moveStatus === 1
       ? "Return to Verification"
-      : clickedItem?.stage === 1 && moveStatus === 0
+      : itemToCheck?.stage === 1 && moveStatus === 0
       ? "Move to Approval"
-      : "Approve Claim";
+      : "Approve Claim(s)";
 
   return (
     <div>
-      {" "}
       <div className="p-8 h-[100%]">
         <p className="text-primary relative font-semibold text-lg mb-5">
           {title}
@@ -107,7 +123,6 @@ function ReturnToPreclaims({
           />
         </div>
         <div className="mt-5">
-          {" "}
           <Button
             onClick={handleCreateClaim}
             variant="contained"
