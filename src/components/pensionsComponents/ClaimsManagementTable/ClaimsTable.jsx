@@ -440,7 +440,7 @@ const ClaimsTable = ({ status }) => {
 
   return (
     <>
-      <div className="table-container relative h-[80vh] w-full">
+      <div className="table-container relative h-[80vh] w-full overflow-hidden">
         <ClaimDialog
           clickedItem={clickedItem}
           setOpenPreclaimDialog={setOpenPreclaimDialog}
@@ -644,6 +644,7 @@ const ClaimsTable = ({ status }) => {
             <div
               className="ag-theme-quartz flex flex-col"
               style={{
+                height: "60vh",
                 padding: "20px",
                 marginLeft: "-10px",
                 width: openFilter ? "calc(100vw - 300px)" : "100vw",

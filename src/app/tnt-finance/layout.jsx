@@ -5,7 +5,6 @@ import React, { Suspense } from "react";
 import styles from "./layout.module.css";
 import { Grid } from "@mui/material";
 import { useIsLoading } from "@/context/LoadingContext";
-import Spinner from "@/components/financeComponents/spinner/Spinner";
 
 function Layout({ children }) {
   const { isLoading } = useIsLoading();
@@ -15,9 +14,7 @@ function Layout({ children }) {
       <Grid container sx={{ height: "95vh" }}>
         {/* Sidebar */}
         <Grid item xs={2}>
-          <div className={styles.sidebar}>
-            <Sidebar />
-          </div>
+          <div className={styles.sidebar}></div>
         </Grid>
         {/* Main Content */}
         <>

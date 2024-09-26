@@ -244,7 +244,7 @@ function Sidebar() {
 
         {
           title: "Payments",
-          path: "/finance/payments",
+          path: "/pensions/finance/payments",
         },
 
         // {
