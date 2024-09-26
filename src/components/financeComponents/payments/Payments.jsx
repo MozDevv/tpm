@@ -5,33 +5,115 @@ import React, { useEffect } from "react";
 import BaseTable from "@/components/baseComponents/BaseTable";
 import BaseCard from "@/components/baseComponents/BaseCard";
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import { apiService } from "@/components/services/financeApi";
 
-import CountyCard from "@/components/pensionsComponents/setups/counties/CountyCard";
-import GeneralJournalCard from "./GeneralJournalCard";
 import financeEndpoints from "@/components/services/financeApi";
-import { formatDate, parseDate } from "@/utils/dateFormatter";
-import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
-import { Dialog, Select } from "@mui/material";
-import PostGL from "./PostGL";
-import { formatNumber } from "@/utils/numberFormatters";
-import { he } from "@faker-js/faker";
+import { formatDate } from "@/utils/dateFormatter";
+
+import PaymentsCard from "./PaymentsCard";
+import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
 
 const Payments = () => {
+  const [paymentMethods, setPaymentMethods] = React.useState([]);
+  const [bankAccounts, setBankAccounts] = React.useState([]);
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const res = await apiService.get(financeEndpoints.getPaymentMethods, {
+          "paging.pageSize": 2000,
+        });
+        if (res.status === 200) {
+          setPaymentMethods(
+            res.data.data.map((meth) => {
+              return {
+                id: meth.id,
+                name: meth.code,
+              };
+            })
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchBankAccounts = async () => {
+      try {
+        const res = await apiService.get(financeEndpoints.getBankAccounts, {
+          "paging.pageSize": 2000,
+        });
+        if (res.status === 200) {
+          setBankAccounts(
+            res.data.data.map((acc) => {
+              return {
+                id: acc.id,
+                name: acc.bankAccountName,
+              };
+            })
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchPaymentMethods();
+    fetchBankAccounts();
+  }, []);
+
   const columnDefs = [
     {
-      payee: "Faith Mungatana",
-      postingDate: "2024-09-25T15:40:31.881Z",
-      onBehalfOf: "string",
-      bankAccountId: "e15fb7e3-0fe0-4025-8d11-f9aee78a1d00",
-      paymentMethodId: "f8b9fc36-5246-4bca-803a-7f609ad2a1a6",
-      narration: 0,
-      isPosted: false,
-    },
+      headerName: "Payee",
+      field: "payee",
+      flex: 1,
 
+      pinned: "left",
+    },
     {
-      he,
+      headerName: "Posting Date",
+      field: "postingDate",
+      flex: 1,
+      valueFormatter: (params) => {
+        return formatDate(params.value);
+      },
+    },
+    {
+      headerName: "On Behalf Of",
+      field: "onBehalfOf",
+      flex: 1,
+    },
+    {
+      headerName: "Bank Account",
+      field: "bankAccountId",
+      flex: 1,
+      valueFormatter: (params) => {
+        const bankAccount = bankAccounts.find(
+          (account) => account.id === params.value
+        );
+        return bankAccount ? bankAccount.name : "";
+      },
+    },
+    {
+      headerName: "Payment Method",
+      field: "paymentMethodId",
+      flex: 1,
+      valueFormatter: (params) => {
+        const paymentMethod = paymentMethods.find(
+          (method) => method.id === params.value
+        );
+        return paymentMethod ? paymentMethod.name : "";
+      },
+    },
+    {
+      headerName: "Narration",
+      field: "narration",
+      flex: 1,
+    },
+    {
+      headerName: "Is Posted",
+      field: "isPosted",
+      flex: 1,
     },
   ];
 
@@ -43,14 +125,12 @@ const Payments = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
-
-      documentType: item.documentType,
-      documentNo: item.documentNo,
-      externalDocumentNo: item.externalDocumentNo,
+      payee: item.payee,
       postingDate: item.postingDate,
-      vatDate: item.vatDate,
-
-      amount: item.amount,
+      onBehalfOf: item.onBehalfOf,
+      bankAccountId: item.bankAccountId,
+      paymentMethodId: item.paymentMethodId,
+      narration: item.narration,
       isPosted: item.isPosted,
     }));
   };
@@ -58,8 +138,6 @@ const Payments = () => {
   const [openPostToGL, setOpenPostToGL] = React.useState(false);
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const handlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -68,7 +146,6 @@ const Payments = () => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
     notify: () => console.log("Notify clicked"),
-    postToGL: () => selectedRows.length > 0 && setOpenPostToGL(true),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -92,50 +169,16 @@ const Payments = () => {
       setDialogType("branch");
       setOpenAction(true);
     },
-
-    ...(clickedItem &&
-      openBaseCard && {
-        postToGL: () => {
-          if (selectedRows.length === 0 && clickedItem && openBaseCard) {
-            setSelectedRows([clickedItem]);
-          }
-          setOpenPostToGL(true);
-        },
-      }),
   };
 
-  const title = clickedItem
-    ? `${clickedItem.documentNo}`
-    : "Create New General Journal";
+  const title = clickedItem ? `${clickedItem.payee}` : "Create New Payment";
 
   const fields = [
     {
-      name: "documentType",
-      label: "Document Type",
-      type: "select",
+      name: "payee",
+      label: "Payee",
+      type: "text",
       required: true,
-
-      options: [
-        { id: 0, name: "Payment Voucher" },
-        { id: 1, name: "Purchase Invoice" },
-        { id: 2, name: "Sales Invoice" },
-        { id: 3, name: "Receipt" },
-        { id: 4, name: "Purchase Credit Memo" },
-        { id: 5, name: "Sales Credit Memo" },
-        { id: 6, name: "Journal Voucher" },
-      ],
-    },
-    {
-      name: "documentNo",
-      label: "Document No",
-      type: "text",
-
-      disabled: true,
-    },
-    {
-      name: "externalDocumentNo",
-      label: "External Document No",
-      type: "text",
     },
     {
       name: "postingDate",
@@ -144,41 +187,36 @@ const Payments = () => {
       required: true,
     },
     {
-      name: "vatDate",
-      label: "VAT Date",
-      type: "date",
+      name: "onBehalfOf",
+      label: "On Behalf Of",
+      type: "text",
       required: true,
     },
-
     {
-      name: "currency",
-      label: "Currency",
+      name: "bankAccountId",
+      label: "Bank Account",
       type: "select",
-      options: [
-        {
-          id: "usd",
-          name: "USD",
-        },
-        {
-          id: "kes",
-          name: "KES",
-        },
-        {
-          id: "eur",
-          name: "EUR",
-        },
-      ],
+      required: true,
+      options: bankAccounts,
     },
     {
-      name: "amount",
-      label: "Amount",
-      type: "amount",
-      disabled: true,
+      name: "paymentMethodId",
+      label: "Payment Method",
+      type: "select",
+      options: paymentMethods,
+      required: true,
+    },
+    {
+      name: "narration",
+      label: "Narration",
+      type: "number",
+      required: false,
     },
     {
       name: "isPosted",
       label: "Is Posted",
       type: "switch",
+      required: false,
     },
   ];
 
@@ -192,24 +230,7 @@ const Payments = () => {
   return (
     <div className="">
       {/* {JSON.stringify(selectedRows)} */}
-      <Dialog
-        open={openPostToGL}
-        onClose={() => setOpenPostToGL(false)}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          padding: "20px",
-          maxHeight: "90vh",
-        }}
-      >
-        <PostGL
-          clickedItem={clickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          selectedRows={selectedRows}
-          setOpenPostGL={setOpenPostToGL}
-          setSelectedRows={setSelectedRows}
-        />
-      </Dialog>
+
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -224,9 +245,9 @@ const Payments = () => {
         dialogType={dialogType}
       >
         {clickedItem ? (
-          <GeneralJournalCard
+          <PaymentsCard
             fields={fields}
-            apiEndpoint={financeEndpoints.editGeneralJournal}
+            apiEndpoint={financeEndpoints.updatePayment}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -237,11 +258,11 @@ const Payments = () => {
         ) : (
           <BaseAutoSaveInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addGeneralJournal}
+            apiEndpoint={financeEndpoints.addPayment}
             putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.editGeneralJournal}
+            updateApiEndpoint={financeEndpoints.updatePayment}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getGeneralJournalsById}
+            getApiEndpoint={financeEndpoints.getPayments}
             getApiFunction={apiService.get}
             transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
@@ -252,21 +273,19 @@ const Payments = () => {
         )}
       </BaseCard>
       <BaseTable
-        openPostToGL={openPostToGL}
-        onSelectionChange={handleSelectionChange}
         openAction={openAction}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getGeneralJournals}
+        fetchApiEndpoint={financeEndpoints.getPayments}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="General Journals"
-        currentTitle="General Journals"
+        breadcrumbTitle="Payments"
+        currentTitle="Payments"
       />
     </div>
   );

@@ -1,9 +1,12 @@
-import React from 'react'
+import Payments from "@/components/financeComponents/payments/Payments";
+import React from "react";
 
 function page() {
   return (
-    <div>page</div>
-  )
+    <div>
+      <Payments />
+    </div>
+  );
 }
 
-export default page
+export default page;

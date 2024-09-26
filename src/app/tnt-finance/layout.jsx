@@ -1,6 +1,6 @@
 "use client";
 import Navbar from "@/components/financeComponents/navbar/Navbar";
-import Sidebar from "@/components/financeComponents/sidebar/Sidebar";
+
 import React, { Suspense } from "react";
 import styles from "./layout.module.css";
 import { Grid } from "@mui/material";
