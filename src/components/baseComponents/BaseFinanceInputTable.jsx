@@ -668,6 +668,17 @@ const BaseFinanceInputTable = ({
 
         setDataAdded(true);
 
+        if (data.amount) {
+          data.vatAmount = 0;
+          data.taxAmount = 0;
+          data.wtaxAmount = 0;
+          data.wvatAmount = 0;
+          data.retentionAmount = 0;
+          data.netAmount = 0;
+
+          api.refreshCells({ rowNodes: [params.node] });
+        }
+
         if (field === "accountId") {
           const accountId = newValue;
 
@@ -679,6 +690,8 @@ const BaseFinanceInputTable = ({
 
           if (selectedOption) {
             data.accountName = selectedOption.accountName;
+            data.accountNo = selectedOption.accountName;
+
             api.refreshCells({ rowNodes: [params.node], force: true });
           } else {
             data.accountName = "";
@@ -703,50 +716,6 @@ const BaseFinanceInputTable = ({
         // Refresh the cell to reflect changes
         params.api.refreshCells({ rowNodes: [params.node], force: true });
 
-        // if (field === "accountTypeId") {
-        //   const newOptions = await fetchNewOptions(newValue);
-
-        //   console.log("New Options:", newOptions);
-
-        //   const accountNoColumn = api.getColumnDef("accountId");
-        //   if (accountNoColumn) {
-        //     accountNoColumn.cellEditorParams = {
-        //       ...accountNoColumn.cellEditorParams,
-        //       values: newOptions.map((option) => option.name), // Set new options
-        //     };
-
-        //     api.refreshCells({ force: true });
-        //   }
-        // }
-
-        // if (field === "accountId") {
-        //   // First, check in selectedAccountTypeId
-        //   let selectedOption = selectedAccountTypeId.find(
-        //     (acc) => acc.accountNo === newValue
-        //   );
-
-        //   console.log("Selected AccountTypeId Options:", selectedAccountTypeId);
-        //   console.log("Selected Option is:", selectedOption);
-
-        //   // If not found in selectedAccountTypeId, fallback to allOptions
-        //   if (!selectedOption && allOptions && Array.isArray(allOptions)) {
-        //     selectedOption = allOptions.find(
-        //       (acc) => acc.accountNo === newValue
-        //     );
-        //     console.log("Selected Option from allOptions:", selectedOption);
-        //   }
-
-        //   // Update the accountName if the selectedOption is found
-        //   if (selectedOption) {
-        //     data.accountName = selectedOption.name;
-
-        //     api.refreshCells({ rowNodes: [params.node], force: true });
-        //   } else {
-        //     // Clear the accountName if no option is found
-        //     data.accountName = "";
-        //     api.refreshCells({ rowNodes: [params.node], force: true });
-        //   }
-        // }
         console.log("Data ", data);
         console.log("New Value", newValue);
         console.log("Column Definition", colDef);

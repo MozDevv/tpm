@@ -10,15 +10,13 @@ import ClaimsTable from "@/components/pensionsComponents/ClaimsManagementTable/C
 function page() {
   return (
     <div>
-      <React.Suspense fallback={<Spinner />}>
-        <div className="ml-4">
-          <div className="text-primary mt-5 ml-3 mb-3 font-semibold text-xl">
-            Claims Management
-          </div>
-          <CustomBreadcrumbsList currentTitle="Claims Management" />
+      <div className="ml-4">
+        <div className="text-primary mt-5 ml-3 mb-3 font-semibold text-xl">
+          Claims Management
         </div>
-        <ClaimsTable />
-      </React.Suspense>
+        <CustomBreadcrumbsList currentTitle="Claims Management" />
+      </div>
+      <ClaimsTable />
     </div>
   );
 }

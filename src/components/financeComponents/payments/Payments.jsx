@@ -71,17 +71,21 @@ const Payments = () => {
       pinned: "left",
     },
     {
-      headerName: "Posting Date",
-      field: "postingDate",
-      flex: 1,
-      valueFormatter: (params) => {
-        return formatDate(params.value);
-      },
-    },
-    {
       headerName: "On Behalf Of",
       field: "onBehalfOf",
       flex: 1,
+    },
+
+    {
+      headerName: "Payment Method",
+      field: "paymentMethodId",
+      flex: 1,
+      valueFormatter: (params) => {
+        const paymentMethod = paymentMethods.find(
+          (method) => method.id === params.value
+        );
+        return paymentMethod ? paymentMethod.name : "";
+      },
     },
     {
       headerName: "Bank Account",
@@ -95,17 +99,6 @@ const Payments = () => {
       },
     },
     {
-      headerName: "Payment Method",
-      field: "paymentMethodId",
-      flex: 1,
-      valueFormatter: (params) => {
-        const paymentMethod = paymentMethods.find(
-          (method) => method.id === params.value
-        );
-        return paymentMethod ? paymentMethod.name : "";
-      },
-    },
-    {
       headerName: "Narration",
       field: "narration",
       flex: 1,
@@ -114,6 +107,14 @@ const Payments = () => {
       headerName: "Is Posted",
       field: "isPosted",
       flex: 1,
+    },
+    {
+      headerName: "Posting Date",
+      field: "postingDate",
+      flex: 1,
+      valueFormatter: (params) => {
+        return formatDate(params.value);
+      },
     },
   ];
 
@@ -171,7 +172,9 @@ const Payments = () => {
     },
   };
 
-  const title = clickedItem ? `${clickedItem.payee}` : "Create New Payment";
+  const title = clickedItem
+    ? `${clickedItem.payee} Payment`
+    : "Create New Payment";
 
   const fields = [
     {
@@ -180,16 +183,18 @@ const Payments = () => {
       type: "text",
       required: true,
     },
-    {
-      name: "postingDate",
-      label: "Posting Date",
-      type: "date",
-      required: true,
-    },
+
     {
       name: "onBehalfOf",
       label: "On Behalf Of",
       type: "text",
+      required: true,
+    },
+    {
+      name: "paymentMethodId",
+      label: "Payment Method",
+      type: "select",
+      options: paymentMethods,
       required: true,
     },
     {
@@ -199,11 +204,11 @@ const Payments = () => {
       required: true,
       options: bankAccounts,
     },
+
     {
-      name: "paymentMethodId",
-      label: "Payment Method",
-      type: "select",
-      options: paymentMethods,
+      name: "postingDate",
+      label: "Posting Date",
+      type: "date",
       required: true,
     },
     {

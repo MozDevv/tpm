@@ -165,6 +165,7 @@ const financeEndpoints = {
   addPayment: "/Posting/AddPayment",
   getPayments: "/Posting/GetPayments",
   updatePayment: "/Posting/UpdatePayment",
+  getPaymentById: (id) => `/Posting/GetPayments?id=${id}`,
   deletePayment: (id) => `/Posting/DeletePayment?id=${id}`,
   addPaymentLine: "/Posting/AddPaymentLine",
   updatePaymentLine: "/Posting/UpdatePaymentLine",

@@ -101,6 +101,7 @@ function PaymentsCard({
       label: "Account Type",
       type: "select",
       required: true,
+
       options: [
         {
           id: 0,
@@ -129,34 +130,13 @@ function PaymentsCard({
 
       options: allOptions && allOptions,
     },
-
     {
-      value: "amount",
-      label: "Amount",
-      type: "number",
+      value: "accountNo",
+      label: "Account Name",
+      type: "text",
       required: true,
       disabled: true,
-    },
-
-    {
-      value: "currency",
-      label: "Currency",
-      type: "select",
-      required: true,
-      options: [
-        {
-          id: "usd",
-          name: "USD",
-        },
-        {
-          id: "kes",
-          name: "KES",
-        },
-        {
-          id: "eur",
-          name: "EUR",
-        },
-      ],
+      options: allOptions && allOptions,
     },
 
     {
@@ -185,14 +165,14 @@ function PaymentsCard({
     },
     {
       value: "wtaxCode",
-      label: "WTax Code",
+      label: "W/Tax Code",
       type: "select",
       required: true,
       options: productPostingGroups,
     },
     {
       value: "wvatCode",
-      label: "WVat Code",
+      label: "W/T Vat Code",
       type: "select",
       required: true,
       options: productPostingGroups,
@@ -205,40 +185,74 @@ function PaymentsCard({
       options: productPostingGroups,
     },
     {
+      value: "amount",
+      label: "Amount",
+      type: "number",
+      required: true,
+      disabled: false,
+    },
+
+    // {
+    //   value: "currency",
+    //   label: "Currency",
+    //   type: "select",
+    //   required: true,
+    //   options: [
+    //     {
+    //       id: "usd",
+    //       name: "USD",
+    //     },
+    //     {
+    //       id: "kes",
+    //       name: "KES",
+    //     },
+    //     {
+    //       id: "eur",
+    //       name: "EUR",
+    //     },
+    //   ],
+    // },
+    {
       value: "vatAmount",
       label: "VAT Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
     {
       value: "taxAmount",
       label: "Tax Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
     {
       value: "wtaxAmount",
-      label: "WTax Amount",
+      label: "W/Tax Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
     {
       value: "wvatAmount",
-      label: "WVat Amount",
+      label: "W/T Vat Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
     {
       value: "retentionAmount",
       label: "Retention Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
     {
       value: "netAmount",
       label: "Net Amount",
       type: "number",
       required: false,
+      disabled: true,
     },
   ];
 
@@ -265,11 +279,13 @@ function PaymentsCard({
                 <BaseAutoSaveInputCard
                   setClickedItem={setClickedItem}
                   fields={fields}
-                  apiEndpoint={financeEndpoints.addGeneralJournal}
+                  apiEndpoint={financeEndpoints.addPayment}
                   putApiFunction={apiService.post}
-                  updateApiEndpoint={financeEndpoints.editGeneralJournal}
+                  updateApiEndpoint={financeEndpoints.updatePayment}
                   postApiFunction={apiService.post}
-                  getApiEndpoint={financeEndpoints.getGeneralJournalsById}
+                  getApiEndpoint={financeEndpoints.getPaymentById(
+                    clickedItem?.id
+                  )}
                   getApiFunction={apiService.get}
                   transformData={transformData}
                   setOpenBaseCard={setOpenBaseCard}
@@ -286,20 +302,20 @@ function PaymentsCard({
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
                     selectedAccountTypeId={selectedAccountTypeId}
-                    title="Journal Entries"
+                    title="Payment Lines"
                     fields={tableFields}
                     id={clickedItem?.id}
-                    idLabel="journalId"
+                    idLabel="paymentId"
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.post}
-                    getEndpoint={financeEndpoints.getGeneralJournalLines(
+                    getEndpoint={financeEndpoints.getPaymentLines(
                       clickedItem?.id
                     )}
-                    deleteEndpoint={financeEndpoints.deleteGeneralJournalLine}
+                    deleteEndpoint={financeEndpoints.deletePaymentLine}
                     setTotalAmmounts={setTotalAmmounts}
-                    postEndpoint={financeEndpoints.addGeneralJournalLine}
-                    putEndpoint={financeEndpoints.editGeneralJournalLine}
+                    postEndpoint={financeEndpoints.addPaymentLine}
+                    putEndpoint={financeEndpoints.updatePaymentLine}
                     passProspectivePensionerId={true}
                   />
                 </div>
