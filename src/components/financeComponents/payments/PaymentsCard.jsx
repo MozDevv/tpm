@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Tabs } from "antd";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 
@@ -65,6 +65,36 @@ function PaymentsCard({
   useEffect(() => {
     fetchNewOptions();
   }, []);
+
+  const [productPostingGroups, setProductPostingGroups] = useState(null);
+
+  useEffect(() => {
+    const fetchProductPostingGroups = async () => {
+      try {
+        const res = await apiService.get(
+          financeEndpoints.getProductPostingGroups,
+          {
+            "paging.pageSize": 2000,
+          }
+        );
+        if (res.status === 200) {
+          setProductPostingGroups(
+            res.data.data.map((group) => {
+              return {
+                id: group.id,
+                name: group.name,
+              };
+            })
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchProductPostingGroups();
+  }, []);
+
   const tableFields = [
     {
       value: "accountTypeId",
@@ -99,33 +129,116 @@ function PaymentsCard({
 
       options: allOptions && allOptions,
     },
-    {
-      value: "accountName",
-      label: "Account Name",
-      type: "text",
-      required: true,
-      disabled: true,
-      options: allOptions && allOptions,
-    },
 
-    {
-      value: "debitAmount",
-      label: "Debit Amount",
-      type: "number",
-      required: true,
-    },
-    {
-      value: "creditAmount",
-      label: "Credit Amount",
-      type: "number",
-      required: true,
-    },
     {
       value: "amount",
       label: "Amount",
       type: "number",
       required: true,
       disabled: true,
+    },
+
+    {
+      value: "currency",
+      label: "Currency",
+      type: "select",
+      required: true,
+      options: [
+        {
+          id: "usd",
+          name: "USD",
+        },
+        {
+          id: "kes",
+          name: "KES",
+        },
+        {
+          id: "eur",
+          name: "EUR",
+        },
+      ],
+    },
+
+    {
+      value: "vatExcempt",
+      label: "VAT Excempt",
+      type: "select",
+      options: [
+        { id: true, name: "Yes" },
+        { id: false, name: "No" },
+      ],
+      required: true,
+    },
+    {
+      value: "vatCode",
+      label: "VAT Code",
+      type: "select",
+      required: true,
+      options: productPostingGroups,
+    },
+    {
+      value: "taxCode",
+      label: "Tax Code",
+      type: "select",
+      required: true,
+      options: productPostingGroups,
+    },
+    {
+      value: "wtaxCode",
+      label: "WTax Code",
+      type: "select",
+      required: true,
+      options: productPostingGroups,
+    },
+    {
+      value: "wvatCode",
+      label: "WVat Code",
+      type: "select",
+      required: true,
+      options: productPostingGroups,
+    },
+    {
+      value: "retentionCode",
+      label: "Retention Code",
+      type: "select",
+      required: true,
+      options: productPostingGroups,
+    },
+    {
+      value: "vatAmount",
+      label: "VAT Amount",
+      type: "number",
+      required: false,
+    },
+    {
+      value: "taxAmount",
+      label: "Tax Amount",
+      type: "number",
+      required: false,
+    },
+    {
+      value: "wtaxAmount",
+      label: "WTax Amount",
+      type: "number",
+      required: false,
+    },
+    {
+      value: "wvatAmount",
+      label: "WVat Amount",
+      type: "number",
+      required: false,
+    },
+    {
+      value: "retentionAmount",
+      label: "Retention Amount",
+      type: "number",
+      required: false,
+    },
+    {
+      value: "netAmount",
+      label: "Net Amount",
+      type: "number",
+      required: false,
     },
   ];
 
@@ -191,7 +304,7 @@ function PaymentsCard({
                   />
                 </div>
 
-                <div className="flex justify-between mt-10">
+                {/* <div className="flex justify-between mt-10">
                   <div className="flex flex-row justify-between w-full">
                     {totalAmmounts.map((item, index) => (
                       <div
@@ -207,7 +320,7 @@ function PaymentsCard({
                       </div>
                     ))}
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

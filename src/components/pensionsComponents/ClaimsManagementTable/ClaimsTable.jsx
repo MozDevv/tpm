@@ -440,7 +440,7 @@ const ClaimsTable = ({ status }) => {
 
   return (
     <>
-      <div className="table-container relative h-full w-full overflow-hidden">
+      <div className=" relative h-full w-full overflow-hidden">
         <ClaimDialog
           clickedItem={clickedItem}
           setOpenPreclaimDialog={setOpenPreclaimDialog}

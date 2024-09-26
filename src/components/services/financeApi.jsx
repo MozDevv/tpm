@@ -161,10 +161,15 @@ const financeEndpoints = {
   updatePaymentMethod: "/AccountsSetup/UpdatePaymentMethod",
   deletePaymentMethod: (id) => `/AccountsSetup/DeletePaymentMethod?id=${id}`,
 
+  //Payments
   addPayment: "/Posting/AddPayment",
   getPayments: "/Posting/GetPayments",
   updatePayment: "/Posting/UpdatePayment",
   deletePayment: (id) => `/Posting/DeletePayment?id=${id}`,
+  addPaymentLine: "/Posting/AddPaymentLine",
+  updatePaymentLine: "/Posting/UpdatePaymentLine",
+  deletePaymentLine: (id) => `/Posting/DeletePaymentLine?id=${id}`,
+  getPaymentLines: (id) => `/Posting/GetPaymentLines?PaymentId=${id}`,
 };
 
 export const apiService = {
