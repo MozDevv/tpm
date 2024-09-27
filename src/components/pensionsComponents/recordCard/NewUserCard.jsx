@@ -114,15 +114,18 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
         setOpenBaseCard(false);
         // router.push("/pensions/users");
-      }
-
-      if (res.data.isSuccess === false) {
+      } else if (res.data.isSuccess === false && res.data.message !== null) {
         message.error(res.data.message);
+      } else {
+        message.error("An error occurred. Please try again.");
       }
     } catch (error) {
       console.log(error.response);
 
-      // Extracting and displaying the error message
+      if (error.status === 400 && error.response.data.message) {
+        message.error(error.response.data.message);
+      }
+
       if (error.response && error.response.data) {
         const errorData = error.response.data;
 
@@ -146,11 +149,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
           message.error(errorData.title);
         }
       } else {
-        // Handle other errors (network issues, etc.)
         message.error("An error occurred. Please try again.");
       }
     } finally {
-      //setIsLoading(false);
     }
   };
 

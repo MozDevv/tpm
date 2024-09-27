@@ -321,9 +321,7 @@ const endpoints = {
   getApprovalUsers: "/api/ApprovalSetups/GetApprovalUsers",
   updateApprovalUser: "/api/ApprovalSetups/UpdateApprovalUsers",
   deleteApprovalUser: (id) => `/api/ApprovalSetups/DeleteApprovalUsers/${id}`,
-
   createApprovalType: "/api/ApprovalSetups/CreateApprovalType",
-
   createApprovalStages: "/api/ApprovalSetups/CreateApprovalStages",
 };
 

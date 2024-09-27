@@ -144,10 +144,6 @@ function Sidebar() {
           title: "Returned Claims",
           path: "/pensions/preclaims/returned-claims",
         },
-        // {
-        //   title: "Verification",
-        //   path: "/pensions/claims-approval",
-        // },
       ],
     },
     {
@@ -246,11 +242,6 @@ function Sidebar() {
           title: "Payments",
           path: "/pensions/finance/payments",
         },
-
-        // {
-        //   title: "Verification",
-        //   path: "/pensions/claims-approval",
-        // },
       ],
     },
     {
@@ -661,12 +652,12 @@ function Sidebar() {
       </div>
       <List>
         <h6 className={styles.h6}>MAIN MENU</h6>
-        {renderMenuItems(menuItems)}
+        {renderMenuItems(filteredMenuItems)}
 
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
 
-        {renderMenuItems(adminItems)}
+        {renderMenuItems(filteredAdminItems)}
       </List>
     </Box>
   );
