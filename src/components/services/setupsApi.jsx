@@ -12,6 +12,7 @@ const api = axios.create({
 
 const endpoints = {
   //PENSION-CAPS
+  getUsers: "/api/UserManagement/GetUsers",
   pensionCaps: "/api/Setups/GetPensionCaps",
 
   getExitGrounds: "/api/Setups/GetExitGround",
@@ -313,6 +314,17 @@ const endpoints = {
   updateGovernmentSalary: "/api/ProspectivePensioners/UpdateGovernmentSalary",
   deleteGovernmentSalary: (id) =>
     `/api/ProspectivePensioners/DeleteGovenrmentSalary?id=${id}`,
+
+  // APPROVALS & WORKFLOWS ****************************************
+
+  createApprovalUser: "/api/ApprovalSetups/CreateApprovalUser",
+  getApprovalUsers: "/api/ApprovalSetups/GetApprovalUsers",
+  updateApprovalUser: "/api/ApprovalSetups/UpdateApprovalUsers",
+  deleteApprovalUser: (id) => `/api/ApprovalSetups/DeleteApprovalUsers/${id}`,
+
+  createApprovalType: "/api/ApprovalSetups/CreateApprovalType",
+
+  createApprovalStages: "/api/ApprovalSetups/CreateApprovalStages",
 };
 
 export const apiService = {

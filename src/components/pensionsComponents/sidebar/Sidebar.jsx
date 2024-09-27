@@ -386,6 +386,23 @@ function Sidebar() {
           ],
         },
         {
+          title: "Workflows Setups",
+          subChildren: [
+            {
+              title: "Approvers",
+              path: "/pensions/workflows/setups/approvers",
+            },
+            {
+              title: "Approval Types",
+              path: "/pensions/workflows/setups/approval-types",
+            },
+            {
+              title: "Approval Stages",
+              path: "/pensions/workflows/setups/approval-stages",
+            },
+          ],
+        },
+        {
           title: "No. Series",
           path: "/pensions/setups/no-series",
         },
@@ -644,16 +661,12 @@ function Sidebar() {
       </div>
       <List>
         <h6 className={styles.h6}>MAIN MENU</h6>
-        {renderMenuItems(filteredMenuItems)}
-
-        {/* {renderMenuItems(menuItems)} */}
+        {renderMenuItems(menuItems)}
 
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
 
-        {renderMenuItems(filteredAdminItems)}
-
-        {/* {renderMenuItems(adminItems)} */}
+        {renderMenuItems(adminItems)}
       </List>
     </Box>
   );

@@ -148,7 +148,7 @@ function WcpsCard({
     },
     {
       value: "contribution_amount",
-      label: "Contribution Amount",
+      label: "Contribution Amount(2%)",
       disabled: true,
       type: "number",
       required: true,

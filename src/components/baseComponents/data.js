@@ -263,6 +263,19 @@ export const menuItems = [
         ],
       },
       {
+        title: "Workflows Setups",
+        subChildren: [
+          {
+            title: "Approvers",
+            path: "/pensions/workflows/setups/approvers",
+          },
+          {
+            title: "Approval Types",
+            path: "/pensions/workflows/setups/approval-types",
+          },
+        ],
+      },
+      {
         title: "City Setups",
         path: "/pensions/setups/city-setups",
       },
