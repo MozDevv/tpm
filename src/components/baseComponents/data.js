@@ -225,6 +225,10 @@ export const menuItems = [
             path: "/pensions/setups/account-category",
           },
           {
+            title: "Award Posting Groups",
+            path: "/pensions/setups/award-posting-groups",
+          },
+          {
             title: "Payment Methods",
             path: "/pensions/setups/payment-methods",
           },

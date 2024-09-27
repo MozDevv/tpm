@@ -337,6 +337,10 @@ function Sidebar() {
               path: "/pensions/setups/payment-methods",
             },
             {
+              title: "Award Posting Groups",
+              path: "/pensions/setups/award-posting-groups",
+            },
+            {
               title: "Bank Posting Groups",
               path: "/pensions/setups/bank-posting-groups",
             },
@@ -653,10 +657,8 @@ function Sidebar() {
       <List>
         <h6 className={styles.h6}>MAIN MENU</h6>
         {renderMenuItems(filteredMenuItems)}
-
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
-
         {renderMenuItems(filteredAdminItems)}
       </List>
     </Box>

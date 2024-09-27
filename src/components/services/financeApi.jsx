@@ -171,6 +171,16 @@ const financeEndpoints = {
   updatePaymentLine: "/Posting/UpdatePaymentLine",
   deletePaymentLine: (id) => `/Posting/DeletePaymentLine?id=${id}`,
   getPaymentLines: (id) => `/Posting/GetPaymentLines?PaymentId=${id}`,
+
+  //Award Documents
+
+  addAwardPostingGroup: "/PostingSetup/AddAwardPostingGroup",
+  getAwardPostingGroups: "/PostingSetup/GetAwardPostingGroups",
+  updateAwardPostingGroup: "/PostingSetup/UpdateAwardPostingGroup",
+  deleteAwardPostingGroup: (id) =>
+    `/PostingSetup/DeleteAwardPostingGroup?id=${id}`,
+
+  getPensionAwards: "/Setups/GetPensionAwards",
 };
 
 export const apiService = {
