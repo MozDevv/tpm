@@ -334,6 +334,10 @@ function Sidebar() {
           title: "Finance Setup",
           subChildren: [
             {
+              title: "Recoveries & Deductions",
+              path: "/pensions/setups/recoveries-deductions",
+            },
+            {
               title: "Account Categories",
               path: "/pensions/setups/account-category",
             },

@@ -182,6 +182,13 @@ const financeEndpoints = {
 
   getPensionAwards: "/Setups/GetPensionAwards",
   pensionCaps: "/Setups/GetPensionCaps",
+
+  //RECOVERIES AND DEDUCTIONS
+  addRecoveryDeduction: "/PostingSetup/AddDeductionsAndRefund",
+  getRecoveryDeductions: "/PostingSetup/GetDeductionsAndRefunds",
+  updateRecoveryDeduction: "/PostingSetup/UpdateDeductionsAndRefund",
+  deleteRecoveryDeduction: (id) =>
+    `/PostingSetup/DeleteDeductionsAndRefund?id=${id}`,
 };
 
 export const apiService = {

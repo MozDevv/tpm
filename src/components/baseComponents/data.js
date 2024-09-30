@@ -226,6 +226,10 @@ export const menuItems = [
         title: "Finance Setup",
         subChildren: [
           {
+            title: "Recoveries & Deductions",
+            path: "/pensions/setups/finance-setups/recoveries-deductions",
+          },
+          {
             title: "Vendor Posting Group",
             path: "/pensions/setups/vendor-posting-groups",
           },
