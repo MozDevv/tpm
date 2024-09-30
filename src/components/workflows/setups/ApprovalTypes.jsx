@@ -60,7 +60,7 @@ const Approvers = () => {
       filter: true,
       valueFormatter: (params) => {
         const numberSeries = noSeries.find((item) => item.id === params.value);
-        return numberSeries ? numberSeries.name : "";
+        return numberSeries ? numberSeries.name : "N/A";
       },
     },
 
@@ -69,6 +69,9 @@ const Approvers = () => {
       headerName: "Approver Type",
       headerClass: "prefix-header",
       filter: true,
+      valueGetter: (params) => {
+        return params.value === 0 ? "WorkFlow" : "Direct";
+      },
     },
   ];
 
@@ -136,6 +139,9 @@ const Approvers = () => {
       label: "Document Status",
       type: "text",
       required: true,
+      valueFormatter: (params) => {
+        return params.value === 0 && "0";
+      },
     },
     {
       name: "number_series_id",

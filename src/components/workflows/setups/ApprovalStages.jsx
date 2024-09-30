@@ -150,12 +150,12 @@ const ApprovalStages = () => {
       name: "approval_type_id",
       label: "Approval Type",
       type: "autocomplete",
-      options: users,
+      options: approvalTypes,
     },
     {
       name: "approval_stage_sequence",
       label: "Approval Stage Sequence",
-      type: "text",
+      type: "number",
       required: true,
     },
     {
@@ -203,7 +203,7 @@ const ApprovalStages = () => {
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={false}
+            useRequestBody={true}
           />
         ) : (
           <BaseInputCard
@@ -212,6 +212,7 @@ const ApprovalStages = () => {
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
           />
         )}
       </BaseCard>
