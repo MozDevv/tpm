@@ -280,6 +280,15 @@ export const menuItems = [
         ],
       },
       {
+        title: "Preclaims Setups",
+        subChildren: [
+          {
+            title: "Parliamentary Terms",
+            path: "/pensions/setups/parliamentary-terms",
+          },
+        ],
+      },
+      {
         title: "City Setups",
         path: "/pensions/setups/city-setups",
       },

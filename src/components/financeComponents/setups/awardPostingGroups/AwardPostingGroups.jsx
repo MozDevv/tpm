@@ -178,24 +178,16 @@ const AwardPostingGroups = () => {
 
   const fields = [
     {
-      name: "description",
-      label: "Description",
-      type: "text",
-      required: true,
-    },
-
-    {
       name: "code",
       label: "Code",
       type: "text",
       required: true,
     },
     {
-      name: "pensionAwardId",
-      label: "Pension Award",
-      type: "select",
+      name: "description",
+      label: "Description",
+      type: "text",
       required: true,
-      options: pensionAwards,
     },
     {
       name: "pensionExpenseAccount",
@@ -206,8 +198,15 @@ const AwardPostingGroups = () => {
       table: true,
     },
     {
+      name: "pensionAwardId",
+      label: "Pension Award",
+      type: "select",
+      required: true,
+      options: pensionAwards,
+    },
+    {
       name: "gratiutyExpenseAccount",
-      label: "Gratiuty Expense Account",
+      label: "Gratuity Expense Account",
       type: "select",
       required: true,
       options: glAccounts,

@@ -322,6 +322,15 @@ function Sidebar() {
       icon: <Widgets />,
       children: [
         {
+          title: "General Setups",
+          subChildren: [
+            {
+              title: "General Settings",
+              path: "/pensions/setups/general-settings",
+            },
+          ],
+        },
+        {
           title: "Finance Setup",
           subChildren: [
             {
@@ -380,6 +389,7 @@ function Sidebar() {
             },
           ],
         },
+
         {
           title: "Workflows Setups",
           subChildren: [
@@ -394,6 +404,16 @@ function Sidebar() {
             {
               title: "Approval Stages",
               path: "/pensions/workflows/setups/approval-stages",
+            },
+          ],
+        },
+
+        {
+          title: "Preclaims Setups",
+          subChildren: [
+            {
+              title: "Parliamentary Terms",
+              path: "/pensions/setups/parliamentary-terms",
             },
           ],
         },

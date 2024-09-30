@@ -323,6 +323,9 @@ const endpoints = {
   deleteApprovalUser: (id) => `/api/ApprovalSetups/DeleteApprovalUsers/${id}`,
   createApprovalType: "/api/ApprovalSetups/CreateApprovalType",
   createApprovalStages: "/api/ApprovalSetups/CreateApprovalStages",
+
+  getParliamentaryTermsSetups: "/api/Setups/GetParliamentaryTermSetups",
+  createParliamentaryTerms: "/api/Setups/CreateParliamentaryTermSetup",
 };
 
 export const apiService = {

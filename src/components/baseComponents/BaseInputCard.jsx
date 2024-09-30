@@ -145,6 +145,7 @@ const BaseInputCard = ({
   };
 
   const { mdaId } = useMda();
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -157,6 +158,7 @@ const BaseInputCard = ({
       }
       if (field.name === "accountName" && value) {
       }
+
       if (
         field.required &&
         (value === undefined || value === null || value === "")
@@ -320,6 +322,13 @@ const BaseInputCard = ({
         console.log("Data  ", res.data);
 
         if (
+          res.data.succeeded === false &&
+          res.data.messages &&
+          res.data.messages.length > 0
+        ) {
+          message.error(res.data.messages[0]);
+          return;
+        } else if (
           res.status === 201 ||
           res.status === 200 ||
           res.status === 204 ||
@@ -459,12 +468,18 @@ const BaseInputCard = ({
                             }}
                           >
                             {" "}
-                            <p className=" text-primary font-normal text-[12px]">
+                            <p
+                              className=" text-primary font-normal text-[12px] items-start"
+                              style={{ alignSelf: "flex-start" }}
+                            >
                               {option.accountNo}
                             </p>
-                            <Typography variant="body2" fontSize={12}>
+                            <p
+                              className="text-[12px] items-center"
+                              style={{ alignSelf: "flex-center" }}
+                            >
                               {option.name}
-                            </Typography>
+                            </p>
                           </Box>
                         </Box>
                       </li>
