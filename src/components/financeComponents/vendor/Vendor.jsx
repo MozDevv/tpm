@@ -75,7 +75,7 @@ const Vendor = () => {
       countryId: item.countryId,
       cityId: item.cityId,
       vendorPostingGroupId: item.vendorPostingGroupId,
-      amount: item.amount,
+      amount: item.amount === null ? 0 : item.amount,
 
       // roles: item.roles,
     }));
@@ -202,6 +202,13 @@ const Vendor = () => {
       options: vendorPG,
     },
     {
+      name: "amount",
+      label: "Amount",
+      type: "amount",
+      required: true,
+      disabled: true,
+    },
+    {
       name: "countryId",
       label: "Country",
       type: "select",
@@ -210,6 +217,7 @@ const Vendor = () => {
         name: country.country_name,
       })),
     },
+
     {
       name: "cityId",
       label: "City",

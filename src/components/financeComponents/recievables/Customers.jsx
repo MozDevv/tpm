@@ -32,7 +32,7 @@ const Customers = () => {
       customerPhoneNumber: item.customerPhoneNumber,
       countryId: item.countryId,
       cityId: item.cityId,
-      amount: item.amount,
+      amount: item.amount === null ? 0 : item.amount,
       customerPostingGroupId: item.customerPostingGroupId,
 
       // roles: item.roles,
@@ -223,6 +223,13 @@ const Customers = () => {
       type: "select",
       required: true,
       options: vendorPG,
+    },
+    {
+      name: "amount",
+      label: "Amount",
+      type: "amount",
+      required: true,
+      disabled: true,
     },
     {
       name: "countryId",

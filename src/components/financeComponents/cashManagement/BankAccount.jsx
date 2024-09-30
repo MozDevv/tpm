@@ -12,6 +12,7 @@ import { formatDate } from "@/utils/dateFormatter";
 import financeEndpoints from "@/components/services/financeApi";
 import endpoints from "@/components/services/setupsApi";
 import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
+import { formatNumber } from "@/utils/numberFormatters";
 
 const columnDefs = [
   {
@@ -32,6 +33,15 @@ const columnDefs = [
     headerName: "Bank Account No",
     headerClass: "prefix-header",
     filter: true,
+  },
+  {
+    field: "amount",
+    headerName: "Amount",
+    width: 150,
+    valueFormatter: (params) => {
+      return formatNumber(params.value);
+    },
+    cellStyle: { textAlign: "right" },
   },
   {
     field: "isBlocked",
@@ -66,6 +76,7 @@ const BankAccount = () => {
         branchName: branch ? branch.name : "",
         bank_id: branch ? branch.bankId : "",
         bankPostingGroupId: item.bankPostingGroupId,
+        amount: item.amount === null ? 0 : item.amount,
 
         // roles: item.roles,
       };
@@ -190,6 +201,13 @@ const BankAccount = () => {
       type: "select",
       required: true,
       options: vendorPG,
+    },
+    {
+      name: "amount",
+      label: "Amount",
+      type: "amount",
+      required: true,
+      disabled: true,
     },
     {
       name: "bank_id",
