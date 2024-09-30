@@ -56,8 +56,8 @@ const BankPostingGroups = () => {
       setGlAccounts(
         accounts.map((account) => ({
           id: account.id,
-          name: account.accountName,
-          accountNo: account.accountNo,
+          name: account.accountNo,
+          accountNo: account.accountName,
         }))
       );
     } catch (error) {

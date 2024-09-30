@@ -123,7 +123,8 @@ const VendorPostingGroups = () => {
       setGlAccounts(
         accounts.map((account) => ({
           id: account.id,
-          name: account.accountName,
+          name: account.accountNo,
+          accountNo: account.accountName,
         }))
       );
     } catch (error) {
@@ -207,6 +208,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "serviceChargeAccount",
@@ -214,6 +216,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "invoiceRoundingAccount",
@@ -221,6 +224,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "drCurrencyRoundingAccount",
@@ -228,6 +232,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "crCurrencyRoundingAccount",
@@ -235,6 +240,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "drRoundingAccount",
@@ -242,6 +248,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
     {
       name: "crRoundingAccount",
@@ -249,6 +256,7 @@ const VendorPostingGroups = () => {
       type: "select",
       required: true,
       options: glAccounts,
+      table: true,
     },
   ];
 

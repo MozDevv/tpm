@@ -148,8 +148,8 @@ const CustomerPostingGroups = () => {
       );
       const account2 = accounts.map((account) => ({
         id: account.id,
-        name: account.accountName,
-        accountNo: account.accountNo,
+        name: account.accountNo,
+        accountNo: account.accountName,
       }));
 
       setGlAccounts(account2);
@@ -234,8 +234,6 @@ const CustomerPostingGroups = () => {
     { name: "groupCode", label: "Group Code", type: "text", required: true },
 
     { name: "description", label: "Description", type: "text", required: true },
-
-    { name: "viewAll", label: "View All", type: "text", required: true },
 
     {
       name: "recievableAccount",
@@ -324,6 +322,12 @@ const CustomerPostingGroups = () => {
       required: true,
       options: glAccounts,
       table: true,
+    },
+    {
+      name: "viewAll",
+      label: "View All",
+      type: "switch",
+      required: true,
     },
   ];
 

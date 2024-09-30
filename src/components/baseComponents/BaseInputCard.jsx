@@ -472,13 +472,13 @@ const BaseInputCard = ({
                               className=" text-primary font-normal text-[12px] items-start"
                               style={{ alignSelf: "flex-start" }}
                             >
-                              {option.accountNo}
+                              {option.name}
                             </p>
                             <p
                               className="text-[12px] items-center"
                               style={{ alignSelf: "flex-center" }}
                             >
-                              {option.name}
+                              {option.accountNo}
                             </p>
                           </Box>
                         </Box>

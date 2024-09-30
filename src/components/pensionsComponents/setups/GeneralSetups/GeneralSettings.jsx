@@ -18,15 +18,6 @@ const GeneralSettings = () => {
     });
   };
 
-  const columnDefs = [
-    {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
-      width: 90,
-      filter: true,
-    },
-  ];
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,

@@ -75,6 +75,7 @@ const MDASetups = () => {
       bank_branch_id: item?.bankBranch?.id,
       bank_id: item?.bankBranch?.bank_id,
       pensionCap: item?.pensionCap.name,
+      is_national_police: item?.is_national_police,
     }));
   };
 
@@ -228,6 +229,7 @@ const MDASetups = () => {
       label: "Bank Account Number",
       type: "text",
     },
+    { name: "is_national_police", label: "Is National Police", type: "switch" },
   ];
 
   return (
