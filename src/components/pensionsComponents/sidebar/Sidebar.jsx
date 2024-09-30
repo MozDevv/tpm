@@ -170,8 +170,18 @@ function Sidebar() {
     },
     {
       title: "Assessment",
-      path: "/pensions/assessment",
+
       icon: <BarChart />,
+      children: [
+        {
+          title: "Assessment Data Capture",
+          path: "/pensions/assessment/data-capture",
+        },
+        {
+          title: "Assessment Approval",
+          path: "/pensions/assessment/approval",
+        },
+      ],
     },
     {
       title: "Finance",

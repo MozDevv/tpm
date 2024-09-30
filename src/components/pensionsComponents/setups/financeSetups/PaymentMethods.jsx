@@ -26,6 +26,7 @@ const PaymentMethods = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       code: item.code,
+      id: item.id,
       description: item.description,
       accountTypeId: item.accountTypeId,
       accountId: item.accountId,
@@ -83,7 +84,8 @@ const PaymentMethods = () => {
           res.data.data.map((acc) => {
             return {
               id: acc.id,
-              name: acc.accountNo,
+              name: acc.name,
+              accountNo: acc.accountNo,
               accountName: acc.name,
               accountType: acc.accountType,
             };
@@ -168,6 +170,18 @@ const PaymentMethods = () => {
         return account ? account.name : "";
       },
     },
+    {
+      field: "accountId",
+      headerName: "Account No",
+      headerClass: "prefix-header",
+      flex: 1,
+      filter: true,
+      valueFormatter: (params) => {
+        const account =
+          allOptions && allOptions.find((acc) => acc.id === params.value);
+        return account ? account.accountNo : "";
+      },
+    },
 
     {
       field: "isDirectDebit",
@@ -226,6 +240,7 @@ const PaymentMethods = () => {
       label: "Account",
       type: "select",
       required: true,
+      table: true,
       options:
         filteredOptions && filteredOptions.length > 0
           ? filteredOptions
@@ -269,7 +284,7 @@ const PaymentMethods = () => {
         {clickedItem ? (
           <BaseAutoSaveInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addPaymentMethod}
+            apiEndpoint={financeEndpoints.updatePaymentMethod}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updatePaymentMethod}
             postApiFunction={apiService.post}
