@@ -171,7 +171,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   return (
-    <div className="mt-4 px-4">
+    <div className="mt-4 px-4 ">
       <div className="flex flex-col gap-3">
         <div className="px-5 mb-5">
           <div className="flex flex-row gap-3 justify-between items-center">
@@ -189,89 +189,111 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           </div>
         </div>
       </div>
-      <Grid container spacing={2} sx={{ ml: 1 }}>
-        <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            options={documents}
-            defaultValue={defaultDocuments}
-            getOptionLabel={(option) => option.name}
-            value={defaultDocuments}
-            onChange={handleDocumentChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Documents"
-                variant="outlined"
-              />
-            )}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                boxShadow: "none",
-              },
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TableContainer component={Paper} sx={{ boxShadow: "none", mt: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "semibold" }}>
-                    Document
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "semibold" }}>
-                    Pensioner Upload
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "semibold" }}>
-                    Upload Details
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {selectedDocuments.map((doc, index) => (
-                  <TableRow key={doc.document.id}>
-                    <TableCell>{doc.document.name}</TableCell>
-                    <TableCell align="center">
-                      <Checkbox
-                        checked={doc.pensionerUpload}
-                        onChange={handleCheckboxChange(
-                          index,
-                          "pensionerUpload"
-                        )}
+
+      <Autocomplete
+        multiple
+        options={documents}
+        defaultValue={defaultDocuments}
+        getOptionLabel={(option) => option.name}
+        value={defaultDocuments}
+        onChange={handleDocumentChange}
+        renderInput={(params) => (
+          <TextField {...params} label="Select Documents" variant="outlined" />
+        )}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            boxShadow: "none",
+          },
+        }}
+      />
+
+      <div className="mt-5 shadow-none max-h-[350px] overflow-auto">
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell
+                sx={{
+                  fontWeight: "semibold",
+                  backgroundColor: "#fff",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Document
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontWeight: "semibold",
+                  backgroundColor: "#fff",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Pensioner Upload
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontWeight: "semibold",
+                  backgroundColor: "#fff",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Upload Details
+              </TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {selectedDocuments.map((doc, index) => (
+              <TableRow
+                key={doc.document.id}
+                sx={{
+                  height: "auto", // dynamically adjust row height
+                  "&:nth-of-type(even)": { backgroundColor: "#f9f9f9" },
+                }}
+              >
+                <TableCell>{doc.document.name}</TableCell>
+                <TableCell align="center">
+                  <Checkbox
+                    checked={doc.pensionerUpload}
+                    onChange={handleCheckboxChange(index, "pensionerUpload")}
+                  />
+                </TableCell>
+                <TableCell align="center">
+                  {doc.document.has_two_sides && (
+                    <>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={doc.front}
+                            onChange={handleCheckboxChange(index, "front")}
+                          />
+                        }
+                        label="Front"
                       />
-                    </TableCell>
-                    <TableCell align="center">
-                      {doc.document.has_two_sides && (
-                        <>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={doc.front}
-                                onChange={handleCheckboxChange(index, "front")}
-                              />
-                            }
-                            label="Front"
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={doc.back}
+                            onChange={handleCheckboxChange(index, "back")}
                           />
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={doc.back}
-                                onChange={handleCheckboxChange(index, "back")}
-                              />
-                            }
-                            label="Back"
-                          />
-                        </>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-      </Grid>
+                        }
+                        label="Back"
+                      />
+                    </>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

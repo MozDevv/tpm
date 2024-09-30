@@ -200,7 +200,7 @@ const AwardPostingGroups = () => {
     {
       name: "pensionAwardId",
       label: "Pension Award",
-      type: "select",
+      type: "autocomplete",
       required: true,
       options: pensionAwards,
     },

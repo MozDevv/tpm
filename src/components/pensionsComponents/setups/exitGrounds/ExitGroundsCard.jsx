@@ -159,12 +159,19 @@ function ExitGroundsCard({ clickedItem }) {
   };
 
   const [openDocumentDialog, setOpenDocumentDialog] = useState(false);
+  const [gridHeight, setGridHeight] = useState(400);
+  const rowHeight = 40;
+
+  useEffect(() => {
+    const totalHeight = Math.min(
+      pensionAwardsnotMapped.length * rowHeight + 50,
+      window.innerHeight - 100
+    );
+    setGridHeight(totalHeight);
+  }, [pensionAwardsnotMapped]);
   return (
     <div>
-      <div
-        className="ag-theme-quartz"
-        style={{ height: "600px", width: "90%", ml: 2, p: 2 }}
-      >
+      <div style={{ width: "90%", ml: 2, p: 2 }}>
         {/* <DialogContent>
             <AgGridReact
               columnDefs={documentTypesColdDefs}
@@ -207,7 +214,12 @@ function ExitGroundsCard({ clickedItem }) {
         <DialogContent sx={{ px: 8, pb: 2 }}>
           <div
             className="ag-theme-quartz"
-            style={{ height: "600px", width: "100%" }}
+            style={{
+              height: `${gridHeight}px`,
+              width: "100%",
+              overflow: "auto",
+              maxHeight: "1000px",
+            }}
           >
             <AgGridReact
               columnDefs={columnDefsunMapped}
@@ -215,7 +227,7 @@ function ExitGroundsCard({ clickedItem }) {
               rowSelection="single"
               onSelectionChanged={handleSelectionChange}
               onGridReady={onGridReady}
-              domLayout="autoHeight"
+              domLayout="normal"
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
             />

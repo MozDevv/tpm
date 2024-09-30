@@ -134,7 +134,7 @@ const Approvers = () => {
     {
       name: "document_status",
       label: "Document Status",
-      type: "number",
+      type: "text",
       required: true,
     },
     {
@@ -177,7 +177,7 @@ const Approvers = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateApprovalType(clickedItem.id)}
+            apiEndpoint={endpoints.updateApprovalType}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -186,7 +186,7 @@ const Approvers = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createRole}
+            apiEndpoint={endpoints.createApprovalType}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}

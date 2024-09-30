@@ -15,12 +15,13 @@ import {
   ListItem,
   Popper,
 } from "@mui/material";
-import { message } from "antd";
+import { Alert, message } from "antd";
 import dayjs from "dayjs";
 
 import { useMda } from "@/context/MdaContext";
 import { formatNumber } from "@/utils/numberFormatters";
 import BaseAmountInput from "./BaseAmountInput";
+import { truncateMessage } from "@/utils/handyFuncs";
 
 const BaseInputCard = ({
   fields,
@@ -250,6 +251,8 @@ const BaseInputCard = ({
     }
   }, [formData.total_emoluments]);
 
+  const [saveError, setSaveError] = useState("");
+
   const handleSave = async () => {
     console.log("Base Input Card: form data to be sent: ", formData);
 
@@ -326,6 +329,7 @@ const BaseInputCard = ({
           res.data.messages &&
           res.data.messages.length > 0
         ) {
+          setSaveError(res.data.messages[0]);
           message.error(res.data.messages[0]);
           return;
         } else if (
@@ -358,6 +362,17 @@ const BaseInputCard = ({
           {inputTitle}
         </p>
       )}
+
+      {saveError && (
+        <div className="w-full mb-2">
+          <Alert
+            message={truncateMessage(saveError, 70)}
+            type="error"
+            showIcon
+            closable
+          />
+        </div>
+      )}
       {fields.every((field) => !field.disabled) && (
         <div className="flex justify-end gap-2 mr-5">
           {!isEditing && clickedItem ? (
@@ -371,6 +386,7 @@ const BaseInputCard = ({
           )}
         </div>
       )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
         {fields.map((field, index) => (
           <div
