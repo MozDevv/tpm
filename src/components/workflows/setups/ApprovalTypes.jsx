@@ -140,14 +140,24 @@ const Approvers = () => {
     {
       name: "number_series_id",
       label: "Number Series",
-      type: "select",
+      type: "autocomplete",
       required: true,
       options: noSeries,
     },
     {
       name: "approver_type",
       label: "Approver Type",
-      type: "number",
+      type: "select",
+      options: [
+        {
+          id: 0,
+          name: "WorkFlow",
+        },
+        {
+          id: 1,
+          name: "Direct",
+        },
+      ],
       required: true,
     },
   ];
@@ -161,17 +171,17 @@ const Approvers = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteRole(clickedItem?.id)}
+        deleteApiEndpoint={endpoints.deleteApprovalType(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateRole(clickedItem.id)}
+            apiEndpoint={endpoints.updateApprovalType(clickedItem.id)}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={false}
+            useRequestBody={true}
           />
         ) : (
           <BaseInputCard
@@ -180,6 +190,7 @@ const Approvers = () => {
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
           />
         )}
       </BaseCard>
@@ -189,7 +200,7 @@ const Approvers = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getRoles}
+        fetchApiEndpoint={endpoints.getApprovalTypes}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

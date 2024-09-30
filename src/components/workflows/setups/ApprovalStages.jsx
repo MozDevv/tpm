@@ -174,13 +174,13 @@ const ApprovalStages = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteRole(clickedItem?.id)}
+        deleteApiEndpoint={endpoints.deleteApprovalStage(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateRole(clickedItem.id)}
+            apiEndpoint={endpoints.updateApprovalStage}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -189,7 +189,7 @@ const ApprovalStages = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createApprovalStages}
+            apiEndpoint={endpoints.createApprovalStage}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
@@ -202,7 +202,7 @@ const ApprovalStages = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getRoles}
+        fetchApiEndpoint={endpoints.getApprovalStages}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

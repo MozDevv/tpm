@@ -7,8 +7,9 @@ import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import { parseDate } from "@/utils/dateFormatter";
 import { name } from "dayjs/locale/en-au";
+import BaseCollapse from "@/components/baseComponents/BaseCollapse";
 
 const GeneralSettings = () => {
   const transformString = (str) => {
@@ -33,9 +34,15 @@ const GeneralSettings = () => {
       id: item.id,
       prospective_pensioner_notification_schedule_max_records:
         item.prospective_pensioner_notification_schedule_max_records,
-      date_of_confirmation_lower_limit: item.date_of_confirmation_lower_limit,
-      date_of_appointment_lower_limit: item.date_of_appointment_lower_limit,
-      date_of_retirement_lower_limit: item.date_of_retirement_lower_limit,
+      date_of_confirmation_lower_limit: parseDate(
+        item.date_of_confirmation_lower_limit
+      ),
+      date_of_appointment_lower_limit: parseDate(
+        item.date_of_appointment_lower_limit
+      ),
+      date_of_retirement_lower_limit: parseDate(
+        item.date_of_retirement_lower_limit
+      ),
       kenyan_pounds_to_ksh_factor: item.kenyan_pounds_to_ksh_factor,
       age_at_retirement_cap189: item.age_at_retirement_cap189,
       disabiled_age_at_retirement_cap189:
@@ -44,8 +51,9 @@ const GeneralSettings = () => {
       disabled_age_at_retirement_cap189: item.disabled_age_at_retirement_cap189,
       compassionate_gratuity_lower_period_years_cap189:
         item.compassionate_gratuity_lower_period_years_cap189,
-      abolition_of_office_age_60_effect_date_cap189:
-        item.abolition_of_office_age_60_effect_date_cap189,
+      abolition_of_office_age_60_effect_date_cap189: parseDate(
+        item.abolition_of_office_age_60_effect_date_cap189
+      ),
       abolition_of_office_additional_pay_max_years_cap189:
         item.abolition_of_office_additional_pay_max_years_cap189,
       abolition_of_office_additional_pay_factor_cap189:
@@ -62,8 +70,9 @@ const GeneralSettings = () => {
         item.compassionate_gratuity_minimum_period_years_cap189,
       compassionate_gratuity_male_end_date_cap189:
         item.compassionate_gratuity_male_end_date_cap189,
-      compassionate_gratuity_female_end_date_cap189:
-        item.compassionate_gratuity_female_end_date_cap189,
+      compassionate_gratuity_female_end_date_cap189: parseDate(
+        item.compassionate_gratuity_female_end_date_cap189
+      ),
       pension_portal_url: item.pension_portal_url,
       injury_pension_min_years_cap189: item.injury_pension_min_years_cap189,
       parliamentary_term_span_years: item.parliamentary_term_span_years,
@@ -258,11 +267,29 @@ const GeneralSettings = () => {
 
   useEffect(() => {
     fetchGeneralSettings().then((data) => {
-      setClickedItem(data[0]);
+      const data2 = transformData(data);
+      setClickedItem(data2[0]);
     });
   }, []);
+  const [openSections, setOpenSections] = React.useState({
+    beneficiaries: false,
+    otherSection: false,
+  });
+
+  const handleToggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   return (
-    <div className="bg-white mt-8">
+    <div className="bg-white mt-8 px-5">
+      {/* <BaseCollapse
+        name="General Settings"
+        openSections={openSections}
+        handleToggleSection={handleToggleSection}
+      > */}
       <BaseInputCard
         fields={fields}
         postApiFunction={apiService.post}
@@ -270,6 +297,7 @@ const GeneralSettings = () => {
         useRequestBody={true}
         setOpenBaseCard={setOpenBaseCard}
       />
+      {/* </BaseCollapse> */}
     </div>
   );
 };

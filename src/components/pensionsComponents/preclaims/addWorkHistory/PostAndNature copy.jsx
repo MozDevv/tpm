@@ -148,8 +148,110 @@ function PostAndNature({ id, loading, setLoading, status }) {
     ],
   };
 
+  const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
+  const fetchTerms = async () => {
+    try {
+      const res = await apiService.get(endpoints.getParliamentaryTermsSetups);
+
+      if (res.status === 200) {
+        setParliamentarianTerms(res.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching Full Term:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDesignations();
+    fetchTerms();
+  }, []);
+  const months = [
+    {
+      id: 1,
+      name: "January",
+    },
+    {
+      id: 2,
+      name: "February",
+    },
+    {
+      id: 3,
+      name: "March",
+    },
+    {
+      id: 4,
+      name: "April",
+    },
+    {
+      id: 5,
+      name: "May",
+    },
+    {
+      id: 6,
+      name: "June",
+    },
+    {
+      id: 7,
+      name: "July",
+    },
+    {
+      id: 8,
+      name: "August",
+    },
+    {
+      id: 9,
+      name: "September",
+    },
+    {
+      id: 10,
+      name: "October",
+    },
+    {
+      id: 11,
+      name: "November",
+    },
+    {
+      id: 12,
+      name: "December",
+    },
+  ];
+
   const fields = [
-    { label: "Start Date", value: "date", type: "date" },
+    ...(cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK"
+      ? [
+          {
+            label: "Parliamentary Term",
+            value: "parliamentary_term_setup_id",
+            type: "select",
+            options: parliamenterianTerms.map((term) => ({
+              id: term.id,
+              name: term.name,
+              start_year: term.start_year,
+
+              // start_month: months.find(
+              //   (month) => month.id === term.specific_start_month
+              // ).name,
+              start_month: term.specific_start_month,
+            })),
+          },
+          {
+            label: "Was Full Term Served (Yes/No)",
+            value: "was_full_term",
+            type: "select",
+            options: [
+              { id: true, name: "Yes" },
+              { id: false, name: "No" },
+            ],
+          },
+        ]
+      : []),
+    {
+      label: "Start Date",
+      value: "date",
+      type: "date",
+      disabled:
+        cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK" ? true : false,
+    },
     {
       label: "Post",
       value: "post",

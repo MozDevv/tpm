@@ -94,24 +94,25 @@ function AddPensionersWorkHistory({
               dateOfFirstAppointment={dateOfFirstAppointment}
               mixedService={true}
             />
-          ) : activeCapName === "APN/PK" ||
-            activeCapName === "CAP196" ||
-            activeCapName === "DSO/RK" ? (
-            <MixedServicePost
-              status={status}
-              id={id}
-              loading={loading}
-              setLoading={setLoading}
-              dateOfFirstAppointment={dateOfFirstAppointment}
-              isParliamentarian={true}
-            />
           ) : (
+            // ) : activeCapName === "APN/PK" ||
+            //   activeCapName === "CAP196" ||
+            //   activeCapName === "DSO/RK" ? (
+            //   <MixedServicePost
+            //     status={status}
+            //     id={id}
+            //     loading={loading}
+            //     setLoading={setLoading}
+            //     dateOfFirstAppointment={dateOfFirstAppointment}
+            //     isParliamentarian={true}
+            //   />
             <PostAndNature
               id={id}
               status={status}
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
+              activeCapName={activeCapName}
             />
           )}
         </Suspense>

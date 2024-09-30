@@ -323,7 +323,14 @@ const endpoints = {
   deleteApprovalUser: (id) => `/api/ApprovalSetups/DeleteApprovalUsers/${id}`,
   createApprovalType: "/api/ApprovalSetups/CreateApprovalType",
   createApprovalStages: "/api/ApprovalSetups/CreateApprovalStages",
+  getApprovalTypes: "/api/ApprovalSetups/GetApprovalType",
+  updateApprovalType: "/api/ApprovalSetups/UpdateApprovalType",
+  deleteApprovalType: (id) => `/api/ApprovalSetups/DeleteApprovalType/${id}`,
 
+  createApprovalStage: "/api/ApprovalSetups/CreateApprovalStages",
+  getApprovalStages: "/api/ApprovalSetups/GetApprovalStages",
+  updateApprovalStage: "/api/ApprovalSetups/UpdateApprovalStages",
+  deleteApprovalStage: (id) => `/api/ApprovalSetups/DeleteApprovalStages/${id}`,
   getParliamentaryTermsSetups: "/api/Setups/GetParliamentaryTermSetups",
   createParliamentaryTerms: "/api/Setups/CreateParliamentaryTermSetup",
 

@@ -715,6 +715,35 @@ const BaseInputTable = ({
         }
         if (colDef.cellEditor === "agSelectCellEditor") {
         }
+        if (data.parliamentary_term_setup_id) {
+          const parliamentarySelectOptions = fields.find(
+            (field) => field.value === "parliamentary_term_setup_id"
+          );
+          const selectedOption = parliamentarySelectOptions?.options.find(
+            (option) => option.id === data.parliamentary_term_setup_id
+          );
+
+          const startYear = selectedOption?.start_year; // e.g., 2022
+          const startMonth = selectedOption?.start_month; // e.g., 8
+
+          if (startYear && startMonth) {
+            // Create a valid JavaScript Date object (Month is zero-indexed, so subtract 1)
+            const validDate = new Date(startYear, startMonth - 1, 1);
+
+            // Use the machine's default date format
+            const formattedDate = validDate.toLocaleDateString();
+
+            // Store the formatted date in data for ag-Grid
+            data.date = formattedDate;
+
+            console.log("Generated Date:", data.date); // This will log the date in the machine's default format
+          }
+
+          console.log(
+            "data.parliamentary_term_setup_id",
+            data.parliamentary_term_setup_id
+          );
+        }
 
         if (data.designationId) {
           setSelectedValue(data.designationId);
