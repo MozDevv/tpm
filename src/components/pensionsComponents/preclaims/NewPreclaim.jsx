@@ -362,6 +362,7 @@ function NewPreclaim({
     if (
       type === "text" &&
       name !== "kra_pin" &&
+      name !== "tax_exempt_certificate_number" &&
       name !== "email_address" &&
       name !== "tribe"
     ) {

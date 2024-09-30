@@ -20,6 +20,7 @@ import {
 import { formatNumber } from "@/utils/numberFormatters";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
 import { CheckCircleOutline } from "@mui/icons-material";
+import { truncateMessage } from "@/utils/handyFuncs";
 
 function PostGL({
   selectedRows,
@@ -82,7 +83,7 @@ function PostGL({
           status: true,
           message: res.data.messages[0],
         });
-        message.error(res.data.messages[0]);
+        message.error(truncateMessage(res.data.messages[0], 100));
       } else {
         message.error("Failed to post General Journal(s) to GL");
       }
@@ -100,7 +101,12 @@ function PostGL({
         </div>
         {errors.status && (
           <div className="w-full mt-2">
-            <Alert message={errors.message} type="error" showIcon closable />
+            <Alert
+              message={truncateMessage(errors.message, 100)}
+              type="error"
+              showIcon
+              closable
+            />
           </div>
         )}
         {/* {JSON.stringify(selectedRows)} */}

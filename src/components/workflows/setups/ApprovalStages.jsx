@@ -11,6 +11,7 @@ import { formatDate } from "@/utils/dateFormatter";
 
 const ApprovalStages = () => {
   const [users, setUsers] = useState([]);
+  const [approvalTypes, setApprovalTypes] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -26,6 +27,20 @@ const ApprovalStages = () => {
       }
     };
 
+    const fetchApprovalTypes = async () => {
+      try {
+        const res = await apiService.get(endpoints.getApprovalTypes);
+        const data = res.data.data.map((item) => ({
+          id: item.id,
+          name: item.approval_type_name,
+        }));
+        setApprovalTypes(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchApprovalTypes();
     fetchUsers();
   }, []);
 
@@ -35,6 +50,10 @@ const ApprovalStages = () => {
       headerName: "Approval Type",
       headerClass: "prefix-header",
       filter: true,
+      valueFormatter: (params) => {
+        const user = approvalTypes.find((user) => user.id === params.value);
+        return user?.name || "N/A";
+      },
     },
     {
       field: "approval_stage_sequence",
