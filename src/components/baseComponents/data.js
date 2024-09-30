@@ -214,6 +214,15 @@ export const menuItems = [
 
     children: [
       {
+        title: "General Setups",
+        subChildren: [
+          {
+            title: "General Settings",
+            path: "/pensions/setups/general-settings",
+          },
+        ],
+      },
+      {
         title: "Finance Setup",
         subChildren: [
           {

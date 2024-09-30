@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use, useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
@@ -247,51 +247,28 @@ const GeneralSettings = () => {
     },
   ];
 
+  const fetchGeneralSettings = async () => {
+    try {
+      const response = await apiService.get(endpoints.getGeneralSettings);
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGeneralSettings().then((data) => {
+      setClickedItem(data[0]);
+    });
+  }, []);
   return (
-    <div className="">
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={title}
+    <div className="bg-white mt-8">
+      <BaseInputCard
+        fields={fields}
+        postApiFunction={apiService.post}
         clickedItem={clickedItem}
-        isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
-      >
-        {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        ) : (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.createDepartment}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        )}
-      </BaseCard>
-      <BaseTable
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
+        useRequestBody={true}
         setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
       />
     </div>
   );

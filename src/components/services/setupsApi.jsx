@@ -326,6 +326,9 @@ const endpoints = {
 
   getParliamentaryTermsSetups: "/api/Setups/GetParliamentaryTermSetups",
   createParliamentaryTerms: "/api/Setups/CreateParliamentaryTermSetup",
+
+  getGeneralSettings: "/api/Setups/GetGeneralSettings",
+  createGeneralSettings: "/api/Setups/CreateGeneralSettings",
 };
 
 export const apiService = {
