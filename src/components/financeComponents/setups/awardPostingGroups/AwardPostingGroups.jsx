@@ -17,6 +17,7 @@ const AwardPostingGroups = () => {
     });
   };
   const [pensionAwards, setPensionAwards] = React.useState([]);
+  const [pensionCaps, setPensionCaps] = React.useState([]);
 
   const [glAccounts, setGlAccounts] = React.useState([]);
   const columnDefs = [
@@ -40,6 +41,18 @@ const AwardPostingGroups = () => {
       flex: 1,
       valueGetter: (params) => {
         const account = pensionAwards?.find(
+          (acc) => acc.id === params.data.pensionAwardId
+        );
+        return account?.name ?? "N/A";
+      },
+    },
+    {
+      field: "pensionCapName",
+      headerName: "Pension Cap",
+      filter: true,
+      flex: 1,
+      valueGetter: (params) => {
+        const account = pensionCaps?.find(
           (acc) => acc.id === params.data.pensionAwardId
         );
         return account?.name ?? "N/A";
@@ -111,13 +124,38 @@ const AwardPostingGroups = () => {
         id: ac.id,
         name: ac.prefix,
       }));
+
+      const caps = response.data.data.map((ac) => ({
+        id: ac.id,
+        name: ac.pensionCap.name,
+      }));
+      setPensionCaps(caps);
       setPensionAwards(awards);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const [allCaps, setAllCaps] = React.useState([]);
+
+  const fetchPensionCaps = async () => {
+    try {
+      const response = await apiService.get(financeEndpoints.pensionCaps, {
+        "paging.pageSize": 200,
+      });
+
+      const caps = response.data.data.map((ac) => ({
+        id: ac.id,
+        name: ac.prefix,
+      }));
+      //setPensionCaps(caps);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    fetchPensionCaps();
     fetchGlAccounts();
     fetchPensionAwards();
   }, []);
@@ -134,6 +172,9 @@ const AwardPostingGroups = () => {
       code: item.code,
       description: item.description,
       pensionAwardId: item.pensionAwardId,
+      // pensionCapName: pensionCaps.find((cap) => cap.id === item.pensionAwardId)
+      //   ?.name,
+
       pensionExpenseAccount: item.pensionExpenseAccount,
       gratiutyExpenseAccount: item.gratiutyExpenseAccount,
       pensionLiabilityAccount: item.pensionLiabilityAccount,
@@ -184,6 +225,21 @@ const AwardPostingGroups = () => {
       required: true,
     },
     {
+      name: "pensionAwardId",
+      label: "Pension Award",
+      type: "autocomplete",
+      required: true,
+      options: pensionAwards,
+    },
+    {
+      name: "pensionCap",
+      label: "Pension Cap",
+      type: "select",
+      options: pensionCaps,
+      required: true,
+      disabled: true,
+    },
+    {
       name: "description",
       label: "Description",
       type: "text",
@@ -197,13 +253,7 @@ const AwardPostingGroups = () => {
       options: glAccounts,
       table: true,
     },
-    {
-      name: "pensionAwardId",
-      label: "Pension Award",
-      type: "autocomplete",
-      required: true,
-      options: pensionAwards,
-    },
+
     {
       name: "gratiutyExpenseAccount",
       label: "Gratuity Expense Account",

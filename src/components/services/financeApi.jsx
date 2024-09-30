@@ -181,6 +181,7 @@ const financeEndpoints = {
     `/PostingSetup/DeleteAwardPostingGroup?id=${id}`,
 
   getPensionAwards: "/Setups/GetPensionAwards",
+  pensionCaps: "/Setups/GetPensionCaps",
 };
 
 export const apiService = {

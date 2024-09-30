@@ -170,12 +170,12 @@ const AccountingPeriod = () => {
       headerClass: "prefix-header",
       filter: true,
     },
-    {
-      field: "isInventoryPeriodClosed",
-      headerName: "Is Inventory Period Closed",
-      headerClass: "prefix-header",
-      filter: true,
-    },
+    // {
+    //   field: "isInventoryPeriodClosed",
+    //   headerName: "Is Inventory Period Closed",
+    //   headerClass: "prefix-header",
+    //   filter: true,
+    // },
   ];
 
   const subgroupFields = [

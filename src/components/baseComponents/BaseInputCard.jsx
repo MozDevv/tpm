@@ -65,6 +65,15 @@ const BaseInputCard = ({
     }
   }, [clickedItem]);
 
+  useEffect(() => {
+    if (formData.pensionAwardId) {
+      setFormData((prev) => ({
+        ...prev,
+        pensionCap: formData.pensionAwardId,
+      }));
+    }
+  }, [formData.pensionAwardId]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked, multiple } = e.target;
 
