@@ -133,7 +133,6 @@ const BankAccount = () => {
           bankId: bank.id,
         }))
       );
-
       console.log("banksData", banksData);
       console.log("branchesData", branchesData);
 
@@ -194,7 +193,7 @@ const BankAccount = () => {
       type: "text",
       required: true,
     },
-    { name: "isBlocked", label: "Is Blocked", type: "switch", required: true },
+
     {
       name: "bankPostingGroupId",
       label: "Bank Posting Group",
@@ -223,6 +222,7 @@ const BankAccount = () => {
         selectedBank && selectedBank.length > 0 ? selectedBank : branches,
       type: "autocomplete",
     },
+    { name: "isBlocked", label: "Is Blocked", type: "switch", required: true },
   ];
 
   return (
