@@ -750,6 +750,16 @@ const Preclaims = ({ status }) => {
             setOpenAction={setOpenAction}
             fetchAllPreclaims={fetchAllPreclaims}
             isClaim={true}
+            activeStep={status}
+            steps={[
+              "Data Capture",
+              "Notification Scheduling",
+              "Retiree Notification",
+              "Preclaim Submission",
+              "Preclaim Review",
+              "Pending Approval",
+              "Claim Creation",
+            ]}
           >
             <CreateProspectivePensioner
               setOpenBaseCard={setOpenBaseCard}

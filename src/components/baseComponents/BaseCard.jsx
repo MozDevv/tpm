@@ -4,7 +4,7 @@ import { Avatar, IconButton, Tooltip } from "@mui/material";
 import { ArrowBack, OpenInFull } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import PensionerDetailSummary from "../pensionsComponents/preclaims/PensionerDetailSummary";
-import { Divider, message } from "antd";
+import { Divider, message, Tabs } from "antd";
 import ListNavigation from "./ListNavigation";
 import UserDetailCard from "../pensionsComponents/recordCard/UserDetailCard";
 import SendForApproval from "../pensionsComponents/preclaims/SendForApproval";
@@ -14,6 +14,9 @@ import BaseInputCard from "./BaseInputCard";
 import CreateClaim from "../pensionsComponents/preclaims/CreateClaim";
 import BaseDeleteDialog from "./BaseDeleteDialog";
 import ReturnToPreclaims from "../pensionsComponents/ClaimsManagementTable/ReturnToPreclaims";
+import TabPane from "antd/es/tabs/TabPane";
+import AttachmentStepper from "../pensionsComponents/ClaimsApprovalComponents/AttachmentStepper";
+import BaseWorkFlow from "./BaseWorkFlow";
 
 function BaseCard({
   openBaseCard,
@@ -47,6 +50,8 @@ function BaseCard({
   isClaim,
   isClaimManagement,
   setClickedItem,
+  steps,
+  activeStep,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -108,6 +113,12 @@ function BaseCard({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const [activeKey, setActiveKey] = useState("1");
+
+  const handleTabChange = (key) => {
+    setActiveKey(key);
   };
 
   return (
@@ -399,7 +410,36 @@ function BaseCard({
                 </>
               ) : isClaim ? (
                 <>
-                  <PensionerDetailSummary clickedItem={clickedItem} />
+                  <div className="px-5 mt-[-43px]">
+                    <Tabs
+                      activeKey={activeKey}
+                      onChange={handleTabChange}
+                      className="!bg-transparent z-50"
+                      style={{ zIndex: 999999999 }}
+                      tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
+                    >
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            General Info
+                          </span>
+                        }
+                        key="1"
+                      >
+                        <PensionerDetailSummary clickedItem={clickedItem} />
+                      </TabPane>
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            WorkFlows
+                          </span>
+                        }
+                        key="2"
+                      >
+                        <BaseWorkFlow steps={steps} activeStep={activeStep} />
+                      </TabPane>
+                    </Tabs>
+                  </div>
                 </>
               ) : (
                 <></>
