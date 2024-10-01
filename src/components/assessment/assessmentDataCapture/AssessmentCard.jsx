@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Tabs } from "antd";
 import NewPreclaim from "@/components/pensionsComponents/preclaims/NewPreclaim";
-import AddBankDetails from "@/components/pensionsComponents/preclaims/AddBankDetails copy";
+
 import AddPensionersWorkHistory from "@/components/pensionsComponents/preclaims/addWorkHistory/AddPensionersWorkHistory";
 import GovernmentSalary from "@/components/pensionsComponents/preclaims/governmentSalary/GovernmentSalary";
 import AddDocuments from "@/components/pensionsComponents/preclaims/documents/AddDocuments";
 import MaintenanceCase from "@/components/pensionsComponents/preclaims/maintenanceCase/MaintenanceCase";
 import AssessmentDetails from "./AssessmentDetails";
 import Liabilities from "@/components/pensionsComponents/preclaims/liabilities/Liabilities";
+import AddBankDetails from "@/components/pensionsComponents/preclaims/AddBankDetails";
 
 const { TabPane } = Tabs;
 
@@ -51,20 +52,17 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
-                    General Information
+                    Computation
                   </span>
                 }
                 key="1"
               >
                 <div className="">
-                  {/* <NewPreclaim
-                    setOpenBaseCard={setOpenBaseCard}
+                  <AssessmentDetails
+                    clickedItem={clickedItem}
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}
-                    moveToNextTab={moveToNextTab}
-                    moveToPreviousTab={moveToPreviousTab}
-                  /> */}
-                  <AssessmentDetails />
+                  />
                 </div>
               </TabPane>
               {clickedItem?.notification_status &&
