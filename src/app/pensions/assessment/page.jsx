@@ -1,7 +1,19 @@
+import AssessmentTable from "@/components/assessment/assessmentDataCapture/AssessmentTable";
+import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
 import React from "react";
 
-function Assessment() {
-  return <div>Assessment</div>;
+function page() {
+  return (
+    <div>
+      <div className="ml-4">
+        <div className="text-primary mt-5 ml-3 mb-3 font-semibold text-xl">
+          Assessment Data Capture
+        </div>
+        <CustomBreadcrumbsList currentTitle="Assessment Data Capture" />
+      </div>
+      <AssessmentTable status={3} />
+    </div>
+  );
 }
 
-export default Assessment;
+export default page;

@@ -341,6 +341,16 @@ function Sidebar() {
           ],
         },
         {
+          title: "Assessment Setups",
+          subChildren: [
+            {
+              title: "Pension Factor Setups",
+              path: "/pensions/setups/pension-factor-assesment-setups",
+            },
+          ],
+        },
+
+        {
           title: "Finance Setup",
           subChildren: [
             {
@@ -431,6 +441,7 @@ function Sidebar() {
             },
           ],
         },
+
         {
           title: "No. Series",
           path: "/pensions/setups/no-series",

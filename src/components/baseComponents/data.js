@@ -223,6 +223,15 @@ export const menuItems = [
         ],
       },
       {
+        title: "Assessment Setups",
+        subChildren: [
+          {
+            title: "Pension Factor Setups",
+            path: "/pensions/setups/pension-factor-assesment-setups",
+          },
+        ],
+      },
+      {
         title: "Finance Setup",
         subChildren: [
           {

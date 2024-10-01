@@ -337,6 +337,11 @@ const endpoints = {
   getGeneralSettings: "/api/Setups/GetGeneralSettings",
   createGeneralSettings: "/api/Setups/CreateGeneralSettings",
   getRateOfInjury: "/api/Setups/GetRateOfInjuryForCap189Setups",
+
+  getPensionFactor: "/api/assessment/GetPensionFactorSetup",
+  createPensionFactor: "/api/assessment/CreatePensionFactorSetup",
+  updatePensionFactor: "/api/assessment/UpdatePensionFactorSetup",
+  deletePensionFactor: (id) => `/api/assessment/DeletePensionFactorSetup/${id}`,
 };
 
 export const apiService = {

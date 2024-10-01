@@ -881,6 +881,7 @@ function NewPreclaim({
       mda_id: mdaId,
       disablement_details,
       injury_details,
+      was_injured: formData?.was_injured === 1 ? true : false,
     };
 
     console.log("Data to be sent:", data);
