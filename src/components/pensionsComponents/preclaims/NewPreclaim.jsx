@@ -879,8 +879,10 @@ function NewPreclaim({
     const data = {
       ...formattedFormData,
       mda_id: mdaId,
-      disablement_details,
-      injury_details,
+      ...(formData?.was_injured === 1 && {
+        disablement_details,
+        injury_details,
+      }),
       was_injured: formData?.was_injured === 1 ? true : false,
     };
 
