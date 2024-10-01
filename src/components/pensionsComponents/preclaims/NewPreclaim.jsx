@@ -182,7 +182,7 @@ function NewPreclaim({
                 .split("T")[0]
             : "",
         isCommutable: retiree?.exitGround?.has_commutation ?? false,
-        was_injured: retiree?.was_injured,
+        was_injured: retiree?.was_injured ? 1 : 0,
         date_of_injury_for_cap189:
           parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? "",
 
@@ -299,7 +299,7 @@ function NewPreclaim({
 
       isCommutable: retiree?.exitGround?.has_commutation,
       pension_cap: retiree?.mda?.pensionCap?.id,
-      was_injured: retiree?.was_injured,
+      was_injured: retiree?.was_injured ? 1 : 0,
 
       date_of_injury_for_cap189:
         parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? "",
