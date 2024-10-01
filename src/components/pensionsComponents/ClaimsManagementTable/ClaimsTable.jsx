@@ -391,15 +391,9 @@ const ClaimsTable = ({ status }) => {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-    // create: () => router.push("/pensions/preclaims/listing/new"),
-    // create: () => {
-    //   setOpenBaseCard(true);
-    //   setClickedItem(null);
-    // },
-    // edit: () => console.log("Edit clicked"),
-    // delete: () => console.log("Delete clicked"),
+   
     reports: () => console.log("Reports clicked"),
-    //notify: () => setOpenNotification(true),
+    
     movetoValidation: () => {
       setOpenAction(0);
       setOpenMoveStatus(true);
@@ -429,6 +423,8 @@ const ClaimsTable = ({ status }) => {
     movetoValidation: () => setOpenAction(0),
     movetoVerification: () => setOpenAction(1),
     moveToApproval: () => setOpenAction(0),
+    returnToApproval: () => setOpenAction(1),
+    moveToAssessment: () => setOpenAction(0),
   };
 
   useEffect(() => {

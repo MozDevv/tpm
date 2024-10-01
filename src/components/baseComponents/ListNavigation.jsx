@@ -125,6 +125,20 @@ const ListNavigation = ({ handlers, status }) => {
       requiredPermissions: [],
       status: [1],
     },
+    {
+      name: "Return to Approval",
+      icon: Undo,
+      action: "returnToApproval",
+      requiredPermissions: [],
+      status: [2],
+    },
+    {
+      name: "Move to Assessment",
+      icon: Send,
+      action: "moveToAssessment",
+      requiredPermissions: [],
+      status: [2],
+    },
 
     {
       name: "Approve Claim",

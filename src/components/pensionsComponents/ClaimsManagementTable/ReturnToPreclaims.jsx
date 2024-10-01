@@ -92,6 +92,10 @@ function ReturnToPreclaims({
       ? "Return to Verification"
       : itemToCheck?.stage === 1 && moveStatus === 0
       ? "Move to Approval"
+      : itemToCheck?.stage === 2 && moveStatus === 0
+      ? "Move to Assessment"
+      : itemToCheck?.stage === 2 && moveStatus === 1
+      ? "Return to Validation"
       : "Approve Claim(s)";
 
   return (

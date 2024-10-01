@@ -18,20 +18,22 @@ function AssessmentDetails({ clickedItem }) {
     });
   };
   return (
-    <div className="max-h-[600px] overflow-y-auto ">
-      <PensionerDetails
-        clickedItem={clickedItem}
-        retireeId={clickedItem?.retiree}
-      />
-      <BaseCollapse name="Qualifying Service">
-        <QualyfyingService />
-      </BaseCollapse>
-      <BaseCollapse name="Pensionable Service">
-        <PensionableService />
-      </BaseCollapse>
-      <BaseCollapse name="Deductions Details">
-        <DeductionsDetails />
-      </BaseCollapse>
+    <div className="flex-col ">
+      <div className="max-h-[500px] overflow-y-auto ">
+        <PensionerDetails
+          clickedItem={clickedItem}
+          retireeId={clickedItem?.retiree}
+        />
+        <BaseCollapse name="Qualifying Service">
+          <QualyfyingService />
+        </BaseCollapse>
+        <BaseCollapse name="Pensionable Service">
+          <PensionableService />
+        </BaseCollapse>
+        <BaseCollapse name="Deductions Details">
+          <DeductionsDetails />
+        </BaseCollapse>
+      </div>
       <PensionComputation />
     </div>
   );
