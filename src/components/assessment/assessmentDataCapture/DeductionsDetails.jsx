@@ -1,39 +1,46 @@
 import BaseCollapse from "@/components/baseComponents/BaseCollapse";
 import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import endpoints, { apiService } from "@/components/services/setupsApi";
 
-function DeductionsDetails() {
+function DeductionsDetails({ clickedItem }) {
   const columnDefs = [
     {
-      field: "pensionable_service_years",
-      headerName: "Years",
+      field: "name",
+      headerName: "Name",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "pensionable_service_months",
-      headerName: "Months",
+      field: "amount",
+      headerName: "Amount",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "pensionable_service_days",
-      headerName: "Days",
+      field: "mda",
+      headerName: "Ministry/Department/Agency",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "pensionable_service_cumulative_months",
-      headerName: "Cumulative Months",
+      field: "deductions_and_refunds_id",
+      headerName: "Deductions/Refunds ",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        const deduction = recoveryDeductions.find(
+          (deduction) => deduction.id === params.value
+        );
+        return deduction ? deduction.name : params.value;
+      },
     },
   ];
   const [rowData, setRowData] = useState([]);
@@ -50,11 +57,42 @@ function DeductionsDetails() {
     params.api.sizeColumnsToFit();
   };
 
+  const [recoveryDeductions, setRecoveryDeductions] = useState([]);
+
+  const fetchRecoveryDeductions = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRecoveryDeductions);
+      const data = res.data.data;
+      setRecoveryDeductions(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const [filteredData, setFilteredData] = useState([]);
+
+  const fetchMaintenance = async () => {
+    try {
+      const res = await apiService.get(
+        endpoints.getDeductions(clickedItem.retiree)
+      );
+      const data = res.data.data;
+      setFilteredData(transformData(data));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecoveryDeductions();
+    fetchMaintenance();
+  }, []);
+
   return (
     <div className="ag-theme-quartz h-[150px] mt-5 px-9">
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={rowData}
+        rowData={filteredData}
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}

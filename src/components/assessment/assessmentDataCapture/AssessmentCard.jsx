@@ -9,10 +9,17 @@ import MaintenanceCase from "@/components/pensionsComponents/preclaims/maintenan
 import AssessmentDetails from "./AssessmentDetails";
 import Liabilities from "@/components/pensionsComponents/preclaims/liabilities/Liabilities";
 import AddBankDetails from "@/components/pensionsComponents/preclaims/AddBankDetails";
+import Deductions from "@/components/pensionsComponents/preclaims/deductions/Deductions";
 
 const { TabPane } = Tabs;
 
-function AssessmentCard({ clickedItem, setOpenBaseCard }) {
+function AssessmentCard({
+  clickedItem,
+  setOpenBaseCard,
+  pensionableService,
+  qualifyingService,
+  computed,
+}) {
   console.log("clickedItem", clickedItem);
 
   const [retireeId, setRetireeId] = useState(null);
@@ -59,9 +66,12 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
               >
                 <div className="">
                   <AssessmentDetails
+                    computed={computed}
                     clickedItem={clickedItem}
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}
+                    pensionableService={pensionableService}
+                    qualifyingService={qualifyingService}
                   />
                 </div>
               </TabPane>
@@ -141,6 +151,17 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
                         </div>
                       </TabPane>
                     )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Deductions
+                        </span>
+                      }
+                      key="7"
+                    >
+                      <Deductions id={clickedItem?.id} />
+                    </TabPane>
                     {/* <TabPane
                       tab={
                         <span className="text-primary font-montserrat">

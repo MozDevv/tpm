@@ -1,11 +1,14 @@
 import BaseCollapse from "@/components/baseComponents/BaseCollapse";
 import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import assessEndpoints, {
+  assessApiService,
+} from "@/components/services/assessmentApi";
 
-function PensionableService() {
+function PensionableService({ clickedItem, computed }) {
   const columnDefs = [
     {
       field: "pensionable_service_years",
@@ -36,6 +39,28 @@ function PensionableService() {
       flex: 1,
     },
   ];
+
+  const [pensionableService, setPensionableService] = useState([]);
+
+  const getClaimPensionableService = async () => {
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
+      );
+      setPensionableService(res.data.data);
+    } catch (error) {
+      console.log("Error getting claim pensionable service:", error);
+    }
+  };
+
+  useEffect(() => {
+    getClaimPensionableService();
+  }, []);
+
+  useEffect(() => {
+    getClaimPensionableService();
+  }, [computed]);
+
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
 
@@ -54,7 +79,7 @@ function PensionableService() {
     <div className="ag-theme-quartz h-[150px] mt-5 px-9">
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={rowData}
+        rowData={pensionableService}
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}

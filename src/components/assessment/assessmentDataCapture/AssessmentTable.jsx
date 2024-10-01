@@ -425,6 +425,8 @@ const AssessmentTable = ({ status }) => {
   const [qualifyingService, setQualifyingService] = useState([]);
   const [pensionableService, setPensionableService] = useState([]);
 
+  const [computed, setComputed] = useState(false);
+
   const baseCardHandlers = {
     edit: () => console.log("Edit clicked"),
     delete: () => console.log("Delete clicked"),
@@ -445,6 +447,7 @@ const AssessmentTable = ({ status }) => {
         if (res.status === 200 && res.data.succeeded) {
           getClaimQualifyingService(id);
           getClaimPensionableService(id);
+          setComputed(true);
         }
       } catch (error) {
         console.log("Error calculating and awarding claim:", error);
@@ -459,7 +462,7 @@ const AssessmentTable = ({ status }) => {
       const res = await assessApiService.get(
         assessEndpoints.getClaimQualyfyingService(id)
       );
-      setQualifyingService(res.data);
+      setQualifyingService(res.data.data);
     } catch (error) {
       console.log("Error getting claim qualifying service:", error);
     }
@@ -469,7 +472,7 @@ const AssessmentTable = ({ status }) => {
       const res = await assessApiService.get(
         assessEndpoints.getClaimPensionableService(id)
       );
-      setPensionableService(res.data);
+      setPensionableService(res.data.data);
     } catch (error) {
       console.log("Error getting claim pensionable service:", error);
     }
@@ -522,9 +525,12 @@ const AssessmentTable = ({ status }) => {
           isClaimManagement={true}
         >
           <AssessmentCard
+            pensionableService={pensionableService}
+            qualifyingService={qualifyingService}
             setOpenBaseCard={setOpenPreclaimDialog}
             openBaseCard={openPreclaimDialog}
             clickedItem={clickedItem}
+            computed={computed}
           />
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2">

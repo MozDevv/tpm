@@ -6,7 +6,12 @@ import PensionableService from "./PensionableService";
 import DeductionsDetails from "./DeductionsDetails";
 import PensionComputation from "./PensionComputation";
 
-function AssessmentDetails({ clickedItem }) {
+function AssessmentDetails({
+  clickedItem,
+  qualifyingService,
+  pensionableService,
+  computed,
+}) {
   const [openSections, setOpenSections] = useState({});
 
   const handleToggleSection = (key) => {
@@ -18,23 +23,31 @@ function AssessmentDetails({ clickedItem }) {
     });
   };
   return (
-    <div className="flex-col ">
+    <div className="flex-col">
       <div className="max-h-[500px] overflow-y-auto ">
         <PensionerDetails
           clickedItem={clickedItem}
           retireeId={clickedItem?.retiree}
         />
         <BaseCollapse name="Qualifying Service">
-          <QualyfyingService />
+          <QualyfyingService
+            computed={computed}
+            qualifyingService={qualifyingService}
+            clickedItem={clickedItem}
+          />
         </BaseCollapse>
         <BaseCollapse name="Pensionable Service">
-          <PensionableService />
+          <PensionableService
+            computed={computed}
+            pensionableService={pensionableService}
+            clickedItem={clickedItem}
+          />
         </BaseCollapse>
         <BaseCollapse name="Deductions Details">
-          <DeductionsDetails />
+          <DeductionsDetails clickedItem={clickedItem} />
         </BaseCollapse>
       </div>
-      <PensionComputation />
+      <PensionComputation computed={computed} clickedItem={clickedItem} />
     </div>
   );
 }

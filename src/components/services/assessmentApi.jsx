@@ -19,6 +19,8 @@ const assessEndpoints = {
     `/api/Assessment/GetClaimQualifyingService?claim_id=${id}`,
   getClaimPensionableService: (id) =>
     `/api/Assessment/GetClaimPensionableService?claim_id=${id}`,
+  getCalculationSummary: (id) =>
+    `/api/Assessment/GetAwardCalcultionDetails?claim_id=${id}`,
 };
 
 export const assessApiService = {

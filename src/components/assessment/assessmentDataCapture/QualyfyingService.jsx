@@ -1,11 +1,16 @@
 import BaseCollapse from "@/components/baseComponents/BaseCollapse";
 import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
-import React, { useMemo, useRef, useState } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import assessEndpoints, {
+  assessApiService,
+} from "@/components/services/assessmentApi";
+import { parseDate } from "@/utils/dateFormatter";
 
-function QualyfyingService() {
+function QualyfyingService({ clickedItem, computed }) {
+  const [qualifyingService, setQualifyingService] = useState([]);
   const columnDefs = [
     {
       field: "qualifying_service_date_of_joining",
@@ -13,6 +18,9 @@ function QualyfyingService() {
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return parseDate(params.value);
+      },
     },
     {
       field: "qualifying_service_date_of_leaving",
@@ -20,6 +28,9 @@ function QualyfyingService() {
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return parseDate(params.value);
+      },
     },
     {
       field: "qualifying_service_years",
@@ -50,6 +61,24 @@ function QualyfyingService() {
       flex: 1,
     },
   ];
+
+  const getClaimQualifyingService = async () => {
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getClaimQualyfyingService(clickedItem?.id_claim)
+      );
+      setQualifyingService(res.data.data);
+    } catch (error) {
+      console.log("Error getting claim qualifying service:", error);
+    }
+  };
+  useEffect(() => {
+    getClaimQualifyingService();
+  }, []);
+
+  useEffect(() => {
+    getClaimQualifyingService();
+  }, [computed]);
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
 
@@ -68,7 +97,7 @@ function QualyfyingService() {
     <div className="ag-theme-quartz h-[150px] mt-5 px-9">
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={rowData}
+        rowData={qualifyingService}
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
