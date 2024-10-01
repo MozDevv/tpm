@@ -502,6 +502,14 @@ const ClaimsTable = ({ status }) => {
           setOpenAction={setOpenAction}
           isClaim={true}
           isClaimManagement={true}
+          activeStep={clickedItem?.stage}
+          steps={[
+            "Verification",
+            "Validation",
+            "Approval",
+            "Assessment Data Capture",
+            "Assessment Approval",
+          ]}
         >
           <CreateProspectivePensioner
             setOpenBaseCard={setOpenPreclaimDialog}
