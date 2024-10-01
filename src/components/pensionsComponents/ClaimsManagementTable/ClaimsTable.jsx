@@ -58,6 +58,8 @@ const notificationStatusMap = {
   0: { name: "VERIFICATION", color: "#3498db" }, // Light Red
   1: { name: "VALIDATION", color: "#f39c12" }, // Bright Orange
   2: { name: "APPROVAL", color: "#2ecc71" }, // Light Blue
+  3: { name: "ASSESSMENT DATA CAPTURE", color: "#f39c12" }, // Bright Orange
+  4: { name: "ASSESSMENT APPROVAL", color: "#2ecc71" }, // Light Blue
 };
 
 const colDefs = [
@@ -91,7 +93,7 @@ const colDefs = [
   {
     headerName: "Stage",
     field: "stage",
-    width: 150,
+    width: 250,
     cellRenderer: (params) => {
       const status = notificationStatusMap[params.value];
       if (!status) return null;
@@ -391,9 +393,9 @@ const ClaimsTable = ({ status }) => {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-   
+
     reports: () => console.log("Reports clicked"),
-    
+
     movetoValidation: () => {
       setOpenAction(0);
       setOpenMoveStatus(true);
@@ -410,6 +412,23 @@ const ClaimsTable = ({ status }) => {
       setOpenAction(1);
       setOpenMoveStatus(true);
     },
+    returnToApproval: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+    moveToAssessment: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+
+    returnToClaimsApprovals: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+    moveToAssessmentApproval: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
   };
 
   const baseCardHandlers = {
@@ -417,7 +436,7 @@ const ClaimsTable = ({ status }) => {
     delete: () => console.log("Delete clicked"),
     reports: () => console.log("Reports clicked"),
 
-    submit: () => setOpenAction(true),
+    // submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
     movetoMDA: () => setOpenAction(1),
     movetoValidation: () => setOpenAction(0),
@@ -425,6 +444,9 @@ const ClaimsTable = ({ status }) => {
     moveToApproval: () => setOpenAction(0),
     returnToApproval: () => setOpenAction(1),
     moveToAssessment: () => setOpenAction(0),
+
+    returnToClaimsApprovals: () => setOpenAction(1),
+    moveToAssessmentApproval: () => setOpenAction(0),
   };
 
   useEffect(() => {

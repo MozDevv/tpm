@@ -1,5 +1,6 @@
 import AssessmentTable from "@/components/assessment/assessmentDataCapture/AssessmentTable";
 import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
+import ClaimsTable from "@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable";
 import React from "react";
 
 function page() {
@@ -11,7 +12,7 @@ function page() {
         </div>
         <CustomBreadcrumbsList currentTitle="Assessment Data Capture" />
       </div>
-      <AssessmentTable status={3} />
+      <ClaimsTable status={3} />
     </div>
   );
 }

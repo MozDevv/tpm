@@ -14,6 +14,11 @@ const api = axios.create({
 
 const assessEndpoints = {
   getAssessmentClaims: "/api/Assessment/getclaims",
+  calculateAndAward: (id) => `/api/Assessment/CalculateAndAward?claim_id=${id}`,
+  getClaimQualyfyingService: (id) =>
+    `/api/Assessment/GetClaimQualifyingService?claim_id=${id}`,
+  getClaimPensionableService: (id) =>
+    `/api/Assessment/GetClaimPensionableService?claim_id=${id}`,
 };
 
 export const assessApiService = {

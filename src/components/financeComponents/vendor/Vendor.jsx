@@ -205,7 +205,7 @@ const Vendor = () => {
       name: "amount",
       label: "Amount",
       type: "amount",
-      required: true,
+      required: false,
       disabled: true,
     },
     {

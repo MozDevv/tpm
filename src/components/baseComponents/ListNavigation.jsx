@@ -30,6 +30,9 @@ import {
   Cancel,
   CancelScheduleSend,
   Rule,
+  PublishedWithChanges,
+  ManageHistory,
+  Settings,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -138,6 +141,28 @@ const ListNavigation = ({ handlers, status }) => {
       action: "moveToAssessment",
       requiredPermissions: [],
       status: [2],
+    },
+
+    {
+      name: "Return to Claims ",
+      icon: Undo,
+      action: "returnToClaimsApprovals",
+      requiredPermissions: [],
+      status: [3],
+    },
+    {
+      name: "Compute Claim",
+      icon: Settings,
+      action: "computeClaim",
+      requiredPermissions: [],
+      status: [4],
+    },
+    {
+      name: "Move to Assessment Approval",
+      icon: Send,
+      action: "moveToAssessmentApproval",
+      requiredPermissions: [],
+      status: [3],
     },
 
     {

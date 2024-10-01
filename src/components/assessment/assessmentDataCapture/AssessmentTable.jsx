@@ -56,6 +56,8 @@ const notificationStatusMap = {
   0: { name: "VERIFICATION", color: "#3498db" }, // Light Red
   1: { name: "VALIDATION", color: "#f39c12" }, // Bright Orange
   2: { name: "APPROVAL", color: "#2ecc71" }, // Light Blue
+  3: { name: "ASSESSMENT DATA CAPTURE", color: "#f39c12" }, // Bright Orange
+  4: { name: "ASSESSMENT APPROVAL", color: "#2ecc71" }, // Light Blue
 };
 
 const colDefs = [
@@ -399,25 +401,29 @@ const AssessmentTable = ({ status }) => {
     // },
     // edit: () => console.log("Edit clicked"),
     // delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    //notify: () => setOpenNotification(true),
-    movetoValidation: () => {
+    // reports: () => console.log("Reports clicked"),
+    // //notify: () => setOpenNotification(true),
+    // movetoValidation: () => {
+    //   setOpenAction(0);
+    //   setOpenMoveStatus(true);
+    // },
+    // movetoVerification: () => {
+    //   setOpenAction(1);
+    //   setOpenMoveStatus(true);
+    // },
+    moveToAssessmentApproval: () => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
-    movetoVerification: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-    moveToApproval: () => {
-      setOpenAction(0);
-      setOpenMoveStatus(true);
-    },
-    movetoMDA: () => {
+    returnToClaimsApprovals: () => {
       setOpenAction(1);
       setOpenMoveStatus(true);
     },
   };
+
+  const [openComputeClaim, setOpenComputeClaim] = useState(false);
+  const [qualifyingService, setQualifyingService] = useState([]);
+  const [pensionableService, setPensionableService] = useState([]);
 
   const baseCardHandlers = {
     edit: () => console.log("Edit clicked"),
@@ -426,10 +432,47 @@ const AssessmentTable = ({ status }) => {
 
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
-    movetoMDA: () => setOpenAction(1),
-    movetoValidation: () => setOpenAction(0),
-    movetoVerification: () => setOpenAction(1),
-    moveToApproval: () => setOpenAction(0),
+    computeClaim: () => calculateAndAward(clickedItem?.id_claim),
+  };
+
+  const calculateAndAward = async (id) => {
+    if (clickedItem?.id_claim) {
+      try {
+        const res = await assessApiService.post(
+          assessEndpoints.calculateAndAward(id)
+        );
+
+        if (res.status === 200 && res.data.succeeded) {
+          getClaimQualifyingService(id);
+          getClaimPensionableService(id);
+        }
+      } catch (error) {
+        console.log("Error calculating and awarding claim:", error);
+      }
+    } else {
+      console.log("No claim id found");
+    }
+  };
+
+  const getClaimQualifyingService = async (id) => {
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getClaimQualyfyingService(id)
+      );
+      setQualifyingService(res.data);
+    } catch (error) {
+      console.log("Error getting claim qualifying service:", error);
+    }
+  };
+  const getClaimPensionableService = async (id) => {
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getClaimPensionableService(id)
+      );
+      setPensionableService(res.data);
+    } catch (error) {
+      console.log("Error getting claim pensionable service:", error);
+    }
   };
 
   useEffect(() => {
