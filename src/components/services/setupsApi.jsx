@@ -342,6 +342,11 @@ const endpoints = {
   createPensionFactor: "/api/assessment/CreatePensionFactorSetup",
   updatePensionFactor: "/api/assessment/UpdatePensionFactorSetup",
   deletePensionFactor: (id) => `/api/assessment/DeletePensionFactorSetup/${id}`,
+  addRecoveryDeduction: "/api/PostingSetup/AddDeductionsAndRefund",
+  getRecoveryDeductions: "/api/PostingSetup/GetDeductionsAndRefunds",
+  updateRecoveryDeduction: "/api/PostingSetup/UpdateDeductionsAndRefund",
+  deleteRecoveryDeduction: (id) =>
+    `/api/PostingSetup/DeleteDeductionsAndRefund?id=${id}`,
 };
 
 export const apiService = {

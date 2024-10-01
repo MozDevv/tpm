@@ -87,7 +87,7 @@ function PensionerDetailSummary({ clickedItem }) {
             {clickedItem.prospectivePensionerAwards.map((award) => (
               <div key={award.id} className="flex items-center gap-2">
                 <h6 className="font-medium text-primary text-xs">
-                  Pension Award:
+                  Claim Type:
                 </h6>
                 <span className="text-xs">{award.pension_award?.prefix}</span>
               </div>

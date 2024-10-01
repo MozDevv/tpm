@@ -76,6 +76,22 @@ const Deductions = (id) => {
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
 
+  const [recoveryDeductions, setRecoveryDeductions] = useState([]);
+
+  const fetchRecoveryDeductions = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRecoveryDeductions);
+      const data = res.data.data;
+      setRecoveryDeductions(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecoveryDeductions();
+  }, []);
+
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -85,6 +101,7 @@ const Deductions = (id) => {
       deduction_type: item.deduction_type,
       deduction_payee: item.deduction_payee,
       mda: item.name,
+      deductions_and_refunds_id: item.deductions_and_refunds_id,
     }));
   };
 
@@ -124,33 +141,33 @@ const Deductions = (id) => {
       type: "number",
       required: true,
     },
-    {
-      label: "Deduction Type",
-      value: "deduction_type",
-      type: "select",
-      options: [
-        { id: 0, name: "Salary Overpayment" },
-        { id: 1, name: "Work Deductions" },
-        { id: 2, name: "Abetement" },
-      ],
-    },
-    {
-      label: "Deduction Payee",
-      value: "deduction_payee",
-      type: "select",
-      options: [
-        {
-          id: 0,
-          name: "MDA",
-        },
-        {
-          id: 1,
-          name: "Treasury",
-        },
-      ],
+    // {
+    //   label: "Deduction Type",
+    //   value: "deduction_type",
+    //   type: "select",
+    //   options: [
+    //     { id: 0, name: "Salary Overpayment" },
+    //     { id: 1, name: "Work Deductions" },
+    //     { id: 2, name: "Abetement" },
+    //   ],
+    // },
+    // {
+    //   label: "Deduction Payee",
+    //   value: "deduction_payee",
+    //   type: "select",
+    //   options: [
+    //     {
+    //       id: 0,
+    //       name: "MDA",
+    //     },
+    //     {
+    //       id: 1,
+    //       name: "Treasury",
+    //     },
+    //   ],
 
-      required: true,
-    },
+    //   required: true,
+    // },
     {
       label: "MDA",
       value: "mda_id",
@@ -163,6 +180,15 @@ const Deductions = (id) => {
         })), // Add the correct options here
       disabled: false,
       hide: false,
+    },
+    {
+      label: "Deduction/Recovery",
+      value: "deductions_and_refunds_id",
+      type: "select",
+      options: recoveryDeductions.map((recovery) => ({
+        id: recovery.id,
+        name: recovery.description,
+      })),
     },
   ];
 
