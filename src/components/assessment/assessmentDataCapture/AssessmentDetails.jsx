@@ -23,7 +23,7 @@ function AssessmentDetails({
     });
   };
   return (
-    <div className="flex-col">
+    <div className="flex-col h-[600px]">
       <div className="max-h-[500px] overflow-y-auto ">
         <PensionerDetails
           clickedItem={clickedItem}

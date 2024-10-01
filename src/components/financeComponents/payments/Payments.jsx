@@ -64,11 +64,15 @@ const Payments = () => {
 
   const columnDefs = [
     {
+      headerName: "Document No",
+      field: "documentNo",
+      flex: 1,
+      pinned: "left",
+    },
+    {
       headerName: "Payee",
       field: "payee",
       flex: 1,
-
-      pinned: "left",
     },
     {
       headerName: "On Behalf Of",
@@ -133,6 +137,7 @@ const Payments = () => {
       paymentMethodId: item.paymentMethodId,
       narration: item.narration,
       isPosted: item.isPosted,
+      documentNo: item.documentNo,
     }));
   };
 
@@ -173,10 +178,17 @@ const Payments = () => {
   };
 
   const title = clickedItem
-    ? `${clickedItem.payee} Payment`
+    ? `${clickedItem.documentNo} `
     : "Create New Payment";
 
   const fields = [
+    {
+      name: "documentNo",
+      label: "Document No",
+      type: "text",
+      required: false,
+      disabled: true,
+    },
     {
       name: "payee",
       label: "Payee",

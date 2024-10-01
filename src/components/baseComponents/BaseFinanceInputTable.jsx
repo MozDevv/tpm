@@ -674,7 +674,7 @@ const BaseFinanceInputTable = ({
           data.wtaxAmount = 0;
           data.wvatAmount = 0;
           data.retentionAmount = 0;
-          data.netAmount = 0;
+          data.netAmount = data.amount;
 
           api.refreshCells({ rowNodes: [params.node] });
         }
@@ -690,7 +690,7 @@ const BaseFinanceInputTable = ({
 
           if (selectedOption) {
             data.accountName = selectedOption.accountName;
-            data.accountNo = selectedOption.accountName;
+            data.accountNo = selectedOption.name;
 
             api.refreshCells({ rowNodes: [params.node], force: true });
           } else {

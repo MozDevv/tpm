@@ -49,7 +49,9 @@ function PensionComputation({ clickedItem, computed }) {
               {label}
             </span>
             <span className="text-gray-500 font-semibold text-[17px] ">
-              {summary?.[key] !== undefined ? formatNumber(summary[key]) : 0}{" "}
+              {summary?.[key] !== undefined
+                ? formatNumber(summary[key])
+                : "0.00"}{" "}
               {/* Default to 0 if value is undefined */}
             </span>
           </div>
