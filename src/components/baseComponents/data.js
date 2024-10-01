@@ -65,6 +65,16 @@ export const menuItems = [
   {
     title: "Assessment",
     path: "/pensions/assessment",
+    children: [
+      {
+        title: "Assessment Data Capture",
+        path: "/pensions/assessment/data-capture",
+      },
+      {
+        title: "Assessment Approval",
+        path: "/pensions/assessment/approval",
+      },
+    ],
   },
   {
     title: "Finance",

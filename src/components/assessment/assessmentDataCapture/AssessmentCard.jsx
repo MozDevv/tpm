@@ -6,6 +6,8 @@ import AddPensionersWorkHistory from "@/components/pensionsComponents/preclaims/
 import GovernmentSalary from "@/components/pensionsComponents/preclaims/governmentSalary/GovernmentSalary";
 import AddDocuments from "@/components/pensionsComponents/preclaims/documents/AddDocuments";
 import MaintenanceCase from "@/components/pensionsComponents/preclaims/maintenanceCase/MaintenanceCase";
+import AssessmentDetails from "./AssessmentDetails";
+import Liabilities from "@/components/pensionsComponents/preclaims/liabilities/Liabilities";
 
 const { TabPane } = Tabs;
 
@@ -33,7 +35,7 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
     setActiveKey(prevTab);
   };
 
-  const { activeCapName } = useMda();
+  // const { activeCapName } = useMda();
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto">
       <div>
@@ -55,13 +57,14 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
                 key="1"
               >
                 <div className="">
-                  <NewPreclaim
+                  {/* <NewPreclaim
                     setOpenBaseCard={setOpenBaseCard}
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}
                     moveToNextTab={moveToNextTab}
                     moveToPreviousTab={moveToPreviousTab}
-                  />
+                  /> */}
+                  <AssessmentDetails />
                 </div>
               </TabPane>
               {clickedItem?.notification_status &&
@@ -177,18 +180,17 @@ function AssessmentCard({ clickedItem, setOpenBaseCard }) {
                         <ParliamentContributions id={clickedItem?.id} />
                       </TabPane>
                     )} */}
-                    {activeCapName === "CAP199" && (
-                      <TabPane
-                        tab={
-                          <span className="text-primary font-montserrat">
-                            Liabilities
-                          </span>
-                        }
-                        key="11"
-                      >
-                        <Liabilities id={clickedItem?.id} />
-                      </TabPane>
-                    )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Liabilities
+                        </span>
+                      }
+                      key="11"
+                    >
+                      <Liabilities id={clickedItem?.id} />
+                    </TabPane>
                   </>
                 )}
             </Tabs>
