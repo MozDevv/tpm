@@ -496,6 +496,7 @@ const ClaimsTable = ({ status }) => {
           status={clickedItem?.stage}
           // openAction={openAction}
           // setOpenAction={setOpenAction}
+          setClickedItem={setClickedItem}
           fetchAllPreclaims={fetchAllPreclaims}
           openAction={openAction}
           setOpenAction={setOpenAction}

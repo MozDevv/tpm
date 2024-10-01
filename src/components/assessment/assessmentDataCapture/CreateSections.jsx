@@ -66,9 +66,10 @@ export const createSections = (
       },
 
       {
-        label: "Middle Name",
-        name: "middle_name",
-        type: "text",
+        label: "Exit Ground",
+        name: "exit_grounds",
+        type: "select",
+        children: exitGroundOptions,
         pensionCap: [
           "CAP189",
           "CAP199",

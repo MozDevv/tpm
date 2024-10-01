@@ -1,6 +1,7 @@
 import assessEndpoints, {
   assessApiService,
 } from "@/components/services/assessmentApi";
+import { formatNumber } from "@/utils/numberFormatters";
 import React, { useEffect, useState } from "react";
 
 function PensionComputation({ clickedItem, computed }) {
@@ -39,18 +40,21 @@ function PensionComputation({ clickedItem, computed }) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
-      {fields.map(({ label, key }) => (
-        <div key={key} className="flex flex-row w-[90%] justify-between ">
-          <span className="font-semibold text-gray-700 capitalize font-montserrat">
-            {label}
-          </span>
-          <span className="text-gray-500 ">
-            {summary?.[key] !== undefined ? summary[key] : 0}{" "}
-            {/* Default to 0 if value is undefined */}
-          </span>
-        </div>
-      ))}
+    <div className="flex flex-col">
+      <hr />
+      <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
+        {fields.map(({ label, key }) => (
+          <div key={key} className="flex flex-row w-[90%] justify-between ">
+            <span className="font-semibold text-gray-700 capitalize font-montserrat">
+              {label}
+            </span>
+            <span className="text-gray-500 font-semibold text-[17px] ">
+              {summary?.[key] !== undefined ? formatNumber(summary[key]) : 0}{" "}
+              {/* Default to 0 if value is undefined */}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
