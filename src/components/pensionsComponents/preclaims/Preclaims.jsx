@@ -680,6 +680,7 @@ const Preclaims = ({ status }) => {
     },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
+    approvalRequest: () => console.log("Approval Request clicked"),
   };
 
   const title = clickedItem

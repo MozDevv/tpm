@@ -23,6 +23,13 @@ import {
   Undo,
   IosShare,
   PostAdd,
+  CheckCircleOutline,
+  TaskAlt,
+  PersonAddAlt,
+  Check,
+  Cancel,
+  CancelScheduleSend,
+  Rule,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
@@ -31,6 +38,7 @@ const ListNavigation = ({ handlers, status }) => {
   const permissions = auth?.user?.permissions;
 
   const [itemClicked, setItemClicked] = useState(false);
+  const [showApprovalButtons, setShowApprovalButtons] = useState(false);
 
   // Define buttons with required permissions
   const buttons = [
@@ -174,6 +182,46 @@ const ListNavigation = ({ handlers, status }) => {
     },
   ];
 
+  const approvalButton = {
+    name: "Approvals",
+    icon: Rule,
+    action: "approvalRequest",
+    requiredPermissions: [],
+    status: [1],
+  };
+
+  const additionalButtons = [
+    {
+      name: "Send Approval Request",
+      action: "sendApprovalRequest",
+      icon: IosShare,
+    },
+    {
+      name: "Cancel Approval Request",
+      action: "cancelApprovalRequest",
+      icon: CancelScheduleSend,
+    },
+    {
+      name: "Approve",
+      action: "approve",
+      icon: Check,
+    },
+    {
+      name: "Reject",
+      action: "cancel",
+      icon: Cancel,
+    },
+    {
+      name: "Delegate",
+      action: "delegate",
+      icon: PersonAddAlt,
+    },
+  ];
+
+  const handleApprovalClick = () => {
+    setShowApprovalButtons(!showApprovalButtons);
+  };
+
   // Define the reports button
   const reportsButton = {
     name: "Reports",
@@ -231,6 +279,30 @@ const ListNavigation = ({ handlers, status }) => {
       ));
   };
 
+  const renderApprovalButtons = () => {
+    return (
+      <>
+        {additionalButtons.map((button, index) => (
+          <Button
+            key={index}
+            onClick={() => handlers[button.action]()}
+            sx={{ mb: -1, maxHeight: "25px", ml: 1 }}
+            startIcon={
+              <button.icon
+                sx={{
+                  fontSize: "20px",
+                  mr: "-3px",
+                }}
+                color="primary"
+              />
+            }
+          >
+            {button.name}
+          </Button>
+        ))}
+      </>
+    );
+  };
   return (
     <div
       style={{
@@ -242,7 +314,33 @@ const ListNavigation = ({ handlers, status }) => {
         marginLeft: "10px",
       }}
     >
-      <div className="flex gap-6 items-center">{renderButtons()}</div>
+      <div className="flex gap-6 items-center">
+        {renderButtons()}
+
+        <div>
+          <Button
+            onClick={handleApprovalClick}
+            sx={{
+              mb: -1,
+              maxHeight: "25px",
+              display: handlers[approvalButton.action] ? "content" : "none",
+            }}
+            startIcon={
+              <approvalButton.icon
+                sx={{
+                  mr: "-3px",
+                  fontSize: "20px",
+                  color: "primary",
+                }}
+              />
+            }
+          >
+            <div className="ml-[-2px]">{approvalButton.name}</div>
+          </Button>
+          {showApprovalButtons && renderApprovalButtons()}{" "}
+          {/* Conditionally render additional buttons */}
+        </div>
+      </div>
       <div>
         <Button
           onClick={handlers[reportsButton.action]}

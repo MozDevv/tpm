@@ -25,6 +25,7 @@ export const createSections = (
   pensionAwardOptions,
   activePensionCap,
   formData,
+  rateOfInjury,
   mdaId
 ) => [
   {
@@ -759,6 +760,7 @@ export const createSections = (
             },
           ]
         : []),
+
       {
         label: "Has Commuted",
         name: "commutation_option_selection",
@@ -777,6 +779,61 @@ export const createSections = (
           "CAP195",
         ],
       },
+      {
+        name: "was_injured",
+        label: "Was Injured On Duty",
+        type: "select",
+        children: [
+          { id: true, name: "Yes" },
+          { id: false, name: "No" },
+        ],
+        pensionCap: ["CAP199", "CAP189"],
+      },
+      ...(formData?.was_injured
+        ? [
+            ////DISABLEMENT FOR CAP189
+            {
+              label: "Date of Injury",
+              name: "date_of_injury_for_cap189",
+              type: "date",
+              pensionCap: ["CAP189"],
+            },
+            {
+              label: "Salary at the time of injury",
+              name: "salary_at_injury_for_cap189",
+              type: "number",
+              pensionCap: ["CAP189"],
+            },
+            {
+              name: "rate_of_injury_id_for_cap189",
+              label: "Rate of Injury",
+              type: "autocomplete",
+              pensionCap: ["CAP189"],
+              children: rateOfInjury,
+            },
+
+            ////DISABLEMENT FOR CAP199
+            {
+              label: "Degree of Disablement (1 - 100%)",
+              name: "degree_of_disablement_for_cap199",
+              type: "number",
+              pensionCap: ["CAP199"],
+            },
+            {
+              label: "Date of Injury",
+              name: "date_of_injury_for_cap199",
+              type: "date",
+              pensionCap: ["CAP199"],
+            },
+            {
+              label: "Salary at the time of injury",
+              name: "salary_at_injury_for_cap199",
+              type: "number",
+              pensionCap: ["CAP199"],
+            },
+          ]
+        : []),
+
       {
         label: "Commutation Confirmation Date",
         name: "commutation_option_selection_date",

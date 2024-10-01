@@ -336,6 +336,7 @@ const endpoints = {
 
   getGeneralSettings: "/api/Setups/GetGeneralSettings",
   createGeneralSettings: "/api/Setups/CreateGeneralSettings",
+  getRateOfInjury: "/api/Setups/GetRateOfInjuryForCap189Setups",
 };
 
 export const apiService = {

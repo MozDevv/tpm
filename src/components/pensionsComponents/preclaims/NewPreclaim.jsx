@@ -85,6 +85,12 @@ function NewPreclaim({
       const retiree = res.data.data[0];
       setRetiree(retiree);
 
+      const parseDate = (date) => {
+        if (date) {
+          return new Date(date).toISOString().split("T")[0];
+        }
+        return "";
+      };
       const ageOnDischarge = computeAgeOfDischarge(
         retiree?.dob,
         retiree?.retirement_date
@@ -176,6 +182,28 @@ function NewPreclaim({
                 .split("T")[0]
             : "",
         isCommutable: retiree?.exitGround?.has_commutation ?? false,
+        was_injured: retiree?.was_injured,
+        date_of_injury_for_cap189:
+          parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? "",
+
+        salary_at_injury_for_cap189:
+          retiree?.injury_details_for_cap189?.salary_at_injury ?? "",
+
+        rate_of_injury_id_for_cap189:
+          retiree?.injury_details_for_cap189?.rate_of_injury_id || "", // CAP 189 specific
+
+        degree_of_disablement_for_cap199:
+          retiree?.degree_of_disablement_details_for_cap199
+            ?.degree_of_disablement || 0,
+
+        date_of_injury_for_cap199:
+          parseDate(
+            retiree?.degree_of_disablement_details_for_cap199?.date_of_injury
+          ) ?? "",
+
+        salary_at_injury_for_cap199:
+          retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
+          "",
       });
       console.log("retiree ********", retiree);
     } catch (error) {
@@ -271,6 +299,29 @@ function NewPreclaim({
 
       isCommutable: retiree?.exitGround?.has_commutation,
       pension_cap: retiree?.mda?.pensionCap?.id,
+      was_injured: retiree?.was_injured,
+
+      date_of_injury_for_cap189:
+        parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? "",
+
+      salary_at_injury_for_cap189:
+        retiree?.injury_details_for_cap189?.salary_at_injury ?? "",
+
+      rate_of_injury_id_for_cap189:
+        retiree?.injury_details_for_cap189?.rate_of_injury_id || "", // CAP 189 specific
+
+      degree_of_disablement_for_cap199:
+        retiree?.degree_of_disablement_details_for_cap199
+          ?.degree_of_disablement || 0,
+
+      date_of_injury_for_cap199:
+        parseDate(
+          retiree?.degree_of_disablement_details_for_cap199?.date_of_injury
+        ) ?? "",
+
+      salary_at_injury_for_cap199:
+        retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
+        "",
     };
   };
 
@@ -529,11 +580,30 @@ function NewPreclaim({
       console.error("Error fetching data:", e);
     }
   };
+  const [rateOfInjury, setRateOfInjury] = useState([]);
+
+  const fetchRateOfInjury = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRateOfInjury);
+      if (res.status === 200) {
+        const rateOfInjury1 = res.data.data.map((rate) => ({
+          id: rate.id,
+          name: rate.name,
+        }));
+
+        console.log("rate of injury", rateOfInjury1);
+        setRateOfInjury(rateOfInjury1);
+      }
+    } catch (e) {
+      console.error("Error fetching data:", e);
+    }
+  };
 
   const { activePensionCap, activeCapName } = useMda("");
 
   useEffect(() => {
     fetchExitGrounds();
+    fetchRateOfInjury();
     fetchGrades();
     fetchPensionAwards();
     fetchPostalAddress();
@@ -647,11 +717,11 @@ function NewPreclaim({
     constituencies,
     filteredPostalAddresses,
     filteredGrades,
-
     exitGroundOptions,
     pensionAwardOptions,
     activePensionCap,
     formData,
+    rateOfInjury,
     mdaId
   );
 
@@ -778,7 +848,40 @@ function NewPreclaim({
       message.error("MDA not found, Please sign in as an MDA user");
       return;
     }
-    const data = { ...formattedFormData, mda_id: mdaId };
+
+    const injury_details =
+      activeCapName === "CAP189"
+        ? {
+            date_of_injury: dayjs(formData.date_of_injury_for_cap189).isValid()
+              ? dayjs(formData.date_of_injury_for_cap189).format(
+                  "YYYY-MM-DDTHH:mm:ss[Z]"
+                )
+              : "",
+            salary_at_injury: formData.salary_at_injury_for_cap189 ?? "",
+            rate_of_injury_id: formData.rate_of_injury_id_for_cap189 ?? "",
+          }
+        : null;
+
+    const disablement_details =
+      activeCapName === "CAP199"
+        ? {
+            date_of_injury: dayjs(formData.date_of_injury_for_cap199).isValid()
+              ? dayjs(formData.date_of_injury_for_cap199).format(
+                  "YYYY-MM-DDTHH:mm:ss[Z]"
+                )
+              : "",
+            degree_of_disablement:
+              formData.degree_of_disablement_for_cap199 ?? 0,
+            salary_at_injury: formData.salary_at_injury_for_cap199 ?? "",
+          }
+        : null;
+
+    const data = {
+      ...formattedFormData,
+      mda_id: mdaId,
+      disablement_details,
+      injury_details,
+    };
 
     console.log("Data to be sent:", data);
 
@@ -805,28 +908,31 @@ function NewPreclaim({
           fetchRetiree();
           setEditMode(false);
         }
-        if (
-          res?.data?.messages[0] ===
-          "Date of confirmation cannot be before or same as date of birth"
-        ) {
-          message.error(
-            "Date of confirmation cannot be before or same as date of birth"
-          );
-        }
-        if (
-          res?.data?.messages[0] ===
-          "The prospective pensioner has already passed the modification state"
-        ) {
-          message.error(
-            "The prospective pensioner has already passed the modification state"
-          );
-        }
+
+        // if (
+        //   res?.data?.messages[0] ===
+        //   "Date of confirmation cannot be before or same as date of birth"
+        // ) {
+        //   message.error(
+        //     "Date of confirmation cannot be before or same as date of birth"
+        //   );
+        // }
+        // if (
+        //   res?.data?.messages[0] ===
+        //   "The prospective pensioner has already passed the modification state"
+        // ) {
+        //   message.error(
+        //     "The prospective pensioner has already passed the modification state"
+        //   );
+        // }
         if (res?.data?.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
             });
           });
+        } else if (res.data.succeeded === false && res.data.messages[0]) {
+          message.error(res.data.messages[0]);
         }
       } else {
         res = await axios.post(
