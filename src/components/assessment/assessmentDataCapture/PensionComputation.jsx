@@ -9,12 +9,12 @@ function PensionComputation({ clickedItem, computed }) {
   const getSummary = async () => {
     try {
       const res = await assessApiService.get(
-        assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
+        assessEndpoints.getCalculationSummary(clickedItem.id_claim)
       );
-      setSummary(res.data.data[0] || null); // Set to null if no data is returned
+      setSummary(res.data.data || {}); // Set to an empty object if no data is returned
     } catch (error) {
       console.log("Error getting claim pensionable service:", error);
-      setSummary(null); // Ensure null is set on error
+      setSummary({}); // Set to an empty object on error
     }
   };
 
@@ -26,21 +26,31 @@ function PensionComputation({ clickedItem, computed }) {
     getSummary();
   }, [computed]);
 
-  // Conditionally render content if summary is not null
-  if (!summary) return null;
+  const fields = [
+    { label: "Current Salary", key: "current_salary" },
+    { label: "Pensionable Emolument", key: "pensionable_emolument" },
+    { label: "Unreduced Pension", key: "unreduced_pension" },
+    { label: "Reduced Pension", key: "reduced_pension" },
+    { label: "Lumpsum Amount", key: "lumpsum_amount" },
+    { label: "Monthly Pension", key: "monthly_pension" },
+    { label: "Last 3-Year Total", key: "last_3year_total" },
+    { label: "Average Salary", key: "average_salary" },
+    { label: "Max Government Salary", key: "max_government_salary" },
+  ];
 
   return (
     <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
-      {Object.entries(summary)
-        .filter(([label]) => label !== "claim_id" && label !== "id")
-        .map(([label, value]) => (
-          <div key={label} className="flex flex-row w-[90%] justify-between ">
-            <span className="font-semibold text-gray-700 capitalize font-montserrat">
-              {label.replace(/_/g, " ")}
-            </span>
-            <span className="text-gray-500 ">{value}</span>
-          </div>
-        ))}
+      {fields.map(({ label, key }) => (
+        <div key={key} className="flex flex-row w-[90%] justify-between ">
+          <span className="font-semibold text-gray-700 capitalize font-montserrat">
+            {label}
+          </span>
+          <span className="text-gray-500 ">
+            {summary?.[key] !== undefined ? summary[key] : 0}{" "}
+            {/* Default to 0 if value is undefined */}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
