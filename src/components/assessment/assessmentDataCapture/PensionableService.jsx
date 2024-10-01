@@ -5,45 +5,31 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-function QualyfyingService() {
+function PensionableService() {
   const columnDefs = [
     {
-      field: "qualifying_service_date_of_joining",
-      headerName: "Date of Joining",
-      headerClass: "prefix-header",
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: "qualifying_service_date_of_leaving",
-      headerName: "Date of Leaving",
-      headerClass: "prefix-header",
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: "qualifying_service_years",
+      field: "pensionable_service_years",
       headerName: "Years",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "qualifying_service_months",
+      field: "pensionable_service_months",
       headerName: "Months",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "qualifying_service_days",
+      field: "pensionable_service_days",
       headerName: "Days",
       headerClass: "prefix-header",
       filter: true,
       flex: 1,
     },
     {
-      field: "qualifying_service_cumulative_months",
+      field: "pensionable_service_cumulative_months",
       headerName: "Cumulative Months",
       headerClass: "prefix-header",
       filter: true,
@@ -94,4 +80,4 @@ function QualyfyingService() {
   );
 }
 
-export default QualyfyingService;
+export default PensionableService;

@@ -80,22 +80,6 @@ export const createSections = (
           "CAP195",
         ],
       },
-
-      {
-        label: "Other Name(s)",
-        name: "other_name",
-        type: "text",
-        pensionCap: [
-          "CAP189",
-          "CAP199",
-          "CAP196",
-          "APN/PK",
-          "CAP190",
-          "CAP195",
-          "DSO/RK",
-          "CAP195",
-        ],
-      },
     ],
   },
 ];

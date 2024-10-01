@@ -3,7 +3,7 @@ import { Collapse, IconButton } from "@mui/material";
 import { KeyboardArrowRight, ExpandLess } from "@mui/icons-material";
 
 const BaseCollapse = ({ name, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleToggleSection = () => {
     setIsOpen((prevState) => !prevState);

@@ -214,7 +214,7 @@ const Payments = () => {
     {
       name: "narration",
       label: "Narration",
-      type: "number",
+      type: "text",
       required: false,
     },
     {
