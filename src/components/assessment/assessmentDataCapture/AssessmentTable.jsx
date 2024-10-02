@@ -516,8 +516,6 @@ const AssessmentTable = ({ status }) => {
           title={clickedItem ? clickedItem?.claim_id : "Create Claim"}
           clickedItem={clickedItem}
           status={clickedItem?.stage}
-          // openAction={openAction}
-          // setOpenAction={setOpenAction}
           fetchAllPreclaims={fetchAllPreclaims}
           openAction={openAction}
           setOpenAction={setOpenAction}

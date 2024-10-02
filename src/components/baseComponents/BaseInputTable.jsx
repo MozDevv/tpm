@@ -19,6 +19,7 @@ import {
   Delete,
   ExpandLess,
   KeyboardArrowRight,
+  MoreVert,
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import BaseLoadingOverlay from "./BaseLoadingOverlay";
@@ -27,6 +28,7 @@ import { baseValidatorFn } from "./BaseValidatorFn";
 import { parseDate } from "@/utils/dateFormatter";
 import * as XLSX from "xlsx";
 import { VisuallyHiddenInput } from "@/utils/handyComponents";
+import CustomSelectCellEditor from "./CustomSelectCellEditor";
 
 const BaseInputTable = ({
   fields = [],
@@ -572,17 +574,19 @@ const BaseInputTable = ({
           return parseDate(params.newValue);
         };
       } else if (col.type === "select" && col.options && col.options.length) {
-        columnDef.cellEditor = "agSelectCellEditor";
+        columnDef.cellEditor = CustomSelectCellEditor;
+
         columnDef.cellEditorParams = (params) => {
-          const { data } = params.node;
-          const dynamicFilterValue = data[filterBy];
+          const { data } = params.node; // Access the current row data
+          const dynamicFilterValue = data[filterBy]; // Get dynamic filter value from row data
 
+          // Map options to their ids and names
           const options = col.options.map((option) => option.id);
-
           const defaultOptions = col.options.map((option) => option.name);
 
           const isFilteredColumn = col.value === filterCol;
 
+          // Filter options based on dynamicFilterValue
           if (isFilteredColumn && dynamicFilterValue) {
             const filteredOptions = col.options.filter(
               (option) => option[filterBy] === dynamicFilterValue
@@ -591,25 +595,17 @@ const BaseInputTable = ({
             console.log("Filtered options:", col.options, filteredOptions);
 
             return {
-              values: filteredOptions.map((option) => option.name),
+              options: filteredOptions, // Pass filtered options to the editor
+              defaultValue: params.value, // Pass the current value as default
+              rowId: data.id, // Pass the row ID to the editor
             };
           }
 
           return {
-            values: defaultOptions,
+            options: col.options, // Pass all options if not filtered
+            defaultValue: params.value, // Pass the current value as default
+            rowId: data.id, // Pass the row ID to the editor
           };
-        };
-        columnDef.valueFormatter = (params) => {
-          const selectedOption = col.options.find(
-            (option) => option.id === params.value
-          );
-          return selectedOption ? selectedOption.name : params.value;
-        };
-        columnDef.valueParser = (params) => {
-          const selectedOption = col.options.find(
-            (option) => option.name === params.newValue
-          );
-          return selectedOption ? selectedOption.id : params.newValue;
         };
       } else if (col.hide) {
         columnDef.hide = true;
@@ -641,6 +637,10 @@ const BaseInputTable = ({
         const field = colDef.field;
 
         setDataAdded(true);
+
+        console.log("Data >>>>>>>>", data);
+        console.log("Field >>>>>>>>", field);
+        console.log("New Value >>>>>>>>", newValue);
 
         const datePair = findDatePair(field);
 
@@ -674,45 +674,52 @@ const BaseInputTable = ({
           }
         }
 
-        if (colDef.cellEditor === "agSelectCellEditor") {
+        if (colDef.cellEditor === "CustomSelectCellEditor") {
+          console.log("Selected Value:", newValue);
+
           const selectField = fields.find(
             (field) => field.value === colDef.field
           );
 
           if (selectField && selectField.options) {
             const selectedOption = selectField.options.find(
-              (option) => option.name === newValue
+              (option) => option.name === newValue // Match by name to get the ID
             );
 
+            // If a matching option is found, update the data with the ID
             if (selectedOption) {
-              data[field] = selectedOption.id;
+              data[colDef.field] = selectedOption.id; // Store ID in data
+            } else {
+              data[colDef.field] = newValue; // If not found, store the input as is
             }
           }
 
+          // Ensure that the displayed value in the cell corresponds to the name
           columnDef.valueFormatter = (params) => {
             if (!params.value) return ""; // Handle empty or undefined values
-            const selectedOption = col.options.find(
-              (option) => option.id === params.value
+            const selectedOption = selectField.options.find(
+              (option) => option.id === params.value // Match ID to find the name
             );
             return selectedOption ? selectedOption.name : params.value; // Display name or the value if not found
           };
 
-          // Parse displayed name back to ID
+          // Parse the displayed name back to ID when editing
           columnDef.valueParser = (params) => {
-            const selectedOption = col.options.find(
-              (option) => option.name === params.newValue
+            const selectedOption = selectField.options.find(
+              (option) => option.name === params.newValue // Match name to find the ID
             );
             return selectedOption ? selectedOption.id : params.newValue; // Return ID if matched, else raw input
           };
 
-          // Ensure that the initial values (default) are correctly formatted
+          // Ensure that the initial values (default) are correctly formatted for filtering
           columnDef.getQuickFilterText = (params) => {
-            const selectedOption = col.options.find(
-              (option) => option.id === params.value
+            const selectedOption = selectField.options.find(
+              (option) => option.id === params.value // Match ID to get the name for filtering
             );
             return selectedOption ? selectedOption.name : params.value; // Use name for filtering
           };
         }
+
         if (colDef.cellEditor === "agSelectCellEditor") {
         }
         if (data.parliamentary_term_setup_id) {
@@ -1010,6 +1017,9 @@ const BaseInputTable = ({
             <AgGridReact
               ref={gridApiRef}
               rowData={rowData}
+              frameworkComponents={{
+                customSelectCellEditor: CustomSelectCellEditor, // Register your custom component
+              }}
               columnDefs={headers}
               defaultColDef={{
                 flex: 1,
