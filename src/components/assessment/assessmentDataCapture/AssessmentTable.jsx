@@ -523,6 +523,14 @@ const AssessmentTable = ({ status }) => {
           setOpenAction={setOpenAction}
           isClaim={true}
           isClaimManagement={true}
+          activeStep={clickedItem?.stage}
+          steps={[
+            "Claims Verification",
+            "Claims Validation",
+            "Claims Approval",
+            "Assessment Data Capture",
+            "Assessment Approval",
+          ]}
         >
           <AssessmentCard
             pensionableService={pensionableService}

@@ -1184,7 +1184,7 @@ function PensionerDetails({
                           sx={{ ml: "-5px", zIndex: 1 }}
                           onClick={() => setOpen((prevOpen) => !prevOpen)}
                         >
-                          {!open ? (
+                          {open ? (
                             <KeyboardArrowRight
                               sx={{ color: "primary.main", fontSize: "14px" }}
                             />
@@ -1197,7 +1197,7 @@ function PensionerDetails({
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
 
-                      <Collapse in={open} timeout="auto" unmountOnExit>
+                      <Collapse in={!open} timeout="auto" unmountOnExit>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 px-6 ">
                           {section.fields
                             .filter((field) => {
