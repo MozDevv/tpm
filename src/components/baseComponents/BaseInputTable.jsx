@@ -756,7 +756,7 @@ const BaseInputTable = ({
           setSelectedValue(data.designationId);
         }
 
-        if (data.to_date) {
+        if (data.salary_amount) {
           data.contribution_amount = 0;
           data.total_emoluments = 0;
           // data.salary_amount = 0;

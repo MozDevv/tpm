@@ -4,6 +4,28 @@ import TextField from "@mui/material/TextField";
 import Popper from "@mui/material/Popper";
 import Box from "@mui/material/Box";
 
+const CustomPopper = (props) => {
+  const isAccountId = props.colDef.field === "accountId";
+  return (
+    <Popper
+      {...props}
+      placement="bottom-start"
+      sx={{
+        width: isAccountId ? "400px !important" : "inherit", // Extend width only for 'accountId'
+        zIndex: 1300,
+      }}
+    >
+      {isAccountId && (
+        <li className="flex items-center gap-[65px] px-[1px] py-2 bg-gray-100">
+          <p className="text-xs font-normal">No.</p>
+          <p className="text-xs font-normal ml-[50px]">Name</p>
+        </li>
+      )}
+      {props.children}
+    </Popper>
+  );
+};
+
 const CustomSelectCellEditor = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value || ""); // Allow falsy values
   const options = props.options || [];
@@ -14,7 +36,6 @@ const CustomSelectCellEditor = (props) => {
   }, [props.value]);
 
   const handleChange = (event, newValue) => {
-    console.log("newValue", newValue);
     const newSelectedValue = newValue ? newValue.id : "";
 
     if (newSelectedValue !== undefined) {
@@ -37,7 +58,7 @@ const CustomSelectCellEditor = (props) => {
 
   // Customize render option for 'accountId' field
   const renderOption = (props, option, { selected }) => (
-    <div className="">
+    <div>
       <li
         {...props}
         style={{
@@ -107,6 +128,9 @@ const CustomSelectCellEditor = (props) => {
           );
         }}
         renderOption={isAccountId ? renderOption : undefined}
+        PopperComponent={(popperProps) => (
+          <CustomPopper {...popperProps} colDef={props.colDef} />
+        )}
         ListboxProps={{
           sx: {
             padding: 0,
@@ -116,48 +140,6 @@ const CustomSelectCellEditor = (props) => {
             },
           },
         }}
-        PopperComponent={
-          isAccountId
-            ? (props) => (
-                <Popper
-                  {...props}
-                  disablePortal={false} // Allow portal rendering (set to true if needed)
-                  sx={{
-                    width: "500px", // Increase the width beyond the input field (e.g., 500px)
-                    maxWidth: "500px", // Control the maximum width
-                    zIndex: 1300, // Ensure it renders above other components if needed
-                  }}
-                  modifiers={[
-                    {
-                      name: "flip",
-                      enabled: true,
-                      options: {
-                        altBoundary: true,
-                        rootBoundary: "viewport",
-                        padding: 8,
-                      },
-                    },
-                    {
-                      name: "preventOverflow",
-                      enabled: true,
-                      options: {
-                        mainAxis: true,
-                        tether: true,
-                        padding: 8,
-                        boundary: "window",
-                      },
-                    },
-                  ]}
-                >
-                  <li className="flex items-center gap-[5px] px-[1px] py-2 bg-gray-100">
-                    <p className="text-xs font-normal">No.</p>
-                    <p className="text-xs font-normal">Name</p>
-                  </li>
-                  {props.children}
-                </Popper>
-              )
-            : undefined
-        }
         style={{ flex: 1 }}
       />
     </div>

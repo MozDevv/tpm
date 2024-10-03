@@ -38,7 +38,6 @@ function PaymentsCard({
               id: acc.id,
               name: acc.accountNo,
               accountName: acc.name,
-
               accountType: acc.accountType,
             };
           })
