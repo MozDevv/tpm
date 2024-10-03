@@ -64,7 +64,7 @@ const Payments = () => {
 
   const columnDefs = [
     {
-      headerName: "Document No",
+      headerName: "Payment Voucher No",
       field: "documentNo",
       flex: 1,
       pinned: "left",
@@ -184,7 +184,7 @@ const Payments = () => {
   const fields = [
     {
       name: "documentNo",
-      label: "Document No",
+      label: "Payment Voucher No",
       type: "text",
       required: false,
       disabled: true,
@@ -279,7 +279,7 @@ const Payments = () => {
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updatePayment}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getPayments}
+            getApiEndpoint={financeEndpoints.getPaymentById}
             getApiFunction={apiService.get}
             transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
