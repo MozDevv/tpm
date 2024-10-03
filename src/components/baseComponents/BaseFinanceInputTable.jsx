@@ -55,6 +55,7 @@ const BaseFinanceInputTable = ({
   selectedAccountTypeId,
   allOptions,
   setTotalAmmounts,
+  branches,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -584,6 +585,7 @@ const BaseFinanceInputTable = ({
             name: option.name,
             accountName: option.accountName,
             accountType: option.accountType,
+            bankId: option.bankId,
           }));
 
           // Check if the column is the 'accountId' column
@@ -602,6 +604,19 @@ const BaseFinanceInputTable = ({
 
             return {
               options: filteredOptions,
+            };
+          }
+
+          const bankIdValue = data.bankId;
+          const isBranchColumn = col.value === "bankBranchId";
+
+          if (isBranchColumn && bankIdValue !== "") {
+            const filteredBranches = branches.filter(
+              (branch) => branch.bankId === bankIdValue
+            );
+
+            return {
+              options: filteredBranches,
             };
           }
           return {
@@ -672,6 +687,10 @@ const BaseFinanceInputTable = ({
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue, api } = params;
         const field = colDef.field;
+
+        console.log("Data", data);
+        console.log("New Value", newValue);
+        console.log("Column Definition", colDef);
 
         setDataAdded(true);
 

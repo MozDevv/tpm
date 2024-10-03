@@ -5,6 +5,9 @@ import BaseInputCard from "@/components/baseComponents/BaseInputCard";
 import { AgGridReact } from "ag-grid-react";
 import BaseInputTable from "@/components/baseComponents/BaseInputTable";
 import { apiService } from "@/components/services/financeApi";
+import endpoints, {
+  apiService as setupsApiService,
+} from "@/components/services/setupsApi";
 import BaseFinanceInputCard from "@/components/baseComponents/BaseFinanceInputCard";
 import BaseFinanceInputTable from "@/components/baseComponents/BaseFinanceInputTable";
 import financeEndpoints from "@/components/services/financeApi";
@@ -92,6 +95,41 @@ function PaymentsCard({
     };
 
     fetchProductPostingGroups();
+  }, []);
+
+  const [banks, setBanks] = useState([]);
+  const [branches, setBranches] = useState([]);
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await setupsApiService.get(endpoints.getBanks, {
+        "paging.pageSize": 1000,
+      });
+      const rawData = res.data.data;
+
+      const banksData = rawData.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+        branches: bank.branches,
+      }));
+
+      const branchesData = rawData.flatMap((bank) =>
+        bank.branches.map((branch) => ({
+          ...branch,
+          bankId: bank.id,
+        }))
+      );
+      console.log("banksData", banksData);
+      console.log("branchesData", branchesData);
+
+      setBanks(banksData);
+      setBranches(branchesData);
+    } catch (error) {
+      console.log("Error fetching banks and branches:", error);
+    }
+  };
+  useEffect(() => {
+    fetchBanksAndBranches();
   }, []);
 
   const tableFields = [
@@ -253,6 +291,46 @@ function PaymentsCard({
       required: false,
       disabled: true,
     },
+
+    {
+      value: "appliesToDocType",
+      label: "Applies To Doc Type",
+      type: "select",
+      options: [
+        { id: 0, name: "Payment Voucher" },
+        { id: 1, name: "Purchase Invoice" },
+        { id: 2, name: "Sales Invoice" },
+        { id: 3, name: "Receipt" },
+        { id: 4, name: "Purchase Credit Memo" },
+        { id: 5, name: "Sales Credit Memo" },
+        { id: 6, name: "Journal Voucher" },
+      ],
+    },
+    {
+      value: "appliesToDocNumber",
+      label: "Applies To Doc Number",
+      type: "text",
+    },
+
+    {
+      value: "purpose",
+      label: "Purpose",
+      type: "text",
+    },
+    {
+      value: "bankId",
+      label: "Bank",
+      type: "select",
+      required: true,
+      options: banks,
+    },
+    {
+      value: "bankBranchId",
+      label: "Bank Branch",
+      type: "select",
+      required: true,
+      options: branches,
+    },
   ];
 
   const totalAmounts1 = [
@@ -316,6 +394,7 @@ function PaymentsCard({
                     postEndpoint={financeEndpoints.addPaymentLine}
                     putEndpoint={financeEndpoints.updatePaymentLine}
                     passProspectivePensionerId={true}
+                    branches={branches}
                   />
                 </div>
 
