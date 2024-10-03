@@ -668,6 +668,11 @@ const BaseFinanceInputTable = ({
           textAlign: "left",
           width: "100%",
         };
+      } else if (col.type === "number") {
+        //console.log("this is the number column", col);
+        columnDef.valueFormatter = (params) => {
+          return formatNumber(params.value) || 0;
+        };
       }
 
       const datePairs = [
@@ -688,9 +693,9 @@ const BaseFinanceInputTable = ({
         const { colDef, data, newValue, api } = params;
         const field = colDef.field;
 
-        console.log("Data", data);
-        console.log("New Value", newValue);
-        console.log("Column Definition", colDef);
+        // console.log("Data", data);
+        // console.log("New Value", newValue);
+        // console.log("Column Definition", colDef);
 
         setDataAdded(true);
 
