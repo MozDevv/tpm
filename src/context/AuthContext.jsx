@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     user: null,
   });
 
+  const [userId, setUserId] = useState(null);
   // Function to handle login
   const login = (token) => {
     localStorage.setItem("token", token);

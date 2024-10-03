@@ -51,6 +51,7 @@ import CreateProspectivePensioner from "./createProspective/CreateProspectivePen
 import { useSearch } from "@/context/SearchContext";
 import { Spin } from "antd";
 import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
+import BaseApprovalCard from "@/components/baseComponents/BaseApprovalCard";
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -657,6 +658,8 @@ const Preclaims = ({ status }) => {
     fetchAllPreclaims(sort, filter);
   }, [openBaseCard]);
 
+  const [openApprove, setOpenApprove] = useState(false);
+
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -681,6 +684,11 @@ const Preclaims = ({ status }) => {
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
     approvalRequest: () => console.log("Approval Request clicked"),
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => setOpenApprove(5),
   };
 
   const title = clickedItem
@@ -740,6 +748,12 @@ const Preclaims = ({ status }) => {
         </p>
       ) : (
         <div className=" relative h-full w-full overflow-hidden">
+          <BaseApprovalCard
+            clickedItem={clickedItem}
+            openApprove={openApprove}
+            setOpenApprove={setOpenApprove}
+            documentNo={clickedItem?.no_series}
+          />
           <BaseCard
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}

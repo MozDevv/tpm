@@ -229,9 +229,9 @@ const ListNavigation = ({ handlers, status }) => {
     status: [1],
   };
 
-  const additionalButtons = [
+  const approvalButtons = [
     {
-      name: "Send Approval Request",
+      name: "Send For Approval",
       action: "sendApprovalRequest",
       icon: IosShare,
     },
@@ -242,17 +242,17 @@ const ListNavigation = ({ handlers, status }) => {
     },
     {
       name: "Approve",
-      action: "approve",
+      action: "approveDocument",
       icon: Check,
     },
     {
       name: "Reject",
-      action: "cancel",
+      action: "rejectDocumentApproval",
       icon: Cancel,
     },
     {
       name: "Delegate",
-      action: "delegate",
+      action: "delegateApproval",
       icon: PersonAddAlt,
     },
   ];
@@ -321,7 +321,7 @@ const ListNavigation = ({ handlers, status }) => {
   const renderApprovalButtons = () => {
     return (
       <>
-        {additionalButtons.map((button, index) => (
+        {approvalButtons.map((button, index) => (
           <Button
             key={index}
             onClick={() => handlers[button.action]()}
