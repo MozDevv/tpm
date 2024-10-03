@@ -31,6 +31,7 @@ import { apiService } from "../services/financeApi";
 import financeEndpoints from "../services/financeApi";
 import { de } from "@faker-js/faker";
 import { formatNumber } from "@/utils/numberFormatters";
+import CustomSelectCellEditor from "./CustomSelectCellEditor";
 
 const BaseFinanceInputTable = ({
   fields = [],
@@ -569,48 +570,54 @@ const BaseFinanceInputTable = ({
           return parseDate(params.newValue);
         };
       } else if (col.type === "select" && col.options && col.options.length) {
-        columnDef.cellEditor = "agSelectCellEditor";
+        // Use your custom cell editor
+        columnDef.cellEditor = CustomSelectCellEditor;
+
+        // Set the cellEditorParams for your custom editor
         columnDef.cellEditorParams = (params) => {
           const { data } = params.node;
           const accountTypeId = data.accountTypeId;
-          const accountId = data.accountId; // Get accountId from the row data
 
-          // Get the static options (for this column)
-          const options = col.options.map((option) => option.name);
+          // Map the options to include both id and name
+          const options = col.options.map((option) => ({
+            id: option.id,
+            name: option.name,
+            accountName: option.accountName,
+            accountType: option.accountType,
+          }));
 
           // Check if the column is the 'accountId' column
           const isAccountIdColumn = col.value === "accountId";
 
           if (isAccountIdColumn && accountTypeId !== "") {
-            const filteredOptions = col.options.filter(
+            const filteredOptions = options.filter(
               (option) => option.accountType === accountTypeId
             );
 
-            console.log("COL.OPTIONS", col.options);
-
+            console.log("COL.OPTIONS", options);
             console.log(
               `Account Type ID: ${accountTypeId} - Filtered options:`,
               filteredOptions
             );
 
-            // Return the filtered options
             return {
-              values: filteredOptions.map((option) => option.name),
+              options: filteredOptions,
             };
           }
-
-          // For other columns or if accountTypeId is not available, return all options
           return {
-            values: options,
+            options: options,
           };
         };
 
+        // Define how to format the displayed value
         columnDef.valueFormatter = (params) => {
           const selectedOption = col.options.find(
             (option) => option.id === params.value
           );
           return selectedOption ? selectedOption.name : params.value;
         };
+
+        // Parse the new value from the editor
         columnDef.valueParser = (params) => {
           const selectedOption = col.options.find(
             (option) => option.name === params.newValue
@@ -685,12 +692,13 @@ const BaseFinanceInputTable = ({
           console.log("accountId", accountId);
 
           const selectedOption =
-            allOptions &&
-            allOptions.find((option) => option.name === accountId);
+            allOptions && allOptions.find((option) => option.id === accountId);
+
+          console.log("Selected Option", selectedOption);
 
           if (selectedOption) {
             data.accountName = selectedOption.accountName;
-            data.accountNo = selectedOption.name;
+            data.accountNo = selectedOption.accountName;
 
             api.refreshCells({ rowNodes: [params.node], force: true });
           } else {
@@ -752,7 +760,8 @@ const BaseFinanceInputTable = ({
           }
         }
 
-        if (colDef.cellEditor === "agSelectCellEditor") {
+        if (colDef.cellEditor === CustomSelectCellEditor) {
+          // Update this line
           const selectField = fields.find(
             (field) => field.value === colDef.field
           );
@@ -763,34 +772,36 @@ const BaseFinanceInputTable = ({
             );
 
             if (selectedOption) {
-              data[field] = selectedOption.id;
+              data[colDef.field] = selectedOption.id; // Use colDef.field to set the correct value
             }
           }
 
+          // Format the value for display
           columnDef.valueFormatter = (params) => {
             if (!params.value) return ""; // Handle empty or undefined values
-            const selectedOption = col.options.find(
+            const selectedOption = selectField.options.find(
               (option) => option.id === params.value
             );
             return selectedOption ? selectedOption.name : params.value; // Display name or the value if not found
           };
 
-          // Parse displayed name back to ID
+          // Parse the displayed name back to ID
           columnDef.valueParser = (params) => {
-            const selectedOption = col.options.find(
+            const selectedOption = selectField.options.find(
               (option) => option.name === params.newValue
             );
             return selectedOption ? selectedOption.id : params.newValue; // Return ID if matched, else raw input
           };
 
-          // Ensure that the initial values (default) are correctly formatted
+          // Ensure that the initial values (default) are correctly formatted for quick filtering
           columnDef.getQuickFilterText = (params) => {
-            const selectedOption = col.options.find(
+            const selectedOption = selectField.options.find(
               (option) => option.id === params.value
             );
             return selectedOption ? selectedOption.name : params.value; // Use name for filtering
           };
         }
+
         if (colDef.cellEditor === "agSelectCellEditor") {
         }
 

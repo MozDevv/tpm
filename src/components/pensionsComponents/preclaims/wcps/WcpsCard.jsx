@@ -139,12 +139,14 @@ function WcpsCard({
       label: "Salary Amount",
       type: "number",
       required: true,
+      disabled: false,
     },
     {
       value: "total_emoluments",
       label: "Total Emoluments",
       type: "number",
       required: true,
+      disabled: true,
     },
     {
       value: "contribution_amount",
@@ -239,7 +241,7 @@ function WcpsCard({
                   apiEndpoint={endpoints.createWcps}
                   postApiFunction={apiService.post}
                   clickedItem={clickedItem}
-                  setOpenBaseCard={setOpenBaseCard}
+                  setOpenBaseCard={setOpenAddReference}
                   useRequestBody={true}
                   isBranch={true}
                 />

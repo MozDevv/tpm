@@ -756,9 +756,10 @@ const BaseInputTable = ({
           setSelectedValue(data.designationId);
         }
 
-        if (data.total_emoluments) {
-          data.contribution_amount =
-            (data.total_emoluments * 0.02).toFixed(2) * 1;
+        if (data.to_date) {
+          data.contribution_amount = 0;
+          data.total_emoluments = 0;
+          // data.salary_amount = 0;
         }
         if (data.start_date && data.end_date) {
           data.number_of_days = dayjs(data.end_date).diff(
@@ -914,6 +915,10 @@ const BaseInputTable = ({
         });
       }
       event.event.preventDefault();
+    } else {
+      if (event.event.key === "Delete") {
+        console.log("Delete key pressed");
+      }
     }
   };
   const handleFileUpload = (event) => {
