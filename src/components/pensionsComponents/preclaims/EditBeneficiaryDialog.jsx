@@ -12,6 +12,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import {
+  ArrowBack,
   Close,
   ExpandLess,
   KeyboardArrowRight,
@@ -179,12 +180,26 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         fullWidth
         sx={{ padding: "20px" }}
       >
-        <div className="p-8">
+        <div className="p-8 ">
           <DialogTitle>
-            <p className="text-primary py-3 text-lg font-bold">
-              {isGuardian ? "Guardian" : "Beneficiary"} :{" "}
-              {beneficiary?.relationship}
-            </p>
+            <div className="flex  flex-row gap-1 items-center">
+              <IconButton
+                sx={{
+                  border: "1px solid #006990",
+                  borderRadius: "50%",
+                  padding: "3px",
+                  marginRight: "10px",
+                  color: "#006990",
+                }}
+                onClick={onClose}
+              >
+                <ArrowBack sx={{ color: "#006990" }} />
+              </IconButton>
+              <p className="text-primary py-3 text-lg font-bold">
+                {isGuardian ? "Guardian" : "Beneficiary"} :{" "}
+                {beneficiary?.relationship}
+              </p>
+            </div>
           </DialogTitle>
           <DialogContent>
             {Object.keys(fields).map((sectionKey) => (
@@ -315,14 +330,14 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
             ))}
           </DialogContent>
 
-          <DialogActions>
+          {/* <DialogActions>
             <Button onClick={onClose} variant="contained" color="error">
               Close
             </Button>
             {/* <Button onClick={handleSave} variant="contained" color="primary">
             Save
-          </Button> */}
-          </DialogActions>
+          </Button> 
+          </DialogActions> */}
         </div>
       </Dialog>
 

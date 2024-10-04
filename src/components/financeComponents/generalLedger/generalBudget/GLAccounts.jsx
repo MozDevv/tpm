@@ -211,6 +211,8 @@ function GLAccounts({ clickedBudget }) {
               inputProps={{
                 style: {
                   textAlign: "right",
+                  // padding: 0, // Remove internal padding
+                  // margin: 0, // Remove internal margin
                 },
               }}
               InputProps={{
@@ -218,8 +220,12 @@ function GLAccounts({ clickedBudget }) {
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
+                  padding: 0, // Remove padding in the root
+                  margin: 0, // Remove margin in the root
                   "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
+                    border: "none", // Remove the border if needed
+                    padding: 0,
+                    margin: 0,
                   },
                 },
                 "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
