@@ -9,12 +9,15 @@ import {
   Paper,
   Divider,
   CircularProgress,
+  TextField,
 } from "@mui/material";
 import financeEndpoints, { apiService } from "@/components/services/financeApi";
 import "./chartsOfAccounts.css"; // Import the stylesheet
 import ListNavigation from "@/components/baseComponents/ListNavigation";
 import BaseCard from "@/components/baseComponents/BaseCard";
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import { formatNumber } from "@/utils/numberFormatters";
+import BaseAmountInput from "@/components/baseComponents/BaseAmountInput";
 
 function GLAccounts({ clickedBudget }) {
   const [rowData, setRowData] = useState([]);
@@ -152,6 +155,8 @@ function GLAccounts({ clickedBudget }) {
           fontSize: isAccountName && !isPostingType ? "14px" : "13px",
           paddingTop: 0,
           paddingBottom: 0,
+          paddingLeft: editable && 0,
+          paddingRight: editable && 0,
           position: "relative",
           borderRight: "1px solid #ccc",
         }}
@@ -170,7 +175,7 @@ function GLAccounts({ clickedBudget }) {
                 }}
               />
             )}
-            <input
+            {/* <input
               type="text"
               value={value || ""}
               onChange={handleInputChange}
@@ -190,6 +195,44 @@ function GLAccounts({ clickedBudget }) {
 
                 //border: "1px solid #ddd",
               }}
+            /> */}
+            <TextField
+              variant="outlined"
+              size="small"
+              type="text"
+              value={value || 0}
+              onChange={handleInputChange}
+              onBlur={() => {
+                if (value !== "" || value !== null) {
+                  saveOrUpdateBudgetAmount();
+                }
+              }}
+              fullWidth
+              inputProps={{
+                style: {
+                  textAlign: "right",
+                },
+              }}
+              InputProps={{
+                inputComponent: BaseAmountInput,
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                },
+                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "none",
+                  },
+                "& .MuiOutlinedInput-root.Mui-focused": {
+                  backgroundColor: "#f0f0f0", // Background color on focus
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "2px solid #006990", // Outline border on focus
+                  },
+                },
+              }}
             />
           </>
         ) : !isPostingType && !isAccountName && !isAccountNo ? (
@@ -200,7 +243,7 @@ function GLAccounts({ clickedBudget }) {
           </p>
         ) : isBudgetedAmount ? (
           <p className=" text-primary text-right">
-            {cumulativeBudgetAmount * 1}
+            {formatNumber(cumulativeBudgetAmount * 1)}
           </p>
         ) : typeof value === "boolean" ? (
           value ? (
