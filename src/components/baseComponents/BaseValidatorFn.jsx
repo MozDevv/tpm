@@ -81,12 +81,10 @@ export const baseValidatorFn = {
     }
     return null;
   },
-  account_number: (value) => {
-    const accountNumberRegex = /^[0-9]{10}$/;
-    if (!accountNumberRegex.test(value))
-      return "Please enter a valid account number";
-    return null;
-  },
-
-  // Add more validators as needed
+  // account_number: (value) => {
+  //   const accountNumberRegex = /^[0-9]{10}$/;
+  //   if (!accountNumberRegex.test(value))
+  //     return "Please enter a valid account number";
+  //   return null;
+  // },
 };

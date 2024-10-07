@@ -673,6 +673,30 @@ const BaseInputTable = ({
             }
           }
         }
+        if (field === "account_number") {
+          // Remove any non-numeric characters from the new value
+          const cleanedValue = newValue.replace(/\D/g, "");
+          // Pad the value with zeros at the start if it's less than 15 digits
+          const paddedValue = cleanedValue.padStart(15, "0");
+
+          // Update the data with the cleaned and padded value
+          data.account_number = paddedValue;
+
+          // Check if the length of the cleaned value is greater than 15 (if needed)
+          if (cleanedValue.length > 15) {
+            message.error("Account number cannot exceed 15 digits.");
+            setCellError(
+              data.id,
+              field,
+              "Account number cannot exceed 15 digits"
+            );
+            return;
+          } else {
+            handleClearError(data, field);
+          }
+
+          console.log("Padded Account Number >>>>>>>>", paddedValue);
+        }
 
         if (colDef.cellEditor === "CustomSelectCellEditor") {
           console.log("Selected Value:", newValue);
