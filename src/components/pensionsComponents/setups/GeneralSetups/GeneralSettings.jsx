@@ -67,6 +67,9 @@ const GeneralSettings = () => {
       pension_portal_url: item.pension_portal_url,
       injury_pension_min_years_cap189: item.injury_pension_min_years_cap189,
       parliamentary_term_span_years: item.parliamentary_term_span_years,
+      base_edms_url: item.base_edms_url,
+      life_expectancy_factor: item.life_expectancy_factor,
+      wcps_contribution_percentage: item.wcps_contribution_percentage,
 
       // roles: item.roles,
     }));
@@ -245,6 +248,22 @@ const GeneralSettings = () => {
       type: "text",
       required: true,
     },
+
+    {
+      name: "base_edms_url",
+      label: "Base Edms Url",
+      type: "text",
+    },
+    {
+      name: "life_expectancy_factor",
+      label: "Life Expectancy Factor",
+      type: "text",
+    },
+    {
+      name: "wcps_contribution_percentage",
+      label: "Wcps Contribution Percentage",
+      type: "text",
+    },
   ];
 
   const fetchGeneralSettings = async () => {
@@ -283,6 +302,7 @@ const GeneralSettings = () => {
       > */}
       <BaseInputCard
         fields={fields}
+        apiEndpoint={endpoints.createGeneralSettings}
         postApiFunction={apiService.post}
         clickedItem={clickedItem}
         useRequestBody={true}

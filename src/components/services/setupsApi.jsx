@@ -196,6 +196,8 @@ const endpoints = {
   //Create Permissions
   createPermissions: "/api/PermissionsSetup/CreatePermission",
 
+  createGeneralSettings: "/api/Setups/CreateGeneralSettings",
+
   //PermissionRoles
   permissionRoles: "/api/PermissionRoleSetup/CreatePermissionRole",
 
