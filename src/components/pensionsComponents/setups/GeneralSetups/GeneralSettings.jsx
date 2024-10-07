@@ -118,19 +118,19 @@ const GeneralSettings = () => {
     {
       name: "date_of_confirmation_lower_limit",
       label: "Date Of Confirmation Lower Limit",
-      type: "text",
+      type: "date",
       required: true,
     },
     {
       name: "date_of_appointment_lower_limit",
       label: "Date Of Appointment Lower Limit",
-      type: "text",
+      type: "date",
       required: true,
     },
     {
       name: "date_of_retirement_lower_limit",
       label: "Date Of Retirement Lower Limit",
-      type: "text",
+      type: "date",
       required: true,
     },
     {
@@ -172,7 +172,7 @@ const GeneralSettings = () => {
     {
       name: "abolition_of_office_age_60_effect_date_cap189",
       label: "Abolition Of Office Age 60 Effect Date Cap189",
-      type: "text",
+      type: "date",
       required: true,
     },
     {
@@ -227,7 +227,7 @@ const GeneralSettings = () => {
     {
       name: "compassionate_gratuity_female_end_date_cap189",
       label: "Compassionate Gratuity Female End Date Cap189",
-      type: "text",
+      type: "date",
       required: true,
     },
     {
