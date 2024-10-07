@@ -54,7 +54,7 @@ function PensionableSalary({ id, status }) {
   const fields = [
     { label: "Start Date", value: "start_date", type: "date" },
     { label: "End Date", value: "end_date", type: "date" },
-    { label: "Salary in k£", value: "salary" },
+    { label: "Salary in ksh", value: "salary" },
     { label: "Pensionable Allowance", value: "pensionable_allowance" },
   ];
 
