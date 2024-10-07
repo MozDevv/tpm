@@ -568,25 +568,25 @@ const BaseInputCard = ({
                 label={formData[field.name] ? "Yes" : "No"}
               />
             ) : field.type === "date" ? (
-              // <TextField
-              //   name={field.name}
-              //   type="date"
-              //   variant="outlined"
-              //   size="small"
-              //   error={!!errors[field.name]}
-              //   value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
-              //   helperText={errors[field.name]}
-              //   onChange={handleInputChange}
-              //   disabled={field.disabled}
-              //   fullWidth
-              // />
-              <CustomDatePicker
-                field={field}
-                formData={formData}
-                handleInputChange={handleInputChange}
-                errors={errors}
+              <TextField
+                name={field.name}
+                type="date"
+                variant="outlined"
+                size="small"
+                error={!!errors[field.name]}
+                value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
+                helperText={errors[field.name]}
+                onChange={handleInputChange}
+                disabled={field.disabled}
+                fullWidth
               />
-            ) : field.type === "autocomplete" ? (
+            ) : // <CustomDatePicker
+            //   field={field}
+            //   formData={formData}
+            //   handleInputChange={handleInputChange}
+            //   errors={errors}
+            // />
+            field.type === "autocomplete" ? (
               <Autocomplete
                 options={field.options}
                 getOptionLabel={(option) => option.name}
