@@ -532,6 +532,7 @@ function Sidebar() {
           href={subChild.path}
           className="no-underline hover:no-underline"
           key={subChild.title}
+          prefetch={false}
         >
           <ListItem
             button
@@ -589,7 +590,11 @@ function Sidebar() {
               </Collapse>
             </React.Fragment>
           ) : (
-            <Link href={child.path} className="no-underline hover:no-underline">
+            <Link
+              href={child.path}
+              prefetch={false}
+              className="no-underline hover:no-underline"
+            >
               <ListItem
                 button
                 onClick={() => setSelectedItem(child.title)}
@@ -625,6 +630,7 @@ function Sidebar() {
         <Link
           href={item.path || "#"}
           className="no-underline hover:no-underline"
+          prefetch={false}
         >
           <ListItem
             button

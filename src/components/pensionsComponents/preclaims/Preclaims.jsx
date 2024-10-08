@@ -755,6 +755,7 @@ const Preclaims = ({ status }) => {
             documentNo={clickedItem?.no_series}
           />
           <BaseCard
+            documentNo={clickedItem && clickedItem?.no_series}
             openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
             status={status}

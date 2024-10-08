@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import {
@@ -35,13 +35,49 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
+import workflowsEndpoints, {
+  workflowsApiService,
+} from "../services/workflowsApi";
 
-const ListNavigation = ({ handlers, status }) => {
+const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
   const [itemClicked, setItemClicked] = useState(false);
   const [showApprovalButtons, setShowApprovalButtons] = useState(false);
+
+  const [approvalActions, setApprovalActions] = useState([]);
+
+  const userId = auth.user ? auth.user.userId : null;
+
+  const getApprovalActionsForUser = async () => {
+    const data = {
+      userId: userId,
+
+      // TODO - uncomment this line when the API is ready
+      //documentNo: clickedItem?.no_series,
+      documentNo: "TEST00001",
+    };
+    try {
+      const res = await workflowsApiService.post(
+        workflowsEndpoints.getApprovalActions,
+        data
+      );
+      if (res.status === 200) {
+        setApprovalActions(res.data);
+        console.log("approver actions", res.data);
+      }
+    } catch (error) {
+      console.log("clickedItem?.no_series", clickedItem?.no_series);
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (openBaseCard) {
+      getApprovalActionsForUser();
+    }
+  }, []);
 
   // Define buttons with required permissions
   const buttons = [
@@ -233,27 +269,33 @@ const ListNavigation = ({ handlers, status }) => {
     {
       name: "Send For Approval",
       action: "sendApprovalRequest",
+      disabled: approvalActions?.sendApprovalRequest,
+
       icon: IosShare,
     },
     {
       name: "Cancel Approval Request",
       action: "cancelApprovalRequest",
       icon: CancelScheduleSend,
+      disabled: approvalActions?.cancelApprovalRequest,
     },
     {
       name: "Approve",
       action: "approveDocument",
       icon: Check,
+      disabled: approvalActions?.approve,
     },
     {
       name: "Reject",
       action: "rejectDocumentApproval",
       icon: Cancel,
+      disabled: approvalActions?.reject,
     },
     {
       name: "Delegate",
       action: "delegateApproval",
       icon: PersonAddAlt,
+      disabled: approvalActions?.delegate,
     },
   ];
 
@@ -324,6 +366,7 @@ const ListNavigation = ({ handlers, status }) => {
         {approvalButtons.map((button, index) => (
           <Button
             key={index}
+            disabled={button.disabled}
             onClick={() => handlers[button.action]()}
             sx={{ mb: -1, maxHeight: "25px", ml: 1 }}
             startIcon={
@@ -331,8 +374,8 @@ const ListNavigation = ({ handlers, status }) => {
                 sx={{
                   fontSize: "20px",
                   mr: "-3px",
+                  color: button.disabled ? "gray" : "primary",
                 }}
-                color="primary"
               />
             }
           >
@@ -376,7 +419,7 @@ const ListNavigation = ({ handlers, status }) => {
           >
             <div className="ml-[-2px]">{approvalButton.name}</div>
           </Button>
-          {showApprovalButtons && renderApprovalButtons()}{" "}
+          {showApprovalButtons && renderApprovalButtons()}
           {/* Conditionally render additional buttons */}
         </div>
       </div>

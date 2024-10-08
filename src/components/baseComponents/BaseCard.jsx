@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import { Avatar, IconButton, Tooltip } from "@mui/material";
 import { ArrowBack, OpenInFull } from "@mui/icons-material";
@@ -17,6 +17,9 @@ import ReturnToPreclaims from "../pensionsComponents/ClaimsManagementTable/Retur
 import TabPane from "antd/es/tabs/TabPane";
 import AttachmentStepper from "../pensionsComponents/ClaimsApprovalComponents/AttachmentStepper";
 import BaseWorkFlow from "./BaseWorkFlow";
+import workflowsEndpoints, {
+  workflowsApiService,
+} from "../services/workflowsApi";
 
 function BaseCard({
   openBaseCard,
@@ -52,6 +55,7 @@ function BaseCard({
   setClickedItem,
   steps,
   activeStep,
+  documentNo,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -121,6 +125,8 @@ function BaseCard({
     setActiveKey(key);
   };
 
+  const userId = auth.user ? auth.user.userId : null;
+
   return (
     <Dialog
       open={openBaseCard}
@@ -147,7 +153,6 @@ function BaseCard({
         onDelete={handleDeleteItem}
         itemName={clickedItem?.name}
       />
-
       <Dialog
         open={openAction && (status === 3 || status === 7 || status === 5)}
         onClose={() => setOpenAction(false)}
@@ -343,7 +348,6 @@ function BaseCard({
           useRequestBody={useRequestBody}
         />
       </Dialog>
-
       <div className="overflow-y-hidden p-5">
         <div className="flex items-center justify-between w-full px-3 sticky top-0 z-[99999999] bg-white">
           <div className="flex items-center gap-1 mt-10">
@@ -382,6 +386,8 @@ function BaseCard({
             handlers={updatedHandlers}
             permissions={permissions}
             status={status}
+            clickedItem={clickedItem}
+            openBaseCard={openBaseCard}
           />
           <Divider />
         </div>

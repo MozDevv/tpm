@@ -19,6 +19,8 @@ const workflowsEndpoints = {
   reject: "/api/Approvals/Reject",
   delegate: "/api/Approvals/Delegate",
   getDocumentStatus: "/api/Approvals/GetDocumentStatus",
+  getApprovalEntries: "/api/Approvals/GetApprovalEntries",
+  getApprovalActions: "/api/Approvals/GetApproverActions",
 };
 
 export const workflowsApiService = {
