@@ -4,6 +4,8 @@ import endpoints, { apiService } from "@/components/services/setupsApi";
 import { useIsLoading } from "@/context/LoadingContext";
 import { BASE_CORE_API } from "@/utils/constants";
 import {
+  Close,
+  Done,
   ExpandLess,
   KeyboardArrowRight,
   OpenInFull,
@@ -40,6 +42,7 @@ import PhoneInput from "react-phone-input-2";
 import "./ag-theme.css";
 import MuiPhoneNumber from "mui-phone-number";
 import { toProperCase } from "@/utils/numberFormatters";
+import AddBeneficiaries from "./AddBeneficiaries";
 
 dayjs.extend(isSameOrBefore);
 
@@ -725,6 +728,32 @@ function NewPreclaim({
     mdaId
   );
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    const fields = sections.flatmap((section) => section.fields);
+    fields.forEach((field) => {
+      const value = formData[field.name];
+
+      // Required field validation
+
+      if (field.name === "accountCode" && value) {
+      }
+      if (field.name === "accountName" && value) {
+      }
+      if (
+        field.required &&
+        (value === undefined || value === null || value === "")
+      ) {
+        newErrors[field.name] = `${field.label} is required`;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const [saving, setSaving] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Preclaims Data", formData);
@@ -757,33 +786,52 @@ function NewPreclaim({
     }
 
     const newErrors = {};
-    // for (const key of Object.keys(formData)) {
-    //   if (
-    //     key !== "other_name" &&
-    //     key !== "postal_code" &&
-    //     key !== "notification_status" &&
-    //     key !== "designation_grade" &&
-    //     key !== "postal_address" &&
-    //     key !== "city_town" &&
-    //     key !== "country_id" &&
-    //     key !== "county_id" &&
-    //     key !== "constituency_id" &&
-    //     key !== "authority_for_retirement_reference" &&
-    //     key !== "authority_for_retirement_dated" &&
-    //     key !== "tax_exempt_certificate_number" &&
-    //     key !== "tax_exempt_certificate_date" &&
-    //     key !== "date_of_confirmation" &&
-    //     key !== "is_parliamentary" &&
-    //     (formData[key] === undefined ||
-    //       formData[key] === null ||
-    //       formData[key] === "" ||
-    //       formData[key] === false)
-    //   ) {
-    //     newErrors[key] = "This field is required";
-    //     message.error(`This field is required: ${key}`);
-    //     return; // Exit the function or block to stop further processing
-    //   }
-    // }
+    for (const key of Object.keys(formData)) {
+      if (
+        key !== "other_name" &&
+        key !== "postal_code" &&
+        key !== "notification_status" &&
+        key !== "designation_grade" &&
+        key !== "postal_address" &&
+        key !== "city_town" &&
+        key !== "country_id" &&
+        key !== "county_id" &&
+        key !== "constituency_id" &&
+        key !== "authority_for_retirement_reference" &&
+        key !== "authority_for_retirement_dated" &&
+        key !== "tax_exempt_certificate_number" &&
+        key !== "tax_exempt_certificate_date" &&
+        key !== "date_of_confirmation" &&
+        key !== "is_parliamentary" &&
+        key !== "military_id" &&
+        key !== "monthly_salary_in_ksh" &&
+        key !== "service_increments" &&
+        key !== "monthly_aditional_pay" &&
+        key !== "tribe" &&
+        key !== "maintenance_case" &&
+        key !== "is_wcps" &&
+        key !== "commutation_option_selection" &&
+        key !== "commutation_option_selection_date" &&
+        key !== "isCommutable" &&
+        key !== "was_injured" &&
+        key !== "date_of_injury_for_cap189" &&
+        key !== "salary_at_injury_for_cap189" &&
+        key !== "rate_of_injury_id_for_cap189" &&
+        key !== "degree_of_disablement_for_cap199" &&
+        key !== "date_of_injury_for_cap199" &&
+        key !== "salary_at_injury_for_cap199" &&
+        key !== "pension_award_id" &&
+        key !== "pension_cap" &&
+        (formData[key] === undefined ||
+          formData[key] === null ||
+          formData[key] === "" ||
+          formData[key] === false)
+      ) {
+        // newErrors[key] = "This field is required";
+        // message.error(`This field is required: ${key}`);
+        return; // Exit the function or block to stop further processing
+      }
+    }
     for (const key of Object.keys(formData)) {
       if (key === "phone_number" && formData[key] === "") {
         newErrors[key] = "This field is required";
@@ -890,7 +938,8 @@ function NewPreclaim({
 
     try {
       let res;
-      if (editMode) {
+      setSaving(1);
+      if (retireeId) {
         res = await axios.post(
           `${BASE_CORE_API}api/ProspectivePensioners/UpdateProspectivePensioner`,
           { ...data, id: retireeId }
@@ -901,13 +950,15 @@ function NewPreclaim({
           res?.data?.messages[0] ===
             "Prospective pensioner updated successfully"
         ) {
+          setSaving(2);
           setAlert({
             open: true,
             message:
               "Prospective pensioner Information & Contact Details updated successfully",
             severity: "success",
           });
-          setOpenBaseCard(false);
+
+          formData.mortality_status == 2 && setOpenBaseCard(false);
           fetchRetiree();
           setEditMode(false);
         }
@@ -934,8 +985,10 @@ function NewPreclaim({
               message.error(`${error.field}: ${err}`);
             });
           });
+          setSaving(3);
         } else if (res.data.succeeded === false && res.data.messages[0]) {
           message.error(res.data.messages[0]);
+          setSaving(3);
         }
       } else {
         res = await axios.post(
@@ -952,7 +1005,13 @@ function NewPreclaim({
         //     "Prospective pensioner Information & Contact Details added successfully",
         //   severity: "success",
         // });
-        setOpenBaseCard(false);
+        setSaving(2);
+        formData.mortality_status == 1 &&
+          message.success(
+            "Prospective pensioner updated successfully, please proceed to the add Beneficiary Details"
+          );
+        formData.mortality_status == 2 && setOpenBaseCard(false);
+        setRetireeId(res.data.data);
         setAlert({
           open: true,
           message: "Prospective pensioner created successfully",
@@ -975,6 +1034,7 @@ function NewPreclaim({
             message.error(`${error.field}: ${err}`);
           });
         });
+        setSaving(3);
       }
       if (
         res.data.succeeded === false &&
@@ -984,9 +1044,14 @@ function NewPreclaim({
         message.error(
           "A similar award has already been created for the retiree."
         );
+        setSaving(3);
+      } else if (res.data.succeeded === false && res.data.messages[0]) {
+        message.error(res.data.messages[0]);
+        setSaving(3);
       }
     } catch (error) {
       console.log("API Error:", error);
+      setSaving(3);
     } finally {
     }
   };
@@ -1111,8 +1176,14 @@ function NewPreclaim({
     formData.notification_status === 2 ||
     formData.notification_status === "";
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState({});
 
+  const handleToggleSection = (section) => {
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [section]: !prevOpen[section],
+    }));
+  };
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -1131,11 +1202,58 @@ function NewPreclaim({
           </Tooltip>{" "}
         </IconButton>
         <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
-          <form onSubmit={handleSubmit} className="">
+          <form className="">
             <div className="pt-2 sticky top-0 bg-inherit  pb-2 bg-white z-50">
               <div className="flex items-center justify-between px-6 w-[100%]">
                 <div className="flex items-center gap-2"></div>
-                <div className="flex ">
+                <div className="flex">
+                  {saving === 1 ? (
+                    <div className="flex justify-between w-full mt-[-10px]  pr-6">
+                      <div className=""></div>
+                      <div className="flex flex-row gap-2">
+                        <span class="loader"></span>
+                        <p className="text-primary text-sm font-medium">
+                          Saving...
+                        </p>
+                      </div>
+                    </div>
+                  ) : saving === 2 ? (
+                    <div className="flex justify-between w-full mt-[-10px]  pr-6">
+                      <div className=""></div>
+                      <div className="flex flex-row gap-2 items-center">
+                        <Done
+                          sx={{
+                            fontSize: "20px",
+                            color: "#006990",
+                            marginRight: "-3px",
+                          }}
+                        />
+                        <p className="text-primary text-sm font-medium">
+                          Saved
+                        </p>
+                      </div>
+                    </div>
+                  ) : saving === 3 ? (
+                    <div className="flex justify-between w-full mt-[-10px]  pr-6">
+                      <div className=""></div>
+                      <div className="flex flex-row gap-2 items-center">
+                        <Close
+                          sx={{
+                            fontSize: "20px",
+                            color: "crimson",
+                            marginRight: "-3px",
+                          }}
+                        />
+                        <p className="text-[crimson] text-sm font-medium">
+                          Not Saved
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                {/* <div className="flex ">
                   {" "}
                   {canEdit && (
                     <div className="flex gap-8 mr-4 ">
@@ -1158,11 +1276,11 @@ function NewPreclaim({
                       </Button>{" "}
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
 
-            <div className="p-2 mt-[-15px] ">
+            <div className="p-2 mt-[-15px]">
               {sections
                 .filter((section) => {
                   if (section.title === "Contact Details") {
@@ -1184,9 +1302,9 @@ function NewPreclaim({
                         </h6>
                         <IconButton
                           sx={{ ml: "-5px", zIndex: 1 }}
-                          onClick={() => setOpen((prevOpen) => !prevOpen)}
+                          onClick={() => handleToggleSection(section.title)}
                         >
-                          {!open ? (
+                          {open[section.title] ? (
                             <KeyboardArrowRight
                               sx={{ color: "primary.main", fontSize: "14px" }}
                             />
@@ -1199,7 +1317,11 @@ function NewPreclaim({
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
 
-                      <Collapse in={open} timeout="auto" unmountOnExit>
+                      <Collapse
+                        in={!open[section.title]}
+                        timeout="auto"
+                        unmountOnExit
+                      >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
                             .filter((field) => {
@@ -1270,6 +1392,7 @@ function NewPreclaim({
                                     variant="outlined"
                                     size="small"
                                     fullWidth
+                                    onBlur={handleSubmit}
                                     dropdownClass="custom-dropdown" // Custom class for the dropdown
                                     MenuProps={{
                                       PaperProps: {
@@ -1294,6 +1417,7 @@ function NewPreclaim({
                                     variant="outlined"
                                     size="small"
                                     fullWidth
+                                    onBlur={handleSubmit}
                                     name={field.name}
                                     disabled={!canEdit || field.disabled}
                                     value={formData[field.name]}
@@ -1343,6 +1467,7 @@ function NewPreclaim({
                                         variant="outlined"
                                         size="small"
                                         fullWidth
+                                        onBlur={handleSubmit}
                                         name={field.name}
                                         disabled={!canEdit}
                                         error={!!errors[field.name]}
@@ -1379,6 +1504,7 @@ function NewPreclaim({
                                     variant="outlined"
                                     disabled={!canEdit || field.disabled}
                                     size="small"
+                                    onBlur={handleSubmit}
                                     value={formData[field.name]}
                                     onChange={handleInputChange}
                                     error={!!errors[field.name]}
@@ -1393,6 +1519,16 @@ function NewPreclaim({
                     </div>
                   );
                 })}
+
+              {formData.mortality_status === 1 ? (
+                <div className="">
+                  <div className="gap-3 my-3">
+                    <AddBeneficiaries id={retireeId} />
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </form>
         </div>

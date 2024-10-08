@@ -349,6 +349,11 @@ const endpoints = {
   updateRecoveryDeduction: "/api/PostingSetup/UpdateDeductionsAndRefund",
   deleteRecoveryDeduction: (id) =>
     `/api/PostingSetup/DeleteDeductionsAndRefund?id=${id}`,
+
+  getBeneficiariesRelationShips: "/api/Setups/GetBenefitsConfigurationMatrix",
+  getBeneficiaries: (id) =>
+    `api/Claims/getBeneficiaries?prospective_pensioner_id=${id}`,
+  createBeneficiary: "/api/Claims/createBeneficiary",
 };
 
 export const apiService = {

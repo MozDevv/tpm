@@ -69,6 +69,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     retireeId={activeRetireeId}
                     moveToNextTab={moveToNextTab}
                     moveToPreviousTab={moveToPreviousTab}
+                    clickedItem={clickedItem}
                   />
                 </div>
               </TabPane>
