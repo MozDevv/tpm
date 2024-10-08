@@ -1521,7 +1521,7 @@ function NewPreclaim({
                 })}
             </div>
             {formData.mortality_status === 1 ? (
-              <div className="">
+              <div className="h-[100px]">
                 <div className="gap-3 my-3">
                   <AddBeneficiaries id={retireeId} />
                 </div>
