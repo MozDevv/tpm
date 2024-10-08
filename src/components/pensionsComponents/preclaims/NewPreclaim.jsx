@@ -1133,6 +1133,15 @@ function NewPreclaim({
     }
   }, [formData.retirement_date, formData.dob]);
 
+  useEffect(() => {
+    if (formData.date_of_death) {
+      setFormData({
+        ...formData,
+        retirement_date: formData.date_of_death,
+      });
+    }
+  }, [formData.date_of_death]);
+
   const [countriesArr, setCountriesArr] = useState([]);
 
   useEffect(() => {

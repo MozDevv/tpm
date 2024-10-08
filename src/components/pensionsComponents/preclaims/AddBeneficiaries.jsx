@@ -117,15 +117,15 @@ const AddBeneficiaries = ({ id }) => {
       label: "Date of Birth",
       type: "date",
     },
-    {
-      value: "gender",
-      label: "Gender",
-      type: "select",
-      options: [
-        { id: 0, name: "Male" },
-        { id: 1, name: "Female" },
-      ],
-    },
+    // {
+    //   value: "gender",
+    //   label: "Gender",
+    //   type: "select",
+    //   options: [
+    //     { id: 0, name: "Male" },
+    //     { id: 1, name: "Female" },
+    //   ],
+    // },
 
     {
       label: "Type Of Identification",
