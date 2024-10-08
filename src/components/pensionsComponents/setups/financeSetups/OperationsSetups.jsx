@@ -1,14 +1,16 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useStae, useEffect } from "react";
 
 // Assume this is your transformation function
 import BaseTable from "@/components/baseComponents/BaseTable";
 import BaseCard from "@/components/baseComponents/BaseCard";
 
 import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+
+import { parseDate } from "@/utils/dateFormatter";
+import { name } from "dayjs/locale/en-au";
+import BaseCollapse from "@/components/baseComponents/BaseCollapse";
+import financeEndpoints, { apiService } from "@/components/services/financeApi";
 
 const OperationsSetups = () => {
   const transformString = (str) => {
@@ -17,92 +19,117 @@ const OperationsSetups = () => {
     });
   };
 
-  const columnDefs = [
-    {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
-      width: 90,
-      filter: true,
-      pinned: "left",
-    },
-    {
-      field: "productPostingGroupId",
-      headerName: "Product Posting Group",
-      filter: true,
-      valueGetter: (params) => {
-        const account = glAccounts?.find(
-          (acc) => acc.id === params.data.productPostingGroupId
-        );
-        return account?.name ?? "N/A";
-      },
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      headerClass: "prefix-header",
-      filter: true,
-      width: 250,
-    },
-    {
-      field: "description",
-      headerName: "Description",
-      filter: true,
-    },
-    {
-      field: "autoInsert",
-      headerName: "Auto Insert",
-      filter: true,
-    },
-  ];
-
-  const [glAccounts, setGlAccounts] = React.useState([]);
-
-  const fetchGlAccounts = async () => {
-    try {
-      const response = await apiService.get(
-        financeEndpoints.getProductPostingGroups,
-        {
-          "paging.pageSize": 150,
-        }
-      );
-
-      setGlAccounts(
-        response.data.data.map((ac) => ({
-          id: ac.id,
-          name: ac.name,
-          description: ac.description,
-        }))
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [bankAccounts, setBankAccounts] = React.useState([]);
+  const [awardPostingGroups, setAwardPostingGroups] = React.useState([]);
+  const [bankPostingGroups, setBankPostingGroups] = React.useState([]);
+  const [generalPostingGroups, setGeneralPostingGroups] = React.useState([]);
+  const [vendorPostingGroups, setVendorPostingGroups] = React.useState([]);
+  const [customerPostingGroups, setCustomerPostingGroups] = React.useState([]);
+  const [vatPostingGroups, setVatPostingGroups] = React.useState([]);
+  const [paymentMethods, setPaymentMethods] = React.useState([]);
 
   useEffect(() => {
-    fetchGlAccounts();
+    const fetchBankAccounts = async () => {
+      try {
+        const response = await apiService.get(financeEndpoints.getBankAccounts);
+        setBankAccounts(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchAwardPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getAwardPostingGroups
+        );
+        setAwardPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchBankPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getBankPostingGroups
+        );
+        setBankPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchGeneralPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getGeneralPostingGroups
+        );
+        setGeneralPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchVendorPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getVendorPostingGroups
+        );
+        setVendorPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchCustomerPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getCustomerPostingGroups
+        );
+        setCustomerPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchVatPostingGroups = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getVatPostingGroups
+        );
+        setVatPostingGroups(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchPaymentMethods = async () => {
+      try {
+        const response = await apiService.get(
+          financeEndpoints.getPaymentMethods
+        );
+        setPaymentMethods(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBankAccounts();
+    fetchAwardPostingGroups();
+    fetchBankPostingGroups();
+    fetchGeneralPostingGroups();
+    fetchVendorPostingGroups();
+    fetchCustomerPostingGroups();
+    fetchVatPostingGroups();
+    fetchPaymentMethods();
   }, []);
-  const getAccountName = (id) => {
-    const account =
-      Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
-  };
 
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      //   {
-      //     "defaultBankAccount": "e15fb7e3-0fe0-4025-8d11-f9aee78a1d00",
-      //     "defaultAwardPostingGroup": "228b00fb-d9cc-4fc7-b70e-ffc868ba91e1",
-      //     "defaultBankPostingGroup": "65d367eb-0b66-4d08-b0d0-dd72404737af",
-      //     "defaultGeneralPostingGroup": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      //     "defaultVendorPostingGroup": "0fc5d9d1-12ef-4fde-8a2f-1f6529f8914a",
-      //     "defaultCustomerPostingGroup": "904306df-901b-400d-a8dc-c7ec95f92e82",
-      //     "defaultVatPostingGroup": "284b5c2c-4b1e-4396-bc43-dfb0d4ad3414",
-      //     "defaultPaymentMethod": "f8b9fc36-5246-4bca-803a-7f609ad2a1a6"
-      //   },
-
-      //     id: item.id,
+      id: item.id,
+      defaultBankAccount: item.defaultBankAccount,
+      defaultAwardPostingGroup: item.defaultAwardPostingGroup,
+      defaultBankPostingGroup: item.defaultBankPostingGroup,
+      defaultGeneralPostingGroup: item.defaultGeneralPostingGroup,
+      defaultVendorPostingGroup: item.defaultVendorPostingGroup,
+      defaultCustomerPostingGroup: item.defaultCustomerPostingGroup,
+      defaultVatPostingGroup: item.defaultVatPostingGroup,
+      defaultPaymentMethod: item.defaultPaymentMethod,
     }));
   };
 
@@ -137,82 +164,106 @@ const OperationsSetups = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem
-    ? "General Product Posting Group"
-    : "Create New General Product Posting Group";
+  const title = clickedItem ? "Department" : "Create New Department";
 
   const fields = [
-    { name: "name", label: "Name", type: "text", required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: "defaultBankAccount",
+      label: "Default Bank Account",
+      type: "select",
+      options: bankAccounts.filter((b) => {
+        return {
+          id: b.id,
+          name: b.bankAccountName,
+        };
+      }),
       required: true,
     },
     {
-      name: "productPostingGroupId",
-      label: "Product Posting Group",
-      type: "autocomplete",
-      required: false,
-      options: glAccounts,
-      table: true,
+      name: "defaultAwardPostingGroup",
+      label: "Default Award Posting Group",
+      type: "select",
+      options: awardPostingGroups,
+      required: true,
     },
     {
-      name: "autoInsert",
-      label: "Auto Insert",
-      type: "switch",
+      name: "defaultBankPostingGroup",
+      label: "Default Bank Posting Group",
+      type: "select",
+      options: bankPostingGroups,
+      required: true,
+    },
+    {
+      name: "defaultGeneralPostingGroup",
+      label: "Default General Posting Group",
+      type: "select",
+      options: generalPostingGroups,
+      required: true,
+    },
+    {
+      name: "defaultVendorPostingGroup",
+      label: "Default Vendor Posting Group",
+      type: "select",
+      options: vendorPostingGroups,
+      required: true,
+    },
+    {
+      name: "defaultCustomerPostingGroup",
+      label: "Default Customer Posting Group",
+      type: "select",
+      options: customerPostingGroups,
+      required: true,
+    },
+    {
+      name: "defaultVatPostingGroup",
+      label: "Default VAT Posting Group",
+      type: "select",
+      options: vatPostingGroups,
+      required: true,
+    },
+    {
+      name: "defaultPaymentMethod",
+      label: "Default Payment Method",
+      type: "select",
+      options: paymentMethods,
       required: true,
     },
   ];
 
+  const fetchGeneralSettings = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getOperationSetups
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGeneralSettings().then((data) => {
+      const data2 = transformData(data);
+      setClickedItem(data2[0]);
+    });
+  }, []);
+
   return (
-    <div className="">
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={title}
+    <div className="bg-white mt-8 px-5">
+      {/* <BaseCollapse
+        name="General Settings"
+        openSections={openSections}
+        handleToggleSection={handleToggleSection}
+      > */}
+      <BaseInputCard
+        fields={fields}
+        apiEndpoint={financeEndpoints.updateOperationSetup}
+        postApiFunction={apiService.post}
         clickedItem={clickedItem}
-        isUserComponent={false}
-        deleteApiEndpoint={financeEndpoints.deleteGeneralProductPostingGroup(
-          clickedItem?.id
-        )}
-        deleteApiService={apiService.delete}
-      >
-        {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updateGeneralProductPostingGroup}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        ) : (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addGeneralProductPostingGroup}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        )}
-      </BaseCard>
-      <BaseTable
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
+        useRequestBody={true}
         setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getGeneralProductPostingGroups}
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="General Product Posting Groups"
-        currentTitle="General Product Posting Groups"
       />
+      {/* </BaseCollapse> */}
     </div>
   );
 };

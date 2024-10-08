@@ -245,6 +245,10 @@ export const menuItems = [
         title: "Finance Setup",
         subChildren: [
           {
+            title: "Operations Setups",
+            path: "/pensions/setups/operations-setups",
+          },
+          {
             title: "Recoveries & Deductions",
             path: "/pensions/setups/finance-setups/recoveries-deductions",
           },

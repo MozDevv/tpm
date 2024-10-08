@@ -117,15 +117,15 @@ const AddBeneficiaries = ({ id }) => {
       label: "Date of Birth",
       type: "date",
     },
-    // {
-    //   value: "gender",
-    //   label: "Gender",
-    //   type: "select",
-    //   options: [
-    //     { id: 0, name: "Male" },
-    //     { id: 1, name: "Female" },
-    //   ],
-    // },
+    {
+      value: "gender",
+      label: "Gender",
+      type: "select",
+      options: [
+        { id: 0, name: "Male" },
+        { id: 1, name: "Female" },
+      ],
+    },
 
     {
       label: "Type Of Identification",
@@ -151,17 +151,17 @@ const AddBeneficiaries = ({ id }) => {
       label: "Mobile Number",
       type: "text",
     },
-    {
-      value: "address",
-      label: "Address",
-      type: "text",
-    },
+    // {
+    //   value: "address",
+    //   label: "Address",
+    //   type: "text",
+    // },
 
-    {
-      value: "city",
-      label: "City",
-      type: "text",
-    },
+    // {
+    //   value: "city",
+    //   label: "City",
+    //   type: "text",
+    // },
     // {
     //   value: "status",
     //   label: "Status",

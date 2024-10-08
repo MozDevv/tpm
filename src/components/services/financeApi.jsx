@@ -189,6 +189,10 @@ const financeEndpoints = {
   updateRecoveryDeduction: "/PostingSetup/UpdateDeductionsAndRefund",
   deleteRecoveryDeduction: (id) =>
     `/PostingSetup/DeleteDeductionsAndRefund?id=${id}`,
+  addOperationSetup: "/PostingSetup/AddOperationSetup",
+  getOperationSetups: "/PostingSetup/GetOperationSetups",
+  updateOperationSetup: "/PostingSetup/UpdateOperationSetup",
+  deleteOperationSetup: (id) => `/PostingSetup/DeleteOperationSetup?id=${id}`,
 };
 
 export const apiService = {
