@@ -1519,17 +1519,16 @@ function NewPreclaim({
                     </div>
                   );
                 })}
-
-              {formData.mortality_status === 1 ? (
-                <div className="">
-                  <div className="gap-3 my-3">
-                    <AddBeneficiaries id={retireeId} />
-                  </div>
-                </div>
-              ) : (
-                <></>
-              )}
             </div>
+            {formData.mortality_status === 1 ? (
+              <div className="">
+                <div className="gap-3 my-3">
+                  <AddBeneficiaries id={retireeId} />
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
           </form>
         </div>
       </div>
