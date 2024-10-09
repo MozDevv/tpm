@@ -958,7 +958,7 @@ function NewPreclaim({
             severity: "success",
           });
 
-          formData.mortality_status == 2 && setOpenBaseCard(false);
+          // formData.mortality_status == 2 && setOpenBaseCard(false);
           fetchRetiree();
           setEditMode(false);
         }
@@ -1010,7 +1010,7 @@ function NewPreclaim({
           message.success(
             "Prospective pensioner updated successfully, please proceed to the add Beneficiary Details"
           );
-        formData.mortality_status == 2 && setOpenBaseCard(false);
+        //formData.mortality_status == 2 && setOpenBaseCard(false);
         setRetireeId(res.data.data);
         setAlert({
           open: true,

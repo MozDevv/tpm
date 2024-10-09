@@ -80,7 +80,7 @@ const OperationsSetups = () => {
     const fetchCustomerPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getCustomerPostingGroups
+          financeEndpoints.getCustomerPostingGroup
         );
         setCustomerPostingGroups(response.data.data);
       } catch (error) {
@@ -89,9 +89,7 @@ const OperationsSetups = () => {
     };
     const fetchVatPostingGroups = async () => {
       try {
-        const response = await apiService.get(
-          financeEndpoints.getVatPostingGroups
-        );
+        const response = await apiService.get(financeEndpoints.getVatSetups);
         setVatPostingGroups(response.data.data);
       } catch (error) {
         console.log(error);
@@ -171,7 +169,7 @@ const OperationsSetups = () => {
       name: "defaultBankAccount",
       label: "Default Bank Account",
       type: "select",
-      options: bankAccounts.filter((b) => {
+      options: bankAccounts.map((b) => {
         return {
           id: b.id,
           name: b.bankAccountName,
@@ -183,49 +181,84 @@ const OperationsSetups = () => {
       name: "defaultAwardPostingGroup",
       label: "Default Award Posting Group",
       type: "select",
-      options: awardPostingGroups,
+      options: awardPostingGroups.map((a) => {
+        return {
+          id: a.id,
+          name: a.code,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultBankPostingGroup",
       label: "Default Bank Posting Group",
       type: "select",
-      options: bankPostingGroups,
+      options: bankPostingGroups.map((b) => {
+        return {
+          id: b.id,
+          name: b.groupName,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultGeneralPostingGroup",
       label: "Default General Posting Group",
       type: "select",
-      options: generalPostingGroups,
+      options: generalPostingGroups.map((g) => {
+        return {
+          id: g.id,
+          name: g.description,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultVendorPostingGroup",
       label: "Default Vendor Posting Group",
       type: "select",
-      options: vendorPostingGroups,
+      options: vendorPostingGroups.map((v) => {
+        return {
+          id: v.id,
+          name: v.groupName,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultCustomerPostingGroup",
       label: "Default Customer Posting Group",
       type: "select",
-      options: customerPostingGroups,
+      options: customerPostingGroups.map((c) => {
+        return {
+          id: c.id,
+          name: c.description,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultVatPostingGroup",
       label: "Default VAT Posting Group",
       type: "select",
-      options: vatPostingGroups,
+      options: vatPostingGroups.map((v) => {
+        return {
+          id: v.id,
+          name: v.description,
+        };
+      }),
       required: true,
     },
     {
       name: "defaultPaymentMethod",
       label: "Default Payment Method",
       type: "select",
-      options: paymentMethods,
+      options: paymentMethods.map((p) => {
+        return {
+          id: p.id,
+          name: p.code,
+        };
+      }),
       required: true,
     },
   ];
@@ -257,7 +290,11 @@ const OperationsSetups = () => {
       > */}
       <BaseInputCard
         fields={fields}
-        apiEndpoint={financeEndpoints.updateOperationSetup}
+        apiEndpoint={
+          clickedItem
+            ? financeEndpoints.updateOperationSetup
+            : financeEndpoints.addOperationSetup
+        }
         postApiFunction={apiService.post}
         clickedItem={clickedItem}
         useRequestBody={true}
