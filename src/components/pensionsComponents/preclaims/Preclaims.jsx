@@ -692,7 +692,7 @@ const Preclaims = ({ status }) => {
     approveDocument: () => setOpenApprove(3),
     rejectDocumentApproval: () => setOpenApprove(4),
     delegateApproval: () => {
-      //setOpenApprove(5);
+      setOpenApprove(5);
       setWorkFlowChange(Date.now());
     },
   };

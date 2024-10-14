@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import {
   List,
   Card,
@@ -9,136 +9,215 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Button,
-  Grid,
   Box,
   Typography,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import workflowsEndpoints, {
+  workflowsApiService,
+} from '@/components/services/workflowsApi';
+import { useAuth } from '@/context/AuthContext';
+import authEndpoints, { AuthApiService } from '@/components/services/authApi';
+import { ArticleOutlined, LaunchOutlined } from '@mui/icons-material';
+import { Empty } from 'antd';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 function DueForApproval() {
-  const dummyData = [
-    {
-      id: 1,
-      name: "John Doe",
-      date: "2023-05-01",
-      avatar: "https://via.placeholder.com/40",
+  const [rowData, setRowData] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
+  const { auth } = useAuth();
+  const [loading, setLoading] = React.useState(false);
+  const userId = auth.user ? auth.user.userId : null;
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserDetails();
+    }
+  }, [userId]);
+
+  const fetchRowData = async () => {
+    // Fetch data from API
+    try {
+      const res = await workflowsApiService.post(
+        workflowsEndpoints.getUserApprovals,
+        {
+          userId,
+        }
+      );
+      console.log(
+        res.data.data,
+        'Approvals data here ****************************'
+      );
+      // Update rowData state with fetched data
+      setRowData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    try {
+      const res = await AuthApiService.get(authEndpoints.getUsers);
+      if (res.status === 200) {
+        setUsers(res.data.data);
+        fetchRowData();
+      }
+
+      console.log('User details fetched successfully:', res.data);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [workFlowChange, setWorkFlowChange] = React.useState(0);
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
+  const baseCardHandlers = {
+    approvalRequest: () => console.log('Approval Request clicked'),
+
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => {
+      setOpenApprove(5);
     },
+  };
+  useEffect(() => {
+    fetchRowData();
+  }, [openBaseCard, openApprove]);
+
+  const fields = [
+    { name: 'documentNo', label: 'Document No', type: 'text', disabled: true },
+    { name: 'comments', label: 'Comments', type: 'text', disabled: true },
     {
-      id: 2,
-      name: "Jane Smith",
-      date: "2023-05-02",
-      avatar: "https://via.placeholder.com/40",
+      name: 'senderId',
+      label: 'Sender',
+      type: 'select',
+      options: users.map((user) => ({ id: user.id, name: user.name })),
+      disabled: true,
     },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      date: "2023-05-03",
-      avatar: "https://via.placeholder.com/40",
-    },
+    { name: 'dateSent', label: 'Date Sent', type: 'date', disabled: true },
   ];
+
   return (
-    <Card
-      sx={{
-        backgroundColor: "white",
-        height: "450px",
-        borderRadius: "20px",
-        p: "10px",
-        m: "0 20px",
-      }}
-    >
-      <Box
+    <div className="">
+      <BaseApprovalCard
+        clickedItem={clickedItem}
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={clickedItem?.documentNo}
+      />
+      <BaseCard
+        openBaseCard={openBaseCard}
+        setOpenBaseCard={setOpenBaseCard}
+        handlers={baseCardHandlers}
+        title={clickedItem?.documentNo}
+        clickedItem={clickedItem}
+        isUserComponent={false}
+      >
+        <BaseInputCard
+          fields={fields}
+          clickedItem={clickedItem}
+          useRequestBody={true}
+          setOpenBaseCard={setOpenBaseCard}
+        />
+      </BaseCard>
+
+      <Card
         sx={{
-          ml: "20px",
-          fontWeight: 600,
+          backgroundColor: 'white',
+          height: '450px',
+          borderRadius: '20px',
+          p: '10px',
+          m: '0 20px',
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: 600, color: "GrayText" }}>
-          Due for Approval
-        </Typography>
-      </Box>
-      <List>
-        {dummyData.map((item) => (
-          <ListItem key={item.id} sx={{ alignItems: "center" }}>
-            <ListItemAvatar>
-              <Avatar sx={{ height: "25px", width: "25px" }} />
-            </ListItemAvatar>
-            <ListItemText
-              sx={{
-                fontSize: "12px",
-                color: "#006990",
-
-                ml: "-20px",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  textDecoration: "underline",
-                }}
-              >
-                {" "}
-                {item.name}
-              </Typography>
-            </ListItemText>
-            <ListItemText sx={{ fontSize: "12px", color: "gray", ml: "3px" }}>
-              <Typography sx={{ fontSize: "13px" }}> 12/02/2024 </Typography>
-            </ListItemText>
-
-            <IconButton edge="end" aria-label="edit">
-              <EditIcon sx={{ fontSize: "13px", color: "#bfbfbf" }} />
-            </IconButton>
-            <IconButton edge="end" aria-label="copy">
-              <FileCopyIcon
-                sx={{ fontSize: "13px", mr: "10px", color: "#bfbfbf" }}
-              />
-            </IconButton>
+        <Box
+          sx={{
+            ml: '20px',
+            fontWeight: 600,
+          }}
+        >
+          <div className="flex flex-row w-full items-center justify-between">
+            <div className="text-base font-semibold p-3 text-gray-700">
+              Documents Pending Approvals
+            </div>
             <Button
-              variant="contained"
-              sx={{
-                marginLeft: 1,
-                maxHeight: "20px",
-                textTransform: "none",
-                fontSize: "12px",
-              }}
+              size="small"
+              sx={{ maxHeight: '24px', fontSize: '12px' }}
+              endIcon={<LaunchOutlined />}
             >
-              view
+              View All
             </Button>
-          </ListItem>
-        ))}
-      </List>
-    </Card>
+          </div>
+        </Box>
+        <List>
+          {Array.isArray(rowData) && rowData.length > 0 ? (
+            <>
+              {' '}
+              {rowData.map((item) => (
+                <ListItem key={item.documentNo} sx={{ alignItems: 'center' }}>
+                  <ListItemAvatar>
+                    <ArticleOutlined
+                      sx={{ height: '25px', width: '25px', color: '#C0C0C0' }}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    sx={{
+                      fontSize: '12px',
+                      color: '#006990',
+                      ml: '-20px',
+                    }}
+                    primary={
+                      <Typography
+                        sx={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {item.documentNo}
+                      </Typography>
+                    }
+                  />
+                  <ListItemText
+                    sx={{ fontSize: '12px', color: 'gray', ml: '3px' }}
+                    primary={
+                      <Typography sx={{ fontSize: '13px' }}>
+                        {new Date(item.dateSent).toLocaleDateString()}
+                      </Typography>
+                    }
+                  />
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      marginLeft: 1,
+                      maxHeight: '20px',
+                      textTransform: 'none',
+                      fontSize: '12px',
+                    }}
+                    onClick={() => {
+                      setOpenBaseCard(true);
+                      setClickedItem(item);
+                    }}
+                  >
+                    view
+                  </Button>
+                </ListItem>
+              ))}
+            </>
+          ) : (
+            <div className="mt-20">
+              <Empty description="" />
+            </div>
+          )}
+        </List>
+      </Card>
+    </div>
   );
 }
 

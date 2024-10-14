@@ -414,8 +414,8 @@ const ListNavigation = ({
   const renderApprovalButtons = () => {
     return (
       <div className="flex flex-col gap-2 w-full">
-        <Divider sx={{ borderColor: '#ededed', mb: '-2px' }} />
-        <div className="flex flex-row">
+        <Divider sx={{ borderColor: '#ededed' }} />
+        <div className="flex flex-row pt-1">
           {approvalButtons.map((button, index) => (
             <Button
               key={index}
@@ -536,7 +536,11 @@ const ListNavigation = ({
           </Button>
         </div>
       </div>
-      <div className="flex flex-row w-full mt-3 ml-2">
+      <div
+        className={`flex flex-col w-full mt-3 ml-2 transition-all duration-1000 px-2  ease-in-out ${
+          showApprovalButtons ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0 '
+        }`}
+      >
         {showApprovalButtons && renderApprovalButtons()}
       </div>
     </div>

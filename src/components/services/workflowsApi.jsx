@@ -1,26 +1,38 @@
 /* eslint-disable no-useless-catch */
-"use client";
-import { create } from "@mui/material/styles/createTransitions";
-import axios from "axios";
+'use client';
+import { create } from '@mui/material/styles/createTransitions';
+import axios from 'axios';
 
-import { BASE_CORE_API } from "@/utils/constants";
-import { Update } from "@mui/icons-material";
+import { BASE_CORE_API } from '@/utils/constants';
+import { Update } from '@mui/icons-material';
 
 export const API_BASE_URL = `${BASE_CORE_API}`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
-
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 const workflowsEndpoints = {
-  createApprovalRequest: "api/Approvals/SendForApproval",
-  cancelApprovalRequest: "api/Approvals/CancelApprovalRequest",
-  approve: "/api/Approvals/Approve",
-  reject: "/api/Approvals/Reject",
-  delegate: "/api/Approvals/Delegate",
-  getDocumentStatus: "/api/Approvals/GetDocumentStatus",
-  getApprovalEntries: "/api/Approvals/GetApprovalEntries",
-  getApprovalActions: "/api/Approvals/GetApproverActions",
+  createApprovalRequest: 'api/Approvals/SendForApproval',
+  cancelApprovalRequest: 'api/Approvals/CancelApprovalRequest',
+  approve: '/api/Approvals/Approve',
+  reject: '/api/Approvals/Reject',
+  delegate: '/api/Approvals/Delegate',
+  getDocumentStatus: '/api/Approvals/GetDocumentStatus',
+  getApprovalEntries: '/api/Approvals/GetApprovalEntries',
+  getApprovalActions: '/api/Approvals/GetApproverActions',
+  getUserApprovals: '/api/Approvals/GetUsersRequestToApprove',
 };
 
 export const workflowsApiService = {
