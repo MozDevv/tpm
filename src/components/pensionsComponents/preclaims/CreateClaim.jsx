@@ -1,6 +1,7 @@
 import claimsEndpoints, { apiService } from '@/components/services/claimsApi';
 import { useAlert } from '@/context/AlertContext';
 import { Button } from '@mui/material';
+import { message } from 'antd';
 import React, { useState } from 'react';
 
 function CreateClaim({
@@ -38,17 +39,9 @@ function CreateClaim({
         response.data.succeeded === false &&
         response.data.messages[0]
       ) {
-        setAlert({
-          open: true,
-          message: response.data.messages[0],
-          severity: 'error',
-        });
+        message.error(response.data.messages[0]);
       } else {
-        setAlert({
-          open: true,
-          message: 'Failed to create claim',
-          severity: 'error',
-        });
+        message.error('Failed to create claim');
       }
     } catch (error) {
       console.error(error);

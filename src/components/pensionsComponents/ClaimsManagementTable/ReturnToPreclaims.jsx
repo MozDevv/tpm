@@ -2,6 +2,7 @@ import claimsEndpoints, { apiService } from '@/components/services/claimsApi';
 import preClaimsEndpoints from '@/components/services/preclaimsApi';
 import { useAlert } from '@/context/AlertContext';
 import { Button, TextareaAutosize } from '@mui/material';
+import { message } from 'antd';
 import React, { useState } from 'react';
 
 function ReturnToPreclaims({
@@ -58,11 +59,9 @@ function ReturnToPreclaims({
           response.data.succeeded === false &&
           response.data.messages[0]
         ) {
-          setAlert({
-            open: true,
-            message: response.data.messages[0],
-            severity: 'error',
-          });
+          message.error(response.data.messages[0]);
+        } else {
+          message.error('Failed to process claim(s)');
         }
       } catch (error) {
         console.error(error.response);
