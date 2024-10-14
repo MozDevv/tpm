@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+import React, { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import {
   FilterList,
   OpenInNew,
@@ -33,11 +33,13 @@ import {
   PublishedWithChanges,
   ManageHistory,
   Settings,
-} from "@mui/icons-material";
-import { useAuth } from "@/context/AuthContext";
+  ScheduleSend,
+} from '@mui/icons-material';
+import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
   workflowsApiService,
-} from "../services/workflowsApi";
+} from '../services/workflowsApi';
+import { name } from 'dayjs/locale/en-au';
 
 const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
   const { auth } = useAuth();
@@ -56,7 +58,7 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
 
       // TODO - uncomment this line when the API is ready
       //documentNo: clickedItem?.no_series,
-      documentNo: "TEST00001",
+      documentNo: 'TEST00001',
     };
     try {
       const res = await workflowsApiService.post(
@@ -65,11 +67,11 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
       );
       if (res.status === 200) {
         setApprovalActions(res.data);
-        console.log("approver actions", res.data);
+        console.log('approver actions', res.data);
       }
     } catch (error) {
-      console.log("clickedItem?.no_series", clickedItem?.no_series);
-      console.error("Error fetching data:", error);
+      console.log('clickedItem?.no_series', clickedItem?.no_series);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -82,218 +84,242 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
   // Define buttons with required permissions
   const buttons = [
     {
-      name: "Filter",
+      name: 'Filter',
       icon: FilterList,
-      action: "filter",
+      action: 'filter',
       requiredPermissions: [],
     },
     {
-      name: "Open in Excel",
+      name: 'Open in Excel',
       icon: OpenInNew,
-      action: "openInExcel",
+      action: 'openInExcel',
       requiredPermissions: [],
     },
     {
-      name: "Create",
+      name: 'Create',
       icon: Add,
-      action: "create",
+      action: 'create',
       requiredPermissions: [],
     },
     {
-      name: "Edit",
+      name: 'Edit',
       icon: Edit,
-      action: "edit",
-      requiredPermissions: ["update"],
+      action: 'edit',
+      requiredPermissions: ['update'],
     },
     {
-      name: "Delete",
+      name: 'Delete',
       icon: Delete,
-      action: "delete",
-      requiredPermissions: ["preclaims.delete.prospective_pensioner"],
+      action: 'delete',
+      requiredPermissions: ['preclaims.delete.prospective_pensioner'],
     },
     {
-      name: "Notify",
+      name: 'Notify',
       icon: ForwardToInbox,
-      action: "notify",
+      action: 'notify',
       requiredPermissions: [
-        "preclaims.notify.prospective_pensioner",
+        'preclaims.notify.prospective_pensioner',
         // "preclaims.execute.notify_prospective_pensioner",
       ],
       status: [0],
     },
 
     {
-      name: "Approve",
+      name: 'Approve',
       icon: CheckCircle,
-      action: "approve",
-      requiredPermissions: ["preclaims.approve.prospective_pensioner"],
+      action: 'approve',
+      requiredPermissions: ['preclaims.approve.prospective_pensioner'],
       status: [1],
     },
     {
-      name: "Submit For Approval",
+      name: 'Submit For Approval',
       icon: Send,
-      action: "submit",
-      requiredPermissions: ["preclaims.execute.send_preclaim_for_approval"],
+      action: 'submit',
+      requiredPermissions: ['preclaims.execute.send_preclaim_for_approval'],
       status: [3],
     },
     {
-      name: "Return to MDA for Clarification",
+      name: 'Return to MDA for Clarification',
       icon: Undo,
-      action: "movetoMDA",
+      action: 'movetoMDA',
       requiredPermissions: [],
       status: [0],
     },
     {
-      name: "Move to Validation",
+      name: 'Move to Validation',
       icon: Send,
-      action: "movetoValidation",
+      action: 'movetoValidation',
       requiredPermissions: [],
       status: [0],
     },
     {
-      name: "Return to Verification",
+      name: 'Return to Verification',
       icon: Undo,
-      action: "movetoVerification",
+      action: 'movetoVerification',
       requiredPermissions: [],
       status: [1],
     },
     {
-      name: "Move to Approval",
+      name: 'Move to Approval',
       icon: Send,
-      action: "moveToApproval",
+      action: 'moveToApproval',
       requiredPermissions: [],
       status: [1],
     },
     {
-      name: "Return to Approval",
+      name: 'Return to Approval',
       icon: Undo,
-      action: "returnToApproval",
+      action: 'returnToApproval',
       requiredPermissions: [],
       status: [2],
     },
     {
-      name: "Move to Assessment",
+      name: 'Move to Assessment',
       icon: Send,
-      action: "moveToAssessment",
+      action: 'moveToAssessment',
       requiredPermissions: [],
       status: [2],
     },
 
     {
-      name: "Return to Claims ",
+      name: 'Return to Claims ',
       icon: Undo,
-      action: "returnToClaimsApprovals",
+      action: 'returnToClaimsApprovals',
       requiredPermissions: [],
       status: [3],
     },
     {
-      name: "Compute Claim",
+      name: 'Compute Claim',
       icon: Settings,
-      action: "computeClaim",
+      action: 'computeClaim',
       requiredPermissions: [],
       status: [4],
     },
     {
-      name: "Move to Assessment Approval",
+      name: 'Move to Assessment Approval',
       icon: Send,
-      action: "moveToAssessmentApproval",
+      action: 'moveToAssessmentApproval',
       requiredPermissions: [],
       status: [3],
     },
 
     {
-      name: "Approve Claim",
+      name: 'Approve Claim',
       icon: Send,
-      action: "moveStatus",
+      action: 'moveStatus',
       requiredPermissions: [],
       status: [2],
     },
     {
-      name: "Create Branch",
+      name: 'Create Branch',
       icon: AccountBalance,
-      action: "createBranch",
+      action: 'createBranch',
       requiredPermissions: [],
-      status: ["createBranch"],
+      status: ['createBranch'],
     },
     {
-      name: "Create Bank Type",
+      name: 'Create Bank Type',
       icon: AddBusiness,
-      action: "createBankType",
+      action: 'createBankType',
       requiredPermissions: [],
-      status: ["createBranch"],
+      status: ['createBranch'],
     },
     {
-      name: "Add Constituency",
+      name: 'Add Constituency',
       icon: AddCircleOutline,
-      action: "createConstituency",
+      action: 'createConstituency',
       requiredPermissions: [],
-      status: ["createConstituency"],
+      status: ['createConstituency'],
     },
     {
-      name: "Create Number Series Line",
+      name: 'Create Number Series Line',
       icon: AddCircle,
-      action: "numberSeriesLine",
+      action: 'numberSeriesLine',
       requiredPermissions: [],
-      status: ["numberSeriesLine"],
+      status: ['numberSeriesLine'],
     },
     {
-      name: "Create Claim",
+      name: 'Create Claim',
       icon: AddCircle,
-      action: "createClaim",
+      action: 'createClaim',
       requiredPermissions: [],
       status: [5, 7],
     },
     {
-      name: "Numbering Sections",
+      name: 'Numbering Sections',
       icon: FormatListNumbered,
-      action: "numberingSections",
+      action: 'numberingSections',
       requiredPermissions: [],
     },
     {
-      name: "Post to Ledger",
+      name: 'Post to Ledger',
       icon: PostAdd,
-      action: "postToGL",
+      action: 'postToGL',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Submit Payment for Approval',
+      icon: Send,
+      action: 'submitPaymentForApproval',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Approve Payment Voucher',
+      icon: TaskAlt,
+      action: 'approvePaymentVoucher',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Schedule Payment Voucher',
+      icon: ScheduleSend,
+      action: 'schedulePaymentVoucher',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Post Payment Voucher',
+      icon: CheckCircle,
+      action: 'postPaymentVoucher',
       requiredPermissions: [],
     },
   ];
 
   const approvalButton = {
-    name: "Approvals",
+    name: 'Approvals',
     icon: Rule,
-    action: "approvalRequest",
+    action: 'approvalRequest',
     requiredPermissions: [],
     status: [1],
   };
 
   const approvalButtons = [
     {
-      name: "Send For Approval",
-      action: "sendApprovalRequest",
+      name: 'Send For Approval',
+      action: 'sendApprovalRequest',
       disabled: approvalActions?.sendApprovalRequest,
 
       icon: IosShare,
     },
     {
-      name: "Cancel Approval Request",
-      action: "cancelApprovalRequest",
+      name: 'Cancel Approval Request',
+      action: 'cancelApprovalRequest',
       icon: CancelScheduleSend,
       disabled: approvalActions?.cancelApprovalRequest,
     },
     {
-      name: "Approve",
-      action: "approveDocument",
+      name: 'Approve',
+      action: 'approveDocument',
       icon: Check,
       disabled: approvalActions?.approve,
     },
     {
-      name: "Reject",
-      action: "rejectDocumentApproval",
+      name: 'Reject',
+      action: 'rejectDocumentApproval',
       icon: Cancel,
       disabled: approvalActions?.reject,
     },
     {
-      name: "Delegate",
-      action: "delegateApproval",
+      name: 'Delegate',
+      action: 'delegateApproval',
       icon: PersonAddAlt,
       disabled: approvalActions?.delegate,
     },
@@ -305,16 +331,16 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
 
   // Define the reports button
   const reportsButton = {
-    name: "Reports",
+    name: 'Reports',
     icon: BarChart,
-    action: "reports",
-    requiredPermissions: ["reports"],
+    action: 'reports',
+    requiredPermissions: ['reports'],
   };
 
   const openDetailsButton = {
-    name: "Open Details",
+    name: 'Open Details',
     icon: Info,
-    action: "openDetails",
+    action: 'openDetails',
     requiredPermissions: [],
     status: [8],
   };
@@ -336,20 +362,20 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
             handleItemClick();
             handlers[button.action]();
           }}
-          sx={{ mb: -1, maxHeight: "25px" }}
+          sx={{ mb: -1, maxHeight: '25px' }}
           disabled={button.requiredPermissions.some(
             (permission) => !permissions?.includes(permission)
           )}
           startIcon={
             <button.icon
               sx={{
-                fontSize: "20px",
-                mr: "2px",
+                fontSize: '20px',
+                mr: '2px',
                 color: button.requiredPermissions.some(
                   (permission) => !permissions?.includes(permission)
                 )
-                  ? "gray"
-                  : "primary",
+                  ? 'gray'
+                  : 'primary',
               }}
               color="primary"
             />
@@ -368,13 +394,13 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
             key={index}
             disabled={button.disabled}
             onClick={() => handlers[button.action]()}
-            sx={{ mb: -1, maxHeight: "25px", ml: 1 }}
+            sx={{ mb: -1, maxHeight: '25px', ml: 1 }}
             startIcon={
               <button.icon
                 sx={{
-                  fontSize: "20px",
-                  mr: "-3px",
-                  color: button.disabled ? "gray" : "primary",
+                  fontSize: '20px',
+                  mr: '-3px',
+                  color: button.disabled ? 'gray' : 'primary',
                 }}
               />
             }
@@ -388,12 +414,12 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
   return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: "15px",
-        paddingRight: "20px",
-        marginLeft: "10px",
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '15px',
+        paddingRight: '20px',
+        marginLeft: '10px',
       }}
     >
       <div className="flex gap-6 items-center">
@@ -404,15 +430,15 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
             onClick={handleApprovalClick}
             sx={{
               mb: -1,
-              maxHeight: "25px",
-              display: handlers[approvalButton.action] ? "content" : "none",
+              maxHeight: '25px',
+              display: handlers[approvalButton.action] ? 'content' : 'none',
             }}
             startIcon={
               <approvalButton.icon
                 sx={{
-                  mr: "-3px",
-                  fontSize: "20px",
-                  color: "primary",
+                  mr: '-3px',
+                  fontSize: '20px',
+                  color: 'primary',
                 }}
               />
             }
@@ -426,7 +452,7 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
       <div>
         <Button
           onClick={handlers[reportsButton.action]}
-          sx={{ mb: -1, maxHeight: "25px" }}
+          sx={{ mb: -1, maxHeight: '25px' }}
           disabled={
             !permissions?.includes(reportsButton.requiredPermissions[0])
           }
@@ -441,13 +467,13 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
             >
               <reportsButton.icon
                 sx={{
-                  fontSize: "20px",
+                  fontSize: '20px',
                   // color: !permissions?.some((permission) =>
                   //   reportsButton.requiredPermissions.includes(permission)
                   // )
                   //   ? "gray"
                   //   : "primary",
-                  color: "gray",
+                  color: 'gray',
                 }}
               />
             </IconButton>
@@ -461,15 +487,15 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
           onClick={handlers[openDetailsButton.action]}
           sx={{
             mb: -1,
-            maxHeight: "25px",
-            display: handlers[openDetailsButton.action] ? "content" : "none",
+            maxHeight: '25px',
+            display: handlers[openDetailsButton.action] ? 'content' : 'none',
           }}
           startIcon={
             <IconButton>
               <openDetailsButton.icon
                 sx={{
-                  fontSize: "16px",
-                  color: "primary",
+                  fontSize: '16px',
+                  color: 'primary',
                 }}
               />
             </IconButton>

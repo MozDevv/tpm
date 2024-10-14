@@ -1,15 +1,15 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+'use client';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import {
   AccountBalance,
   AccountBalanceWallet,
@@ -19,15 +19,15 @@ import {
   Person,
   Wallet,
   Widgets,
-} from "@mui/icons-material";
-import styles from "./sidebar.module.css";
-import { Box, Divider, IconButton } from "@mui/material";
-import { BarChart, Payments, SupportAgent } from "@mui/icons-material";
-import { useSelectedItem } from "@/context/NavItemContext";
-import { useIsLoading } from "@/context/LoadingContext";
-import { useAuth } from "@/context/AuthContext";
-import axios from "axios";
-import { BASE_CORE_API } from "@/utils/constants";
+} from '@mui/icons-material';
+import styles from './sidebar.module.css';
+import { Box, Divider, IconButton } from '@mui/material';
+import { BarChart, Payments, SupportAgent } from '@mui/icons-material';
+import { useSelectedItem } from '@/context/NavItemContext';
+import { useIsLoading } from '@/context/LoadingContext';
+import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 function Sidebar() {
   const [open, setOpen] = useState({});
@@ -79,7 +79,7 @@ function Sidebar() {
   const getMenus = async (role) => {
     try {
       if (!role) {
-        throw new Error("Role is not defined");
+        throw new Error('Role is not defined');
       }
       const res = await axios.get(
         `${BASE_CORE_API}api/MenuItemsSetup/GetMenuJSON1/${role}`
@@ -89,15 +89,15 @@ function Sidebar() {
     } catch (error) {
       if (error.response) {
         // Server responded with a status other than 200 range
-        console.log("Error response:", error.response);
+        console.log('Error response:', error.response);
       } else if (error.request) {
         // Request was made but no response was received
-        console.log("Error request:", error.request);
+        console.log('Error request:', error.request);
       } else {
         // Something else happened while setting up the request
-        console.log("Error message:", error.message);
+        console.log('Error message:', error.message);
       }
-      console.log("Role:", role);
+      console.log('Role:', role);
     }
   };
 
@@ -107,401 +107,423 @@ function Sidebar() {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      path: "/pensions",
+      title: 'Dashboard',
+      path: '/pensions',
       icon: <DashboardOutlinedIcon />,
     },
     {
-      title: "Preclaims",
+      title: 'Preclaims',
       icon: <ArticleOutlinedIcon />,
       children: [
         {
-          title: "Retirees",
+          title: 'Retirees',
           subChildren: [
             {
-              title: "Retirees List",
-              path: "/pensions/preclaims/listing",
+              title: 'Retirees List',
+              path: '/pensions/preclaims/listing',
             },
             {
-              title: "Unnotified Retirees",
-              path: "/pensions/preclaims/listing/unnotified",
+              title: 'Unnotified Retirees',
+              path: '/pensions/preclaims/listing/unnotified',
             },
             {
-              title: "Notified Retirees",
-              path: "/pensions/preclaims/listing/notified",
+              title: 'Notified Retirees',
+              path: '/pensions/preclaims/listing/notified',
             },
             {
-              title: "Submissions",
-              path: "/pensions/preclaims/listing/submissions",
+              title: 'Submissions',
+              path: '/pensions/preclaims/listing/submissions',
             },
             {
-              title: "Pending Approvals",
-              path: "/pensions/preclaims/approvals",
+              title: 'Pending Approvals',
+              path: '/pensions/preclaims/approvals',
             },
           ],
         },
         {
-          title: "Returned Claims",
-          path: "/pensions/preclaims/returned-claims",
+          title: 'Returned Claims',
+          path: '/pensions/preclaims/returned-claims',
         },
       ],
     },
     {
-      title: "Claims",
+      title: 'Claims',
       icon: <ArticleOutlinedIcon />,
       children: [
         {
-          title: "Claims Management",
-          path: "/pensions/claims/claims-management",
+          title: 'Claims Management',
+          path: '/pensions/claims/claims-management',
         },
         {
-          title: "Claims Verification",
-          path: "/pensions/claims/claims-verification",
+          title: 'Claims Verification',
+          path: '/pensions/claims/claims-verification',
         },
         {
-          title: "Claims Validation",
-          path: "/pensions/claims/claims-validation",
+          title: 'Claims Validation',
+          path: '/pensions/claims/claims-validation',
         },
         {
-          title: "Claims Approval",
-          path: "/pensions/claims/claims-approval",
+          title: 'Claims Approval',
+          path: '/pensions/claims/claims-approval',
         },
       ],
     },
     {
-      title: "Assessment",
+      title: 'Assessment',
 
       icon: <BarChart />,
       children: [
         {
-          title: "Assessment Data Capture",
-          path: "/pensions/assessment/data-capture",
+          title: 'Assessment Data Capture',
+          path: '/pensions/assessment/data-capture',
         },
         {
-          title: "Assessment Approval",
-          path: "/pensions/assessment/approval",
+          title: 'Assessment Approval',
+          path: '/pensions/assessment/approval',
         },
       ],
     },
     {
-      title: "Finance",
+      title: 'Finance',
       icon: <AccountBalanceWallet />,
       children: [
         {
-          title: "General Ledger",
+          title: 'General Ledger',
           subChildren: [
             {
-              title: "Chart of Accounts",
-              path: "/pensions/finance/general-ledger/charts-of-accounts",
+              title: 'Chart of Accounts',
+              path: '/pensions/finance/general-ledger/charts-of-accounts',
             },
             {
-              title: "General Budget",
-              path: "/pensions/finance/general-ledger/general-budget",
+              title: 'General Budget',
+              path: '/pensions/finance/general-ledger/general-budget',
             },
             {
-              title: "General Ledger Entries",
-              path: "/pensions/finance/general-ledger/ledger-entries",
+              title: 'General Ledger Entries',
+              path: '/pensions/finance/general-ledger/ledger-entries',
             },
           ],
         },
         {
-          title: "Cash Management",
+          title: 'Cash Management',
           subChildren: [
             {
-              title: "Bank Account",
-              path: "/pensions/finance/cash-management/bank-account",
+              title: 'Bank Account',
+              path: '/pensions/finance/cash-management/bank-account',
             },
             {
-              title: "Bank Account Ledger Entries",
-              path: "/pensions/finance/cash-management/ledger-entries",
+              title: 'Bank Account Ledger Entries',
+              path: '/pensions/finance/cash-management/ledger-entries',
             },
           ],
         },
         {
-          title: "Recievables",
+          title: 'Recievables',
           subChildren: [
             {
-              title: "Customers",
-              path: "/pensions/finance/customers",
+              title: 'Customers',
+              path: '/pensions/finance/customers',
             },
             {
-              title: "Customer Ledger Entries",
-              path: "/pensions/finance/recievables/ledger-entries",
+              title: 'Customer Ledger Entries',
+              path: '/pensions/finance/recievables/ledger-entries',
             },
           ],
         },
         {
-          title: "Payables",
+          title: 'Payables',
           subChildren: [
             {
-              title: "Vendors",
-              path: "/pensions/finance/vendor",
+              title: 'Vendors',
+              path: '/pensions/finance/vendor',
             },
             {
-              title: "Vendor Ledger Entries",
-              path: "/pensions/finance/payables/ledger-entries",
+              title: 'Vendor Ledger Entries',
+              path: '/pensions/finance/payables/ledger-entries',
             },
           ],
         },
         {
-          title: "General Journals",
-          path: "/pensions/finance/general-journals",
+          title: 'General Journals',
+          path: '/pensions/finance/general-journals',
         },
+        {
+          title: 'Payments',
+          subChildren: [
+            {
+              title: 'Payment Vouchers',
+              path: '/pensions/finance/payments',
+            },
+            {
+              title: 'Pending Payment Vouchers',
+              path: '/pensions/finance/payments/pending',
+            },
 
-        {
-          title: "Payments",
-          path: "/pensions/finance/payments",
+            {
+              title: 'Approved Payment Vouchers',
+              path: '/pensions/finance/payments/approved',
+            },
+
+            {
+              title: 'Scheduled Payment Vouchers',
+              path: '/pensions/finance/payments/scheduled',
+            },
+            {
+              title: 'Posted Payment Vouchers',
+              path: '/pensions/finance/payments/posted',
+            },
+          ],
         },
       ],
     },
     {
-      title: "Directorate",
-      path: "/pensions/directorate",
+      title: 'Directorate',
+      path: '/pensions/directorate',
       icon: <ArticleOutlinedIcon />,
     },
     {
-      title: "Controller of Budget",
-      path: "/pensions/cob",
+      title: 'Controller of Budget',
+      path: '/pensions/cob',
       icon: <Payments />,
     },
     {
-      title: "Accounts",
-      path: "/pensions/accounts",
+      title: 'Accounts',
+      path: '/pensions/accounts',
       icon: <DashboardOutlinedIcon />,
     },
     {
-      title: "Customer Relations",
-      path: "/pensions",
+      title: 'Customer Relations',
+      path: '/pensions',
       icon: <SupportAgent />,
     },
   ];
 
   const adminItems = [
     {
-      title: "Users & Teams",
+      title: 'Users & Teams',
       icon: <PeopleAltOutlined />,
       children: [
         {
-          title: "Manage Users",
-          path: "/pensions/users",
+          title: 'Manage Users',
+          path: '/pensions/users',
         },
         {
-          title: "Departments Setups",
-          path: "/pensions/users/setups/departments-setups",
+          title: 'Departments Setups',
+          path: '/pensions/users/setups/departments-setups',
         },
         {
-          title: "Roles Setups",
-          path: "/pensions/users/setups/roles-setups",
+          title: 'Roles Setups',
+          path: '/pensions/users/setups/roles-setups',
         },
         // {
         //   title: "Permissions Setups",
         //   path: "/pensions/users/setups/permissions-setups",
         // },
         {
-          title: "Menu Setups",
-          path: "/pensions/setups/menus",
+          title: 'Menu Setups',
+          path: '/pensions/setups/menus',
         },
         // {
         //   title: "Tables Setups",
         //   path: "/pensions/users/setups/tables-setups",
         // },
         {
-          title: "Roles & Permissions",
-          path: "/pensions/users/roles-permissions",
+          title: 'Roles & Permissions',
+          path: '/pensions/users/roles-permissions',
         },
         {
-          title: "Password Rules",
-          path: "/pensions/users/password-rules",
+          title: 'Password Rules',
+          path: '/pensions/users/password-rules',
         },
         {
-          title: "Counties",
-          path: "/pensions/setups/counties",
+          title: 'Counties',
+          path: '/pensions/setups/counties',
         },
         // {
         //   title: "Constituencies",
         //   path: "/pensions/setups/constituencies",
         // },
         {
-          title: "Leave Management",
-          path: "/pensions/users/leave-management",
+          title: 'Leave Management',
+          path: '/pensions/users/leave-management',
         },
       ],
     },
     {
-      title: "Setups",
+      title: 'Setups',
       icon: <Widgets />,
       children: [
         {
-          title: "General Setups",
+          title: 'General Setups',
           subChildren: [
             {
-              title: "General Settings",
-              path: "/pensions/setups/general-settings",
+              title: 'General Settings',
+              path: '/pensions/setups/general-settings',
             },
           ],
         },
         {
-          title: "Assessment Setups",
+          title: 'Assessment Setups',
           subChildren: [
             {
-              title: "Pension Factor Setups",
-              path: "/pensions/setups/pension-factor-assesment-setups",
-            },
-          ],
-        },
-
-        {
-          title: "Finance Setup",
-          subChildren: [
-            {
-              title: "Operation Setups",
-              path: "/pensions/setups/operation-setups",
-            },
-            {
-              title: "Recoveries & Deductions",
-              path: "/pensions/setups/recoveries-deductions",
-            },
-            {
-              title: "Account Categories",
-              path: "/pensions/setups/account-category",
-            },
-            {
-              title: "Accounting Period",
-              path: "/pensions/setups/accounting-period",
-            },
-            {
-              title: "Payment Methods",
-              path: "/pensions/setups/payment-methods",
-            },
-            {
-              title: "Award Posting Groups",
-              path: "/pensions/setups/award-posting-groups",
-            },
-            {
-              title: "Bank Posting Groups",
-              path: "/pensions/setups/bank-posting-groups",
-            },
-            {
-              title: "Business Posting Groups",
-              path: "/pensions/setups/business-posting-groups",
-            },
-            {
-              title: "Customer Posting Groups",
-              path: "/pensions/setups/customer-posting-groups",
-            },
-
-            {
-              title: "Vendor Posting Group",
-              path: "/pensions/setups/vendor-posting-groups",
-            },
-            {
-              title: "VAT Postings",
-              path: "/pensions/setups/vat-postings",
-            },
-
-            {
-              title: "Product Posting Groups",
-              path: "/pensions/setups/product-posting-groups",
-            },
-            {
-              title: "General Posting Groups",
-              path: "/pensions/setups/general-posting-groups",
-            },
-            {
-              title: "General Business Posting Groups",
-              path: "/pensions/setups/general-business-posting-groups",
-            },
-            {
-              title: "General Product Posting Groups",
-              path: "/pensions/setups/general-product-posting-groups",
+              title: 'Pension Factor Setups',
+              path: '/pensions/setups/pension-factor-assesment-setups',
             },
           ],
         },
 
         {
-          title: "Workflows Setups",
+          title: 'Finance Setup',
           subChildren: [
             {
-              title: "Approvers",
-              path: "/pensions/workflows/setups/approvers",
+              title: 'Operation Setups',
+              path: '/pensions/setups/operation-setups',
             },
             {
-              title: "Approval Types",
-              path: "/pensions/workflows/setups/approval-types",
+              title: 'Recoveries & Deductions',
+              path: '/pensions/setups/recoveries-deductions',
             },
             {
-              title: "Approval Stages",
-              path: "/pensions/workflows/setups/approval-stages",
+              title: 'Account Categories',
+              path: '/pensions/setups/account-category',
+            },
+            {
+              title: 'Accounting Period',
+              path: '/pensions/setups/accounting-period',
+            },
+            {
+              title: 'Payment Methods',
+              path: '/pensions/setups/payment-methods',
+            },
+            {
+              title: 'Award Posting Groups',
+              path: '/pensions/setups/award-posting-groups',
+            },
+            {
+              title: 'Bank Posting Groups',
+              path: '/pensions/setups/bank-posting-groups',
+            },
+            {
+              title: 'Business Posting Groups',
+              path: '/pensions/setups/business-posting-groups',
+            },
+            {
+              title: 'Customer Posting Groups',
+              path: '/pensions/setups/customer-posting-groups',
+            },
+
+            {
+              title: 'Vendor Posting Group',
+              path: '/pensions/setups/vendor-posting-groups',
+            },
+            {
+              title: 'VAT Postings',
+              path: '/pensions/setups/vat-postings',
+            },
+
+            {
+              title: 'Product Posting Groups',
+              path: '/pensions/setups/product-posting-groups',
+            },
+            {
+              title: 'General Posting Groups',
+              path: '/pensions/setups/general-posting-groups',
+            },
+            {
+              title: 'General Business Posting Groups',
+              path: '/pensions/setups/general-business-posting-groups',
+            },
+            {
+              title: 'General Product Posting Groups',
+              path: '/pensions/setups/general-product-posting-groups',
             },
           ],
         },
 
         {
-          title: "Preclaims Setups",
+          title: 'Workflows Setups',
           subChildren: [
             {
-              title: "Parliamentary Terms",
-              path: "/pensions/setups/parliamentary-terms",
+              title: 'Approvers',
+              path: '/pensions/workflows/setups/approvers',
+            },
+            {
+              title: 'Approval Types',
+              path: '/pensions/workflows/setups/approval-types',
+            },
+            {
+              title: 'Approval Stages',
+              path: '/pensions/workflows/setups/approval-stages',
             },
           ],
         },
 
         {
-          title: "No. Series",
-          path: "/pensions/setups/no-series",
+          title: 'Preclaims Setups',
+          subChildren: [
+            {
+              title: 'Parliamentary Terms',
+              path: '/pensions/setups/parliamentary-terms',
+            },
+          ],
         },
 
         {
-          title: "Vendor Posting Groups",
-          path: "/pensions/setups/vendor-posting-groups",
+          title: 'No. Series',
+          path: '/pensions/setups/no-series',
+        },
+
+        {
+          title: 'Vendor Posting Groups',
+          path: '/pensions/setups/vendor-posting-groups',
         },
         {
-          title: "Cities",
-          path: "/pensions/setups/cities",
+          title: 'Cities',
+          path: '/pensions/setups/cities',
         },
         {
-          title: "Document Types",
-          path: "/pensions/setups/document-types",
+          title: 'Document Types',
+          path: '/pensions/setups/document-types',
         },
         {
-          title: "Pension Caps",
-          path: "/pensions/setups/pension-caps",
+          title: 'Pension Caps',
+          path: '/pensions/setups/pension-caps',
         },
         {
-          title: "Designation & Grades",
-          path: "/pensions/setups/designation-grades",
+          title: 'Designation & Grades',
+          path: '/pensions/setups/designation-grades',
         },
         {
-          title: "Exit Grounds",
-          path: "/pensions/setups/exit-grounds",
+          title: 'Exit Grounds',
+          path: '/pensions/setups/exit-grounds',
         },
         {
-          title: "Postal Codes",
-          path: "/pensions/setups/postal-codes",
+          title: 'Postal Codes',
+          path: '/pensions/setups/postal-codes',
         },
         {
-          title: "Terms of Service",
-          path: "/pensions/setups/termsofservice",
+          title: 'Terms of Service',
+          path: '/pensions/setups/termsofservice',
         },
         {
-          title: "MDAs",
-          path: "/pensions/setups/mdas",
+          title: 'MDAs',
+          path: '/pensions/setups/mdas',
         },
         {
-          title: "Pension Awards",
-          path: "/pensions/setups/pension-awards",
+          title: 'Pension Awards',
+          path: '/pensions/setups/pension-awards',
         },
         {
-          title: "Banks",
-          path: "/pensions/setups/banks",
+          title: 'Banks',
+          path: '/pensions/setups/banks',
         },
         {
-          title: "Counties",
-          path: "/pensions/setups/banks",
+          title: 'Counties',
+          path: '/pensions/setups/banks',
         },
         {
-          title: "Constituencies",
-          path: "/pensions/setups/banks",
+          title: 'Constituencies',
+          path: '/pensions/setups/banks',
         },
       ],
     },
@@ -543,16 +565,16 @@ function Sidebar() {
             onClick={() => setSelectedItem(subChild.title)}
             sx={{
               pl: 11,
-              py: "3px",
+              py: '3px',
 
-              "&:hover": {
-                backgroundColor: "rgba(0, 105, 144, 0.1)",
+              '&:hover': {
+                backgroundColor: 'rgba(0, 105, 144, 0.1)',
               },
             }}
           >
             <ListItemText
               sx={{
-                color: selectedItem === subChild.title ? "#006990" : "gray",
+                color: selectedItem === subChild.title ? '#006990' : 'gray',
                 fontWeight: 600,
               }}
             >
@@ -573,20 +595,20 @@ function Sidebar() {
               <ListItem
                 button
                 onClick={() => handleToggle(child.title)}
-                sx={{ pl: 10, py: "3px", display: "flex" }}
+                sx={{ pl: 10, py: '3px', display: 'flex' }}
               >
                 <ListItemText
                   sx={{
-                    color: open[child.title] ? "#006990" : "gray",
+                    color: open[child.title] ? '#006990' : 'gray',
                     fontWeight: 700,
                   }}
                 >
                   <p className={styles.nav_title}> {child.title}</p>
                 </ListItemText>
                 {open[child.title] ? (
-                  <ExpandLess sx={{ color: "gray" }} />
+                  <ExpandLess sx={{ color: 'gray' }} />
                 ) : (
-                  <ExpandMore sx={{ color: "gray" }} />
+                  <ExpandMore sx={{ color: 'gray' }} />
                 )}
               </ListItem>
               <Collapse in={open[child.title]} timeout="auto" unmountOnExit>
@@ -604,18 +626,18 @@ function Sidebar() {
                 onClick={() => setSelectedItem(child.title)}
                 sx={{
                   pl: 10,
-                  py: "3px",
-                  color: selectedItem === child.title ? "#006990" : "#1F1F1F",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 105, 144, 0.1)",
+                  py: '3px',
+                  color: selectedItem === child.title ? '#006990' : '#1F1F1F',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 105, 144, 0.1)',
                   },
                 }}
               >
                 <ListItemText
                   sx={{
-                    color: selectedItem === child.title ? "#006990" : "gray",
+                    color: selectedItem === child.title ? '#006990' : 'gray',
                     fontWeight: 600,
-                    display: "flex",
+                    display: 'flex',
                   }}
                 >
                   <p className={styles.nav_title}> {child.title}</p>
@@ -632,7 +654,7 @@ function Sidebar() {
     items.map((item) => (
       <React.Fragment key={item.title}>
         <Link
-          href={item.path || "#"}
+          href={item.path || '#'}
           className="no-underline hover:no-underline"
           prefetch={false}
         >
@@ -647,18 +669,18 @@ function Sidebar() {
               }
             }}
             sx={{
-              mb: "5px",
+              mb: '5px',
               backgroundColor:
                 open[item.title] || selectedItem === item.title
-                  ? "#E5F0F4"
-                  : "transparent",
-              borderRadius: "30px",
+                  ? '#E5F0F4'
+                  : 'transparent',
+              borderRadius: '30px',
               color:
                 open[item.title] || selectedItem === item.title
-                  ? "#006990"
-                  : "#1F1F1F",
-              "&:hover": {
-                backgroundColor: "rgba(0, 105, 144, 0.1)",
+                  ? '#006990'
+                  : '#1F1F1F',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 105, 144, 0.1)',
               },
             }}
           >
@@ -666,8 +688,8 @@ function Sidebar() {
               sx={{
                 color:
                   open[item.title] || selectedItem === item.title
-                    ? "#006990"
-                    : "#1F1F1F",
+                    ? '#006990'
+                    : '#1F1F1F',
               }}
             >
               {item.icon}
@@ -676,8 +698,8 @@ function Sidebar() {
               sx={{
                 color:
                   open[item.title] || selectedItem === item.title
-                    ? "#006990"
-                    : "gray",
+                    ? '#006990'
+                    : 'gray',
                 fontWeight: 700,
               }}
               // className="font-bold"
@@ -686,9 +708,9 @@ function Sidebar() {
             </ListItemText>
             {item.children &&
               (open[item.title] ? (
-                <ExpandLess sx={{ color: "gray" }} />
+                <ExpandLess sx={{ color: 'gray' }} />
               ) : (
-                <ExpandMore sx={{ color: "gray" }} />
+                <ExpandMore sx={{ color: 'gray' }} />
               ))}
           </ListItem>
         </Link>
@@ -701,7 +723,7 @@ function Sidebar() {
     ));
 
   return (
-    <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
+    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
       <div className="sticky top-0 bg-white z-50">
         <img
           src="/logo.png"

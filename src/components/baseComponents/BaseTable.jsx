@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import {
   Box,
@@ -13,15 +13,15 @@ import {
   MenuItem,
   Pagination,
   Tooltip,
-} from "@mui/material";
-import Link from "next/link";
-import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
-import ListNavigation from "@/components/baseComponents/ListNavigation";
-import { useRouter } from "next/navigation";
-import { FilterList, SortByAlpha } from "@mui/icons-material";
-import BaseCard from "./BaseCard";
-import { useSearch } from "@/context/SearchContext";
-import BaseLoadingOverlay from "./BaseLoadingOverlay";
+} from '@mui/material';
+import Link from 'next/link';
+import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
+import ListNavigation from '@/components/baseComponents/ListNavigation';
+import { useRouter } from 'next/navigation';
+import { FilterList, SortByAlpha } from '@mui/icons-material';
+import BaseCard from './BaseCard';
+import { useSearch } from '@/context/SearchContext';
+import BaseLoadingOverlay from './BaseLoadingOverlay';
 
 const BaseTable = ({
   columnDefs,
@@ -49,10 +49,10 @@ const BaseTable = ({
   const [pageNumber, setPageNumber] = useState(1);
   const [userClicked, setUserClicked] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [filterColumn, setFilterColumn] = useState("");
-  const [filterValue, setFilterValue] = useState("");
+  const [filterColumn, setFilterColumn] = useState('');
+  const [filterValue, setFilterValue] = useState('');
   const [filterType, setFilterType] = useState(2);
-  const [sortColumn, setSortColumn] = useState("");
+  const [sortColumn, setSortColumn] = useState('');
   const [sortCriteria, setSortCriteria] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
@@ -87,25 +87,25 @@ const BaseTable = ({
   const handleFilters = async () => {
     const filter = {
       ...(filterColumn && {
-        "filterCriterion.criterions[0].propertyName": filterColumn,
+        'filterCriterion.criterions[0].propertyName': filterColumn,
       }),
       ...(filterValue && {
-        "filterCriterion.criterions[0].propertyValue": filterValue,
+        'filterCriterion.criterions[0].propertyValue': filterValue,
       }),
       ...(filterType
         ? {
-            "filterCriterion.criterions[0].criterionType": filterType,
+            'filterCriterion.criterions[0].criterionType': filterType,
           }
         : {
-            "filterCriterion.criterions[0].criterionType": 2,
+            'filterCriterion.criterions[0].criterionType': 2,
           }),
     };
     const sort = {
       ...(sortColumn && {
-        "sortProperties.propertyName": sortColumn,
+        'sortProperties.propertyName': sortColumn,
       }),
       ...(sortCriteria !== 0 && {
-        "sortProperties.sortCriteria": sortCriteria,
+        'sortProperties.sortCriteria': sortCriteria,
       }),
     };
 
@@ -113,12 +113,12 @@ const BaseTable = ({
   };
 
   const fetchData = async (filter) => {
-    console.log("fetchData called", fetchApiEndpoint);
+    console.log('fetchData called', fetchApiEndpoint);
     try {
       let res;
       res = await fetchApiService(fetchApiEndpoint, {
-        "paging.pageNumber": pageNumber,
-        "paging.pageSize": 10,
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': 10,
         ...filter,
       });
       const { data, totalCount, totalPages } = res.data;
@@ -129,19 +129,19 @@ const BaseTable = ({
       setTotalRecords(totalCount);
       setTotalPages(totalPages);
 
-      console.log("Data fetched successfully:", transformedData);
+      console.log('Data fetched successfully:', transformedData);
     } catch (error) {
-      console.log("", error);
+      console.log('', error);
 
-      console.error("Error fetching data:", error.response);
+      console.error('Error fetching data:', error.response);
     }
   };
 
   const resetFilters = () => {
-    setFilterColumn("");
-    setFilterValue("");
+    setFilterColumn('');
+    setFilterValue('');
     setFilterType(2);
-    setSortColumn("");
+    setSortColumn('');
     //setSortCriteria(1);
     fetchData();
   };
@@ -156,9 +156,9 @@ const BaseTable = ({
   };
 
   const handlePaginationChange = (e, newPage) => {
-    console.log("newPage", newPage);
-    console.log("***********************");
-    console.log("e", e);
+    console.log('newPage', newPage);
+    console.log('***********************');
+    console.log('e', e);
     setPageNumber(newPage);
   };
 
@@ -206,21 +206,21 @@ const BaseTable = ({
   }, [openSubGroup]);
 
   const loadingOverlayComponentParams = useMemo(() => {
-    return { loadingMessage: "Loading..." };
+    return { loadingMessage: 'Loading...' };
   }, []);
 
   return (
     <div>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Box sx={{ display: "flex", gap: "1px", flexDirection: "column" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ display: 'flex', gap: '1px', flexDirection: 'column' }}>
           <h6
             style={{
-              fontSize: "20px",
-              color: "#006990",
+              fontSize: '20px',
+              color: '#006990',
               fontWeight: 700,
-              marginTop: "20px",
-              marginLeft: "15px",
-              marginBottom: "-10px",
+              marginTop: '20px',
+              marginLeft: '15px',
+              marginBottom: '-10px',
             }}
           >
             {breadcrumbTitle}
@@ -234,15 +234,15 @@ const BaseTable = ({
         </Box>
       </Box>
       <div className="flex gap-2">
-        {" "}
+        {' '}
         <Collapse
           in={openFilter}
           sx={{
-            bgcolor: "white",
+            bgcolor: 'white',
             mt: 2,
-            borderRadius: "10px",
-            color: "black",
-            borderRadius: "10px",
+            borderRadius: '10px',
+            color: 'black',
+            borderRadius: '10px',
             // maxHeight: "70vh",
           }}
           timeout="auto"
@@ -274,12 +274,12 @@ const BaseTable = ({
               open={Boolean(anchorEl)}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
+                vertical: 'bottom',
+                horizontal: 'right',
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               }}
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
@@ -310,7 +310,7 @@ const BaseTable = ({
                 Sort By:
               </label>
               <div className="flex items-center ">
-                {" "}
+                {' '}
                 <select
                   name="role"
                   value={sortColumn}
@@ -324,12 +324,12 @@ const BaseTable = ({
                 </select>
                 <Tooltip
                   title={
-                    sortCriteria === 1 ? "Ascending Order" : "Desceding Order"
+                    sortCriteria === 1 ? 'Ascending Order' : 'Desceding Order'
                   }
                   placement="top"
                 >
                   <IconButton
-                    sx={{ mr: "-10px", ml: "-4px" }}
+                    sx={{ mr: '-10px', ml: '-4px' }}
                     onClick={() => {
                       setSortCriteria(sortCriteria === 1 ? 2 : 1);
                     }}
@@ -342,14 +342,14 @@ const BaseTable = ({
           </div>
           <Button
             variant="contained"
-            sx={{ ml: 2, width: "80%", mr: 2, mt: "-24px" }}
+            sx={{ ml: 2, width: '80%', mr: 2, mt: '-24px' }}
             onClick={handleFilters}
           >
             Apply Filters
           </Button>
           <Button
             variant="outlined"
-            sx={{ ml: 2, width: "80%", mr: 2, mt: 2 }}
+            sx={{ ml: 2, width: '80%', mr: 2, mt: 2 }}
             onClick={resetFilters}
           >
             Reset Filters
@@ -359,11 +359,11 @@ const BaseTable = ({
           <div
             className="ag-theme-quartz"
             style={{
-              height: "65vh",
+              height: '65vh',
 
-              maxHeight: "85%",
-              overflowY: "auto",
-              width: openFilter ? "calc(100vw - 500px)" : "80vw",
+              maxHeight: '85%',
+              overflowY: 'auto',
+              width: openFilter ? 'calc(100vw - 500px)' : '80vw',
             }}
           >
             <AgGridReact
@@ -388,7 +388,7 @@ const BaseTable = ({
               rowSelection="multiple"
               onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
-                console.log("e.data", e.data);
+                console.log('e.data', e.data);
                 setOpenBaseCard(true);
                 setClickedItem(e.data);
                 // setUserClicked(e.data);
@@ -400,8 +400,8 @@ const BaseTable = ({
 
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             <Pagination

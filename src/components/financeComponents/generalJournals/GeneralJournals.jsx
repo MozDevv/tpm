@@ -1,81 +1,81 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
 
-import CountyCard from "@/components/pensionsComponents/setups/counties/CountyCard";
-import GeneralJournalCard from "./GeneralJournalCard";
-import financeEndpoints from "@/components/services/financeApi";
-import { formatDate, parseDate } from "@/utils/dateFormatter";
-import BaseAutoSaveInputCard from "../../baseComponents/BaseAutoSaveInputCard";
-import { Dialog, Select } from "@mui/material";
-import PostGL from "./PostGL";
-import { formatNumber } from "@/utils/numberFormatters";
+import CountyCard from '@/components/pensionsComponents/setups/counties/CountyCard';
+import GeneralJournalCard from './GeneralJournalCard';
+import financeEndpoints from '@/components/services/financeApi';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
+import BaseAutoSaveInputCard from '../../baseComponents/BaseAutoSaveInputCard';
+import { Dialog, Select } from '@mui/material';
+import PostGL from './PostGL';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const columnDefs = [
   {
-    headerName: "Document No",
-    field: "documentNo",
+    headerName: 'Document No',
+    field: 'documentNo',
     width: 90,
-    pinned: "left", // Pinning to the left ensures it's the first column
+    pinned: 'left', // Pinning to the left ensures it's the first column
     checkboxSelection: true,
     headerCheckboxSelection: true,
   },
   {
-    headerName: "Document Type",
-    field: "documentType",
+    headerName: 'Document Type',
+    field: 'documentType',
     width: 100,
     valueFormatter: (params) => {
       const options = [
-        { id: 0, name: "Payment Voucher" },
-        { id: 1, name: "Purchase Invoice" },
-        { id: 2, name: "Sales Invoice" },
-        { id: 3, name: "Receipt" },
-        { id: 4, name: "Purchase Credit Memo" },
-        { id: 5, name: "Sales Credit Memo" },
-        { id: 6, name: "Journal Voucher" },
+        { id: 0, name: 'Payment Voucher' },
+        { id: 1, name: 'Purchase Invoice' },
+        { id: 2, name: 'Sales Invoice' },
+        { id: 3, name: 'Receipt' },
+        { id: 4, name: 'Purchase Credit Memo' },
+        { id: 5, name: 'Sales Credit Memo' },
+        { id: 6, name: 'Journal Voucher' },
       ];
 
       const selectedOption = options.find(
         (option) => params.value === option.id
       );
-      return selectedOption ? selectedOption.name : "";
+      return selectedOption ? selectedOption.name : '';
     },
   },
 
   {
-    headerName: "Amount",
-    field: "amount",
+    headerName: 'Amount',
+    field: 'amount',
     width: 150,
-    cellStyle: { marginLeft: "50px" },
+    cellStyle: { marginLeft: '50px' },
     valueFormatter: (params) => {
-      return params.value ? formatNumber(params.value) : "0.00";
+      return params.value ? formatNumber(params.value) : '0.00';
     },
   },
   {
-    headerName: "External Document No",
-    field: "externalDocumentNo",
+    headerName: 'External Document No',
+    field: 'externalDocumentNo',
     width: 150,
   },
   {
-    headerName: "Posting Date",
-    field: "postingDate",
+    headerName: 'Posting Date',
+    field: 'postingDate',
     width: 150,
     valueFormatter: (params) => {
-      return params.value ? parseDate(params.value) : "";
+      return params.value ? parseDate(params.value) : '';
     },
   },
   {
-    headerName: "VAT Date",
-    field: "vatDate",
+    headerName: 'VAT Date',
+    field: 'vatDate',
     width: 150,
     valueFormatter: (params) => {
-      return params.value ? parseDate(params.value) : "";
+      return params.value ? parseDate(params.value) : '';
     },
   },
 ];
@@ -110,10 +110,10 @@ const GeneralJournals = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
     postToGL: () => selectedRows.length > 0 && setOpenPostToGL(true),
   };
 
@@ -135,7 +135,7 @@ const GeneralJournals = () => {
       //  setClickedItem(item);
     },
     createConstituency: () => {
-      setDialogType("branch");
+      setDialogType('branch');
       setOpenAction(true);
     },
 
@@ -152,86 +152,86 @@ const GeneralJournals = () => {
 
   const title = clickedItem
     ? `${clickedItem.documentNo}`
-    : "Create New General Journal";
+    : 'Create New General Journal';
 
   const fields = [
     {
-      name: "documentType",
-      label: "Document Type",
-      type: "select",
+      name: 'documentType',
+      label: 'Document Type',
+      type: 'select',
       required: true,
 
       options: [
-        { id: 0, name: "Payment Voucher" },
-        { id: 1, name: "Purchase Invoice" },
-        { id: 2, name: "Sales Invoice" },
-        { id: 3, name: "Receipt" },
-        { id: 4, name: "Purchase Credit Memo" },
-        { id: 5, name: "Sales Credit Memo" },
-        { id: 6, name: "Journal Voucher" },
+        { id: 0, name: 'Payment Voucher' },
+        { id: 1, name: 'Purchase Invoice' },
+        { id: 2, name: 'Sales Invoice' },
+        { id: 3, name: 'Receipt' },
+        { id: 4, name: 'Purchase Credit Memo' },
+        { id: 5, name: 'Sales Credit Memo' },
+        { id: 6, name: 'Journal Voucher' },
       ],
     },
     {
-      name: "documentNo",
-      label: "Document No",
-      type: "text",
+      name: 'documentNo',
+      label: 'Document No',
+      type: 'text',
 
       disabled: true,
     },
     {
-      name: "externalDocumentNo",
-      label: "External Document No",
-      type: "text",
+      name: 'externalDocumentNo',
+      label: 'External Document No',
+      type: 'text',
     },
     {
-      name: "postingDate",
-      label: "Posting Date",
-      type: "date",
+      name: 'postingDate',
+      label: 'Posting Date',
+      type: 'date',
       required: true,
     },
     {
-      name: "vatDate",
-      label: "VAT Date",
-      type: "date",
+      name: 'vatDate',
+      label: 'VAT Date',
+      type: 'date',
       required: true,
     },
 
     {
-      name: "currency",
-      label: "Currency",
-      type: "select",
+      name: 'currency',
+      label: 'Currency',
+      type: 'select',
       options: [
         {
-          id: "usd",
-          name: "USD",
+          id: 'usd',
+          name: 'USD',
         },
         {
-          id: "kes",
-          name: "KES",
+          id: 'kes',
+          name: 'KES',
         },
         {
-          id: "eur",
-          name: "EUR",
+          id: 'eur',
+          name: 'EUR',
         },
       ],
     },
     {
-      name: "amount",
-      label: "Amount",
-      type: "amount",
+      name: 'amount',
+      label: 'Amount',
+      type: 'amount',
       disabled: true,
     },
     {
-      name: "isPosted",
-      label: "Is Posted",
-      type: "switch",
+      name: 'isPosted',
+      label: 'Is Posted',
+      type: 'switch',
     },
   ];
 
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   const handleSelectionChange = (selectedRows) => {
-    console.log("Selected rows in ParentComponent:", selectedRows);
+    console.log('Selected rows in ParentComponent:', selectedRows);
     setSelectedRows(selectedRows);
   };
 
@@ -244,8 +244,8 @@ const GeneralJournals = () => {
         fullWidth
         maxWidth="sm"
         sx={{
-          padding: "20px",
-          maxHeight: "90vh",
+          padding: '20px',
+          maxHeight: '90vh',
         }}
       >
         <PostGL

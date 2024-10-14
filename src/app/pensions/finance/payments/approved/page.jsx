@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <Payments status={0} />
+      <Payments status={2} />
     </div>
   );
 }
