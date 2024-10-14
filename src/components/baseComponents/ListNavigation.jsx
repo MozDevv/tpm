@@ -41,7 +41,13 @@ import workflowsEndpoints, {
 } from '../services/workflowsApi';
 import { name } from 'dayjs/locale/en-au';
 
-const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
+const ListNavigation = ({
+  handlers,
+  status,
+  openBaseCard,
+  clickedItem,
+  selectedRows,
+}) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
@@ -273,8 +279,23 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
       name: 'Schedule Payment Voucher',
       icon: ScheduleSend,
       action: 'schedulePaymentVoucher',
+      disabled:
+        Array.isArray(selectedRows) &&
+        selectedRows.length > 0 &&
+        selectedRows.some((row) => row.isPosted === false),
       requiredPermissions: [],
     },
+    {
+      name: 'Post Payment to Ledger',
+      icon: CheckCircleOutline,
+      action: 'postPaymentToLedger',
+      disabled:
+        Array.isArray(selectedRows) &&
+        selectedRows.length > 0 &&
+        selectedRows.some((row) => row.isPosted === true),
+      requiredPermissions: [],
+    },
+
     {
       name: 'Post Payment Voucher',
       icon: CheckCircle,
@@ -363,19 +384,22 @@ const ListNavigation = ({ handlers, status, openBaseCard, clickedItem }) => {
             handlers[button.action]();
           }}
           sx={{ mb: -1, maxHeight: '25px' }}
-          disabled={button.requiredPermissions.some(
-            (permission) => !permissions?.includes(permission)
-          )}
+          disabled={
+            button.requiredPermissions.some(
+              (permission) => !permissions?.includes(permission)
+            ) || button.disabled
+          }
           startIcon={
             <button.icon
               sx={{
                 fontSize: '20px',
                 mr: '2px',
-                color: button.requiredPermissions.some(
-                  (permission) => !permissions?.includes(permission)
-                )
-                  ? 'gray'
-                  : 'primary',
+                color:
+                  button.requiredPermissions.some(
+                    (permission) => !permissions?.includes(permission)
+                  ) || button.disabled
+                    ? 'gray'
+                    : 'primary',
               }}
               color="primary"
             />

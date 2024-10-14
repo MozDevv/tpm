@@ -120,6 +120,19 @@ const Payments = ({ status }) => {
       headerName: 'Is Posted',
       field: 'isPosted',
       flex: 1,
+      cellRenderer: (params) => {
+        if (params.value === null || params.value === false) {
+          return 'No';
+        } else if (params.value === true) {
+          return 'Yes';
+        }
+        return 'No'; // Default case
+      },
+      cellStyle: (params) => ({
+        color: params.value ? 'red' : 'green',
+        fontWeight: 'semi-bold',
+        paddingLeft: '50px',
+      }),
     },
     {
       headerName: 'Posting Date',
@@ -152,6 +165,7 @@ const Payments = ({ status }) => {
 
   const [openPostToGL, setOpenPostToGL] = React.useState(false);
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [isSchedule, setIsSchedule] = React.useState(false);
   const [openPV, setOpenPV] = React.useState(false);
   const handlers = {
     create: () => {
@@ -175,7 +189,12 @@ const Payments = ({ status }) => {
       },
     }),
     ...(status === 2 && {
+      postPaymentToLedger: () => {
+        setOpenPV(true);
+        console.log('Post Payment');
+      },
       schedulePaymentVoucher: () => {
+        setIsSchedule(true);
         setOpenPV(true);
         console.log('Schedule Payment');
       },
@@ -222,6 +241,10 @@ const Payments = ({ status }) => {
       },
     }),
     ...(status === 2 && {
+      postPaymentToLedger: () => {
+        setOpenPV(true);
+        console.log('Post Payment');
+      },
       schedulePaymentVoucher: () => {
         setOpenPV(true);
         console.log('Schedule Payment');
@@ -317,7 +340,10 @@ const Payments = ({ status }) => {
     <div className="">
       <Dialog
         open={openPV && selectedRows.length > 0}
-        onClose={() => setOpenPV(false)}
+        onClose={() => {
+          setOpenPV(false);
+          setIsSchedule(false);
+        }}
         fullWidth
         maxWidth="sm"
         sx={{
@@ -326,6 +352,7 @@ const Payments = ({ status }) => {
         }}
       >
         <PVActions
+          isSchedule={isSchedule}
           status={status}
           clickedItem={clickedItem}
           setOpenBaseCard={setOpenBaseCard}

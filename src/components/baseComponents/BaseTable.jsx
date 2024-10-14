@@ -146,9 +146,12 @@ const BaseTable = ({
     fetchData();
   };
 
+  const [selectedRows, setSelectedRows] = useState([]);
+
   const onSelectionChanged = (event) => {
     const selectedNodes = event.api.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
+    setSelectedRows(selectedData);
 
     if (onSelectionChange) {
       onSelectionChange(selectedData);
@@ -229,6 +232,7 @@ const BaseTable = ({
           <div className="w-[80vw]">
             <ListNavigation
               handlers={!isSecondaryTable ? adjustedHandlers : handlers}
+              selectedRows={selectedRows}
             />
           </div>
         </Box>

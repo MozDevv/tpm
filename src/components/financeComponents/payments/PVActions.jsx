@@ -28,23 +28,9 @@ function PVActions({
   setOpenPostGL,
   setOpenBaseCard,
   clickedItem,
+  isSchedule,
   status,
 }) {
-  const getDocumentName = (documentType) => {
-    const options = [
-      { id: 0, name: 'Payment Voucher' },
-      { id: 1, name: 'Purchase Invoice' },
-      { id: 2, name: 'Sales Invoice' },
-      { id: 3, name: 'Receipt' },
-      { id: 4, name: 'Purchase Credit Memo' },
-      { id: 5, name: 'Sales Credit Memo' },
-      { id: 6, name: 'Journal Voucher' },
-    ];
-
-    const selectedOption = options.find((option) => documentType === option.id);
-    return selectedOption ? selectedOption.name : '';
-  };
-
   const [errors, setErrors] = React.useState({
     status: false,
     message: '',
@@ -66,15 +52,90 @@ function PVActions({
       let errorMessage;
       let requestData;
 
-      // Determine endpoint and request data based on status
       if (status === 2) {
-        // Special case for scheduling (case 2)
-        endpoint = financeEndpoints.createPaymentSchedule;
-        successMessage = 'Payment Vouchers scheduled successfully';
-        errorMessage = 'Failed to schedule Payment Vouchers';
-        requestData = {
-          payments: selectedIds.map((item) => ({ paymentsId: item.id })),
-        };
+        if (isSchedule) {
+          console.log('isSchedule >>', isSchedule);
+          // Case for scheduling
+          endpoint = financeEndpoints.createPaymentSchedule;
+          successMessage = 'Payment Vouchers scheduled successfully';
+          errorMessage = 'Failed to schedule Payment Vouchers';
+          requestData = {
+            payments: selectedIds.map((item) => ({ paymentsId: item.id })),
+          };
+
+          // Make the API call for scheduling
+          const res = await apiService.post(endpoint, requestData);
+
+          if (res && res.data && res.data.succeeded && res.status === 200) {
+            setSelectedRows([]);
+            setOpenPostGL(false);
+            setOpenBaseCard && setOpenBaseCard(false);
+            message.success(successMessage);
+          } else if (
+            res &&
+            res.data &&
+            res.data.messages.length > 0 &&
+            !res.data.succeeded
+          ) {
+            setErrors({
+              status: true,
+              message: res.data.messages[0],
+            });
+            message.error(truncateMessage(res.data.messages[0], 100));
+          } else {
+            message.error(errorMessage);
+          }
+        } else {
+          // Case for posting payment to ledger
+          endpoint = financeEndpoints.postClaimPitoLegder;
+          successMessage = 'Payment Voucher(s) posted to ledger successfully';
+          errorMessage = 'Failed to post Payment Voucher(s) to ledger';
+          // Loop through selected IDs since each request requires individual ClaimId
+          const processRequests = selectedIds.map(async ({ id }) => {
+            requestData = {
+              ClaimId: id,
+            };
+            const res = await apiService.post(endpoint, requestData);
+
+            if (res && res.data && res.data.succeeded && res.status === 200) {
+              return { success: true, id };
+            } else if (
+              res &&
+              res.data &&
+              res.data.messages.length > 0 &&
+              !res.data.succeeded
+            ) {
+              setErrors({
+                status: true,
+                message: res.data.messages[0],
+              });
+              message.error(truncateMessage(res.data.messages[0], 100));
+              return { success: false, id };
+            } else {
+              message.error(errorMessage);
+              return { success: false, id };
+            }
+          });
+
+          // Execute all individual requests concurrently
+          const results = await Promise.all(processRequests);
+          const allSucceeded = results.every(
+            (result) => result && result.success
+          );
+
+          if (allSucceeded) {
+            setSelectedRows([]);
+            setOpenPostGL(false);
+            setOpenBaseCard && setOpenBaseCard(false);
+            message.success(successMessage);
+          } else {
+            message.error(
+              'Some actions failed, please check the details above.'
+            );
+          }
+
+          return; // Exit the function after processing case 2 actions
+        }
       } else {
         const processRequests = selectedIds.map(async ({ id }) => {
           switch (status) {
@@ -102,11 +163,13 @@ function PVActions({
           // Make API call for each ID
           const res = await apiService.post(endpoint);
 
-          if (res.data.succeeded && res.status === 200) {
+          if (res && res.data && res.data.succeeded && res.status === 200) {
             return { success: true, id };
           } else if (
+            res &&
+            res.data &&
             res.data.messages.length > 0 &&
-            res.data.succeeded === false
+            !res.data.succeeded
           ) {
             setErrors({
               status: true,
@@ -122,8 +185,10 @@ function PVActions({
 
         // Execute all individual requests concurrently
         const results = await Promise.all(processRequests);
+        const allSucceeded = results.every(
+          (result) => result && result.success
+        );
 
-        const allSucceeded = results.every((result) => result.success);
         if (allSucceeded) {
           setSelectedRows([]);
           setOpenPostGL(false);
@@ -132,26 +197,6 @@ function PVActions({
         } else {
           message.error('Some actions failed, please check the details above.');
         }
-
-        return; // Exit the function here for cases 0, 1, and 3
-      }
-
-      // Special case for scheduling (case 2) - Make a single API call with the array
-      const res = await apiService.post(endpoint, requestData);
-
-      if (res.data.succeeded && res.status === 200) {
-        setSelectedRows([]);
-        setOpenPostGL(false);
-        setOpenBaseCard && setOpenBaseCard(false);
-        message.success(successMessage);
-      } else if (res.data.messages.length > 0 && res.data.succeeded === false) {
-        setErrors({
-          status: true,
-          message: res.data.messages[0],
-        });
-        message.error(truncateMessage(res.data.messages[0], 100));
-      } else {
-        message.error(errorMessage);
       }
     } catch (error) {
       console.error('Error processing action:', error);
@@ -167,10 +212,13 @@ function PVActions({
       : status === 1
       ? 'Approve'
       : status === 2
-      ? 'Schedule'
+      ? isSchedule
+        ? 'Schedule'
+        : 'Post to Ledger'
       : status === 3
       ? 'Post'
       : 'Post';
+
   return (
     <div className="p-5">
       <div className="flex  px-3 flex-col">
