@@ -53,6 +53,16 @@ function ReturnToPreclaims({
                 : 'Claim(s) has been moved to the next stage',
             severity: 'success',
           });
+        } else if (
+          response.status === 200 &&
+          response.data.succeeded === false &&
+          response.data.messages[0]
+        ) {
+          setAlert({
+            open: true,
+            message: response.data.messages[0],
+            severity: 'error',
+          });
         }
       } catch (error) {
         console.error(error.response);

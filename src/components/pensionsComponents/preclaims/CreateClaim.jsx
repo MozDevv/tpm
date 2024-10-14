@@ -1,14 +1,14 @@
-import claimsEndpoints, { apiService } from "@/components/services/claimsApi";
-import { useAlert } from "@/context/AlertContext";
-import { Button } from "@mui/material";
-import React, { useState } from "react";
+import claimsEndpoints, { apiService } from '@/components/services/claimsApi';
+import { useAlert } from '@/context/AlertContext';
+import { Button } from '@mui/material';
+import React, { useState } from 'react';
 
 function CreateClaim({
   clickedItem,
   setOpenPreclaimDialog,
   setOpenCreateClaim,
 }) {
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState('');
 
   const { alert, setAlert } = useAlert();
 
@@ -24,15 +24,31 @@ function CreateClaim({
         data
       );
       console.log(response);
-      console.log("data", data);
-      if (response.status === 200) {
+      console.log('data', data);
+      if (response.status === 200 && response.data.succeeded === true) {
         setAlert({
           open: true,
-          message: "Claim created successfully",
-          severity: "success",
+          message: 'Claim created successfully',
+          severity: 'success',
         });
         setOpenCreateClaim(false);
         setOpenPreclaimDialog(false);
+      } else if (
+        response.status === 200 &&
+        response.data.succeeded === false &&
+        response.data.messages[0]
+      ) {
+        setAlert({
+          open: true,
+          message: response.data.messages[0],
+          severity: 'error',
+        });
+      } else {
+        setAlert({
+          open: true,
+          message: 'Failed to create claim',
+          severity: 'error',
+        });
       }
     } catch (error) {
       console.error(error);
@@ -44,7 +60,7 @@ function CreateClaim({
 
   return (
     <div>
-      {" "}
+      {' '}
       <div className="p-8 h-[100%]">
         <p className="text-primary relative font-semibold text-lg mb-2">
           Create Claim
@@ -67,7 +83,7 @@ function CreateClaim({
           />
         </div>
         <div className="mt-5">
-          {" "}
+          {' '}
           <Button
             onClick={handleCreateClaim}
             variant="contained"

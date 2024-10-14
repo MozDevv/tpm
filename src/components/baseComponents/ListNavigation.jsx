@@ -426,7 +426,7 @@ const ListNavigation = ({
               key={index}
               disabled={!button.disabled}
               onClick={() => handlers[button.action]()}
-              sx={{ mb: -1, maxHeight: '25px', ml: 1 }}
+              sx={{ mb: -1, maxHeight: '23px', ml: 1 }}
               startIcon={
                 <button.icon
                   sx={{
@@ -451,7 +451,7 @@ const ListNavigation = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginTop: '15px',
+          marginTop: '12px',
           paddingRight: '20px',
           marginLeft: '10px',
         }}
