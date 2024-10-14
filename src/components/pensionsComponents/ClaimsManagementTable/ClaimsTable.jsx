@@ -1,8 +1,8 @@
-"use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+'use client';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
   Avatar,
   Typography,
@@ -16,37 +16,42 @@ import {
   Tooltip,
   Pagination,
   Dialog,
-} from "@mui/material";
+} from '@mui/material';
 import {
+  AccessTime,
   Add,
+  Cancel,
   DeleteOutlineOutlined,
   Edit,
   FilterAlt,
   FilterList,
   ForwardToInbox,
   SortByAlpha,
-} from "@mui/icons-material";
-import "./ag-theme.css";
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
+import './ag-theme.css';
 
-import { apiService } from "@/components/services/preclaimsApi";
+import { apiService } from '@/components/services/preclaimsApi';
 
-import claimsEndpoints from "@/components/services/claimsApi";
-import { useIsLoading } from "@/context/LoadingContext";
-import Spinner from "@/components/spinner/Spinner";
-import ClaimDialog from "./ClaimDialog";
-import CreateProspectivePensioner from "../preclaims/createProspective/CreateProspectivePensioner";
-import BaseCard from "@/components/baseComponents/BaseCard";
-import ListNavigation from "@/components/baseComponents/ListNavigation";
-import ReturnToPreclaims from "./ReturnToPreclaims";
-import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
+import claimsEndpoints from '@/components/services/claimsApi';
+import { useIsLoading } from '@/context/LoadingContext';
+import Spinner from '@/components/spinner/Spinner';
+import ClaimDialog from './ClaimDialog';
+import CreateProspectivePensioner from '../preclaims/createProspective/CreateProspectivePensioner';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import ListNavigation from '@/components/baseComponents/ListNavigation';
+import ReturnToPreclaims from './ReturnToPreclaims';
+import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
-    <Box sx={{ display: "flex", p: 1, alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: 'flex', p: 1, alignItems: 'center', gap: 1 }}>
       <Avatar variant="rounded" sx={{ height: 28, width: 28 }} />
       <Typography
         variant="body2"
-        sx={{ fontWeight: 600, color: "primary.main" }}
+        sx={{ fontWeight: 600, color: 'primary.main' }}
       >
         {value}
       </Typography>
@@ -55,21 +60,28 @@ const SchemaCellRenderer = ({ value }) => {
 };
 
 const notificationStatusMap = {
-  0: { name: "VERIFICATION", color: "#3498db" }, // Light Red
-  1: { name: "VALIDATION", color: "#f39c12" }, // Bright Orange
-  2: { name: "APPROVAL", color: "#2ecc71" }, // Light Blue
-  3: { name: "ASSESSMENT DATA CAPTURE", color: "#f39c12" }, // Bright Orange
-  4: { name: "ASSESSMENT APPROVAL", color: "#2ecc71" }, // Light Blue
+  0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
+  1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
+  2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
+  3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
+  4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+};
+
+const statusIcons = {
+  0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+  1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
 const colDefs = [
   {
-    headerName: "Claim No.",
-    field: "claim_id",
+    headerName: 'Claim No.',
+    field: 'claim_id',
     width: 150,
     checkboxSelection: true,
     headerCheckboxSelection: true,
-    pinned: "left",
+    pinned: 'left',
     filter: true,
     cellRenderer: (params) => {
       return (
@@ -78,21 +90,21 @@ const colDefs = [
     },
   },
   {
-    headerName: "First Name",
-    field: "first_name",
+    headerName: 'First Name',
+    field: 'first_name',
     width: 150,
 
     filter: true,
   },
 
   {
-    headerName: "Surname",
-    field: "surname",
+    headerName: 'Surname',
+    field: 'surname',
     width: 150,
   },
   {
-    headerName: "Stage",
-    field: "stage",
+    headerName: 'Stage',
+    field: 'stage',
     width: 250,
     cellRenderer: (params) => {
       const status = notificationStatusMap[params.value];
@@ -103,11 +115,11 @@ const colDefs = [
           variant="text"
           sx={{
             borderColor: status.color,
-            maxHeight: "22px",
-            cursor: "pointer",
+            maxHeight: '22px',
+            cursor: 'pointer',
             color: status.color,
-            fontSize: "10px",
-            fontWeight: "bold",
+            fontSize: '10px',
+            fontWeight: 'bold',
           }}
         >
           {status.name.toLowerCase()}
@@ -115,108 +127,141 @@ const colDefs = [
       );
     },
   },
+  {
+    headerName: 'Approval Status',
+    field: 'approval_status',
+    width: 150,
+    filter: true,
+    cellRenderer: (params) => {
+      const status = statusIcons[params.value];
+      if (!status) return null;
+
+      const IconComponent = status.icon;
+
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconComponent
+            style={{
+              color: status.color,
+              marginRight: '6px',
+              fontSize: '17px',
+            }}
+          />
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'semibold',
+              fontSize: '13px',
+            }}
+          >
+            {status.name}
+          </span>
+        </div>
+      );
+    },
+  },
 
   {
-    headerName: "Email Address",
-    field: "email_address",
+    headerName: 'Email Address',
+    field: 'email_address',
     width: 200,
     filter: true,
   },
   {
-    headerName: "Retiree ID",
-    field: "retiree",
+    headerName: 'Retiree ID',
+    field: 'retiree',
     width: 150,
     hide: true,
   },
 
   {
-    headerName: "Gender",
-    field: "gender",
+    headerName: 'Gender',
+    field: 'gender',
     width: 120,
     cellRenderer: (params) => {
-      return params.value === 1 ? "Male" : "Female";
+      return params.value === 1 ? 'Male' : 'Female';
     },
   },
   {
-    headerName: "Phone Number",
-    field: "phone_number",
+    headerName: 'Phone Number',
+    field: 'phone_number',
     width: 180,
   },
   {
-    headerName: "Personal Number",
-    field: "personal_number",
+    headerName: 'Personal Number',
+    field: 'personal_number',
     width: 180,
   },
 
   {
-    headerName: "Other Name(s)",
-    field: "other_name",
+    headerName: 'Other Name(s)',
+    field: 'other_name',
     width: 150,
   },
 
   {
-    headerName: "National ID",
-    field: "national_id",
+    headerName: 'National ID',
+    field: 'national_id',
     width: 150,
   },
   {
-    headerName: "KRA PIN",
-    field: "kra_pin",
+    headerName: 'KRA PIN',
+    field: 'kra_pin',
     width: 150,
   },
   {
-    headerName: "Retirement Date",
-    field: "retirement_date",
+    headerName: 'Retirement Date',
+    field: 'retirement_date',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Date of Birth",
-    field: "dob",
+    headerName: 'Date of Birth',
+    field: 'dob',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Date of Confirmation",
-    field: "date_of_confirmation",
+    headerName: 'Date of Confirmation',
+    field: 'date_of_confirmation',
     width: 200,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Last Basic Salary Amount",
-    field: "last_basic_salary_amount",
+    headerName: 'Last Basic Salary Amount',
+    field: 'last_basic_salary_amount',
     width: 200,
   },
   {
-    headerName: "MDA Code",
-    field: "mda_code",
+    headerName: 'MDA Code',
+    field: 'mda_code',
     width: 150,
   },
   {
-    headerName: "MDA Description",
-    field: "mda_description",
+    headerName: 'MDA Description',
+    field: 'mda_description',
     width: 200,
   },
   {
-    headerName: "MDA Pension Cap Code",
-    field: "mda_pensionCap_code",
+    headerName: 'MDA Pension Cap Code',
+    field: 'mda_pensionCap_code',
     width: 200,
   },
   {
-    headerName: "MDA Pension Cap Name",
-    field: "mda_pensionCap_name",
+    headerName: 'MDA Pension Cap Name',
+    field: 'mda_pensionCap_name',
     width: 200,
   },
 
   {
-    headerName: "Comments",
-    field: "comments",
+    headerName: 'Comments',
+    field: 'comments',
     width: 150,
   },
 ];
@@ -261,16 +306,16 @@ const ClaimsTable = ({ status }) => {
     const filters =
       status !== null && status !== undefined
         ? {
-            "filterCriterion.criterions[0].propertyName": "stage",
-            "filterCriterion.criterions[0].propertyValue": status,
-            "filterCriterion.criterions[0].criterionType": 0,
+            'filterCriterion.criterions[0].propertyName': 'stage',
+            'filterCriterion.criterions[0].propertyValue': status,
+            'filterCriterion.criterions[0].criterionType': 0,
           }
         : {};
     setLoading(true);
     try {
       const res = await apiService.get(claimsEndpoints.getClaims, {
-        "paging.pageNumber": pageNumber,
-        "paging.pageSize": pageSize,
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': pageSize,
         ...filters,
       });
       const rawData = res.data.data;
@@ -331,6 +376,7 @@ const ClaimsTable = ({ status }) => {
           item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
         pensionAward_pensionCap_id:
           item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
+        approval_status: item?.document_status,
 
         //////
 
@@ -357,9 +403,9 @@ const ClaimsTable = ({ status }) => {
       }));
 
       setRowData(mappedData);
-      console.log("mappedData", mappedData);
+      console.log('mappedData', mappedData);
     } catch (error) {
-      console.error("Error fetching preclaims:", error);
+      console.error('Error fetching preclaims:', error);
       return []; // Return an empty array or handle error as needed
     } finally {
       setLoading(false);
@@ -373,7 +419,7 @@ const ClaimsTable = ({ status }) => {
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
 
-    console.log("Selected Rows:", selectedData);
+    console.log('Selected Rows:', selectedData);
   };
   const handlePageChange = (event, newPage) => {
     setPageNumber(newPage);
@@ -394,7 +440,7 @@ const ClaimsTable = ({ status }) => {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
 
-    reports: () => console.log("Reports clicked"),
+    reports: () => console.log('Reports clicked'),
 
     movetoValidation: () => {
       setOpenAction(0);
@@ -431,10 +477,12 @@ const ClaimsTable = ({ status }) => {
     },
   };
 
+  const [openApprove, setOpenApprove] = useState(0);
+
   const baseCardHandlers = {
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
 
     // submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
@@ -447,18 +495,33 @@ const ClaimsTable = ({ status }) => {
 
     returnToClaimsApprovals: () => setOpenAction(1),
     moveToAssessmentApproval: () => setOpenAction(0),
+
+    approvalRequest: () => console.log('Approval Request clicked'),
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => {
+      setOpenApprove(5);
+    },
   };
 
   useEffect(() => {
     fetchAllPreclaims();
   }, [openPreclaimDialog]);
   const loadingOverlayComponentParams = useMemo(() => {
-    return { loadingMessage: "Loading NOT..." };
+    return { loadingMessage: 'Loading NOT...' };
   }, []);
 
   return (
     <>
       <div className=" relative h-full w-full overflow-hidden">
+        <BaseApprovalCard
+          clickedItem={clickedItem}
+          openApprove={openApprove}
+          setOpenApprove={setOpenApprove}
+          documentNo={clickedItem?.claim_id}
+        />
         <ClaimDialog
           clickedItem={clickedItem}
           setOpenPreclaimDialog={setOpenPreclaimDialog}
@@ -470,9 +533,9 @@ const ClaimsTable = ({ status }) => {
           open={openMoveStatus && selectedRows.length > 0}
           onClose={() => setOpenMoveStatus(false)}
           sx={{
-            "& .MuiDialog-paper": {
-              height: "300px",
-              width: "600px",
+            '& .MuiDialog-paper': {
+              height: '300px',
+              width: '600px',
             },
             p: 4,
           }}
@@ -491,7 +554,7 @@ const ClaimsTable = ({ status }) => {
           openBaseCard={openPreclaimDialog}
           setOpenBaseCard={setOpenPreclaimDialog}
           handlers={baseCardHandlers}
-          title={clickedItem ? clickedItem?.claim_id : "Create Claim"}
+          title={clickedItem ? clickedItem?.claim_id : 'Create Claim'}
           clickedItem={clickedItem}
           status={clickedItem?.stage}
           // openAction={openAction}
@@ -504,11 +567,11 @@ const ClaimsTable = ({ status }) => {
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[
-            "Verification",
-            "Validation",
-            "Approval",
-            "Assessment Data Capture",
-            "Assessment Approval",
+            'Verification',
+            'Validation',
+            'Approval',
+            'Assessment Data Capture',
+            'Assessment Approval',
           ]}
         >
           <CreateProspectivePensioner
@@ -558,11 +621,11 @@ const ClaimsTable = ({ status }) => {
             <Collapse
               in={openFilter}
               sx={{
-                bgcolor: "white",
+                bgcolor: 'white',
                 mt: 2,
-                borderRadius: "10px",
-                color: "black",
-                borderRadius: "10px",
+                borderRadius: '10px',
+                color: 'black',
+                borderRadius: '10px',
               }}
               timeout="auto"
               unmountOnExit
@@ -593,12 +656,12 @@ const ClaimsTable = ({ status }) => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                   anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
+                    vertical: 'bottom',
+                    horizontal: 'right',
                   }}
                   transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
+                    vertical: 'top',
+                    horizontal: 'right',
                   }}
                 >
                   <MenuItem>Equal</MenuItem>
@@ -628,7 +691,7 @@ const ClaimsTable = ({ status }) => {
                     Sort By:
                   </label>
                   <div className="flex items-center ">
-                    {" "}
+                    {' '}
                     <select
                       name="role"
                       //value={selectedRole}
@@ -644,13 +707,13 @@ const ClaimsTable = ({ status }) => {
                     <Tooltip
                       title={
                         sortCriteria === 1
-                          ? "Ascending Order"
-                          : "Desceding Order"
+                          ? 'Ascending Order'
+                          : 'Desceding Order'
                       }
                       placement="top"
                     >
                       <IconButton
-                        sx={{ mr: "-10px", ml: "-4px" }}
+                        sx={{ mr: '-10px', ml: '-4px' }}
                         onClick={() => {
                           setSortCriteria(sortCriteria === 1 ? 2 : 1);
                         }}
@@ -663,7 +726,7 @@ const ClaimsTable = ({ status }) => {
               </div>
               <Button
                 variant="contained"
-                sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
+                sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
               >
                 Apply Filters
               </Button>
@@ -671,9 +734,9 @@ const ClaimsTable = ({ status }) => {
             <div
               className="ag-theme-quartz flex flex-col"
               style={{
-                padding: "20px",
-                marginLeft: "-10px",
-                width: openFilter ? "calc(100vw - 300px)" : "100vw",
+                padding: '20px',
+                marginLeft: '-10px',
+                width: openFilter ? 'calc(100vw - 300px)' : '100vw',
               }}
             >
               <AgGridReact
@@ -690,13 +753,13 @@ const ClaimsTable = ({ status }) => {
                   setClickedItem(event.data); // Update selected item
                   setOpenPreclaimDialog(true); // Open dialog
                 }}
-              />{" "}
+              />{' '}
               {totalPages > 1 && (
                 <Box
                   sx={{
-                    mt: "50px",
-                    display: "flex",
-                    justifyContent: "center",
+                    mt: '50px',
+                    display: 'flex',
+                    justifyContent: 'center',
                   }}
                 >
                   <Pagination

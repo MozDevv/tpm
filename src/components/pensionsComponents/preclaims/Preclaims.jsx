@@ -17,7 +17,11 @@ import {
   Pagination,
 } from '@mui/material';
 import {
+  AccessTime,
+  AccessTimeOutlined,
   Add,
+  Cancel,
+  CancelOutlined,
   Close,
   Delete,
   DeleteOutlineOutlined,
@@ -27,8 +31,14 @@ import {
   FilterAltOutlined,
   FilterList,
   ForwardToInbox,
+  Launch,
+  LaunchOutlined,
   Send,
   SortByAlpha,
+  TaskAlt,
+  TaskAltOutlined,
+  Verified,
+  Visibility,
 } from '@mui/icons-material';
 import './ag-theme.css';
 import CreatePreclaim from './CreatePreclaim';
@@ -77,6 +87,13 @@ export const notificationStatusMap = {
   5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
   6: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
   7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
+};
+
+const statusIcons = {
+  0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+  1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
 export const colDefs = [
@@ -147,6 +164,39 @@ export const colDefs = [
         >
           {status.name.toLowerCase()}
         </Button>
+      );
+    },
+  },
+  {
+    headerName: 'Approval Status',
+    field: 'approval_status',
+    width: 150,
+    filter: true,
+    cellRenderer: (params) => {
+      const status = statusIcons[params.value];
+      if (!status) return null;
+
+      const IconComponent = status.icon;
+
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconComponent
+            style={{
+              color: status.color,
+              marginRight: '6px',
+              fontSize: '17px',
+            }}
+          />
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'semibold',
+              fontSize: '13px',
+            }}
+          >
+            {status.name}
+          </span>
+        </div>
       );
     },
   },
@@ -346,6 +396,7 @@ export const mapRowData = (items) =>
       pension_commencement_date: item?.pension_commencement_date,
       postal_address: item?.postal_address,
       id: item.id,
+      approval_status: item.status,
 
       bank_name: item.bankDetails[0]?.bankBranch?.bank?.name,
       branch_name: item.bankDetails[0]?.bankBranch?.name,

@@ -1,8 +1,8 @@
-import claimsEndpoints, { apiService } from "@/components/services/claimsApi";
-import preClaimsEndpoints from "@/components/services/preclaimsApi";
-import { useAlert } from "@/context/AlertContext";
-import { Button, TextareaAutosize } from "@mui/material";
-import React, { useState } from "react";
+import claimsEndpoints, { apiService } from '@/components/services/claimsApi';
+import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import { useAlert } from '@/context/AlertContext';
+import { Button, TextareaAutosize } from '@mui/material';
+import React, { useState } from 'react';
 
 function ReturnToPreclaims({
   clickedItem,
@@ -13,11 +13,11 @@ function ReturnToPreclaims({
   setSelectedRows,
   fetchAllPreclaims,
 }) {
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState('');
   const { alert, setAlert } = useAlert();
   const [errors, setErrors] = useState({
     status: false,
-    message: "",
+    message: '',
   });
 
   const handleCreateClaim = async () => {
@@ -25,7 +25,7 @@ function ReturnToPreclaims({
     if (!comments || comments.length < 20) {
       setErrors({
         status: true,
-        message: "Comments must be at least 20 characters",
+        message: 'Comments must be at least 20 characters',
       });
       return;
     }
@@ -43,15 +43,15 @@ function ReturnToPreclaims({
           claimsEndpoints.moveClaimStatus,
           data
         );
-        console.log("Response:", response);
-        if (response.status === 200) {
+        console.log('Response:', response);
+        if (response.status === 200 && response.data.succeeded === true) {
           setAlert({
             open: true,
             message:
               moveStatus === 1
-                ? "Claim(s) has been returned Successfully"
-                : "Claim(s) has been moved to the next stage",
-            severity: "success",
+                ? 'Claim(s) has been returned Successfully'
+                : 'Claim(s) has been moved to the next stage',
+            severity: 'success',
           });
         }
       } catch (error) {
@@ -72,7 +72,7 @@ function ReturnToPreclaims({
       setOpenCreateClaim(false);
       setOpenPreclaimDialog(false);
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error('An error occurred:', error);
     } finally {
       setOpenCreateClaim(false);
       setSelectedRows && setSelectedRows([]); // Reset selected rows if applicable
@@ -85,22 +85,22 @@ function ReturnToPreclaims({
 
   const title =
     itemToCheck?.stage === 0 && moveStatus === 1
-      ? "Return Claim(s) to MDA"
+      ? 'Return Claim(s) to MDA'
       : itemToCheck?.stage === 0 && moveStatus === 0
-      ? "Move Claim(s) to Validation"
+      ? 'Move Claim(s) to Validation'
       : itemToCheck?.stage === 1 && moveStatus === 1
-      ? "Return to Verification"
+      ? 'Return to Verification'
       : itemToCheck?.stage === 1 && moveStatus === 0
-      ? "Move to Approval"
+      ? 'Move to Approval'
       : itemToCheck?.stage === 2 && moveStatus === 0
-      ? "Move to Assessment"
+      ? 'Move to Assessment'
       : itemToCheck?.stage === 2 && moveStatus === 1
-      ? "Return to Validation"
+      ? 'Return to Validation'
       : itemToCheck?.stage === 3 && moveStatus === 0
-      ? "Move to Assessment Approval"
+      ? 'Move to Assessment Approval'
       : itemToCheck?.stage === 3 && moveStatus === 1
-      ? "Return to Claims"
-      : "Approve Claim(s)";
+      ? 'Return to Claims'
+      : 'Approve Claim(s)';
 
   return (
     <div>
@@ -123,10 +123,10 @@ function ReturnToPreclaims({
             error={errors.status}
             minRows={3}
             style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "4px",
-              border: "1px solid gray",
+              width: '100%',
+              padding: '8px',
+              borderRadius: '4px',
+              border: '1px solid gray',
             }}
           />
         </div>
