@@ -126,7 +126,6 @@ function DueForApproval() {
           useRequestBody={true}
           setOpenBaseCard={setOpenBaseCard}
         />
-        {JSON.stringify(clickedItem)}
       </BaseCard>
 
       <Card
