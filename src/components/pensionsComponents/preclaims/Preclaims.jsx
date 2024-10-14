@@ -52,6 +52,7 @@ import { useSearch } from '@/context/SearchContext';
 import { Spin } from 'antd';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import { useStatus } from '@/context/StatusContext';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -660,6 +661,8 @@ const Preclaims = ({ status }) => {
 
   const [openApprove, setOpenApprove] = useState(false);
 
+  const { workFlowChange, setWorkFlowChange } = useStatus();
+
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -688,7 +691,10 @@ const Preclaims = ({ status }) => {
     cancelApprovalRequest: () => setOpenApprove(2),
     approveDocument: () => setOpenApprove(3),
     rejectDocumentApproval: () => setOpenApprove(4),
-    delegateApproval: () => setOpenApprove(5),
+    delegateApproval: () => {
+      //setOpenApprove(5);
+      setWorkFlowChange(Date.now());
+    },
   };
 
   const title = clickedItem

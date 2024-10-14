@@ -10,6 +10,7 @@ import {
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
+import { useStatus } from '@/context/StatusContext';
 
 // Define a mapping of statuses to icon paths
 const statusIcons = {
@@ -24,7 +25,8 @@ const statusIcons = {
 function BaseWorkFlow({ steps, activeStep, clickedItem }) {
   const [currentStatus, setCurrentStatus] = useState(null);
 
-  const getDocumentStatus = async (documentId) => {
+  const getDocumentStatus = async () => {
+    const documentId = clickedItem.no_series;
     try {
       const res = await workflowsApiService.post(
         workflowsEndpoints.getDocumentStatus,
@@ -32,16 +34,24 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
           documentNo: documentId,
         }
       );
+      console.log(
+        res.data.data,
+        'Workflow status for document now is here ****************************'
+      );
       setCurrentStatus(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const { workFlowChange, setWorkFlowChange } = useStatus();
   useEffect(() => {
-    getDocumentStatus(clickedItem.no_series);
+    getDocumentStatus();
   }, [clickedItem]);
 
+  useEffect(() => {
+    getDocumentStatus();
+  }, [workFlowChange, setWorkFlowChange]);
   return (
     <Box p={1} sx={{ width: '100%' }}>
       <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5">
