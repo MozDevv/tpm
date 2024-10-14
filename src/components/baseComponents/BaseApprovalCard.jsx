@@ -42,6 +42,7 @@ function BaseApprovalCard({
       1: 'userId',
       2: 'senderId',
       3: 'approverId',
+      5: 'approverId',
     };
 
     const fieldName = fieldMapping[openApprove] || 'userId';

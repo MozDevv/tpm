@@ -78,11 +78,13 @@ function DueForApproval() {
   const [clickedItem, setClickedItem] = React.useState(null);
   const baseCardHandlers = {
     approvalRequest: () => console.log('Approval Request clicked'),
-
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
     approveDocument: () => setOpenApprove(3),
     rejectDocumentApproval: () => setOpenApprove(4),
     delegateApproval: () => {
       setOpenApprove(5);
+      setWorkFlowChange(Date.now());
     },
   };
   useEffect(() => {
@@ -124,6 +126,7 @@ function DueForApproval() {
           useRequestBody={true}
           setOpenBaseCard={setOpenBaseCard}
         />
+        {JSON.stringify(clickedItem)}
       </BaseCard>
 
       <Card
@@ -154,68 +157,71 @@ function DueForApproval() {
             </Button>
           </div>
         </Box>
-        <List>
-          {Array.isArray(rowData) && rowData.length > 0 ? (
-            <>
-              {' '}
-              {rowData.map((item) => (
-                <ListItem key={item.documentNo} sx={{ alignItems: 'center' }}>
-                  <ListItemAvatar>
-                    <ArticleOutlined
-                      sx={{ height: '25px', width: '25px', color: '#C0C0C0' }}
+        <div className="h-[380px] overflow-y-auto ">
+          {' '}
+          <List sx={{}}>
+            {Array.isArray(rowData) && rowData.length > 0 ? (
+              <>
+                {' '}
+                {rowData.map((item) => (
+                  <ListItem key={item.documentNo} sx={{ alignItems: 'center' }}>
+                    <ListItemAvatar>
+                      <ArticleOutlined
+                        sx={{ height: '25px', width: '25px', color: '#C0C0C0' }}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      sx={{
+                        fontSize: '12px',
+                        color: '#006990',
+                        ml: '-20px',
+                      }}
+                      primary={
+                        <Typography
+                          sx={{
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          {item.documentNo}
+                        </Typography>
+                      }
                     />
-                  </ListItemAvatar>
-                  <ListItemText
-                    sx={{
-                      fontSize: '12px',
-                      color: '#006990',
-                      ml: '-20px',
-                    }}
-                    primary={
-                      <Typography
-                        sx={{
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          textDecoration: 'underline',
-                        }}
-                      >
-                        {item.documentNo}
-                      </Typography>
-                    }
-                  />
-                  <ListItemText
-                    sx={{ fontSize: '12px', color: 'gray', ml: '3px' }}
-                    primary={
-                      <Typography sx={{ fontSize: '13px' }}>
-                        {new Date(item.dateSent).toLocaleDateString()}
-                      </Typography>
-                    }
-                  />
+                    <ListItemText
+                      sx={{ fontSize: '12px', color: 'gray', ml: '3px' }}
+                      primary={
+                        <Typography sx={{ fontSize: '13px' }}>
+                          {new Date(item.dateSent).toLocaleDateString()}
+                        </Typography>
+                      }
+                    />
 
-                  <Button
-                    variant="contained"
-                    sx={{
-                      marginLeft: 1,
-                      maxHeight: '20px',
-                      textTransform: 'none',
-                      fontSize: '12px',
-                    }}
-                    onClick={() => {
-                      setOpenBaseCard(true);
-                      setClickedItem(item);
-                    }}
-                  >
-                    view
-                  </Button>
-                </ListItem>
-              ))}
-            </>
-          ) : (
-            <div className="mt-20">
-              <Empty description="" />
-            </div>
-          )}
-        </List>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        marginLeft: 1,
+                        maxHeight: '20px',
+                        textTransform: 'none',
+                        fontSize: '12px',
+                      }}
+                      onClick={() => {
+                        setOpenBaseCard(true);
+                        setClickedItem(item);
+                      }}
+                    >
+                      view
+                    </Button>
+                  </ListItem>
+                ))}
+              </>
+            ) : (
+              <div className="mt-20">
+                <Empty description="" />
+              </div>
+            )}
+          </List>
+        </div>
       </Card>
     </div>
   );

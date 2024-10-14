@@ -63,9 +63,14 @@ const ListNavigation = ({
     const data = {
       userId: userId,
 
-      // TODO - uncomment this line when the API is ready
-      //documentNo: clickedItem?.no_series,
-      documentNo: 'TEST00001',
+      //TODO - uncomment this line when the API is ready
+      documentNo: clickedItem?.no_series
+        ? clickedItem?.no_series
+        : clickedItem?.documentNo
+        ? clickedItem?.documentNo
+        : clickedItem?.document_no
+        ? clickedItem?.document_no
+        : 'TEST00001',
     };
     try {
       const res = await workflowsApiService.post(
@@ -317,7 +322,7 @@ const ListNavigation = ({
     {
       name: 'Send For Approval',
       action: 'sendApprovalRequest',
-      disabled: approvalActions?.sendApprovalRequest,
+      disabled: approvalActions?.sendForApproval,
 
       icon: IosShare,
     },
@@ -419,7 +424,7 @@ const ListNavigation = ({
           {approvalButtons.map((button, index) => (
             <Button
               key={index}
-              disabled={button.disabled}
+              disabled={!button.disabled}
               onClick={() => handlers[button.action]()}
               sx={{ mb: -1, maxHeight: '25px', ml: 1 }}
               startIcon={
@@ -427,7 +432,7 @@ const ListNavigation = ({
                   sx={{
                     fontSize: '20px',
                     mr: '-3px',
-                    color: button.disabled ? 'gray' : 'primary',
+                    color: !button.disabled ? 'gray' : 'primary',
                   }}
                 />
               }
