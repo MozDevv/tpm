@@ -1,19 +1,31 @@
 /* eslint-disable no-useless-catch */
-"use client";
-import { create } from "@mui/material/styles/createTransitions";
-import axios from "axios";
+'use client';
+import { create } from '@mui/material/styles/createTransitions';
+import axios from 'axios';
 
-import { BASE_CORE_API } from "@/utils/constants";
-import { Update } from "@mui/icons-material";
+import { BASE_CORE_API } from '@/utils/constants';
+import { Update } from '@mui/icons-material';
 
 export const API_BASE_URL = `${BASE_CORE_API}`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 const assessEndpoints = {
-  getAssessmentClaims: "/api/Assessment/getclaims",
+  getAssessmentClaims: '/api/Assessment/getclaims',
   calculateAndAward: (id) => `/api/Assessment/CalculateAndAward?claim_id=${id}`,
   getClaimQualyfyingService: (id) =>
     `/api/Assessment/GetClaimQualifyingService?claim_id=${id}`,

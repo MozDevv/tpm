@@ -1,10 +1,10 @@
 /* eslint-disable no-useless-catch */
-"use client";
-import { create } from "@mui/material/styles/createTransitions";
-import axios from "axios";
+'use client';
+import { create } from '@mui/material/styles/createTransitions';
+import axios from 'axios';
 
-import { BASE_CORE_API } from "@/utils/constants";
-import { Update } from "@mui/icons-material";
+import { BASE_CORE_API } from '@/utils/constants';
+import { Update } from '@mui/icons-material';
 
 export const API_BASE_URL = `${BASE_CORE_API}`;
 
@@ -12,55 +12,69 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-const preClaimsEndpoints = {
-  createPreclaim: "/api/ProspectivePensioners/CreateProspectivePensioner",
+// Axios interceptor to set the Authorization header for every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-  getPreclaims: "/api/ProspectivePensioners/getProspectivePensioners",
+const preClaimsEndpoints = {
+  createPreclaim: '/api/ProspectivePensioners/CreateProspectivePensioner',
+
+  getPreclaims: '/api/ProspectivePensioners/getProspectivePensioners',
 
   getProspectivePensioner: (id) =>
     `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
 
   sendNotifications:
-    "/api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule",
+    '/api/ProspectivePensioners/CreateProspectivePensionerNotificationSchedule',
 
   //Work History
 
-  createWorkHistory: "/api/ProspectivePensioners/CreateWorkHistory",
+  createWorkHistory: '/api/ProspectivePensioners/CreateWorkHistory',
 
-  submitForApproval: "/api/ProspectivePensioners/SendPreClaimForApproval",
+  submitForApproval: '/api/ProspectivePensioners/SendPreClaimForApproval',
 
   //workHistory
   getPostandNatureofSalaries: (id) =>
     `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
   createPostAndNatureOfService:
-    "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary",
+    '/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalary',
   getPensionableSalary: (id) =>
     `/api/ProspectivePensioners/GetProspectivePensionerPensionableSalary/?prospective_pensioner_id=${id}`,
   createPensionableSalary:
-    "/api/ProspectivePensioners/CreateProspectivePensionerPensionableSalary",
+    '/api/ProspectivePensioners/CreateProspectivePensionerPensionableSalary',
   getPeriodsOfAbsence: (id) =>
     `/api/ProspectivePensioners/GetProspectivePensionerPeriodsOfAbsenceWithoutSalary/?prospective_pensioner_id=${id}`,
 
   createPeriodsOfAbsence:
-    "api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
+    'api/ProspectivePensioners/CreateProspectivePensionerPeriodsOfAbsenceWithoutSalary',
 
   deletePostAndNature: (id) =>
     `/api/ProspectivePensioners/DeleteProspectivePensionerPostAndNatureofSalary?id=${id}`,
 
   updatePostAndNature:
-    "api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalary",
+    'api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalary',
 
   deletePensionableSalary: (id) =>
     `/api/ProspectivePensioners/DeleteProspectivePensionerPensionableSalary?id=${id}`,
 
   updatePensionableSalary:
-    "/api/ProspectivePensioners/UpdateProspectivePensionerPensionableSalary",
+    '/api/ProspectivePensioners/UpdateProspectivePensionerPensionableSalary',
 
   deletePeriodsOfAbsence: (id) =>
     `api/ProspectivePensioners/DeleteProspectivePensionerPeriodsOfAbsenceWithoutSalary/?id=${id}`,
 
   UpdatePeriodsOfAbsence:
-    "/api/ProspectivePensioners/UpdateProspectivePensionerPeriodsOfAbsenceWithoutSalary",
+    '/api/ProspectivePensioners/UpdateProspectivePensionerPeriodsOfAbsenceWithoutSalary',
 
   //Documents
   getAwardDocuments: (id) =>

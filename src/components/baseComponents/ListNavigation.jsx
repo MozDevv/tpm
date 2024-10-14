@@ -40,6 +40,7 @@ import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import { name } from 'dayjs/locale/en-au';
+import { Divider } from '@mui/material';
 
 const ListNavigation = ({
   handlers,
@@ -412,123 +413,131 @@ const ListNavigation = ({
 
   const renderApprovalButtons = () => {
     return (
-      <>
-        {approvalButtons.map((button, index) => (
-          <Button
-            key={index}
-            disabled={button.disabled}
-            onClick={() => handlers[button.action]()}
-            sx={{ mb: -1, maxHeight: '25px', ml: 1 }}
-            startIcon={
-              <button.icon
-                sx={{
-                  fontSize: '20px',
-                  mr: '-3px',
-                  color: button.disabled ? 'gray' : 'primary',
-                }}
-              />
-            }
-          >
-            {button.name}
-          </Button>
-        ))}
-      </>
+      <div className="flex flex-col gap-2 w-full">
+        <Divider sx={{ borderColor: '#ededed', mb: '-2px' }} />
+        <div className="flex flex-row">
+          {approvalButtons.map((button, index) => (
+            <Button
+              key={index}
+              disabled={button.disabled}
+              onClick={() => handlers[button.action]()}
+              sx={{ mb: -1, maxHeight: '25px', ml: 1 }}
+              startIcon={
+                <button.icon
+                  sx={{
+                    fontSize: '20px',
+                    mr: '-3px',
+                    color: button.disabled ? 'gray' : 'primary',
+                  }}
+                />
+              }
+            >
+              {button.name}
+            </Button>
+          ))}
+        </div>
+      </div>
     );
   };
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: '15px',
-        paddingRight: '20px',
-        marginLeft: '10px',
-      }}
-    >
-      <div className="flex gap-6 items-center">
-        {renderButtons()}
+    <div className="flex flex-col w-full ">
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: '15px',
+          paddingRight: '20px',
+          marginLeft: '10px',
+        }}
+      >
+        <div className="flex gap-6 items-center">
+          {renderButtons()}
 
+          <div>
+            <Button
+              onClick={handleApprovalClick}
+              sx={{
+                mb: -1,
+                maxHeight: '25px',
+                display: handlers[approvalButton.action] ? 'content' : 'none',
+              }}
+              startIcon={
+                <approvalButton.icon
+                  sx={{
+                    mr: '-3px',
+                    fontSize: '20px',
+                    color: 'primary',
+                  }}
+                />
+              }
+            >
+              <div className="ml-[-2px]">{approvalButton.name}</div>
+            </Button>
+
+            {/* Conditionally render additional buttons */}
+          </div>
+        </div>
         <div>
           <Button
-            onClick={handleApprovalClick}
+            onClick={handlers[reportsButton.action]}
+            sx={{ mb: -1, maxHeight: '25px' }}
+            disabled={
+              !permissions?.includes(reportsButton.requiredPermissions[0])
+            }
+            startIcon={
+              <IconButton
+                // disabled={
+                //   !permissions?.some((permission) =>
+                //     reportsButton.requiredPermissions.includes(permission)
+                //   )
+                // }
+                disabled
+              >
+                <reportsButton.icon
+                  sx={{
+                    fontSize: '20px',
+                    // color: !permissions?.some((permission) =>
+                    //   reportsButton.requiredPermissions.includes(permission)
+                    // )
+                    //   ? "gray"
+                    //   : "primary",
+                    color: 'gray',
+                  }}
+                />
+              </IconButton>
+            }
+          >
+            <p className="font-medium text-gray -ml-2 text-sm">
+              {reportsButton.name}
+            </p>
+          </Button>
+          <Button
+            onClick={handlers[openDetailsButton.action]}
             sx={{
               mb: -1,
               maxHeight: '25px',
-              display: handlers[approvalButton.action] ? 'content' : 'none',
+              display: handlers[openDetailsButton.action] ? 'content' : 'none',
             }}
             startIcon={
-              <approvalButton.icon
-                sx={{
-                  mr: '-3px',
-                  fontSize: '20px',
-                  color: 'primary',
-                }}
-              />
+              <IconButton>
+                <openDetailsButton.icon
+                  sx={{
+                    fontSize: '16px',
+                    color: 'primary',
+                  }}
+                />
+              </IconButton>
             }
           >
-            <div className="ml-[-2px]">{approvalButton.name}</div>
+            <p className="font-medium text-gray -ml-3 text-sm">
+              {openDetailsButton.name}
+            </p>
           </Button>
-          {showApprovalButtons && renderApprovalButtons()}
-          {/* Conditionally render additional buttons */}
         </div>
       </div>
-      <div>
-        <Button
-          onClick={handlers[reportsButton.action]}
-          sx={{ mb: -1, maxHeight: '25px' }}
-          disabled={
-            !permissions?.includes(reportsButton.requiredPermissions[0])
-          }
-          startIcon={
-            <IconButton
-              // disabled={
-              //   !permissions?.some((permission) =>
-              //     reportsButton.requiredPermissions.includes(permission)
-              //   )
-              // }
-              disabled
-            >
-              <reportsButton.icon
-                sx={{
-                  fontSize: '20px',
-                  // color: !permissions?.some((permission) =>
-                  //   reportsButton.requiredPermissions.includes(permission)
-                  // )
-                  //   ? "gray"
-                  //   : "primary",
-                  color: 'gray',
-                }}
-              />
-            </IconButton>
-          }
-        >
-          <p className="font-medium text-gray -ml-2 text-sm">
-            {reportsButton.name}
-          </p>
-        </Button>
-        <Button
-          onClick={handlers[openDetailsButton.action]}
-          sx={{
-            mb: -1,
-            maxHeight: '25px',
-            display: handlers[openDetailsButton.action] ? 'content' : 'none',
-          }}
-          startIcon={
-            <IconButton>
-              <openDetailsButton.icon
-                sx={{
-                  fontSize: '16px',
-                  color: 'primary',
-                }}
-              />
-            </IconButton>
-          }
-        >
-          <p className="font-medium text-gray -ml-3 text-sm">
-            {openDetailsButton.name}
-          </p>
-        </Button>
+      <div className="flex flex-row w-full mt-3 ml-2">
+        {showApprovalButtons && renderApprovalButtons()}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
-"use client";
-import { create } from "@mui/material/styles/createTransitions";
-import axios from "axios";
-import { BASE_CORE_API } from "@/utils/constants";
+'use client';
+import { create } from '@mui/material/styles/createTransitions';
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 export const API_BASE_URL = `${BASE_CORE_API}`;
 
@@ -10,56 +10,69 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 const endpoints = {
   //PENSION-CAPS
-  getUsers: "/api/UserManagement/GetUsers",
-  pensionCaps: "/api/Setups/GetPensionCaps",
+  getUsers: '/api/UserManagement/GetUsers',
+  pensionCaps: '/api/Setups/GetPensionCaps',
 
-  getExitGrounds: "/api/Setups/GetExitGround",
+  getExitGrounds: '/api/Setups/GetExitGround',
 
-  editExitReason: "/api/Setups/EditExitReason",
+  editExitReason: '/api/Setups/EditExitReason',
 
   //getGrades
   getGrades: (id) => `/api/Setups/GetGradeSetups?designationId=${id}`,
 
-  getAllGrades: "/api/Setups/GetGradeSetups?paging.pageSize=1000",
+  getAllGrades: '/api/Setups/GetGradeSetups?paging.pageSize=1000',
 
   getGradesByDesignation: (id) =>
     `api/Setups/GetGradeSetups?paging.pageSize=1000&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].propertyName=designation_id`,
 
-  getAllGrades: "/api/Setups/GetGradeSetups",
+  getAllGrades: '/api/Setups/GetGradeSetups',
 
   //createGrade
-  createGrade: "/api/Setups/CreateGradeSetup",
+  createGrade: '/api/Setups/CreateGradeSetup',
 
   //assignCaptermsOfservice
-  assignCaptermsOfservice: "/api/Setups/AssignDeassignCapTermsOfService",
+  assignCaptermsOfservice: '/api/Setups/AssignDeassignCapTermsOfService',
 
   //get Number Series
-  getNumberSeries: "/api/setups/GetNumberSeries",
+  getNumberSeries: '/api/setups/GetNumberSeries',
 
   //create Number Series
-  createNumberSeries: "/api/setups/CreateNumberSeries",
+  createNumberSeries: '/api/setups/CreateNumberSeries',
 
   //create Number Series Line
-  createNumberSeriesLine: "/api/setups/CreateNumberSeriesLine",
+  createNumberSeriesLine: '/api/setups/CreateNumberSeriesLine',
 
-  editNumberSeriesLine: "/api/setups/EditNumberSeriesLineLine",
+  editNumberSeriesLine: '/api/setups/EditNumberSeriesLineLine',
 
   deleteNumberSeriesLine: (id) => `/api/setups/DeleteNumberSeriesLine/${id}`,
 
   //get Number Series Line
-  getNumberSeriesLine: "/api/setups/GetNumberSeriesLine",
+  getNumberSeriesLine: '/api/setups/GetNumberSeriesLine',
 
   //get Number Series Line by code
   getNumberSeriesLineByCode: (code) =>
     `api/setups/GetNumberSeriesLines?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=code&filterCriterion.criterions[0].propertyValue=${code}`,
 
   //Get Numbering sections
-  getNumberingSections: "/api/Setups/GetNumberingSections",
+  getNumberingSections: '/api/Setups/GetNumberingSections',
 
   //edit Numbering Section
-  editNumberingSection: "/api/Setups/EditNumberingSection",
+  editNumberingSection: '/api/Setups/EditNumberingSection',
 
   //BANKS
   getBankBranches: (id) => `/api/setups/GetBankBranches?id=${id}`,
@@ -69,7 +82,7 @@ const endpoints = {
 
   deleteBankBranch: (id) => `/api/Setups/DeleteBankBranch/${id}`,
   //get Banks
-  getBanks: "/api/setups/GetBanks",
+  getBanks: '/api/setups/GetBanks',
 
   //getBankById
   getBankById: (id) => `/api/Setups/GetBanks?id=${id}`,
@@ -80,93 +93,93 @@ const endpoints = {
 
   //create Bank
 
-  createBank: "/api/Setups/CreateBank",
+  createBank: '/api/Setups/CreateBank',
 
   //Create Bank Branch
-  createBankBranch: "/api/Setups/CreateBankBranch",
+  createBankBranch: '/api/Setups/CreateBankBranch',
 
   //getBank Types
 
-  getBankTypes: "/api/Setups/GetBankTypes",
+  getBankTypes: '/api/Setups/GetBankTypes',
 
   //createBankType
-  createBankType: "/api/Setups/CreateBankType",
+  createBankType: '/api/Setups/CreateBankType',
 
   createBankforPensioner:
-    "/api/ProspectivePensioners/CreateProspectivePensionerBankDetail",
+    '/api/ProspectivePensioners/CreateProspectivePensionerBankDetail',
 
   //PENSION-AWARDS
-  pensionAwards: "/api/Setups/GetPensionAwards",
+  pensionAwards: '/api/Setups/GetPensionAwards',
 
   //MAP PENSIONER AWARDS
-  mapPensionerAwards: "/api/Setups/MapDocumentTypesPensionAward",
+  mapPensionerAwards: '/api/Setups/MapDocumentTypesPensionAward',
 
-  editPensionAwards: "/api/Setups/EditPensionAward",
+  editPensionAwards: '/api/Setups/EditPensionAward',
 
   //MDAs
-  mdas: "/api/Setups/Getmdas",
-  createMDA: "/api/Setups/Createmda",
-  updateMDA: "/api/Setups/EditMDA",
+  mdas: '/api/Setups/Getmdas',
+  createMDA: '/api/Setups/Createmda',
+  updateMDA: '/api/Setups/EditMDA',
   deleteMDA: (id) => `/api/Setups/DeleteMDA/${id}`,
 
   //TERMS OF SERVICE
-  termsOfService: "/api/Setups/GetTermsOfServiceSetups",
+  termsOfService: '/api/Setups/GetTermsOfServiceSetups',
 
   //DOCUMENT TYPES
-  documentTypes: "/api/setups/GetDocumentTypeSetups",
+  documentTypes: '/api/setups/GetDocumentTypeSetups',
 
   //designation & grades
-  getDesignations: "/api/Setups/GetDesignationSetups",
+  getDesignations: '/api/Setups/GetDesignationSetups',
 
   //editDesignation
-  editDesignation: "/api/Setups/EditDesignationSetup",
+  editDesignation: '/api/Setups/EditDesignationSetup',
 
   //createDesignation
-  createDesignation: "/api/Setups/CreateDesignationSetup",
+  createDesignation: '/api/Setups/CreateDesignationSetup',
 
   //editDesignation
-  editDesignation: "/api/Setups/EditDesignationSetup",
+  editDesignation: '/api/Setups/EditDesignationSetup',
 
   //deleteDesignation
   deleteDesignation: (id) => `/api/Setups/DeleteDesignationSetup/${id}`,
 
   //GET COUNTIES
-  getCounties: "/api/Setups/GetCounties",
+  getCounties: '/api/Setups/GetCounties',
 
-  createCounty: "/api/Setups/CreateCounty",
+  createCounty: '/api/Setups/CreateCounty',
 
   //getConstituencies
-  getConstituencies: "/api/Setups/GetConstituencies",
+  getConstituencies: '/api/Setups/GetConstituencies',
 
   getConstituenciesByCounty: (id) =>
     `api/Setups/GetConstituencies?filterCriterion.criterions[0].propertyName=county_id&filterCriterion.criterions[0].propertyValue=${id}&paging.pageSize=200`,
 
-  createConstituency: "/api/Setups/CreateConstituency",
+  createConstituency: '/api/Setups/CreateConstituency',
   //Get Countries
-  getCountries: "/api/Setups/GetCountries",
+  getCountries: '/api/Setups/GetCountries',
 
   //getPostal codes
-  getPostalCodes: "/api/Setups/GetPostalCodes",
+  getPostalCodes: '/api/Setups/GetPostalCodes',
 
   //createPostalCode
-  createPostalCode: "/api/Setups/CreatePostalCodeDTO",
+  createPostalCode: '/api/Setups/CreatePostalCodeDTO',
 
   //editPostalCode
-  editPostalCode: "/api/Setups/EditPostalCode",
+  editPostalCode: '/api/Setups/EditPostalCode',
 
   //deletePostalCode
   deletePostalCode: (id) => `/api/Setups/DeletePostalCode/${id}`,
 
   //GET MENUS
-  getMenus: "/api/MenuItemsSetup/GetMenuJSON",
+  getMenus: '/api/MenuItemsSetup/GetMenuJSON',
 
-  createDocumentType: "/api/Setups/CreateDocumentTypeSetup",
+  createDocumentType: '/api/Setups/CreateDocumentTypeSetup',
 
   //Departments setups
-  getDepartments: "/api/DepartmentsSetup/GetDepartments",
+  getDepartments: '/api/DepartmentsSetup/GetDepartments',
 
   //Create Department
-  createDepartment: "/api/DepartmentsSetup/CreateDepartment",
+  createDepartment: '/api/DepartmentsSetup/CreateDepartment',
 
   //update Department
   updateDepartment: (id) => `/api/DepartmentsSetup/UpdateDepartments/${id}`,
@@ -175,11 +188,11 @@ const endpoints = {
   deleteDepartment: (id) => `/api/DepartmentsSetup/DeleteDepartments/${id}`,
 
   //createRole
-  createRole: "/api/RolesSetUp/CreateRole",
+  createRole: '/api/RolesSetUp/CreateRole',
 
   //Get Roles
 
-  getRoles: "/api/RolesSetUp/GetRoles",
+  getRoles: '/api/RolesSetUp/GetRoles',
 
   //updateRole
   updateRole: (id) => `/api/RolesSetUp/UpdateRole/${id}`,
@@ -188,48 +201,48 @@ const endpoints = {
   deleteRole: (id) => `/api/RolesSetUp/DeleteRoles/${id}`,
 
   //Get Tables
-  getTables: "/api/TableSetup/GetTables",
+  getTables: '/api/TableSetup/GetTables',
 
   //Get Permissions
-  getPermissions: "/api/PermissionsSetup/GetPermissions",
+  getPermissions: '/api/PermissionsSetup/GetPermissions',
 
   //Create Permissions
-  createPermissions: "/api/PermissionsSetup/CreatePermission",
+  createPermissions: '/api/PermissionsSetup/CreatePermission',
 
-  createGeneralSettings: "/api/Setups/CreateGeneralSettings",
+  createGeneralSettings: '/api/Setups/CreateGeneralSettings',
 
   //PermissionRoles
-  permissionRoles: "/api/PermissionRoleSetup/CreatePermissionRole",
+  permissionRoles: '/api/PermissionRoleSetup/CreatePermissionRole',
 
   //Get Permission Roles
-  getPermissionRoles: "/api/PermissionRoleSetup/GetPermissionsRole",
+  getPermissionRoles: '/api/PermissionRoleSetup/GetPermissionsRole',
 
   //create permission user
-  createPermissionsUser: "/api/PermissionUserSetUp/CreatePermissionsUser",
+  createPermissionsUser: '/api/PermissionUserSetUp/CreatePermissionsUser',
 
   //getUserPermissions
-  getUserPermissions: "/api/PermissionUserSetUp/GetPermissionsUser",
+  getUserPermissions: '/api/PermissionUserSetUp/GetPermissionsUser',
 
-  getMenus: "/api/MenuItemsSetup/GetMenuJSON",
+  getMenus: '/api/MenuItemsSetup/GetMenuJSON',
 
   //Get Menu Items
-  getMenuItems: "/api/MenuItemsSetup/GetMenuItems",
+  getMenuItems: '/api/MenuItemsSetup/GetMenuItems',
 
   //Get MenuRole
   getMenuRole: (roleId) => `/api/MenuItemsSetup/GetMenuJSON/${roleId}`,
 
   //updateMenuRole
-  updateMenuRole: "/api/RoleMenuItemSetup/CreatePermissionRole",
+  updateMenuRole: '/api/RoleMenuItemSetup/CreatePermissionRole',
 
   //getMaintennace\
-  maintenanceCase: "/api/ProspectivePensioners/GetPensionerMaintenances",
+  maintenanceCase: '/api/ProspectivePensioners/GetPensionerMaintenances',
 
   getMaintenance: (id) =>
     `/api/ProspectivePensioners/GetPensionerMaintenances?prospective_pensioner_id=${id}`,
 
-  createMaintenance: "/api/ProspectivePensioners/CreatePensionerMaintenance",
+  createMaintenance: '/api/ProspectivePensioners/CreatePensionerMaintenance',
 
-  updateMaintenance: "/api/ProspectivePensioners/UpdatePensionerMaintenance",
+  updateMaintenance: '/api/ProspectivePensioners/UpdatePensionerMaintenance',
 
   deleteMaintenance: (id) =>
     `/api/ProspectivePensioners/DeletePensionerMaintenance/${id}`,
@@ -243,117 +256,117 @@ const endpoints = {
     `/api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalariesSalaryMixedService?prospective_pensioner_id=${id}`,
 
   createMixedServiceWorkHistory:
-    "/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalaryMixedService",
+    '/api/ProspectivePensioners/CreateProspectivePensionerPostAndNatureofSalaryMixedService',
 
   updateMixedServiceWorkHistory:
-    "/api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalarySalaryMixedService",
+    '/api/ProspectivePensioners/UpdateProspectivePensionerPostAndNatureofSalarySalaryMixedService',
   deleteMixedServiceWorkHistory: (id) =>
     `/api/ProspectivePensioners/DeleteProspectivePensionerPostAndNatureofSalarySalaryMixedService/${id}`,
 
   getDeductions: (id) =>
     `/api/ProspectivePensioners/GetPensionerDeductions?prospective_pensioner_id=${id}`,
 
-  createDeductions: "/api/ProspectivePensioners/CreatePensionerDeduction",
+  createDeductions: '/api/ProspectivePensioners/CreatePensionerDeduction',
 
   createParliamentContributions:
-    "/api/ProspectivePensioners/CreateParliamentaryContributions",
+    '/api/ProspectivePensioners/CreateParliamentaryContributions',
   getParliamentaryContributions: (id) =>
     `/api/ProspectivePensioners/GetParliamentaryContributions?prospective_pensioner_id=${id}`,
   deleteContributions: (id) =>
     `/api/ProspectivePensioners/DeleteParliamentaryContributions?id=${id}`,
   updateContributions:
-    "/api/ProspectivePensioners/UpdateParliamentaryContributions",
+    '/api/ProspectivePensioners/UpdateParliamentaryContributions',
 
   createParliamentContributionsLine:
-    "/api/ProspectivePensioners/CreateParliamentaryContributionLines",
+    '/api/ProspectivePensioners/CreateParliamentaryContributionLines',
   getParliamentaryContributionsLine: (id) =>
     `/api/ProspectivePensioners/GetParliamentaryContributionLines?paliamentary_contribution_id=${id}`,
   deleteContributionsLine: (id) =>
     `/api/ProspectivePensioners/DeleteParliamentaryContributionLines?id=${id}`,
   updateContributionsLine:
-    "/api/ProspectivePensioners/UpdateParliamentaryContributionLines",
+    '/api/ProspectivePensioners/UpdateParliamentaryContributionLines',
 
   getWcps: (id) =>
     `/api/ProspectivePensioners/GetWCPSContributions?prospective_pensioner_id=${id}`,
-  createWcps: "/api/ProspectivePensioners/CreateWCPSContribution",
-  updateWcps: "/api/ProspectivePensioners/UpdateWCPSContribution",
+  createWcps: '/api/ProspectivePensioners/CreateWCPSContribution',
+  updateWcps: '/api/ProspectivePensioners/UpdateWCPSContribution',
   deleteWcps: (id) =>
     `/api/ProspectivePensioners/DeleteWCPSContribution?id=${id}`,
 
   getWcpsLine: (id) =>
     `/api/ProspectivePensioners/GetWCPSContributionLines?prospective_pensioner_id=${id}`,
-  createWcpsLine: "/api/ProspectivePensioners/CreateWCPSContributionLine",
-  updateWcpsLine: "/api/ProspectivePensioners/UpdateWCPSContributionLine",
+  createWcpsLine: '/api/ProspectivePensioners/CreateWCPSContributionLine',
+  updateWcpsLine: '/api/ProspectivePensioners/UpdateWCPSContributionLine',
   deleteWcpsLine: (id) =>
     `/api/ProspectivePensioners/DeleteWCPSContributionLine?id=${id}`,
 
   getLiabilities: (id) =>
     `/api/ProspectivePensioners/GetLiabilties?prospective_pensioner_id=${id}`,
-  createLiabilities: "/api/ProspectivePensioners/CreateLiabilities",
+  createLiabilities: '/api/ProspectivePensioners/CreateLiabilities',
   updateLiabilities:
-    "/api/ProspectivePensioners/UpdateProspectivePensionerLiabilities",
+    '/api/ProspectivePensioners/UpdateProspectivePensionerLiabilities',
 
-  mapExitGroundAwards: "/api/Setups/MapExitReasonAward",
+  mapExitGroundAwards: '/api/Setups/MapExitReasonAward',
 
   previewBirthCertificate: (prospectiveId, birthCertNo) =>
     `/birthCert/${prospectiveId}/${birthCertNo}`,
 
-  createPasswordRules: "/api/PasswordRulesSetUp/CreatePasswordRules",
-  getPasswordRules: "/api/PasswordRulesSetUp/GetPasswordRules",
+  createPasswordRules: '/api/PasswordRulesSetUp/CreatePasswordRules',
+  getPasswordRules: '/api/PasswordRulesSetUp/GetPasswordRules',
   updatePasswordRules: (id) =>
     `/api/PasswordRulesSetUp/UpdatePasswordRule/${id}`,
   deletePasswordRules: (id) =>
     `/api/PasswordRulesSetUp/DeletePasswordRule/${id}`,
 
-  createCity: "/api/Setups/CreateCity",
-  getCities: "/api/Setups/GetCity",
-  updateCity: "/api/Setups/UpdateCity",
+  createCity: '/api/Setups/CreateCity',
+  getCities: '/api/Setups/GetCity',
+  updateCity: '/api/Setups/UpdateCity',
   deleteCity: (id) => `/api/Setups/DeleteCity?id=${id}`,
 
-  createGovernmentSalary: "/api/ProspectivePensioners/CreateGovernmentSalary",
+  createGovernmentSalary: '/api/ProspectivePensioners/CreateGovernmentSalary',
   getGovernmentSalary: (id) =>
     `/api/ProspectivePensioners/GetGovernmentSalary?prospective_pensioner_id=${id}`,
-  updateGovernmentSalary: "/api/ProspectivePensioners/UpdateGovernmentSalary",
+  updateGovernmentSalary: '/api/ProspectivePensioners/UpdateGovernmentSalary',
   deleteGovernmentSalary: (id) =>
     `/api/ProspectivePensioners/DeleteGovenrmentSalary?id=${id}`,
 
   // APPROVALS & WORKFLOWS ****************************************
 
-  createApprovalUser: "/api/ApprovalSetups/CreateApprovalUser",
-  getApprovalUsers: "/api/ApprovalSetups/GetApprovalUsers",
-  updateApprovalUser: "/api/ApprovalSetups/UpdateApprovalUsers",
+  createApprovalUser: '/api/ApprovalSetups/CreateApprovalUser',
+  getApprovalUsers: '/api/ApprovalSetups/GetApprovalUsers',
+  updateApprovalUser: '/api/ApprovalSetups/UpdateApprovalUsers',
   deleteApprovalUser: (id) => `/api/ApprovalSetups/DeleteApprovalUsers/${id}`,
-  createApprovalType: "/api/ApprovalSetups/CreateApprovalType",
-  createApprovalStages: "/api/ApprovalSetups/CreateApprovalStages",
-  getApprovalTypes: "/api/ApprovalSetups/GetApprovalType",
-  updateApprovalType: "/api/ApprovalSetups/UpdateApprovalType",
+  createApprovalType: '/api/ApprovalSetups/CreateApprovalType',
+  createApprovalStages: '/api/ApprovalSetups/CreateApprovalStages',
+  getApprovalTypes: '/api/ApprovalSetups/GetApprovalType',
+  updateApprovalType: '/api/ApprovalSetups/UpdateApprovalType',
   deleteApprovalType: (id) => `/api/ApprovalSetups/DeleteApprovalType/${id}`,
 
-  createApprovalStage: "/api/ApprovalSetups/CreateApprovalStages",
-  getApprovalStages: "/api/ApprovalSetups/GetApprovalStages",
-  updateApprovalStage: "/api/ApprovalSetups/UpdateApprovalStages",
+  createApprovalStage: '/api/ApprovalSetups/CreateApprovalStages',
+  getApprovalStages: '/api/ApprovalSetups/GetApprovalStages',
+  updateApprovalStage: '/api/ApprovalSetups/UpdateApprovalStages',
   deleteApprovalStage: (id) => `/api/ApprovalSetups/DeleteApprovalStages/${id}`,
-  getParliamentaryTermsSetups: "/api/Setups/GetParliamentaryTermSetups",
-  createParliamentaryTerms: "/api/Setups/CreateParliamentaryTermSetup",
+  getParliamentaryTermsSetups: '/api/Setups/GetParliamentaryTermSetups',
+  createParliamentaryTerms: '/api/Setups/CreateParliamentaryTermSetup',
 
-  getGeneralSettings: "/api/Setups/GetGeneralSettings",
-  createGeneralSettings: "/api/Setups/CreateGeneralSettings",
-  getRateOfInjury: "/api/Setups/GetRateOfInjuryForCap189Setups",
+  getGeneralSettings: '/api/Setups/GetGeneralSettings',
+  createGeneralSettings: '/api/Setups/CreateGeneralSettings',
+  getRateOfInjury: '/api/Setups/GetRateOfInjuryForCap189Setups',
 
-  getPensionFactor: "/api/assessment/GetPensionFactorSetup",
-  createPensionFactor: "/api/assessment/CreatePensionFactorSetup",
-  updatePensionFactor: "/api/assessment/UpdatePensionFactorSetup",
+  getPensionFactor: '/api/assessment/GetPensionFactorSetup',
+  createPensionFactor: '/api/assessment/CreatePensionFactorSetup',
+  updatePensionFactor: '/api/assessment/UpdatePensionFactorSetup',
   deletePensionFactor: (id) => `/api/assessment/DeletePensionFactorSetup/${id}`,
-  addRecoveryDeduction: "/api/PostingSetup/AddDeductionsAndRefund",
-  getRecoveryDeductions: "/api/PostingSetup/GetDeductionsAndRefunds",
-  updateRecoveryDeduction: "/api/PostingSetup/UpdateDeductionsAndRefund",
+  addRecoveryDeduction: '/api/PostingSetup/AddDeductionsAndRefund',
+  getRecoveryDeductions: '/api/PostingSetup/GetDeductionsAndRefunds',
+  updateRecoveryDeduction: '/api/PostingSetup/UpdateDeductionsAndRefund',
   deleteRecoveryDeduction: (id) =>
     `/api/PostingSetup/DeleteDeductionsAndRefund?id=${id}`,
 
-  getBeneficiariesRelationShips: "/api/Setups/GetBenefitsConfigurationMatrix",
+  getBeneficiariesRelationShips: '/api/Setups/GetBenefitsConfigurationMatrix',
   getBeneficiaries: (id) =>
     `api/Claims/getAllBeneficiaries?prospective_pensioner_id=${id}`,
-  createBeneficiary: "/api/Claims/createBeneficiary",
+  createBeneficiary: '/api/Claims/createBeneficiary',
 };
 
 export const apiService = {

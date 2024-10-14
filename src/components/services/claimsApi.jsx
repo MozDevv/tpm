@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
-"use client";
-import axios from "axios";
+'use client';
+import axios from 'axios';
 
-export const API_BASE_URL = "https://tntportalapi.agilebiz.co.ke";
+export const API_BASE_URL = 'https://tntportalapi.agilebiz.co.ke';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,11 +10,23 @@ const api = axios.create({
 
 const claimsEndpoints = {
   createProspectivePensionerClaim:
-    "/api/claims/CreateProspectivePensionerClaim",
+    '/api/claims/CreateProspectivePensionerClaim',
 
-  getClaims: "/api/Claims/getClaims",
-  moveClaimStatus: "/api/claims/MoveClaimStatus",
+  getClaims: '/api/Claims/getClaims',
+  moveClaimStatus: '/api/claims/MoveClaimStatus',
 };
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const apiService = {
   get: async (endpoint, params) => {

@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import { Avatar, IconButton, Tooltip } from "@mui/material";
-import { ArrowBack, OpenInFull } from "@mui/icons-material";
-import { useAuth } from "@/context/AuthContext";
-import PensionerDetailSummary from "../pensionsComponents/preclaims/PensionerDetailSummary";
-import { Divider, message, Tabs } from "antd";
-import ListNavigation from "./ListNavigation";
-import UserDetailCard from "../pensionsComponents/recordCard/UserDetailCard";
-import SendForApproval from "../pensionsComponents/preclaims/SendForApproval";
-import CreateBranch from "./CreateBranch";
-import endpoints, { apiService } from "../services/setupsApi";
-import BaseInputCard from "./BaseInputCard";
-import CreateClaim from "../pensionsComponents/preclaims/CreateClaim";
-import BaseDeleteDialog from "./BaseDeleteDialog";
-import ReturnToPreclaims from "../pensionsComponents/ClaimsManagementTable/ReturnToPreclaims";
-import TabPane from "antd/es/tabs/TabPane";
-import AttachmentStepper from "../pensionsComponents/ClaimsApprovalComponents/AttachmentStepper";
-import BaseWorkFlow from "./BaseWorkFlow";
+import React, { useEffect, useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import { Avatar, IconButton, Tooltip } from '@mui/material';
+import { ArrowBack, OpenInFull } from '@mui/icons-material';
+import { useAuth } from '@/context/AuthContext';
+import PensionerDetailSummary from '../pensionsComponents/preclaims/PensionerDetailSummary';
+import { Divider, message, Tabs } from 'antd';
+import ListNavigation from './ListNavigation';
+import UserDetailCard from '../pensionsComponents/recordCard/UserDetailCard';
+import SendForApproval from '../pensionsComponents/preclaims/SendForApproval';
+import CreateBranch from './CreateBranch';
+import endpoints, { apiService } from '../services/setupsApi';
+import BaseInputCard from './BaseInputCard';
+import CreateClaim from '../pensionsComponents/preclaims/CreateClaim';
+import BaseDeleteDialog from './BaseDeleteDialog';
+import ReturnToPreclaims from '../pensionsComponents/ClaimsManagementTable/ReturnToPreclaims';
+import TabPane from 'antd/es/tabs/TabPane';
+import AttachmentStepper from '../pensionsComponents/ClaimsApprovalComponents/AttachmentStepper';
+import BaseWorkFlow from './BaseWorkFlow';
 import workflowsEndpoints, {
   workflowsApiService,
-} from "../services/workflowsApi";
+} from '../services/workflowsApi';
 
 function BaseCard({
   openBaseCard,
@@ -62,28 +62,28 @@ function BaseCard({
 
   const expandSizes = {
     default: {
-      minHeight: "95vh",
-      maxHeight: "75vh",
-      minWidth: "55vw",
-      maxWidth: "75vw",
+      minHeight: '95vh',
+      maxHeight: '75vh',
+      minWidth: '55vw',
+      maxWidth: '75vw',
     },
     expanded: {
-      minHeight: "95vh",
-      maxHeight: "95vh",
-      minWidth: "95vw",
-      maxWidth: "95vw",
+      minHeight: '95vh',
+      maxHeight: '95vh',
+      minWidth: '95vw',
+      maxWidth: '95vw',
     },
     secondary: {
-      minHeight: "85vh",
-      maxHeight: "75vh",
-      minWidth: "40vw",
-      maxWidth: "70vw",
+      minHeight: '85vh',
+      maxHeight: '75vh',
+      minWidth: '40vw',
+      maxWidth: '70vw',
     },
     secondary2: {
-      minHeight: "75vh",
-      maxHeight: "65vh",
-      minWidth: "30vw",
-      maxWidth: "60vw",
+      minHeight: '75vh',
+      maxHeight: '65vh',
+      minWidth: '30vw',
+      maxWidth: '60vw',
     },
   };
   const currentSize = isSecondaryCard
@@ -119,7 +119,7 @@ function BaseCard({
     }
   };
 
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const handleTabChange = (key) => {
     setActiveKey(key);
@@ -137,13 +137,13 @@ function BaseCard({
       fullWidth
       maxWidth="xl"
       sx={{
-        "& .MuiPaper-root": {
+        '& .MuiPaper-root': {
           minHeight: currentSize.minHeight,
           maxHeight: currentSize.maxHeight,
           minWidth: currentSize.minWidth,
           maxWidth: currentSize.maxWidth,
-          transition: "all 0.3s ease",
-          overflowY: "hidden",
+          transition: 'all 0.3s ease',
+          overflowY: 'hidden',
         },
       }}
     >
@@ -157,9 +157,9 @@ function BaseCard({
         open={openAction && (status === 3 || status === 7 || status === 5)}
         onClose={() => setOpenAction(false)}
         sx={{
-          "& .MuiDialog-paper": {
-            height: "300px",
-            width: "500px",
+          '& .MuiDialog-paper': {
+            height: '300px',
+            width: '500px',
           },
           p: 4,
         }}
@@ -205,9 +205,9 @@ function BaseCard({
         }
         onClose={() => setOpenAction(false)}
         sx={{
-          "& .MuiDialog-paper": {
-            height: "300px",
-            width: "600px",
+          '& .MuiDialog-paper': {
+            height: '300px',
+            width: '600px',
           },
           p: 4,
         }}
@@ -238,16 +238,16 @@ function BaseCard({
         maxWidth="lg"
         maxHeight="lg"
         sx={{
-          "& .MuiDialog-paper": {
-            minHeight: "250px",
-            minWidth: "600px",
+          '& .MuiDialog-paper': {
+            minHeight: '250px',
+            minWidth: '600px',
             pt: 5,
           },
         }}
         open={
           openAction &&
-          status === "createConstituency" &&
-          dialogType === "branch"
+          status === 'createConstituency' &&
+          dialogType === 'branch'
         }
         onClose={() => setOpenAction(false)}
       >
@@ -268,13 +268,13 @@ function BaseCard({
         maxWidth="lg"
         maxHeight="lg"
         sx={{
-          "& .MuiDialog-paper": {
-            minHeight: "250px",
-            minWidth: "600px",
+          '& .MuiDialog-paper': {
+            minHeight: '250px',
+            minWidth: '600px',
             pt: 5,
           },
         }}
-        open={openAction && status === "numberSeriesLine"}
+        open={openAction && status === 'numberSeriesLine'}
         onClose={() => setOpenAction(false)}
       >
         <BaseInputCard
@@ -295,14 +295,14 @@ function BaseCard({
         maxWidth="lg"
         maxHeight="lg"
         sx={{
-          "& .MuiDialog-paper": {
-            minHeight: "250px",
-            minWidth: "600px",
+          '& .MuiDialog-paper': {
+            minHeight: '250px',
+            minWidth: '600px',
             pt: 5,
           },
         }}
         open={
-          openAction && status === "createBranch" && dialogType === "branch"
+          openAction && status === 'createBranch' && dialogType === 'branch'
         }
         onClose={() => setOpenAction(false)}
       >
@@ -324,14 +324,14 @@ function BaseCard({
         maxWidth="lg"
         maxHeight="lg"
         sx={{
-          "& .MuiDialog-paper": {
-            minHeight: "250px",
-            minWidth: "600px",
+          '& .MuiDialog-paper': {
+            minHeight: '250px',
+            minWidth: '600px',
             pt: 5,
           },
         }}
         open={
-          openAction && status === "createBranch" && dialogType === "bankType"
+          openAction && status === 'createBranch' && dialogType === 'bankType'
         }
         onClose={() => setOpenAction(false)}
       >
@@ -353,15 +353,15 @@ function BaseCard({
           <div className="flex items-center gap-1 mt-10">
             <IconButton
               sx={{
-                border: "1px solid #006990",
-                borderRadius: "50%",
-                padding: "3px",
-                marginRight: "10px",
-                color: "#006990",
+                border: '1px solid #006990',
+                borderRadius: '50%',
+                padding: '3px',
+                marginRight: '10px',
+                color: '#006990',
               }}
               onClick={() => setOpenBaseCard(false)}
             >
-              <ArrowBack sx={{ color: "#006990" }} />
+              <ArrowBack sx={{ color: '#006990' }} />
             </IconButton>
             <p className="text-lg text-primary font-semibold">
               {glAccountName || title}
@@ -369,12 +369,12 @@ function BaseCard({
           </div>
           <div className="flex items-center">
             <IconButton onClick={() => setIsExpanded(!isExpanded)}>
-              <Tooltip title={isExpanded ? "Shrink" : "Expand"}>
+              <Tooltip title={isExpanded ? 'Shrink' : 'Expand'}>
                 <OpenInFull
                   color="primary"
                   sx={{
-                    fontSize: "18px",
-                    mt: "4px",
+                    fontSize: '18px',
+                    mt: '4px',
                   }}
                 />
               </Tooltip>
@@ -401,9 +401,9 @@ function BaseCard({
           // }`}
           className="grid gap-2 grid-cols-12 mt-[-20px]"
         >
-          {" "}
+          {' '}
           <div
-            className={`col-span-${isDetailsVisible ? "12" : "9"}`}
+            className={`col-span-${isDetailsVisible ? '12' : '9'}`}
             // className="col-span-9"
           >
             {children}
@@ -442,7 +442,11 @@ function BaseCard({
                         }
                         key="2"
                       >
-                        <BaseWorkFlow steps={steps} activeStep={activeStep} />
+                        <BaseWorkFlow
+                          steps={steps}
+                          activeStep={activeStep}
+                          clickedItem={clickedItem}
+                        />
                       </TabPane>
                     </Tabs>
                   </div>
