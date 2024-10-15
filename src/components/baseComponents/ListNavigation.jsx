@@ -4,10 +4,8 @@ import IconButton from '@mui/material/IconButton';
 import {
   FilterList,
   OpenInNew,
-  Create,
   Edit,
   Delete,
-  Report,
   ForwardToInbox,
   CheckCircle,
   Send,
@@ -19,7 +17,6 @@ import {
   AddCircleOutline,
   Info,
   FormatListNumbered,
-  KeyboardReturn,
   Undo,
   IosShare,
   PostAdd,
@@ -30,8 +27,6 @@ import {
   Cancel,
   CancelScheduleSend,
   Rule,
-  PublishedWithChanges,
-  ManageHistory,
   Settings,
   ScheduleSend,
 } from '@mui/icons-material';
@@ -39,7 +34,6 @@ import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
-import { name } from 'dayjs/locale/en-au';
 import { Divider } from '@mui/material';
 
 const ListNavigation = ({
