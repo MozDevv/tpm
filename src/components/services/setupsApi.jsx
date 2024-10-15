@@ -26,6 +26,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
+      // Check if the endpoint is '/api/Setups/Getmdas'
+      if (error.config.url === '/api/Setups/Getmdas') {
+        // Return the error without triggering the session expired logic
+        return Promise.reject(error);
+      }
+
       alert('Session Expired. You will be redirected to the login page.');
       // Redirect to the login page
       window.location.href = '/'; // Update with your login route
