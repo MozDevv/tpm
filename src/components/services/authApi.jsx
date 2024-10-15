@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
-import axios from "axios";
-import { BASE_CORE_API } from "@/utils/constants";
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 export const API_BASE_URL = `${BASE_CORE_API}api`;
 
@@ -9,25 +9,25 @@ const api = axios.create({
 });
 
 const setAuthorizationHeader = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
-    delete api.defaults.headers.common["Authorization"];
+    delete api.defaults.headers.common['Authorization'];
   }
 };
 
 const authEndpoints = {
   //auth
-  activateEmail: "/Auth/confirmEmail",
-  login: "/Auth/Login",
-  register: "/Auth/Register",
-  resetPassword: "/Auth/ResetPassword",
-  forgetPassword: "/Auth/ForgetPassword",
+  activateEmail: '/Auth/confirmEmail',
+  login: '/Auth/Login',
+  register: '/Auth/Register',
+  resetPassword: '/Auth/ResetPassword',
+  forgetPassword: '/Auth/ForgetPassword',
 
   //users
 
-  getUsers: "/UserManagement/GetUsers",
+  getUsers: '/UserManagement/GetUsers',
 
   updateUser: (id) => `/api/UserManagement/UpdateUser/${id}`,
 };

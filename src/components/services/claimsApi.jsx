@@ -27,6 +27,17 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      alert('Session Expired. You will be redirected to the login page.');
+      // Redirect to the login page
+      window.location.href = '/'; // Update with your login route
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const apiService = {
   get: async (endpoint, params) => {
