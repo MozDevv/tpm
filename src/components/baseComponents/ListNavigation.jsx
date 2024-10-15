@@ -316,7 +316,7 @@ const ListNavigation = ({
     {
       name: 'Send For Approval',
       action: 'sendApprovalRequest',
-      disabled: true,
+      disabled: approvalActions?.sendForApproval,
 
       icon: IosShare,
     },
@@ -324,7 +324,7 @@ const ListNavigation = ({
       name: 'Cancel Approval Request',
       action: 'cancelApprovalRequest',
       icon: CancelScheduleSend,
-      disabled: true,
+      disabled: approvalActions?.cancelApprovalRequest,
     },
     {
       name: 'Approve',
