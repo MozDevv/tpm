@@ -551,6 +551,7 @@ const ClaimsTable = ({ status }) => {
         </Dialog>
 
         <BaseCard
+          documentNo={clickedItem && clickedItem?.claim_id}
           openBaseCard={openPreclaimDialog}
           setOpenBaseCard={setOpenPreclaimDialog}
           handlers={baseCardHandlers}

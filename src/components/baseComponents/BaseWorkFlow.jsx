@@ -32,7 +32,11 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
   const [approver, setApprover] = useState(null);
 
   const getDocumentStatus = async () => {
-    const documentId = clickedItem.no_series;
+    const documentId = clickedItem.no_series
+      ? clickedItem.no_series
+      : clickedItem.claim_id
+      ? clickedItem.claim_id
+      : 'test';
     try {
       const res = await workflowsApiService.post(
         workflowsEndpoints.getDocumentStatus,
@@ -65,7 +69,11 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
 
   const userId = auth.user ? auth.user.userId : null;
   const getApprovalEntries = () => {
-    const documentId = clickedItem.no_series;
+    const documentId = clickedItem.no_series
+      ? clickedItem.no_series
+      : clickedItem.claim_id
+      ? clickedItem.claim_id
+      : 'test';
     try {
       workflowsApiService
         .post(workflowsEndpoints.getApprovalEntries, {
