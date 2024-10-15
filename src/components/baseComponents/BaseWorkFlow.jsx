@@ -11,6 +11,7 @@ import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import { useStatus } from '@/context/StatusContext';
+import { formatDate } from '@/utils/dateFormatter';
 
 // Define a mapping of statuses to icon paths
 const statusIcons = {
@@ -92,7 +93,7 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
                         <Box>
                           <Typography variant="body2">
                             <strong>Approval Status:</strong>{' '}
-                            {currentStatus.approvalStatus}
+                            {currentStatus.status}
                           </Typography>
                           <Typography variant="body2">
                             <strong>Approved By:</strong>{' '}
@@ -101,6 +102,10 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
                           <Typography variant="body2">
                             <strong>Comment:</strong>{' '}
                             {currentStatus.approvalComment}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Approved At:</strong>{' '}
+                            {formatDate(currentStatus.approvedAt)}
                           </Typography>
                         </Box>
                       }
