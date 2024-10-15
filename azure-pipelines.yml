@@ -2,13 +2,13 @@ trigger:
   - main
 
 pool:
-  vmImage: "ubuntu-latest"
+  vmImage: 'ubuntu-latest'
 
 steps:
   - task: DownloadSecureFile@1
     name: sshKey
     inputs:
-      secureFile: "sammymathenge-web.pem"
+      secureFile: 'sammymathenge-web.pem'
 
   - script: |
       # Set correct permissions for the private key
@@ -44,7 +44,7 @@ steps:
         echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
 
         # Push the Docker image to Docker Hub
-        sudo docker push agilesam/pmis:latest
+        # sudo docker push agilesam/pmis:latest
 
         # Stop and remove the existing container if it exists
         sudo docker stop pmis-core || true
@@ -62,4 +62,4 @@ steps:
 
         echo "Deployment completed successfully"
       EOF
-    displayName: "Deploying to server..."
+    displayName: 'Deploying to server...'
