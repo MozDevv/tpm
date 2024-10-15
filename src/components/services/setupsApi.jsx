@@ -43,6 +43,7 @@ api.interceptors.response.use(
 const endpoints = {
   //PENSION-CAPS
   getUsers: '/api/UserManagement/GetUsers',
+  getUserById: (id) => `/api/UserManagement/GetUsers?documentId=${id}`,
   pensionCaps: '/api/Setups/GetPensionCaps',
 
   getExitGrounds: '/api/Setups/GetExitGround',

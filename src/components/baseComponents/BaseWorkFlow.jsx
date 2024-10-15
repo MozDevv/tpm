@@ -6,12 +6,16 @@ import {
   Typography,
   Box,
   Tooltip,
+  Button,
 } from '@mui/material';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import { useStatus } from '@/context/StatusContext';
 import { formatDate } from '@/utils/dateFormatter';
+import authEndpoints, { AuthApiService } from '../services/authApi';
+import { useAuth } from '@/context/AuthContext';
+import endpoints, { apiService } from '../services/setupsApi';
 
 // Define a mapping of statuses to icon paths
 const statusIcons = {
@@ -25,6 +29,7 @@ const statusIcons = {
 
 function BaseWorkFlow({ steps, activeStep, clickedItem }) {
   const [currentStatus, setCurrentStatus] = useState(null);
+  const [approver, setApprover] = useState(null);
 
   const getDocumentStatus = async () => {
     const documentId = clickedItem.no_series;
@@ -53,6 +58,49 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
   useEffect(() => {
     getDocumentStatus();
   }, [workFlowChange, setWorkFlowChange]);
+
+  const { auth } = useAuth();
+
+  const [approvalEntries, setApprovalEntries] = useState([]);
+
+  const userId = auth.user ? auth.user.userId : null;
+  const getApprovalEntries = () => {
+    const documentId = clickedItem.no_series;
+    try {
+      workflowsApiService
+        .post(workflowsEndpoints.getApprovalEntries, {
+          documentNo: documentId,
+          userId: userId,
+        })
+        .then((res) => {
+          console.log('Approval Entries:', res.data.data);
+          setApprovalEntries(res.data.data);
+          if (res.data.data.length > 0) {
+            fetchUserDetails(res.data.data[0].approver_id);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchUserDetails = async (id) => {
+    try {
+      const res = await apiService.get(endpoints.getUserById(id));
+      if (res.status === 200) {
+        setApprover(res.data.data.email);
+      }
+
+      console.log('User details fetched successfully:', res.data);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  useEffect(() => {
+    getApprovalEntries();
+  }, []);
+
   return (
     <Box p={1} sx={{ width: '100%' }}>
       <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5">
@@ -143,6 +191,12 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
           </Step>
         ))}
       </Stepper>
+
+      {approver && (
+        <div className="mt-7 p-4 bg-gray-100 border-l-4 border-primary text-gray-800 rounded-l">
+          <strong>Next Approver:</strong> {approver}
+        </div>
+      )}
     </Box>
   );
 }
