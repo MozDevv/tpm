@@ -5,6 +5,8 @@ import QualyfyingService from './QualyfyingService';
 import PensionableService from './PensionableService';
 import DeductionsDetails from './DeductionsDetails';
 import PensionComputation from './PensionComputation';
+import AwardsTable from './awardsTable';
+import NewTable from './NewTable';
 
 function AssessmentDetails({
   clickedItem,
@@ -27,6 +29,9 @@ function AssessmentDetails({
   return (
     <div className="flex-col h-[600px]">
       <div className="max-h-[500px] overflow-y-auto ">
+        <BaseCollapse name="Pensioner Benefits">
+          <NewTable clickedItem={clickedItem} />
+        </BaseCollapse>
         <PensionerDetails
           clickedItem={clickedItem}
           retireeId={clickedItem?.retiree}
