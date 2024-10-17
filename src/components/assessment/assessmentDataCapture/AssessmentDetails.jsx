@@ -30,7 +30,10 @@ function AssessmentDetails({
     <div className="flex-col h-[600px]">
       <div className="max-h-[500px] overflow-y-auto ">
         <BaseCollapse name="Pensioner Benefits">
-          <NewTable clickedItem={clickedItem} />
+          <NewTable
+            clickedItem={clickedItem}
+            setViewBreakDown={setViewBreakDown}
+          />
         </BaseCollapse>
         <PensionerDetails
           clickedItem={clickedItem}
