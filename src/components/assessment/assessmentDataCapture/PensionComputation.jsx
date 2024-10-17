@@ -54,7 +54,7 @@ function PensionComputation({
       .filter((line) => line.trim() !== '');
 
     return (
-      <div className="flex flex-col divide-y divide-gray-300 bg-white shadow-lg rounded-md ">
+      <div className="flex flex-col bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
         {lines.map((line, index) => {
           const [key, value] = line.split(':');
           if (!key || !value) return null;
@@ -62,10 +62,10 @@ function PensionComputation({
           return (
             <div
               key={index}
-              className="flex justify-between items-center py-3 px-4 hover:bg-gray-50 transition-colors"
+              className="flex justify-between items-center px-5 py-3 hover:bg-gray-100 transition duration-200 ease-in-out rounded-md"
             >
-              <span className="font-medium text-gray-900">{key.trim()}:</span>
-              <span className="text-gray-700 text-right">{value.trim()}</span>
+              <span className="font-semibold text-gray-800">{key.trim()}:</span>
+              <span className="text-gray-600 text-right">{value.trim()}</span>
             </div>
           );
         })}
