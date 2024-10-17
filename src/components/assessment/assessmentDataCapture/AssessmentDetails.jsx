@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import PensionerDetails from "./PensionerDetails";
-import BaseCollapse from "@/components/baseComponents/BaseCollapse";
-import QualyfyingService from "./QualyfyingService";
-import PensionableService from "./PensionableService";
-import DeductionsDetails from "./DeductionsDetails";
-import PensionComputation from "./PensionComputation";
+import React, { useState } from 'react';
+import PensionerDetails from './PensionerDetails';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import QualyfyingService from './QualyfyingService';
+import PensionableService from './PensionableService';
+import DeductionsDetails from './DeductionsDetails';
+import PensionComputation from './PensionComputation';
 
 function AssessmentDetails({
   clickedItem,
   qualifyingService,
   pensionableService,
   computed,
+  setViewBreakDown,
+  viewBreakDown,
 }) {
   const [openSections, setOpenSections] = useState({});
 
@@ -47,7 +49,12 @@ function AssessmentDetails({
           <DeductionsDetails clickedItem={clickedItem} />
         </BaseCollapse>
       </div>
-      <PensionComputation computed={computed} clickedItem={clickedItem} />
+      <PensionComputation
+        computed={computed}
+        clickedItem={clickedItem}
+        setViewBreakDown={setViewBreakDown}
+        viewBreakDown={viewBreakDown}
+      />
     </div>
   );
 }

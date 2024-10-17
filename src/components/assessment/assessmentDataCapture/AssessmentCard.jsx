@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { Tabs } from "antd";
-import NewPreclaim from "@/components/pensionsComponents/preclaims/NewPreclaim";
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import NewPreclaim from '@/components/pensionsComponents/preclaims/NewPreclaim';
 
-import AddPensionersWorkHistory from "@/components/pensionsComponents/preclaims/addWorkHistory/AddPensionersWorkHistory";
-import GovernmentSalary from "@/components/pensionsComponents/preclaims/governmentSalary/GovernmentSalary";
-import AddDocuments from "@/components/pensionsComponents/preclaims/documents/AddDocuments";
-import MaintenanceCase from "@/components/pensionsComponents/preclaims/maintenanceCase/MaintenanceCase";
-import AssessmentDetails from "./AssessmentDetails";
-import Liabilities from "@/components/pensionsComponents/preclaims/liabilities/Liabilities";
-import AddBankDetails from "@/components/pensionsComponents/preclaims/AddBankDetails";
-import Deductions from "@/components/pensionsComponents/preclaims/deductions/Deductions";
+import AddPensionersWorkHistory from '@/components/pensionsComponents/preclaims/addWorkHistory/AddPensionersWorkHistory';
+import GovernmentSalary from '@/components/pensionsComponents/preclaims/governmentSalary/GovernmentSalary';
+import AddDocuments from '@/components/pensionsComponents/preclaims/documents/AddDocuments';
+import MaintenanceCase from '@/components/pensionsComponents/preclaims/maintenanceCase/MaintenanceCase';
+import AssessmentDetails from './AssessmentDetails';
+import Liabilities from '@/components/pensionsComponents/preclaims/liabilities/Liabilities';
+import AddBankDetails from '@/components/pensionsComponents/preclaims/AddBankDetails';
+import Deductions from '@/components/pensionsComponents/preclaims/deductions/Deductions';
 
 const { TabPane } = Tabs;
 
@@ -19,11 +19,13 @@ function AssessmentCard({
   pensionableService,
   qualifyingService,
   computed,
+  setViewBreakDown,
+  viewBreakDown,
 }) {
-  console.log("clickedItem", clickedItem);
+  console.log('clickedItem', clickedItem);
 
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const activeRetireeId =
     retireeId !== null ? retireeId : clickedItem ? clickedItem.id : undefined;
@@ -34,7 +36,7 @@ function AssessmentCard({
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log("Moving to next tab:", nextTab); // Debug line
+    console.log('Moving to next tab:', nextTab); // Debug line
     setActiveKey(nextTab);
   };
 
@@ -72,6 +74,8 @@ function AssessmentCard({
                     retireeId={activeRetireeId}
                     pensionableService={pensionableService}
                     qualifyingService={qualifyingService}
+                    setViewBreakDown={setViewBreakDown}
+                    viewBreakDown={viewBreakDown}
                   />
                 </div>
               </TabPane>

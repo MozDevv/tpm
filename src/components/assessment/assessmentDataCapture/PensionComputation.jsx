@@ -1,10 +1,17 @@
 import assessEndpoints, {
   assessApiService,
-} from "@/components/services/assessmentApi";
-import { formatNumber } from "@/utils/numberFormatters";
-import React, { useEffect, useState } from "react";
+} from '@/components/services/assessmentApi';
+import { formatNumber } from '@/utils/numberFormatters';
+import { Close } from '@mui/icons-material';
+import { Button, Dialog, IconButton } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
-function PensionComputation({ clickedItem, computed }) {
+function PensionComputation({
+  clickedItem,
+  computed,
+  setViewBreakDown,
+  viewBreakDown,
+}) {
   const [summary, setSummary] = useState(null); // Initialize as null to handle empty state
 
   const getSummary = async () => {
@@ -14,7 +21,7 @@ function PensionComputation({ clickedItem, computed }) {
       );
       setSummary(res.data.data || {}); // Set to an empty object if no data is returned
     } catch (error) {
-      console.log("Error getting claim pensionable service:", error);
+      console.log('Error getting claim pensionable service:', error);
       setSummary({}); // Set to an empty object on error
     }
   };
@@ -28,16 +35,43 @@ function PensionComputation({ clickedItem, computed }) {
   }, [computed]);
 
   const fields = [
-    { label: "Current Salary", key: "current_salary" },
-    { label: "Pensionable Emolument", key: "pensionable_emolument" },
-    { label: "Unreduced Pension", key: "unreduced_pension" },
-    { label: "Reduced Pension", key: "reduced_pension" },
-    { label: "Lumpsum Amount", key: "lumpsum_amount" },
-    { label: "Monthly Pension", key: "monthly_pension" },
-    { label: "Last 3-Year Total", key: "last_3year_total" },
-    { label: "Average Salary", key: "average_salary" },
-    { label: "Max Government Salary", key: "max_government_salary" },
+    { label: 'Current Salary', key: 'current_salary' },
+    { label: 'Pensionable Emolument', key: 'pensionable_emolument' },
+    { label: 'Unreduced Pension', key: 'unreduced_pension' },
+    { label: 'Reduced Pension', key: 'reduced_pension' },
+    { label: 'Lumpsum Amount', key: 'lumpsum_amount' },
+    { label: 'Monthly Pension', key: 'monthly_pension' },
+    { label: 'Last 3-Year Total', key: 'last_3year_total' },
+    { label: 'Average Salary', key: 'average_salary' },
+    { label: 'Max Government Salary', key: 'max_government_salary' },
   ];
+
+  const renderSummary = () => {
+    if (!summary || !summary.breakdown) return null;
+
+    const lines = summary.breakdown
+      .split('\n')
+      .filter((line) => line.trim() !== '');
+
+    return (
+      <div className="flex flex-col divide-y divide-gray-300 bg-white shadow-lg rounded-md ">
+        {lines.map((line, index) => {
+          const [key, value] = line.split(':');
+          if (!key || !value) return null;
+
+          return (
+            <div
+              key={index}
+              className="flex justify-between items-center py-3 px-4 hover:bg-gray-50 transition-colors"
+            >
+              <span className="font-medium text-gray-900">{key.trim()}:</span>
+              <span className="text-gray-700 text-right">{value.trim()}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col">
@@ -51,12 +85,49 @@ function PensionComputation({ clickedItem, computed }) {
             <span className="text-gray-500 font-semibold text-[17px] ">
               {summary?.[key] !== undefined
                 ? formatNumber(summary[key])
-                : "0.00"}{" "}
+                : '0.00'}{' '}
               {/* Default to 0 if value is undefined */}
             </span>
           </div>
         ))}
       </div>
+      <Dialog
+        maxWidth="lg"
+        maxHeight="lg"
+        sx={{
+          '& .MuiDialog-paper': {
+            minHeight: '350px',
+            minWidth: '600px',
+            p: 5,
+          },
+        }}
+        open={
+          viewBreakDown &&
+          summary &&
+          summary.breakdown &&
+          summary.breakdown !== ''
+        }
+        onClose={() => setViewBreakDown(false)}
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-primary">
+            Breakdown Details
+          </h2>
+          <IconButton onClick={() => setViewBreakDown(false)}>
+            <Close />
+          </IconButton>
+        </div>
+        <div className="overflow-y-auto max-h-[400px]">{renderSummary()}</div>
+        <div className="flex justify-end mt-4">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setViewBreakDown(false)}
+          >
+            Close
+          </Button>
+        </div>
+      </Dialog>
     </div>
   );
 }

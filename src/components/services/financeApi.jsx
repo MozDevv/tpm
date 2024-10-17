@@ -212,6 +212,8 @@ const financeEndpoints = {
   approvePv: (id) => `/Posting/ApprovePayment?PaymentId=${id}`,
   createPaymentSchedule: '/Posting/CreatePensionPaymentSchedule',
   postClaimPitoLegder: '/Posting/PostClaimPIToLedger',
+
+  getPaymentSchedules: '/Posting/GetPaymentSchedules',
 };
 
 export const apiService = {

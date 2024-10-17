@@ -29,6 +29,7 @@ import {
   Rule,
   Settings,
   ScheduleSend,
+  Launch,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -198,6 +199,13 @@ const ListNavigation = ({
       name: 'Compute Claim',
       icon: Settings,
       action: 'computeClaim',
+      requiredPermissions: [],
+      status: [4],
+    },
+    {
+      name: 'View Computation Breakdown',
+      icon: Launch,
+      action: 'viewComputationBreakdown',
       requiredPermissions: [],
       status: [4],
     },
