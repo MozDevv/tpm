@@ -1,6 +1,6 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import styles from "./navbar.module.css";
+'use client';
+import React, { useEffect, useState } from 'react';
+import styles from './navbar.module.css';
 import {
   Avatar,
   Badge,
@@ -15,7 +15,7 @@ import {
   MenuItem,
   TextField,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   AvTimer,
   Email,
@@ -27,16 +27,16 @@ import {
   Person,
   SearchOutlined,
   SettingsOutlined,
-} from "@mui/icons-material";
-import { useSelectedItem } from "@/context/NavItemContext";
-import { useRouter } from "next/navigation";
-import NotificationMenu from "./NotificationMenu";
-import { useAuth } from "@/context/AuthContext";
-import axios from "axios";
-import { BASE_CORE_API } from "@/utils/constants";
-import { useSearch } from "@/context/SearchContext";
-import { useMda } from "@/context/MdaContext";
-import { toProperCase } from "@/utils/numberFormatters";
+} from '@mui/icons-material';
+import { useSelectedItem } from '@/context/NavItemContext';
+import { useRouter } from 'next/navigation';
+import NotificationMenu from './NotificationMenu';
+import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
+import { useSearch } from '@/context/SearchContext';
+import { useMda } from '@/context/MdaContext';
+import { toProperCase } from '@/utils/numberFormatters';
 
 function Navbar() {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -56,14 +56,14 @@ function Navbar() {
   const [loading, setLoading] = useState(false);
   const { selectedItem } = useSelectedItem();
   useEffect(() => {
-    if (selectedItem !== "") {
+    if (selectedItem !== '') {
       setLoading(false);
     }
   }, [selectedItem]);
 
   const router = useRouter();
   const { auth, login, logout } = useAuth();
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,21 +72,25 @@ function Navbar() {
         );
         setRole(res.data.data.name);
       } catch (error) {
-        console.log("error", error);
+        console.log('error', error);
       }
     };
 
     fetchData();
   }, []);
 
-  console.log("auth**&&&&&&&&", auth?.user?.name);
+  console.log('auth**&&&&&&&&', auth?.user?.name);
 
   const handleLogout = () => {
-    if (localStorage.getItem("token")) {
-      localStorage.removeItem("token");
+    if (localStorage.getItem('token')) {
+      localStorage.removeItem('token');
     }
 
-    router.push("/");
+    if (localStorage.getItem('retireeFormData')) {
+      localStorage.removeItem('retireeFormData');
+    }
+
+    router.push('/');
   };
 
   const { searchedKeyword, setSearchedKeyword } = useSearch();
@@ -94,11 +98,11 @@ function Navbar() {
   const { mdaName } = useMda();
 
   return (
-    <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
+    <div style={{ paddingLeft: '10px', paddingTop: '10px' }}>
       <div className={styles.navbar}>
         <div className="flex w-[950px] ml-2 gap-15">
           <div className={styles.left}>
-            {selectedItem === "Dashboard" ? (
+            {selectedItem === 'Dashboard' ? (
               <div className={styles.heading}>
                 <h1>DashBoard</h1>
                 <p>Welcome Back!</p>
@@ -117,18 +121,18 @@ function Navbar() {
               onChange={(e) => setSearchedKeyword(e.target.value)}
               size="small"
               sx={{
-                "&.MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderRadius: "30px", // Set your desired border radius
+                '&.MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderRadius: '30px', // Set your desired border radius
                   },
                 },
               }}
               InputProps={{
                 style: {
-                  backgroundColor: "white",
-                  width: "500px",
-                  borderRadius: "30px",
-                  marginLeft: "auto",
+                  backgroundColor: 'white',
+                  width: '500px',
+                  borderRadius: '30px',
+                  marginLeft: 'auto',
                 },
                 startAdornment: (
                   <InputAdornment position="start">
@@ -140,11 +144,11 @@ function Navbar() {
             />
           </div>
         </div>
-        <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
+        <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
           <IconButton
             sx={{
-              backgroundColor: "white",
-              borderRadius: "50%",
+              backgroundColor: 'white',
+              borderRadius: '50%',
             }}
             onClick={handleClick3}
           >
@@ -152,23 +156,23 @@ function Navbar() {
               <NotificationsOutlined
                 color="action"
                 sx={{
-                  color: "#006990",
+                  color: '#006990',
                 }}
               />
             </Badge>
-          </IconButton>{" "}
+          </IconButton>{' '}
           <Menu
             id="msgs-menu"
             anchorEl={anchorEl3}
             keepMounted
             open={Boolean(anchorEl3)}
             onClose={handleClose3}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             sx={{
-              "& .MuiMenu-paper": {
-                width: "600px",
-                height: "400px",
+              '& .MuiMenu-paper': {
+                width: '600px',
+                height: '400px',
               },
             }}
           >
@@ -176,30 +180,30 @@ function Navbar() {
           </Menu>
           <IconButton
             sx={{
-              backgroundColor: "white",
-              borderRadius: "50%",
+              backgroundColor: 'white',
+              borderRadius: '50%',
             }}
           >
             <Badge badgeContent={4} color="primary">
               <MessageOutlined
                 color="action"
                 sx={{
-                  color: "#006990",
+                  color: '#006990',
                 }}
               />
             </Badge>
           </IconButton>
-          <Box sx={{ display: "flex", gap: "5px", alignItems: "center" }}>
+          <Box sx={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
-              <Avatar sx={{ height: "36px", width: "36px" }} />
+              <Avatar sx={{ height: '36px', width: '36px' }} />
               <Box
-                sx={{ display: "flex", gap: "4px", fontSize: "15px", mr: 3 }}
+                sx={{ display: 'flex', gap: '4px', fontSize: '15px', mr: 3 }}
               >
                 <div className="flex flex-col ml-1">
                   <div className="flex items-center">
@@ -209,21 +213,21 @@ function Navbar() {
                         fontWeight: 700,
                       }}
                     >
-                      {auth?.user?.name?.split(" ")[0]}
+                      {auth?.user?.name?.split(' ')[0]}
                     </h6>
                   </div>
                   <h6
                     style={{
-                      fontSize: "11px",
+                      fontSize: '11px',
                       fontWeight: 700,
-                      color: "rgb(153, 153, 153)",
+                      color: 'rgb(153, 153, 153)',
                     }}
                   >
                     {role}
                   </h6>
                 </div>
               </Box>
-            </Box>{" "}
+            </Box>{' '}
             <IconButton
               size="large"
               aria-label="show 11 new notifications"
@@ -232,31 +236,31 @@ function Navbar() {
               aria-haspopup="true"
               onClick={handleClick2}
               sx={{
-                height: "36px",
-                width: "36px",
-                backgroundColor: "#006990",
+                height: '36px',
+                width: '36px',
+                backgroundColor: '#006990',
                 ml: 5,
-                ...(typeof anchorEl2 === "object" && {
-                  color: "primary.main",
+                ...(typeof anchorEl2 === 'object' && {
+                  color: 'primary.main',
                 }),
-                "&:hover": {
-                  backgroundColor: "#0c4f68", // Change to desired hover color
+                '&:hover': {
+                  backgroundColor: '#0c4f68', // Change to desired hover color
                 },
               }}
             >
-              <SettingsOutlined sx={{ color: "white" }} />
-            </IconButton>{" "}
+              <SettingsOutlined sx={{ color: 'white' }} />
+            </IconButton>{' '}
             <Menu
               id="msgs-menu"
               anchorEl={anchorEl2}
               keepMounted
               open={Boolean(anchorEl2)}
               onClose={handleClose2}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               sx={{
-                "& .MuiMenu-paper": {
-                  width: "200px",
+                '& .MuiMenu-paper': {
+                  width: '200px',
                 },
               }}
             >

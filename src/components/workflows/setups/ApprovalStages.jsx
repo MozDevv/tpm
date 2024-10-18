@@ -199,7 +199,7 @@ const ApprovalStages = () => {
     },
     {
       name: 'primary_approver_id',
-      label: 'Primary Approver',
+      label: 'Approver',
       type: 'table',
       row1: 'Primary Approver',
       row2: 'Secondary Approver',
