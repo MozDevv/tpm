@@ -1,38 +1,39 @@
-import BaseCollapse from "@/components/baseComponents/BaseCollapse";
-import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 function DeductionsDetails({ clickedItem }) {
   const columnDefs = [
     {
-      field: "name",
-      headerName: "Name",
-      headerClass: "prefix-header",
+      field: 'name',
+      headerName: 'Name',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "amount",
-      headerName: "Amount",
-      headerClass: "prefix-header",
+      field: 'amount',
+      headerName: 'Amount',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "mda",
-      headerName: "Ministry/Department/Agency",
-      headerClass: "prefix-header",
+      field: 'mda',
+      headerName: 'Ministry/Department/Agency',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "deductions_and_refunds_id",
-      headerName: "Deductions/Refunds ",
-      headerClass: "prefix-header",
+      field: 'deductions_and_refunds_id',
+      headerName: 'Deductions/Refunds ',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
       valueFormatter: (params) => {
@@ -49,7 +50,7 @@ function DeductionsDetails({ clickedItem }) {
   const [gridApi, setGridApi] = useState(null);
 
   const loadingOverlayComponentParams = useMemo(() => {
-    return { loadingMessage: "Loading..." };
+    return { loadingMessage: 'Loading...' };
   }, []);
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -65,7 +66,7 @@ function DeductionsDetails({ clickedItem }) {
       const data = res.data.data;
       setRecoveryDeductions(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -79,7 +80,7 @@ function DeductionsDetails({ clickedItem }) {
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -96,6 +97,7 @@ function DeductionsDetails({ clickedItem }) {
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
+        noRowsOverlayComponent={BaseEmptyComponent}
         // alwaysShowVerticalScroll={true}
 
         // loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
@@ -109,7 +111,7 @@ function DeductionsDetails({ clickedItem }) {
         rowSelection="multiple"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
-          console.log("e.data", e.data);
+          console.log('e.data', e.data);
           //   setOpenBaseCard(true);
           //   setClickedItem(e.data);
         }}

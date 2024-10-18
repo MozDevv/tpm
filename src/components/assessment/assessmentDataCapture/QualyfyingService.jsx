@@ -11,6 +11,7 @@ import { parseDate } from '@/utils/dateFormatter';
 import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/api';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 function QualyfyingService({ clickedItem, computed }) {
   const [qualifyingService, setQualifyingService] = useState([]);
@@ -171,6 +172,7 @@ function QualyfyingService({ clickedItem, computed }) {
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
+        noRowsOverlayComponent={BaseEmptyComponent}
         // alwaysShowVerticalScroll={true}
 
         // loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader

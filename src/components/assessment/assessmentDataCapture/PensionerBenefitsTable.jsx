@@ -13,6 +13,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints from '@/components/services/setupsApi';
 import { apiService } from '@/components/services/api';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
   const [qualifyingService, setQualifyingService] = useState([]);
@@ -300,6 +301,7 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
+        noRowsOverlayComponent={BaseEmptyComponent}
         // alwaysShowVerticalScroll={true}
 
         // loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader

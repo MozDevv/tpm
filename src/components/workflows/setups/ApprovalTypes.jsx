@@ -197,7 +197,7 @@ const Approvers = () => {
           <BaseInputCard
             fields={fields}
             apiEndpoint={endpoints.updateApprovalType}
-            postApiFunction={apiService.post}
+            postApiFunction={apiService.put}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
