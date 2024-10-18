@@ -14,7 +14,7 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints from '@/components/services/setupsApi';
 import { apiService } from '@/components/services/api';
 
-function NewTable({ clickedItem, computed, setViewBreakDown }) {
+function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
   const [qualifyingService, setQualifyingService] = useState([]);
   const columnDefs = [
     {
@@ -73,6 +73,9 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'total_pensioner_refund_amount',
@@ -80,6 +83,9 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'lumpsum_tax_amount',
@@ -87,6 +93,9 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'monthly_tax_amount',
@@ -94,6 +103,9 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'annual_allowance',
@@ -101,6 +113,9 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'document_status',
@@ -308,4 +323,4 @@ function NewTable({ clickedItem, computed, setViewBreakDown }) {
   );
 }
 
-export default NewTable;
+export default PensionerBenefitsTable;

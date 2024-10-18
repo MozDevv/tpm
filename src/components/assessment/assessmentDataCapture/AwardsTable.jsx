@@ -39,6 +39,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'lumpsum_amount',
@@ -46,6 +49,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'monthly_pension',
@@ -63,6 +69,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'total_pensioner_refund_amount',
@@ -70,6 +79,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'lumpsum_tax_amount',
@@ -77,6 +89,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'monthly_tax_amount',
@@ -84,6 +99,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'annual_allowance',
@@ -91,6 +109,9 @@ function AwardsTable({ clickedItem, computed }) {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
     },
     {
       field: 'document_status',

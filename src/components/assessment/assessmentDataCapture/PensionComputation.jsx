@@ -2,7 +2,7 @@ import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Close } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import { Button, Dialog, IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
@@ -110,23 +110,28 @@ function PensionComputation({
         onClose={() => setViewBreakDown(false)}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-primary">
-            Breakdown Details
-          </h2>
+          <div className="flex gap-2 items-center">
+            <IconButton
+              sx={{
+                border: '1px solid #006990',
+                borderRadius: '50%',
+                padding: '3px',
+                marginRight: '10px',
+                color: '#006990',
+              }}
+              onClick={() => setViewBreakDown(false)}
+            >
+              <ArrowBack sx={{ color: '#006990' }} />
+            </IconButton>
+            <h2 className="text-xl font-semibold text-primary">
+              Computation Breakdown
+            </h2>
+          </div>
           <IconButton onClick={() => setViewBreakDown(false)}>
             <Close />
           </IconButton>
         </div>
         <div className="overflow-y-auto max-h-[400px]">{renderSummary()}</div>
-        <div className="flex justify-end mt-4">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setViewBreakDown(false)}
-          >
-            Close
-          </Button>
-        </div>
       </Dialog>
     </div>
   );
