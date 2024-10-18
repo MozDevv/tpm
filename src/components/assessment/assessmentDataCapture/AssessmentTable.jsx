@@ -16,6 +16,8 @@ import {
   Tooltip,
   Pagination,
   Dialog,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add,
@@ -438,8 +440,11 @@ const AssessmentTable = ({ status }) => {
     viewComputationBreakdown: () => setViewBreakDown(true),
   };
 
+  const [computing, setComputing] = useState(false);
+
   const calculateAndAward = async (id) => {
     if (clickedItem?.id_claim) {
+      setComputing(true);
       try {
         const res = await assessApiService.post(
           assessEndpoints.calculateAndAward(id)
@@ -452,6 +457,8 @@ const AssessmentTable = ({ status }) => {
         }
       } catch (error) {
         console.log('Error calculating and awarding claim:', error);
+      } finally {
+        setComputing(false);
       }
     } else {
       console.log('No claim id found');
@@ -489,6 +496,23 @@ const AssessmentTable = ({ status }) => {
   return (
     <>
       <div className=" relative h-full w-full overflow-hidden">
+        {computing && (
+          <Backdrop
+            sx={{ color: '#fff', zIndex: 99999999999999999999 }}
+            open={open}
+            onClick={handleClose}
+          >
+            <span class="loader"></span>
+            <div className="ml-3 font-semibold text-xl flex items-center">
+              Computing
+              <div className="ellipsis ml-1 mb-4">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </div>
+            </div>
+          </Backdrop>
+        )}
         <Dialog
           open={openMoveStatus && selectedRows.length > 0}
           onClose={() => setOpenMoveStatus(false)}

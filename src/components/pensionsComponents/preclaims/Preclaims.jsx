@@ -63,6 +63,7 @@ import { Spin } from 'antd';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { useStatus } from '@/context/StatusContext';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -1044,6 +1045,7 @@ const Preclaims = ({ status }) => {
                   rowData={filteredData}
                   columnDefs={colDefs}
                   rowSelection="multiple"
+                  noRowsOverlayComponent={BaseEmptyComponent}
                   onSelectionChanged={onSelectionChanged}
                   domLayout="autoHeight"
                   onGridReady={onGridReady}
