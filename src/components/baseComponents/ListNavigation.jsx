@@ -202,6 +202,12 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       status: [4],
     },
     {
+      name: 'View Complete Summary',
+      icon: Launch,
+      action: 'viewComputationSummary',
+      requiredPermissions: [],
+    },
+    {
       name: 'Move to Assessment Approval',
       icon: Send,
       action: 'moveToAssessmentApproval',

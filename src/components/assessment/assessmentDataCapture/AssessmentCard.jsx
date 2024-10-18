@@ -21,6 +21,8 @@ function AssessmentCard({
   computed,
   setViewBreakDown,
   viewBreakDown,
+  setViewCompleteSummary,
+  viewCompleteSummary,
 }) {
   console.log('clickedItem', clickedItem);
 
@@ -76,6 +78,8 @@ function AssessmentCard({
                     qualifyingService={qualifyingService}
                     setViewBreakDown={setViewBreakDown}
                     viewBreakDown={viewBreakDown}
+                    setViewCompleteSummary={setViewCompleteSummary}
+                    viewCompleteSummary={viewCompleteSummary}
                   />
                 </div>
               </TabPane>

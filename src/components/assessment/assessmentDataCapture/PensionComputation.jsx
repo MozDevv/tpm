@@ -1,3 +1,5 @@
+import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
@@ -17,6 +19,8 @@ function PensionComputation({
   computed,
   setViewBreakDown,
   viewBreakDown,
+  setViewCompleteSummary,
+  viewCompleteSummary,
 }) {
   const [summary, setSummary] = useState(null); // Initialize as null to handle empty state
 
@@ -76,6 +80,36 @@ function PensionComputation({
       }))
     : [];
 
+  const inputFields =
+    summary &&
+    Object.keys(summary)
+      .filter((key) => summary[key] !== undefined && summary[key] !== null) // Filter out undefined or null values
+      .filter(
+        (key) => key !== 'breakdown' && key !== 'claim_id' && key !== 'id'
+      ) // Filter out breakdown, claim_id and id
+      .map((key) => {
+        const value = summary[key];
+        const containsDateKeyword =
+          /(month|year|day)/i.test(key) &&
+          key !== 'breakdown' &&
+          key !== 'last_3year_total' &&
+          key !== 'monthly_pension';
+        return {
+          label: key
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase()), // Convert snake_case to Title Case
+          name: key,
+          type: containsDateKeyword
+            ? 'text' // If the key contains "month", "year", or "day", set type to 'text'
+            : isValidISODate(value)
+            ? 'date'
+            : typeof value === 'number' || value === 0
+            ? 'amount'
+            : 'text',
+          disabled: true,
+        };
+      });
+
   const renderSummary = () => {
     if (!summary || !summary.breakdown) return null;
 
@@ -105,6 +139,7 @@ function PensionComputation({
 
   return (
     <div className="flex flex-col">
+      {JSON.stringify(viewCompleteSummary)}
       <hr />
       <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
         {fields
@@ -120,7 +155,7 @@ function PensionComputation({
               summary[field.key] !== undefined && summary[field.key] !== null
           )
           .map(({ label, key }) => (
-            <div key={key} className="flex flex-row w-[90%] justify-between ">
+            <div key={key} className="flex flex-row w-[90%] justify-between">
               <span className="font-semibold text-gray-700 capitalize font-montserrat">
                 {label}
               </span>
@@ -136,6 +171,7 @@ function PensionComputation({
             </div>
           ))}
       </div>
+
       <Dialog
         maxWidth="lg"
         maxHeight="lg"
@@ -178,6 +214,24 @@ function PensionComputation({
         </div>
         <div className="overflow-y-auto max-h-[400px]">{renderSummary()}</div>
       </Dialog>
+      <BaseCard
+        openBaseCard={viewCompleteSummary}
+        setOpenBaseCard={setViewCompleteSummary}
+        title={'Complete Summary Details'}
+        handlers={{}}
+        deleteApiEndpoint={''}
+        deleteApiService={''}
+        clickedItem={summary}
+        isUserComponent={false}
+        isSecondaryCard={true}
+      >
+        <BaseInputCard
+          fields={inputFields}
+          clickedItem={summary}
+          useRequestBody={true}
+          setOpenBaseCard={setViewBreakDown}
+        />
+      </BaseCard>
     </div>
   );
 }

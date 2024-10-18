@@ -427,6 +427,7 @@ const AssessmentTable = ({ status }) => {
   const [qualifyingService, setQualifyingService] = useState([]);
   const [pensionableService, setPensionableService] = useState([]);
   const [viewBreakDown, setViewBreakDown] = useState(false);
+  const [viewCompleteSummary, setViewCompleteSummary] = useState(false);
   const [computed, setComputed] = useState(false);
 
   const baseCardHandlers = {
@@ -438,6 +439,7 @@ const AssessmentTable = ({ status }) => {
     createClaim: () => setOpenAction(true),
     computeClaim: () => calculateAndAward(clickedItem?.id_claim),
     viewComputationBreakdown: () => setViewBreakDown(true),
+    viewComputationSummary: () => setViewCompleteSummary(true),
   };
 
   const [computing, setComputing] = useState(false);
@@ -556,6 +558,8 @@ const AssessmentTable = ({ status }) => {
           ]}
         >
           <AssessmentCard
+            setViewCompleteSummary={setViewCompleteSummary}
+            viewCompleteSummary={viewCompleteSummary}
             setViewBreakDown={setViewBreakDown}
             viewBreakDown={viewBreakDown}
             pensionableService={pensionableService}

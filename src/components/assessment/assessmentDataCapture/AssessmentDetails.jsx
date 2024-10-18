@@ -15,6 +15,8 @@ function AssessmentDetails({
   computed,
   setViewBreakDown,
   viewBreakDown,
+  setViewCompleteSummary,
+  viewCompleteSummary,
 }) {
   const [openSections, setOpenSections] = useState({});
 
@@ -63,6 +65,8 @@ function AssessmentDetails({
           clickedItem={clickedItem}
           setViewBreakDown={setViewBreakDown}
           viewBreakDown={viewBreakDown}
+          setViewCompleteSummary={setViewCompleteSummary}
+          viewCompleteSummary={viewCompleteSummary}
         />
       </div>
     </div>
