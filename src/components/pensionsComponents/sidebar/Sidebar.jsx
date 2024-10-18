@@ -127,6 +127,10 @@ function Sidebar() {
               path: '/pensions/preclaims/listing/unnotified',
             },
             {
+              title: 'Scheduled Preclaims',
+              path: '/pensions/preclaims/listing/scheduled',
+            },
+            {
               title: 'Notified Retirees',
               path: '/pensions/preclaims/listing/notified',
             },

@@ -1,7 +1,7 @@
 import { Empty } from 'antd';
 import React from 'react';
 
-function BaseEmptyComponent({ title, scale = 0.7 }) {
+function BaseEmptyComponent({ title, scale = 0.6 }) {
   // Dynamic styles based on the scale prop
   const scaledStyle = {
     transform: `scale(${scale})`,
@@ -10,7 +10,7 @@ function BaseEmptyComponent({ title, scale = 0.7 }) {
 
   return (
     <div>
-      <div className="mt-20" style={scaledStyle}>
+      <div className="mt-10" style={scaledStyle}>
         <Empty description={title ? title : ''} />
       </div>
     </div>

@@ -10,31 +10,26 @@ import workflowsEndpoints, {
 import { useStatus } from '@/context/StatusContext';
 
 function BaseApprovalCard({
-  clickedItem,
   openApprove,
   setOpenApprove,
-  approvalType,
-  documentNo,
+  documentNo, // Can be a string or an array
 }) {
   const [comments, setComments] = useState('');
-
   const { alert, setAlert } = useAlert();
-
   const [errors, setErrors] = useState({
     status: false,
     message: '',
   });
-
   const { auth } = useAuth();
   const userId = auth.user ? auth.user.userId : null;
   const { workFlowChange, setWorkFlowChange } = useStatus();
+
   const handleApprove = async () => {
     if (!comments || comments.length < 10) {
       setErrors({
         status: true,
-        message: 'Comments must be atleast 10 characters',
+        message: 'Comments must be at least 10 characters',
       });
-
       return;
     }
 
@@ -46,64 +41,67 @@ function BaseApprovalCard({
     };
 
     const fieldName = fieldMapping[openApprove] || 'userId';
-    const data = {
-      documentNo,
-      comments,
-      [fieldName]: userId,
-    };
 
-    try {
-      const response = await workflowsApiService.post(
-        openApprove === 1
-          ? workflowsEndpoints.createApprovalRequest
-          : openApprove === 2
-          ? workflowsEndpoints.cancelApprovalRequest
-          : openApprove === 3
-          ? workflowsEndpoints.approve
-          : openApprove === 4
-          ? workflowsEndpoints.reject
-          : workflowsEndpoints.delegate,
-        data
-      );
-      console.log(response);
-      console.log('data', data);
+    // Convert documentNo to an array if it's a string
+    const documentNos = Array.isArray(documentNo) ? documentNo : [documentNo];
 
-      if (response.status === 200) {
-        if (response.data.succeeded) {
-          // Success case
-          message.success(
-            openApprove === 1
-              ? `Document ${documentNo} sent for approval`
-              : openApprove === 2
-              ? `Approval Request Cancelled for ${documentNo}`
-              : openApprove === 3
-              ? `Document ${documentNo} Approved`
-              : openApprove === 4
-              ? `Document ${documentNo} Rejected`
-              : `Approval Delegated for ${documentNo}`
-          );
+    // Loop through each documentNo and make API calls
+    for (const docNo of documentNos) {
+      const data = {
+        documentNo: docNo,
+        comments,
+        [fieldName]: userId,
+      };
 
-          //  setWorkFlowChange('change');
+      try {
+        const response = await workflowsApiService.post(
+          openApprove === 1
+            ? workflowsEndpoints.createApprovalRequest
+            : openApprove === 2
+            ? workflowsEndpoints.cancelApprovalRequest
+            : openApprove === 3
+            ? workflowsEndpoints.approve
+            : openApprove === 4
+            ? workflowsEndpoints.reject
+            : workflowsEndpoints.delegate,
+          data
+        );
 
-          setComments('');
-          setOpenApprove(false);
-        } else if (
-          response.data.messages &&
-          response.data.messages.length > 0
-        ) {
-          // Error case
-          message.error(response.data.messages[0]); // Show the first error message
+        if (response.status === 200) {
+          if (response.data.succeeded) {
+            // Success case for each document
+            message.success(
+              openApprove === 1
+                ? `Document ${docNo} sent for approval`
+                : openApprove === 2
+                ? `Approval Request Cancelled for ${docNo}`
+                : openApprove === 3
+                ? `Document ${docNo} Approved`
+                : openApprove === 4
+                ? `Document ${docNo} Rejected`
+                : `Approval Delegated for ${docNo}`
+            );
+          } else if (
+            response.data.messages &&
+            response.data.messages.length > 0
+          ) {
+            // Error case for each document
+            message.error(response.data.messages[0]);
+          }
+        } else {
+          // Handle other status codes if needed
+          message.error('An unexpected error occurred. Please try again.'); // General error message
         }
-      } else {
-        // Handle other status codes if needed
-        message.error('An unexpected error occurred. Please try again.'); // General error message
+      } catch (error) {
+        console.error(error);
+        message.error('An error occurred while processing the request.');
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setWorkFlowChange('change');
-      console.log('workFlowChange from approvals', workFlowChange);
     }
+
+    // Reset comments and close the dialog
+    setComments('');
+    setOpenApprove(false);
+    setWorkFlowChange('change');
   };
 
   const title =
@@ -129,7 +127,6 @@ function BaseApprovalCard({
       fullWidth
     >
       <div>
-        {' '}
         <div className="p-8 h-[100%]">
           <p className="text-primary relative font-semibold text-lg mb-2">
             {title}
@@ -138,7 +135,7 @@ function BaseApprovalCard({
           <div>
             <label
               htmlFor="comments"
-              className=" text-xs font-medium text-gray-700"
+              className="text-xs font-medium text-gray-700"
             >
               Add Comments
             </label>
@@ -157,7 +154,6 @@ function BaseApprovalCard({
             />
           </div>
           <div className="mt-5">
-            {' '}
             <Button
               onClick={handleApprove}
               variant="contained"

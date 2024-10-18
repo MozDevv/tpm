@@ -727,6 +727,17 @@ const Preclaims = ({ status }) => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
   };
 
   const baseCardHandlers = {
@@ -798,6 +809,17 @@ const Preclaims = ({ status }) => {
     fetchAllPreclaims();
   };
 
+  const [clickedRow, setClickedRow] = useState(null);
+
+  useEffect(() => {
+    if (
+      Array.isArray(selectedRows) &&
+      selectedRows.length > 0 &&
+      openApprove === false
+    ) {
+      fetchAllPreclaims();
+    }
+  }, [openApprove]);
   return (
     <>
       {loading ? (
@@ -807,10 +829,9 @@ const Preclaims = ({ status }) => {
       ) : (
         <div className=" relative h-full w-full overflow-hidden">
           <BaseApprovalCard
-            clickedItem={clickedItem}
             openApprove={openApprove}
             setOpenApprove={setOpenApprove}
-            documentNo={clickedItem?.no_series}
+            documentNo={selectedRows.map((item) => item.no_series)}
           />
           <BaseCard
             documentNo={clickedItem && clickedItem?.no_series}
@@ -868,6 +889,7 @@ const Preclaims = ({ status }) => {
               handlers={handlers}
               // permissions={permissions}
               status={status}
+              clickedItem={selectedRows[0]}
             />
 
             <div className="flex justify-between flex-row mt-2"></div>
@@ -1051,6 +1073,10 @@ const Preclaims = ({ status }) => {
                   onGridReady={onGridReady}
                   totalRecords={totalRecords}
                   rowHeight={36}
+                  onRowClicked={(event) => {
+                    setClickedRow(event.data);
+                    console.log('event.data', event.data);
+                  }}
                   onCellDoubleClicked={(event) => {
                     setOpenBaseCard(true);
                     setClickedItem(event.data); // Update selected item

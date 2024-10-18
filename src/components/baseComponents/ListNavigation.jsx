@@ -37,13 +37,7 @@ import workflowsEndpoints, {
 } from '../services/workflowsApi';
 import { Divider } from '@mui/material';
 
-const ListNavigation = ({
-  handlers,
-  status,
-  openBaseCard,
-  clickedItem,
-  selectedRows,
-}) => {
+const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
@@ -83,10 +77,8 @@ const ListNavigation = ({
   };
 
   useEffect(() => {
-    if (openBaseCard) {
-      getApprovalActionsForUser();
-    }
-  }, []);
+    getApprovalActionsForUser();
+  }, [clickedItem]);
 
   // Define buttons with required permissions
   const buttons = [
