@@ -5,7 +5,7 @@ import QualyfyingService from './QualyfyingService';
 import PensionableService from './PensionableService';
 import DeductionsDetails from './DeductionsDetails';
 import PensionComputation from './PensionComputation';
-import AwardsTable from './awardsTable';
+
 import PensionerBenefitsTable from './PensionerBenefitsTable';
 
 function AssessmentDetails({
