@@ -27,7 +27,7 @@ function AssessmentDetails({
     });
   };
   return (
-    <div className="flex-col h-[600px]">
+    <div className="flex-col h-[900px]">
       <div className="max-h-[500px] overflow-y-auto ">
         <BaseCollapse name="Pensioner Benefits">
           <PensionerBenefitsTable
@@ -57,12 +57,14 @@ function AssessmentDetails({
           <DeductionsDetails clickedItem={clickedItem} />
         </BaseCollapse>
       </div>
-      <PensionComputation
-        computed={computed}
-        clickedItem={clickedItem}
-        setViewBreakDown={setViewBreakDown}
-        viewBreakDown={viewBreakDown}
-      />
+      <div className="h-[200px]">
+        <PensionComputation
+          computed={computed}
+          clickedItem={clickedItem}
+          setViewBreakDown={setViewBreakDown}
+          viewBreakDown={viewBreakDown}
+        />
+      </div>
     </div>
   );
 }

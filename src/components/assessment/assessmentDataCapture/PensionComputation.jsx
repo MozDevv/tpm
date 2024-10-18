@@ -44,6 +44,23 @@ function PensionComputation({
     { label: 'Last 3-Year Total', key: 'last_3year_total' },
     { label: 'Average Salary', key: 'average_salary' },
     { label: 'Max Government Salary', key: 'max_government_salary' },
+    {
+      label: 'Killed On Duty Monthly Pension',
+      key: 'kod_widows_monthly_pension_amount',
+    },
+    {
+      label: 'Killed On Duty Children Monthly Pension',
+      key: 'kod_childrens_monthly_pension_amount',
+    },
+    { label: 'Death Gratuity Amount', key: 'death_gratuity_amount' },
+    {
+      label: 'Unreduced Dependent Pension',
+      key: 'unreduced_dependent_pension',
+    },
+    {
+      label: 'Monthly Primary Dependent Pension',
+      key: 'monthly_primary_dependent_pension',
+    },
   ];
 
   const renderSummary = () => {
