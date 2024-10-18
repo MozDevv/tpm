@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   TextField,
   MenuItem,
@@ -14,15 +14,15 @@ import {
   Typography,
   ListItem,
   Popper,
-} from "@mui/material";
-import { Alert, message } from "antd";
-import dayjs from "dayjs";
+} from '@mui/material';
+import { Alert, message } from 'antd';
+import dayjs from 'dayjs';
 
-import { useMda } from "@/context/MdaContext";
-import { formatNumber } from "@/utils/numberFormatters";
-import BaseAmountInput from "./BaseAmountInput";
-import { truncateMessage } from "@/utils/handyFuncs";
-import CustomDatePicker from "./CustomDatePicker";
+import { useMda } from '@/context/MdaContext';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseAmountInput from './BaseAmountInput';
+import { truncateMessage } from '@/utils/handyFuncs';
+import CustomDatePicker from './CustomDatePicker';
 
 const BaseInputCard = ({
   fields,
@@ -46,8 +46,8 @@ const BaseInputCard = ({
   refreshData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
-    acc[field.name] = field.default !== undefined ? field.default : "";
-    if (field.type === "switch") {
+    acc[field.name] = field.default !== undefined ? field.default : '';
+    if (field.type === 'switch') {
       acc[field.name] = field.default !== undefined ? field.default : false;
     }
     return acc;
@@ -81,14 +81,14 @@ const BaseInputCard = ({
     if (name === selectedLabel) {
       setSelectedValue(value);
     }
-    if (type === "text") {
+    if (type === 'text') {
       setFormData((prev) => ({
         ...prev,
         [name]: value.toUpperCase(),
       }));
     }
-    if (type === "number") {
-      if (value === "") {
+    if (type === 'number') {
+      if (value === '') {
         setFormData((prev) => ({
           ...prev,
           [name]: null,
@@ -101,7 +101,7 @@ const BaseInputCard = ({
       }
     }
     // Assuming 'banks' is your data array and 'branch_id' is the id of the branch you're filtering by
-    if (name === "bank_id" && banks && value) {
+    if (name === 'bank_id' && banks && value) {
       // Find the bank that has a branch matching the given branch_id
       const bankWithBranch = banks.find(
         (bank) => bank.branches.some((branch) => branch.id === value) // assuming 'value' is the branch_id
@@ -121,10 +121,10 @@ const BaseInputCard = ({
           bank_id: null,
         }));
       }
-      console.log("formData", formData);
+      console.log('formData', formData);
     }
 
-    if (name === "bank_id") {
+    if (name === 'bank_id') {
       setSelectedBank(value);
     }
     if (multiple) {
@@ -139,7 +139,7 @@ const BaseInputCard = ({
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === 'checkbox' ? checked : value,
       }));
     }
     setIsEditing(true);
@@ -151,7 +151,7 @@ const BaseInputCard = ({
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value.replace(/,/g, ""),
+      [name]: value.replace(/,/g, ''),
     }));
   };
 
@@ -165,14 +165,14 @@ const BaseInputCard = ({
 
       // Required field validation
 
-      if (field.name === "accountCode" && value) {
+      if (field.name === 'accountCode' && value) {
       }
-      if (field.name === "accountName" && value) {
+      if (field.name === 'accountName' && value) {
       }
 
       if (
         field.required &&
-        (value === undefined || value === null || value === "")
+        (value === undefined || value === null || value === '')
       ) {
         newErrors[field.name] = `${field.label} is required`;
       }
@@ -186,15 +186,15 @@ const BaseInputCard = ({
       //   }
       // }
 
-      if ((field.type === "date" || field.name === "dob") && value) {
-        if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
+      if ((field.type === 'date' || field.name === 'dob') && value) {
+        if (!dayjs(value, 'YYYY-MM-DD', true).isValid()) {
           newErrors[field.name] = `${field.label} is not a valid date`;
         } else {
-          formData[field.name] = dayjs(value).format("YYYY-MM-DDTHH:mm:ss[Z]");
+          formData[field.name] = dayjs(value).format('YYYY-MM-DDTHH:mm:ss[Z]');
         }
       }
       // KRA PIN validation
-      if (field.name === "kra_pin" && value) {
+      if (field.name === 'kra_pin' && value) {
         const kraPinPattern = /^[A-Z]{1}[0-9]{9}[A-Z]{1}$/;
         if (value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
@@ -202,7 +202,7 @@ const BaseInputCard = ({
       }
 
       // National ID validation
-      if (field.name === "national_id" && value) {
+      if (field.name === 'national_id' && value) {
         const nationalIdPattern = /^[0-9]{8}$/; // Adjust the pattern as per your requirements
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
@@ -210,7 +210,7 @@ const BaseInputCard = ({
       }
 
       // Email validation
-      if ((field.name === "email" || field.name === "email_address") && value) {
+      if ((field.name === 'email' || field.name === 'email_address') && value) {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors[field.name] = `${field.label} is not a valid email`;
@@ -218,27 +218,27 @@ const BaseInputCard = ({
       }
 
       // Phone number validation
-      if (field.name === "phone_number" && value) {
+      if (field.name === 'phone_number' && value) {
         const phoneNumberPattern = /^\+?[0-9]{10,13}$/; // Adjust pattern for your locale
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not a valid phone number`;
         }
       }
 
-      if (field.type === "number" && value) {
+      if (field.type === 'number' && value) {
         formData[field.name] = value * 1;
       }
 
-      if (field.type === "switch" && value === undefined) {
+      if (field.type === 'switch' && value === undefined) {
         formData[field.name] = false;
       }
 
-      if (field.name === "mda_id" && field.hide) {
+      if (field.name === 'mda_id' && field.hide) {
         formData[field.name] = mdaId;
       }
 
       // Account number validation
-      if (field.name === "account_number" && value) {
+      if (field.name === 'account_number' && value) {
         const accountNumberPattern = /^[0-9]{10,20}$/; // Adjust pattern for account number format
         if (!accountNumberPattern.test(value)) {
           newErrors[
@@ -261,13 +261,13 @@ const BaseInputCard = ({
     }
   }, [formData.total_emoluments]);
 
-  const [saveError, setSaveError] = useState("");
+  const [saveError, setSaveError] = useState('');
 
   const handleSave = async () => {
-    console.log("Base Input Card: form data to be sent: ", formData);
+    console.log('Base Input Card: form data to be sent: ', formData);
 
-    console.log("Base Input Card: apiEndpoint: ", apiEndpoint);
-    console.log("Base Input Card: postApiFunction: ", postApiFunction);
+    console.log('Base Input Card: apiEndpoint: ', apiEndpoint);
+    console.log('Base Input Card: postApiFunction: ', postApiFunction);
 
     if (validateForm()) {
       try {
@@ -284,10 +284,10 @@ const BaseInputCard = ({
         Object.keys(formattedFormData).forEach((key) => {
           const value = formattedFormData[key];
 
-          if (dayjs(value).isValid() && key.includes("date")) {
+          if (dayjs(value).isValid() && key.includes('date')) {
             console.log(`Formatting Date for Key: ${key}, Value: ${value}`);
             formattedFormData[key] = dayjs(value).format(
-              "YYYY-MM-DDTHH:mm:ss[Z]"
+              'YYYY-MM-DDTHH:mm:ss[Z]'
             );
             console.log(`Formatted Date: ${formattedFormData[key]}`);
           }
@@ -305,7 +305,7 @@ const BaseInputCard = ({
         //   delete dataToSend.accountNo;
         // }
 
-        console.log("DATA TO SEND: ", dataToSend);
+        console.log('DATA TO SEND: ', dataToSend);
 
         if (id && idLabel) {
           if (isBranch) {
@@ -315,7 +315,7 @@ const BaseInputCard = ({
           }
         }
 
-        console.log("DATA TO SEND: ", dataToSend);
+        console.log('DATA TO SEND: ', dataToSend);
 
         if (!useRequestBody) {
           const formDataObj = new FormData();
@@ -332,7 +332,7 @@ const BaseInputCard = ({
         const res = await postApiFunction(apiEndpoint, dataToSend);
         setIsEditing(false);
 
-        console.log("Data  ", res.data);
+        console.log('Data  ', res.data);
 
         if (
           res.data.succeeded === false &&
@@ -350,13 +350,13 @@ const BaseInputCard = ({
         ) {
           refreshData && refreshData(res.data.data.id);
           fetchData && fetchData();
-          message.success("Record saved successfully");
+          message.success('Record saved successfully');
           !refreshData && setOpenBaseCard(false);
           setOpenAction && setOpenAction(false);
           // setReFetchData(true);
         }
       } catch (error) {
-        console.error("Error saving data:", error);
+        console.error('Error saving data:', error);
       }
     }
   };
@@ -402,14 +402,14 @@ const BaseInputCard = ({
           <div
             key={index}
             style={{
-              flexDirection: "column",
-              display: field.hide === true ? "none" : "flex",
+              flexDirection: 'column',
+              display: field.hide === true ? 'none' : 'flex',
             }}
           >
             <label className="text-xs font-semibold text-gray-600">
               {field.label}
             </label>
-            {field.type === "select" ? (
+            {field.type === 'select' ? (
               field.multiple ? (
                 <Select
                   multiple
@@ -447,7 +447,7 @@ const BaseInputCard = ({
                     handleInputChange({
                       target: {
                         name: field.name,
-                        value: newValue ? newValue.id : "",
+                        value: newValue ? newValue.id : '',
                       },
                     });
                   }}
@@ -472,37 +472,37 @@ const BaseInputCard = ({
                       <li
                         {...props}
                         style={{
-                          border: "none",
-                          boxShadow: "none",
-                          backgroundColor: selected ? "#B2E9ED" : "white",
+                          border: 'none',
+                          boxShadow: 'none',
+                          backgroundColor: selected ? '#B2E9ED' : 'white',
                         }}
                       >
                         <Box
                           sx={{
-                            width: "100%",
-                            pr: "40px",
+                            width: '100%',
+                            pr: '40px',
 
-                            display: "flex",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            justifyContent: 'space-between',
                           }}
                         >
                           <Box
                             sx={{
-                              display: "flex",
-                              flexDirection: "row",
+                              display: 'flex',
+                              flexDirection: 'row',
                               gap: 3,
                             }}
                           >
-                            {" "}
+                            {' '}
                             <p
                               className=" text-primary font-normal text-[12px] items-start"
-                              style={{ alignSelf: "flex-start" }}
+                              style={{ alignSelf: 'flex-start' }}
                             >
                               {option.name}
                             </p>
                             <p
                               className="text-[12px] items-center"
-                              style={{ alignSelf: "flex-center" }}
+                              style={{ alignSelf: 'flex-center' }}
                             >
                               {option.accountNo}
                             </p>
@@ -514,7 +514,7 @@ const BaseInputCard = ({
                   ListboxProps={{
                     sx: {
                       padding: 0,
-                      "& ul": {
+                      '& ul': {
                         padding: 0,
                         margin: 0,
                       },
@@ -554,7 +554,7 @@ const BaseInputCard = ({
                   ))}
                 </TextField>
               )
-            ) : field.type === "switch" ? (
+            ) : field.type === 'switch' ? (
               <FormControlLabel
                 control={
                   <Switch
@@ -565,16 +565,16 @@ const BaseInputCard = ({
                     color="primary"
                   />
                 }
-                label={formData[field.name] ? "Yes" : "No"}
+                label={formData[field.name] ? 'Yes' : 'No'}
               />
-            ) : field.type === "date" ? (
+            ) : field.type === 'date' ? (
               <TextField
                 name={field.name}
                 type="date"
                 variant="outlined"
                 size="small"
                 error={!!errors[field.name]}
-                value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
+                value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
                 helperText={errors[field.name]}
                 onChange={handleInputChange}
                 disabled={field.disabled}
@@ -586,7 +586,7 @@ const BaseInputCard = ({
             //   handleInputChange={handleInputChange}
             //   errors={errors}
             //
-            field.type === "autocomplete" ? (
+            field.type === 'autocomplete' ? (
               <Autocomplete
                 options={field.options}
                 getOptionLabel={(option) => option.name}
@@ -594,7 +594,7 @@ const BaseInputCard = ({
                   handleInputChange({
                     target: {
                       name: field.name,
-                      value: newValue ? newValue.id : "",
+                      value: newValue ? newValue.id : '',
                     },
                   });
                 }}
@@ -615,7 +615,7 @@ const BaseInputCard = ({
                   ) || null
                 }
               />
-            ) : field.type === "amount" ? (
+            ) : field.type === 'amount' ? (
               <TextField
                 name={field.name}
                 variant="outlined"
@@ -630,18 +630,115 @@ const BaseInputCard = ({
                 required={field.required}
                 fullWidth
                 inputProps={{
-                  style: { textAlign: "right" }, // Aligns the text to the right
+                  style: { textAlign: 'right' }, // Aligns the text to the right
                 }}
                 InputProps={{
                   inputComponent: BaseAmountInput,
                 }}
                 sx={{
-                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
                     {
-                      border: "none",
-                      backgroundColor: "rgba(0, 0, 0, 0.06)",
+                      border: 'none',
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
                     },
                 }}
+              />
+            ) : field.type === 'table' ? (
+              <Autocomplete
+                options={field.options}
+                getOptionLabel={(option) => option.name}
+                onChange={(event, newValue) => {
+                  handleInputChange({
+                    target: {
+                      name: field.name,
+                      value: newValue ? newValue.id : '',
+                    },
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name={field.name}
+                    error={!!errors[field.name]}
+                    helperText={errors[field.name]}
+                  />
+                )}
+                value={
+                  field.options.find(
+                    (option) => option.id === formData[field.name]
+                  ) || null
+                }
+                renderOption={(props, option, { selected }) => (
+                  <div className="">
+                    <li
+                      {...props}
+                      style={{
+                        border: 'none',
+                        boxShadow: 'none',
+                        backgroundColor: selected ? '#B2E9ED' : 'white',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '100%',
+                          pr: '10px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            width: '100%',
+                            '&:hover': {
+                              backgroundColor: '#e0f7fa',
+                            },
+                          }}
+                        >
+                          <p
+                            className="text-primary font-normal text-[12px] leading-5"
+                            style={{ margin: 0 }}
+                          >
+                            {option.row1}
+                          </p>
+                          <p
+                            className="text-[12px] text-gray-700"
+                            style={{ margin: 0 }}
+                          >
+                            {option.row2}
+                          </p>
+                        </Box>
+                      </Box>
+                    </li>
+                  </div>
+                )}
+                ListboxProps={{
+                  sx: {
+                    padding: 0,
+                    '& ul': {
+                      padding: 0,
+                      margin: 0,
+                    },
+                    // Additional styling for the listbox
+                  },
+                }}
+                PopperComponent={(props) => (
+                  <Popper {...props}>
+                    {/* Header */}
+                    <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                      <p className="text-xs font-normal">{field.row1}</p>
+                      <p className="text-xs font-normal">{field.row2}</p>
+                    </li>
+
+                    {props.children}
+                  </Popper>
+                )}
               />
             ) : (
               <TextField
@@ -649,7 +746,7 @@ const BaseInputCard = ({
                 name={field.name}
                 variant="outlined"
                 size="small"
-                value={formData[field.name] || ""}
+                value={formData[field.name] || ''}
                 onChange={handleInputChange}
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}

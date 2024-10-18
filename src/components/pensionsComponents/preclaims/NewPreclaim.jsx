@@ -941,6 +941,7 @@ function NewPreclaim({
     try {
       let res;
       setSaving(1);
+
       if (retireeId) {
         res = await axios.post(
           `${BASE_CORE_API}api/ProspectivePensioners/UpdateProspectivePensioner`,
@@ -952,50 +953,39 @@ function NewPreclaim({
           }
         );
 
-        if (
-          res?.status === 200 &&
-          res?.data?.messages[0] ===
+        if (res?.status === 200 && res?.data?.succeeded) {
+          if (
+            res.data.messages[0] ===
             'Prospective pensioner updated successfully'
-        ) {
-          setSaving(2);
-          setAlert({
-            open: true,
-            message:
-              'Prospective pensioner Information & Contact Details updated successfully',
-            severity: 'success',
-          });
-
-          // formData.mortality_status == 2 && setOpenBaseCard(false);
-          fetchRetiree();
-          setEditMode(false);
+          ) {
+            localStorage.removeItem('retireeFormData');
+            setSaving(2);
+            setAlert({
+              open: true,
+              message:
+                'Prospective pensioner Information & Contact Details updated successfully',
+              severity: 'success',
+            });
+            fetchRetiree();
+            setEditMode(false);
+            return;
+          }
         }
 
-        // if (
-        //   res?.data?.messages[0] ===
-        //   "Date of confirmation cannot be before or same as date of birth"
-        // ) {
-        //   message.error(
-        //     "Date of confirmation cannot be before or same as date of birth"
-        //   );
-        // }
-        // if (
-        //   res?.data?.messages[0] ===
-        //   "The prospective pensioner has already passed the modification state"
-        // ) {
-        //   message.error(
-        //     "The prospective pensioner has already passed the modification state"
-        //   );
-        // }
-        if (res?.data?.validationErrors.length > 0) {
+        if (res?.data?.validationErrors?.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
               message.error(`${error.field}: ${err}`);
             });
           });
           setSaving(3);
-        } else if (res.data.succeeded === false && res.data.messages[0]) {
+          return;
+        }
+
+        if (res.data.succeeded === false && res.data.messages[0]) {
           message.error(res.data.messages[0]);
           setSaving(3);
+          return;
         }
       } else {
         res = await axios.post(
@@ -1010,61 +1000,55 @@ function NewPreclaim({
       }
 
       console.log('API Response:', res.data);
+
       if (res.data.succeeded && res.status === 200) {
-        // setAlert({
-        //   open: true,
-        //   message:
-        //     "Prospective pensioner Information & Contact Details added successfully",
-        //   severity: "success",
-        // });
         setSaving(2);
         formData.mortality_status == 1 &&
           message.success(
             'Prospective pensioner updated successfully, please proceed to the add Beneficiary Details'
           );
-        //formData.mortality_status == 2 && setOpenBaseCard(false);
+
         setRetireeId(res.data.data);
         setAlert({
           open: true,
           message: 'Prospective pensioner created successfully',
           severity: 'success',
-        }); // router.push(
-        //   `/pensions/preclaims/listing/new/add-payment-details?id=${res.data.data}`
-        // );
+        });
 
         localStorage.removeItem('retireeFormData');
-
         clickedItem && moveToNextTab();
-
         setRetireeId(res.data.data);
         console.log('Retiree ID:', res.data.data);
+        return;
       }
 
-      if (res.data.validationErrors.length > 0) {
+      if (res?.data?.validationErrors?.length > 0) {
         res.data.validationErrors.forEach((error) => {
           error.errors.forEach((err) => {
             message.error(`${error.field}: ${err}`);
           });
         });
         setSaving(3);
+        return;
       }
-      if (
-        res.data.succeeded === false &&
-        res.data.messages[0] ===
+
+      if (res?.data?.succeeded === false) {
+        if (
+          res.data.messages[0] ===
           'A similar award has already been created for the retiree.'
-      ) {
-        message.error(
-          'A similar award has already been created for the retiree.'
-        );
-        setSaving(3);
-      } else if (res.data.succeeded === false && res.data.messages[0]) {
-        message.error(res.data.messages[0]);
-        setSaving(3);
+        ) {
+          message.error(res.data.messages[0]);
+          setSaving(3);
+          return;
+        } else if (res.data.messages[0]) {
+          message.error(res.data.messages[0]);
+          setSaving(3);
+          return;
+        }
       }
     } catch (error) {
       console.log('API Error:', error);
       setSaving(3);
-    } finally {
     }
   };
 
