@@ -99,13 +99,14 @@ function PensionComputation({
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (c) => c.toUpperCase()), // Convert snake_case to Title Case
           name: key,
-          type: containsDateKeyword
-            ? 'text' // If the key contains "month", "year", or "day", set type to 'text'
-            : isValidISODate(value)
-            ? 'date'
-            : typeof value === 'number' || value === 0
-            ? 'amount'
-            : 'text',
+          type:
+            containsDateKeyword || key === 'pensionable_service_months'
+              ? 'text' // If the key contains "month", "year", or "day", set type to 'text'
+              : isValidISODate(value)
+              ? 'date'
+              : typeof value === 'number' || value === 0
+              ? 'amount'
+              : 'text',
           disabled: true,
         };
       });
@@ -137,41 +138,57 @@ function PensionComputation({
     );
   };
 
+  const [showAll, setShowAll] = useState(false);
+
+  // Filter and slice fields to control the number of displayed items
+  const filteredFields = fields
+    .filter((field) => {
+      return (
+        field.label !== 'Breakdown' &&
+        field.label !== 'Claim Id' &&
+        field.label !== 'Id'
+      );
+    })
+    .filter(
+      (field) => summary[field.key] !== undefined && summary[field.key] !== null
+    );
+
+  // Show only 6 items initially if not expanded
+  const fieldsToShow = showAll ? filteredFields : filteredFields.slice(0, 12);
+
   return (
     <div className="flex flex-col">
-      {JSON.stringify(viewCompleteSummary)}
       <hr />
-      <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
-        {fields
-          .filter((field) => {
-            return (
-              field.label !== 'Breakdown' &&
-              field.label !== 'Claim Id' &&
-              field.label !== 'Id'
-            );
-          })
-          .filter(
-            (field) =>
-              summary[field.key] !== undefined && summary[field.key] !== null
-          )
-          .map(({ label, key }) => (
+      <div className="flex flex-col max-h-[200px] overflow-y-auto">
+        <hr />
+        <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
+          {fieldsToShow.map(({ label, key }) => (
             <div key={key} className="flex flex-row w-[90%] justify-between">
               <span className="font-semibold text-gray-700 capitalize font-montserrat">
                 {label}
               </span>
               <span className="text-gray-500 font-semibold text-[17px]">
-                {
-                  summary?.[key] !== undefined
-                    ? isValidISODate(summary[key])
-                      ? parseDate(summary[key])
-                      : formatNumber(summary[key])
-                    : '0.00' // Default to 0 if value is undefined
-                }
+                {summary?.[key] !== undefined
+                  ? isValidISODate(summary[key])
+                    ? parseDate(summary[key])
+                    : formatNumber(summary[key])
+                  : '0.00'}{' '}
+                {/* Default to 0 if value is undefined */}
               </span>
             </div>
           ))}
+        </div>
+        {filteredFields.length > 9 && (
+          <div className="pl-5 pt-4">
+            <button
+              className="text-primary font-semibold underline cursor-pointer"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {showAll ? 'View Less' : 'View All'}
+            </button>
+          </div>
+        )}
       </div>
-
       <Dialog
         maxWidth="lg"
         maxHeight="lg"
