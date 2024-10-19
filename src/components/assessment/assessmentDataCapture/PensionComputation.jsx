@@ -168,11 +168,22 @@ function PensionComputation({
                 {label}
               </span>
               <span className="text-gray-500 font-semibold text-[17px]">
-                {summary?.[key] !== undefined
-                  ? isValidISODate(summary[key])
-                    ? parseDate(summary[key])
-                    : formatNumber(summary[key])
-                  : '0.00'}{' '}
+                <span className="text-gray-500 font-semibold text-[17px]">
+                  {summary?.[key] !== undefined
+                    ? isValidISODate(summary[key])
+                      ? parseDate(summary[key])
+                      : /(month|year|day)/i.test(key) &&
+                        ![
+                          'breakdown',
+                          'last_3year_total',
+                          'monthly_pension',
+                        ].includes(key)
+                      ? summary[key]
+                      : formatNumber(summary[key])
+                    : '0.00'}{' '}
+                  {/* Default to 0 if value is undefined */}
+                </span>
+
                 {/* Default to 0 if value is undefined */}
               </span>
             </div>
