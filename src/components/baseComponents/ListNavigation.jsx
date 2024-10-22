@@ -327,7 +327,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
     },
     {
-      name: 'Upload General Budget',
+      name: 'Create Budget from Excel',
       icon: PostAdd,
       action: 'uploadGeneralBudget',
       requiredPermissions: [],

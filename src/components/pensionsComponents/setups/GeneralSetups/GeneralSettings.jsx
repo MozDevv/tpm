@@ -167,6 +167,18 @@ const GeneralSettings = () => {
       required: true,
     },
     {
+      name: 'compassionate_gratuity_male_end_date_cap189',
+      label: 'Compassionate Gratuity Male End Date Cap189',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'disabled_age_at_retirement_cap189',
+      label: 'Disabled Age At Retirement Cap189(2)',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'abolition_of_office_age_60_effect_date_cap189',
       label: 'Abolition Of Office Age 60 Effect Date Cap189',
       type: 'date',

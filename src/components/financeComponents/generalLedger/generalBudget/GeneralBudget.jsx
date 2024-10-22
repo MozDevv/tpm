@@ -139,16 +139,42 @@ const GeneralBudget = () => {
 
       const { data } = response.data; // Extract the data array
 
-      // Prepare the data as an array of arrays (without headers)
-      const worksheetData = data.map((item) => [
-        item.glAccountId, // GL Account ID
-        item.accountNo, // Account No
-        item.accountName, // Account Name
-        item.amount, // Amount
-      ]);
+      // Prepare the data as an array of arrays (with headers included)
+      const worksheetData = [
+        ['GL Account ID', 'Account No', 'Account Name', 'Amount'], // Headers
+        ...data.map((item) => [
+          item.glAccountId, // GL Account ID
+          item.accountNo, // Account No
+          item.accountName, // Account Name
+          item.amount, // Amount
+        ]),
+      ];
 
       // Create a worksheet and a workbook
-      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData); // Use aoa_to_sheet for raw data
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+      // Format columns for protection (disable editing for GL Account ID and Account No)
+      const protection = {
+        hidden: false, // Show formulas if any
+        locked: true, // Lock this cell (non-editable)
+      };
+
+      // Mark the first and second columns (GL Account ID, Account No) as locked
+      worksheet['!cols'] = [
+        { hidden: false, width: 20, locked: true }, // GL Account ID column (locked)
+        { hidden: false, width: 20, locked: true }, // Account No column (locked)
+        { hidden: false, width: 30, locked: false }, // Account Name column (editable)
+        { hidden: false, width: 15, locked: false }, // Amount column (editable)
+      ];
+
+      // Enable worksheet protection
+      worksheet['!protect'] = {
+        password: 'yourpassword', // Optional password to protect the sheet
+        lockFormatCells: true, // Prevent users from formatting locked cells
+        selectLockedCells: true, // Allow users to select locked cells
+        selectUnlockedCells: true, // Allow users to select unlocked cells
+      };
+
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Budget Template');
 
