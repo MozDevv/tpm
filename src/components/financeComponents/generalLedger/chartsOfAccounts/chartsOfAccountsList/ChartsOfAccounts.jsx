@@ -447,7 +447,7 @@ function ChartsOfAccounts() {
           setOpenBaseCard={setOpenBaseCard}
           title={clickedItem?.accountName}
           isUserComponent={false}
-          handlers={baseCardHandlers}
+          // handlers={baseCardHandlers}
           clickedItem={clickedItem}
           deleteApiEndpoint={financeEndpoints.deleteGlAccount(clickedItem?.id)}
           deleteApiService={apiService.delete}
