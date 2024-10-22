@@ -15,6 +15,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import { Dialog } from '@mui/material';
 import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
+import ScheduledPaymentsCard from './ScheduledPaymentsCard';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -260,7 +261,7 @@ const ScheduledPayments = ({ status }) => {
     {
       name: 'totalAmount',
       label: 'Total Amount',
-      type: 'number',
+      type: 'amount',
       required: true,
       disabled: true,
     },
@@ -313,7 +314,7 @@ const ScheduledPayments = ({ status }) => {
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         handlers={baseCardHandlers}
-        title={title}
+        title={'Scheduled Payments'}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         isUserComponent={false}
@@ -323,7 +324,7 @@ const ScheduledPayments = ({ status }) => {
         dialogType={dialogType}
       >
         {clickedItem ? (
-          <PaymentsCard
+          <ScheduledPaymentsCard
             fields={fields}
             apiEndpoint={financeEndpoints.updatePayment}
             postApiFunction={apiService.post}

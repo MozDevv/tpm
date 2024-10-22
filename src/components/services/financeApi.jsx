@@ -214,6 +214,8 @@ const financeEndpoints = {
   postClaimPitoLegder: '/Posting/PostClaimPIToLedger',
 
   getPaymentSchedules: '/Posting/GetPaymentSchedules',
+  getPaymentScheduleLines: (id) =>
+    `/Posting/GetPaymentScheduleLines?PaymentScheduleId=${id}`,
 };
 
 export const apiService = {
