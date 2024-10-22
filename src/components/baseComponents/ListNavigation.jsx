@@ -120,7 +120,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       icon: ForwardToInbox,
       action: 'notify',
       requiredPermissions: [
-        'preclaims.notify.prospective_pensioner',
+        /// 'preclaims.notify.prospective_pensioner',
         // "preclaims.execute.notify_prospective_pensioner",
       ],
       status: [0],
