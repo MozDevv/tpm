@@ -155,7 +155,7 @@ const GeneralSettings = () => {
       required: true,
     },
     {
-      name: 'disabled_age_at_retirement_cap189',
+      name: 'disabiled_age_at_retirement_cap189',
       label: 'Disabled Age At Retirement Cap189',
       type: 'text',
       required: true,
