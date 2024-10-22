@@ -16,6 +16,7 @@ import { formatNumber } from '@/utils/numberFormatters';
 import BankReconciliationCard from './BankReconciliationCard';
 import { Dialog, Divider } from '@mui/material';
 import BaseUploadDialog from '@/components/baseComponents/BaseUploadDialog';
+import { message } from 'antd';
 
 const columnDefs = [
   {
@@ -133,11 +134,14 @@ const BankReconciliation = () => {
       //  setClickedItem(item);
     },
     importBankStatement: () => handleOpenUploadDialog(),
-    matchManually: () => setMatchManually(true),
+    matchManually: () => submitReconciliation(true),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+
+  const [selectedBankStatements, setSelectedBankStatements] = useState([]);
+  const [selectedBankSubledgers, setSelectedBankSubledgers] = useState([]);
 
   const fetchBanksAndBranches = async () => {
     try {
@@ -295,6 +299,51 @@ const BankReconciliation = () => {
     },
   ];
 
+  const submitReconciliation = async () => {
+    if (
+      selectedBankStatements.length === 0 ||
+      selectedBankSubledgers.length === 0
+    ) {
+      alert('Please select both a Bank Statement and a Bank Subledger entry.');
+      return;
+    }
+
+    const bankDetails = selectedBankStatements.map((bankStatement, index) => {
+      const bankSubledger = selectedBankSubledgers[index];
+      return {
+        bankSubledgerId: bankSubledger?.id,
+        bankStatementId: bankStatement?.id,
+      };
+    });
+
+    try {
+      const response = await apiService.post(
+        financeEndpoints.matchBankDetails,
+        {
+          bankDetails,
+        }
+      );
+
+      if (response.status === 200 && response.data.succeeded) {
+        message.success(
+          'Statement matched successful Entry created successfully'
+        );
+      } else if (
+        response.data.messages[0] &&
+        response.data.succeeded === false
+      ) {
+        message.error(response.data.messages[0].message);
+      } else {
+        console.warn('Matching Failed:', response.data);
+
+        message.error('Matching Failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting reconciliation:', error);
+      message.error('An error occurred while submitting the reconciliation.');
+    }
+  };
+
   return (
     <div className="">
       {/* <BaseUploadDialog
@@ -360,6 +409,8 @@ const BankReconciliation = () => {
             />
 
             <BankReconciliationCard
+              setSelectedBankStatements={setSelectedBankStatements}
+              setSelectedBankSubledgers={setSelectedBankSubledgers}
               clickedItem={clickedItem}
               uploadExcel={uploadExcel}
             />

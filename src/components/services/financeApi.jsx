@@ -226,6 +226,7 @@ const financeEndpoints = {
 
   generateBudgetUploadTemplate: '/Accounts/GenerateBudgetUploadTemplate',
   uploadBudget: '/Accounts/UploadBudget',
+  matchBankDetails: '/Posting/MatchBankDetails',
 };
 
 export const apiService = {

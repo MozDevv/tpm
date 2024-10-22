@@ -6,9 +6,24 @@ import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { formatNumber } from '@/utils/numberFormatters';
 import { parseDate } from '@/utils/dateFormatter';
 
-function BankReconciliationCard({ clickedItem, uploadExcel }) {
+function BankReconciliationCard({
+  clickedItem,
+  uploadExcel,
+  setSelectedBankSubledgers,
+  setSelectedBankStatements,
+}) {
   const [bankStatement, setBankStatement] = useState([]);
   const [bankSubledger, setBankSubledger] = useState([]);
+
+  const onBankStatementSelectionChanged = (params) => {
+    const selectedRows = params.api.getSelectedRows();
+    setSelectedBankStatements(selectedRows);
+  };
+
+  const onBankSubledgerSelectionChanged = (params) => {
+    const selectedRows = params.api.getSelectedRows();
+    setSelectedBankSubledgers(selectedRows);
+  };
 
   const getBankStatement = async () => {
     try {
@@ -84,6 +99,7 @@ function BankReconciliationCard({ clickedItem, uploadExcel }) {
       headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
       width: 150,
+      valueFormatter: (params) => parseDate(params.value),
     },
     {
       field: 'description',
@@ -187,6 +203,7 @@ function BankReconciliationCard({ clickedItem, uploadExcel }) {
           rowSelection="multiple"
           defaultColDef={{ resizable: true, sortable: true }}
           domLayout="autoHeight"
+          onSelectionChanged={onBankStatementSelectionChanged}
         />
       </div>
 
@@ -207,6 +224,7 @@ function BankReconciliationCard({ clickedItem, uploadExcel }) {
         <AgGridReact
           rowData={bankSubledger}
           columnDefs={bankAccountColDefs}
+          onSelectionChanged={onBankSubledgerSelectionChanged}
           rowSelection="multiple"
           defaultColDef={{ resizable: true, sortable: true }}
           domLayout="autoHeight"
