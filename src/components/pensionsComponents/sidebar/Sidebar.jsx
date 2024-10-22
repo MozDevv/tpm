@@ -219,6 +219,10 @@ function Sidebar() {
               title: 'Bank Account Ledger Entries',
               path: '/pensions/finance/cash-management/ledger-entries',
             },
+            {
+              title: 'Bank Reconciliation',
+              path: '/pensions/finance/cash-management/bank-reconciliation',
+            },
           ],
         },
         {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useEffect, useMemo, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -26,6 +26,7 @@ import BaseLoadingOverlay from './BaseLoadingOverlay';
 const BaseTable = ({
   columnDefs,
   fetchApiService,
+  uploadExcel,
   fetchApiEndpoint,
   pageSize = 100,
   handlers,
@@ -136,6 +137,10 @@ const BaseTable = ({
       console.error('Error fetching data:', error.response);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [uploadExcel]);
 
   const resetFilters = () => {
     setFilterColumn('');

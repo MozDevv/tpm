@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -10,21 +10,21 @@ import {
   Divider,
   CircularProgress,
   TextField,
-} from "@mui/material";
-import financeEndpoints, { apiService } from "@/components/services/financeApi";
-import "./chartsOfAccounts.css"; // Import the stylesheet
-import ListNavigation from "@/components/baseComponents/ListNavigation";
-import BaseCard from "@/components/baseComponents/BaseCard";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { formatNumber } from "@/utils/numberFormatters";
-import BaseAmountInput from "@/components/baseComponents/BaseAmountInput";
+} from '@mui/material';
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import './chartsOfAccounts.css'; // Import the stylesheet
+import ListNavigation from '@/components/baseComponents/ListNavigation';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
 
-function GLAccounts({ clickedBudget }) {
+function GLAccounts({ clickedBudget, uploadExcel }) {
   const [rowData, setRowData] = useState([]);
   const [colDefs, setColDefs] = useState([
-    { headerName: "Account No.", field: "accountNo" },
-    { headerName: "Account Name", field: "accountName" },
-    { headerName: "Budgeted Amount", field: "budgetedAmount" },
+    { headerName: 'Account No.', field: 'accountNo' },
+    { headerName: 'Account Name', field: 'accountName' },
+    { headerName: 'Budgeted Amount', field: 'budgetedAmount' },
   ]);
 
   const fetchGlAccounts = async () => {
@@ -32,7 +32,7 @@ function GLAccounts({ clickedBudget }) {
       const response = await apiService.get(
         financeEndpoints.fetchGlAccountsById(clickedBudget.id),
         {
-          "paging.pageSize": 1000,
+          'paging.pageSize': 1000,
         }
       );
 
@@ -48,16 +48,20 @@ function GLAccounts({ clickedBudget }) {
 
   useEffect(() => {
     fetchGlAccounts();
+  }, [uploadExcel]);
+
+  useEffect(() => {
+    fetchGlAccounts();
 
     const newColDefs = [...colDefs]; // Start with existing column definitions
 
     // Check and add startDate column if it exists
     if (clickedBudget?.startDate) {
       const startDateYear = new Date(clickedBudget.startDate).getFullYear();
-      if (!newColDefs.find((col) => col.field === "startDate")) {
+      if (!newColDefs.find((col) => col.field === 'startDate')) {
         newColDefs.push({
           headerName: `Financial Year (${startDateYear})`, // Set headerName to the year
-          field: "budgetAmount",
+          field: 'budgetAmount',
           editable: true,
           width: 100,
         });
@@ -87,9 +91,9 @@ function GLAccounts({ clickedBudget }) {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
   };
 
@@ -99,17 +103,17 @@ function GLAccounts({ clickedBudget }) {
   const renderTableCell = (colDef, row) => {
     const { field, editable } = colDef;
     const value = row[field];
-    const isAccountName = field === "accountName";
-    const isPostingType = row.accountTypeName === "POSTING";
-    const isAccountNo = field === "accountNo";
+    const isAccountName = field === 'accountName';
+    const isPostingType = row.accountTypeName === 'POSTING';
+    const isAccountNo = field === 'accountNo';
     const formattedValue =
-      typeof value === "number" && value === 0 ? "0.00" : value;
-    const isBudgetedAmount = field === "budgetedAmount";
+      typeof value === 'number' && value === 0 ? '0.00' : value;
+    const isBudgetedAmount = field === 'budgetedAmount';
     const budgetAmountValue = row.budgetAmount || 0;
     const endDateValue = row.endDate || 0;
     const cumulativeBudgetAmount = budgetAmountValue * 1 + endDateValue * 1;
 
-    const isEndTotal = row.accountTypeName === "END_TOTAL";
+    const isEndTotal = row.accountTypeName === 'END_TOTAL';
 
     const handleInputChange = (e) => {
       const newValue = e.target.value;
@@ -151,14 +155,14 @@ function GLAccounts({ clickedBudget }) {
       <TableCell
         className="table-cell"
         style={{
-          fontWeight: isAccountName && !isPostingType ? "bold" : "normal",
-          fontSize: isAccountName && !isPostingType ? "14px" : "13px",
+          fontWeight: isAccountName && !isPostingType ? 'bold' : 'normal',
+          fontSize: isAccountName && !isPostingType ? '14px' : '13px',
           paddingTop: 0,
           paddingBottom: 0,
           paddingLeft: editable && 0,
           paddingRight: editable && 0,
-          position: "relative",
-          borderRight: "1px solid #ccc",
+          position: 'relative',
+          borderRight: '1px solid #ccc',
         }}
         key={field}
       >
@@ -168,9 +172,9 @@ function GLAccounts({ clickedBudget }) {
               <CircularProgress
                 size={24}
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   left: 10,
-                  top: "50%",
+                  top: '50%',
                   marginTop: -12, // Center spinner vertically
                 }}
               />
@@ -203,14 +207,14 @@ function GLAccounts({ clickedBudget }) {
               value={value || 0}
               onChange={handleInputChange}
               onBlur={() => {
-                if (value !== "" || value !== null) {
+                if (value !== '' || value !== null) {
                   saveOrUpdateBudgetAmount();
                 }
               }}
               fullWidth
               inputProps={{
                 style: {
-                  textAlign: "right",
+                  textAlign: 'right',
                   // padding: 0, // Remove internal padding
                   // margin: 0, // Remove internal margin
                 },
@@ -219,23 +223,23 @@ function GLAccounts({ clickedBudget }) {
                 inputComponent: BaseAmountInput,
               }}
               sx={{
-                "& .MuiOutlinedInput-root": {
+                '& .MuiOutlinedInput-root': {
                   padding: 0, // Remove padding in the root
                   margin: 0, // Remove margin in the root
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none", // Remove the border if needed
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: 'none', // Remove the border if needed
                     padding: 0,
                     margin: 0,
                   },
                 },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
                   {
-                    border: "none",
+                    border: 'none',
                   },
-                "& .MuiOutlinedInput-root.Mui-focused": {
-                  backgroundColor: "#f0f0f0", // Background color on focus
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "2px solid #006990", // Outline border on focus
+                '& .MuiOutlinedInput-root.Mui-focused': {
+                  backgroundColor: '#f0f0f0', // Background color on focus
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: '2px solid #006990', // Outline border on focus
                   },
                 },
               }}
@@ -251,11 +255,11 @@ function GLAccounts({ clickedBudget }) {
           <p className=" text-primary text-right">
             {formatNumber(cumulativeBudgetAmount * 1)}
           </p>
-        ) : typeof value === "boolean" ? (
+        ) : typeof value === 'boolean' ? (
           value ? (
-            "Yes"
+            'Yes'
           ) : (
-            "No"
+            'No'
           )
         ) : (
           formattedValue
@@ -265,7 +269,7 @@ function GLAccounts({ clickedBudget }) {
   };
 
   const handleRowClick = (row) => {
-    console.log("Row clicked:", row);
+    console.log('Row clicked:', row);
     setClickedItem(row);
     setOpenBaseCard(true);
   };
@@ -319,77 +323,77 @@ function GLAccounts({ clickedBudget }) {
 
   const fields = [
     {
-      name: "accountCode",
-      label: "Account Code",
-      type: "text",
+      name: 'accountCode',
+      label: 'Account Code',
+      type: 'text',
     },
     {
-      name: "accountName",
-      label: "Account Name",
-      type: "text",
+      name: 'accountName',
+      label: 'Account Name',
+      type: 'text',
     },
     {
-      name: "accountNo",
-      label: "Account No",
-      type: "text",
+      name: 'accountNo',
+      label: 'Account No',
+      type: 'text',
     },
     {
-      name: "amount",
-      label: "Amount",
-      type: "number",
+      name: 'amount',
+      label: 'Amount',
+      type: 'number',
     },
     {
-      name: "subGroupName",
-      label: "Sub Group Name",
-      type: "text",
+      name: 'subGroupName',
+      label: 'Sub Group Name',
+      type: 'text',
     },
     {
-      name: "glAccountType",
-      label: "GL Account Type",
-      type: "text",
+      name: 'glAccountType',
+      label: 'GL Account Type',
+      type: 'text',
     },
     {
-      name: "accountTypeName",
-      label: "Account Type Name",
-      type: "text",
+      name: 'accountTypeName',
+      label: 'Account Type Name',
+      type: 'text',
     },
     {
-      name: "isDirectPosting",
-      label: "Direct Posting",
-      type: "switch",
+      name: 'isDirectPosting',
+      label: 'Direct Posting',
+      type: 'switch',
     },
     {
-      name: "isReconciliation",
-      label: "Reconciliation",
-      type: "switch",
+      name: 'isReconciliation',
+      label: 'Reconciliation',
+      type: 'switch',
     },
   ];
 
   const inputFields = [
     {
-      name: "glAccountNo",
-      label: "Account No",
-      type: "text",
+      name: 'glAccountNo',
+      label: 'Account No',
+      type: 'text',
     },
     {
-      name: "glAccountName",
-      label: "Account Name",
-      type: "text",
+      name: 'glAccountName',
+      label: 'Account Name',
+      type: 'text',
     },
 
     {
-      name: "group",
-      label: "Category",
-      type: "select",
+      name: 'group',
+      label: 'Category',
+      type: 'select',
       options: groupTypes?.map((type) => ({
         id: type.id,
         name: type.groupName,
       })),
     },
     {
-      name: "accountSubgroupId",
-      label: "Sub Category",
-      type: "select",
+      name: 'accountSubgroupId',
+      label: 'Sub Category',
+      type: 'select',
       options:
         groupTypes
           ?.find((group) => group.id === selectedGroup)
@@ -399,23 +403,23 @@ function GLAccounts({ clickedBudget }) {
           })) || [],
     },
     {
-      name: "glAccountType",
-      label: "GL Account Type",
-      type: "autocomplete",
+      name: 'glAccountType',
+      label: 'GL Account Type',
+      type: 'autocomplete',
       options: accountTypes.map((type) => ({
         id: type.value,
         name: type.name,
       })),
     },
     {
-      name: "isDirectPosting",
-      label: "Direct Posting",
-      type: "switch",
+      name: 'isDirectPosting',
+      label: 'Direct Posting',
+      type: 'switch',
     },
     {
-      name: "isReconciliation",
-      label: "Reconciliation",
-      type: "switch",
+      name: 'isReconciliation',
+      label: 'Reconciliation',
+      type: 'switch',
     },
   ];
 
@@ -451,7 +455,7 @@ function GLAccounts({ clickedBudget }) {
           <BaseInputCard
             fetchData={fetchGlAccounts}
             fields={inputFields}
-            selectedLabel={"group"}
+            selectedLabel={'group'}
             setSelectedValue={setSelectedGroup}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}

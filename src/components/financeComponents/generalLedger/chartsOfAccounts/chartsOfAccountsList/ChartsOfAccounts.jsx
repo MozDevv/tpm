@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { AgGridReact } from "ag-grid-react"; // Import Ag-Grid
-import "ag-grid-community/styles/ag-grid.css"; // Import Ag-Grid CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Import Ag-Grid Theme CSS
-import financeEndpoints, { apiService } from "@/components/services/financeApi";
-import "./chartsOfAccounts.css"; // Import the stylesheet
-import ListNavigation from "@/components/baseComponents/ListNavigation";
-import BaseCard from "@/components/baseComponents/BaseCard";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import CustomBreadcrumbsList from "@/components/CustomBreadcrumbs/CustomBreadcrumbsList";
-import { formatNumber } from "@/utils/numberFormatters";
-import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
+import React, { useEffect, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react'; // Import Ag-Grid
+import 'ag-grid-community/styles/ag-grid.css'; // Import Ag-Grid CSS
+import 'ag-grid-community/styles/ag-theme-quartz.css'; // Import Ag-Grid Theme CSS
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import './chartsOfAccounts.css'; // Import the stylesheet
+import ListNavigation from '@/components/baseComponents/ListNavigation';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -27,20 +27,20 @@ function ChartsOfAccounts() {
     let sectionKey = null;
 
     data.forEach((item) => {
-      if (item.accountTypeName === "BEGIN_TOTAL") {
+      if (item.accountTypeName === 'BEGIN_TOTAL') {
         // Initialize totals when encountering a BEGIN_TOTAL
         sectionKey = item.id;
         currentTotal = 0;
         currentBudgetTotal = 0;
       }
 
-      if (item.accountTypeName === "POSTING" && sectionKey) {
+      if (item.accountTypeName === 'POSTING' && sectionKey) {
         // Accumulate totals for POSTING accounts
         currentTotal += item.amount || 0;
         currentBudgetTotal += item.budgetAmount || 0;
       }
 
-      if (item.accountTypeName === "END_TOTAL" && sectionKey) {
+      if (item.accountTypeName === 'END_TOTAL' && sectionKey) {
         // Store totals when encountering an END_TOTAL
         totals[item.id] = {
           totalAmount: currentTotal,
@@ -57,123 +57,123 @@ function ChartsOfAccounts() {
 
   const colDefs = [
     {
-      headerName: "Account No.",
-      field: "glAccountNo",
+      headerName: 'Account No.',
+      field: 'glAccountNo',
       width: 120,
-      pinned: "left",
+      pinned: 'left',
 
       cellStyle: ({ data }) => ({
-        paddingLeft: "10px",
+        paddingLeft: '10px',
         textDecoration:
-          data.accountTypeName !== "POSTING" ? "underline" : "none",
-        color: data.accountTypeName !== "POSTING" ? "#006990" : "inherit",
+          data.accountTypeName !== 'POSTING' ? 'underline' : 'none',
+        color: data.accountTypeName !== 'POSTING' ? '#006990' : 'inherit',
 
-        fontWeight: data.accountTypeName !== "POSTING" ? 700 : 600,
+        fontWeight: data.accountTypeName !== 'POSTING' ? 700 : 600,
       }),
     },
     {
-      headerName: "Account Name",
-      field: "glAccountName",
+      headerName: 'Account Name',
+      field: 'glAccountName',
 
       width: 350,
       cellStyle: ({ data }) => ({
         paddingLeft:
-          data.accountTypeName === "POSTING"
-            ? "25px"
-            : data.accountTypeName === "BEGIN_TOTAL" ||
-              data.accountTypeName === "END_TOTAL"
-            ? "15px"
-            : "4px",
-        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
-        fontSize: "14px",
+          data.accountTypeName === 'POSTING'
+            ? '25px'
+            : data.accountTypeName === 'BEGIN_TOTAL' ||
+              data.accountTypeName === 'END_TOTAL'
+            ? '15px'
+            : '4px',
+        fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
+        fontSize: '14px',
       }),
     },
     // { headerName: "Account Code", field: "accountCode", width: 150 },
     {
-      headerName: "Net Amount",
-      field: "amount",
+      headerName: 'Net Amount',
+      field: 'amount',
       width: 150,
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
         const rowId = params.data.id;
 
-        if (accountType === "END_TOTAL") {
+        if (accountType === 'END_TOTAL') {
           return formatNumber(totals[rowId]?.totalAmount || 0);
         }
 
-        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
-          ? ""
+        return accountType === 'BEGIN_TOTAL' || accountType === 'HEADING'
+          ? ''
           : formatNumber(params.value);
       },
       cellStyle: ({ data }) => ({
-        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
-        textAlign: "right",
+        fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
+        textAlign: 'right',
       }),
     },
     {
-      headerName: "Budget Amount",
-      field: "budgetAmount",
+      headerName: 'Budget Amount',
+      field: 'budgetAmount',
       width: 150,
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
         const rowId = params.data.id;
 
-        if (accountType === "END_TOTAL") {
+        if (accountType === 'END_TOTAL') {
           return formatNumber(totals[rowId]?.totalBudget || 0);
         }
 
-        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
-          ? ""
+        return accountType === 'BEGIN_TOTAL' || accountType === 'HEADING'
+          ? ''
           : formatNumber(params.value);
       },
       cellStyle: ({ data }) => ({
-        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
-        textAlign: "right",
+        fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
+        textAlign: 'right',
       }),
     },
     {
-      headerName: "Budget Balance",
-      field: "budgetBalance",
+      headerName: 'Budget Balance',
+      field: 'budgetBalance',
       width: 150,
       valueFormatter: (params) => {
         const accountType = params.data.accountTypeName;
         const rowId = params.data.id;
 
-        if (accountType === "END_TOTAL") {
+        if (accountType === 'END_TOTAL') {
           const totalAmount = totals[rowId]?.totalAmount || 0;
           const totalBudget = totals[rowId]?.totalBudget || 0;
           return formatNumber(totalBudget - totalAmount);
         }
 
-        return accountType === "BEGIN_TOTAL" || accountType === "HEADING"
-          ? ""
+        return accountType === 'BEGIN_TOTAL' || accountType === 'HEADING'
+          ? ''
           : formatNumber(params.value);
       },
       cellStyle: ({ data }) => ({
-        fontWeight: data.accountTypeName !== "POSTING" ? "bold" : "normal",
-        textAlign: "right",
+        fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
+        textAlign: 'right',
       }),
     },
     {
-      headerName: "Account Category",
-      field: "accountSubgroupId",
+      headerName: 'Account Category',
+      field: 'accountSubgroupId',
 
       valueFormatter: (params) => {
         const subgroupId = params.data.accountSubgroupId;
         const subGroup = subGroups.find((group) => group.id === subgroupId);
-        return subGroup?.parentGroupName || "";
+        return subGroup?.parentGroupName || '';
       },
-      cellStyle: { marginLeft: "40px" },
+      cellStyle: { marginLeft: '40px' },
     },
     {
-      headerName: "Account Sub Category",
-      field: "subGroupName",
-      cellStyle: { marginLeft: "20px", color: "#006990" },
+      headerName: 'Account Sub Category',
+      field: 'subGroupName',
+      cellStyle: { marginLeft: '20px', color: '#006990' },
     },
 
-    { headerName: "Account Type Name", field: "accountTypeName" },
-    { headerName: "Direct Posting", field: "isDirectPosting", width: 90 },
-    { headerName: "Reconciliation", field: "isReconciliation", width: 90 },
+    { headerName: 'Account Type Name', field: 'accountTypeName' },
+    { headerName: 'Direct Posting', field: 'isDirectPosting', width: 90 },
+    { headerName: 'Reconciliation', field: 'isReconciliation', width: 90 },
   ];
 
   const onGridReady = (params) => {
@@ -206,7 +206,7 @@ function ChartsOfAccounts() {
       );
 
       console.log(
-        "flattenedData.map((subgroup) => subgroup.subGroupName",
+        'flattenedData.map((subgroup) => subgroup.subGroupName',
         flattenedData.map((subgroup) => {
           return {
             id: subgroup.id,
@@ -233,7 +233,7 @@ function ChartsOfAccounts() {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
 
       const accounts = response.data.data.map((account) => ({
@@ -264,53 +264,53 @@ function ChartsOfAccounts() {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
   };
 
   const handleRowClick = (row) => {
-    console.log("Row clicked:", row); // Handle row click and access row data here
+    console.log('Row clicked:', row); // Handle row click and access row data here
     setClickedItem(row);
     setOpenBaseCard(true);
   };
   const [filteredData, setFilteredData] = useState([]);
   const fields = [
     {
-      name: "glAccountNo",
-      label: "Account No",
-      type: "text",
+      name: 'glAccountNo',
+      label: 'Account No',
+      type: 'text',
     },
     {
-      name: "glAccountName",
-      label: "Account Name",
-      type: "text",
-    },
-
-    {
-      name: "amount",
-      label: "Amount",
-      type: "amount",
-      disabled: true,
-    },
-    {
-      name: "budgetAmount",
-      label: "Budget Amount",
-      type: "amount",
-      disabled: true,
+      name: 'glAccountName',
+      label: 'Account Name',
+      type: 'text',
     },
 
     {
-      name: "budgetBalance",
-      label: "Budget Balance",
-      type: "amount",
+      name: 'amount',
+      label: 'Amount',
+      type: 'amount',
       disabled: true,
     },
     {
-      name: "glCategory",
-      label: "Category",
-      type: "select",
+      name: 'budgetAmount',
+      label: 'Budget Amount',
+      type: 'amount',
+      disabled: true,
+    },
+
+    {
+      name: 'budgetBalance',
+      label: 'Budget Balance',
+      type: 'amount',
+      disabled: true,
+    },
+    {
+      name: 'glCategory',
+      label: 'Category',
+      type: 'select',
       options: groupTypes?.map((type) => ({
         id: type.id,
         name: type.groupName,
@@ -319,17 +319,17 @@ function ChartsOfAccounts() {
     },
 
     {
-      name: "accountSubgroupId",
-      label: "Sub Category",
-      type: "select",
+      name: 'accountSubgroupId',
+      label: 'Sub Category',
+      type: 'select',
       options:
         filteredData && filteredData.length > 0 ? filteredData : subGroups,
       required: true,
     },
     {
-      name: "glAccountType",
-      label: "Account Type",
-      type: "autocomplete",
+      name: 'glAccountType',
+      label: 'Account Type',
+      type: 'autocomplete',
       options: accountTypes.map((type) => ({
         id: type.value,
         name: type.name,
@@ -338,35 +338,35 @@ function ChartsOfAccounts() {
     },
 
     {
-      name: "isDirectPosting",
-      label: "Direct Posting",
-      type: "switch",
+      name: 'isDirectPosting',
+      label: 'Direct Posting',
+      type: 'switch',
     },
     {
-      name: "isReconciliation",
-      label: "Reconciliation",
-      type: "switch",
+      name: 'isReconciliation',
+      label: 'Reconciliation',
+      type: 'switch',
     },
   ];
 
   const inputFields = [
     {
-      name: "accountNo",
-      label: "Account No",
-      type: "text",
+      name: 'accountNo',
+      label: 'Account No',
+      type: 'text',
       required: true,
     },
     {
-      name: "accountName",
-      label: "Account Name",
-      type: "text",
+      name: 'accountName',
+      label: 'Account Name',
+      type: 'text',
       required: true,
     },
 
     {
-      name: "group",
-      label: "Category",
-      type: "select",
+      name: 'group',
+      label: 'Category',
+      type: 'select',
       options: groupTypes?.map((type) => ({
         id: type.id,
         name: type.groupName,
@@ -374,17 +374,17 @@ function ChartsOfAccounts() {
       required: true,
     },
     {
-      name: "accountSubgroupId",
-      label: "Sub Category",
-      type: "select",
+      name: 'accountSubgroupId',
+      label: 'Sub Category',
+      type: 'select',
       options:
         filteredData && filteredData.length > 0 ? filteredData : subGroups,
       required: true,
     },
     {
-      name: "glAccountType",
-      label: "Account Type",
-      type: "autocomplete",
+      name: 'glAccountType',
+      label: 'Account Type',
+      type: 'autocomplete',
       options: accountTypes.map((type) => ({
         id: type.value,
         name: type.name,
@@ -392,14 +392,14 @@ function ChartsOfAccounts() {
       required: true,
     },
     {
-      name: "isDirectPosting",
-      label: "Direct Posting",
-      type: "switch",
+      name: 'isDirectPosting',
+      label: 'Direct Posting',
+      type: 'switch',
     },
     {
-      name: "isReconciliation",
-      label: "Reconciliation",
-      type: "switch",
+      name: 'isReconciliation',
+      label: 'Reconciliation',
+      type: 'switch',
     },
   ];
 
@@ -440,20 +440,21 @@ function ChartsOfAccounts() {
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
       <div
         className=" mt-[15px] mr-5"
-        style={{ width: "100%", overflowY: "hidden" }}
+        style={{ width: '100%', overflowY: 'hidden' }}
       >
         <BaseCard
           openBaseCard={openBaseCard}
           setOpenBaseCard={setOpenBaseCard}
           title={clickedItem?.accountName}
           isUserComponent={false}
+          handlers={baseCardHandlers}
           clickedItem={clickedItem}
           deleteApiEndpoint={financeEndpoints.deleteGlAccount(clickedItem?.id)}
           deleteApiService={apiService.delete}
           glAccountName={
             clickedItem
               ? `${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`
-              : "Create New GL Account"
+              : 'Create New GL Account'
           }
         >
           {clickedItem ? (
@@ -502,9 +503,9 @@ function ChartsOfAccounts() {
         className="ag-theme-quartz"
         style={{
           height: `${gridHeight}px`,
-          width: "100%",
-          overflow: "hidden",
-          maxHeight: "600px",
+          width: '100%',
+          overflow: 'hidden',
+          maxHeight: '600px',
         }} // Set the height as needed
       >
         <AgGridReact

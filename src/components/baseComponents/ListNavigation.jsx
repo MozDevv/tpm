@@ -30,6 +30,9 @@ import {
   Settings,
   ScheduleSend,
   Launch,
+  TaskOutlined,
+  ArticleOutlined,
+  FileDownload,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -285,27 +288,48 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       name: 'Schedule Payment Voucher',
       icon: ScheduleSend,
       action: 'schedulePaymentVoucher',
-      disabled:
-        Array.isArray(selectedRows) &&
-        selectedRows.length > 0 &&
-        selectedRows.some((row) => row.isPosted === false),
+
       requiredPermissions: [],
     },
-    {
-      name: 'Post Payment to Ledger',
-      icon: CheckCircleOutline,
-      action: 'postPaymentToLedger',
-      disabled:
-        Array.isArray(selectedRows) &&
-        selectedRows.length > 0 &&
-        selectedRows.some((row) => row.isPosted === true),
-      requiredPermissions: [],
-    },
+    // {
+    //   name: 'Post Payment to Ledger',
+    //   icon: CheckCircleOutline,
+    //   action: 'postPaymentToLedger',
+    //   disabled:
+    //     Array.isArray(selectedRows) &&
+    //     selectedRows.length > 0 &&
+    //     selectedRows.some((row) => row.isPosted === true),
+    //   requiredPermissions: [],
+    // },
 
     {
       name: 'Post Payment Voucher',
       icon: CheckCircle,
       action: 'postPaymentVoucher',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Upload Bank Statement',
+      icon: PostAdd,
+      action: 'importBankStatement',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Match Manually',
+      icon: TaskAlt,
+      action: 'matchManually',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Generate Budget Upload Template',
+      icon: FileDownload,
+      action: 'generateBudgetUploadTemplate',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Upload General Budget',
+      icon: PostAdd,
+      action: 'uploadGeneralBudget',
       requiredPermissions: [],
     },
   ];

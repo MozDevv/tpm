@@ -413,7 +413,7 @@ const Payments = ({ status }) => {
         columnDefs={columnDefs}
         fetchApiEndpoint={
           status === 0
-            ? financeEndpoints.getPayments
+            ? financeEndpoints.getPaymentByStages(status)
             : financeEndpoints.getPaymentByStages(status)
         }
         fetchApiService={apiService.get}

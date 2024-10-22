@@ -167,6 +167,8 @@ const financeEndpoints = {
   bankSubLedger: '/api/Posting/GetBankSubLedger',
   glSubLedger: '/api/Posting/GetGeneralLedgerDetail',
 
+  bankSubLedgerPayments: '/Posting/GetBankSubLedger',
+
   addPaymentMethod: '/AccountsSetup/AddPaymentMethod',
   getPaymentMethods: '/AccountsSetup/GetPaymentMethods',
   updatePaymentMethod: '/AccountsSetup/UpdatePaymentMethod',
@@ -216,6 +218,14 @@ const financeEndpoints = {
   getPaymentSchedules: '/Posting/GetPaymentSchedules',
   getPaymentScheduleLines: (id) =>
     `/Posting/GetPaymentScheduleLines?PaymentScheduleId=${id}`,
+
+  getBankStatement: (id) =>
+    `/Posting/GetBankStatement?BanKReconciliationId=${id}`,
+
+  uploadBankStatement: '/Posting/UploadBankStatement',
+
+  generateBudgetUploadTemplate: '/Accounts/GenerateBudgetUploadTemplate',
+  uploadBudget: '/Accounts/UploadBudget',
 };
 
 export const apiService = {

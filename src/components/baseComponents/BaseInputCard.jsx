@@ -15,14 +15,20 @@ import {
   ListItem,
   Popper,
 } from '@mui/material';
-import { Alert, message } from 'antd';
+import { Alert, message, Upload } from 'antd';
 import dayjs from 'dayjs';
+import { Button as AntButton } from 'antd';
 
 import { useMda } from '@/context/MdaContext';
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseAmountInput from './BaseAmountInput';
 import { truncateMessage } from '@/utils/handyFuncs';
 import CustomDatePicker from './CustomDatePicker';
+import {
+  UploadFileOutlined,
+  UploadOutlined,
+  Upload as MuiUpload,
+} from '@mui/icons-material';
 
 const BaseInputCard = ({
   fields,
@@ -153,6 +159,13 @@ const BaseInputCard = ({
       ...prev,
       [name]: value.replace(/,/g, ''),
     }));
+  };
+
+  const handleFileUpload = (file) => {
+    setFormData({
+      ...formData,
+      file: file,
+    });
   };
 
   const { mdaId } = useMda();
@@ -322,6 +335,9 @@ const BaseInputCard = ({
           Object.keys(dataToSend).forEach((key) => {
             formDataObj.append(key, dataToSend[key]);
           });
+          if (formData.file) {
+            formDataObj.append('file', formData.file);
+          }
 
           dataToSend = formDataObj;
         }
@@ -406,9 +422,17 @@ const BaseInputCard = ({
               display: field.hide === true ? 'none' : 'flex',
             }}
           >
-            <label className="text-xs font-semibold text-gray-600">
-              {field.label}
-            </label>
+            {field.type === 'file' && field.fileName ? (
+              <>
+                <label className="text-xs font-semibold text-gray-600 mb-2">
+                  {field.label}
+                </label>
+              </>
+            ) : (
+              <label className="text-xs font-semibold text-gray-600">
+                {field.label}
+              </label>
+            )}
             {field.type === 'select' ? (
               field.multiple ? (
                 <Select
@@ -567,6 +591,27 @@ const BaseInputCard = ({
                 }
                 label={formData[field.name] ? 'Yes' : 'No'}
               />
+            ) : field.type === 'file' && field.fileName ? (
+              <>
+                <Upload
+                  beforeUpload={(file) => {
+                    handleFileUpload(file); // Capture the file and store it
+                    return false; // Prevent the auto-upload, we'll handle it manually
+                  }}
+                >
+                  <AntButton
+                    icon={
+                      <MuiUpload
+                        sx={{
+                          fontSize: '20px',
+                        }}
+                      />
+                    }
+                  >
+                    Click to Upload
+                  </AntButton>
+                </Upload>
+              </>
             ) : field.type === 'date' ? (
               <TextField
                 name={field.name}
