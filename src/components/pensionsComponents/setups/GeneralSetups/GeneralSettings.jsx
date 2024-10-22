@@ -154,12 +154,12 @@ const GeneralSettings = () => {
       type: 'text',
       required: true,
     },
-    // {
-    //   name: 'disabiled_age_at_retirement_cap189',
-    //   label: 'Disabled Age At Retirement Cap189',
-    //   type: 'text',
-    //   required: true,
-    // },
+    {
+      name: 'disabiled_age_at_retirement_cap189',
+      label: 'Disabled Age At Retirement Cap189',
+      type: 'text',
+      required: true,
+    },
     {
       name: 'compassionate_gratuity_lower_period_years_cap189',
       label: 'Compassionate Gratuity Lower Period Years Cap189',
