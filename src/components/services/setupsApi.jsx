@@ -391,6 +391,9 @@ const endpoints = {
 
   getPostAndNature: (id) =>
     `api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
+
+  getRelationships: 'api/Setups/GetBenefitsConfigurationMatrix',
+  createRelationship: 'api/setups/CreateBenefitsConfigurationMatrix',
 };
 
 export const apiService = {

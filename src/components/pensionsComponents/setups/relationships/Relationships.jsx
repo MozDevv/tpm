@@ -8,8 +8,46 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
+import { name } from 'dayjs/locale/en-au';
 
-const columnDefs = [];
+const columnDefs = [
+  {
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
+    width: 90,
+    filter: true,
+  },
+  {
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
+    filter: true,
+    width: 250,
+  },
+  {
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
+    filter: true,
+    width: 250,
+  },
+  {
+    field: 'gender',
+    headerName: 'Gender',
+    headerClass: 'prefix-header',
+    filter: true,
+    width: 100,
+    valueFormatter: (params) => (params.value === 0 ? 'Male' : 'Female'),
+  },
+  {
+    field: 'is_spouse',
+    headerName: 'Is Spouse',
+    headerClass: 'prefix-header',
+    filter: true,
+    width: 100,
+  },
+];
 
 const RelationShips = () => {
   const transformString = (str) => {
@@ -24,8 +62,9 @@ const RelationShips = () => {
       id: item.departmentId,
       name: item.name,
       description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
+
+      is_spouse: item.is_spouse,
+      gender: item.gender,
       // roles: item.roles,
     }));
   };
@@ -61,17 +100,23 @@ const RelationShips = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Department' : 'Create New Department';
+  const title = clickedItem
+    ? 'Beneficiary Relationship'
+    : 'Create New Beneficiary Relationship';
 
   const fields = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'name', label: 'Name', type: 'text' },
+    { name: 'description', label: 'Description', type: 'text' },
+    { name: 'isSpouse', label: 'Is Spouse', type: 'switch' },
     {
-      name: 'description',
-      label: 'Description',
-      type: 'text',
-      required: true,
+      name: 'gender',
+      label: 'Gender',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Male' },
+        { id: 1, name: 'Female' },
+      ],
     },
-    { name: 'isMDA', label: 'Is Mda', type: 'switch', required: true },
   ];
 
   return (
@@ -98,7 +143,7 @@ const RelationShips = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createRelationship}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -112,13 +157,13 @@ const RelationShips = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
+        fetchApiEndpoint={endpoints.getRelationships}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
+        breadcrumbTitle="Beneficiaries Relationships Setups"
+        currentTitle="Beneficiaries Relationships Setups"
       />
     </div>
   );
