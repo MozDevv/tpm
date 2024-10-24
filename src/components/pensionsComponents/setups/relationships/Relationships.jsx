@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 // Assume this is your transformation function
