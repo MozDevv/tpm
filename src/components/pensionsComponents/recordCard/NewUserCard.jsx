@@ -1,70 +1,74 @@
-"use client";
-import authEndpoints, { AuthApiService } from "@/components/services/authApi";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { useAlert } from "@/context/AlertContext";
-import { useIsLoading } from "@/context/LoadingContext";
-import { de } from "@faker-js/faker";
+'use client';
+import authEndpoints, { AuthApiService } from '@/components/services/authApi';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { useAlert } from '@/context/AlertContext';
+import { useIsLoading } from '@/context/LoadingContext';
+import { de } from '@faker-js/faker';
 import {
+  Autocomplete,
   Avatar,
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
-} from "@mui/material";
-import { message } from "antd";
-import MuiPhoneNumber from "mui-phone-number";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+  Popper,
+  TextField,
+} from '@mui/material';
+import { message } from 'antd';
+import MuiPhoneNumber from 'mui-phone-number';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const { alert, setAlert } = useAlert();
-  const [selectedRole, setSelectedRole] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedAdminType, setSelectedAdminType] = useState("");
-  const [selectedMDA, setSelectedMDA] = useState("");
+  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedAdminType, setSelectedAdminType] = useState('');
+  const [selectedMDA, setSelectedMDA] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const [designationId, setDesignationId] = useState("");
-  const [gradeId, setGradeId] = useState("");
+  const [designationId, setDesignationId] = useState('');
+  const [gradeId, setGradeId] = useState('');
   const { isLoading, setIsLoading } = useIsLoading();
 
   const validateForm = (userData) => {
     let formErrors = {};
 
-    if (!userData.firstName) formErrors.firstName = "First Name is required";
-    if (!userData.lastName) formErrors.lastName = "Last Name is required";
+    if (!userData.firstName) formErrors.firstName = 'First Name is required';
+    if (!userData.lastName) formErrors.lastName = 'Last Name is required';
     if (!userData.employeeNumber) {
-      formErrors.employeeNumber = "Employee Number is required";
+      formErrors.employeeNumber = 'Employee Number is required';
     } else if (isNaN(userData.employeeNumber)) {
-      message.error("Employee Number must be a number");
-      formErrors.employeeNumber = "Employee Number must be a number";
+      message.error('Employee Number must be a number');
+      formErrors.employeeNumber = 'Employee Number must be a number';
     }
 
     // if (!userData.id_number) formErrors.id_number = "Id Number is required";
     if (!userData.phoneNumber)
-      formErrors.phoneNumber = "Phone Number is required";
+      formErrors.phoneNumber = 'Phone Number is required';
     if (
       userData.phoneNumber &&
       !/^\+\d{1,4}\d{9}$|^0\d{9}$/.test(userData.phoneNumber)
     ) {
-      message.error("Phone Number is invalid");
-      formErrors.phoneNumber = "Phone Number is invalid";
+      message.error('Phone Number is invalid');
+      formErrors.phoneNumber = 'Phone Number is invalid';
     }
 
     if (userData.email && !/\S+@\S+\.\S+/.test(userData.email)) {
-      message.error("Email is invalid");
-      formErrors.email = "Email is invalid";
+      message.error('Email is invalid');
+      formErrors.email = 'Email is invalid';
     }
     if (userData.id_number && !/^\d+$/.test(userData.id_number)) {
-      message.error("Id Number is invalid");
-      formErrors.id_number = "Id Number is invalid";
+      message.error('Id Number is invalid');
+      formErrors.id_number = 'Id Number is invalid';
     }
-    if (!userData.email) formErrors.email = "Email is required";
+    if (!userData.email) formErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(userData.email))
-      formErrors.email = "Email is invalid";
+      formErrors.email = 'Email is invalid';
 
     return formErrors;
   };
@@ -76,21 +80,21 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const userData = {
-      firstName: formData.get("firstName"),
-      middleName: formData.get("middleName"),
-      lastName: formData.get("lastName"),
-      ...((selectedAdminType === "Treasury" ||
-        selectedAdminType === "other") && {
+      firstName: formData.get('firstName'),
+      middleName: formData.get('middleName'),
+      lastName: formData.get('lastName'),
+      ...((selectedAdminType === 'Treasury' ||
+        selectedAdminType === 'other') && {
         department: selectedDepartment,
         role: selectedRole,
       }),
-      employeeNumber: formData.get("employeeNumber"),
-      phoneNumber: formData.get("phoneNumber"),
-      email: formData.get("email"),
+      employeeNumber: formData.get('employeeNumber'),
+      phoneNumber: formData.get('phoneNumber'),
+      email: formData.get('email'),
       mdaid: selectedMDA, // Include the MDA ID in the user data
       //adminType: selectedAdminType, // Include the admin type in the user data
-      isMDA: selectedAdminType === "MDA" ? true : false,
-      idNumber: Number(formData.get("id_number")),
+      isMDA: selectedAdminType === 'MDA' ? true : false,
+      idNumber: Number(formData.get('id_number')),
     };
     console.log(userData);
 
@@ -107,8 +111,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       if (res.data.isSuccess === true) {
         setAlert({
           open: true,
-          message: "User added successfully",
-          severity: "success",
+          message: 'User added successfully',
+          severity: 'success',
         });
         event.target.reset();
 
@@ -117,7 +121,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       } else if (res.data.isSuccess === false && res.data.message !== null) {
         message.error(res.data.message);
       } else {
-        message.error("An error occurred. Please try again.");
+        message.error('An error occurred. Please try again.');
       }
     } catch (error) {
       console.log(error.response);
@@ -137,19 +141,19 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
           for (const field in validationErrors) {
             if (validationErrors.hasOwnProperty(field)) {
               errorMessages.push(
-                `${field}: ${validationErrors[field].join(", ")}`
+                `${field}: ${validationErrors[field].join(', ')}`
               );
             }
           }
 
           // Display all validation errors as a single message
-          message.error(errorMessages.join(" | "));
+          message.error(errorMessages.join(' | '));
         } else if (errorData.title) {
           // Display the general error message
           message.error(errorData.title);
         }
       } else {
-        message.error("An error occurred. Please try again.");
+        message.error('An error occurred. Please try again.');
       }
     } finally {
     }
@@ -166,36 +170,36 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       if (res.status === 200) {
         setRolesList(res.data.data);
       }
-      console.log("roles", res.data.data);
+      console.log('roles', res.data.data);
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      console.error('Error fetching roles:', error);
     }
   };
 
   const fetchDepartments = async () => {
     try {
       const res = await apiService.get(endpoints.getDepartments, {
-        "paging.pageNumber": 1,
-        "paging.pageSize": 200,
+        'paging.pageNumber': 1,
+        'paging.pageSize': 200,
       });
       setDepartments(res.data.data);
 
-      console.log("departments", res.data.data);
+      console.log('departments', res.data.data);
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error('Error fetching departments:', error);
     }
   };
 
   const fetchMDAs = async () => {
     try {
       const res = await apiService.get(endpoints.mdas, {
-        "paging.pageNumber": 1,
-        "paging.pageSize": 200,
+        'paging.pageNumber': 1,
+        'paging.pageSize': 200,
       });
       setMDAs(res.data.data);
-      console.log("mdas", res.data.data);
+      console.log('mdas', res.data.data);
     } catch (error) {
-      console.error("Error fetching MDAs:", error);
+      console.error('Error fetching MDAs:', error);
     }
   };
   const [grades, setGrades] = useState([]);
@@ -203,7 +207,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const fetchGrades = async () => {
     try {
       const res = await apiService.get(endpoints.getAllGrades, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       if (res.status === 200) {
         setGrades(
@@ -213,18 +217,18 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
         console.log(res.data.data);
       }
     } catch (e) {
-      console.error("Error fetching data:", e);
+      console.error('Error fetching data:', e);
     }
   };
 
   const fetchDesignations = async () => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setDesignations(res.data.data);
     } catch (error) {
-      console.error("Error fetching Designations:", error);
+      console.error('Error fetching Designations:', error);
     }
   };
 
@@ -288,7 +292,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
             </div>
             {selectedAdminType && (
               <>
-                {selectedAdminType === "MDA" && (
+                {selectedAdminType === 'MDA' && (
                   <div className="pb-4 mb-2">
                     <div className="mb-4 flex items-center gap-2">
                       <h6 className="font-semibold text-primary text-sm">
@@ -296,34 +300,99 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                       </h6>
                       <hr className="flex-grow border-blue-500 border-opacity-20" />
                     </div>
-                    <div className="flex justify-evenly gap-4 px-8">
-                      <div className="flex flex-col flex-1">
-                        <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
-                          Select MDA
-                          <div className="text-red-600 text-base mt-[3px]">
-                            *
-                          </div>
-                        </label>
-                        <select
-                          name="mda"
-                          value={selectedMDA}
-                          onChange={(e) => setSelectedMDA(e.target.value)}
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
-                          required
-                        >
-                          <option value="">Select MDA</option>
-                          {mdas.map((mda) => (
-                            <option key={mda.id} value={mda.id}>
-                              {mda.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                    <Autocomplete
+                      options={mdas}
+                      getOptionLabel={(option) => option.name}
+                      onChange={(event, newValue) => {
+                        setSelectedMDA(newValue.id);
+                      }}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          sx={{ width: '93%' }}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                        />
+                      )}
+                      value={
+                        mdas.find((option) => option.id === selectedMDA) || null
+                      }
+                      renderOption={(props, option, { selected }) => (
+                        <div className="">
+                          <li
+                            {...props}
+                            style={{
+                              border: 'none',
+                              boxShadow: 'none',
+                              backgroundColor: selected ? '#B2E9ED' : 'white',
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: '100%',
+                                pr: '40px',
+
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  flexDirection: 'row',
+                                  gap: 3,
+                                }}
+                              >
+                                {' '}
+                                <p
+                                  className=" text-primary font-normal text-[12px] items-start"
+                                  style={{ alignSelf: 'flex-start' }}
+                                >
+                                  {option.pensionCap.name}
+                                </p>
+                                <p
+                                  className="text-[12px] items-center"
+                                  style={{ alignSelf: 'flex-center' }}
+                                >
+                                  {option.name}
+                                </p>
+                              </Box>
+                            </Box>
+                          </li>
+                        </div>
+                      )}
+                      ListboxProps={{
+                        sx: {
+                          padding: 0,
+                          '& ul': {
+                            padding: 0,
+                            margin: 0,
+                          },
+                          // Additional styling for the listbox
+                        },
+                      }}
+                      PopperComponent={(props) => (
+                        <Popper {...props}>
+                          {/* Header */}
+                          <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                            <p className="text-xs font-normal">Pension Cap</p>
+                            <p className="text-xs font-normal">MDA Name</p>
+                          </li>
+
+                          {props.children}
+                        </Popper>
+                      )}
+                    />
                   </div>
                 )}
-                {(selectedAdminType === "Treasury" ||
-                  selectedAdminType === "other") && (
+                {(selectedAdminType === 'Treasury' ||
+                  selectedAdminType === 'other') && (
                   <div className="pb-4">
                     <div className="mb-4 flex items-center gap-2">
                       <h6 className="font-semibold text-primary text-sm">
@@ -523,7 +592,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           onChange={(e) => setDesignationId(e.target.value)}
                           className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                         >
-                          {" "}
+                          {' '}
                           <option value="">--------------</option>
                           {designations
 
@@ -540,7 +609,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                                   {designation.name}
                                 </option>
                               </>
-                            ))}{" "}
+                            ))}{' '}
                         </select>
                       </div>
                       <div className="flex flex-col mt-[-15px]">
@@ -625,17 +694,17 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           MenuProps={{
                             PaperProps: {
                               style: {
-                                maxHeight: "120px", // Set max height for the dropdown
-                                overflowY: "auto",
+                                maxHeight: '120px', // Set max height for the dropdown
+                                overflowY: 'auto',
                               },
                             },
                             anchorOrigin: {
-                              vertical: "bottom",
-                              horizontal: "left",
+                              vertical: 'bottom',
+                              horizontal: 'left',
                             },
                             transformOrigin: {
-                              vertical: "top",
-                              horizontal: "left",
+                              vertical: 'top',
+                              horizontal: 'left',
                             },
                           }}
                         />
@@ -669,7 +738,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
           </p>
         </DialogContent>
         <DialogActions
-          sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
+          sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}
         >
           <Button
             onClick={() => setOpenDialog(false)}
