@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
