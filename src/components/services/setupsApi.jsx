@@ -385,6 +385,12 @@ const endpoints = {
   getBeneficiaries: (id) =>
     `api/Claims/getAllBeneficiaries?prospective_pensioner_id=${id}`,
   createBeneficiary: '/api/Claims/createBeneficiary',
+
+  getRetireesDesignationGvtSalary: (id) =>
+    `api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
+
+  getPostAndNature: (id) =>
+    `api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
 };
 
 export const apiService = {

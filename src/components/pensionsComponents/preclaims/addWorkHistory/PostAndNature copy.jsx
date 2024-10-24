@@ -1,5 +1,5 @@
-import { useAlert } from "@/context/AlertContext";
-import React, { useEffect, useState } from "react";
+import { useAlert } from '@/context/AlertContext';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,29 +18,29 @@ import {
   TextField,
   FormControl,
   IconButton,
-} from "@mui/material";
-import dayjs from "dayjs";
-import { message } from "antd";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
-import axios from "axios";
+} from '@mui/material';
+import dayjs from 'dayjs';
+import { message } from 'antd';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
+import axios from 'axios';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import { useMda } from "@/context/MdaContext";
-import endpoints from "@/components/services/setupsApi";
-import EditableTable from "@/components/baseComponents/EditableTable";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
-import { BASE_CORE_API } from "@/utils/constants";
+} from '@/components/services/preclaimsApi';
+import { useMda } from '@/context/MdaContext';
+import endpoints from '@/components/services/setupsApi';
+import EditableTable from '@/components/baseComponents/EditableTable';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { BASE_CORE_API } from '@/utils/constants';
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    date: "",
-    post: "",
+    date: '',
+    post: '',
     was_pensionable: false,
-    nature_of_salary_scale: "",
-    nature_of_service: "",
+    nature_of_salary_scale: '',
+    nature_of_service: '',
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -51,15 +51,13 @@ function PostAndNature({ id, loading, setLoading, status }) {
 
   const fetchPostandNature = async () => {
     try {
-      const res = await axios.get(
-        `${BASE_CORE_API}api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`
-      );
+      const res = await apiService.get(endpoints.getPostAndNature(id));
       if (res.status === 200) {
         const sortedData = res.data.data.sort(
           (a, b) => new Date(a.date) - new Date(b.date)
         );
 
-        console.log("Post and Nature Data:", sortedData);
+        console.log('Post and Nature Data:', sortedData);
         setPostAndNatureData(res.data.data);
         return res.data.data;
       }
@@ -75,10 +73,10 @@ function PostAndNature({ id, loading, setLoading, status }) {
     }
   }, [id]);
 
-  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState('');
 
-  const [mdaId, setMdaId] = useState("");
-  const [cap, setCap] = useState("");
+  const [mdaId, setMdaId] = useState('');
+  const [cap, setCap] = useState('');
 
   const [pensionAward, setPensionAward] = useState(null);
 
@@ -97,9 +95,9 @@ function PostAndNature({ id, loading, setLoading, status }) {
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
       console.log(
-        "first appointment",
+        'first appointment',
         res.data.data[0].date_of_first_appointment,
-        "date of confirmation",
+        'date of confirmation',
         res.data.data[0].date_of_confirmation
       );
     } catch (error) {
@@ -116,11 +114,11 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const fetchDesignations = async () => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setDesignations(res.data.data);
     } catch (error) {
-      console.error("Error fetching Designations:", error);
+      console.error('Error fetching Designations:', error);
     }
   };
 
@@ -129,22 +127,22 @@ function PostAndNature({ id, loading, setLoading, status }) {
   }, []);
   const natureOfServiceOptions = {
     CAP189: [
-      { id: "Probation", name: "Probation" },
-      { id: "Permanent", name: "Permanent" },
-      { id: "Temporary", name: "Temporary" },
-      { id: "Contract", name: "Contract" },
+      { id: 'Probation', name: 'Probation' },
+      { id: 'Permanent', name: 'Permanent' },
+      { id: 'Temporary', name: 'Temporary' },
+      { id: 'Contract', name: 'Contract' },
     ],
     CAP199: [
-      { id: "ReckonableService", name: "Reckonable Service" },
-      { id: "NonReckonableService", name: "Non-Reckonable Service" },
+      { id: 'ReckonableService', name: 'Reckonable Service' },
+      { id: 'NonReckonableService', name: 'Non-Reckonable Service' },
     ],
     CAP196: [
-      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
-      { id: "OneTerm", name: "1 Term" },
-      { id: "TwoTerms", name: "2 Term" },
-      { id: "ThreeTerms", name: "3 Term" },
-      { id: "FourTerms", name: "4 Term" },
-      { id: "FiveTerms", name: "5 Term" },
+      { id: 'ParliamentaryTerms', name: 'Parliamentary Terms' },
+      { id: 'OneTerm', name: '1 Term' },
+      { id: 'TwoTerms', name: '2 Term' },
+      { id: 'ThreeTerms', name: '3 Term' },
+      { id: 'FourTerms', name: '4 Term' },
+      { id: 'FiveTerms', name: '5 Term' },
     ],
   };
 
@@ -157,7 +155,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
         setParliamentarianTerms(res.data.data);
       }
     } catch (error) {
-      console.error("Error fetching Full Term:", error);
+      console.error('Error fetching Full Term:', error);
     }
   };
 
@@ -168,61 +166,61 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const months = [
     {
       id: 1,
-      name: "January",
+      name: 'January',
     },
     {
       id: 2,
-      name: "February",
+      name: 'February',
     },
     {
       id: 3,
-      name: "March",
+      name: 'March',
     },
     {
       id: 4,
-      name: "April",
+      name: 'April',
     },
     {
       id: 5,
-      name: "May",
+      name: 'May',
     },
     {
       id: 6,
-      name: "June",
+      name: 'June',
     },
     {
       id: 7,
-      name: "July",
+      name: 'July',
     },
     {
       id: 8,
-      name: "August",
+      name: 'August',
     },
     {
       id: 9,
-      name: "September",
+      name: 'September',
     },
     {
       id: 10,
-      name: "October",
+      name: 'October',
     },
     {
       id: 11,
-      name: "November",
+      name: 'November',
     },
     {
       id: 12,
-      name: "December",
+      name: 'December',
     },
   ];
 
   const fields = [
-    ...(cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK"
+    ...(cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK'
       ? [
           {
-            label: "Parliamentary Term",
-            value: "parliamentary_term_setup_id",
-            type: "select",
+            label: 'Parliamentary Term',
+            value: 'parliamentary_term_setup_id',
+            type: 'select',
             options: parliamenterianTerms.map((term) => ({
               id: term.id,
               name: term.name,
@@ -235,27 +233,27 @@ function PostAndNature({ id, loading, setLoading, status }) {
             })),
           },
           {
-            label: "Was Full Term Served (Yes/No)",
-            value: "was_full_term",
-            type: "select",
+            label: 'Was Full Term Served (Yes/No)',
+            value: 'was_full_term',
+            type: 'select',
             options: [
-              { id: true, name: "Yes" },
-              { id: false, name: "No" },
+              { id: true, name: 'Yes' },
+              { id: false, name: 'No' },
             ],
           },
         ]
       : []),
     {
-      label: "Start Date",
-      value: "date",
-      type: "date",
+      label: 'Start Date',
+      value: 'date',
+      type: 'date',
       disabled:
-        cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK" ? true : false,
+        cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK' ? true : false,
     },
     {
-      label: "Post",
-      value: "post",
-      type: "select",
+      label: 'Post',
+      value: 'post',
+      type: 'select',
       options: designations
         .filter((designation) => designation?.mda?.id === mdaId)
         .map((designation) => ({
@@ -264,29 +262,29 @@ function PostAndNature({ id, loading, setLoading, status }) {
         })),
     },
     {
-      label: "Whether Pensionable(Yes/No)",
-      value: "was_pensionable",
-      type: "select",
+      label: 'Whether Pensionable(Yes/No)',
+      value: 'was_pensionable',
+      type: 'select',
       options: [
-        { id: true, name: "Yes" },
-        { id: false, name: "No" },
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
       ],
     },
     {
-      label: "Nature of Salary Scale",
-      value: "nature_of_salary_scale",
-      type: "select",
+      label: 'Nature of Salary Scale',
+      value: 'nature_of_salary_scale',
+      type: 'select',
       options: [
-        { id: "P", name: "Pensionable" },
-        { id: "Prob", name: "Probation" },
-        { id: "T", name: "Temporary" },
-        { id: "C", name: "Contract" },
+        { id: 'P', name: 'Pensionable' },
+        { id: 'Prob', name: 'Probation' },
+        { id: 'T', name: 'Temporary' },
+        { id: 'C', name: 'Contract' },
       ],
     },
     {
-      label: "Nature of Service",
-      value: "nature_of_service",
-      type: "select",
+      label: 'Nature of Service',
+      value: 'nature_of_service',
+      type: 'select',
       options: natureOfServiceOptions[cap] || [],
     },
   ];
@@ -295,13 +293,13 @@ function PostAndNature({ id, loading, setLoading, status }) {
     const { name, value, type } = e.target;
     const updatedFormData = {
       ...formData,
-      [name]: type === "radio" ? JSON.parse(value) : value,
+      [name]: type === 'radio' ? JSON.parse(value) : value,
     };
 
     // Automatically set related fields based on 'whether pensionable'
-    if (name === "was_pensionable") {
-      updatedFormData.nature_of_salary_scale = value === true ? "P" : "";
-      updatedFormData.nature_of_service = value === true ? "Permanent" : "";
+    if (name === 'was_pensionable') {
+      updatedFormData.nature_of_salary_scale = value === true ? 'P' : '';
+      updatedFormData.nature_of_service = value === true ? 'Permanent' : '';
     }
 
     setFormData(updatedFormData);
@@ -310,9 +308,9 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const handleSubmit = async (data) => {
     const formattedFormData = { ...data, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
+          'YYYY-MM-DDTHH:mm:ss[Z]'
         );
       }
     });
@@ -337,9 +335,9 @@ function PostAndNature({ id, loading, setLoading, status }) {
         setAlert({
           open: true,
           message: `Post and Nature of Service ${
-            isEditMode ? "updated" : "added"
+            isEditMode ? 'updated' : 'added'
           } successfully`,
-          severity: "success",
+          severity: 'success',
         });
         setOpen(false);
       }
@@ -353,7 +351,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
         });
         // setValidationErrors(errors); // Update state with validation errors
         setValidationErrors(errors);
-        throw new Error("Validation Error");
+        throw new Error('Validation Error');
       }
     } catch (error) {
       throw error;
@@ -364,7 +362,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const handleUpdate = (item) => {
     const formattedItem = {
       ...item,
-      date: dayjs(item.date).format("YYYY-MM-DD"),
+      date: dayjs(item.date).format('YYYY-MM-DD'),
       // end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
     };
 
@@ -380,8 +378,8 @@ function PostAndNature({ id, loading, setLoading, status }) {
       fetchPostandNature();
       setAlert({
         open: true,
-        message: "Post and Nature deleted successfully",
-        severity: "success",
+        message: 'Post and Nature deleted successfully',
+        severity: 'success',
       });
       setOpenDeleteDialog(false);
     } catch (error) {
@@ -393,7 +391,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const [recordId, setRecordId] = useState();
 
   const saveRow = (data) => {
-    console.log("Saved row data:", data);
+    console.log('Saved row data:', data);
   };
 
   // Initial row data
@@ -421,7 +419,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
       ? postAndNatureData.map((item) => ({
           ...item,
           id: item.id,
-          date: dayjs(item.date).format("YYYY-MM-DD"),
+          date: dayjs(item.date).format('YYYY-MM-DD'),
           post: item.post,
           was_pensionable: item.was_pensionable,
           nature_of_salary_scale: item.nature_of_salary_scale,
@@ -430,17 +428,17 @@ function PostAndNature({ id, loading, setLoading, status }) {
       : [
           {
             date: dateOfFirstAppointment,
-            post: "",
+            post: '',
             was_pensionable: false,
-            nature_of_salary_scale: "C",
-            nature_of_service: "",
+            nature_of_salary_scale: 'C',
+            nature_of_service: '',
           },
           {
             date: dateOfConfirmation,
-            post: "",
+            post: '',
             was_pensionable: true,
-            nature_of_salary_scale: "C",
-            nature_of_service: "",
+            nature_of_salary_scale: 'C',
+            nature_of_service: '',
           },
         ];
 
@@ -448,33 +446,33 @@ function PostAndNature({ id, loading, setLoading, status }) {
   const validators = {
     date: (value) => {
       if (!value) {
-        return "Date is required";
+        return 'Date is required';
       }
     },
     post: (value) => {
       if (!value) {
-        return "Post is required";
+        return 'Post is required';
       }
     },
     was_pensionable: (value) => {
       if (value === null) {
-        return "Pensionable is required";
+        return 'Pensionable is required';
       }
     },
     nature_of_salary_scale: (value) => {
       if (!value) {
-        return "Nature of Salary Scale is required";
+        return 'Nature of Salary Scale is required';
       }
     },
     nature_of_service: (value) => {
       if (!value) {
-        return "Nature of Service is required";
+        return 'Nature of Service is required';
       }
     },
   };
 
   const handleError = (errors) => {
-    console.log("Errors:", errors);
+    console.log('Errors:', errors);
   };
   return (
     <div className="">
