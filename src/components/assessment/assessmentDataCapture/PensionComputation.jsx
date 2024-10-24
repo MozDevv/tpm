@@ -97,11 +97,11 @@ function PensionComputation({
         return {
           label: key
             .replace(/_/g, ' ')
-            .replace(/\b\w/g, (c) => c.toUpperCase()), // Convert snake_case to Title Case
+            .replace(/\b\w/g, (c) => c.toUpperCase()),
           name: key,
           type:
             containsDateKeyword || key === 'pensionable_service_months'
-              ? 'text' // If the key contains "month", "year", or "day", set type to 'text'
+              ? 'text'
               : isValidISODate(value)
               ? 'date'
               : typeof value === 'number' || value === 0

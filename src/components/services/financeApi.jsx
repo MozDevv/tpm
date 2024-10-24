@@ -227,6 +227,12 @@ const financeEndpoints = {
   generateBudgetUploadTemplate: '/Accounts/GenerateBudgetUploadTemplate',
   uploadBudget: '/Accounts/UploadBudget',
   matchBankDetails: '/Posting/MatchBankDetails',
+  getReceipts: '/Posting/GetReceipts',
+  getReceiptsById: (id) => `/Posting/GetReceipts?id=${id}`,
+  addReceipt: '/Posting/AddReceipt',
+  updateReceipt: '/Posting/UpdateReceipt',
+  updateTheReceipt: '/Posting/UpdateReceipt',
+  deleteReceipt: (id) => `/Posting/DeleteReceipt?id=${id}`,
 };
 
 export const apiService = {

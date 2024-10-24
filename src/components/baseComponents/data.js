@@ -155,6 +155,10 @@ export const menuItems = [
         path: '/finance/payments',
         subChildren: [
           {
+            title: 'Receipts',
+            path: '/pensions/finance/recievables/receipts',
+          },
+          {
             title: 'Customers',
             path: '/pensions/finance/customers',
           },

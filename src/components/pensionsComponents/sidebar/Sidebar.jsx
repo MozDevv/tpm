@@ -233,6 +233,10 @@ function Sidebar() {
               path: '/pensions/finance/customers',
             },
             {
+              title: 'Receipts',
+              path: '/pensions/finance/recievables/receipts',
+            },
+            {
               title: 'Customer Ledger Entries',
               path: '/pensions/finance/recievables/ledger-entries',
             },
