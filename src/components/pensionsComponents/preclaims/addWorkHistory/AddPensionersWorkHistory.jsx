@@ -83,7 +83,7 @@ function AddPensionersWorkHistory({
           </Button>
         </div> */}
       </div>
-      {JSON.stringify(clickedItem)}
+
       <div className="flex-1 overflow-y-auto pb-[200px] max-h-[90vh]">
         <Suspense fallback={<Spinner />}>
           {pensionAward ? (

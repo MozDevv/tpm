@@ -155,7 +155,10 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         key="6"
                       >
                         <div className="z-10">
-                          <MaintenanceCase id={clickedItem.id} />
+                          <MaintenanceCase
+                            id={clickedItem.id}
+                            clickedItem2={clickedItem}
+                          />
                         </div>
                       </TabPane>
                     )}
@@ -167,7 +170,10 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       }
                       key="7"
                     >
-                      <Deductions id={clickedItem?.id} />
+                      <Deductions
+                        id={clickedItem?.id}
+                        clickedItem2={clickedItem}
+                      />
                     </TabPane>
 
                     {clickedItem?.is_wcps === 0 && (
@@ -179,7 +185,10 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         }
                         key="8"
                       >
-                        <WcpsCard id={clickedItem?.id} />
+                        <WcpsCard
+                          id={clickedItem?.id}
+                          clickedItem2={clickedItem}
+                        />
                       </TabPane>
                     )}
 

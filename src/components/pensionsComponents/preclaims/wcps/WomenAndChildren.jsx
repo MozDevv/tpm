@@ -1,44 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
-import { Button } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import { Button } from '@mui/material';
+import { AgGridReact } from 'ag-grid-react';
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useMda } from "@/context/MdaContext";
-import WcpsCard from "./WcpsCard";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { useMda } from '@/context/MdaContext';
+import WcpsCard from './WcpsCard';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
-    pinned: "left",
+    pinned: 'left',
   },
   {
-    field: "reference_number",
-    headerName: "Reference Number",
+    field: 'reference_number',
+    headerName: 'Reference Number',
     width: 150,
     filter: true,
   },
   {
-    field: "effective_date",
-    headerName: "Effective Date",
+    field: 'effective_date',
+    headerName: 'Effective Date',
     width: 150,
     filter: true,
   },
 ];
 
-const WomenAndChildren = (id) => {
+const WomenAndChildren = (id, clickedItem2) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -68,27 +68,27 @@ const WomenAndChildren = (id) => {
       const { data, totalCount } = res.data;
       setMdas(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
   const title = clickedItem
-    ? "WCPS Contribution"
-    : "Add a New WCPS Contribution";
+    ? 'WCPS Contribution'
+    : 'Add a New WCPS Contribution';
 
   const { mdaId } = useMda();
 
   const fields = [
     {
-      name: "reference_number",
-      label: "Reference Number",
-      type: "text",
+      name: 'reference_number',
+      label: 'Reference Number',
+      type: 'text',
       required: true,
     },
     {
-      name: "effective_date",
-      label: "Effective Date",
-      type: "date",
+      name: 'effective_date',
+      label: 'Effective Date',
+      type: 'date',
       required: true,
     },
   ];
@@ -105,7 +105,7 @@ const WomenAndChildren = (id) => {
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -140,6 +140,7 @@ const WomenAndChildren = (id) => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
+            clickedItem2={clickedItem2}
           />
         ) : (
           <BaseInputCard
@@ -172,11 +173,11 @@ const WomenAndChildren = (id) => {
       <div
         className="ag-theme-quartz"
         style={{
-          height: "60vh",
+          height: '60vh',
 
-          mt: "20px",
+          mt: '20px',
 
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <AgGridReact

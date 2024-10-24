@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import React, { useEffect, useState } from 'react';
+import { Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { AgGridReact } from "ag-grid-react";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { Button, Tooltip } from "@mui/material";
-import BaseCard from "@/components/baseComponents/BaseCard";
-import { dateFormatter, formatDate } from "@/utils/dateFormatter";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import { AgGridReact } from 'ag-grid-react';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { Button, Tooltip } from '@mui/material';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import { dateFormatter, formatDate } from '@/utils/dateFormatter';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const { TabPane } = Tabs;
 
@@ -20,9 +20,10 @@ function WcpsCard({
   useRequestBody,
   openAction,
   id,
+  clickedItem2,
 }) {
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const activeRetireeId = [];
   const handleTabChange = (key) => {
@@ -31,7 +32,7 @@ function WcpsCard({
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log("Moving to next tab:", nextTab); // Debug line
+    console.log('Moving to next tab:', nextTab); // Debug line
     setActiveKey(nextTab);
   };
 
@@ -41,11 +42,11 @@ function WcpsCard({
   };
 
   const columnDefs = [
-    { headerName: "From Date", field: "from_date" },
-    { headerName: "To Date", field: "to_date" },
-    { headerName: "Salary ", field: "salary_amount" },
-    { headerName: "Total Emoluments", field: "total_emoluments" },
-    { headerName: "Contribution Amount", field: "contribution_amount" },
+    { headerName: 'From Date', field: 'from_date' },
+    { headerName: 'To Date', field: 'to_date' },
+    { headerName: 'Salary ', field: 'salary_amount' },
+    { headerName: 'Total Emoluments', field: 'total_emoluments' },
+    { headerName: 'Contribution Amount', field: 'contribution_amount' },
   ];
 
   const [contributionLines, setContributionLines] = useState([]);
@@ -58,15 +59,15 @@ function WcpsCard({
       const res = await apiService.get(endpoints.getWcps(id));
       const data = res.data.data;
 
-      console.log("Data", res.data.data[0]);
+      console.log('Data', res.data.data[0]);
       setReferenceId(data[0].id);
       setEffectiveDate(data[0].effective_date);
       setReferenceNumber(data[0].reference_number);
       if (res.data.data[0].id) {
         const contributionLinesData =
           res.data.data[0].wcpsContributionLines.map((line) => ({
-            from_date: new Date(line.from_date).toISOString().split("T")[0],
-            to_date: new Date(line.to_date).toISOString().split("T")[0],
+            from_date: new Date(line.from_date).toISOString().split('T')[0],
+            to_date: new Date(line.to_date).toISOString().split('T')[0],
             salary_amount: line.salary_amount,
             total_emoluments: line.total_emoluments,
             contribution_amount: line.contribution_amount,
@@ -76,7 +77,7 @@ function WcpsCard({
         // await fetchContributionLines(res.data.data[0].id);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -104,11 +105,11 @@ function WcpsCard({
 
         setContributionLines(contributionLinesData);
       } else {
-        console.warn("No contribution lines found for the provided ID.");
+        console.warn('No contribution lines found for the provided ID.');
         setContributionLines([]); // Optionally, clear the contribution lines if no data is found
       }
     } catch (error) {
-      console.error("Error fetching contribution lines:", error);
+      console.error('Error fetching contribution lines:', error);
     }
   };
 
@@ -123,36 +124,36 @@ function WcpsCard({
 
   const inputFields = [
     {
-      value: "from_date",
-      label: "From Date",
-      type: "date",
+      value: 'from_date',
+      label: 'From Date',
+      type: 'date',
       required: true,
     },
     {
-      value: "to_date",
-      label: "To Date",
-      type: "date",
+      value: 'to_date',
+      label: 'To Date',
+      type: 'date',
       required: true,
     },
     {
-      value: "salary_amount",
-      label: "Salary Amount",
-      type: "number",
+      value: 'salary_amount',
+      label: 'Salary Amount',
+      type: 'number',
       required: true,
       disabled: false,
     },
     {
-      value: "total_emoluments",
-      label: "Total Emoluments",
-      type: "number",
+      value: 'total_emoluments',
+      label: 'Total Emoluments',
+      type: 'number',
       required: true,
       disabled: true,
     },
     {
-      value: "contribution_amount",
-      label: "Contribution Amount(2%)",
+      value: 'contribution_amount',
+      label: 'Contribution Amount(2%)',
       disabled: true,
-      type: "number",
+      type: 'number',
       required: true,
       disabled: true,
     },
@@ -160,15 +161,15 @@ function WcpsCard({
 
   const refFields = [
     {
-      name: "reference_number",
-      label: "Reference Number",
-      type: "text",
+      name: 'reference_number',
+      label: 'Reference Number',
+      type: 'text',
       required: true,
     },
     {
-      name: "effective_date",
-      label: "Effective Date",
-      type: "date",
+      name: 'effective_date',
+      label: 'Effective Date',
+      type: 'date',
       required: true,
     },
   ];
@@ -204,7 +205,7 @@ function WcpsCard({
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
                     <div className="flex flex-row items-center gap-2">
                       <div className="text-gray-600 text-sm ">
-                        <i className="fas fa-hashtag text-gray-400"></i>{" "}
+                        <i className="fas fa-hashtag text-gray-400"></i>{' '}
                         Reference Number:
                       </div>
                       <div className="text-lg font-montserrat font-semibold text-gray-800">
@@ -213,11 +214,11 @@ function WcpsCard({
                     </div>
                     <div className="w-full sm:w-auto sm:ml-auto flex flex-row items-center gap-3">
                       <div className="text-gray-600 text-sm ">
-                        <i className="fas fa-calendar-alt text-gray-400"></i>{" "}
+                        <i className="fas fa-calendar-alt text-gray-400"></i>{' '}
                         Effective Date:
                       </div>
                       <div className="text-base font-semibold text-gray-800 font-montserrat">
-                        {effective_date ? dateFormatter(effective_date) : "N/A"}
+                        {effective_date ? dateFormatter(effective_date) : 'N/A'}
                       </div>
                     </div>
                   </div>
@@ -227,7 +228,7 @@ function WcpsCard({
               <BaseCard
                 openBaseCard={openAddReference}
                 setOpenBaseCard={setOpenAddReference}
-                title={"Add A Reference"}
+                title={'Add A Reference'}
                 clickedItem={clickedItem}
                 isUserComponent={false}
                 deleteApiEndpoint={endpoints.deleteWcps(id)}
@@ -249,6 +250,12 @@ function WcpsCard({
 
               {referenceId && (
                 <BaseInputTable
+                  disableAll={
+                    clickedItem2?.notification_status !== 2 &&
+                    clickedItem2?.notification_status !== null &&
+                    clickedItem2?.notification_status !== 0 &&
+                    clickedItem2?.notification_status !== 3
+                  }
                   title="WCPS Contributions Lines"
                   fields={inputFields}
                   id={referenceId}

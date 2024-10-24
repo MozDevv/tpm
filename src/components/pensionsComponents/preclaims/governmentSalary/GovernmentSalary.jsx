@@ -207,6 +207,12 @@ function GovernmentSalary({ id, clickedItem }) {
         title="Government Salary"
         fields={fields}
         id={id}
+        disableAll={
+          clickedItem?.notification_status !== 2 &&
+          clickedItem?.notification_status !== null &&
+          clickedItem?.notification_status !== 0 &&
+          clickedItem?.notification_status !== 3
+        }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}

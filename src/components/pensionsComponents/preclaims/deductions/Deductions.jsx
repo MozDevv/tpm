@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
-import { Button } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import { Button } from '@mui/material';
+import { AgGridReact } from 'ag-grid-react';
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useMda } from "@/context/MdaContext";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { useMda } from '@/context/MdaContext';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const getOptionNameById = (options, id) => {
   const option = options.find((opt) => opt.id === id);
@@ -22,55 +22,55 @@ const getOptionNameById = (options, id) => {
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
-    pinned: "left",
+    pinned: 'left',
   },
   {
-    field: "name",
-    headerName: "Name",
+    field: 'name',
+    headerName: 'Name',
     width: 150,
     filter: true,
   },
   {
-    field: "amount",
-    headerName: "Amount",
+    field: 'amount',
+    headerName: 'Amount',
     width: 150,
     filter: true,
   },
   {
-    field: "deduction_type",
-    headerName: "Deduction Type",
+    field: 'deduction_type',
+    headerName: 'Deduction Type',
     width: 150,
     filter: true,
     cellRenderer: (params) => {
       const options = [
-        { id: 0, name: "Salary Overpayment" },
-        { id: 1, name: "Work Deductions" },
-        { id: 2, name: "Abetement" },
+        { id: 0, name: 'Salary Overpayment' },
+        { id: 1, name: 'Work Deductions' },
+        { id: 2, name: 'Abetement' },
       ];
       return getOptionNameById(options, params.value);
     },
   },
   {
-    field: "deduction_payee",
-    headerName: "Deduction Payee",
+    field: 'deduction_payee',
+    headerName: 'Deduction Payee',
     width: 150,
     filter: true,
     cellRenderer: (params) => {
       const options = [
-        { id: 0, name: "MDA" },
-        { id: 1, name: "Treasury" },
+        { id: 0, name: 'MDA' },
+        { id: 1, name: 'Treasury' },
       ];
       return getOptionNameById(options, params.value);
     },
   },
 ];
 
-const Deductions = (id) => {
+const Deductions = (id, clickedItem2) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -84,7 +84,7 @@ const Deductions = (id) => {
       const data = res.data.data;
       setRecoveryDeductions(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -115,30 +115,30 @@ const Deductions = (id) => {
   const fetchMdas = async () => {
     try {
       const res = await apiService.get(endpoints.mdas, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       const { data, totalCount } = res.data;
       setMdas(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
-  const title = clickedItem ? "Deductions" : "Add a New Deduction";
+  const title = clickedItem ? 'Deductions' : 'Add a New Deduction';
 
-  const mdaId = localStorage.getItem("mdaId");
+  const mdaId = localStorage.getItem('mdaId');
 
   const fields = [
     {
-      label: "Name",
-      value: "name",
-      type: "text",
+      label: 'Name',
+      value: 'name',
+      type: 'text',
       required: true,
     },
     {
-      label: "Amount",
-      value: "amount",
-      type: "number",
+      label: 'Amount',
+      value: 'amount',
+      type: 'number',
       required: true,
     },
     // {
@@ -169,9 +169,9 @@ const Deductions = (id) => {
     //   required: true,
     // },
     {
-      label: "MDA",
-      value: "mda_id",
-      type: "select",
+      label: 'MDA',
+      value: 'mda_id',
+      type: 'select',
       options: mdas
         .filter((mda) => mda.id === mdaId)
         .map((mda) => ({
@@ -182,9 +182,9 @@ const Deductions = (id) => {
       hide: false,
     },
     {
-      label: "Deduction/Recovery",
-      value: "deductions_and_refunds_id",
-      type: "select",
+      label: 'Deduction/Recovery',
+      value: 'deductions_and_refunds_id',
+      type: 'select',
       options: recoveryDeductions.map((recovery) => ({
         id: recovery.id,
         name: recovery.description,
@@ -204,7 +204,7 @@ const Deductions = (id) => {
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -225,6 +225,12 @@ const Deductions = (id) => {
         title="Deductions"
         fields={fields}
         id={id.id}
+        disableAll={
+          clickedItem2?.clickedItem?.notification_status !== 2 &&
+          clickedItem2?.clickedItem?.notification_status !== null &&
+          clickedItem2?.clickedItem?.notification_status !== 0 &&
+          clickedItem2?.clickedItem?.notification_status !== 3
+        }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
