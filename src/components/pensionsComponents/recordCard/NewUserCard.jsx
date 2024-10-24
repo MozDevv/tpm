@@ -301,7 +301,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                       <hr className="flex-grow border-blue-500 border-opacity-20" />
                     </div>
                     <Autocomplete
-                      options={mdas}
+                      options={mdas.sort(
+                        (a, b) =>
+                          -b.pensionCap.name.localeCompare(a.pensionCap.name)
+                      )}
                       getOptionLabel={(option) => option.name}
                       onChange={(event, newValue) => {
                         setSelectedMDA(newValue.id);
@@ -346,7 +349,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                                 sx={{
                                   display: 'flex',
                                   flexDirection: 'row',
-                                  gap: 3,
+                                  gap: 2,
                                 }}
                               >
                                 {' '}
