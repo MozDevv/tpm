@@ -514,6 +514,10 @@ function Sidebar() {
           path: '/pensions/setups/termsofservice',
         },
         {
+          title: 'Beneficiary Relationships Setups',
+          path: '/pensions/setups/beneficiary-relationships',
+        },
+        {
           title: 'MDAs',
           path: '/pensions/setups/mdas',
         },
