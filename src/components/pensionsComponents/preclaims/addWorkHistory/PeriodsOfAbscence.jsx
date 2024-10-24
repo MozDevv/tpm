@@ -1,8 +1,8 @@
-"use client";
+'use client';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import React, { useEffect, useState } from "react";
+} from '@/components/services/preclaimsApi';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,16 +18,16 @@ import {
   TextField,
   FormControl,
   IconButton,
-} from "@mui/material";
-import { Edit, Delete, Visibility } from "@mui/icons-material";
-import dayjs from "dayjs";
-import { useAlert } from "@/context/AlertContext";
-import { message } from "antd";
-import { useMda } from "@/context/MdaContext";
-import EditableTable from "@/components/baseComponents/EditableTable";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+} from '@mui/material';
+import { Edit, Delete, Visibility } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import { useAlert } from '@/context/AlertContext';
+import { message } from 'antd';
+import { useMda } from '@/context/MdaContext';
+import EditableTable from '@/components/baseComponents/EditableTable';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-function PeriodsOfAbsence({ id, status }) {
+function PeriodsOfAbsence({ id, status, clickedItem }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -41,7 +41,7 @@ function PeriodsOfAbsence({ id, status }) {
       );
       setPeriodsOfAbsence(res.data.data);
       setLoading(false);
-      console.log("Period of Absence", res.data.data);
+      console.log('Period of Absence', res.data.data);
       return res.data.data;
     } catch (error) {
       console.log(error);
@@ -54,26 +54,26 @@ function PeriodsOfAbsence({ id, status }) {
   }, [id]);
 
   const fields = [
-    { label: "Start Date", value: "start_date", type: "date" },
-    { label: "End Date", value: "end_date", type: "date" },
+    { label: 'Start Date', value: 'start_date', type: 'date' },
+    { label: 'End Date', value: 'end_date', type: 'date' },
     {
-      label: "Cause Of Absence",
-      value: "cause_of_absence",
-      type: "select",
+      label: 'Cause Of Absence',
+      value: 'cause_of_absence',
+      type: 'select',
       options: [
-        { id: "Absenteeism", name: "Absenteeism" },
-        { id: "Suspension", name: "Suspension" },
-        { id: "Interdiction", name: "Interdiction" },
-        { id: "Unpaid Maternity Leave", name: "Unpaid Maternity Leave" },
-        { id: "Study Leave", name: "Study Leave" },
-        { id: "Sick Leave", name: "Sick Leave" },
-        { id: "Condoned Leave", name: "Condoned Leave" },
+        { id: 'Absenteeism', name: 'Absenteeism' },
+        { id: 'Suspension', name: 'Suspension' },
+        { id: 'Interdiction', name: 'Interdiction' },
+        { id: 'Unpaid Maternity Leave', name: 'Unpaid Maternity Leave' },
+        { id: 'Study Leave', name: 'Study Leave' },
+        { id: 'Sick Leave', name: 'Sick Leave' },
+        { id: 'Condoned Leave', name: 'Condoned Leave' },
       ],
     },
     {
-      label: "Number of Days",
-      value: "number_of_days",
-      type: "number",
+      label: 'Number of Days',
+      value: 'number_of_days',
+      type: 'number',
       disabled: true,
     },
   ];
@@ -86,9 +86,9 @@ function PeriodsOfAbsence({ id, status }) {
   const handleSubmit = async (data) => {
     const formattedFormData = { ...data, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
+          'YYYY-MM-DDTHH:mm:ss[Z]'
         );
       }
     });
@@ -106,7 +106,7 @@ function PeriodsOfAbsence({ id, status }) {
         if (res.status === 200 && res.data.succeeded) {
           fetchPeriodsOfAbsence();
           setOpen(false);
-          message.success("Period of Absence updated successfully");
+          message.success('Period of Absence updated successfully');
         } else if (res.data.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
             error.errors.forEach((err) => {
@@ -131,7 +131,7 @@ function PeriodsOfAbsence({ id, status }) {
           fetchPeriodsOfAbsence();
           setOpen(false);
 
-          message.success("Period of Absence added successfully");
+          message.success('Period of Absence added successfully');
         }
         if (res.data.validationErrors.length > 0) {
           res.data.validationErrors.forEach((error) => {
@@ -139,7 +139,7 @@ function PeriodsOfAbsence({ id, status }) {
               message.error(`${error.field}: ${err}`);
             });
           });
-          throw new Error("An error occurred while submitting the data.");
+          throw new Error('An error occurred while submitting the data.');
         }
       }
     } catch (error) {
@@ -154,8 +154,8 @@ function PeriodsOfAbsence({ id, status }) {
   const handleEdit = (item) => {
     const formattedItem = {
       ...item,
-      start_date: dayjs(item.start_date).format("YYYY-MM-DD"),
-      end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+      start_date: dayjs(item.start_date).format('YYYY-MM-DD'),
+      end_date: dayjs(item.end_date).format('YYYY-MM-DD'),
     };
 
     setFormData(formattedItem);
@@ -172,8 +172,8 @@ function PeriodsOfAbsence({ id, status }) {
       fetchPeriodsOfAbsence();
       setAlert({
         open: true,
-        message: "Periods of abscence deleted successfully",
-        severity: "success",
+        message: 'Periods of abscence deleted successfully',
+        severity: 'success',
       });
       setOpenDeleteDialog(false);
     } catch (error) {
@@ -192,6 +192,11 @@ function PeriodsOfAbsence({ id, status }) {
           title="Periods of Absence"
           fields={fields}
           id={id}
+          disableAll={
+            clickedItem?.notification_status !== 2 &&
+            clickedItem?.notification_status !== null &&
+            clickedItem?.notification_status !== 0
+          }
           idLabel="prospective_pensioner_id"
           getApiService={apiService.get}
           postApiService={apiService.post}

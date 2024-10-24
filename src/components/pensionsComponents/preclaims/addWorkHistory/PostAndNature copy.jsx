@@ -32,7 +32,7 @@ import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { BASE_CORE_API } from '@/utils/constants';
 
-function PostAndNature({ id, loading, setLoading, status }) {
+function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -480,6 +480,11 @@ function PostAndNature({ id, loading, setLoading, status }) {
         title="Post and Nature of Service"
         fields={fields}
         id={id}
+        disableAll={
+          clickedItem?.notification_status !== 2 &&
+          clickedItem?.notification_status !== null &&
+          clickedItem?.notification_status !== 0
+        }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
@@ -489,7 +494,7 @@ function PostAndNature({ id, loading, setLoading, status }) {
         putEndpoint={preClaimsEndpoints.updatePostAndNature}
         deleteEndpoint={preClaimsEndpoints.deletePostAndNature}
         passProspectivePensionerId={true}
-      />
+      />{' '}
     </div>
   );
 }

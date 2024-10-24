@@ -162,8 +162,8 @@ const RelationShips = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Beneficiaries Relationships Setups"
-        currentTitle="Beneficiaries Relationships Setups"
+        breadcrumbTitle="Beneficiaries Relationships"
+        currentTitle="Beneficiaries Relationships"
       />
     </div>
   );

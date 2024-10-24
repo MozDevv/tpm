@@ -514,7 +514,7 @@ function Sidebar() {
           path: '/pensions/setups/termsofservice',
         },
         {
-          title: 'Beneficiary Relationships Setups',
+          title: 'Beneficiary Relationships',
           path: '/pensions/setups/beneficiary-relationships',
         },
         {

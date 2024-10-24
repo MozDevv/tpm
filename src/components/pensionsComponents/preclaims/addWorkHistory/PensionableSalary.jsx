@@ -1,8 +1,8 @@
-"use client";
+'use client';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import React, { useEffect, useState } from "react";
+} from '@/components/services/preclaimsApi';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -14,16 +14,16 @@ import {
   Button,
   Dialog,
   IconButton,
-} from "@mui/material";
-import { Edit, Delete, Visibility } from "@mui/icons-material";
-import dayjs from "dayjs";
-import { useAlert } from "@/context/AlertContext";
-import { message } from "antd";
-import EditableTable from "@/components/baseComponents/EditableTable";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
-import endpoints from "@/components/services/setupsApi";
+} from '@mui/material';
+import { Edit, Delete, Visibility } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import { useAlert } from '@/context/AlertContext';
+import { message } from 'antd';
+import EditableTable from '@/components/baseComponents/EditableTable';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import endpoints from '@/components/services/setupsApi';
 
-function PensionableSalary({ id, status }) {
+function PensionableSalary({ id, status, clickedItem }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ function PensionableSalary({ id, status }) {
       );
       setPensionableSalary(res.data.data);
       setLoading(false);
-      console.log("Pensionable Salary", res.data.data);
+      console.log('Pensionable Salary', res.data.data);
       return res.data.data;
     } catch (error) {
       console.log(error);
@@ -52,10 +52,10 @@ function PensionableSalary({ id, status }) {
   }, [id]);
 
   const fields = [
-    { label: "Start Date", value: "start_date", type: "date" },
-    { label: "End Date", value: "end_date", type: "date" },
-    { label: "Salary in ksh", value: "salary" },
-    { label: "Pensionable Allowance", value: "pensionable_allowance" },
+    { label: 'Start Date', value: 'start_date', type: 'date' },
+    { label: 'End Date', value: 'end_date', type: 'date' },
+    { label: 'Salary in ksh', value: 'salary' },
+    { label: 'Pensionable Allowance', value: 'pensionable_allowance' },
   ];
 
   const handleInputChange = (e) => {
@@ -67,9 +67,9 @@ function PensionableSalary({ id, status }) {
 
     // Format date fields
     Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
+          'YYYY-MM-DDTHH:mm:ss[Z]'
         );
       }
     });
@@ -97,7 +97,7 @@ function PensionableSalary({ id, status }) {
         fetchPensionableSalary();
         setOpen(false);
         message.success(
-          `Pensionable Salary ${isEditMode ? "updated" : "added"} successfully`
+          `Pensionable Salary ${isEditMode ? 'updated' : 'added'} successfully`
         );
       } else if (
         res.data.validationErrors &&
@@ -108,20 +108,20 @@ function PensionableSalary({ id, status }) {
             message.error(`${error.field}: ${err}`);
           });
         });
-        throw new Error("An error occurred while submitting the data.");
+        throw new Error('An error occurred while submitting the data.');
       }
     } catch (error) {
       throw error;
-      console.error("Submission error:", error);
-      message.error("An error occurred while submitting the data.");
+      console.error('Submission error:', error);
+      message.error('An error occurred while submitting the data.');
     }
   };
 
   const handleEdit = (item) => {
     const formattedItem = {
       ...item,
-      start_date: dayjs(item.start_date).format("YYYY-MM-DD"),
-      end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
+      start_date: dayjs(item.start_date).format('YYYY-MM-DD'),
+      end_date: dayjs(item.end_date).format('YYYY-MM-DD'),
     };
 
     setFormData(formattedItem);
@@ -137,7 +137,7 @@ function PensionableSalary({ id, status }) {
         preClaimsEndpoints.deletePensionableSalary(recordId)
       );
       fetchPensionableSalary();
-      message.success("Pensionable Salary deleted successfully");
+      message.success('Pensionable Salary deleted successfully');
       setOpenDeleteDialog(false);
     } catch (error) {
       console.log(error);
@@ -284,6 +284,11 @@ function PensionableSalary({ id, status }) {
         title="Pensionable Salary"
         fields={fields}
         id={id}
+        disableAll={
+          clickedItem?.notification_status !== 2 &&
+          clickedItem?.notification_status !== null &&
+          clickedItem?.notification_status !== 0
+        }
         idLabel="prospective_pensioner_id"
         apiService={apiService}
         getApiService={apiService.get}

@@ -1,18 +1,18 @@
-"use client";
-import React, { Suspense, useEffect, useState } from "react";
+'use client';
+import React, { Suspense, useEffect, useState } from 'react';
 
-import PensionableSalary from "./PensionableSalary";
-import PeriodsOfAbsence from "./PeriodsOfAbscence";
-import Spinner from "@/components/spinner/Spinner";
-import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { Close } from "@mui/icons-material";
+import PensionableSalary from './PensionableSalary';
+import PeriodsOfAbsence from './PeriodsOfAbscence';
+import Spinner from '@/components/spinner/Spinner';
+import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { Close } from '@mui/icons-material';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import MixedServicePost from "./MixedServicePost";
-import { useMda } from "@/context/MdaContext";
-import PostAndNature from "./PostAndNature copy";
+} from '@/components/services/preclaimsApi';
+import MixedServicePost from './MixedServicePost';
+import { useMda } from '@/context/MdaContext';
+import PostAndNature from './PostAndNature copy';
 
 function AddPensionersWorkHistory({
   id,
@@ -20,6 +20,7 @@ function AddPensionersWorkHistory({
   moveToNextTab,
   status,
   moveToPreviousTab,
+  clickedItem,
 }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -35,10 +36,10 @@ function AddPensionersWorkHistory({
 
   const [retiree, setRetiree] = useState({});
 
-  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState('');
   const [pensionAward, setPensionAward] = useState(false);
 
-  const { activePensionCap, activeCapName } = useMda("");
+  const { activePensionCap, activeCapName } = useMda('');
 
   const fetchRetiree = async () => {
     try {
@@ -46,9 +47,9 @@ function AddPensionersWorkHistory({
         preClaimsEndpoints.getProspectivePensioner(id)
       );
       const data = res?.data?.data[0]; // Get the retiree data
-      setPensionAward(res.data.data[0]?.pensionAward?.name === "MIXED SERVICE");
+      setPensionAward(res.data.data[0]?.pensionAward?.name === 'MIXED SERVICE');
 
-      console.log("pensionAward", pensionAward);
+      console.log('pensionAward', pensionAward);
       setDateOfFirstAppointment(data.date_of_first_appointment);
 
       setRetiree(data);
@@ -82,7 +83,7 @@ function AddPensionersWorkHistory({
           </Button>
         </div> */}
       </div>
-
+      {JSON.stringify(clickedItem)}
       <div className="flex-1 overflow-y-auto pb-[200px] max-h-[90vh]">
         <Suspense fallback={<Spinner />}>
           {pensionAward ? (
@@ -109,6 +110,7 @@ function AddPensionersWorkHistory({
             <PostAndNature
               id={id}
               status={status}
+              clickedItem={retiree}
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}
@@ -117,11 +119,11 @@ function AddPensionersWorkHistory({
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
-          <PensionableSalary id={id} status={status} />
+          <PensionableSalary id={id} status={status} clickedItem={retiree} />
         </Suspense>
         <div className="pb-15">
           <Suspense fallback={<Spinner />}>
-            <PeriodsOfAbsence id={id} status={status} />
+            <PeriodsOfAbsence id={id} status={status} clickedItem={retiree} />
           </Suspense>
         </div>
       </div>

@@ -273,6 +273,10 @@ export const menuItems = [
         ],
       },
       {
+        title: 'Beneficiary Relationships',
+        path: '/pensions/setups/beneficiaries-relationships',
+      },
+      {
         title: 'Finance Setup',
         subChildren: [
           {
