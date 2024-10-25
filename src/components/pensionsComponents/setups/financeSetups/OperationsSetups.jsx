@@ -1,16 +1,16 @@
-"use client";
-import React, { useStae, useEffect } from "react";
+'use client';
+import React, { useStae, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { parseDate } from "@/utils/dateFormatter";
-import { name } from "dayjs/locale/en-au";
-import BaseCollapse from "@/components/baseComponents/BaseCollapse";
-import financeEndpoints, { apiService } from "@/components/services/financeApi";
+import { parseDate } from '@/utils/dateFormatter';
+import { name } from 'dayjs/locale/en-au';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
 
 const OperationsSetups = () => {
   const transformString = (str) => {
@@ -31,7 +31,12 @@ const OperationsSetups = () => {
   useEffect(() => {
     const fetchBankAccounts = async () => {
       try {
-        const response = await apiService.get(financeEndpoints.getBankAccounts);
+        const response = await apiService.get(
+          financeEndpoints.getBankAccounts,
+          {
+            'paging.pageSize': 10000,
+          }
+        );
         setBankAccounts(response.data.data);
       } catch (error) {
         console.log(error);
@@ -40,7 +45,10 @@ const OperationsSetups = () => {
     const fetchAwardPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getAwardPostingGroups
+          financeEndpoints.getAwardPostingGroups,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setAwardPostingGroups(response.data.data);
       } catch (error) {
@@ -50,7 +58,10 @@ const OperationsSetups = () => {
     const fetchBankPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getBankPostingGroups
+          financeEndpoints.getBankPostingGroups,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setBankPostingGroups(response.data.data);
       } catch (error) {
@@ -60,7 +71,10 @@ const OperationsSetups = () => {
     const fetchGeneralPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getGeneralPostingGroups
+          financeEndpoints.getGeneralPostingGroups,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setGeneralPostingGroups(response.data.data);
       } catch (error) {
@@ -70,7 +84,10 @@ const OperationsSetups = () => {
     const fetchVendorPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getVendorPostingGroups
+          financeEndpoints.getVendorPostingGroups,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setVendorPostingGroups(response.data.data);
       } catch (error) {
@@ -80,7 +97,10 @@ const OperationsSetups = () => {
     const fetchCustomerPostingGroups = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getCustomerPostingGroup
+          financeEndpoints.getCustomerPostingGroup,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setCustomerPostingGroups(response.data.data);
       } catch (error) {
@@ -89,7 +109,9 @@ const OperationsSetups = () => {
     };
     const fetchVatPostingGroups = async () => {
       try {
-        const response = await apiService.get(financeEndpoints.getVatSetups);
+        const response = await apiService.get(financeEndpoints.getVatSetups, {
+          'paging.pageSize': 10000,
+        });
         setVatPostingGroups(response.data.data);
       } catch (error) {
         console.log(error);
@@ -98,7 +120,10 @@ const OperationsSetups = () => {
     const fetchPaymentMethods = async () => {
       try {
         const response = await apiService.get(
-          financeEndpoints.getPaymentMethods
+          financeEndpoints.getPaymentMethods,
+          {
+            'paging.pageSize': 10000,
+          }
         );
         setPaymentMethods(response.data.data);
       } catch (error) {
@@ -138,10 +163,10 @@ const OperationsSetups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -162,13 +187,13 @@ const OperationsSetups = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Department" : "Create New Department";
+  const title = clickedItem ? 'Department' : 'Create New Department';
 
   const fields = [
     {
-      name: "defaultBankAccount",
-      label: "Default Bank Account",
-      type: "select",
+      name: 'defaultBankAccount',
+      label: 'Default Bank Account',
+      type: 'autocomplete',
       options: bankAccounts.map((b) => {
         return {
           id: b.id,
@@ -178,9 +203,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultAwardPostingGroup",
-      label: "Default Award Posting Group",
-      type: "select",
+      name: 'defaultAwardPostingGroup',
+      label: 'Default Award Posting Group',
+      type: 'autocomplete',
       options: awardPostingGroups.map((a) => {
         return {
           id: a.id,
@@ -190,9 +215,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultBankPostingGroup",
-      label: "Default Bank Posting Group",
-      type: "select",
+      name: 'defaultBankPostingGroup',
+      label: 'Default Bank Posting Group',
+      type: 'autocomplete',
       options: bankPostingGroups.map((b) => {
         return {
           id: b.id,
@@ -202,9 +227,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultGeneralPostingGroup",
-      label: "Default General Posting Group",
-      type: "select",
+      name: 'defaultGeneralPostingGroup',
+      label: 'Default General Posting Group',
+      type: 'autocomplete',
       options: generalPostingGroups.map((g) => {
         return {
           id: g.id,
@@ -214,9 +239,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultVendorPostingGroup",
-      label: "Default Vendor Posting Group",
-      type: "select",
+      name: 'defaultVendorPostingGroup',
+      label: 'Default Vendor Posting Group',
+      type: 'autocomplete',
       options: vendorPostingGroups.map((v) => {
         return {
           id: v.id,
@@ -226,9 +251,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultCustomerPostingGroup",
-      label: "Default Customer Posting Group",
-      type: "select",
+      name: 'defaultCustomerPostingGroup',
+      label: 'Default Customer Posting Group',
+      type: 'autocomplete',
       options: customerPostingGroups.map((c) => {
         return {
           id: c.id,
@@ -238,9 +263,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultVatPostingGroup",
-      label: "Default VAT Posting Group",
-      type: "select",
+      name: 'defaultVatPostingGroup',
+      label: 'Default VAT Posting Group',
+      type: 'autocomplete',
       options: vatPostingGroups.map((v) => {
         return {
           id: v.id,
@@ -250,9 +275,9 @@ const OperationsSetups = () => {
       required: true,
     },
     {
-      name: "defaultPaymentMethod",
-      label: "Default Payment Method",
-      type: "select",
+      name: 'defaultPaymentMethod',
+      label: 'Default Payment Method',
+      type: 'autocomplete',
       options: paymentMethods.map((p) => {
         return {
           id: p.id,

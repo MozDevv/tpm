@@ -5,6 +5,8 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { formatNumber } from '@/utils/numberFormatters';
 import { parseDate } from '@/utils/dateFormatter';
+import { TextField } from '@mui/material';
+import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
 
 function BankReconciliationCard({
   clickedItem,
@@ -104,20 +106,28 @@ function BankReconciliationCard({
     {
       field: 'description',
       headerName: 'Description',
-      width: 250,
+      width: 200,
       filter: true,
     },
-    {
-      field: 'debitAmount',
-      headerName: 'Debit Amount',
+    // {
+    //   field: 'debitAmount',
+    //   headerName: 'Debit Amount',
 
-      filter: true,
-      valueFormatter: (params) => formatNumber(params.value),
-      cellStyle: { textAlign: 'center' },
-    },
+    //   filter: true,
+    //   valueFormatter: (params) => formatNumber(params.value),
+    //   cellStyle: { textAlign: 'center' },
+    // },
+    // {
+    //   field: 'creditAmount',
+    //   headerName: 'Credit Amount',
+
+    //   filter: true,
+    //   valueFormatter: (params) => formatNumber(params.value),
+    //   cellStyle: { textAlign: 'center' },
+    // },
     {
-      field: 'creditAmount',
-      headerName: 'Credit Amount',
+      field: 'balance',
+      headerName: 'Statement Ammount',
 
       filter: true,
       valueFormatter: (params) => formatNumber(params.value),
@@ -125,7 +135,15 @@ function BankReconciliationCard({
     },
     {
       field: 'balance',
-      headerName: 'Balance',
+      headerName: 'Applied Ammount',
+
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      field: 'balance',
+      headerName: 'Difference',
 
       filter: true,
       valueFormatter: (params) => formatNumber(params.value),
@@ -181,37 +199,82 @@ function BankReconciliationCard({
     { field: 'glEntryNo', headerName: 'GL Entry No', filter: true },
     { field: 'glBankCode', headerName: 'GL Bank Code', filter: true },
   ];
-
+  const totalAmounts1 = [
+    { name: 'Total Difference', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+    { name: 'Total Balance', value: '0.00' },
+  ];
+  const totalAmounts2 = [
+    { name: 'Balance to Reconcile', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+  ];
   return (
     <div style={{ display: 'flex', gap: '20px' }}>
       <div
-        className="ag-theme-quartz"
+        className=""
         style={{
           overflow: 'auto',
-          height: '300px',
+          px: 2,
+
           width: '100%',
-          overflow: 'hidden',
-          maxHeight: '600px',
+          overflow: 'auto',
         }}
       >
         <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
           Bank Statement Lines
         </h3>
-        <AgGridReact
-          rowData={bankStatement}
-          columnDefs={bankStatementColDefs}
-          rowSelection="multiple"
-          defaultColDef={{ resizable: true, sortable: true }}
-          domLayout="autoHeight"
-          onSelectionChanged={onBankStatementSelectionChanged}
-        />
+        <div className="h-[250px] ag-theme-quartz ">
+          <AgGridReact
+            rowData={bankStatement}
+            columnDefs={bankStatementColDefs}
+            rowSelection="multiple"
+            defaultColDef={{ resizable: true, sortable: true }}
+            domLayout="normal"
+            onSelectionChanged={onBankStatementSelectionChanged}
+          />
+        </div>
+
+        <div className="mt-8">
+          {totalAmounts1.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-row gap-4 justify-between mb-3"
+            >
+              <span className="text-sm font-semibold text-gray-600">
+                {item.name}
+              </span>
+              <span className="items-end text-right">
+                <TextField
+                  value={item.value}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  disabled={true}
+                  fullWidth
+                  inputProps={{
+                    style: { textAlign: 'right' },
+                  }}
+                  InputProps={{
+                    inputComponent: BaseAmountInput,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        border: 'none',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      },
+                  }}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div
-        className="ag-theme-quartz"
         style={{
           overflow: 'auto',
-          height: '300px',
+
           width: '100%',
           overflow: 'hidden',
           maxHeight: '600px',
@@ -221,14 +284,52 @@ function BankReconciliationCard({
         <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
           Bank Account Ledger Entries
         </h3>
-        <AgGridReact
-          rowData={bankSubledger}
-          columnDefs={bankAccountColDefs}
-          onSelectionChanged={onBankSubledgerSelectionChanged}
-          rowSelection="multiple"
-          defaultColDef={{ resizable: true, sortable: true }}
-          domLayout="autoHeight"
-        />
+        <div className="h-[250px] ag-theme-quartz ">
+          <AgGridReact
+            rowData={bankSubledger}
+            columnDefs={bankAccountColDefs}
+            onSelectionChanged={onBankSubledgerSelectionChanged}
+            rowSelection="multiple"
+            defaultColDef={{ resizable: true, sortable: true }}
+            domLayout="normal"
+          />
+        </div>
+
+        <div className="mt-8">
+          {totalAmounts2.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-row gap-4 justify-between mb-3"
+            >
+              <span className="text-sm font-semibold text-gray-600">
+                {item.name}
+              </span>
+              <span className="items-end text-right">
+                <TextField
+                  value={item.value}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  disabled={true}
+                  fullWidth
+                  inputProps={{
+                    style: { textAlign: 'right' },
+                  }}
+                  InputProps={{
+                    inputComponent: BaseAmountInput,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        border: 'none',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      },
+                  }}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

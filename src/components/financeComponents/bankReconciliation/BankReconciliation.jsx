@@ -14,9 +14,10 @@ import endpoints from '@/components/services/setupsApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { formatNumber } from '@/utils/numberFormatters';
 import BankReconciliationCard from './BankReconciliationCard';
-import { Dialog, Divider } from '@mui/material';
+import { Dialog, Divider, TextField } from '@mui/material';
 import BaseUploadDialog from '@/components/baseComponents/BaseUploadDialog';
 import { message } from 'antd';
+import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
 
 const columnDefs = [
   {
@@ -76,6 +77,7 @@ const BankReconciliation = () => {
   const [uploadExcel, setUploadExcel] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [matchManually, setMatchManually] = useState(false);
+  const [postReconciliation, setPostReconciliation] = useState(false);
 
   const handleOpenUploadDialog = () => {
     setUploadExcel(true);
@@ -135,6 +137,7 @@ const BankReconciliation = () => {
     },
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
+    postReconciliation: () => setPostReconciliation(false),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -217,46 +220,33 @@ const BankReconciliation = () => {
       disabled: true,
     },
     {
-      name: 'bankAccountDescription',
-      label: 'Bank Account Description',
+      name: 'statementNo',
+      label: 'Statement No',
       type: 'text',
       disabled: true,
     },
-
     {
-      name: 'bankPostingGroupId',
-      label: 'Bank Posting Group',
-      type: 'select',
+      name: 'statementStartDate',
+      label: 'Statement Start Date',
+      type: 'date',
       disabled: true,
-      options: vendorPG,
     },
     {
-      name: 'amount',
-      label: 'Amount',
+      name: 'statementEndDate',
+      label: 'Statement End Date',
+      type: 'date',
+      disabled: true,
+    },
+    {
+      name: 'balanceLastStatement',
+      label: 'Balance Last Statement',
       type: 'amount',
-      disabled: true,
+      //disabled: true,
     },
     {
-      name: 'bank_id',
-      label: 'Bank',
-      type: 'select',
-      options: banks,
-      disabled: true,
-    },
-
-    {
-      name: 'bankBranchId',
-      label: 'Bank Branch Name',
-      options:
-        selectedBank && selectedBank.length > 0 ? selectedBank : branches,
-      type: 'select',
-      disabled: true,
-    },
-    {
-      name: 'isBlocked',
-      label: 'Is Blocked',
-      type: 'switch',
-      required: true,
+      name: 'statementEndingBalance',
+      label: 'Statement Ending Balance',
+      type: 'amount',
       disabled: true,
     },
   ];
@@ -344,6 +334,16 @@ const BankReconciliation = () => {
     }
   };
 
+  const [balance, setBalance] = useState(0);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [undebitedAmount, setUndebitedAmount] = useState(0);
+  const [totalDifference, setTotalDifference] = useState(0);
+
+  const totalAmounts1 = [
+    { name: 'Total Balance', value: '0.00' },
+    { name: 'Total Undebited/Uncredited', value: '0.00' },
+    { name: 'Total Difference', value: '0.00' },
+  ];
   return (
     <div className="">
       {/* <BaseUploadDialog

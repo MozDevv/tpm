@@ -332,6 +332,12 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       action: 'uploadGeneralBudget',
       requiredPermissions: [],
     },
+    {
+      name: 'Post Reconciliation',
+      icon: CheckCircle,
+      action: 'postReconciliation',
+      requiredPermissions: [],
+    },
   ];
 
   const approvalButton = {

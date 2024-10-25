@@ -22,6 +22,7 @@ import { message } from 'antd';
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import endpoints from '@/components/services/setupsApi';
+import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
 
 function PensionableSalary({ id, status, clickedItem }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -31,6 +32,54 @@ function PensionableSalary({ id, status, clickedItem }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
   const { alert, setAlert } = useAlert();
+  const [designations, setDesignations] = useState([]);
+
+  const [addAditionalCols, setAddAditionalCols] = useState(false);
+  const [postNames, setPostNames] = useState([]);
+
+  const extractPosts = (data) => {
+    return data.map((item) => item.post);
+  };
+
+  const fetchMixedServicePosts = async () => {
+    try {
+      const res = await apiService.get(
+        endpoints.getMixedServiceWorkHistory(id)
+      );
+      if (res.status === 200) {
+        const sortedData = res.data.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setPostNames((prevNames) => [
+          ...prevNames,
+          ...extractPosts(sortedData),
+        ]);
+        console.log('Post and Nature Posts:', extractPosts(sortedData));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPostandNature = async () => {
+    try {
+      const res = await apiService.get(
+        endpoints.getRetireesDesignationGvtSalary(id)
+      );
+      if (res.status === 200) {
+        const sortedData = res.data.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setPostNames((prevNames) => [
+          ...prevNames,
+          ...extractPosts(sortedData),
+        ]);
+        console.log('Post and Nature Posts:', extractPosts(sortedData));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchPensionableSalary = async () => {
     try {
@@ -47,15 +96,66 @@ function PensionableSalary({ id, status, clickedItem }) {
     }
   };
 
+  const fetchDesignations = async (postNames) => {
+    try {
+      const res = await apiService.get(endpoints.getDesignations, {
+        'paging.pageSize': 1000,
+      });
+      const filteredDesignations =
+        postNames.length > 0
+          ? res.data.data.filter((designation) =>
+              postNames.includes(designation.name)
+            )
+          : res.data.data;
+
+      console.log('Post Names:', postNames);
+      console.log('Filtered Designations:', filteredDesignations);
+      setDesignations(filteredDesignations);
+      return res.data.data;
+    } catch (error) {
+      console.error('Error fetching Designations:', error);
+    }
+  };
+
   useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([fetchMixedServicePosts(), fetchPostandNature()]);
+      if (postNames.length > 0) fetchDesignations(postNames);
+    };
+    fetchData();
     fetchPensionableSalary();
-  }, [id]);
+  }, [id, postNames]);
 
   const fields = [
     { label: 'Start Date', value: 'start_date', type: 'date' },
     { label: 'End Date', value: 'end_date', type: 'date' },
     { label: 'Salary in ksh', value: 'salary' },
     { label: 'Pensionable Allowance', value: 'pensionable_allowance' },
+
+    {
+      label: 'Mode of Salary Increment',
+      value: 'mode_of_salary_increment',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Increment' },
+        { id: 1, name: 'Promotion' },
+        { id: 2, name: 'Review' },
+      ],
+    },
+    ...(addAditionalCols
+      ? [
+          { label: 'Review Period', value: 'review_period', type: 'date' },
+          {
+            label: 'New Designation',
+            value: 'new_designation_id',
+            type: 'select',
+            options: designations.map((designation) => ({
+              name: designation.name,
+              id: designation.id,
+            })),
+          },
+        ]
+      : []),
   ];
 
   const handleInputChange = (e) => {
@@ -148,139 +248,8 @@ function PensionableSalary({ id, status, clickedItem }) {
   const [recordId, setRecordId] = useState();
 
   return (
-    // <div>
-    //   <Dialog
-    //     open={openDeleteDialog}
-    //     onClose={() => setOpenDeleteDialog(false)}
-    //   >
-    //     <div className="p-6">
-    //       <h1 className="text-base font-semibold text-primary py-2 mb-3">
-    //         Delete Confirmation
-    //       </h1>
-    //       <p className="text-gray-600 mb-3">
-    //         Are you sure you want to delete this record?
-    //       </p>
-    //       <div className="flex justify-between w-full mt-5">
-    //         <Button
-    //           variant="outlined"
-    //           onClick={() => setOpenDeleteDialog(false)}
-    //           sx={{ mr: 2 }}
-    //         >
-    //           Cancel
-    //         </Button>
-    //         <Button
-    //           variant="contained"
-    //           onClick={handleDelete}
-    //           sx={{ backgroundColor: "crimson", color: "white" }}
-    //           disabled={status === 5}
-    //         >
-    //           Delete
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   </Dialog>
-    //   <Dialog open={open} onClose={() => setOpen(false)}>
-    //     <div className="p-6">
-    //       <h1 className="text-base font-semibold text-primary py-2 mb-3">
-    //         {isEditMode ? "Edit" : "Add"} Pensionable Salary
-    //       </h1>
-    //       <div className="flex flex-col gap-3">
-    //         {fields.map((field) => (
-    //           <div key={field.value}>
-    //             <label className="text-xs font-semibold text-gray-600">
-    //               {field.label}
-    //             </label>
-    //             <input
-    //               type={field.type}
-    //               name={field.value}
-    //               value={formData[field.value] || ""}
-    //               onChange={handleInputChange}
-    //               className="border p-3 bg-gray-100 border-gray-300 w-full rounded-md text-sm"
-    //             />
-    //           </div>
-    //         ))}
-    //         <Button
-    //           variant="contained"
-    //           onClick={handleSubmit}
-    //           sx={{ mt: 4, display: status === 5 ? "none" : "block" }}
-    //         >
-    //           {isEditMode ? "Update" : "Submit"}
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   </Dialog>
-    //   <p className="my-6 mt-5 text-primary text-[16px] font-semibold font-montserrat">
-    //     Pensionable Salary
-    //   </p>
-    //   <Button
-    //     variant="contained"
-    //     sx={{
-    //       mt: 2,
-    //       mb: 2,
-    //       display: status === 5 ? "none" : "block",
-    //     }}
-    //     onClick={() => {
-    //       setFormData({});
-    //       setIsEditMode(false);
-    //       setOpen(true);
-    //     }}
-    //   >
-    //     Add Pensionable Salary
-    //   </Button>
-    //   <TableContainer
-    //     //component={Paper}
-    //     sx={{ boxShadow: "none" }}
-    //   >
-    //     <Table>
-    //       <TableHead>
-    //         <TableRow>
-    //           <TableCell>No.</TableCell>
-    //           <TableCell>Start Date</TableCell>
-    //           <TableCell>End Date</TableCell>
-    //           <TableCell>Salary</TableCell>
-    //           <TableCell>Pensionable Allowance</TableCell>
-    //           <TableCell>Actions</TableCell>
-    //         </TableRow>
-    //       </TableHead>
-    //       <TableBody>
-    //         {pensionableSalary.map((item, index) => (
-    //           <TableRow key={item.prospective_pensioner_id}>
-    //             <TableCell>{index + 1}</TableCell>
-    //             <TableCell>
-    //               {new Date(item.start_date).toLocaleDateString()}
-    //             </TableCell>
-    //             <TableCell>
-    //               {new Date(item.end_date).toLocaleDateString()}
-    //             </TableCell>
-    //             <TableCell>{item.salary}</TableCell>
-    //             <TableCell>{item.pensionable_allowance}</TableCell>
-    //             <TableCell sx={{ display: "flex", flexDirection: "row" }}>
-    //               <IconButton onClick={() => handleEdit(item)}>
-    //                 {status === 5 ? (
-    //                   <Visibility />
-    //                 ) : (
-    //                   <Edit sx={{ color: "gray" }} />
-    //                 )}
-    //               </IconButton>
-    //               <IconButton
-    //                 onClick={() => {
-    //                   setOpenDeleteDialog(true);
-    //                   setRecordId(item.id);
-    //                 }}
-    //                 sx={{ display: status === 5 ? "none" : "block" }}
-    //               >
-    //                 <Delete sx={{ color: "crimson" }} />
-    //               </IconButton>
-    //             </TableCell>
-    //           </TableRow>
-    //         ))}
-    //       </TableBody>
-    //     </Table>
-    //   </TableContainer>
-    // </div>
-
     <div className="mt-5">
-      <BaseInputTable
+      <BaseInputForPensionableSalary
         title="Pensionable Salary"
         fields={fields}
         id={id}
@@ -300,6 +269,8 @@ function PensionableSalary({ id, status, clickedItem }) {
         putEndpoint={preClaimsEndpoints.updatePensionableSalary}
         deleteEndpoint={endpoints.deletePensionableSalary(id)}
         passProspectivePensionerId={true}
+        addAditionalCols={addAditionalCols}
+        setAddAditionalCols={setAddAditionalCols}
       />
     </div>
   );
