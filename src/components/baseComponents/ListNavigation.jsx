@@ -33,6 +33,7 @@ import {
   TaskOutlined,
   ArticleOutlined,
   FileDownload,
+  PlaylistRemove,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -315,9 +316,21 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
     },
     {
+      name: 'Remove Uploaded Statement',
+      icon: PlaylistRemove,
+      action: 'removeUploadedStatement',
+      requiredPermissions: [],
+    },
+    {
       name: 'Match Manually',
       icon: TaskAlt,
       action: 'matchManually',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Remove Match',
+      icon: Cancel,
+      action: 'removeMatch',
       requiredPermissions: [],
     },
     {

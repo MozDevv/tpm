@@ -88,6 +88,7 @@ function BankReconciliationCard({
             statementEndDate: bankStatement.statementEndDate,
             lastStatementBalance: bankStatement.lastStatementBalance,
             currentStatementBalance: bankStatement.currentStatementBalance,
+            bankStatementId: bankStatement.id,
           }));
         }
 

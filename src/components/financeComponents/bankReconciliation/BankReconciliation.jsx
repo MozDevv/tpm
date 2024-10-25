@@ -102,6 +102,7 @@ const BankReconciliation = () => {
         bank_id: branch ? branch.bankId : '',
         bankPostingGroupId: item.bankPostingGroupId,
         amount: item.amount === null ? 0 : item.amount,
+        bankStatementId: item.bankStatementId,
 
         // roles: item.roles,
       };
@@ -137,6 +138,8 @@ const BankReconciliation = () => {
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
     postReconciliation: () => setPostReconciliation(false),
+    removeUploadedStatement: () => removeUploadedDocument(),
+    removeMatch: () => removeMatch(),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -347,6 +350,76 @@ const BankReconciliation = () => {
         message.success(
           'Statement matched successful Entry created successfully'
         );
+      } else if (
+        response.data.messages[0] &&
+        response.data.succeeded === false
+      ) {
+        message.error(response.data.messages[0].message);
+      } else {
+        console.warn('Matching Failed:', response.data);
+
+        message.error('Matching Failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting reconciliation:', error);
+      message.error('An error occurred while submitting the reconciliation.');
+    }
+  };
+  const removeMatch = async () => {
+    if (
+      selectedBankStatements.length === 0 ||
+      selectedBankSubledgers.length === 0
+    ) {
+      message.error(
+        'Please select both a Bank Statement and one or more Bank Subledger entries.'
+      );
+      return;
+    }
+
+    const bankDetails = selectedBankSubledgers.map((bankSubledger) => {
+      return {
+        bankSubledgerId: bankSubledger?.id,
+        bankStatementId: selectedBankStatements[0]?.id, // Always take the first (or selected) bank statement
+      };
+    });
+
+    console.log('bankDetails:', bankDetails);
+
+    try {
+      const response = await apiService.post(financeEndpoints.removeMatch, {
+        bankDetails,
+      });
+
+      if (response.status === 200 && response.data.succeeded) {
+        setRefreshBankStatements((prev) => !prev);
+        message.success(
+          'Statement matched successful Entry created successfully'
+        );
+      } else if (
+        response.data.messages[0] &&
+        response.data.succeeded === false
+      ) {
+        message.error(response.data.messages[0].message);
+      } else {
+        console.warn('Matching Failed:', response.data);
+
+        message.error('Matching Failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting reconciliation:', error);
+      message.error('An error occurred while submitting the reconciliation.');
+    }
+  };
+
+  const removeUploadedDocument = async () => {
+    try {
+      const response = await apiService.delete(
+        financeEndpoints.removeUploadedDocument(clickedItem?.bankStatementId)
+      );
+
+      if (response.data.succeeded) {
+        setRefreshBankStatements((prev) => !prev);
+        message.success('Uploaded document removed successfully');
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false

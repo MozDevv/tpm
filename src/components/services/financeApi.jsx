@@ -237,6 +237,10 @@ const financeEndpoints = {
   updateReceiptLine: '/Posting/UpdateReceiptLine',
   deleteReceiptLine: (id) => `/Posting/DeleteReceiptLine?id=${id}`,
   getReceiptLines: (id) => `/Posting/GetReceiptLines?ReceiptId=${id}`,
+
+  removeMatch: `/Posting/RemoveMatch`,
+  deleteUploadedStatement: (id) =>
+    `/Posting/DeleteUploadedStatement?BankReconciliationId=${id}`,
 };
 
 export const apiService = {
