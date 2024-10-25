@@ -56,6 +56,7 @@ const BaseFinanceInputTable = ({
   allOptions,
   setTotalAmmounts,
   branches,
+  fetchChildren,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>

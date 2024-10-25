@@ -219,8 +219,7 @@ const financeEndpoints = {
   getPaymentScheduleLines: (id) =>
     `/Posting/GetPaymentScheduleLines?PaymentScheduleId=${id}`,
 
-  getBankStatement: (id) =>
-    `/Posting/GetBankStatement?BanKReconciliationId=${id}`,
+  getBankStatement: (id) => `/Posting/GetBankStatement?BankAccountId=${id}`,
 
   uploadBankStatement: '/Posting/UploadBankStatement',
 

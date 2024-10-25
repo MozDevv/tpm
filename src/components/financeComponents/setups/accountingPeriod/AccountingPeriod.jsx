@@ -1,52 +1,52 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { dateFormatter, formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
-import BaseSecondaryTable from "@/components/baseComponents/BaseSecondaryTable";
-import BaseSecondaryCard from "@/components/baseComponents/BaseSecondaryCard";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { dateFormatter, formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
+import BaseSecondaryTable from '@/components/baseComponents/BaseSecondaryTable';
+import BaseSecondaryCard from '@/components/baseComponents/BaseSecondaryCard';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
   {
-    field: "finYearName",
-    headerName: "Accounting Period Name",
-    headerClass: "prefix-header",
+    field: 'finYearName',
+    headerName: 'Accounting Period Name',
+    headerClass: 'prefix-header',
     filter: true,
     width: 250,
   },
   {
-    field: "fromDate",
-    headerName: "From Date",
-    headerClass: "prefix-header",
+    field: 'fromDate',
+    headerName: 'From Date',
+    headerClass: 'prefix-header',
     valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
     width: 250,
   },
 
   {
-    field: "toDate",
-    headerName: "To Date",
-    headerClass: "prefix-header",
+    field: 'toDate',
+    headerName: 'To Date',
+    headerClass: 'prefix-header',
     valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
     width: 250,
   },
   {
-    field: "isClosed",
-    headerName: "Is Closed",
-    headerClass: "prefix-header",
+    field: 'isClosed',
+    headerName: 'Is Closed',
+    headerClass: 'prefix-header',
     filter: true,
     width: 100,
   },
@@ -75,8 +75,6 @@ const AccountingPeriod = () => {
         isDateLocked: subgroup.isDateLocked,
         isInventoryPeriodClosed: subgroup.isInventoryPeriodClosed,
       })),
-
-      // roles: item.roles,
     }));
   };
 
@@ -87,10 +85,10 @@ const AccountingPeriod = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -115,59 +113,59 @@ const AccountingPeriod = () => {
   const [postedData, setPostedData] = React.useState(null);
 
   const title = clickedItem
-    ? "Accounting Period"
-    : "Create New Accounting Period";
+    ? 'Accounting Period'
+    : 'Create New Accounting Period';
 
   const fields = [
     {
-      name: "finYearName",
-      label: "Accounting Period Name",
-      type: "text",
+      name: 'finYearName',
+      label: 'Accounting Period Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "fromDate",
-      label: "From Date",
-      type: "date",
+      name: 'fromDate',
+      label: 'From Date',
+      type: 'date',
       required: true,
     },
     {
-      name: "toDate",
-      label: "To Date",
-      type: "date",
+      name: 'toDate',
+      label: 'To Date',
+      type: 'date',
       required: true,
     },
     {
-      name: "isClosed",
-      label: "Is Closed",
-      type: "switch",
+      name: 'isClosed',
+      label: 'Is Closed',
+      type: 'switch',
       required: true,
     },
   ];
   const subGroupColumnDefs = [
     {
-      field: "startDate",
-      headerName: "Start Date",
-      headerClass: "prefix-header",
+      field: 'startDate',
+      headerName: 'Start Date',
+      headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => dateFormatter(params.value),
     },
     {
-      field: "monthName",
-      headerName: "Month Name",
-      headerClass: "prefix-header",
+      field: 'monthName',
+      headerName: 'Month Name',
+      headerClass: 'prefix-header',
       filter: true,
     },
     {
-      field: "description",
-      headerName: "Description",
-      headerClass: "prefix-header",
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
       filter: true,
     },
     {
-      field: "isDateLocked",
-      headerName: "Is Date Locked",
-      headerClass: "prefix-header",
+      field: 'isDateLocked',
+      headerName: 'Is Date Locked',
+      headerClass: 'prefix-header',
       filter: true,
     },
     // {
@@ -179,13 +177,13 @@ const AccountingPeriod = () => {
   ];
 
   const subgroupFields = [
-    { name: "startDate", label: "Start Date", type: "date", required: true },
-    { name: "monthName", label: "Month Name", type: "text", required: true },
-    { name: "description", label: "Description", type: "text", required: true },
+    { name: 'startDate', label: 'Start Date', type: 'date', required: true },
+    { name: 'monthName', label: 'Month Name', type: 'text', required: true },
+    { name: 'description', label: 'Description', type: 'text', required: true },
     {
-      name: "isDateLocked",
-      label: "Is Date Locked",
-      type: "switch",
+      name: 'isDateLocked',
+      label: 'Is Date Locked',
+      type: 'switch',
       required: true,
     },
     // {
@@ -211,8 +209,8 @@ const AccountingPeriod = () => {
         setOpenBaseCard={setOpenSubGroup}
         title={
           clickedSubGroup
-            ? "Edit Accounting Period"
-            : "Create New Accounting Period"
+            ? 'Edit Accounting Period'
+            : 'Create New Accounting Period'
         }
         clickedItem={clickedSubGroup}
         deleteApiEndpoint={financeEndpoints.deleteAccountingPeriodLines(
@@ -255,7 +253,7 @@ const AccountingPeriod = () => {
               columnDefs={subGroupColumnDefs}
               rowData={clickedItem?.subGroups}
               onRowClicked={(e) => {
-                console.log("Row clicked", e.data);
+                console.log('Row clicked', e.data);
                 setClickedSubGroup(e.data);
                 setOpenSubGroup(true);
               }}
@@ -263,7 +261,7 @@ const AccountingPeriod = () => {
                 setOpenSubGroup(true);
                 setClickedSubGroup(null);
               }}
-              title={"Accounting Period Lines"}
+              title={'Accounting Period Lines'}
             />
           </div>
         ) : (
@@ -290,6 +288,7 @@ const AccountingPeriod = () => {
         handlers={handlers}
         breadcrumbTitle="Accounting Period"
         currentTitle="Accounting Period"
+        openSubGroup={openSubGroup}
       />
     </div>
   );

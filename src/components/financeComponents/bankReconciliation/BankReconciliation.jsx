@@ -37,7 +37,6 @@ const columnDefs = [
     field: 'bankAccountName',
     headerName: 'Bank Account Name',
     headerClass: 'prefix-header',
-
     filter: true,
   },
   {
@@ -238,16 +237,16 @@ const BankReconciliation = () => {
       disabled: true,
     },
     {
-      name: 'balanceLastStatement',
-      label: 'Balance Last Statement',
-      type: 'amount',
-      //disabled: true,
-    },
-    {
-      name: 'statementEndingBalance',
-      label: 'Statement Ending Balance',
+      name: 'lastStatementBalance',
+      label: 'Last Statement Balance',
       type: 'amount',
       disabled: true,
+    },
+    {
+      name: 'currentStatementBalance',
+      label: 'Statement Ending Balance',
+      type: 'amount',
+      disabled: false,
     },
   ];
 
@@ -269,42 +268,71 @@ const BankReconciliation = () => {
       required: true,
     },
     {
-      name: 'statementDate',
-      label: 'Bank Statement Date',
+      name: 'statementStartDate',
+      label: 'Statement Start Date',
       type: 'date',
       required: true,
     },
     {
-      name: 'closingBalance',
-      label: 'Closing Balance',
+      name: 'statementEndDate',
+      label: 'Statement End Date',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'balanceLastStatement',
+      label: 'Last Statement Balance',
+      type: 'amount',
+      required: true,
+    },
+    {
+      name: 'currentStatementBalance',
+      label: 'Current Statement Balance',
       type: 'amount',
       required: true,
     },
     {
       name: 'file',
-      label: 'Upload Bank Statement',
+      label: 'Upload Bank Statement(Excel)',
       type: 'file',
       required: true,
-      fileName: 'Upload Bank Statement',
+      fileName: 'Upload Bank Statement(Excel)',
+    },
+    {
+      name: 'isClosed',
+      label: 'Is Closed',
+      type: 'switch',
+      required: true,
+    },
+    {
+      name: 'isReversed',
+      label: 'Is Reversed',
+      type: 'switch',
+      required: true,
     },
   ];
+
+  const [refreshBankStatements, setRefreshBankStatements] = useState(false);
 
   const submitReconciliation = async () => {
     if (
       selectedBankStatements.length === 0 ||
       selectedBankSubledgers.length === 0
     ) {
-      alert('Please select both a Bank Statement and a Bank Subledger entry.');
+      message.error(
+        'Please select both a Bank Statement and one or more Bank Subledger entries.'
+      );
       return;
     }
 
-    const bankDetails = selectedBankStatements.map((bankStatement, index) => {
-      const bankSubledger = selectedBankSubledgers[index];
+    const bankDetails = selectedBankSubledgers.map((bankSubledger) => {
       return {
         bankSubledgerId: bankSubledger?.id,
-        bankStatementId: bankStatement?.id,
+        bankStatementId: selectedBankStatements[0]?.id, // Always take the first (or selected) bank statement
       };
     });
+
+    console.log('bankDetails:', bankDetails);
 
     try {
       const response = await apiService.post(
@@ -315,6 +343,7 @@ const BankReconciliation = () => {
       );
 
       if (response.status === 200 && response.data.succeeded) {
+        setRefreshBankStatements((prev) => !prev);
         message.success(
           'Statement matched successful Entry created successfully'
         );
@@ -388,34 +417,35 @@ const BankReconciliation = () => {
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
         deleteApiService={apiService.delete}
       >
-        {clickedItem ? (
-          <div className="flex flex-col gap-5">
-            <BaseAutoSaveInputCard
-              fields={fields}
-              apiEndpoint={financeEndpoints.addBankAccount}
-              putApiFunction={apiService.post}
-              updateApiEndpoint={financeEndpoints.updateBankAccount}
-              postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.getBankAccounts}
-              getApiFunction={apiService.get}
-              transformData={transformData}
-              setOpenBaseCard={setOpenBaseCard}
-              useRequestBody={true}
-              openBaseCard={openBaseCard}
-              setClickedItem={setClickedItem}
-              clickedItem={clickedItem}
-              banks={branches}
-              setSelectedBank={setSelectedBank}
-            />
+        <div className="flex flex-col gap-5">
+          <BaseAutoSaveInputCard
+            fields={fields}
+            apiEndpoint={financeEndpoints.addBankAccount}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateBankAccount}
+            postApiFunction={apiService.post}
+            getApiEndpoint={financeEndpoints.getBankAccounts}
+            getApiFunction={apiService.get}
+            transformData={transformData}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
+            banks={branches}
+            setSelectedBank={setSelectedBank}
+          />
 
-            <BankReconciliationCard
-              setSelectedBankStatements={setSelectedBankStatements}
-              setSelectedBankSubledgers={setSelectedBankSubledgers}
-              clickedItem={clickedItem}
-              uploadExcel={uploadExcel}
-            />
-          </div>
-        ) : (
+          <BankReconciliationCard
+            refreshBankStatements={refreshBankStatements}
+            setSelectedBankStatements={setSelectedBankStatements}
+            setSelectedBankSubledgers={setSelectedBankSubledgers}
+            clickedItem={clickedItem}
+            setClickedItem={setClickedItem}
+            uploadExcel={uploadExcel}
+          />
+        </div>
+        {/* ) : (
           <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addBankAccount}
@@ -430,7 +460,7 @@ const BankReconciliation = () => {
             openBaseCard={openBaseCard}
             setClickedItem={setClickedItem}
           />
-        )}
+        )} */}
       </BaseCard>
       <BaseTable
         openBaseCard={openBaseCard}

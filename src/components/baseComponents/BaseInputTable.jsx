@@ -34,6 +34,7 @@ const BaseInputTable = ({
   fields = [],
   validators = {},
   title,
+
   id,
   idLabel,
   initialData = [],
