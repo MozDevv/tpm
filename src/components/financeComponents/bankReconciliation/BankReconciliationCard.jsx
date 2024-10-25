@@ -80,36 +80,40 @@ function BankReconciliationCard({
       );
       if (response.status === 200 && response.data.succeeded) {
         if (response.data.data[0].bankStatements.length > 0) {
-          const bankStatement = response.data.data[1];
+          const bankStatement = response.data.data[
+            response.data.data.length - 1
+          ]
+            ? response.data.data[response.data.data.length - 1]
+            : {};
           setClickedItem((prev) => ({
             ...prev,
-            totalDifference: bankStatement.totalDifference,
-            statementStartDate: bankStatement.statementStartDate,
-            statementEndDate: bankStatement.statementEndDate,
-            lastStatementBalance: bankStatement.lastStatementBalance,
-            currentStatementBalance: bankStatement.currentStatementBalance,
-            bankStatementId: bankStatement.id,
+            totalDifference: bankStatement?.totalDifference,
+            statementStartDate: bankStatement?.statementStartDate,
+            statementEndDate: bankStatement?.statementEndDate,
+            lastStatementBalance: bankStatement?.lastStatementBalance,
+            currentStatementBalance: bankStatement?.currentStatementBalance,
+            bankStatementId: bankStatement?.id,
           }));
         }
 
-        const formattedStatements = response.data.data[1].bankStatements.map(
-          (item) => ({
-            id: item.id,
-            transactionDate: item.transactionDate,
-            description: item.description,
-            debitAmount: item.debitAmount,
-            appliedAmount: item.appliedAmount,
-            difference: item.difference,
-            statementAmount: item.statementAmount,
-            appliedEntries: item.appliedEntries,
-            creditAmount: item.creditAmount,
-            balance: item.balance,
-            appliedEntries: item.appliedEntries,
-            bankReconciliationId: item.bankReconciliationId,
-            bankReconciliationStatus: item.bankReconciliationStatus,
-            totalSubLedgerCount: item.totalSubLedgerCount,
-          })
-        );
+        const formattedStatements = response.data.data[
+          response.data.data.length - 1
+        ].bankStatements.map((item) => ({
+          id: item.id,
+          transactionDate: item.transactionDate,
+          description: item.description,
+          debitAmount: item.debitAmount,
+          appliedAmount: item.appliedAmount,
+          difference: item.difference,
+          statementAmount: item.statementAmount,
+          appliedEntries: item.appliedEntries,
+          creditAmount: item.creditAmount,
+          balance: item.balance,
+          appliedEntries: item.appliedEntries,
+          bankReconciliationId: item.bankReconciliationId,
+          bankReconciliationStatus: item.bankReconciliationStatus,
+          totalSubLedgerCount: item.totalSubLedgerCount,
+        }));
 
         setBankStatement(formattedStatements);
         calculateTotals(formattedStatements, 0);
@@ -182,6 +186,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -192,6 +197,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
 
@@ -204,6 +210,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -216,6 +223,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -227,6 +235,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -236,6 +245,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -267,6 +277,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
   ];
@@ -284,6 +295,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -295,6 +307,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -307,6 +320,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -317,6 +331,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
 
@@ -328,6 +343,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {
@@ -337,6 +353,7 @@ function BankReconciliationCard({
       cellStyle: ({ data }) => ({
         fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
         color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
       }),
     },
     {

@@ -346,7 +346,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
     },
     {
-      name: 'Post Reconciliation',
+      name: 'Reconcile Bank Statement',
       icon: CheckCircle,
       action: 'postReconciliation',
       requiredPermissions: [],

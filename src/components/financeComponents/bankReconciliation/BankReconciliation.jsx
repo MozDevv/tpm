@@ -137,7 +137,7 @@ const BankReconciliation = () => {
     },
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
-    postReconciliation: () => setPostReconciliation(false),
+    postReconciliation: () => reconcileBankDetails(),
     removeUploadedStatement: () => removeUploadedDocument(),
     removeMatch: () => removeMatch(),
   };
@@ -414,7 +414,7 @@ const BankReconciliation = () => {
   const removeUploadedDocument = async () => {
     try {
       const response = await apiService.delete(
-        financeEndpoints.removeUploadedDocument(clickedItem?.bankStatementId)
+        financeEndpoints.deleteUploadedStatement(clickedItem?.bankStatementId)
       );
 
       if (response.data.succeeded) {
@@ -433,6 +433,36 @@ const BankReconciliation = () => {
     } catch (error) {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
+    }
+  };
+
+  const reconcileBankDetails = async () => {
+    try {
+      const response = await apiService.post(
+        financeEndpoints.reconcileBankDetails,
+        {
+          bankReconciliationId: clickedItem?.id,
+          totalDifference: clickedItem?.totalDifference,
+          currentStatementBalance: clickedItem?.currentStatementBalance,
+        }
+      );
+
+      if (response.status === 200 && response.data.succeeded) {
+        setRefreshBankStatements((prev) => !prev);
+        message.success('Bank details reconciled successfully');
+      } else if (
+        response.data.messages[0] &&
+        response.data.succeeded === false
+      ) {
+        message.error(response.data.messages[0].message);
+      } else {
+        console.warn('Reconciliation Failed:', response.data);
+
+        message.error('Reconciliation Failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error reconciling bank details:', error);
+      message.error('An error occurred while reconciling bank details.');
     }
   };
 

@@ -241,6 +241,8 @@ const financeEndpoints = {
   removeMatch: `/Posting/RemoveMatch`,
   deleteUploadedStatement: (id) =>
     `/Posting/DeleteUploadedStatement?BankReconciliationId=${id}`,
+
+  reconcileBankDetails: '/Posting/ReconcileBankDetails',
 };
 
 export const apiService = {
