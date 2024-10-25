@@ -233,6 +233,11 @@ const financeEndpoints = {
   updateReceipt: '/Posting/UpdateReceipt',
   updateTheReceipt: '/Posting/UpdateReceipt',
   deleteReceipt: (id) => `/Posting/DeleteReceipt?id=${id}`,
+
+  addReceiptLine: '/Posting/AddReceiptLine',
+  updateReceiptLine: '/Posting/UpdateReceiptLine',
+  deleteReceiptLine: (id) => `/Posting/DeleteReceiptLine?id=${id}`,
+  getReceiptLines: (id) => `/Posting/GetReceiptLines?ReceiptId=${id}`,
 };
 
 export const apiService = {

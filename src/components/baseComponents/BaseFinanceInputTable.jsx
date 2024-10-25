@@ -1,16 +1,16 @@
-"use client";
+'use client';
 import React, {
   useRef,
   useState,
   useCallback,
   useEffect,
   useMemo,
-} from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { Button, Collapse, Divider, IconButton, Tooltip } from "@mui/material";
-import { message } from "antd";
+} from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { Button, Collapse, Divider, IconButton, Tooltip } from '@mui/material';
+import { message } from 'antd';
 import {
   Add,
   Api,
@@ -19,19 +19,19 @@ import {
   Delete,
   ExpandLess,
   KeyboardArrowRight,
-} from "@mui/icons-material";
-import dayjs from "dayjs";
-import BaseLoadingOverlay from "./BaseLoadingOverlay";
-import "./editabletable.css";
-import { baseValidatorFn } from "./BaseValidatorFn";
-import { parseDate } from "@/utils/dateFormatter";
-import * as XLSX from "xlsx";
-import { VisuallyHiddenInput } from "@/utils/handyComponents";
-import { apiService } from "../services/financeApi";
-import financeEndpoints from "../services/financeApi";
-import { de } from "@faker-js/faker";
-import { formatNumber } from "@/utils/numberFormatters";
-import CustomSelectCellEditor from "./CustomSelectCellEditor";
+} from '@mui/icons-material';
+import dayjs from 'dayjs';
+import BaseLoadingOverlay from './BaseLoadingOverlay';
+import './editabletable.css';
+import { baseValidatorFn } from './BaseValidatorFn';
+import { parseDate } from '@/utils/dateFormatter';
+import * as XLSX from 'xlsx';
+import { VisuallyHiddenInput } from '@/utils/handyComponents';
+import { apiService } from '../services/financeApi';
+import financeEndpoints from '../services/financeApi';
+import { de } from '@faker-js/faker';
+import { formatNumber } from '@/utils/numberFormatters';
+import CustomSelectCellEditor from './CustomSelectCellEditor';
 
 const BaseFinanceInputTable = ({
   fields = [],
@@ -60,7 +60,7 @@ const BaseFinanceInputTable = ({
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
       fields.reduce((acc, field) => {
-        acc[field.value] = "";
+        acc[field.value] = '';
         return acc;
       }, {})
     );
@@ -83,15 +83,15 @@ const BaseFinanceInputTable = ({
 
   const sortData = (data) => {
     const dateField = data[0]?.date
-      ? "date"
+      ? 'date'
       : data[0]?.startDate
-      ? "startDate"
+      ? 'startDate'
       : data[0]?.start_date
-      ? "start_date"
+      ? 'start_date'
       : data[0]?.from_date
-      ? "from_date"
+      ? 'from_date'
       : data[0]?.fromDate
-      ? "fromDate"
+      ? 'fromDate'
       : null;
 
     const sortedData = dateField
@@ -104,7 +104,7 @@ const BaseFinanceInputTable = ({
   const [dataAdded, setDataAdded] = useState(false);
   const fetchData = async () => {
     console.log(
-      "Fetching Data from Editable Table",
+      'Fetching Data from Editable Table',
       getEndpoint,
       getApiService
     );
@@ -112,7 +112,7 @@ const BaseFinanceInputTable = ({
     try {
       const res = await getApiService(getEndpoint);
       if (res.status === 200) {
-        console.log("Fetched Data from Editable Table", res.data.data);
+        console.log('Fetched Data from Editable Table', res.data.data);
 
         const entries = res.data.data; // Your array of data
         const numberOfEntries = entries.length; // Total entries
@@ -127,11 +127,11 @@ const BaseFinanceInputTable = ({
         const totalBalance = totalDebit - totalCredit; // Total balance
 
         const totalAmounts = [
-          { name: "Number of Entries", value: numberOfEntries },
-          { name: "Total Debit", value: totalDebit.toFixed(2) }, // Format to 2 decimal places
-          { name: "Total Credit", value: totalCredit.toFixed(2) }, // Format to 2 decimal places
-          { name: "Balance", value: totalBalance.toFixed(2) }, // Format to 2 decimal places
-          { name: "Total Balance", value: totalBalance.toFixed(2) }, // Format to 2 decimal places
+          { name: 'Number of Entries', value: numberOfEntries },
+          { name: 'Total Debit', value: totalDebit.toFixed(2) }, // Format to 2 decimal places
+          { name: 'Total Credit', value: totalCredit.toFixed(2) }, // Format to 2 decimal places
+          { name: 'Balance', value: totalBalance.toFixed(2) }, // Format to 2 decimal places
+          { name: 'Total Balance', value: totalBalance.toFixed(2) }, // Format to 2 decimal places
         ];
 
         // Set state with the totalAmounts array
@@ -139,17 +139,17 @@ const BaseFinanceInputTable = ({
 
         setRowData((prevRowData) => {
           const datePairs = [
-            { start: "startDate", end: "endDate" },
-            { start: "from_date", end: "to_date" },
-            { start: "fromDate", end: "toDate" },
-            { start: "date", end: "endDate" },
-            { start: "date", end: "enddate" },
-            { start: "start_date", end: "end_date" },
+            { start: 'startDate', end: 'endDate' },
+            { start: 'from_date', end: 'to_date' },
+            { start: 'fromDate', end: 'toDate' },
+            { start: 'date', end: 'endDate' },
+            { start: 'date', end: 'enddate' },
+            { start: 'start_date', end: 'end_date' },
           ];
 
           const defaultRows = Array.from({ length: 1 }, () =>
             fields.reduce((acc, field) => {
-              acc[field.value] = "";
+              acc[field.value] = '';
               return acc;
             }, {})
           );
@@ -157,14 +157,14 @@ const BaseFinanceInputTable = ({
           //setSelectedAccountTypeId(res.data.data[0].accountTypeId);
 
           const sortedData = sortData(res.data.data || []);
-          console.log("Sorted Data:", sortedData);
+          console.log('Sorted Data:', sortedData);
 
           let lastEndDate = null;
           let matchingStartField = null;
 
           if (sortedData.length > 0) {
             const lastRow = sortedData[sortedData.length - 1];
-            console.log("Last Row:", lastRow);
+            console.log('Last Row:', lastRow);
 
             for (const { start, end } of datePairs) {
               if (lastRow[end]) {
@@ -174,18 +174,18 @@ const BaseFinanceInputTable = ({
               }
             }
 
-            console.log("Last End Date Before Formatting:", lastEndDate);
+            console.log('Last End Date Before Formatting:', lastEndDate);
 
             if (lastEndDate && matchingStartField) {
               const formattedEndDate = dayjs(lastEndDate)
-                .add(1, "day")
-                .format("YYYY-MM-DDTHH:mm:ss[Z]");
+                .add(1, 'day')
+                .format('YYYY-MM-DDTHH:mm:ss[Z]');
 
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
           }
 
-          console.log("Default Rows:", defaultRows);
+          console.log('Default Rows:', defaultRows);
 
           // Map over defaultRows correctly
           // const subgroups = defaultRows.map((row) => {
@@ -216,7 +216,7 @@ const BaseFinanceInputTable = ({
   const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.sizeColumnsToFit();
-    console.log("Grid is ready, API set:", gridApiRef.current);
+    console.log('Grid is ready, API set:', gridApiRef.current);
   }, []);
 
   const isRowComplete = (row) => {
@@ -224,7 +224,7 @@ const BaseFinanceInputTable = ({
       return (
         row[field.value] !== undefined &&
         row[field.value] !== null &&
-        row[field.value] !== ""
+        row[field.value] !== ''
       );
     });
   };
@@ -236,19 +236,19 @@ const BaseFinanceInputTable = ({
         res.status === 200 ||
         res.status === 204 ||
         res.data.succeeded ||
-        res.data.message[0] === "Record deleted successfully"
+        res.data.message[0] === 'Record deleted successfully'
       ) {
         refreshData();
-        message.success("Record deleted successfully");
+        message.success('Record deleted successfully');
         setRowData((prevData) => {
           return prevData.filter((row) => row.id !== rowId);
         });
       } else {
-        message.error("An error occurred while deleting the record.");
+        message.error('An error occurred while deleting the record.');
       }
     } catch (error) {
       console.log(error);
-      message.error("An error occurred while deleting the record.");
+      message.error('An error occurred while deleting the record.');
     }
   };
   const handleDeleteSelectedRows = async () => {
@@ -272,32 +272,32 @@ const BaseFinanceInputTable = ({
         return { ...prevErrors };
       });
 
-      message.success("Selected rows deleted successfully!");
+      message.success('Selected rows deleted successfully!');
     } else {
-      message.error("Unable to delete rows. Grid is not ready.");
+      message.error('Unable to delete rows. Grid is not ready.');
     }
   };
 
-  const mdaId = localStorage.getItem("mdaId");
+  const mdaId = localStorage.getItem('mdaId');
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
-    console.log("Formatted Form Data:", formattedFormData);
+    console.log('Formatted Form Data:', formattedFormData);
     if (id) {
       formattedFormData[idLabel] = id;
     }
     Object.keys(formattedFormData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
+          'YYYY-MM-DDTHH:mm:ss[Z]'
         );
       }
     });
 
-    console.log("Formatted Form Data After Date Handling:", formattedFormData);
+    console.log('Formatted Form Data After Date Handling:', formattedFormData);
 
-    console.log("Formatted Form Data:", formattedFormData);
+    console.log('Formatted Form Data:', formattedFormData);
     try {
       if (data.id) {
         const res = await putApiService(putEndpoint, {
@@ -307,7 +307,7 @@ const BaseFinanceInputTable = ({
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
-          message.success("Record updated successfully");
+          message.success('Record updated successfully');
           // Clear errors upon successful submission
           setRowErrors((prevErrors) => {
             const updatedErrors = { ...prevErrors };
@@ -325,7 +325,7 @@ const BaseFinanceInputTable = ({
               setCellError(data.id, error.field, err);
             });
           });
-          throw new Error("An error occurred while submitting the data.");
+          throw new Error('An error occurred while submitting the data.');
         } else if (
           res.status === 200 &&
           !res.data.succeeded &&
@@ -341,7 +341,7 @@ const BaseFinanceInputTable = ({
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
           refetchDataFromAnotherComponent?.();
-          message.success("Record added successfully");
+          message.success('Record added successfully');
 
           // Clear errors upon successful submission
 
@@ -361,12 +361,12 @@ const BaseFinanceInputTable = ({
               setCellError(data.id, error.field, err);
             });
           });
-          throw new Error("An error occurred while submitting the data.");
+          throw new Error('An error occurred while submitting the data.');
         }
       }
     } catch (error) {
       // Log the error and set a generic row error if needed
-      setCellError(data.id, null, error.message || "An unknown error occurred");
+      setCellError(data.id, null, error.message || 'An unknown error occurred');
       console.log(error);
       throw error;
     }
@@ -402,7 +402,7 @@ const BaseFinanceInputTable = ({
       maxWidth: 40,
       flex: 0,
       suppressSizeToFit: true,
-      cellStyle: { width: "50px", borderRight: "1px solid #f0f0f0" },
+      cellStyle: { width: '50px', borderRight: '1px solid #f0f0f0' },
     },
     ...fields.map((col, index) => {
       let columnDef = {
@@ -414,7 +414,7 @@ const BaseFinanceInputTable = ({
         filter: true,
         headerClass: (params) => {
           const isError = rowErrors[params.column.getColId()];
-          return isError ? "error-header" : "";
+          return isError ? 'error-header' : '';
         },
         cellRenderer: (params) => {
           const { value, data, colDef } = params;
@@ -441,7 +441,7 @@ const BaseFinanceInputTable = ({
           
             "</span> is not an acceptable value for 
             <strong>${colDef.headerName}</strong>. 
-            ${hasError ? rowErrors[rowId][field] : ""}
+            ${hasError ? rowErrors[rowId][field] : ''}
           </div>
         `;
 
@@ -449,7 +449,7 @@ const BaseFinanceInputTable = ({
             const date = new Date(dateString);
 
             if (!isNaN(date.getTime())) {
-              return date.toLocaleDateString("en-GB");
+              return date.toLocaleDateString('en-GB');
             }
             return dateString;
           };
@@ -460,7 +460,7 @@ const BaseFinanceInputTable = ({
 
             if (!selectedField || !selectedField.options) {
               console.log(
-                "No matching field or options found for:",
+                'No matching field or options found for:',
                 colDef.field
               );
               return id;
@@ -476,37 +476,37 @@ const BaseFinanceInputTable = ({
           };
 
           const displayValue =
-            col.type === "date"
+            col.type === 'date'
               ? formatDate(value)
-              : col.type === "select"
+              : col.type === 'select'
               ? getNameById(value)
               : value;
 
           return (
-            <div style={{ position: "relative", display: "flex" }}>
+            <div style={{ position: 'relative', display: 'flex' }}>
               {hasError && (
                 <Tooltip
                   title={<div dangerouslySetInnerHTML={{ __html: error }} />}
                   arrow
                   PopperProps={{
                     sx: {
-                      "& .MuiTooltip-tooltip": {
+                      '& .MuiTooltip-tooltip': {
                         //   borderLeft: "2px solid crimson",
-                        fontSize: "0.75rem",
-                        padding: "0.5rem",
-                        borderRadius: "4px",
-                        maxWidth: "200px",
-                        wordWrap: "break-word",
+                        fontSize: '0.75rem',
+                        padding: '0.5rem',
+                        borderRadius: '4px',
+                        maxWidth: '200px',
+                        wordWrap: 'break-word',
                       },
                     },
                   }}
                 >
                   <IconButton
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       right: 0,
-                      top: "50%",
-                      transform: "translateY(-50%)",
+                      top: '50%',
+                      transform: 'translateY(-50%)',
                     }}
                     size="small"
                     onClick={() => {
@@ -523,7 +523,7 @@ const BaseFinanceInputTable = ({
                       });
                     }}
                   >
-                    <Cancel fontSize="small" sx={{ color: "crimson" }} />
+                    <Cancel fontSize="small" sx={{ color: 'crimson' }} />
                   </IconButton>
                 </Tooltip>
               )}
@@ -535,25 +535,25 @@ const BaseFinanceInputTable = ({
         cellStyle: (params) => {
           if (rowErrors[params.data.id]) {
             return {
-              border: "1px solid red",
+              border: '1px solid red',
             };
           }
           return {
-            borderRight: "1px solid #f0f0f0",
-            fontSize: "15px",
+            borderRight: '1px solid #f0f0f0',
+            fontSize: '15px',
           };
         },
       };
 
-      if (col.type === "date") {
-        columnDef.cellEditor = "agDateStringCellEditor";
+      if (col.type === 'date') {
+        columnDef.cellEditor = 'agDateStringCellEditor';
 
         columnDef.valueFormatter = (params) => {
-          if (!params.value) return "";
+          if (!params.value) return '';
 
           // Using dayjs to format the date
-          const formattedDate = dayjs(params.value).format("DD/MM/YYYY");
-          return formattedDate === "Invalid Date"
+          const formattedDate = dayjs(params.value).format('DD/MM/YYYY');
+          return formattedDate === 'Invalid Date'
             ? params.value
             : formattedDate;
         };
@@ -570,14 +570,14 @@ const BaseFinanceInputTable = ({
           // Parse the user input into a date
           return parseDate(params.newValue);
         };
-      } else if (col.type === "select" && col.options && col.options.length) {
+      } else if (col.type === 'select' && col.options && col.options.length) {
         // Use your custom cell editor
         columnDef.cellEditor = CustomSelectCellEditor;
 
         // Set the cellEditorParams for your custom editor
         columnDef.cellEditorParams = (params) => {
           const { data } = params.node;
-          const accountTypeId = data.accountTypeId;
+          const accountTypeId = data.accountTypeId || data.accountType;
 
           // Map the options to include both id and name
           const options = col.options.map((option) => ({
@@ -589,14 +589,14 @@ const BaseFinanceInputTable = ({
           }));
 
           // Check if the column is the 'accountId' column
-          const isAccountIdColumn = col.value === "accountId";
+          const isAccountIdColumn = col.value === 'accountId';
 
-          if (isAccountIdColumn && accountTypeId !== "") {
+          if (isAccountIdColumn && accountTypeId !== '') {
             const filteredOptions = options.filter(
               (option) => option.accountType === accountTypeId
             );
 
-            console.log("COL.OPTIONS", options);
+            console.log('COL.OPTIONS', options);
             console.log(
               `Account Type ID: ${accountTypeId} - Filtered options:`,
               filteredOptions
@@ -608,9 +608,9 @@ const BaseFinanceInputTable = ({
           }
 
           const bankIdValue = data.bankId;
-          const isBranchColumn = col.value === "bankBranchId";
+          const isBranchColumn = col.value === 'bankBranchId';
 
-          if (isBranchColumn && bankIdValue !== "") {
+          if (isBranchColumn && bankIdValue !== '') {
             const filteredBranches = branches.filter(
               (branch) => branch.bankId === bankIdValue
             );
@@ -641,23 +641,23 @@ const BaseFinanceInputTable = ({
         };
       } else if (col.hide) {
         columnDef.hide = true;
-      } else if (col.value === "phone_number") {
-        const defaultPhoneNumberValue = "+254";
+      } else if (col.value === 'phone_number') {
+        const defaultPhoneNumberValue = '+254';
         columnDef.valueFormatter = (params) => {
-          if (!params.value) return "";
-          return params.value.startsWith("0")
+          if (!params.value) return '';
+          return params.value.startsWith('0')
             ? defaultPhoneNumberValue + params.value.slice(1)
             : params.value;
         };
-      } else if (col.type === "amount") {
-        console.log("Column Definition", columnDef);
+      } else if (col.type === 'amount') {
+        console.log('Column Definition', columnDef);
 
         columnDef.valueFormatter = (params) => {
           console.log(
-            "Value Formatter Called with:",
+            'Value Formatter Called with:',
             formatNumber(params.value)
           );
-          if (!params.value) return "";
+          if (!params.value) return '';
           return formatNumber(params.value);
         };
         columnDef.valueParser = (params) => {
@@ -665,10 +665,10 @@ const BaseFinanceInputTable = ({
         };
 
         columnDef.cellStyle = {
-          textAlign: "left",
-          width: "100%",
+          textAlign: 'left',
+          width: '100%',
         };
-      } else if (col.type === "number") {
+      } else if (col.type === 'number') {
         //console.log("this is the number column", col);
         columnDef.valueFormatter = (params) => {
           return formatNumber(params.value) || 0;
@@ -676,11 +676,11 @@ const BaseFinanceInputTable = ({
       }
 
       const datePairs = [
-        { start: "startDate", end: "endDate" },
-        { start: "from_date", end: "to_date" },
-        { start: "fromDate", end: "toDate" },
-        { start: "date", end: "endDate" },
-        { start: "start_date", end: "end_date" },
+        { start: 'startDate', end: 'endDate' },
+        { start: 'from_date', end: 'to_date' },
+        { start: 'fromDate', end: 'toDate' },
+        { start: 'date', end: 'endDate' },
+        { start: 'start_date', end: 'end_date' },
       ];
 
       const findDatePair = (field) => {
@@ -710,15 +710,15 @@ const BaseFinanceInputTable = ({
           api.refreshCells({ rowNodes: [params.node] });
         }
 
-        if (field === "accountId") {
+        if (field === 'accountId') {
           const accountId = newValue;
 
-          console.log("accountId", accountId);
+          console.log('accountId', accountId);
 
           const selectedOption =
             allOptions && allOptions.find((option) => option.id === accountId);
 
-          console.log("Selected Option", selectedOption);
+          console.log('Selected Option', selectedOption);
 
           if (selectedOption) {
             data.accountName = selectedOption.accountName;
@@ -726,18 +726,18 @@ const BaseFinanceInputTable = ({
 
             api.refreshCells({ rowNodes: [params.node], force: true });
           } else {
-            data.accountName = "";
+            data.accountName = '';
             api.refreshCells({ rowNodes: [params.node], force: true });
           }
         }
 
-        if (colDef.field === "debitAmount") {
+        if (colDef.field === 'debitAmount') {
           const debitAmount = parseFloat(newValue) || 0;
           if (debitAmount > 0) {
             // Update amount with the absolute value of debitAmount
             data.amount = debitAmount;
           }
-        } else if (colDef.field === "creditAmount") {
+        } else if (colDef.field === 'creditAmount') {
           const creditAmount = parseFloat(newValue) || 0; // Convert to float and default to 0
           if (creditAmount > 0) {
             // Subtract creditAmount from amount
@@ -748,9 +748,9 @@ const BaseFinanceInputTable = ({
         // Refresh the cell to reflect changes
         params.api.refreshCells({ rowNodes: [params.node], force: true });
 
-        console.log("Data ", data);
-        console.log("New Value", newValue);
-        console.log("Column Definition", colDef);
+        console.log('Data ', data);
+        console.log('New Value', newValue);
+        console.log('Column Definition', colDef);
 
         const datePair = findDatePair(field);
 
@@ -802,7 +802,7 @@ const BaseFinanceInputTable = ({
 
           // Format the value for display
           columnDef.valueFormatter = (params) => {
-            if (!params.value) return ""; // Handle empty or undefined values
+            if (!params.value) return ''; // Handle empty or undefined values
             const selectedOption = selectField.options.find(
               (option) => option.id === params.value
             );
@@ -826,19 +826,19 @@ const BaseFinanceInputTable = ({
           };
         }
 
-        if (colDef.cellEditor === "agSelectCellEditor") {
+        if (colDef.cellEditor === 'agSelectCellEditor') {
         }
 
         if (data.designationId) {
           setSelectedValue(data.designationId);
         }
 
-        if (field === "creditAmount") {
+        if (field === 'creditAmount') {
           if (newValue) {
             data.debitAmount = 0;
             api.refreshCells({ rowNodes: [params.node], force: true });
           }
-        } else if (field === "debitAmount") {
+        } else if (field === 'debitAmount') {
           if (newValue) {
             data.creditAmount = 0;
             api.refreshCells({ rowNodes: [params.node], force: true });
@@ -852,12 +852,12 @@ const BaseFinanceInputTable = ({
         if (data.start_date && data.end_date) {
           data.number_of_days = dayjs(data.end_date).diff(
             dayjs(data.start_date),
-            "days"
+            'days'
           );
         }
 
-        console.log("Cell Value Changed:", params);
-        console.log("Updated Data:", data);
+        console.log('Cell Value Changed:', params);
+        console.log('Updated Data:', data);
 
         if (validators[field]) {
           const error = validators[field](newValue);
@@ -874,7 +874,7 @@ const BaseFinanceInputTable = ({
           }
           await refreshData();
 
-          message.success("Row saved successfully!");
+          message.success('Row saved successfully!');
 
           setRowErrors((prevErrors) => {
             const updatedErrors = { ...prevErrors };
@@ -902,7 +902,7 @@ const BaseFinanceInputTable = ({
 
       if (hasErrors) {
         message.error(
-          "Please resolve errors in the current line before adding a new line."
+          'Please resolve errors in the current line before adding a new line.'
         );
         return;
       }
@@ -913,17 +913,17 @@ const BaseFinanceInputTable = ({
         editedData.push(node.data);
       });
 
-      console.log("Edited data:", editedData);
+      console.log('Edited data:', editedData);
 
       const lastRow = editedData[editedData.length - 1];
       let previousEndDate = null;
 
       const datePairs = [
-        { start: "startDate", end: "endDate" },
-        { start: "from_date", end: "to_date" },
-        { start: "fromDate", end: "toDate" },
-        { start: "date", end: "endDate" },
-        { start: "start_date", end: "end_date" },
+        { start: 'startDate', end: 'endDate' },
+        { start: 'from_date', end: 'to_date' },
+        { start: 'fromDate', end: 'toDate' },
+        { start: 'date', end: 'endDate' },
+        { start: 'start_date', end: 'end_date' },
       ];
 
       // Loop through date pairs to find a filled end date
@@ -943,7 +943,7 @@ const BaseFinanceInputTable = ({
         ) {
           acc[field.value] = previousEndDate;
         } else {
-          acc[field.value] = "";
+          acc[field.value] = '';
         }
         return acc;
       }, {});
@@ -955,7 +955,7 @@ const BaseFinanceInputTable = ({
       setRowData((prevRowData) => {
         if (!prevRowData) {
           console.error(
-            "Previous row data is undefined. Initializing with an empty array."
+            'Previous row data is undefined. Initializing with an empty array.'
           );
           prevRowData = [];
         }
@@ -973,7 +973,7 @@ const BaseFinanceInputTable = ({
 
       // message.info("New row added!");
     } else {
-      message.error("Unable to add a new row. Grid is not ready.");
+      message.error('Unable to add a new row. Grid is not ready.');
     }
   };
 
@@ -981,15 +981,15 @@ const BaseFinanceInputTable = ({
     try {
       await fetchData();
     } catch (error) {
-      message.error("Error refreshing data: " + error.message);
+      message.error('Error refreshing data: ' + error.message);
     }
   };
   const loadingOverlayComponentParams = useMemo(() => {
-    return { loadingMessage: "Loading..." };
+    return { loadingMessage: 'Loading...' };
   }, []);
 
   const onCellKeyDown = (event) => {
-    if (event.event.key === "Enter") {
+    if (event.event.key === 'Enter') {
       event.api.stopEditing(); // Stop editing the current cell
 
       event.api.tabToNextCell();
@@ -1012,14 +1012,14 @@ const BaseFinanceInputTable = ({
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
+      const workbook = XLSX.read(data, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-      console.log("JSON Data:", jsonData);
-      console.log("Sheet Name:", sheetName);
-      console.log("Sheet Data:", sheet);
+      console.log('JSON Data:', jsonData);
+      console.log('Sheet Name:', sheetName);
+      console.log('Sheet Data:', sheet);
 
       setRowData((prevData) => {
         const transformedData = jsonData.map((item) => {
@@ -1038,7 +1038,7 @@ const BaseFinanceInputTable = ({
           }, 1500);
         }
       }
-      console.log("Row Data:", rowData);
+      console.log('Row Data:', rowData);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -1050,15 +1050,15 @@ const BaseFinanceInputTable = ({
           {title}
         </div>
         <IconButton
-          sx={{ ml: "-5px", zIndex: 1, mt: "-6px" }}
+          sx={{ ml: '-5px', zIndex: 1, mt: '-6px' }}
           onClick={() => handleToggleSection(sectionKey)}
         >
           {!openSections[sectionKey] ? (
             <KeyboardArrowRight
-              sx={{ color: "primary.main", fontSize: "14px" }}
+              sx={{ color: 'primary.main', fontSize: '14px' }}
             />
           ) : (
-            <ExpandLess sx={{ color: "primary.main", fontSize: "14px" }} />
+            <ExpandLess sx={{ color: 'primary.main', fontSize: '14px' }} />
           )}
         </IconButton>
         <hr className="flex-grow border-blue-500 border-opacity-20 mt-[-5px]" />
@@ -1070,7 +1070,7 @@ const BaseFinanceInputTable = ({
               onClick={onAddRow}
               variant="text"
               startIcon={<Add />}
-              style={{ marginLeft: "10px", marginBottom: "10px" }}
+              style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
               New Line
             </Button>
@@ -1078,7 +1078,7 @@ const BaseFinanceInputTable = ({
               onClick={handleDeleteSelectedRows}
               variant="text"
               startIcon={<Delete />}
-              style={{ marginLeft: "10px", marginBottom: "10px" }}
+              style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
               Delete Lines
             </Button>
@@ -1088,7 +1088,7 @@ const BaseFinanceInputTable = ({
                 variant="text"
                 tabIndex={-1}
                 startIcon={<CloudUpload />}
-                sx={{ mt: "-13px" }}
+                sx={{ mt: '-13px' }}
                 component="label"
                 role={undefined}
               >
@@ -1102,7 +1102,7 @@ const BaseFinanceInputTable = ({
             )}
           </div>
 
-          <div className="" style={{ maxHeight: "500px", width: "100%" }}>
+          <div className="" style={{ maxHeight: '500px', width: '100%' }}>
             <AgGridReact
               ref={gridApiRef}
               rowData={rowData}
@@ -1110,8 +1110,8 @@ const BaseFinanceInputTable = ({
               defaultColDef={{
                 flex: 1,
                 minWidth: 150,
-                height: "400px",
-                minHehight: "100px",
+                height: '400px',
+                minHehight: '100px',
               }}
               onCellKeyDown={onCellKeyDown}
               onGridReady={onGridReady}

@@ -15,16 +15,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 
 const { TabPane } = Tabs;
 
-function ScheduledPaymentsCard({
-  fields,
-  apiEndpoint,
-  postApiFunction,
-  clickedItem,
-  setOpenBaseCard,
-  useRequestBody,
-  transformData,
-  setClickedItem,
-}) {
+function RecieptLines({ clickedItem }) {
   const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
 
   const [allOptions, setAllOptions] = useState(null);
@@ -64,7 +55,21 @@ function ScheduledPaymentsCard({
     }
   };
 
+  const [accountTypes, setAccountTypes] = useState([]);
+
+  const fetchAccountTypes = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.fetchGlAccountTypes
+      );
+      setAccountTypes(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    fetchAccountTypes();
     fetchNewOptions();
   }, []);
 
@@ -134,9 +139,55 @@ function ScheduledPaymentsCard({
 
   const tableFields = [
     {
-      value: 'documentNo',
-      label: 'Document No',
-      type: 'text',
+      value: 'receiptType',
+      label: 'Receipt Type',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Customer' },
+        { id: 1, name: 'Vendor' },
+      ],
+    },
+    {
+      value: 'accountType',
+      label: 'Account Type',
+      type: 'select',
+      options: [
+        {
+          id: 0,
+          name: 'General_Ledger',
+        },
+        {
+          id: 1,
+          name: 'Vendor',
+        },
+        {
+          id: 2,
+          name: 'Customer',
+        },
+        {
+          id: 3,
+          name: 'Bank',
+        },
+      ],
+    },
+    {
+      value: 'accountId',
+      label: 'Account No',
+      type: 'select',
+      options: allOptions && allOptions,
+    },
+    // {
+    //   value: 'accountName',
+    //   label: 'Account Name',
+    //   type: 'text',
+    //   required: true,
+    //   disabled: true,
+    //   options: allOptions && allOptions,
+    // },
+    {
+      value: 'amount',
+      label: 'Amount',
+      type: 'number',
       required: true,
     },
     {
@@ -145,95 +196,57 @@ function ScheduledPaymentsCard({
       type: 'text',
       required: true,
     },
-    {
-      value: 'netAmount',
-      label: 'Net Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'grossAmount',
-      label: 'Gross Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'refundAmount',
-      label: 'Refund Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'pensionAmount',
-      label: 'Pension Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'deductionsAndRefundId',
-      label: 'Deductions And Refund',
-      type: 'text',
-      required: true,
-    },
-    {
-      value: 'paymentId',
-      label: 'Payment',
-      type: 'text',
-      required: true,
-    },
 
     {
-      value: 'deductionAmount',
-      label: 'Deduction Amount',
-      type: 'number',
-      required: true,
+      value: 'appliesToDocType',
+      label: 'Applies To Doc Type',
+      type: 'select',
+      options: [
+        {
+          id: 0,
+          name: 'Payment Voucher',
+        },
+        {
+          id: 1,
+          name: 'Purchase Invoice',
+        },
+        {
+          id: 2,
+          name: 'Sales Invoice',
+        },
+        {
+          id: 3,
+          name: 'Receipt',
+        },
+        {
+          id: 4,
+          name: 'Purchase Credit Memo',
+        },
+        {
+          id: 5,
+          name: 'Sales Credit Memo',
+        },
+        {
+          id: 6,
+          name: 'Journal Voucher',
+        },
+      ],
     },
     {
-      value: 'refundDescription',
-      label: 'Refund Description',
+      value: 'appliesToDocNo',
+      label: 'Applies To Doc No',
       type: 'text',
       required: true,
     },
   ];
 
-  const totalAmounts1 = [
-    { name: 'Number of Entries', value: 1 },
-
-    { name: 'Total Debit', value: '0.00' },
-    { name: 'Total Credit', value: '0.00' },
-    { name: 'Balance', value: '0.00' },
-    { name: 'Total Balance', value: '0.00' },
-  ];
-
-  const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
-
+  const [totalAmmounts, setTotalAmmounts] = useState([]);
   return (
     <div className="p-2   mt-2">
       <div>
         <div>
           <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
-              <div className="flex-grow">
-                {' '}
-                {/* This allows the card to grow */}
-                <BaseAutoSaveInputCard
-                  setClickedItem={setClickedItem}
-                  fields={fields}
-                  apiEndpoint={financeEndpoints.addPayment}
-                  putApiFunction={apiService.post}
-                  updateApiEndpoint={financeEndpoints.updatePayment}
-                  postApiFunction={apiService.post}
-                  getApiEndpoint={financeEndpoints.getPaymentById(
-                    clickedItem?.id
-                  )}
-                  getApiFunction={apiService.get}
-                  transformData={transformData}
-                  setOpenBaseCard={setOpenBaseCard}
-                  clickedItem={clickedItem}
-                  useRequestBody={true}
-                />
-              </div>
-
               <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
                 <div className="flex-grow">
                   {' '}
@@ -242,22 +255,21 @@ function ScheduledPaymentsCard({
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
                     selectedAccountTypeId={selectedAccountTypeId}
-                    title="Scheduled Payment Lines"
+                    title="Receipt Lines"
                     fields={tableFields}
                     id={clickedItem?.id}
-                    idLabel="paymentId"
+                    idLabel="receiptId"
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.post}
-                    getEndpoint={financeEndpoints.getPaymentScheduleLines(
+                    getEndpoint={financeEndpoints.getReceiptLines(
                       clickedItem?.id
                     )}
-                    deleteEndpoint={financeEndpoints.deletePaymentLine}
-                    setTotalAmmounts={setTotalAmmounts}
-                    postEndpoint={financeEndpoints.addPaymentLine}
-                    putEndpoint={financeEndpoints.updatePaymentLine}
+                    deleteEndpoint={financeEndpoints.deleteReceiptLine}
+                    postEndpoint={financeEndpoints.addReceiptLine}
+                    putEndpoint={financeEndpoints.updateReceiptLine}
                     passProspectivePensionerId={true}
-                    branches={branches}
+                    setTotalAmmounts={setTotalAmmounts}
                   />
                 </div>
 
@@ -287,4 +299,4 @@ function ScheduledPaymentsCard({
   );
 }
 
-export default ScheduledPaymentsCard;
+export default RecieptLines;

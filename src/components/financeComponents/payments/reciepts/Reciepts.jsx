@@ -15,7 +15,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import { Dialog } from '@mui/material';
 import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
-import ScheduledPaymentsCard from './ScheduledPaymentsCard';
+import RecieptLines from './ReceiptLines';
 
 const Reciepts = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -363,20 +363,24 @@ const Reciepts = ({ status }) => {
         dialogType={dialogType}
       >
         {clickedItem ? (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addReceipt}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateTheReceipt}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getReceiptsById}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-          />
+          <div className="flex flex-col ">
+            <BaseAutoSaveInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.addReceipt}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateTheReceipt}
+              postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.getReceipts}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+              clickedItem={clickedItem}
+            />
+            <RecieptLines clickedItem={clickedItem} />
+          </div>
         ) : (
           <BaseAutoSaveInputCard
             fields={fields}
@@ -384,7 +388,7 @@ const Reciepts = ({ status }) => {
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateTheReceipt}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getReceiptsById}
+            getApiEndpoint={financeEndpoints.getReceipts}
             getApiFunction={apiService.get}
             transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
