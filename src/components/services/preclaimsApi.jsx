@@ -99,6 +99,9 @@ const preClaimsEndpoints = {
     `/api/Claims/getBeneficiaries?prospective_pensioner_id=${id}`,
 
   getBeneficiariesPortal: (id) => `/api/Claims/getBeneficiaries?id=${id}`,
+
+  getProspectivePensionerReviewPeriods: (id) =>
+    `api/ProspectivePensioners/GetProspectivePensionerReviewPeriods?prospective_pensioner_id=${id}`,
 };
 
 export const apiService = {

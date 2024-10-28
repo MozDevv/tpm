@@ -23,6 +23,7 @@ import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import endpoints from '@/components/services/setupsApi';
 import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
+import { parseDate, parseDateSlash } from '@/utils/dateFormatter';
 
 function PensionableSalary({ id, status, clickedItem }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -37,6 +38,8 @@ function PensionableSalary({ id, status, clickedItem }) {
   const [addAditionalCols, setAddAditionalCols] = useState(false);
   const [postNames, setPostNames] = useState([]);
 
+  const [hasFetchedPosts, setHasFetchedPosts] = useState(false); // New state to prevent multiple fetches
+
   const extractPosts = (data) => {
     return data.map((item) => item.post);
   };
@@ -50,11 +53,7 @@ function PensionableSalary({ id, status, clickedItem }) {
         const sortedData = res.data.data.sort(
           (a, b) => new Date(a.date) - new Date(b.date)
         );
-        setPostNames((prevNames) => [
-          ...prevNames,
-          ...extractPosts(sortedData),
-        ]);
-        console.log('Post and Nature Posts:', extractPosts(sortedData));
+        return extractPosts(sortedData);
       }
     } catch (error) {
       console.log(error);
@@ -70,11 +69,7 @@ function PensionableSalary({ id, status, clickedItem }) {
         const sortedData = res.data.data.sort(
           (a, b) => new Date(a.date) - new Date(b.date)
         );
-        setPostNames((prevNames) => [
-          ...prevNames,
-          ...extractPosts(sortedData),
-        ]);
-        console.log('Post and Nature Posts:', extractPosts(sortedData));
+        return extractPosts(sortedData);
       }
     } catch (error) {
       console.log(error);
@@ -87,11 +82,10 @@ function PensionableSalary({ id, status, clickedItem }) {
         preClaimsEndpoints.getPensionableSalary(id)
       );
       setPensionableSalary(res.data.data);
-      setLoading(false);
       console.log('Pensionable Salary', res.data.data);
-      return res.data.data;
     } catch (error) {
       console.log(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -108,10 +102,8 @@ function PensionableSalary({ id, status, clickedItem }) {
             )
           : res.data.data;
 
-      console.log('Post Names:', postNames);
       console.log('Filtered Designations:', filteredDesignations);
       setDesignations(filteredDesignations);
-      return res.data.data;
     } catch (error) {
       console.error('Error fetching Designations:', error);
     }
@@ -119,32 +111,70 @@ function PensionableSalary({ id, status, clickedItem }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([fetchMixedServicePosts(), fetchPostandNature()]);
-      if (postNames.length > 0) fetchDesignations(postNames);
+      if (!hasFetchedPosts) {
+        try {
+          const [mixedPosts, naturePosts] = await Promise.all([
+            fetchMixedServicePosts(),
+            fetchPostandNature(),
+          ]);
+
+          const combinedPosts = [...mixedPosts, ...naturePosts];
+          setPostNames(combinedPosts);
+          setHasFetchedPosts(true); // Mark posts as fetched
+          if (combinedPosts.length > 0) {
+            fetchDesignations(combinedPosts);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
     };
+
     fetchData();
     fetchPensionableSalary();
-  }, []);
+  }, [hasFetchedPosts]);
 
+  const [reviewPeriods, setReviewPeriods] = useState([]);
+
+  const getProspectivePensionerReviewPeriods = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensionerReviewPeriods(id)
+      );
+      setReviewPeriods(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProspectivePensionerReviewPeriods();
+  }, []);
   const fields = [
     { label: 'Start Date', value: 'start_date', type: 'date' },
     { label: 'End Date', value: 'end_date', type: 'date' },
-    { label: 'Salary in ksh', value: 'salary' },
-    { label: 'Pensionable Allowance', value: 'pensionable_allowance' },
-
     {
       label: 'Mode of Salary Increment',
       value: 'mode_of_salary_increment',
       type: 'select',
       options: [
-        { id: 0, name: 'Increment' },
-        { id: 1, name: 'Promotion' },
-        { id: 2, name: 'Review' },
+        { id: 0, name: 'Entry' },
+        { id: 1, name: 'Increment' },
+        { id: 2, name: 'Promotion' },
+        { id: 3, name: 'Review' },
       ],
     },
+    { label: 'Salary in ksh', value: 'salary' },
+    { label: 'Pensionable Allowance', value: 'pensionable_allowance' },
+
     ...(addAditionalCols
       ? [
-          { label: 'Review Period', value: 'review_period', type: 'date' },
+          {
+            label: 'Review Period',
+            value: 'review_period',
+            type: 'date',
+            disabled: true,
+          },
           {
             label: 'New Designation',
             value: 'new_designation_id',
@@ -157,93 +187,12 @@ function PensionableSalary({ id, status, clickedItem }) {
         ]
       : []),
   ];
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (data) => {
-    const formattedFormData = { ...data, prospective_pensioner_id: id };
-
-    // Format date fields
-    Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
-        formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          'YYYY-MM-DDTHH:mm:ss[Z]'
-        );
-      }
-    });
-
-    try {
-      let res;
-
-      if (data.id) {
-        res = await apiService.post(
-          preClaimsEndpoints.updatePensionableSalary,
-          {
-            ...formattedFormData,
-            id: editId,
-          }
-        );
-      } else {
-        res = await apiService.post(
-          preClaimsEndpoints.createPensionableSalary,
-          formattedFormData
-        );
-      }
-
-      // Check for successful response
-      if (res.status === 200 && res.data.succeeded) {
-        fetchPensionableSalary();
-        setOpen(false);
-        message.success(
-          `Pensionable Salary ${isEditMode ? 'updated' : 'added'} successfully`
-        );
-      } else if (
-        res.data.validationErrors &&
-        res.data.validationErrors.length > 0
-      ) {
-        res.data.validationErrors.forEach((error) => {
-          error.errors.forEach((err) => {
-            message.error(`${error.field}: ${err}`);
-          });
-        });
-        throw new Error('An error occurred while submitting the data.');
-      }
-    } catch (error) {
-      throw error;
-      console.error('Submission error:', error);
-      message.error('An error occurred while submitting the data.');
-    }
-  };
-
-  const handleEdit = (item) => {
-    const formattedItem = {
-      ...item,
-      start_date: dayjs(item.start_date).format('YYYY-MM-DD'),
-      end_date: dayjs(item.end_date).format('YYYY-MM-DD'),
-    };
-
-    setFormData(formattedItem);
-    //setFormData(item);
-    setEditId(item.id);
-    setIsEditMode(true);
-    setOpen(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await apiService.post(
-        preClaimsEndpoints.deletePensionableSalary(recordId)
-      );
-      fetchPensionableSalary();
-      message.success('Pensionable Salary deleted successfully');
-      setOpenDeleteDialog(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  const dynamicReviewFields = reviewPeriods.map((period, index) => ({
+    label: `${parseDateSlash(period.review_date)} Salary Revision`,
+    value: `new_salary_${period.review_date.split('T')[0].replace('-', '_')}`,
+    disabled: true,
+  }));
+  const finalFields = [...fields, ...dynamicReviewFields];
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
 
@@ -251,7 +200,7 @@ function PensionableSalary({ id, status, clickedItem }) {
     <div className="mt-5">
       <BaseInputForPensionableSalary
         title="Pensionable Salary"
-        fields={fields}
+        fields={finalFields}
         id={id}
         disableAll={
           clickedItem?.notification_status !== 2 &&

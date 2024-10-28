@@ -29,6 +29,8 @@ import { parseDate } from '@/utils/dateFormatter';
 import * as XLSX from 'xlsx';
 import { VisuallyHiddenInput } from '@/utils/handyComponents';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
+import preClaimsEndpoints from '../services/preclaimsApi';
+import { apiService as preclaimsApiService } from '../services/preclaimsApi';
 
 const BaseInputForPensionableSalary = ({
   fields = [],
@@ -107,12 +109,25 @@ const BaseInputForPensionableSalary = ({
       getApiService
     );
 
+    const getSalaryRevisions = async () => {
+      try {
+        const res = await preclaimsApiService.get(
+          preClaimsEndpoints.getProspectivePensionerReviewPeriods(id)
+        );
+        console.log('Fetched Salary Revisions:', res.data.data);
+        return res.data.data;
+      } catch (error) {
+        console.log(error);
+        return []; // Return an empty array on error
+      }
+    };
     if (dataAdded) {
       try {
         const res = await getApiService(getEndpoint);
         if (res.status === 200) {
           console.log('Fetched Data from Editable Table', res.data.data);
 
+          const salaryRevisions = await getSalaryRevisions();
           setRowData((prevRowData) => {
             const datePairs = [
               { start: 'startDate', end: 'endDate' },
@@ -157,21 +172,35 @@ const BaseInputForPensionableSalary = ({
 
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
+            const updatedRows = res.data.data.map((row) => {
+              salaryRevisions.forEach((review) => {
+                review.salaryReviews.forEach((salaryReview) => {
+                  if (row.id === salaryReview.pensionable_salary_id) {
+                    const reviewDateKey = `new_salary_${review.review_date}`;
 
-            console.log('Default Rows:', defaultRows);
+                    const newSalary = parseFloat(salaryReview.new_salary);
 
-            // Determine if we should fetch and append children
+                    // Use Object.assign() to add the new key-value pair
+                    Object.assign(row, { [reviewDateKey]: newSalary });
+                  }
+                });
+              });
+              return row;
+            });
+
+            console.log('Updated Rows with Salary Revisions:', updatedRows);
+
+            console.log('Updated Rows with Salary Revisions:', updatedRows);
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
               console.log('Fetched Children Data:', childrenData);
-
-              console.log('childrenData', childrenData);
-              // Merge sortedData with childrenData
-              return [...childrenData, ...sortedData];
+              return [...childrenData, ...updatedRows, ...defaultRows];
             } else {
-              return [...sortedData, ...defaultRows];
+              console.log('Updated Rows with Salary Revisions:', updatedRows);
+
+              return [...updatedRows, ...defaultRows];
             }
           });
         }
@@ -181,7 +210,9 @@ const BaseInputForPensionableSalary = ({
     } else {
       try {
         const res = await getApiService(getEndpoint);
+
         if (res.status === 200) {
+          const salaryRevisions = await getSalaryRevisions();
           console.log('Fetched Data from Editable Table', res.data.data);
           setRowData((prevRowData) => {
             const defaultRows = Array.from({ length: 1 }, () =>
@@ -191,19 +222,56 @@ const BaseInputForPensionableSalary = ({
               }, {})
             );
 
-            const sortedData = sortData(res.data.data);
+            const mappedData = res.data.data.map((row) => {
+              const updatedRow = { ...row };
 
-            // Determine if we should fetch and append children
+              if (row.salaryReviews && row.salaryReviews.length > 0) {
+                row.salaryReviews.forEach((salaryReview) => {
+                  const reviewDate =
+                    salaryReview.prospectivePensionerReviewPeriod.review_date;
+                  const reviewDateKey = `new_salary_${reviewDate
+                    .split('T')[0]
+                    .replaceAll('-', '_')}`;
+
+                  // updatedRow[reviewDateKey] = parseFloat(
+                  //   salaryReview.new_salary
+                  // );
+                  Object.assign(row, {
+                    [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                  });
+                });
+              }
+
+              console.log('Updated ROW with Salary REVISIONS:', updatedRow);
+              return row;
+            });
+
+            // const updatedRows = res.data.data.map((row) => {
+            //   salaryRevisions.forEach((review) => {
+            //     review.salaryReviews.forEach((salaryReview) => {
+            //       if (row.id === salaryReview.pensionable_salary_id) {
+            //         const reviewDateKey = `new_salary_${review.review_date}`;
+
+            //         const newSalary = parseFloat(salaryReview.new_salary);
+
+            //         Object.assign(row, { [reviewDateKey]: newSalary });
+            //       }
+            //     });
+            //   });
+            //   return row;
+            // });
+
+            const sortedData = sortData(mappedData);
+
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
               console.log('Fetched Children Data:', childrenData);
-
-              // Merge sortedData with childrenData
-              return [...childrenData, ...sortedData];
+              return [...childrenData, ...updatedRows, ...defaultRows];
             } else {
-              return [...sortedData, ...defaultRows];
+              console.log('Updated Rows with Salary Revisions:', mappedData);
+              return [...mappedData];
             }
           });
         }
@@ -293,13 +361,25 @@ const BaseInputForPensionableSalary = ({
     if (id) {
       formattedFormData[idLabel] = id;
     }
-    Object.keys(formattedFormData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
-        formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          'YYYY-MM-DDTHH:mm:ss[Z]'
-        );
-      }
-    });
+
+    if (
+      formattedFormData.start_date &&
+      formattedFormData.mode_of_salary_increment === 3
+    ) {
+      formattedFormData.review_period = formattedFormData.start_date;
+    }
+
+    // Object.keys(formattedFormData).forEach((key) => {
+    //   if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
+    //     // Set the time portion to 00:00:00
+    //     formattedFormData[key] = dayjs(formattedFormData[key])
+    //       .set('hour', 0)
+    //       .set('minute', 0)
+    //       .set('second', 0)
+    //       .set('millisecond', 0)
+    //       .format('YYYY-MM-DDTHH:mm:ss[Z]');
+    //   }
+    // });
 
     console.log('Formatted Form Data After Date Handling:', formattedFormData);
 
@@ -320,6 +400,9 @@ const BaseInputForPensionableSalary = ({
             delete updatedErrors[data.id];
             return updatedErrors;
           });
+        } else if (res.data.messages.length > 0) {
+          message.error(res.data.messages[0]);
+          throw new Error(res.data.messages[0]);
         } else if (
           res?.data?.validationErrors &&
           res?.data?.validationErrors?.length > 0
@@ -639,20 +722,24 @@ const BaseInputForPensionableSalary = ({
         const { colDef, data, newValue } = params;
         const field = colDef.field;
 
-        const columns = data.mode_of_salary_increment === 2;
+        const isReview = data.mode_of_salary_increment === 3;
 
-        if (data.start_date) {
+        if (data.start_date && isReview) {
+          // Ensure the exact same value without conversion
           data.review_period = data.start_date;
         }
 
-        if (columns) {
+        if (isReview) {
           if (data.start_date) {
             data.review_period = data.start_date;
+            setAddAditionalCols(true);
+          } else {
+            setAddAditionalCols(true);
           }
-          setAddAditionalCols(true);
         } else if (
           data.mode_of_salary_increment === 0 ||
-          data.mode_of_salary_increment === 1
+          data.mode_of_salary_increment === 1 ||
+          data.mode_of_salary_increment === 2
         ) {
           setAddAditionalCols(false);
         }

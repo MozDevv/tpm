@@ -25,6 +25,14 @@ export const parseDate = (date) => {
   return '';
 };
 
+//1960-10-10T00:00:00Z to 1960/10/10
+export const parseDateSlash = (date) => {
+  if (date) {
+    return new Date(date).toISOString().split('T')[0].replace(/-/g, '/');
+  }
+  return '';
+};
+
 export const checkIsDate = (date) => {
   return date instanceof Date && !isNaN(date);
 };

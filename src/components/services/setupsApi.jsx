@@ -394,6 +394,9 @@ const endpoints = {
 
   getRelationships: 'api/Setups/GetBenefitsConfigurationMatrix',
   createRelationship: 'api/setups/CreateBenefitsConfigurationMatrix',
+
+  getProspectivePensionerReviewPeriods: (id) =>
+    `api/ProspectivePensioners/GetProspectivePensionerReviewPeriods?prospective_pensioner_id=${id}`,
 };
 
 export const apiService = {
