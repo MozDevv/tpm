@@ -81,6 +81,11 @@ function PensionableSalary({ id, status, clickedItem }) {
       const res = await apiService.get(
         preClaimsEndpoints.getPensionableSalary(id)
       );
+
+      const hasReviewPeriods = res.data.data.some(
+        (item) => item.mode_of_salary_increment === 3
+      );
+      setAddAditionalCols(hasReviewPeriods);
       setPensionableSalary(res.data.data);
       console.log('Pensionable Salary', res.data.data);
     } catch (error) {
