@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import TextField from "@mui/material/TextField";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import React, { useState, useEffect, useRef } from 'react';
+import TextField from '@mui/material/TextField';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const AutocompleteSelectCellEditor = (props) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null); // For menu positioning
   const inputRef = useRef(null);
 
   useEffect(() => {
     // Set initial value for the editor
-    setInputValue(props.value ? props.value : "");
+    setInputValue(props.value ? props.value : '');
     setFilteredOptions(props.options);
 
     // Focus on the input when editor is opened
@@ -40,7 +40,7 @@ const AutocompleteSelectCellEditor = (props) => {
 
   // Handle key press to select an option with Enter
   const onKeyPress = (event) => {
-    if (event.key === "Enter" && filteredOptions.length) {
+    if (event.key === 'Enter' && filteredOptions.length) {
       onSelectOption(filteredOptions[0]);
     }
   };
@@ -70,8 +70,8 @@ const AutocompleteSelectCellEditor = (props) => {
         size="small"
         className="mb-2"
         sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "0.375rem", // Tailwind's rounded-md
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '0.375rem', // Tailwind's rounded-md
           },
         }}
       />
@@ -81,8 +81,8 @@ const AutocompleteSelectCellEditor = (props) => {
         onClose={() => setAnchorEl(null)}
         PaperProps={{
           style: {
-            maxHeight: "200px",
-            width: "200px",
+            maxHeight: '200px',
+            width: '200px',
           },
         }}
         className="absolute z-10" // Tailwind for positioning
@@ -91,7 +91,7 @@ const AutocompleteSelectCellEditor = (props) => {
           <MenuItem
             key={option.id}
             onClick={() => onSelectOption(option)}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: 'pointer' }}
             className="hover:bg-gray-100" // Tailwind hover effect
           >
             {option.name}

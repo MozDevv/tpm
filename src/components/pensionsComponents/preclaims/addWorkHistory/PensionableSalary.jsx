@@ -169,8 +169,12 @@ function PensionableSalary({ id, status, clickedItem }) {
         { id: 3, name: 'Review' },
       ],
     },
-    { label: 'Salary in ksh', value: 'salary' },
-    { label: 'Pensionable Allowance', value: 'pensionable_allowance' },
+    { label: 'Salary in ksh', value: 'salary', type: 'amount' },
+    {
+      label: 'Pensionable Allowance',
+      value: 'pensionable_allowance',
+      type: 'amount',
+    },
 
     ...(addAditionalCols
       ? [
@@ -200,6 +204,7 @@ function PensionableSalary({ id, status, clickedItem }) {
       .split('T')[0]
       .replaceAll('-', '_')}`,
     notRequired: true,
+    type: 'amount',
     //  disabled: true,
   }));
   const finalFields = [...fields, ...dynamicReviewFields];

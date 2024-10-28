@@ -31,6 +31,8 @@ import { VisuallyHiddenInput } from '@/utils/handyComponents';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
 import preClaimsEndpoints from '../services/preclaimsApi';
 import { apiService as preclaimsApiService } from '../services/preclaimsApi';
+import AmountCellEditor from './AmountCellEditor';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const BaseInputForPensionableSalary = ({
   fields = [],
@@ -195,21 +197,21 @@ const BaseInputForPensionableSalary = ({
 
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
-            const updatedRows = res.data.data.map((row) => {
-              salaryRevisions.forEach((review) => {
-                review.salaryReviews.forEach((salaryReview) => {
-                  if (row.id === salaryReview.pensionable_salary_id) {
-                    const reviewDateKey = `new_salary_${review.review_date}`;
+            // const updatedRows = res.data.data.map((row) => {
+            //   salaryRevisions.forEach((review) => {
+            //     review.salaryReviews.forEach((salaryReview) => {
+            //       if (row.id === salaryReview.pensionable_salary_id) {
+            //         const reviewDateKey = `new_salary_${review.review_date}`;
 
-                    const newSalary = parseFloat(salaryReview.new_salary);
+            //         const newSalary = parseFloat(salaryReview.new_salary);
 
-                    // Use Object.assign() to add the new key-value pair
-                    Object.assign(row, { [reviewDateKey]: newSalary });
-                  }
-                });
-              });
-              return row;
-            });
+            //         // Use Object.assign() to add the new key-value pair
+            //         Object.assign(row, { [reviewDateKey]: newSalary });
+            //       }
+            //     });
+            //   });
+            //   return row;
+            // });
 
             console.log('Updated Rows with Salary Revisions:', updatedRows);
 
@@ -294,7 +296,7 @@ const BaseInputForPensionableSalary = ({
               return [...childrenData, ...updatedRows, ...defaultRows];
             } else {
               console.log('Updated Rows with Salary Revisions:', mappedData);
-              return [...mappedData];
+              return [...sortedData, ...defaultRows];
             }
           });
         }
@@ -657,6 +659,7 @@ const BaseInputForPensionableSalary = ({
             };
           }
           return {
+            fontFamily: 'Montserrat',
             borderRight: '1px solid #f0f0f0',
             fontSize: '13px',
           };
@@ -721,6 +724,24 @@ const BaseInputForPensionableSalary = ({
             defaultValue: params.value, // Pass the current value as default
             rowId: data.id, // Pass the row ID to the editor
           };
+        };
+      } else if (col.type === 'amount') {
+        columnDef.cellEditor = AmountCellEditor;
+
+        columnDef.valueFormatter = (params) => {
+          if (!params.value) return '';
+
+          // Optionally format the amount with commas and decimals
+          return formatNumber(params.value);
+        };
+
+        columnDef.cellRenderer = (params) => {
+          const { value } = params;
+          return formatNumber(value);
+        };
+        columnDef.valueParser = (params) => {
+          const parsedValue = parseFloat(params.newValue.replace(/,/g, ''));
+          return isNaN(parsedValue) ? params.newValue : parsedValue;
         };
       } else if (col.hide) {
         columnDef.hide = true;

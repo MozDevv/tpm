@@ -29,6 +29,8 @@ import { parseDate } from '@/utils/dateFormatter';
 import * as XLSX from 'xlsx';
 import { VisuallyHiddenInput } from '@/utils/handyComponents';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
+import AmountCellEditor from './AmountCellEditor';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const BaseInputTable = ({
   fields = [],
@@ -544,6 +546,7 @@ const BaseInputTable = ({
             };
           }
           return {
+            fontFamily: 'Montserrat',
             borderRight: '1px solid #f0f0f0',
             fontSize: '13px',
           };
@@ -608,6 +611,24 @@ const BaseInputTable = ({
             defaultValue: params.value, // Pass the current value as default
             rowId: data.id, // Pass the row ID to the editor
           };
+        };
+      } else if (col.type === 'amount') {
+        columnDef.cellEditor = AmountCellEditor;
+
+        columnDef.valueFormatter = (params) => {
+          if (!params.value) return '';
+
+          // Optionally format the amount with commas and decimals
+          return formatNumber(params.value);
+        };
+
+        columnDef.cellRenderer = (params) => {
+          const { value } = params;
+          return formatNumber(value);
+        };
+        columnDef.valueParser = (params) => {
+          const parsedValue = parseFloat(params.newValue.replace(/,/g, ''));
+          return isNaN(parsedValue) ? params.newValue : parsedValue;
         };
       } else if (col.hide) {
         columnDef.hide = true;
