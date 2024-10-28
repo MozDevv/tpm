@@ -196,7 +196,7 @@ function GovernmentSalary({ id, clickedItem }) {
       type: 'select',
       options: allGrades,
     },
-    { label: 'Salary Amount', value: 'salaryAmount', type: 'text' },
+    { label: 'Salary Amount', value: 'salaryAmount', type: 'amount' },
   ];
 
   return (
