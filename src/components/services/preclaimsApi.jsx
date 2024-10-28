@@ -30,8 +30,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       alert('Session Expired. You will be redirected to the login page.');
-      // Redirect to the login page
-      window.location.href = '/'; // Update with your login route
+
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }

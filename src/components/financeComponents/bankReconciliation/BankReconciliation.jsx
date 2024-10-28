@@ -293,6 +293,7 @@ const BankReconciliation = () => {
       label: 'Current Statement Balance',
       type: 'amount',
       required: true,
+      disabled: true,
     },
     {
       name: 'file',
@@ -548,22 +549,6 @@ const BankReconciliation = () => {
             uploadExcel={uploadExcel}
           />
         </div>
-        {/* ) : (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addBankAccount}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateBankAccount}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getBankAccounts}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-          />
-        )} */}
       </BaseCard>
       <BaseTable
         openBaseCard={openBaseCard}

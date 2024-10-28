@@ -3,6 +3,8 @@ import { Tabs } from 'antd';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
 import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { apiService } from '@/components/services/financeApi';
 import endpoints, {
@@ -12,6 +14,8 @@ import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCa
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 
 const { TabPane } = Tabs;
 
@@ -25,187 +29,123 @@ function ScheduledPaymentsCard({
   transformData,
   setClickedItem,
 }) {
-  const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
+  const [scheduleLines, setScheduleLines] = useState([]);
+  const [deductionsAndRefunds, setDeductionsAndRefunds] = useState([]);
+  const [payments, setPayments] = useState([]);
 
-  const [allOptions, setAllOptions] = useState(null);
-
-  const fetchNewOptions = async () => {
+  const fetchScheduleLines = async (id) => {
     try {
-      const res = await apiService.get(financeEndpoints.getAllAccounts, {
-        'paging.pageSize': 2000,
-      }); // Pass accountTypeId to the endpoint
-      if (res.status === 200) {
-        setAllOptions(
-          res.data.data.map((acc) => {
-            return {
-              id: acc.id,
-              name: acc.accountNo,
-              accountName: acc.name,
-              accountType: acc.accountType,
-            };
-          })
-        );
-      }
-
-      console.log(
-        'All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️',
-        res.data.data.map((acc) => {
-          return {
-            id: acc.id,
-            name: acc.accountNo,
-            accountName: acc.name,
-            accountType: acc.accountType,
-          };
-        })
+      const res = await apiService.get(
+        financeEndpoints.getPaymentScheduleLines(id),
+        {
+          'paging.pageSize': 2000,
+        }
       );
+      if (res.status === 200) {
+        return res.data.data;
+      }
     } catch (error) {
       console.log(error);
-      return []; // Return an empty array if an error occurs
+      return [];
     }
   };
 
-  useEffect(() => {
-    fetchNewOptions();
-  }, []);
-
-  const [productPostingGroups, setProductPostingGroups] = useState(null);
-
-  useEffect(() => {
-    const fetchProductPostingGroups = async () => {
-      try {
-        const res = await apiService.get(
-          financeEndpoints.getProductPostingGroups,
-          {
-            'paging.pageSize': 2000,
-          }
-        );
-        if (res.status === 200) {
-          setProductPostingGroups(
-            res.data.data.map((group) => {
-              return {
-                id: group.id,
-                name: group.name,
-              };
-            })
-          );
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchProductPostingGroups();
-  }, []);
-
-  const [banks, setBanks] = useState([]);
-  const [branches, setBranches] = useState([]);
-
-  const fetchBanksAndBranches = async () => {
+  const fetchDeductionsRefunds = async () => {
     try {
-      const res = await setupsApiService.get(endpoints.getBanks, {
-        'paging.pageSize': 1000,
+      const res = await apiService.get(financeEndpoints.getRecoveryDeductions, {
+        'paging.pageSize': 2000,
       });
-      const rawData = res.data.data;
-
-      const banksData = rawData.map((bank) => ({
-        id: bank.id,
-        name: bank.name,
-        branches: bank.branches,
-      }));
-
-      const branchesData = rawData.flatMap((bank) =>
-        bank.branches.map((branch) => ({
-          ...branch,
-          bankId: bank.id,
-        }))
-      );
-      console.log('banksData', banksData);
-      console.log('branchesData', branchesData);
-
-      setBanks(banksData);
-      setBranches(branchesData);
+      if (res.status === 200) {
+        return res.data.data;
+      }
     } catch (error) {
-      console.log('Error fetching banks and branches:', error);
+      console.log(error);
+      return [];
     }
   };
+
   useEffect(() => {
-    fetchBanksAndBranches();
+    // fetchBanksAndBranches();
+    fetchScheduleLines(clickedItem?.id).then((data) => {
+      setScheduleLines(data);
+    });
+    fetchDeductionsRefunds().then((data) => {
+      setDeductionsAndRefunds(data);
+    });
   }, []);
 
   const tableFields = [
     {
-      value: 'documentNo',
-      label: 'Document No',
+      field: 'documentNo',
+      headerName: 'Document No',
+      filter: true,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
       type: 'text',
       required: true,
     },
     {
-      value: 'description',
-      label: 'Description',
+      field: 'netAmount',
+      headerName: 'Net Amount',
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      required: true,
+    },
+    {
+      field: 'grossAmount',
+      headerName: 'Gross Amount',
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      required: true,
+    },
+    {
+      field: 'refundAmount',
+      headerName: 'Refund Amount',
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      required: true,
+    },
+    {
+      field: 'pensionAmount',
+      headerName: 'Pension Amount',
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      required: true,
+    },
+    {
+      field: 'deductionsAndRefundId',
+      headerName: 'Deductions And Refund',
       type: 'text',
       required: true,
-    },
-    {
-      value: 'netAmount',
-      label: 'Net Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'grossAmount',
-      label: 'Gross Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'refundAmount',
-      label: 'Refund Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'pensionAmount',
-      label: 'Pension Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      value: 'deductionsAndRefundId',
-      label: 'Deductions And Refund',
-      type: 'text',
-      required: true,
-    },
-    {
-      value: 'paymentId',
-      label: 'Payment',
-      type: 'text',
-      required: true,
+      valueFormatter: (params) => {
+        const deduction = deductionsAndRefunds.find(
+          (deduction) => deduction.id === params.value
+        );
+        return deduction?.description;
+      },
     },
 
     {
-      value: 'deductionAmount',
-      label: 'Deduction Amount',
-      type: 'number',
+      field: 'deductionAmount',
+      headerName: 'Deduction Amount',
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
       required: true,
     },
     {
-      value: 'refundDescription',
-      label: 'Refund Description',
+      field: 'refundDescription',
+      headerName: 'Refund Description',
       type: 'text',
       required: true,
     },
   ];
-
-  const totalAmounts1 = [
-    { name: 'Number of Entries', value: 1 },
-
-    { name: 'Total Debit', value: '0.00' },
-    { name: 'Total Credit', value: '0.00' },
-    { name: 'Balance', value: '0.00' },
-    { name: 'Total Balance', value: '0.00' },
-  ];
-
-  const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
 
   return (
     <div className="p-2   mt-2">
@@ -234,51 +174,18 @@ function ScheduledPaymentsCard({
                 />
               </div>
 
-              <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
-                <div className="flex-grow">
+              <BaseCollapse name="Schedule Lines" titleFontSize="24">
+                <div className="flex-grow h-[350px] ag-theme-quartz mt-3 ">
                   {' '}
-                  {/* Make this grow too */}
-                  <BaseFinanceInputTable
-                    allOptions={allOptions}
-                    setSelectedAccountTypeId={setSelectedAccountTypeId}
-                    selectedAccountTypeId={selectedAccountTypeId}
-                    title="Scheduled Payment Lines"
-                    fields={tableFields}
-                    id={clickedItem?.id}
-                    idLabel="paymentId"
-                    getApiService={apiService.get}
-                    postApiService={apiService.post}
-                    putApiService={apiService.post}
-                    getEndpoint={financeEndpoints.getPaymentScheduleLines(
-                      clickedItem?.id
-                    )}
-                    deleteEndpoint={financeEndpoints.deletePaymentLine}
-                    setTotalAmmounts={setTotalAmmounts}
-                    postEndpoint={financeEndpoints.addPaymentLine}
-                    putEndpoint={financeEndpoints.updatePaymentLine}
-                    passProspectivePensionerId={true}
-                    branches={branches}
+                  <AgGridReact
+                    rowData={scheduleLines}
+                    columnDefs={tableFields}
+                    rowSelection="multiple"
+                    defaultColDef={{ resizable: true, sortable: true }}
+                    domLayout="autoHeight"
                   />
                 </div>
-
-                {/* <div className="flex justify-between mt-10">
-                  <div className="flex flex-row justify-between w-full">
-                    {totalAmmounts.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col gap-4 justify-between"
-                      >
-                        <span className="text-sm font-semibold text-gray-600">
-                          {item.name}
-                        </span>
-                        <span className="items-end text-right">
-                          {item.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div> */}
-              </div>
+              </BaseCollapse>
             </div>
           </div>
         </div>

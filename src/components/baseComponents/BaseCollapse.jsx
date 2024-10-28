@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Collapse, IconButton } from "@mui/material";
-import { KeyboardArrowRight, ExpandLess } from "@mui/icons-material";
+import React, { useState } from 'react';
+import { Collapse, IconButton } from '@mui/material';
+import { KeyboardArrowRight, ExpandLess } from '@mui/icons-material';
 
-const BaseCollapse = ({ name, children }) => {
+const BaseCollapse = ({ name, children, titleFontSize }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleToggleSection = () => {
@@ -12,15 +12,19 @@ const BaseCollapse = ({ name, children }) => {
   return (
     <>
       <div className="flex items-center ml-4">
-        <p className="font-semibold text-primary text-sm font-montserrat">
+        <p
+          className={`font-semibold text-primary ${
+            titleFontSize ? `${titleFontSize}px` : 'text-sm'
+          } font-montserrat`}
+        >
           {name}
         </p>
-        <IconButton sx={{ zIndex: 1, mt: "3px" }} onClick={handleToggleSection}>
+        <IconButton sx={{ zIndex: 1, mt: '3px' }} onClick={handleToggleSection}>
           {isOpen ? (
-            <ExpandLess sx={{ color: "primary.main", fontSize: "14px" }} />
+            <ExpandLess sx={{ color: 'primary.main', fontSize: '14px' }} />
           ) : (
             <KeyboardArrowRight
-              sx={{ color: "primary.main", fontSize: "14px" }}
+              sx={{ color: 'primary.main', fontSize: '14px' }}
             />
           )}
         </IconButton>

@@ -124,7 +124,7 @@ function PensionableSalary({ id, status, clickedItem }) {
     };
     fetchData();
     fetchPensionableSalary();
-  }, [id, postNames]);
+  }, []);
 
   const fields = [
     { label: 'Start Date', value: 'start_date', type: 'date' },
