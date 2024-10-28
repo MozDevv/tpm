@@ -145,7 +145,30 @@ const BaseInputForPensionableSalary = ({
               }, {})
             );
 
-            const sortedData = sortData(res.data.data);
+            const mappedData = res.data.data.map((row) => {
+              const updatedRow = { ...row };
+
+              if (row.salaryReviews && row.salaryReviews.length > 0) {
+                row.salaryReviews.forEach((salaryReview) => {
+                  const reviewDate =
+                    salaryReview.prospectivePensionerReviewPeriod.review_date;
+                  const reviewDateKey = `new_salary_${reviewDate
+                    .split('T')[0]
+                    .replaceAll('-', '_')}`;
+
+                  // updatedRow[reviewDateKey] = parseFloat(
+                  //   salaryReview.new_salary
+                  // );
+                  Object.assign(row, {
+                    [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                  });
+                });
+              }
+
+              console.log('Updated ROW with Salary REVISIONS:', updatedRow);
+              return row;
+            });
+            const sortedData = sortData(mappedData);
 
             let lastEndDate = null;
             let matchingStartField = null;
@@ -295,6 +318,12 @@ const BaseInputForPensionableSalary = ({
 
   const isRowComplete = (row) => {
     return fields.every((field) => {
+      // If the field is not required, we don't need to check its value
+      if (field.notRequired) {
+        return true; // Skip this field since it's not required
+      }
+
+      // If the field is required, check if its value is defined, not null, and not an empty string
       return (
         row[field.value] !== undefined &&
         row[field.value] !== null &&

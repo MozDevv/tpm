@@ -174,6 +174,7 @@ function PensionableSalary({ id, status, clickedItem }) {
             value: 'review_period',
             type: 'date',
             disabled: true,
+            notRequired: true,
           },
           {
             label: 'New Designation',
@@ -183,14 +184,18 @@ function PensionableSalary({ id, status, clickedItem }) {
               name: designation.name,
               id: designation.id,
             })),
+            //notRequired: true,
           },
         ]
       : []),
   ];
   const dynamicReviewFields = reviewPeriods.map((period, index) => ({
     label: `${parseDateSlash(period.review_date)} Salary Revision`,
-    value: `new_salary_${period.review_date.split('T')[0].replace('-', '_')}`,
-    disabled: true,
+    value: `new_salary_${period.review_date
+      .split('T')[0]
+      .replaceAll('-', '_')}`,
+    notRequired: true,
+    //  disabled: true,
   }));
   const finalFields = [...fields, ...dynamicReviewFields];
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
