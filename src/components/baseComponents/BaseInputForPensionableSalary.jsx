@@ -213,19 +213,16 @@ const BaseInputForPensionableSalary = ({
             //   return row;
             // });
 
-            console.log('Updated Rows with Salary Revisions:', updatedRows);
-
-            console.log('Updated Rows with Salary Revisions:', updatedRows);
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
               console.log('Fetched Children Data:', childrenData);
-              return [...childrenData, ...updatedRows, ...defaultRows];
+              return [...childrenData, ...defaultRows];
             } else {
-              console.log('Updated Rows with Salary Revisions:', updatedRows);
+              //  console.log('Updated Rows with Salary Revisions:', updatedRows);
 
-              return [...updatedRows, ...defaultRows];
+              return [...sortedData, ...defaultRows];
             }
           });
         }
