@@ -1,101 +1,101 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
 const VendorPostingGroups = () => {
   const columnDefs = [
     {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
       width: 90,
       filter: true,
     },
     {
-      field: "groupName",
-      headerName: "Group Name",
-      headerClass: "prefix-header",
+      field: 'groupName',
+      headerName: 'Group Name',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "description",
-      headerName: "Description",
-      headerClass: "prefix-header",
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "viewAll",
-      headerName: "View All",
-      headerClass: "prefix-header",
+      field: 'viewAll',
+      headerName: 'View All',
+      headerClass: 'prefix-header',
       filter: true,
       width: 100,
     },
     {
-      field: "payableAccount",
-      headerName: "Payable Account",
-      headerClass: "prefix-header",
+      field: 'payableAccount',
+      headerName: 'Payable Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.payableAccount),
     },
 
     {
-      field: "serviceChargeAccount",
-      headerName: "Service Charge Account",
-      headerClass: "prefix-header",
+      field: 'serviceChargeAccount',
+      headerName: 'Service Charge Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.serviceChargeAccount),
     },
     {
-      field: "invoiceRoundingAccount",
-      headerName: "Invoice Rounding Account",
-      headerClass: "prefix-header",
+      field: 'invoiceRoundingAccount',
+      headerName: 'Invoice Rounding Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) =>
         getAccountName(params.data.invoiceRoundingAccount),
     },
     {
-      field: "drCurrencyRoundingAccount",
-      headerName: "Debit Currency Rounding Account",
-      headerClass: "prefix-header",
+      field: 'drCurrencyRoundingAccount',
+      headerName: 'Debit Currency Rounding Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) =>
         getAccountName(params.data.drCurrencyRoundingAccount),
     },
     {
-      field: "crCurrencyRoundingAccount",
-      headerName: "Credit Currency Rounding Account",
-      headerClass: "prefix-header",
+      field: 'crCurrencyRoundingAccount',
+      headerName: 'Credit Currency Rounding Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) =>
         getAccountName(params.data.crCurrencyRoundingAccount),
     },
     {
-      field: "drRoundingAccount",
-      headerName: "Debit Rounding Account",
-      headerClass: "prefix-header",
+      field: 'drRoundingAccount',
+      headerName: 'Debit Rounding Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.drRoundingAccount),
     },
     {
-      field: "crRoundingAccount",
-      headerName: "Credit Rounding Account",
-      headerClass: "prefix-header",
+      field: 'crRoundingAccount',
+      headerName: 'Credit Rounding Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.crRoundingAccount),
@@ -112,18 +112,21 @@ const VendorPostingGroups = () => {
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 150,
-      });
-
-      const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
+      const response = await apiService.get(
+        financeEndpoints.getGLAccountsAccounttype(0),
+        {
+          'paging.pageSize': 150,
+        }
       );
 
+      // const accounts = response.data.data.filter(
+      //   (acc) => acc.accountTypeName === 'POSTING'
+      // );
+
       setGlAccounts(
-        accounts.map((account) => ({
+        response.data.data.map((account) => ({
           id: account.id,
-          name: account.accountNo,
+          name: account.name,
           accountNo: account.accountName,
         }))
       );
@@ -138,7 +141,7 @@ const VendorPostingGroups = () => {
   const getAccountName = (id) => {
     const account =
       Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
+    return account ? account.name : '';
   };
 
   const transformData = (data) => {
@@ -165,10 +168,10 @@ const VendorPostingGroups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -190,70 +193,70 @@ const VendorPostingGroups = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Vendor Posting Group"
-    : "Create New Vendor Posting Group";
+    ? 'Vendor Posting Group'
+    : 'Create New Vendor Posting Group';
 
   const fields = [
-    { name: "groupName", label: "Group Name", type: "text", required: true },
+    { name: 'groupName', label: 'Group Name', type: 'text', required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
-    { name: "viewAll", label: "View All", type: "switch", required: true },
+    { name: 'viewAll', label: 'View All', type: 'switch', required: true },
     {
-      name: "payableAccount",
-      label: "Payable Account",
-      type: "select",
-      required: true,
-      options: glAccounts,
-      table: true,
-    },
-    {
-      name: "serviceChargeAccount",
-      label: "Service Charge Account",
-      type: "select",
+      name: 'payableAccount',
+      label: 'Payable Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "invoiceRoundingAccount",
-      label: "Invoice Rounding Account",
-      type: "select",
+      name: 'serviceChargeAccount',
+      label: 'Service Charge Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "drCurrencyRoundingAccount",
-      label: "Dr Currency Rounding Account",
-      type: "select",
+      name: 'invoiceRoundingAccount',
+      label: 'Invoice Rounding Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "crCurrencyRoundingAccount",
-      label: "Cr Currency Rounding Account",
-      type: "select",
+      name: 'drCurrencyRoundingAccount',
+      label: 'Dr Currency Rounding Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "drRoundingAccount",
-      label: "Dr Rounding Account",
-      type: "select",
+      name: 'crCurrencyRoundingAccount',
+      label: 'Cr Currency Rounding Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "crRoundingAccount",
-      label: "Cr Rounding Account",
-      type: "select",
+      name: 'drRoundingAccount',
+      label: 'Dr Rounding Account',
+      type: 'select',
+      required: true,
+      options: glAccounts,
+      table: true,
+    },
+    {
+      name: 'crRoundingAccount',
+      label: 'Cr Rounding Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,

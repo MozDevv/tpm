@@ -1,14 +1,14 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
 const AwardPostingGroups = () => {
   const transformString = (str) => {
@@ -22,69 +22,69 @@ const AwardPostingGroups = () => {
   const [glAccounts, setGlAccounts] = React.useState([]);
   const columnDefs = [
     {
-      field: "code",
-      headerName: "Code",
+      field: 'code',
+      headerName: 'Code',
       filter: true,
       flex: 1,
-      pinned: "left",
+      pinned: 'left',
     },
     {
-      field: "description",
-      headerName: "Description",
+      field: 'description',
+      headerName: 'Description',
       filter: true,
       flex: 1,
     },
     {
-      field: "pensionAwardId",
-      headerName: "Pension Award",
+      field: 'pensionAwardId',
+      headerName: 'Pension Award',
       filter: true,
       flex: 1,
       valueGetter: (params) => {
         const account = pensionAwards?.find(
           (acc) => acc.id === params.data.pensionAwardId
         );
-        return account?.name ?? "N/A";
+        return account?.name ?? 'N/A';
       },
     },
     {
-      field: "pensionCapName",
-      headerName: "Pension Cap",
+      field: 'pensionCapName',
+      headerName: 'Pension Cap',
       filter: true,
       flex: 1,
       valueGetter: (params) => {
         const account = pensionCaps?.find(
           (acc) => acc.id === params.data.pensionAwardId
         );
-        return account?.name ?? "N/A";
+        return account?.name ?? 'N/A';
       },
     },
     {
-      field: "pensionExpenseAccount",
-      headerName: "Pension Expense Account",
+      field: 'pensionExpenseAccount',
+      headerName: 'Pension Expense Account',
       filter: true,
       flex: 1,
       valueGetter: (params) =>
         getAccountName(params.data.pensionExpenseAccount),
     },
     {
-      field: "gratiutyExpenseAccount",
-      headerName: "Gratiuty Expense Account",
+      field: 'gratiutyExpenseAccount',
+      headerName: 'Gratiuty Expense Account',
       filter: true,
       flex: 1,
       valueGetter: (params) =>
         getAccountName(params.data.gratiutyExpenseAccount),
     },
     {
-      field: "pensionLiabilityAccount",
-      headerName: "Pension Liability Account",
+      field: 'pensionLiabilityAccount',
+      headerName: 'Pension Liability Account',
       filter: true,
       flex: 1,
       valueGetter: (params) =>
         getAccountName(params.data.pensionLiabilityAccount),
     },
     {
-      field: "gratiutyLiabilityAccount",
-      headerName: "Gratiuty Liability Account",
+      field: 'gratiutyLiabilityAccount',
+      headerName: 'Gratiuty Liability Account',
       filter: true,
       flex: 1,
       valueGetter: (params) =>
@@ -94,18 +94,21 @@ const AwardPostingGroups = () => {
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 1000,
-      });
-
-      const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
+      const response = await apiService.get(
+        financeEndpoints.getGLAccountsAccounttype(0),
+        {
+          'paging.pageSize': 150,
+        }
       );
 
+      // const accounts = response.data.data.filter(
+      //   (acc) => acc.accountTypeName === 'POSTING'
+      // );
+
       setGlAccounts(
-        accounts.map((account) => ({
+        response.data.data.map((account) => ({
           id: account.id,
-          name: account.accountNo,
+          name: account.name,
           accountNo: account.accountName,
         }))
       );
@@ -117,7 +120,7 @@ const AwardPostingGroups = () => {
   const fetchPensionAwards = async () => {
     try {
       const response = await apiService.get(financeEndpoints.getPensionAwards, {
-        "paging.pageSize": 200,
+        'paging.pageSize': 200,
       });
 
       const awards = response.data.data.map((ac) => ({
@@ -141,7 +144,7 @@ const AwardPostingGroups = () => {
   const fetchPensionCaps = async () => {
     try {
       const response = await apiService.get(financeEndpoints.pensionCaps, {
-        "paging.pageSize": 200,
+        'paging.pageSize': 200,
       });
 
       const caps = response.data.data.map((ac) => ({
@@ -162,7 +165,7 @@ const AwardPostingGroups = () => {
   const getAccountName = (id) => {
     const account =
       Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
+    return account ? account.name : '';
   };
 
   const transformData = (data) => {
@@ -189,10 +192,10 @@ const AwardPostingGroups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -214,66 +217,66 @@ const AwardPostingGroups = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Award Posting Group"
-    : "Create New Award Posting Group";
+    ? 'Award Posting Group'
+    : 'Create New Award Posting Group';
 
   const fields = [
     {
-      name: "code",
-      label: "Code",
-      type: "text",
+      name: 'code',
+      label: 'Code',
+      type: 'text',
       required: true,
     },
     {
-      name: "pensionAwardId",
-      label: "Pension Award",
-      type: "autocomplete",
+      name: 'pensionAwardId',
+      label: 'Pension Award',
+      type: 'autocomplete',
       required: true,
       options: pensionAwards,
     },
     {
-      name: "pensionCap",
-      label: "Pension Cap",
-      type: "select",
+      name: 'pensionCap',
+      label: 'Pension Cap',
+      type: 'select',
       options: pensionCaps,
       required: true,
       disabled: true,
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     {
-      name: "pensionExpenseAccount",
-      label: "Pension Expense Account",
-      type: "select",
+      name: 'pensionExpenseAccount',
+      label: 'Pension Expense Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
 
     {
-      name: "gratiutyExpenseAccount",
-      label: "Gratuity Expense Account",
-      type: "select",
+      name: 'gratiutyExpenseAccount',
+      label: 'Gratuity Expense Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "pensionLiabilityAccount",
-      label: "Pension Liability Account",
-      type: "select",
+      name: 'pensionLiabilityAccount',
+      label: 'Pension Liability Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "gratiutyLiabilityAccount",
-      label: "Gratiuty Liability Account",
-      type: "select",
+      name: 'gratiutyLiabilityAccount',
+      label: 'Gratiuty Liability Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,

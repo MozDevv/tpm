@@ -243,6 +243,9 @@ const financeEndpoints = {
     `/Posting/DeleteUploadedStatement?BankReconciliationId=${id}`,
 
   reconcileBankDetails: '/Posting/ReconcileBankDetails',
+
+  getGLAccountsAccounttype: (accountType) =>
+    `/Accounts/GetAccounts?AccountType=${accountType}`,
 };
 
 export const apiService = {

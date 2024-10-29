@@ -1,14 +1,14 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
 const BankPostingGroups = () => {
   const transformString = (str) => {
@@ -19,23 +19,23 @@ const BankPostingGroups = () => {
 
   const columnDefs = [
     {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
       width: 90,
       filter: true,
     },
     {
-      field: "groupName",
-      headerName: "Group Name",
-      headerClass: "prefix-header",
+      field: 'groupName',
+      headerName: 'Group Name',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "glAccountId",
-      headerName: "GL Account",
-      headerClass: "prefix-header",
+      field: 'glAccountId',
+      headerName: 'GL Account',
+      headerClass: 'prefix-header',
       filter: true,
       valueGetter: (params) => getAccountName(params.data.glAccountId),
     },
@@ -45,18 +45,21 @@ const BankPostingGroups = () => {
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 150,
-      });
-
-      const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
+      const response = await apiService.get(
+        financeEndpoints.getGLAccountsAccounttype(0),
+        {
+          'paging.pageSize': 150,
+        }
       );
 
+      // const accounts = response.data.data.filter(
+      //   (acc) => acc.accountTypeName === 'POSTING'
+      // );
+
       setGlAccounts(
-        accounts.map((account) => ({
+        response.data.data.map((account) => ({
           id: account.id,
-          name: account.accountNo,
+          name: account.name,
           accountNo: account.accountName,
         }))
       );
@@ -71,7 +74,7 @@ const BankPostingGroups = () => {
   const getAccountName = (id) => {
     const account =
       Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
+    return account ? account.name : '';
   };
 
   const transformData = (data) => {
@@ -90,10 +93,10 @@ const BankPostingGroups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -115,15 +118,15 @@ const BankPostingGroups = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? "Bank Posting Group"
-    : "Create New Bank Posting Group";
+    ? 'Bank Posting Group'
+    : 'Create New Bank Posting Group';
 
   const fields = [
-    { name: "groupName", label: "Group Name", type: "text", required: true },
+    { name: 'groupName', label: 'Group Name', type: 'text', required: true },
     {
-      name: "glAccountId",
-      label: "GL Account",
-      type: "select",
+      name: 'glAccountId',
+      label: 'GL Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
