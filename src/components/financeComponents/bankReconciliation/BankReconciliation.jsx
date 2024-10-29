@@ -135,11 +135,13 @@ const BankReconciliation = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    match: () => console.log('Match clicked'),
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
     postReconciliation: () => reconcileBankDetails(),
     removeUploadedStatement: () => removeUploadedDocument(),
     removeMatch: () => removeMatch(),
+    bankStatement: () => console.log('Bank Statement clicked'),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);

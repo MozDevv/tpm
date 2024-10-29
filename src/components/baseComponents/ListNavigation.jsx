@@ -34,6 +34,8 @@ import {
   ArticleOutlined,
   FileDownload,
   PlaylistRemove,
+  Upload,
+  CloudUpload,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -49,6 +51,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
   const [showApprovalButtons, setShowApprovalButtons] = useState(false);
 
   const [approvalActions, setApprovalActions] = useState([]);
+  const [parentAction, setParentAction] = useState(null);
 
   const userId = auth.user ? auth.user.userId : null;
 
@@ -309,30 +312,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       action: 'postPaymentVoucher',
       requiredPermissions: [],
     },
-    {
-      name: 'Upload Bank Statement',
-      icon: PostAdd,
-      action: 'importBankStatement',
-      requiredPermissions: [],
-    },
-    {
-      name: 'Remove Uploaded Statement',
-      icon: PlaylistRemove,
-      action: 'removeUploadedStatement',
-      requiredPermissions: [],
-    },
-    {
-      name: 'Match Manually',
-      icon: TaskAlt,
-      action: 'matchManually',
-      requiredPermissions: [],
-    },
-    {
-      name: 'Remove Match',
-      icon: Cancel,
-      action: 'removeMatch',
-      requiredPermissions: [],
-    },
+
     {
       name: 'Generate Budget Upload Template',
       icon: FileDownload,
@@ -353,49 +333,108 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
     },
   ];
 
-  const approvalButton = {
-    name: 'Approvals',
-    icon: Rule,
-    action: 'approvalRequest',
-    requiredPermissions: [],
-    status: [1],
-  };
+  const collapseParents = [
+    {
+      name: 'Approvals',
+      icon: Rule,
+      action: 'approvalRequest',
+      requiredPermissions: [],
+      status: [1],
+    },
 
-  const approvalButtons = [
+    {
+      name: 'Match',
+      icon: TaskAlt,
+      action: 'match',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Bank Statement',
+      icon: CloudUpload,
+      action: 'bankStatement',
+      requiredPermissions: [],
+    },
+  ];
+
+  const collapseChildren = [
+    // Bank Statement Actions
+
+    {
+      name: 'Upload Bank Statement',
+      icon: PostAdd,
+      action: 'importBankStatement',
+      requiredPermissions: [],
+      parent: 'bankStatement',
+      disabled: true,
+    },
+    {
+      name: 'Remove Uploaded Statement',
+      icon: PlaylistRemove,
+      action: 'removeUploadedStatement',
+      requiredPermissions: [],
+      parent: 'bankStatement',
+      disabled: true,
+    },
+
+    // Match Actions
+    {
+      name: 'Match Manually',
+      icon: TaskAlt,
+      action: 'matchManually',
+      requiredPermissions: [],
+      parent: 'match',
+      disabled: true,
+    },
+    {
+      name: 'Remove Match',
+      icon: Cancel,
+      action: 'removeMatch',
+      requiredPermissions: [],
+      parent: 'match',
+      disabled: true,
+    },
+
+    // Approval Request Actions
     {
       name: 'Send For Approval',
       action: 'sendApprovalRequest',
       disabled: approvalActions?.sendForApproval,
-
       icon: IosShare,
+      parent: 'approvalRequest',
     },
     {
       name: 'Cancel Approval Request',
       action: 'cancelApprovalRequest',
       icon: CancelScheduleSend,
       disabled: approvalActions?.cancelApprovalRequest,
+      parent: 'approvalRequest',
     },
     {
       name: 'Approve',
       action: 'approveDocument',
       icon: Check,
+
       disabled: approvalActions?.approve,
+      parent: 'approvalRequest',
     },
     {
       name: 'Reject',
       action: 'rejectDocumentApproval',
       icon: Cancel,
       disabled: approvalActions?.reject,
+      parent: 'approvalRequest',
     },
     {
       name: 'Delegate',
       action: 'delegateApproval',
       icon: PersonAddAlt,
       disabled: approvalActions?.delegate,
+      parent: 'approvalRequest',
     },
   ];
 
-  const handleApprovalClick = () => {
+  const handleApprovalClick = (action) => {
+    setParentAction(action);
     setShowApprovalButtons(!showApprovalButtons);
   };
 
@@ -464,25 +503,27 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       <div className="flex flex-col gap-2 w-full">
         <Divider sx={{ borderColor: '#ededed' }} />
         <div className="flex flex-row pt-1">
-          {approvalButtons.map((button, index) => (
-            <Button
-              key={index}
-              disabled={!button.disabled}
-              onClick={() => handlers[button.action]()}
-              sx={{ mb: -1, maxHeight: '23px', ml: 1 }}
-              startIcon={
-                <button.icon
-                  sx={{
-                    fontSize: '20px',
-                    mr: '-3px',
-                    color: !button.disabled ? 'gray' : 'primary',
-                  }}
-                />
-              }
-            >
-              {button.name}
-            </Button>
-          ))}
+          {collapseChildren
+            .filter((button) => button.parent === parentAction)
+            .map((button, index) => (
+              <Button
+                key={index}
+                disabled={!button.disabled}
+                onClick={() => handlers[button.action]()}
+                sx={{ mb: -1, maxHeight: '23px', ml: 1 }}
+                startIcon={
+                  <button.icon
+                    sx={{
+                      fontSize: '20px',
+                      mr: '-3px',
+                      color: !button.disabled ? 'gray' : 'primary',
+                    }}
+                  />
+                }
+              >
+                {button.name}
+              </Button>
+            ))}
         </div>
       </div>
     );
@@ -502,26 +543,28 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
         <div className="flex gap-6 items-center">
           {renderButtons()}
 
-          <div>
-            <Button
-              onClick={handleApprovalClick}
-              sx={{
-                mb: -1,
-                maxHeight: '25px',
-                display: handlers[approvalButton.action] ? 'content' : 'none',
-              }}
-              startIcon={
-                <approvalButton.icon
-                  sx={{
-                    mr: '-3px',
-                    fontSize: '20px',
-                    color: 'primary',
-                  }}
-                />
-              }
-            >
-              <div className="ml-[-2px]">{approvalButton.name}</div>
-            </Button>
+          <div className="flex gap-6 items-center">
+            {collapseParents.map((button, index) => (
+              <Button
+                onClick={() => handleApprovalClick(button.action)}
+                sx={{
+                  mb: -1,
+                  maxHeight: '25px',
+                  display: handlers[button.action] ? 'content' : 'none',
+                }}
+                startIcon={
+                  <button.icon
+                    sx={{
+                      mr: '-3px',
+                      fontSize: '20px',
+                      color: 'primary',
+                    }}
+                  />
+                }
+              >
+                <div className="ml-[-2px]">{button.name}</div>
+              </Button>
+            ))}
 
             {/* Conditionally render additional buttons */}
           </div>
