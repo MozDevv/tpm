@@ -250,6 +250,16 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
       disabled:
         cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK' ? true : false,
     },
+    ...(clickedItem?.was_in_mixed_service
+      ? [
+          {
+            label: 'End Date',
+            value: 'end_date',
+            type: 'date',
+          },
+        ]
+      : []),
+
     {
       label: 'Post',
       value: 'post',
@@ -261,10 +271,27 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
           name: designation.name,
         })),
     },
+    ...(clickedItem?.was_in_mixed_service
+      ? [
+          {
+            label: 'Salary',
+            value: 'salary',
+            type: 'date',
+          },
+        ]
+      : []),
     {
       label: 'Whether Pensionable(Yes/No)',
       value: 'was_pensionable',
       type: 'select',
+      options: [
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
+      ],
+    },
+    {
+      label: 'Is Central Government(Yes/No)',
+      value: 'is_central_government',
       options: [
         { id: true, name: 'Yes' },
         { id: false, name: 'No' },
@@ -289,104 +316,6 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
     },
   ];
 
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    const updatedFormData = {
-      ...formData,
-      [name]: type === 'radio' ? JSON.parse(value) : value,
-    };
-
-    // Automatically set related fields based on 'whether pensionable'
-    if (name === 'was_pensionable') {
-      updatedFormData.nature_of_salary_scale = value === true ? 'P' : '';
-      updatedFormData.nature_of_service = value === true ? 'Permanent' : '';
-    }
-
-    setFormData(updatedFormData);
-  };
-
-  const handleSubmit = async (data) => {
-    const formattedFormData = { ...data, prospective_pensioner_id: id };
-    Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
-        formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          'YYYY-MM-DDTHH:mm:ss[Z]'
-        );
-      }
-    });
-
-    try {
-      let res;
-      if (data.id) {
-        const data = { ...formattedFormData, id: editId };
-        res = await apiService.post(
-          preClaimsEndpoints.updatePostAndNature,
-          data
-        );
-      } else {
-        res = await apiService.post(
-          preClaimsEndpoints.createPostAndNatureOfService,
-          formattedFormData
-        );
-      }
-
-      if (res.status === 200 && res.data.succeeded) {
-        fetchPostandNature();
-        setAlert({
-          open: true,
-          message: `Post and Nature of Service ${
-            isEditMode ? 'updated' : 'added'
-          } successfully`,
-          severity: 'success',
-        });
-        setOpen(false);
-      }
-      if (res.data.validationErrors) {
-        const errors = {};
-        res.data.validationErrors.forEach((error) => {
-          error.errors.forEach((err) => {
-            message.error(`${error.field}: ${err}`);
-            errors[error.field] = err; // Store errors by field
-          });
-        });
-        // setValidationErrors(errors); // Update state with validation errors
-        setValidationErrors(errors);
-        throw new Error('Validation Error');
-      }
-    } catch (error) {
-      throw error;
-      console.log(error);
-    }
-  };
-
-  const handleUpdate = (item) => {
-    const formattedItem = {
-      ...item,
-      date: dayjs(item.date).format('YYYY-MM-DD'),
-      // end_date: dayjs(item.end_date).format("YYYY-MM-DD"),
-    };
-
-    setFormData(formattedItem);
-    setEditId(item.id);
-    setIsEditMode(true);
-    setOpen(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await apiService.post(preClaimsEndpoints.deletePostAndNature(recordId));
-      fetchPostandNature();
-      setAlert({
-        open: true,
-        message: 'Post and Nature deleted successfully',
-        severity: 'success',
-      });
-      setOpenDeleteDialog(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
 
@@ -394,86 +323,6 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
     console.log('Saved row data:', data);
   };
 
-  // Initial row data
-  // const initialData =
-  //   postAndNatureData.length > 0
-  //     ? postAndNatureData
-  //     : [
-  //         {
-  //           date: dateOfFirstAppointment,
-  //           post: "",
-  //           was_pensionable: false,
-  //           nature_of_salary_scale: "P",
-  //           nature_of_service: "",
-  //         },
-  //         {
-  //           date: dateOfConfirmation,
-  //           post: "",
-  //           was_pensionable: true,
-  //           nature_of_salary_scale: "P",
-  //           nature_of_service: "",
-  //         },
-  //       ];
-  const initialData =
-    postAndNatureData.length > 0
-      ? postAndNatureData.map((item) => ({
-          ...item,
-          id: item.id,
-          date: dayjs(item.date).format('YYYY-MM-DD'),
-          post: item.post,
-          was_pensionable: item.was_pensionable,
-          nature_of_salary_scale: item.nature_of_salary_scale,
-          nature_of_service: item.nature_of_service,
-        }))
-      : [
-          {
-            date: dateOfFirstAppointment,
-            post: '',
-            was_pensionable: false,
-            nature_of_salary_scale: 'C',
-            nature_of_service: '',
-          },
-          {
-            date: dateOfConfirmation,
-            post: '',
-            was_pensionable: true,
-            nature_of_salary_scale: 'C',
-            nature_of_service: '',
-          },
-        ];
-
-  // Validator functions for each field
-  const validators = {
-    date: (value) => {
-      if (!value) {
-        return 'Date is required';
-      }
-    },
-    post: (value) => {
-      if (!value) {
-        return 'Post is required';
-      }
-    },
-    was_pensionable: (value) => {
-      if (value === null) {
-        return 'Pensionable is required';
-      }
-    },
-    nature_of_salary_scale: (value) => {
-      if (!value) {
-        return 'Nature of Salary Scale is required';
-      }
-    },
-    nature_of_service: (value) => {
-      if (!value) {
-        return 'Nature of Service is required';
-      }
-    },
-  };
-
-  const handleError = (errors) => {
-    console.log('Errors:', errors);
-  };
   return (
     <div className="">
       <BaseInputTable

@@ -207,6 +207,7 @@ function NewPreclaim({
         salary_at_injury_for_cap199:
           retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
           '',
+        was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
       });
       console.log('retiree ********', retiree);
     } catch (error) {
@@ -325,6 +326,7 @@ function NewPreclaim({
       salary_at_injury_for_cap199:
         retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
         '',
+      was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
     };
   };
 
@@ -824,6 +826,7 @@ function NewPreclaim({
         key !== 'salary_at_injury_for_cap199' &&
         key !== 'pension_award_id' &&
         key !== 'pension_cap' &&
+        key !== 'was_in_mixed_service' &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === '' ||
@@ -1230,7 +1233,7 @@ function NewPreclaim({
                           sx={{
                             fontSize: '25px',
                             color: '#006990',
-                            marginRight: '-4px',
+                            marginRight: '-6px',
                           }}
                         />
                         <p className="text-primary text-[17px] font-normal">

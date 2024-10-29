@@ -110,7 +110,7 @@ function AddPensionersWorkHistory({
             <PostAndNature
               id={id}
               status={status}
-              clickedItem={retiree}
+              clickedItem={clickedItem}
               loading={loading}
               setLoading={setLoading}
               dateOfFirstAppointment={dateOfFirstAppointment}

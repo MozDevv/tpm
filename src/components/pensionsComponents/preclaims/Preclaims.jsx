@@ -414,6 +414,7 @@ export const mapRowData = (items) =>
       is_parliamentary: item?.is_parliamentary,
       age_on_discharge: item?.age_on_discharge,
       maintenance_case: item?.maintenance_case,
+      was_in_mixed_service: item?.was_in_mixed_service,
     }));
 
 const Preclaims = ({ status }) => {
