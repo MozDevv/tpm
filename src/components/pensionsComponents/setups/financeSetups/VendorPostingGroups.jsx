@@ -127,7 +127,7 @@ const VendorPostingGroups = () => {
         response.data.data.map((account) => ({
           id: account.id,
           name: account.name,
-          accountNo: account.accountName,
+          accountNo: account.accountNo,
         }))
       );
     } catch (error) {
