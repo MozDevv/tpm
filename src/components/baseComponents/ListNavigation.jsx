@@ -42,6 +42,7 @@ import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import { Divider } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
   const { auth } = useAuth();
@@ -627,13 +628,19 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
           </Button>
         </div>
       </div>
-      <div
-        className={`flex flex-col w-full mt-3 ml-2 transition-all duration-1000 px-2  ease-in-out ${
-          showApprovalButtons ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0 '
-        }`}
-      >
-        {showApprovalButtons && renderApprovalButtons()}
-      </div>
+      <AnimatePresence>
+        {showApprovalButtons && (
+          <motion.div
+            initial={{ maxHeight: 0, opacity: 0 }}
+            animate={{ maxHeight: 160, opacity: 1 }}
+            exit={{ maxHeight: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.1 }}
+            className="flex flex-col w-full mt-3 ml-2 px-2"
+          >
+            {renderApprovalButtons()}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

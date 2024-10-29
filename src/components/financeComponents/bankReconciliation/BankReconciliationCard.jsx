@@ -5,7 +5,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { formatNumber } from '@/utils/numberFormatters';
 import { parseDate } from '@/utils/dateFormatter';
-import { TextField } from '@mui/material';
+import { Divider, TextField } from '@mui/material';
 import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
 
 function BankReconciliationCard({
@@ -386,21 +386,19 @@ function BankReconciliationCard({
   ];
 
   return (
-    <div style={{ display: 'flex', gap: '20px' }}>
+    <div style={{ display: 'flex', gap: '20px', marginTop: '-40px' }}>
+      {/* Left Side: Bank Statement Lines */}
       <div
-        className=""
         style={{
           overflow: 'auto',
           padding: '0 20px',
-
           width: '100%',
-          overflow: 'auto',
         }}
       >
         <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
           Bank Statement Lines
         </h3>
-        <div className="h-[250px] ag-theme-quartz ">
+        <div className="h-[250px] ag-theme-quartz">
           <AgGridReact
             rowData={bankStatement}
             columnDefs={bankStatementColDefs}
@@ -428,9 +426,7 @@ function BankReconciliationCard({
                   type="text"
                   disabled={true}
                   fullWidth
-                  inputProps={{
-                    style: { textAlign: 'right' },
-                  }}
+                  inputProps={{ style: { textAlign: 'right' } }}
                   InputProps={{
                     inputComponent: BaseAmountInput,
                   }}
@@ -448,20 +444,30 @@ function BankReconciliationCard({
         </div>
       </div>
 
+      {/* Vertical Dashed Divider */}
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{
+          borderStyle: 'dashed',
+          borderWidth: '2px',
+          borderColor: 'rgba(0, 0, 0, 0.06)', // Adjust color as needed
+          marginLeft: '-15px',
+        }}
+      />
+
+      {/* Right Side: Bank Account Ledger Entries */}
       <div
         style={{
           overflow: 'auto',
-
           width: '100%',
-          overflow: 'hidden',
           maxHeight: '600px',
-          zIndex: 9999999999,
         }}
       >
         <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
           Bank Account Ledger Entries
         </h3>
-        <div className="h-[250px] ag-theme-quartz ">
+        <div className="h-[250px] ag-theme-quartz">
           <AgGridReact
             rowData={bankSubledger}
             columnDefs={bankAccountColDefs}
@@ -489,9 +495,7 @@ function BankReconciliationCard({
                   type="text"
                   disabled={true}
                   fullWidth
-                  inputProps={{
-                    style: { textAlign: 'right' },
-                  }}
+                  inputProps={{ style: { textAlign: 'right' } }}
                   InputProps={{
                     inputComponent: BaseAmountInput,
                   }}
