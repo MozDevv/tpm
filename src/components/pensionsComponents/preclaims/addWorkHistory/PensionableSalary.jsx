@@ -190,6 +190,9 @@ function PensionableSalary({ id, clickedItem }) {
     getProspectivePensionerReviewPeriods();
   }, [refreshColumns]);
   useEffect(() => {
+    fetchPensionableSalary();
+  }, [refreshColumns]);
+  useEffect(() => {
     getProspectivePensionerReviewPeriods();
   }, []);
   const fields = [
