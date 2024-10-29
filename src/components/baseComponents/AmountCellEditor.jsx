@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TextField } from '@mui/material';
 import BaseAmountInput from './BaseAmountInput'; // Assuming you have a custom input component
 
 const AmountCellEditor = (props) => {
   const [value, setValue] = useState(props.value || ''); // Track input value
+
+  const inputRef = useRef(null); // Reference to input
 
   useEffect(() => {
     setValue(props.value || ''); // Initialize with the provided value
@@ -14,6 +16,13 @@ const AmountCellEditor = (props) => {
     const newValue = event.target.value;
     setValue(newValue); // Update state with new value
   };
+
+  useEffect(() => {
+    // Focus the input when the editor is opened
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   // Trigger the update and stop editing when input is blurred or editing ends
   const stopEditing = () => {
@@ -34,7 +43,7 @@ const AmountCellEditor = (props) => {
     }
 
     // Stop editing the cell
-    props.api.stopEditing();
+    //  props.api.stopEditing();
   };
 
   return (
@@ -43,6 +52,7 @@ const AmountCellEditor = (props) => {
       size="small"
       type="text"
       value={value}
+      inputRef={inputRef}
       onChange={handleAmountChange}
       onBlur={stopEditing} // Trigger when the input loses focus
       onKeyPress={(e) => e.key === 'Enter' && stopEditing()} // Trigger when the Enter key is pressed

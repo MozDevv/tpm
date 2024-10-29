@@ -119,11 +119,19 @@ function AddPensionersWorkHistory({
           )}
         </Suspense>
         <Suspense fallback={<Spinner />}>
-          <PensionableSalary id={id} status={status} clickedItem={retiree} />
+          <PensionableSalary
+            id={id}
+            status={status}
+            clickedItem={clickedItem}
+          />
         </Suspense>
         <div className="pb-15">
           <Suspense fallback={<Spinner />}>
-            <PeriodsOfAbsence id={id} status={status} clickedItem={retiree} />
+            <PeriodsOfAbsence
+              id={id}
+              status={status}
+              clickedItem={clickedItem}
+            />
           </Suspense>
         </div>
       </div>

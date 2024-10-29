@@ -484,6 +484,15 @@ const BaseInputForPensionableSalary = ({
             });
           });
           throw new Error('An error occurred while submitting the data.');
+        } else if (
+          res.data.messages.length > 0 &&
+          res.data.succeeded === false
+        ) {
+          message.error(res.data.messages[0]);
+          throw new Error(res.data.messages[0]);
+        } else if (res.data.succeeded === false) {
+          message.error('An error occurred while submitting the data.');
+          throw new Error('An error occurred while submitting the data.');
         }
       }
     } catch (error) {

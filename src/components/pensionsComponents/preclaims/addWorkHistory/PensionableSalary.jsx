@@ -123,7 +123,15 @@ function PensionableSalary({ id, clickedItem }) {
         'paging.pageSize': 1000,
       });
 
-      setDesignations(res.data.data);
+      console.log('Clikec from Pensionable  cs', clickedItem);
+
+      setDesignations(
+        res.data.data.filter((designation) =>
+          clickedItem?.mda_id
+            ? designation?.mda?.id === clickedItem?.mda_id
+            : true
+        )
+      );
     } catch (error) {
       console.error('Error fetching Designations:', error);
     }
