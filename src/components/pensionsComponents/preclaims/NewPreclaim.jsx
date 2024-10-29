@@ -1215,9 +1215,9 @@ function NewPreclaim({
                   {saving === 1 ? (
                     <div className="flex justify-between w-full mt-[-10px]  pr-6">
                       <div className=""></div>
-                      <div className="flex flex-row gap-2">
+                      <div className="flex flex-row gap-2 items-center">
                         <span class="loader"></span>
-                        <p className="text-primary text-sm font-medium">
+                        <p className="text-primary text-[17px] font-normal">
                           Saving...
                         </p>
                       </div>
@@ -1228,12 +1228,12 @@ function NewPreclaim({
                       <div className="flex flex-row gap-2 items-center">
                         <Done
                           sx={{
-                            fontSize: '20px',
+                            fontSize: '25px',
                             color: '#006990',
-                            marginRight: '-3px',
+                            marginRight: '-4px',
                           }}
                         />
-                        <p className="text-primary text-sm font-medium">
+                        <p className="text-primary text-[17px] font-normal">
                           Saved
                         </p>
                       </div>
@@ -1244,12 +1244,12 @@ function NewPreclaim({
                       <div className="flex flex-row gap-2 items-center">
                         <Close
                           sx={{
-                            fontSize: '20px',
+                            fontSize: '23px',
                             color: 'crimson',
                             marginRight: '-3px',
                           }}
                         />
-                        <p className="text-[crimson] text-sm font-medium">
+                        <p className="text-[crimson] text-[17px] font-normal">
                           Not Saved
                         </p>
                       </div>
