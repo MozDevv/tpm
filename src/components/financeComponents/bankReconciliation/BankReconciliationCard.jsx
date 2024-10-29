@@ -401,7 +401,7 @@ function BankReconciliationCard({
             Bank Statement Lines
           </h3>
 
-          <ExpandMore sx={{ color: '#006990', fontSize: '18px', mb: '2px' }} />
+          <ExpandMore sx={{ color: '#006990K', fontSize: '18px', mb: '2px' }} />
         </div>
         <div className="h-[250px] ag-theme-quartz">
           <AgGridReact

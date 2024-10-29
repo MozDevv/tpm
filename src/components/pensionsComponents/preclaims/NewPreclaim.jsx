@@ -754,7 +754,7 @@ function NewPreclaim({
     return Object.keys(newErrors).length === 0;
   };
 
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(-1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1048,7 +1048,7 @@ function NewPreclaim({
       }
     } catch (error) {
       console.log('API Error:', error);
-      setSaving(3);
+      // setSaving(3);
     }
   };
 
