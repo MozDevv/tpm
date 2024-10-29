@@ -33,11 +33,11 @@ const BankPostingGroups = () => {
       width: 250,
     },
     {
-      field: 'glAccountId',
+      field: 'accountId',
       headerName: 'GL Account',
       headerClass: 'prefix-header',
       filter: true,
-      valueGetter: (params) => getAccountName(params.data.glAccountId),
+      valueGetter: (params) => getAccountName(params.data.accountId),
     },
   ];
 
@@ -82,7 +82,7 @@ const BankPostingGroups = () => {
       no: index + 1,
       id: item.id,
       groupName: item.groupName,
-      glAccountId: item.glAccountId,
+      accountId: item.accountId,
     }));
   };
 
@@ -124,7 +124,7 @@ const BankPostingGroups = () => {
   const fields = [
     { name: 'groupName', label: 'Group Name', type: 'text', required: true },
     {
-      name: 'glAccountId',
+      name: 'accountId',
       label: 'GL Account',
       type: 'select',
       required: true,

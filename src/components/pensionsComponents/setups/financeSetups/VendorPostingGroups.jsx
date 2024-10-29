@@ -122,12 +122,11 @@ const VendorPostingGroups = () => {
       // const accounts = response.data.data.filter(
       //   (acc) => acc.accountTypeName === 'POSTING'
       // );
-
       setGlAccounts(
         response.data.data.map((account) => ({
           id: account.id,
-          name: account.name,
-          accountNo: account.accountNo,
+          name: account.accountNo,
+          accountNo: account.name,
         }))
       );
     } catch (error) {
