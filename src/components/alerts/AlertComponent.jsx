@@ -1,6 +1,6 @@
-"use client";
-import { Alert } from "@mui/material";
-import React from "react";
+'use client';
+import { Alert } from '@mui/material';
+import React from 'react';
 
 function AlertComponent({ alert, setAlert }) {
   React.useEffect(() => {
@@ -14,15 +14,15 @@ function AlertComponent({ alert, setAlert }) {
   return (
     <Alert
       sx={{
-        backgroundColor: "#3A845D",
-        color: "white",
-        height: "60px",
+        backgroundColor: '#3A845D',
+        color: 'white',
+        height: '60px',
         pt: 1,
         borderRadius: 0,
-        position: "fixed",
+        position: 'fixed',
         top: 0,
-        width: "100%",
-        zIndex: 1000,
+        width: '100%',
+        zIndex: 9999999999,
       }}
       variant="filled"
       severity={alert.severity}
