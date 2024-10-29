@@ -79,15 +79,24 @@ function PensionableSalary({ id, clickedItem }) {
     }
   };
 
+  const [hasReviewPeriods, setHasReviewPeriods] = useState(false);
+  const [hasNewDesignation, setHasNewDesignation] = useState(false);
+
   const fetchPensionableSalary = async () => {
     try {
       const res = await apiService.get(
         preClaimsEndpoints.getPensionableSalary(id)
       );
 
-      const hasReviewPeriods = res.data.data.some(
-        (item) => item.mode_of_salary_increment === 3
+      const hasReviewPeriods = res.data.data.some((item) => item.review_period);
+
+      const hasNewDesignation = res.data.data.some(
+        (item) => item.new_designation_id
       );
+
+      setHasNewDesignation(hasNewDesignation);
+      setHasReviewPeriods(hasReviewPeriods);
+
       console.log('Has Review Periods:', hasReviewPeriods);
       setAddAditionalCols(hasReviewPeriods);
       setPensionableSalary(res.data.data);
@@ -204,7 +213,7 @@ function PensionableSalary({ id, clickedItem }) {
       type: 'amount',
     },
 
-    ...(addAditionalCols === 3
+    ...((hasNewDesignation && hasReviewPeriods) || addAditionalCols === 3
       ? [
           {
             label: 'Review Period',
@@ -224,7 +233,20 @@ function PensionableSalary({ id, clickedItem }) {
             //notRequired: true,
           },
         ]
-      : addAditionalCols === 2
+      : hasNewDesignation || addAditionalCols === 3
+      ? [
+          {
+            label: 'New Designation',
+            value: 'new_designation_id',
+            type: 'select',
+            options: designations.map((designation) => ({
+              name: designation.name,
+              id: designation.id,
+            })),
+            //notRequired: true,
+          },
+        ]
+      : hasNewDesignation || addAditionalCols === 2
       ? [
           {
             label: 'New Designation',

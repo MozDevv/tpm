@@ -395,9 +395,11 @@ function BankReconciliationCard({
           width: '100%',
         }}
       >
-        <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
-          Bank Statement Lines
-        </h3>
+        <div className="flex gap-1">
+          <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
+            Bank Statement Lines
+          </h3>
+        </div>
         <div className="h-[250px] ag-theme-quartz">
           <AgGridReact
             rowData={bankStatement}
