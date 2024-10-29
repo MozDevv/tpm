@@ -5,8 +5,9 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { formatNumber } from '@/utils/numberFormatters';
 import { parseDate } from '@/utils/dateFormatter';
-import { Divider, TextField } from '@mui/material';
+import { Divider, IconButton, TextField } from '@mui/material';
 import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 function BankReconciliationCard({
   clickedItem,
@@ -395,10 +396,12 @@ function BankReconciliationCard({
           width: '100%',
         }}
       >
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
           <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
             Bank Statement Lines
           </h3>
+
+          <ExpandMore sx={{ color: '#006990', fontSize: '18px', mb: '2px' }} />
         </div>
         <div className="h-[250px] ag-theme-quartz">
           <AgGridReact
@@ -466,9 +469,13 @@ function BankReconciliationCard({
           maxHeight: '600px',
         }}
       >
-        <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
-          Bank Account Ledger Entries
-        </h3>
+        <div className="flex gap-1 items-center">
+          <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
+            Bank Account Ledger Entries
+          </h3>
+
+          <ExpandMore sx={{ color: '#006990', fontSize: '18px', mb: '2px' }} />
+        </div>
         <div className="h-[250px] ag-theme-quartz">
           <AgGridReact
             rowData={bankSubledger}

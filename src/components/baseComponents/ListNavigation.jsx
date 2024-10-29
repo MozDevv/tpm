@@ -369,7 +369,7 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       disabled: true,
     },
     {
-      name: 'Remove Uploaded Statement',
+      name: 'Remove Current Statement',
       icon: PlaylistRemove,
       action: 'removeUploadedStatement',
       requiredPermissions: [],

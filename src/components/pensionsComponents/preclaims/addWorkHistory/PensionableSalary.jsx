@@ -271,7 +271,7 @@ function PensionableSalary({ id, clickedItem }) {
       .replaceAll('-', '_')}`,
     notRequired: true,
     type: 'amount',
-    //  disabled: true,
+    disabled: true,
   }));
   const finalFields = [...fields, ...dynamicReviewFields];
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
