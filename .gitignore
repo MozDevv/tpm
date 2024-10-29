@@ -39,4 +39,5 @@ yarn-error.log*
 next-env.d.ts
 
 zdeploy.yaml
+zdeploy live.md
 pipeline-treasury.yml

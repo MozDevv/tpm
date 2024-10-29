@@ -7,3 +7,4 @@ Dockerfile
 zdeploy.yaml
 .env.local
 .pipeline-treasury.yml
+zdeploy live.md

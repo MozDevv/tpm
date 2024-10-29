@@ -25,7 +25,7 @@ import endpoints from '@/components/services/setupsApi';
 import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
 import { parseDate, parseDateSlash } from '@/utils/dateFormatter';
 
-function PensionableSalary({ id, status, clickedItem }) {
+function PensionableSalary({ id, clickedItem }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -39,6 +39,9 @@ function PensionableSalary({ id, status, clickedItem }) {
   const [postNames, setPostNames] = useState([]);
 
   const [hasFetchedPosts, setHasFetchedPosts] = useState(false); // New state to prevent multiple fetches
+
+  const [filteredDesignations, setFilteredDesignations] = useState([]);
+  const [refreshColumns, setRefreshColumns] = useState(false);
 
   const extractPosts = (data) => {
     return data.map((item) => item.post);
@@ -85,6 +88,7 @@ function PensionableSalary({ id, status, clickedItem }) {
       const hasReviewPeriods = res.data.data.some(
         (item) => item.mode_of_salary_increment === 3
       );
+      console.log('Has Review Periods:', hasReviewPeriods);
       setAddAditionalCols(hasReviewPeriods);
       setPensionableSalary(res.data.data);
       console.log('Pensionable Salary', res.data.data);
@@ -113,6 +117,17 @@ function PensionableSalary({ id, status, clickedItem }) {
       console.error('Error fetching Designations:', error);
     }
   };
+  const fetchAllDesignations = async () => {
+    try {
+      const res = await apiService.get(endpoints.getDesignations, {
+        'paging.pageSize': 1000,
+      });
+
+      setDesignations(res.data.data);
+    } catch (error) {
+      console.error('Error fetching Designations:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,6 +143,8 @@ function PensionableSalary({ id, status, clickedItem }) {
           setHasFetchedPosts(true); // Mark posts as fetched
           if (combinedPosts.length > 0) {
             fetchDesignations(combinedPosts);
+          } else {
+            fetchAllDesignations();
           }
         } catch (error) {
           console.log(error);
@@ -154,6 +171,9 @@ function PensionableSalary({ id, status, clickedItem }) {
 
   useEffect(() => {
     getProspectivePensionerReviewPeriods();
+  }, [refreshColumns]);
+  useEffect(() => {
+    getProspectivePensionerReviewPeriods();
   }, []);
   const fields = [
     { label: 'Start Date', value: 'start_date', type: 'date' },
@@ -176,7 +196,7 @@ function PensionableSalary({ id, status, clickedItem }) {
       type: 'amount',
     },
 
-    ...(addAditionalCols
+    ...(addAditionalCols === 3
       ? [
           {
             label: 'Review Period',
@@ -196,9 +216,22 @@ function PensionableSalary({ id, status, clickedItem }) {
             //notRequired: true,
           },
         ]
+      : addAditionalCols === 2
+      ? [
+          {
+            label: 'New Designation',
+            value: 'new_designation_id',
+            type: 'select',
+            options: designations.map((designation) => ({
+              name: designation.name,
+              id: designation.id,
+            })),
+            //notRequired: true,
+          },
+        ]
       : []),
   ];
-  const dynamicReviewFields = reviewPeriods.map((period, index) => ({
+  const dynamicReviewFields = reviewPeriods.map((period) => ({
     label: `${parseDateSlash(period.review_date)} Salary Revision`,
     value: `new_salary_${period.review_date
       .split('T')[0]
@@ -224,6 +257,8 @@ function PensionableSalary({ id, status, clickedItem }) {
           clickedItem?.notification_status !== 3
         }
         idLabel="prospective_pensioner_id"
+        refreshColumns={refreshColumns}
+        setRefreshColumns={setRefreshColumns}
         apiService={apiService}
         getApiService={apiService.get}
         postApiService={apiService.post}

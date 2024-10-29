@@ -58,6 +58,7 @@ const BaseInputForPensionableSalary = ({
   disableAll,
   addAditionalCols,
   setAddAditionalCols,
+  setRefreshColumns,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -225,6 +226,8 @@ const BaseInputForPensionableSalary = ({
               return [...sortedData, ...defaultRows];
             }
           });
+
+          setRefreshColumns((prev) => !prev);
         }
       } catch (error) {
         console.log(error);
@@ -236,6 +239,7 @@ const BaseInputForPensionableSalary = ({
         if (res.status === 200) {
           const salaryRevisions = await getSalaryRevisions();
           console.log('Fetched Data from Editable Table', res.data.data);
+
           setRowData((prevRowData) => {
             const defaultRows = Array.from({ length: 1 }, () =>
               fields.reduce((acc, field) => {
@@ -296,6 +300,7 @@ const BaseInputForPensionableSalary = ({
               return [...sortedData, ...defaultRows];
             }
           });
+          setRefreshColumns((prev) => !prev);
         }
       } catch (error) {
         console.log(error);
@@ -740,6 +745,12 @@ const BaseInputForPensionableSalary = ({
           const parsedValue = parseFloat(params.newValue.replace(/,/g, ''));
           return isNaN(parsedValue) ? params.newValue : parsedValue;
         };
+        columnDef.onCellClicked = (event) => {
+          event.api.startEditingCell({
+            rowIndex: event.rowIndex,
+            colKey: event.column.colId,
+          });
+        };
       } else if (col.hide) {
         columnDef.hide = true;
       } else if (col.value === 'phone_number') {
@@ -779,15 +790,13 @@ const BaseInputForPensionableSalary = ({
         if (isReview) {
           if (data.start_date) {
             data.review_period = data.start_date;
-            setAddAditionalCols(true);
+            setAddAditionalCols(3);
           } else {
-            setAddAditionalCols(true);
+            setAddAditionalCols(3);
           }
-        } else if (
-          data.mode_of_salary_increment === 0 ||
-          data.mode_of_salary_increment === 1 ||
-          data.mode_of_salary_increment === 2
-        ) {
+        } else if (data.mode_of_salary_increment === 2) {
+          setAddAditionalCols(2);
+        } else {
           setAddAditionalCols(false);
         }
 
@@ -1212,6 +1221,9 @@ const BaseInputForPensionableSalary = ({
                 minHehight: '100px',
               }}
               onCellKeyDown={onCellKeyDown}
+              gridOptions={{
+                singleClickEdit: true,
+              }}
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
