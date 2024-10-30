@@ -278,6 +278,12 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
     },
     {
+      name: 'Post Receipt(s) to Ledger',
+      icon: PostAdd,
+      action: 'postReceiptToGL',
+      requiredPermissions: [],
+    },
+    {
       name: 'Submit Payment for Approval',
       icon: Send,
       action: 'submitPaymentForApproval',
@@ -296,16 +302,13 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
 
       requiredPermissions: [],
     },
-    // {
-    //   name: 'Post Payment to Ledger',
-    //   icon: CheckCircleOutline,
-    //   action: 'postPaymentToLedger',
-    //   disabled:
-    //     Array.isArray(selectedRows) &&
-    //     selectedRows.length > 0 &&
-    //     selectedRows.some((row) => row.isPosted === true),
-    //   requiredPermissions: [],
-    // },
+    {
+      name: 'Post Payment to Ledger',
+      icon: CheckCircleOutline,
+      action: 'postPaymentToLedger',
+
+      requiredPermissions: [],
+    },
 
     {
       name: 'Post Payment Voucher',
@@ -331,6 +334,13 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       icon: CheckCircle,
       action: 'postReconciliation',
       requiredPermissions: [],
+    },
+    {
+      name: 'Search',
+      icon: ArticleOutlined,
+      action: 'search',
+      requiredPermissions: [],
+      disabled: true,
     },
   ];
 

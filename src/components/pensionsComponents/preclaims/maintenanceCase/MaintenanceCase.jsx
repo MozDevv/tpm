@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -16,92 +16,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-    pinned: 'left',
-  },
-  {
-    field: 'maintainee_name',
-    headerName: 'Name',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'national_id',
-    headerName: 'National ID',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'kra_pin',
-    headerName: 'KRA PIN',
-    width: 120,
-    filter: true,
-    // Assuming you want a checkbox for boolean values
-  },
-  {
-    field: 'email_address',
-    headerName: 'Email Address',
-    width: 200,
-    filter: true,
-  },
-  {
-    field: 'phone_number',
-    headerName: 'Phone Number',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'postal_address',
-    headerName: 'Postal Address',
-    width: 200,
-    filter: true,
-  },
-  // {
-  //   field: "postal_code_id",
-  //   headerName: "Postal Code",
-  //   width: 120,
-  //   filter: true,
-  // },
-  {
-    field: 'gratuity_rate',
-    headerName: 'Gratuity Rate',
-    width: 120,
-    filter: true,
-    cellRenderer: 'checkboxRenderer', // Checkbox for boolean values
-  },
-  {
-    field: 'monthly_pension_rate',
-    headerName: 'Monthly Pension Rate',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'bank_branch_name',
-    headerName: 'Bank Branch',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'account_number',
-    headerName: 'Account Number',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'account_name',
-    headerName: 'Account Name',
-    width: 150,
-    filter: true,
-  },
-];
-
-const MaintenanceCase = (id, clickedItem2) => {
+const MaintenanceCase = ({ id, clickedItem2 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -291,7 +206,7 @@ const MaintenanceCase = (id, clickedItem2) => {
 
   const fetchMaintenance = async () => {
     try {
-      const res = await apiService.get(endpoints.getMaintenance(id.id));
+      const res = await apiService.get(endpoints.getMaintenance(id));
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
@@ -310,9 +225,6 @@ const MaintenanceCase = (id, clickedItem2) => {
     fetchDepartments();
   }, []);
 
-  const saveRow = (data) => {
-    console.log('Saved row data:', data);
-  };
   const fields = [
     { title: 'First Name', value: 'firstName', type: 'text' },
     { title: 'Last Name', value: 'lastName', type: 'text' },
@@ -327,70 +239,6 @@ const MaintenanceCase = (id, clickedItem2) => {
     { title: 'Email', value: 'email', type: 'text' },
   ];
 
-  // Initial row data
-  const initialData = [
-    {
-      firstName: 'John',
-      lastName: 'Doe',
-      id: 1,
-      dob: new Date(),
-      role: 1,
-      email: 'john.doe@example.com',
-    },
-    {
-      firstName: 'Jane',
-      lastName: 'Smith',
-      id: 2,
-      dob: new Date(),
-      role: 2,
-      email: 'jane.smith@example.com',
-    },
-  ];
-
-  // Validator functions for each field
-  const validators = {
-    firstName: (value) => {
-      if (!value || value.length < 2)
-        return 'First Name must be at least 2 characters.';
-      return null;
-    },
-    lastName: (value) => {
-      if (!value || value.length < 2)
-        return 'Last Name must be at least 2 characters.';
-      return null;
-    },
-    email: (value) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) return 'Invalid email format.';
-      return null;
-    },
-    id: (value) => {
-      if (!value || isNaN(value)) return 'ID must be a number.';
-      return null;
-    },
-    dob: (value) => {
-      if (!value || isNaN(new Date(value).getTime())) return 'Invalid date.';
-      return null;
-    },
-  };
-
-  // Save function
-  const handleSave = (data) => {
-    console.log('Data saved:', data);
-    // Perform save operation, such as API call or local storage update
-  };
-
-  // Update function for handling data changes
-  const handleUpdate = (updatedData) => {
-    console.log('Data updated:', updatedData);
-    // Perform update operation, such as API call or state update
-  };
-
-  // Error handling function
-  const handleError = (errorMessage, params) => {
-    alert(`Error in field "${params.colDef.headerName}": ${errorMessage}`);
-    // Additional error handling actions can be added here
-  };
   return (
     <div className="relative">
       <BaseCard
@@ -451,45 +299,23 @@ const MaintenanceCase = (id, clickedItem2) => {
           overflowY: 'auto',
         }}
       >
-        {/* <AgGridReact
-          columnDefs={columnDefs}
-          rowData={filteredData}
-          pagination={false}
-          domLayout="autoHeight"
-          alwaysShowHorizontalScroll={true}
-          // paginationPageSize={pageSize}
-          onGridReady={(params) => {
-            params.api.sizeColumnsToFit();
-            // onGridReady(params);
-          }}
-          // onPaginationChanged={(params) =>
-          //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-          // }
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
-            // setUserClicked(e.data);
-            //handleClickUser(e.data);
-          }}
-        /> */}
-
         <BaseInputTable
           title="Maintenance Case"
           fields={fields2}
-          id={id.id}
+          id={id}
           disableAll={
-            clickedItem2?.clickedItem?.notification_status !== 2 &&
-            clickedItem2?.clickedItem?.notification_status !== null &&
-            clickedItem2?.clickedItem?.notification_status !== 0 &&
-            clickedItem2?.clickedItem?.notification_status !== 3
+            clickedItem2?.notification_status !== 2 &&
+            clickedItem2?.notification_status !== null &&
+            clickedItem2?.notification_status !== 0 &&
+            clickedItem2?.notification_status !== 3
           }
           idLabel="prospective_pensioner_id"
           getApiService={apiService.get}
           postApiService={apiService.post}
           putApiService={apiService.put}
           apiService={apiService}
-          deleteEndpoint={endpoints.deleteMaintenance(id.id)}
-          getEndpoint={endpoints.getMaintenance(id.id)}
+          deleteEndpoint={endpoints.deleteMaintenance(id)}
+          getEndpoint={endpoints.getMaintenance(id)}
           postEndpoint={endpoints.createMaintenance}
           putEndpoint={endpoints.updateMaintenance}
           passProspectivePensionerId={true}

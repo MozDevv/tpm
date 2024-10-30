@@ -72,6 +72,11 @@ const GeneralSettings = () => {
       wcps_contribution_percentage: item.wcps_contribution_percentage,
       valid_child_age_payable_for_pension:
         item.valid_child_age_payable_for_pension,
+      compassionate_annual_allowance_amount_payable_cap189:
+        item.compassionate_annual_allowance_amount_payable_cap189,
+
+      compassionate_annual_allowance_minimum_years_applicable_cap189:
+        item.compassionate_annual_allowance_minimum_years_applicable_cap189,
 
       // roles: item.roles,
     }));
@@ -237,6 +242,18 @@ const GeneralSettings = () => {
       name: 'compassionate_gratuity_female_end_date_cap189',
       label: 'Compassionate Gratuity Female End Date Cap189',
       type: 'date',
+      required: true,
+    },
+    {
+      name: 'compassionate_annual_allowance_amount_payable_cap189',
+      label: 'Compassionate Annual Allowance Amount Payable Cap189',
+      type: 'number',
+      required: false,
+    },
+    {
+      name: 'compassionate_annual_allowance_minimum_years_applicable_cap189',
+      label: 'Compassionate Annual Allowance Minimum Years Applicable Cap189',
+      type: 'number',
       required: true,
     },
     {

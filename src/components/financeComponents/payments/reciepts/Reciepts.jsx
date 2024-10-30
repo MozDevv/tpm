@@ -16,6 +16,7 @@ import { Dialog } from '@mui/material';
 import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
 import RecieptLines from './ReceiptLines';
+import ReceiptActions from './ReceiptActions';
 
 const Reciepts = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -74,6 +75,11 @@ const Reciepts = ({ status }) => {
       checkboxSelection: true,
       headerCheckboxSelection: true,
       pinned: 'left',
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
     },
     {
       headerName: 'Reciept Date',
@@ -96,6 +102,9 @@ const Reciepts = ({ status }) => {
       headerName: 'Cheque No',
       field: 'chequeNo',
       type: 'string',
+      cellRenderer: (params) => {
+        return <p className=" text-primary font-normal">{params.value}</p>;
+      },
     },
     {
       headerName: 'Cheque Date',
@@ -166,7 +175,9 @@ const Reciepts = ({ status }) => {
     edit: () => console.log('Edit clicked'),
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
+    postReceiptToGL: () => setOpenPV(true),
     notify: () => console.log('Notify clicked'),
+
     ...(status === 0 && {
       submitPaymentForApproval: () => {
         setOpenPV(true);
@@ -339,9 +350,9 @@ const Reciepts = ({ status }) => {
           maxHeight: '90vh',
         }}
       >
-        <PVActions
-          isSchedule={isSchedule}
-          status={status}
+        <ReceiptActions
+          isSchedule={true}
+          status={2}
           clickedItem={clickedItem}
           setOpenBaseCard={setOpenBaseCard}
           selectedRows={selectedRows}

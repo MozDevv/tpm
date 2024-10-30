@@ -118,3 +118,25 @@ a:hover {
   outline: none;
   box-shadow: none; /* Prevents shadow on focus */
 }
+
+.custom-grid .ag-root-wrapper {
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  background-color: rgb(243, 244, 246);
+}
+
+.custom-grid .ag-header,
+.custom-grid .ag-header-cell {
+  background-color: rgb(243, 244, 246) !important;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.custom-grid .ag-header-cell-label {
+  color: black;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.custom-grid .ag-cell {
+  font-family: 'Montserrat', sans-serif;
+  background-color: rgb(243, 244, 246);
+}

@@ -32,7 +32,7 @@ import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { BASE_CORE_API } from '@/utils/constants';
 
-function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
+function PostAndNature({ id, clickedItem }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -163,56 +163,6 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
     fetchDesignations();
     fetchTerms();
   }, []);
-  const months = [
-    {
-      id: 1,
-      name: 'January',
-    },
-    {
-      id: 2,
-      name: 'February',
-    },
-    {
-      id: 3,
-      name: 'March',
-    },
-    {
-      id: 4,
-      name: 'April',
-    },
-    {
-      id: 5,
-      name: 'May',
-    },
-    {
-      id: 6,
-      name: 'June',
-    },
-    {
-      id: 7,
-      name: 'July',
-    },
-    {
-      id: 8,
-      name: 'August',
-    },
-    {
-      id: 9,
-      name: 'September',
-    },
-    {
-      id: 10,
-      name: 'October',
-    },
-    {
-      id: 11,
-      name: 'November',
-    },
-    {
-      id: 12,
-      name: 'December',
-    },
-  ];
 
   const fields = [
     ...(cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK'
@@ -275,8 +225,8 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
       ? [
           {
             label: 'Salary',
-            value: 'salary',
-            type: 'date',
+            value: 'amount',
+            type: 'amount',
           },
         ]
       : []),
@@ -292,6 +242,7 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
     {
       label: 'Is Central Government(Yes/No)',
       value: 'is_central_government',
+      type: 'select',
       options: [
         { id: true, name: 'Yes' },
         { id: false, name: 'No' },
@@ -318,10 +269,6 @@ function PostAndNature({ id, loading, setLoading, status, clickedItem }) {
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
-
-  const saveRow = (data) => {
-    console.log('Saved row data:', data);
-  };
 
   return (
     <div className="">

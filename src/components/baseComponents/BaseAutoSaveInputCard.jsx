@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   TextField,
   MenuItem,
@@ -19,17 +19,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material";
-import { message } from "antd";
-import dayjs from "dayjs";
+  InputAdornment,
+} from '@mui/material';
+import { message } from 'antd';
+import dayjs from 'dayjs';
 
-import { useMda } from "@/context/MdaContext";
-import { formatNumber } from "@/utils/numberFormatters";
-import BaseAmountInput from "./BaseAmountInput";
-import "./autosave.css";
-import { Close, Done } from "@mui/icons-material";
-import { truncateMessage } from "@/utils/handyFuncs";
-import MuiPhoneNumber from "mui-phone-number";
+import { useMda } from '@/context/MdaContext';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseAmountInput from './BaseAmountInput';
+import './autosave.css';
+import { Close, Done } from '@mui/icons-material';
+import { truncateMessage } from '@/utils/handyFuncs';
+import MuiPhoneNumber from 'mui-phone-number';
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -52,10 +53,11 @@ const BaseAutoSaveInputCard = ({
   options,
   filterKey,
   setResultFunction,
+  setOpenDrilldown,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
-    acc[field.name] = field.default !== undefined ? field.default : "";
-    if (field.type === "switch") {
+    acc[field.name] = field.default !== undefined ? field.default : '';
+    if (field.type === 'switch') {
       acc[field.name] = field.default !== undefined ? field.default : false;
     }
     return acc;
@@ -82,14 +84,14 @@ const BaseAutoSaveInputCard = ({
     if (name === selectedLabel) {
       setSelectedValue(value);
     }
-    if (type === "text") {
+    if (type === 'text') {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
-    if (type === "number") {
-      if (value === "") {
+    if (type === 'number') {
+      if (value === '') {
         setFormData((prev) => ({
           ...prev,
           [name]: null,
@@ -108,19 +110,19 @@ const BaseAutoSaveInputCard = ({
     //   ).options;
     // }
 
-    if (name === "bank_id" && value) {
+    if (name === 'bank_id' && value) {
       const filteredBranches = banks.filter(
         (branch) => branch.bankId === value
       );
 
       setSelectedBank(filteredBranches);
     }
-    if (name === fieldName && value !== "" && options) {
-      console.log("Filtering options...", options);
+    if (name === fieldName && value !== '' && options) {
+      console.log('Filtering options...', options);
 
       const filtered = options.filter((item) => item[filterKey] === value);
 
-      console.log("Filtered options: ", filtered);
+      console.log('Filtered options: ', filtered);
 
       setResultFunction(filtered); // Set the filtered result
     }
@@ -133,10 +135,10 @@ const BaseAutoSaveInputCard = ({
         ...prev,
         [name]: values,
       }));
-    } else if (type === "checkbox") {
+    } else if (type === 'checkbox') {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === 'checkbox' ? checked : value,
       }));
     } else {
       setFormData((prev) => ({
@@ -154,7 +156,7 @@ const BaseAutoSaveInputCard = ({
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value.replace(/,/g, ""),
+      [name]: value.replace(/,/g, ''),
     }));
   };
 
@@ -167,13 +169,13 @@ const BaseAutoSaveInputCard = ({
 
       // Required field validation
 
-      if (field.name === "accountCode" && value) {
+      if (field.name === 'accountCode' && value) {
       }
-      if (field.name === "accountName" && value) {
+      if (field.name === 'accountName' && value) {
       }
       if (
         field.required &&
-        (value === undefined || value === null || value === "")
+        (value === undefined || value === null || value === '')
       ) {
         newErrors[field.name] = `${field.label} is required`;
       }
@@ -187,29 +189,29 @@ const BaseAutoSaveInputCard = ({
       //   }
       // }
 
-      if ((field.type === "date" || field.name === "dob") && value) {
-        if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
+      if ((field.type === 'date' || field.name === 'dob') && value) {
+        if (!dayjs(value, 'YYYY-MM-DD', true).isValid()) {
           newErrors[field.name] = `${field.label} is not a valid date`;
         } else {
-          formData[field.name] = dayjs(value).format("YYYY-MM-DDTHH:mm:ss[Z]");
+          formData[field.name] = dayjs(value).format('YYYY-MM-DDTHH:mm:ss[Z]');
         }
       }
       // KRA PIN validation
-      if (field.name === "kra_pin" && value) {
+      if (field.name === 'kra_pin' && value) {
         if (value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
         }
       }
 
       // National ID validation
-      if (field.name === "national_id" && value) {
+      if (field.name === 'national_id' && value) {
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not valid`;
         }
       }
 
       // Email validation
-      if ((field.name === "email" || field.name === "email_address") && value) {
+      if ((field.name === 'email' || field.name === 'email_address') && value) {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors[field.name] = `${field.label} is not a valid email`;
@@ -217,26 +219,26 @@ const BaseAutoSaveInputCard = ({
       }
 
       // Phone number validation
-      if (field.name === "phone_number" && value) {
+      if (field.name === 'phone_number' && value) {
         if (value && !/^\d+$/.test(value)) {
           newErrors[field.name] = `${field.label} is not a valid phone number`;
         }
       }
 
-      if (field.type === "number" && value) {
+      if (field.type === 'number' && value) {
         formData[field.name] = value * 1;
       }
 
-      if (field.type === "switch" && value === undefined) {
+      if (field.type === 'switch' && value === undefined) {
         formData[field.name] = false;
       }
 
-      if (field.name === "mda_id" && field.hide) {
+      if (field.name === 'mda_id' && field.hide) {
         formData[field.name] = mdaId;
       }
 
       // Account number validation
-      if (field.name === "account_number" && value) {
+      if (field.name === 'account_number' && value) {
         const accountNumberPattern = /^[0-9]{10,20}$/; // Adjust pattern for account number format
         if (!accountNumberPattern.test(value)) {
           newErrors[
@@ -282,11 +284,11 @@ const BaseAutoSaveInputCard = ({
             message.error(truncateMessage(res.data.messages[0], 100));
           } else {
             setSaving(3);
-            message.error("Error saving record");
+            message.error('Error saving record');
           }
         } else {
-          console.log("Record ID exists, updating...");
-          console.log("PUT API Endp oint: ", updateApiEndpoint);
+          console.log('Record ID exists, updating...');
+          console.log('PUT API Endp oint: ', updateApiEndpoint);
 
           res = await putApiFunction(updateApiEndpoint, {
             ...formData,
@@ -305,26 +307,26 @@ const BaseAutoSaveInputCard = ({
         }
       } catch (error) {
         setSaving(3);
-        console.error("Error in auto-save:", error);
+        console.error('Error in auto-save:', error);
       } finally {
       }
     }
   };
 
   const getInitialData = async (id) => {
-    console.log("getInitialData: id: ", id);
-    console.log("getInitialData: getApiEndpoint: ", getApiEndpoint);
-    console.log("getInitialData: getApiFunction: ", getApiFunction);
+    console.log('getInitialData: id: ', id);
+    console.log('getInitialData: getApiEndpoint: ', getApiEndpoint);
+    console.log('getInitialData: getApiFunction: ', getApiFunction);
     try {
       const res = await getApiFunction(getApiEndpoint(id));
       if (res.status === 200) {
         const data = transformData(res.data.data);
         setClickedItem(data[0]);
         setFormData(data[0]);
-        console.log("Get Initial Data Transfomred: ", formData);
+        console.log('Get Initial Data Transfomred: ', formData);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -350,9 +352,9 @@ const BaseAutoSaveInputCard = ({
           <div className="flex flex-row gap-2 items-center">
             <Done
               sx={{
-                fontSize: "20px",
-                color: "#006990",
-                marginRight: "-3px",
+                fontSize: '20px',
+                color: '#006990',
+                marginRight: '-3px',
               }}
             />
             <p className="text-primary text-sm font-medium">Saved</p>
@@ -364,9 +366,9 @@ const BaseAutoSaveInputCard = ({
           <div className="flex flex-row gap-2 items-center">
             <Close
               sx={{
-                fontSize: "20px",
-                color: "crimson",
-                marginRight: "-3px",
+                fontSize: '20px',
+                color: 'crimson',
+                marginRight: '-3px',
               }}
             />
             <p className="text-[crimson] text-sm font-medium">Not Saved</p>
@@ -381,8 +383,8 @@ const BaseAutoSaveInputCard = ({
           <div
             key={index}
             style={{
-              flexDirection: "column",
-              display: field.hide === true ? "none" : "flex",
+              flexDirection: 'column',
+              display: field.hide === true ? 'none' : 'flex',
             }}
           >
             <label className="text-xs font-semibold text-gray-600 flex gap-1">
@@ -393,7 +395,7 @@ const BaseAutoSaveInputCard = ({
                 </div>
               )}
             </label>
-            {field.type === "select" ? (
+            {field.type === 'select' ? (
               field.multiple ? (
                 <Select
                   multiple
@@ -431,7 +433,7 @@ const BaseAutoSaveInputCard = ({
                     handleInputChange({
                       target: {
                         name: field.name,
-                        value: newValue ? newValue.id : "",
+                        value: newValue ? newValue.id : '',
                       },
                     });
                   }}
@@ -456,28 +458,28 @@ const BaseAutoSaveInputCard = ({
                       <li
                         {...props}
                         style={{
-                          border: "none",
-                          boxShadow: "none",
-                          backgroundColor: selected ? "#B2E9ED" : "white",
+                          border: 'none',
+                          boxShadow: 'none',
+                          backgroundColor: selected ? '#B2E9ED' : 'white',
                         }}
                       >
                         <Box
                           sx={{
-                            width: "100%",
-                            pr: "40px",
+                            width: '100%',
+                            pr: '40px',
 
-                            display: "flex",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            justifyContent: 'space-between',
                           }}
                         >
                           <Box
                             sx={{
-                              display: "flex",
-                              flexDirection: "row",
+                              display: 'flex',
+                              flexDirection: 'row',
                               gap: 3,
                             }}
                           >
-                            {" "}
+                            {' '}
                             <p className=" text-primary font-normal text-[12px]">
                               {option.accountNo}
                             </p>
@@ -492,7 +494,7 @@ const BaseAutoSaveInputCard = ({
                   ListboxProps={{
                     sx: {
                       padding: 0,
-                      "& ul": {
+                      '& ul': {
                         padding: 0,
                         margin: 0,
                       },
@@ -533,7 +535,7 @@ const BaseAutoSaveInputCard = ({
                   ))}
                 </TextField>
               )
-            ) : field.type === "switch" ? (
+            ) : field.type === 'switch' ? (
               <FormControlLabel
                 control={
                   <Switch
@@ -544,9 +546,9 @@ const BaseAutoSaveInputCard = ({
                     onBlur={handleAutoSave}
                   />
                 }
-                label={formData[field.name] ? "Yes" : "No"}
+                label={formData[field.name] ? 'Yes' : 'No'}
               />
-            ) : field.type === "date" ? (
+            ) : field.type === 'date' ? (
               <TextField
                 name={field.name}
                 type="date"
@@ -554,12 +556,12 @@ const BaseAutoSaveInputCard = ({
                 onBlur={handleAutoSave}
                 size="small"
                 error={!!errors[field.name]}
-                value={dayjs(formData[field.name]).format("YYYY-MM-DD")}
+                value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
                 // helperText={errors[field.name]}
                 onChange={handleInputChange}
                 fullWidth
               />
-            ) : field.type === "autocomplete" ? (
+            ) : field.type === 'autocomplete' ? (
               <Autocomplete
                 options={field.options}
                 getOptionLabel={(option) => option.name}
@@ -567,7 +569,7 @@ const BaseAutoSaveInputCard = ({
                   handleInputChange({
                     target: {
                       name: field.name,
-                      value: newValue ? newValue.id : "",
+                      value: newValue ? newValue.id : '',
                     },
                   });
                 }}
@@ -589,7 +591,63 @@ const BaseAutoSaveInputCard = ({
                   ) || null
                 }
               />
-            ) : field.type === "amount" ? (
+            ) : field.type === 'drillDown' ? (
+              <TextField
+                //   name={field.name}
+                variant="outlined"
+                size="small"
+                type="text"
+                // value={formData[field.name]}
+                onBlur={handleAutoSave}
+                disabled={field.disabled}
+                onChange={handleAmountChange}
+                error={!!errors[field.name]}
+                required={field.required}
+                fullWidth
+                inputProps={{
+                  style: { textAlign: 'right' },
+                }}
+                InputProps={{
+                  inputComponent: BaseAmountInput,
+
+                  endAdornment: field.disabled ? (
+                    <InputAdornment
+                      position="end"
+                      sx={{
+                        display: 'flex', // Ensure proper layout
+                        alignItems: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)', // Set background color
+                        padding: '0 8px', // Add padding for better appearance
+                      }}
+                    >
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+
+                          setOpenDrilldown(true);
+                        }}
+                        style={{
+                          color: '#006990',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {formatNumber(formData[field.name])}
+                      </a>
+                    </InputAdornment>
+                  ) : null,
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      border: 'none',
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                    },
+                }}
+              />
+            ) : field.type === 'amount' ? (
               <TextField
                 name={field.name}
                 variant="outlined"
@@ -605,20 +663,20 @@ const BaseAutoSaveInputCard = ({
                 required={field.required}
                 fullWidth
                 inputProps={{
-                  style: { textAlign: "right" }, // Aligns the text to the right
+                  style: { textAlign: 'right' }, // Aligns the text to the right
                 }}
                 InputProps={{
                   inputComponent: BaseAmountInput,
                 }}
                 sx={{
-                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
                     {
-                      border: "none",
-                      backgroundColor: "rgba(0, 0, 0, 0.06)",
+                      border: 'none',
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
                     },
                 }}
               />
-            ) : field.type === "phonenumber" ? (
+            ) : field.type === 'phonenumber' ? (
               <MuiPhoneNumber
                 defaultCountry="ke" // Kenya as the default country
                 name={field.name}
@@ -638,17 +696,17 @@ const BaseAutoSaveInputCard = ({
                 MenuProps={{
                   PaperProps: {
                     style: {
-                      maxHeight: "120px", // Set max height for the dropdown
-                      overflowY: "auto",
+                      maxHeight: '120px', // Set max height for the dropdown
+                      overflowY: 'auto',
                     },
                   },
                   anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "left",
+                    vertical: 'bottom',
+                    horizontal: 'left',
                   },
                   transformOrigin: {
-                    vertical: "top",
-                    horizontal: "left",
+                    vertical: 'top',
+                    horizontal: 'left',
                   },
                 }}
               />
@@ -659,7 +717,7 @@ const BaseAutoSaveInputCard = ({
                 onBlur={handleAutoSave}
                 variant="outlined"
                 size="small"
-                value={formData[field.name] || ""}
+                value={formData[field.name] || ''}
                 onChange={handleInputChange}
                 error={!!errors[field.name]}
                 // helperText={errors[field.name]}

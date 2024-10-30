@@ -116,11 +116,13 @@ const BaseInputTable = ({
 
           setRowData((prevRowData) => {
             const datePairs = [
+              { start: 'date', end: 'end_date' },
               { start: 'startDate', end: 'endDate' },
               { start: 'from_date', end: 'to_date' },
               { start: 'fromDate', end: 'toDate' },
               { start: 'date', end: 'endDate' },
               { start: 'date', end: 'enddate' },
+
               { start: 'start_date', end: 'end_date' },
             ];
 
@@ -645,8 +647,9 @@ const BaseInputTable = ({
         { start: 'startDate', end: 'endDate' },
         { start: 'from_date', end: 'to_date' },
         { start: 'fromDate', end: 'toDate' },
-        { start: 'date', end: 'endDate' },
+        //  { start: 'date', end: 'endDate' },
         { start: 'start_date', end: 'end_date' },
+        { start: 'date', end: 'end_date' },
       ];
 
       const findDatePair = (field) => {
@@ -667,7 +670,7 @@ const BaseInputTable = ({
 
         const datePair = findDatePair(field);
 
-        if (datePair) {
+        if (datePair && data[datePair.start] && data[datePair.end]) {
           const currentStartDate = data[datePair.start];
           const currentEndDate = data[datePair.end];
 
@@ -676,6 +679,9 @@ const BaseInputTable = ({
           const endDate = field === datePair.end ? newValue : currentEndDate;
 
           const error = baseValidatorFn.endDate(endDate, startDate);
+
+          console.log('Start Date:', currentStartDate);
+          console.log('End Date:', endDate);
           if (error) {
             message.error(`Validation Error on ${field}: ${error}`);
             setCellError(data.id, field, error);
@@ -883,6 +889,7 @@ const BaseInputTable = ({
         { start: 'fromDate', end: 'toDate' },
         { start: 'date', end: 'endDate' },
         { start: 'start_date', end: 'end_date' },
+        { start: 'date', end: 'end_date' },
       ];
 
       // Loop through date pairs to find a filled end date

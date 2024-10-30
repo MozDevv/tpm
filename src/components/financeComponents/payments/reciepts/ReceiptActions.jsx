@@ -22,7 +22,7 @@ import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { truncateMessage } from '@/utils/handyFuncs';
 
-function PVActions({
+function ReceiptActions({
   selectedRows,
   setSelectedRows,
   setOpenPostGL,
@@ -56,11 +56,11 @@ function PVActions({
         if (isSchedule) {
           console.log('isSchedule >>', isSchedule);
           // Case for scheduling
-          endpoint = financeEndpoints.createPaymentSchedule;
-          successMessage = 'Payment Vouchers scheduled successfully';
-          errorMessage = 'Failed to schedule Payment Vouchers';
+          endpoint = financeEndpoints.postReceiptToLedger;
+          successMessage = 'Receipt(s) Posted to Ledger successfully';
+          errorMessage = 'Failed to post Receipt to Ledger';
           requestData = {
-            payments: selectedIds.map((item) => ({ paymentsId: item.id })),
+            receiptList: selectedIds.map((item) => ({ receiptId: item.id })),
           };
 
           // Make the API call for scheduling
@@ -194,7 +194,7 @@ function PVActions({
       ? 'Approve'
       : status === 2
       ? isSchedule
-        ? 'Schedule'
+        ? 'Post'
         : 'Post to Ledger'
       : status === 3
       ? 'Post'
@@ -205,7 +205,7 @@ function PVActions({
       <div className="flex  px-3 flex-col">
         <div className="flex items-center gap-2">
           <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
-            {navTitle} Payment Voucher(s) {status === 0 && 'for Approval'}
+            {navTitle} Receipts(s) {status === 2 && 'to Ledger'}
           </h5>
         </div>
         {errors.status && (
@@ -229,8 +229,8 @@ function PVActions({
                 <TableHead>
                   <TableRow>
                     <TableCell>Document No</TableCell>
-                    <TableCell>On Behalf Of</TableCell>
-                    <TableCell align="right">Payee</TableCell>
+                    <TableCell>Descriptions</TableCell>
+                    <TableCell align="right">Recieved From</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -248,10 +248,10 @@ function PVActions({
                         {doc.documentNo}
                       </TableCell>
 
-                      <TableCell>{doc.onBehalfOf}</TableCell>
+                      <TableCell>{doc.paymentNarration}</TableCell>
 
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                        {doc.payee}
+                        {doc.recievedFrom}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -295,4 +295,4 @@ function PVActions({
   );
 }
 
-export default PVActions;
+export default ReceiptActions;

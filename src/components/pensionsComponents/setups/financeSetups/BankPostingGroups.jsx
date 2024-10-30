@@ -9,6 +9,7 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import { apiService } from '@/components/services/financeApi';
 import { formatDate } from '@/utils/dateFormatter';
 import financeEndpoints from '@/components/services/financeApi';
+import BaseDrilldown from '@/components/baseComponents/BaseDrilldown';
 
 const BankPostingGroups = () => {
   const transformString = (str) => {
@@ -148,14 +149,17 @@ const BankPostingGroups = () => {
         deleteApiService={apiService.delete}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updateBankPostingGroup}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <>
+            {' '}
+            <BaseInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.updateBankPostingGroup}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />{' '}
+          </>
         ) : (
           <BaseInputCard
             fields={fields}

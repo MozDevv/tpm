@@ -246,6 +246,12 @@ const financeEndpoints = {
 
   getGLAccountsAccounttype: (accountType) =>
     `/Accounts/GetAccounts?AccountType=${accountType}`,
+
+  postPaymentToLedger: '/Posting/PostPaymentToLedger',
+  postReceiptToLedger: '/Posting/PostReceiptToLedger',
+
+  bankDrillDown: (val) =>
+    `/Posting/GetBankSubLedger?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=bankAccountCode&filterCriterion.criterions[0].propertyValue=${val}`,
 };
 
 export const apiService = {
