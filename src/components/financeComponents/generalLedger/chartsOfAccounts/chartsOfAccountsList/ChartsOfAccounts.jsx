@@ -10,6 +10,8 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import BaseDrilldown from '@/components/baseComponents/BaseDrilldown';
+import { getColumnDefsByType } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -291,7 +293,7 @@ function ChartsOfAccounts() {
     {
       name: 'amount',
       label: 'Amount',
-      type: 'amount',
+      type: 'drillDown',
       disabled: true,
     },
     {
@@ -435,6 +437,8 @@ function ChartsOfAccounts() {
     setGridHeight(totalHeight);
   }, [rowData]);
 
+  const [openDrilldown, setOpenDrilldown] = useState(false);
+
   return (
     <div className="flex flex-col">
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
@@ -458,21 +462,35 @@ function ChartsOfAccounts() {
           }
         >
           {clickedItem ? (
-            <BaseAutoSaveInputCard
-              fields={fields}
-              apiEndpoint={financeEndpoints.createGlAccount}
-              putApiFunction={apiService.post}
-              updateApiEndpoint={financeEndpoints.updateGlAccount}
-              postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.fetchGlAccounts}
-              getApiFunction={apiService.get}
-              transformData={transformData}
-              setOpenBaseCard={setOpenBaseCard}
-              useRequestBody={true}
-              openBaseCard={openBaseCard}
-              setClickedItem={setClickedItem}
-              clickedItem={clickedItem}
-            />
+            <>
+              {' '}
+              <BaseAutoSaveInputCard
+                fields={fields}
+                apiEndpoint={financeEndpoints.createGlAccount}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.updateGlAccount}
+                postApiFunction={apiService.post}
+                getApiEndpoint={financeEndpoints.fetchGlAccounts}
+                getApiFunction={apiService.get}
+                transformData={transformData}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+                openBaseCard={openBaseCard}
+                setClickedItem={setClickedItem}
+                clickedItem={clickedItem}
+                setOpenDrilldown={setOpenDrilldown}
+              />{' '}
+              <BaseDrilldown
+                setOpenDrilldown={setOpenDrilldown}
+                openDrilldown={openDrilldown}
+                clickedItem={clickedItem}
+                setClickedItem={setClickedItem}
+                columnDefs={getColumnDefsByType('General Ledger Entries')}
+                fetchApiEndpoint={financeEndpoints.glDrillDown(clickedItem?.id)}
+                fetchApiService={apiService.get}
+                title={`${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`}
+              />
+            </>
           ) : (
             <BaseAutoSaveInputCard
               fields={inputFields}

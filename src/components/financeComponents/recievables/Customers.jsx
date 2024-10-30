@@ -1,20 +1,22 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
-import { API_BASE_URL } from "@/components/services/setupsApi";
+import { API_BASE_URL } from '@/components/services/setupsApi';
 
-import axios from "axios";
-import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
-import { formatNumber } from "@/utils/numberFormatters";
+import axios from 'axios';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseDrilldown from '@/components/baseComponents/BaseDrilldown';
+import { getColumnDefsByType } from '../baseSubledgerData/BaseSubledgerData';
 
 const Customers = () => {
   const transformString = (str) => {
@@ -46,10 +48,10 @@ const Customers = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -75,12 +77,12 @@ const Customers = () => {
   const fetchCountries = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCountries`, {
-        "paging.pageSize": 100,
+        'paging.pageSize': 100,
       });
 
       setCountries(res.data.data);
 
-      console.log("countries", res.data.data);
+      console.log('countries', res.data.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -88,12 +90,12 @@ const Customers = () => {
   const fetchCities = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCity`, {
-        "paging.pageSize": 100,
+        'paging.pageSize': 100,
       });
 
       setCities(res.data.data);
 
-      console.log("countries", res.data.data);
+      console.log('countries', res.data.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -104,7 +106,7 @@ const Customers = () => {
     fetchCities();
   }, []);
 
-  const title = clickedItem ? clickedItem?.customerName : "Create New Customer";
+  const title = clickedItem ? clickedItem?.customerName : 'Create New Customer';
 
   const [vendorPG, setVendorPG] = React.useState([]);
 
@@ -113,7 +115,7 @@ const Customers = () => {
       const res = await apiService.get(
         financeEndpoints.getCustomerPostingGroup,
         {
-          "paging.pageSize": 1000,
+          'paging.pageSize': 1000,
         }
       );
       setVendorPG(
@@ -135,121 +137,123 @@ const Customers = () => {
 
   const columnDefs = [
     {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
       width: 90,
       filter: true,
-      pinned: "left",
+      pinned: 'left',
     },
     {
-      field: "customerName",
-      headerName: "Customer Name",
-      headerClass: "prefix-header",
+      field: 'customerName',
+      headerName: 'Customer Name',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "amount",
-      headerName: "Amount",
-      headerClass: "prefix-header",
+      field: 'amount',
+      headerName: 'Amount',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
       valueFormatter: (params) => {
         return formatNumber(params.value);
       },
-      cellStyle: { textAlign: "right" },
+      cellStyle: { textAlign: 'right' },
     },
     {
-      field: "customerEmail",
-      headerName: "Customer Email",
-      headerClass: "prefix-header",
+      field: 'customerEmail',
+      headerName: 'Customer Email',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "customerPhoneNumber",
-      headerName: "Customer Phone Number",
-      headerClass: "prefix-header",
+      field: 'customerPhoneNumber',
+      headerName: 'Customer Phone Number',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      field: "countryId",
-      headerName: "Country",
-      headerClass: "prefix-header",
+      field: 'countryId',
+      headerName: 'Country',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
       valueFormatter: (params) => {
         const country = countries.find((item) => item.id === params.value);
-        return country ? country.country_name : "";
+        return country ? country.country_name : '';
       },
     },
     {
-      field: "cityId",
-      headerName: "City",
-      headerClass: "prefix-header",
+      field: 'cityId',
+      headerName: 'City',
+      headerClass: 'prefix-header',
       filter: true,
       flex: 1,
       valueFormatter: (params) => {
         const city = cities.find((item) => item.id === params.value);
-        return city ? city.city_name : "";
+        return city ? city.city_name : '';
       },
     },
   ];
   const fields = [
     {
-      name: "customerName",
-      label: "Customer Name",
-      type: "text",
+      name: 'customerName',
+      label: 'Customer Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "customerEmail",
-      label: "Customer Email",
-      type: "text",
+      name: 'customerEmail',
+      label: 'Customer Email',
+      type: 'text',
       required: true,
     },
 
     {
-      name: "customerPhoneNumber",
-      label: "Customer Phone Number",
-      type: "phonenumber",
+      name: 'customerPhoneNumber',
+      label: 'Customer Phone Number',
+      type: 'phonenumber',
       required: true,
     },
     {
-      name: "customerPostingGroupId",
-      label: "Customer Posting Group",
-      type: "select",
+      name: 'customerPostingGroupId',
+      label: 'Customer Posting Group',
+      type: 'select',
       required: true,
       options: vendorPG,
     },
     {
-      name: "amount",
-      label: "Amount",
-      type: "amount",
+      name: 'amount',
+      label: 'Amount',
+      type: 'drillDown',
       required: false,
       disabled: true,
     },
     {
-      name: "countryId",
-      label: "Country",
-      type: "select",
+      name: 'countryId',
+      label: 'Country',
+      type: 'select',
       options: countries.map((type) => ({
         id: type.id,
         name: type.country_name,
       })),
     },
     {
-      name: "cityId",
-      label: "City",
-      type: "select",
+      name: 'cityId',
+      label: 'City',
+      type: 'select',
       options: cities.map((type) => ({
         id: type.id,
         name: type.city_name,
       })),
     },
   ];
+
+  const [openDrilldown, setOpenDrilldown] = React.useState(false);
 
   return (
     <div className="">
@@ -264,21 +268,37 @@ const Customers = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addCustomer}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateCustomer}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getCustomers}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-            clickedItem={clickedItem}
-          />
+          <>
+            {' '}
+            <BaseAutoSaveInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.addCustomer}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateCustomer}
+              postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.getCustomers}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+              setOpenDrilldown={setOpenDrilldown}
+              clickedItem={clickedItem}
+            />{' '}
+            <BaseDrilldown
+              setOpenDrilldown={setOpenDrilldown}
+              openDrilldown={openDrilldown}
+              clickedItem={clickedItem}
+              setClickedItem={setClickedItem}
+              columnDefs={getColumnDefsByType('Customer Ledger Entries')}
+              fetchApiEndpoint={financeEndpoints.customenrDrillDown(
+                clickedItem?.bankAccountCode
+              )}
+              fetchApiService={apiService.get}
+              title={clickedItem?.customerName}
+            />
+          </>
         ) : (
           <>
             <BaseAutoSaveInputCard

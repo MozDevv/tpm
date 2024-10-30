@@ -252,6 +252,12 @@ const financeEndpoints = {
 
   bankDrillDown: (val) =>
     `/Posting/GetBankSubLedger?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=bankAccountCode&filterCriterion.criterions[0].propertyValue=${val}`,
+  vendorDrillDown: (val) => `/Posting/GetVendorSubLedger?VendorId=${val}`,
+
+  customenrDrillDown: (val) =>
+    `/Posting/GetCustomerSubLedger?CustomerId=${val}`,
+
+  glDrillDown: (val) => `/Posting/GetGeneralLedgerDetail?GlAccountId=${val}`,
 };
 
 export const apiService = {
