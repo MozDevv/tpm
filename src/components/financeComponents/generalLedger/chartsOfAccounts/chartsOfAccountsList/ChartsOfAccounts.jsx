@@ -110,6 +110,30 @@ function ChartsOfAccounts() {
           ? ''
           : formatNumber(params.value);
       },
+      cellRenderer: (params) => {
+        const accountType = params.data.accountTypeName;
+
+        // If it's not BEGIN_TOTAL or HEADING, render clickable amount
+        if (
+          accountType !== 'BEGIN_TOTAL' &&
+          accountType !== 'HEADING' &&
+          accountType !== 'END_TOTAL'
+        ) {
+          return (
+            <p
+              className="cursor-pointer underline text-primary font-bold text-[14px]"
+              onClick={() => {
+                setOpenDrilldown(true);
+                setClickedItem(params.data);
+              }}
+            >
+              {formatNumber(params.value)}
+            </p>
+          );
+        }
+
+        return formatNumber(params.value); // For other types, return normal formatted value
+      },
       cellStyle: ({ data }) => ({
         fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
         textAlign: 'right',
@@ -477,6 +501,16 @@ function ChartsOfAccounts() {
         className=" mt-[15px] mr-5"
         style={{ width: '100%', overflowY: 'hidden' }}
       >
+        <BaseDrilldown
+          setOpenDrilldown={setOpenDrilldown}
+          openDrilldown={openDrilldown}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          columnDefs={getColumnDefsByType2('General Ledger Entries', rowData)}
+          fetchApiEndpoint={financeEndpoints.glDrillDown(clickedItem?.id)}
+          fetchApiService={apiService.get}
+          title={`${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`}
+        />
         <BaseCard
           openBaseCard={openBaseCard}
           setOpenBaseCard={setOpenBaseCard}
@@ -511,19 +545,6 @@ function ChartsOfAccounts() {
                 clickedItem={clickedItem}
                 setOpenDrilldown={setOpenDrilldown}
               />{' '}
-              <BaseDrilldown
-                setOpenDrilldown={setOpenDrilldown}
-                openDrilldown={openDrilldown}
-                clickedItem={clickedItem}
-                setClickedItem={setClickedItem}
-                columnDefs={getColumnDefsByType2(
-                  'General Ledger Entries',
-                  rowData
-                )}
-                fetchApiEndpoint={financeEndpoints.glDrillDown(clickedItem?.id)}
-                fetchApiService={apiService.get}
-                title={`${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`}
-              />
             </>
           ) : (
             <BaseAutoSaveInputCard
@@ -563,10 +584,14 @@ function ChartsOfAccounts() {
         <AgGridReact
           columnDefs={colDefs}
           rowData={rowData}
-          onRowClicked={(e) => {
+          onCellDoubleClicked={(e) => {
             setOpenBaseCard(true);
             setClickedItem(e.data);
           }}
+          // onRowClicked={(e) => {
+          //   // setOpenBaseCard(true);
+          //   setClickedItem(e.data);
+          // }}
           onGridReady={onGridReady}
           animateRows={true}
           rowHeight={rowHeight}

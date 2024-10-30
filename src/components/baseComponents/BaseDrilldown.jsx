@@ -87,7 +87,7 @@ const BaseDrilldown = ({
 
   useEffect(() => {
     fetchData();
-  }, [uploadExcel]);
+  }, [openDrilldown]);
 
   const [selectedRows, setSelectedRows] = useState([]);
 
