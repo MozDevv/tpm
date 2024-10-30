@@ -32,7 +32,7 @@ export const getColumnDefsByType = (type) => {
         //   flex: 1,
         //   filter: true,
         //   valueGetter: (params) => {
-        //     const account = allOptions?.find(
+        //     const account = allOptions?.find(fall
         //       (acc) => acc.id === params.data.accountId
         //     );
         //     return account?.name ?? 'N/A';
@@ -149,6 +149,160 @@ export const getColumnDefsByType = (type) => {
           headerName: 'Transaction No',
           flex: 1,
           filter: true,
+        },
+      ];
+
+    default:
+      return [];
+  }
+};
+export const getColumnDefsByType2 = (type, allOptions) => {
+  switch (type) {
+    case 'Vendor Ledger Entries':
+    case 'Customer Ledger Entries':
+      return [
+        {
+          field: 'documentNo',
+          headerName: 'Document No',
+          flex: 1,
+          filter: true,
+          pinned: 'left',
+        },
+        {
+          field: 'transactionNo',
+          headerName: 'Transaction No',
+          flex: 1,
+          filter: true,
+        },
+
+        {
+          field: 'externalDocumentNo',
+          headerName: 'External Document No',
+          flex: 1,
+          filter: true,
+        },
+        // {
+        //   field: 'accountId',
+        //   headerName: 'Account',
+        //   flex: 1,
+        //   filter: true,
+        //   valueGetter: (params) => {
+        //     const account = allOptions?.find(fall
+        //       (acc) => acc.id === params.data.accountId
+        //     );
+        //     return account?.name ?? 'N/A';
+        //   },
+        // },
+        {
+          field: 'transactionDate',
+          headerName: 'Transaction Date',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => formatDate(params.value),
+        },
+        {
+          field: 'amount',
+          headerName: 'Amount',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => {
+            return formatNumber(params.value);
+          },
+          cellStyle: { textAlign: 'center' },
+        },
+        {
+          field: 'description',
+          headerName: 'Description',
+          width: 250,
+          filter: true,
+        },
+      ];
+
+    case 'Bank Account Ledger Entries':
+      return [
+        {
+          field: 'documentNo',
+          headerName: 'Document No',
+          flex: 1,
+          filter: true,
+          pinned: 'left',
+        },
+
+        {
+          field: 'description',
+          headerName: 'Description',
+          flex: 1,
+          filter: true,
+        },
+
+        {
+          field: 'amount',
+          headerName: 'Amount',
+          flex: 1,
+          filter: true,
+
+          cellRenderer: (params) => {
+            return (
+              <p className=" text-primary text-right font-semibold">
+                {formatNumber(params.value)}
+              </p>
+            );
+          },
+        },
+
+        {
+          field: 'transactionDate',
+          headerName: 'Transaction Date',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => parseDate(params.value),
+        },
+      ];
+
+    case 'General Ledger Entries':
+      return [
+        {
+          field: 'documentNo',
+          headerName: 'Document No',
+          flex: 1,
+          filter: true,
+          pinned: 'left',
+        },
+        {
+          field: 'accountNo',
+          headerName: 'Account No',
+          flex: 1,
+          filter: true,
+        },
+        {
+          field: 'accountName',
+          headerName: 'Account Name',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => {
+            const account = allOptions?.find(
+              (acc) => acc.glAccountNo === params.data.accountNo
+            );
+            return account?.glAccountName ?? 'N/A';
+          },
+        },
+        {
+          field: 'amount',
+          headerName: 'Amount',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => {
+            return formatNumber(params.value);
+          },
+          cellStyle: { textAlign: 'center' },
+        },
+
+        {
+          field: 'transactionDate',
+          headerName: 'Transaction Date',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => parseDate(params.value),
         },
       ];
 

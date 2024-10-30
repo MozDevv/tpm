@@ -11,7 +11,10 @@ import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcru
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import BaseDrilldown from '@/components/baseComponents/BaseDrilldown';
-import { getColumnDefsByType } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
+import {
+  getColumnDefsByType,
+  getColumnDefsByType2,
+} from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -231,6 +234,34 @@ function ChartsOfAccounts() {
       console.log(error);
     }
   };
+  const [allOptions, setAllOptions] = useState([]);
+
+  const fetchNewOptions = async () => {
+    try {
+      const res = await apiService.get(financeEndpoints.getAccounts, {
+        'paging.pageSize': 2000,
+      }); // Pass accountTypeId to the endpoint
+      if (res.status === 200) {
+        setAllOptions(
+          res.data.data.map((acc) => {
+            return {
+              id: acc.id,
+              name: acc.accountNo,
+              accountName: acc.name,
+              accountType: acc.accountType,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      return []; // Return an empty array if an error occurs
+    }
+  };
+
+  useEffect(() => {
+    fetchNewOptions();
+  }, []);
 
   const fetchGlAccounts = async () => {
     try {
@@ -485,7 +516,10 @@ function ChartsOfAccounts() {
                 openDrilldown={openDrilldown}
                 clickedItem={clickedItem}
                 setClickedItem={setClickedItem}
-                columnDefs={getColumnDefsByType('General Ledger Entries')}
+                columnDefs={getColumnDefsByType2(
+                  'General Ledger Entries',
+                  rowData
+                )}
                 fetchApiEndpoint={financeEndpoints.glDrillDown(clickedItem?.id)}
                 fetchApiService={apiService.get}
                 title={`${clickedItem?.glAccountNo} - ${clickedItem?.glAccountName}`}
