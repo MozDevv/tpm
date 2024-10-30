@@ -65,6 +65,8 @@ const notificationStatusMap = {
   2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
   3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+  5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+  6: { name: 'COB', color: '#2ecc71' }, // Light Blue
 };
 
 const statusIcons = {
@@ -485,25 +487,28 @@ const ClaimsTable = ({ status }) => {
     reports: () => console.log('Reports clicked'),
 
     // submit: () => setOpenAction(true),
-    createClaim: () => setOpenAction(true),
-    movetoMDA: () => setOpenAction(1),
-    movetoValidation: () => setOpenAction(0),
-    movetoVerification: () => setOpenAction(1),
-    moveToApproval: () => setOpenAction(0),
-    returnToApproval: () => setOpenAction(1),
-    moveToAssessment: () => setOpenAction(0),
+    ...(status !== 5 &&
+      status !== 6 && {
+        createClaim: () => setOpenAction(true),
+        movetoMDA: () => setOpenAction(1),
+        movetoValidation: () => setOpenAction(0),
+        movetoVerification: () => setOpenAction(1),
+        moveToApproval: () => setOpenAction(0),
+        returnToApproval: () => setOpenAction(1),
+        moveToAssessment: () => setOpenAction(0),
 
-    returnToClaimsApprovals: () => setOpenAction(1),
-    moveToAssessmentApproval: () => setOpenAction(0),
+        returnToClaimsApprovals: () => setOpenAction(1),
+        moveToAssessmentApproval: () => setOpenAction(0),
 
-    approvalRequest: () => console.log('Approval Request clicked'),
-    sendApprovalRequest: () => setOpenApprove(1),
-    cancelApprovalRequest: () => setOpenApprove(2),
-    approveDocument: () => setOpenApprove(3),
-    rejectDocumentApproval: () => setOpenApprove(4),
-    delegateApproval: () => {
-      setOpenApprove(5);
-    },
+        approvalRequest: () => console.log('Approval Request clicked'),
+        sendApprovalRequest: () => setOpenApprove(1),
+        cancelApprovalRequest: () => setOpenApprove(2),
+        approveDocument: () => setOpenApprove(3),
+        rejectDocumentApproval: () => setOpenApprove(4),
+        delegateApproval: () => {
+          setOpenApprove(5);
+        },
+      }),
   };
 
   useEffect(() => {
