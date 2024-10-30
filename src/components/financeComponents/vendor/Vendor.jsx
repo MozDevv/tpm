@@ -36,6 +36,7 @@ const Vendor = () => {
       cityId: item.cityId,
       vendorPostingGroupId: item.vendorPostingGroupId,
       amount: item.amount === null ? 0 : item.amount,
+      vendorCode: item.vendorCode,
 
       // roles: item.roles,
     }));
@@ -194,11 +195,12 @@ const Vendor = () => {
 
   const columnDefs = [
     {
-      field: 'no',
-      headerName: 'No',
+      field: 'vendorCode',
+      headerName: 'Vendor Code',
       headerClass: 'prefix-header',
       flex: 1,
       filter: true,
+      pinned: 'left',
     },
     {
       field: 'vendorName',

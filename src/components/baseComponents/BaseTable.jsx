@@ -176,7 +176,9 @@ const BaseTable = ({
     params.api.sizeColumnsToFit();
   };
   const exportToExcel = () => {
-    gridApi.exportDataAsCsv();
+    gridApi.exportDataAsCsv({
+      fileName: `${currentTitle}.csv`, // Set the desired file name here
+    });
   };
 
   const { searchedKeyword, setSearchedKeyword } = useSearch();

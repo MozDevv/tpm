@@ -153,7 +153,9 @@ const BaseDrilldown = ({
   };
 
   const exportData = () => {
-    gridApi.exportDataAsCsv();
+    gridApi.exportDataAsCsv({
+      fileName: `${title}.csv`, // Set the desired file name here
+    });
   };
 
   return (
