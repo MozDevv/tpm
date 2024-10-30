@@ -397,6 +397,9 @@ const BaseTable = ({
               rowSelection="multiple"
               onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
+                setClickedItem(e.data);
+              }}
+              onCellDoubleClicked={(e) => {
                 console.log('e.data', e.data);
                 setOpenBaseCard(true);
                 setClickedItem(e.data);

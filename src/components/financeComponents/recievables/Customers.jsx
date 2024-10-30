@@ -135,70 +135,6 @@ const Customers = () => {
     fetchPostingGroups();
   }, []);
 
-  const columnDefs = [
-    {
-      field: 'no',
-      headerName: 'No',
-      headerClass: 'prefix-header',
-      width: 90,
-      filter: true,
-      pinned: 'left',
-    },
-    {
-      field: 'customerName',
-      headerName: 'Customer Name',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: 'amount',
-      headerName: 'Amount',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
-      cellStyle: { textAlign: 'right' },
-    },
-    {
-      field: 'customerEmail',
-      headerName: 'Customer Email',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: 'customerPhoneNumber',
-      headerName: 'Customer Phone Number',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: 'countryId',
-      headerName: 'Country',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-      valueFormatter: (params) => {
-        const country = countries.find((item) => item.id === params.value);
-        return country ? country.country_name : '';
-      },
-    },
-    {
-      field: 'cityId',
-      headerName: 'City',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-      valueFormatter: (params) => {
-        const city = cities.find((item) => item.id === params.value);
-        return city ? city.city_name : '';
-      },
-    },
-  ];
   const fields = [
     {
       name: 'customerName',
@@ -255,8 +191,97 @@ const Customers = () => {
 
   const [openDrilldown, setOpenDrilldown] = React.useState(false);
 
+  const columnDefs = [
+    {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      width: 90,
+      filter: true,
+      pinned: 'left',
+    },
+    {
+      field: 'customerName',
+      headerName: 'Customer Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      cellRenderer: (params) => {
+        return (
+          <p
+            className="cursor-pointer underline text-primary font-bold text-[14px] text-right"
+            onClick={() => {
+              setOpenDrilldown(true);
+              setClickedItem(params.data);
+            }}
+          >
+            {formatNumber(params.value)}
+          </p>
+        );
+      },
+    },
+    {
+      field: 'customerEmail',
+      headerName: 'Customer Email',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'customerPhoneNumber',
+      headerName: 'Customer Phone Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'countryId',
+      headerName: 'Country',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        const country = countries.find((item) => item.id === params.value);
+        return country ? country.country_name : '';
+      },
+    },
+    {
+      field: 'cityId',
+      headerName: 'City',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        const city = cities.find((item) => item.id === params.value);
+        return city ? city.city_name : '';
+      },
+    },
+  ];
+
   return (
     <div className="">
+      <BaseDrilldown
+        setOpenDrilldown={setOpenDrilldown}
+        openDrilldown={openDrilldown}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        columnDefs={getColumnDefsByType('Customer Ledger Entries')}
+        fetchApiEndpoint={financeEndpoints.customenrDrillDown(
+          clickedItem?.bankAccountCode
+        )}
+        fetchApiService={apiService.get}
+        title={clickedItem?.customerName}
+      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -267,6 +292,7 @@ const Customers = () => {
         deleteApiEndpoint={financeEndpoints.deleteCustomer(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
+        {' '}
         {clickedItem ? (
           <>
             {' '}
@@ -286,18 +312,6 @@ const Customers = () => {
               setOpenDrilldown={setOpenDrilldown}
               clickedItem={clickedItem}
             />{' '}
-            <BaseDrilldown
-              setOpenDrilldown={setOpenDrilldown}
-              openDrilldown={openDrilldown}
-              clickedItem={clickedItem}
-              setClickedItem={setClickedItem}
-              columnDefs={getColumnDefsByType('Customer Ledger Entries')}
-              fetchApiEndpoint={financeEndpoints.customenrDrillDown(
-                clickedItem?.bankAccountCode
-              )}
-              fetchApiService={apiService.get}
-              title={clickedItem?.customerName}
-            />
           </>
         ) : (
           <>

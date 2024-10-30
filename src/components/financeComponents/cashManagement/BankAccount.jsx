@@ -19,44 +19,6 @@ import {
   transformDataByType,
 } from '../baseSubledgerData/BaseSubledgerData';
 
-const columnDefs = [
-  {
-    field: 'bankAccountName',
-    headerName: 'Bank Account Name',
-    headerClass: 'prefix-header',
-
-    filter: true,
-  },
-  {
-    field: 'bankAccountDescription',
-    headerName: 'Bank Account Description',
-    headerClass: 'prefix-header',
-    filter: true,
-  },
-  {
-    field: 'bankAccountNo',
-    headerName: 'Bank Account No',
-    headerClass: 'prefix-header',
-    filter: true,
-  },
-  {
-    field: 'amount',
-    headerName: 'Amount',
-    width: 150,
-    valueFormatter: (params) => {
-      return formatNumber(params.value);
-    },
-    cellStyle: { textAlign: 'right' },
-  },
-  {
-    field: 'isBlocked',
-    headerName: 'Is Blocked',
-    headerClass: 'prefix-header',
-    filter: true,
-    width: 100,
-  },
-];
-
 const BankAccount = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -233,8 +195,73 @@ const BankAccount = () => {
 
   const [openDrilldown, setOpenDrilldown] = React.useState(false);
 
+  const columnDefs = [
+    {
+      field: 'bankAccountNo',
+      headerName: 'Bank Account No',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'bankAccountName',
+      headerName: 'Bank Account Name',
+      headerClass: 'prefix-header',
+
+      filter: true,
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      width: 150,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      cellRenderer: (params) => {
+        return (
+          <p
+            className="cursor-pointer underline text-primary font-bold text-[14px]"
+            onClick={() => {
+              setOpenDrilldown(true);
+              setClickedItem(params.data);
+            }}
+          >
+            {formatNumber(params.value)}
+          </p>
+        );
+      },
+    },
+
+    {
+      field: 'bankAccountDescription',
+      headerName: 'Bank Account Description',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+
+    {
+      field: 'isBlocked',
+      headerName: 'Is Blocked',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 100,
+    },
+  ];
+
   return (
     <div className="">
+      {' '}
+      <BaseDrilldown
+        setOpenDrilldown={setOpenDrilldown}
+        openDrilldown={openDrilldown}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        columnDefs={getColumnDefsByType('Bank Account Ledger Entries')}
+        fetchApiEndpoint={financeEndpoints.bankDrillDown(
+          clickedItem?.bankAccountCode
+        )}
+        fetchApiService={apiService.get}
+        title={clickedItem?.bankAccountName}
+      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -245,6 +272,7 @@ const BankAccount = () => {
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
         deleteApiService={apiService.delete}
       >
+        {' '}
         {clickedItem ? (
           <>
             <BaseAutoSaveInputCard
@@ -264,18 +292,6 @@ const BankAccount = () => {
               banks={branches}
               setOpenDrilldown={setOpenDrilldown}
               setSelectedBank={setSelectedBank}
-            />
-            <BaseDrilldown
-              setOpenDrilldown={setOpenDrilldown}
-              openDrilldown={openDrilldown}
-              clickedItem={clickedItem}
-              setClickedItem={setClickedItem}
-              columnDefs={getColumnDefsByType('Bank Account Ledger Entries')}
-              fetchApiEndpoint={financeEndpoints.bankDrillDown(
-                clickedItem?.bankAccountCode
-              )}
-              fetchApiService={apiService.get}
-              title={clickedItem?.bankAccountName}
             />
           </>
         ) : (

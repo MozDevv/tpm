@@ -18,48 +18,6 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import BaseDrilldown from '@/components/baseComponents/BaseDrilldown';
 import { getColumnDefsByType } from '../baseSubledgerData/BaseSubledgerData';
 
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'vendorName',
-    headerName: 'Vendor Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    width: 250,
-  },
-  {
-    field: 'amount',
-    headerName: 'Amount',
-    headerClass: 'prefix-header',
-    filter: true,
-    width: 100,
-    valueFormatter: (params) => {
-      return formatNumber(params.value);
-    },
-    cellStyle: { textAlign: 'right' },
-  },
-  {
-    field: 'vendorEmail',
-    headerName: 'Vendor Email',
-    headerClass: 'prefix-header',
-    filter: true,
-    width: 250,
-  },
-  {
-    field: 'vendorPhoneNumber',
-    headerName: 'Vendor Phone Number',
-    headerClass: 'prefix-header',
-    filter: true,
-    width: 100,
-  },
-];
-
 const Vendor = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -234,8 +192,72 @@ const Vendor = () => {
 
   const [openDrilldown, setOpenDrilldown] = React.useState(false);
 
+  const columnDefs = [
+    {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      flex: 1,
+      filter: true,
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      cellRenderer: (params) => {
+        return (
+          <p
+            className="cursor-pointer underline text-primary font-bold text-[14px] text-right"
+            onClick={() => {
+              setOpenDrilldown(true);
+              setClickedItem(params.data);
+            }}
+          >
+            {formatNumber(params.value)}
+          </p>
+        );
+      },
+    },
+    {
+      field: 'vendorEmail',
+      headerName: 'Vendor Email',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'vendorPhoneNumber',
+      headerName: 'Vendor Phone Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+  ];
+
   return (
     <div className="">
+      <BaseDrilldown
+        setOpenDrilldown={setOpenDrilldown}
+        openDrilldown={openDrilldown}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        columnDefs={getColumnDefsByType('Vendor Ledger Entries')}
+        fetchApiEndpoint={financeEndpoints.vendorDrillDown(clickedItem?.id)}
+        fetchApiService={apiService.get}
+        title={clickedItem?.vendorName}
+      />{' '}
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -246,21 +268,10 @@ const Vendor = () => {
         deleteApiEndpoint={financeEndpoints.deleteVendor(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
+        {' '}
         {clickedItem ? (
           <>
             {' '}
-            <BaseDrilldown
-              setOpenDrilldown={setOpenDrilldown}
-              openDrilldown={openDrilldown}
-              clickedItem={clickedItem}
-              setClickedItem={setClickedItem}
-              columnDefs={getColumnDefsByType('Vendor Ledger Entries')}
-              fetchApiEndpoint={financeEndpoints.vendorDrillDown(
-                clickedItem?.id
-              )}
-              fetchApiService={apiService.get}
-              title={clickedItem?.vendorName}
-            />
             <BaseAutoSaveInputCard
               fields={fields}
               setOpenDrilldown={setOpenDrilldown}
@@ -296,7 +307,6 @@ const Vendor = () => {
           />
         )}
       </BaseCard>
-
       <BaseTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
