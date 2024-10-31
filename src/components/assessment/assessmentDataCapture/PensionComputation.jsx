@@ -44,35 +44,6 @@ function PensionComputation({
     getSummary();
   }, [computed]);
 
-  // const fields = [
-  //   { label: 'Current Salary', key: 'current_salary' },
-  //   { label: 'Pensionable Emolument', key: 'pensionable_emolument' },
-  //   { label: 'Unreduced Pension', key: 'unreduced_pension' },
-  //   { label: 'Reduced Pension', key: 'reduced_pension' },
-  //   { label: 'Lumpsum Amount', key: 'lumpsum_amount' },
-  //   { label: 'Monthly Pension', key: 'monthly_pension' },
-  //   { label: 'Last 3-Year Total', key: 'last_3year_total' },
-  //   { label: 'Average Salary', key: 'average_salary' },
-  //   { label: 'Max Government Salary', key: 'max_government_salary' },
-  //   {
-  //     label: 'Killed On Duty Monthly Pension',
-  //     key: 'kod_widows_monthly_pension_amount',
-  //   },
-  //   {
-  //     label: 'Killed On Duty Children Monthly Pension',
-  //     key: 'kod_childrens_monthly_pension_amount',
-  //   },
-  //   { label: 'Death Gratuity Amount', key: 'death_gratuity_amount' },
-  //   {
-  //     label: 'Unreduced Dependent Pension',
-  //     key: 'unreduced_dependent_pension',
-  //   },
-  //   {
-  //     label: 'Monthly Primary Dependent Pension',
-  //     key: 'monthly_primary_dependent_pension',
-  //   },
-  // ];
-
   const fields = summary
     ? Object.keys(summary).map((key) => ({
         label: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), // Convert snake_case to Title Case
@@ -88,25 +59,34 @@ function PensionComputation({
         (key) => key !== 'breakdown' && key !== 'claim_id' && key !== 'id'
       ) // Filter out breakdown, claim_id and id
       .map((key) => {
-        const value = summary[key];
+        let value = summary[key];
         const containsDateKeyword =
           /(month|year|day)/i.test(key) &&
           key !== 'breakdown' &&
           key !== 'last_3year_total' &&
           key !== 'monthly_pension';
+
+        if (key === 'commuted') {
+          console.log('Commuted field found:', value);
+          value = value === true ? 'Yes' : 'No';
+        }
+
         return {
           label: key
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (c) => c.toUpperCase()),
           name: key,
           type:
-            containsDateKeyword || key === 'pensionable_service_months'
+            typeof value === 'boolean'
+              ? 'boolean' // Check if the value is boolean
+              : containsDateKeyword || key === 'pensionable_service_months'
               ? 'text'
               : isValidISODate(value)
               ? 'date'
               : typeof value === 'number' || value === 0
               ? 'amount'
-              : 'text',
+              : 'text', // Default to text if none of the above conditions match
+
           disabled: true,
         };
       });
@@ -170,7 +150,11 @@ function PensionComputation({
               <span className="text-gray-500 font-semibold text-[17px]">
                 <span className="text-gray-500 font-semibold text-[17px]">
                   {summary?.[key] !== undefined
-                    ? isValidISODate(summary[key])
+                    ? typeof summary[key] === 'boolean'
+                      ? summary[key]
+                        ? 'Yes'
+                        : 'No'
+                      : isValidISODate(summary[key])
                       ? parseDate(summary[key])
                       : /(month|year|day)/i.test(key) &&
                         ![
