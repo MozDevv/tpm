@@ -544,7 +544,11 @@ const ClaimsTable = ({ status }) => {
         />
 
         <Dialog
-          open={openMoveStatus && selectedRows.length > 0}
+          open={
+            openPreclaimDialog
+              ? openMoveStatus // When openPreclaimDialog is true, only consider openMoveStatus.
+              : openMoveStatus && selectedRows.length > 0 // When openPreclaimDialog is false, check both openMoveStatus and selectedRows.length.
+          }
           onClose={() => setOpenMoveStatus(false)}
           sx={{
             '& .MuiDialog-paper': {

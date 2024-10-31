@@ -40,6 +40,7 @@ import assessEndpoints, {
 import ReturnToPreclaims from '@/components/pensionsComponents/ClaimsManagementTable/ReturnToPreclaims';
 import AssessmentCard from './AssessmentCard';
 import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
+import PushToFinance from './PushToFinance';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -429,6 +430,8 @@ const AssessmentTable = ({ status }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
+
+  const [openPushToFinance, setOpenPushToFinance] = useState(false);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -459,7 +462,7 @@ const AssessmentTable = ({ status }) => {
     },
 
     moveToFinance: () => {
-      console.log('Move to Finance clicked');
+      setOpenPushToFinance(true);
     },
     returnToDirectorate: () => {
       setOpenAction(1);
@@ -508,8 +511,9 @@ const AssessmentTable = ({ status }) => {
     },
 
     moveToFinance: () => {
-      console.log('Move to Finance clicked');
+      setOpenPushToFinance(true);
     },
+
     returnToDirectorate: () => {
       setOpenAction(1);
       setOpenMoveStatus(true);
@@ -571,6 +575,32 @@ const AssessmentTable = ({ status }) => {
 
   return (
     <>
+      <Dialog
+        open={
+          openPreclaimDialog
+            ? openPushToFinance
+            : openPushToFinance && selectedRows.length > 0
+        }
+        onClose={() => {
+          setOpenPushToFinance(false);
+        }}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          padding: '20px',
+          maxHeight: '90vh',
+        }}
+      >
+        <PushToFinance
+          isSchedule={true}
+          status={status}
+          clickedItem={clickedItem}
+          setOpenBaseCard={setOpenPreclaimDialog}
+          selectedRows={selectedRows}
+          setOpenPostGL={setOpenPushToFinance}
+          setSelectedRows={setSelectedRows}
+        />
+      </Dialog>
       <div className=" relative h-full w-full overflow-hidden">
         {computing && (
           <Backdrop

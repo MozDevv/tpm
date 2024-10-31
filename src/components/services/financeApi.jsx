@@ -258,6 +258,8 @@ const financeEndpoints = {
     `/Posting/GetCustomerSubLedger?CustomerId=${val}`,
 
   glDrillDown: (val) => `/Posting/GetGeneralLedgerDetail?GlAccountId=${val}`,
+
+  postClaimtoFinance: 'Posting/PostClaimPIToLedger',
 };
 
 export const apiService = {
