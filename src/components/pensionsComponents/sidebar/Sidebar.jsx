@@ -187,6 +187,18 @@ function Sidebar() {
         },
       ],
     },
+
+    {
+      title: 'Directorate',
+      path: '/pensions/directorate',
+      icon: <ArticleOutlinedIcon />,
+    },
+    {
+      title: 'Controller of Budget',
+      path: '/pensions/cob',
+      icon: <Payments />,
+    },
+
     {
       title: 'Finance',
       icon: <AccountBalanceWallet />,
@@ -288,21 +300,7 @@ function Sidebar() {
         },
       ],
     },
-    {
-      title: 'Directorate',
-      path: '/pensions/directorate',
-      icon: <ArticleOutlinedIcon />,
-    },
-    {
-      title: 'Controller of Budget',
-      path: '/pensions/cob',
-      icon: <Payments />,
-    },
-    {
-      title: 'Accounts',
-      path: '/pensions/accounts',
-      icon: <DashboardOutlinedIcon />,
-    },
+
     {
       title: 'Customer Relations',
       path: '/pensions',

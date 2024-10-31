@@ -80,7 +80,6 @@ const BaseDrilldown = ({
       console.log('Data fetched successfully:', transformedData);
     } catch (error) {
       console.log('', error);
-
       console.error('Error fetching data:', error.response);
     }
   };
