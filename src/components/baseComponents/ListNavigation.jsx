@@ -36,6 +36,8 @@ import {
   PlaylistRemove,
   Upload,
   CloudUpload,
+  PriceCheck,
+  AssuredWorkload,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -254,6 +256,20 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       status: [3],
     },
 
+    {
+      name: 'Return to Directorate',
+      icon: Undo,
+      action: 'returnToDirectorate',
+      requiredPermissions: [],
+      status: [6],
+    },
+    {
+      name: 'Move to Finance',
+      icon: AssuredWorkload,
+      action: 'moveToFinance',
+      requiredPermissions: [],
+      status: [6],
+    },
     {
       name: 'Approve Claim',
       icon: Send,

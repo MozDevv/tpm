@@ -457,6 +457,14 @@ const AssessmentTable = ({ status }) => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
+
+    moveToFinance: () => {
+      console.log('Move to Finance clicked');
+    },
+    returnToDirectorate: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
   };
 
   const [openComputeClaim, setOpenComputeClaim] = useState(false);
@@ -496,6 +504,14 @@ const AssessmentTable = ({ status }) => {
 
     moveToControllerOfBudget: () => {
       setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+
+    moveToFinance: () => {
+      console.log('Move to Finance clicked');
+    },
+    returnToDirectorate: () => {
+      setOpenAction(1);
       setOpenMoveStatus(true);
     },
   };

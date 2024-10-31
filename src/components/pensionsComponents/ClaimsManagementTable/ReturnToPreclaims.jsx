@@ -88,13 +88,13 @@ function ReturnToPreclaims({
     }
   };
   const notificationStatusMap = {
-    0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
-    1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
-    2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
-    3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
-    4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
-    5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
-    6: { name: 'COB', color: '#2ecc71' }, // Light Blue
+    0: { name: 'Claims Verification', color: '#3498db' }, // Light Red
+    1: { name: 'Claims Validation', color: '#f39c12' }, // Bright Orange
+    2: { name: 'Claims Approval', color: '#2ecc71' }, // Light Blue
+    3: { name: 'Assessment Data Capture', color: '#f39c12' }, // Bright Orange
+    4: { name: 'Assessment Approval', color: '#2ecc71' }, // Light Blue
+    5: { name: 'Directorate', color: '#f39c12' }, // Bright Orange
+    6: { name: 'Controller Of Budget', color: '#2ecc71' }, // Light Blue
   };
 
   // Check if clickedItem is an array and use the first item for title determination

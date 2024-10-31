@@ -6,6 +6,7 @@ import { Box, Button, Typography } from '@mui/material';
 import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
 import Claims from '@/components/pensionsComponents/preclaims/Claims';
 import ClaimsTable from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
+import AssessmentTable from '@/components/assessment/assessmentDataCapture/AssessmentTable';
 
 function page() {
   return (
@@ -16,7 +17,7 @@ function page() {
         </div>
         {/* <CustomBreadcrumbsList currentTitle="Controller of Budget" /> */}
       </div>
-      <ClaimsTable status={6} />
+      <AssessmentTable status={6} />
     </div>
   );
 }
