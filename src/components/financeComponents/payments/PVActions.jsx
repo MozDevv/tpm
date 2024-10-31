@@ -117,6 +117,38 @@ function PVActions({
 
           return; // Exit the function after processing case 2 actions
         }
+      } else if (status === 3) {
+        endpoint = financeEndpoints.postScheduledPaymentToLedger;
+        successMessage = 'Payment Vouchers scheduled successfully';
+        errorMessage = 'Failed to schedule Payment Vouchers';
+        requestData = {
+          paymentSchedulesList: selectedIds.map((item) => ({
+            paymentScheduleId: item.id,
+          })),
+        };
+
+        // Make the API call for scheduling
+        const res = await apiService.post(endpoint, requestData);
+
+        if (res && res.data && res.data.succeeded && res.status === 200) {
+          setSelectedRows([]);
+          setOpenPostGL(false);
+          setOpenBaseCard && setOpenBaseCard(false);
+          message.success(successMessage);
+        } else if (
+          res &&
+          res.data &&
+          res.data.messages.length > 0 &&
+          !res.data.succeeded
+        ) {
+          setErrors({
+            status: true,
+            message: res.data.messages[0],
+          });
+          message.error(truncateMessage(res.data.messages[0], 100));
+        } else {
+          message.error(errorMessage);
+        }
       } else {
         const processRequests = selectedIds.map(async ({ id }) => {
           switch (status) {
@@ -225,38 +257,73 @@ function PVActions({
             <div className="text-primary mt-3 text-[15px] font-normal mb-6"></div>
 
             <TableContainer sx={{ maxHeight: '400px' }}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Document No</TableCell>
-                    <TableCell>On Behalf Of</TableCell>
-                    <TableCell align="right">Payee</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {selectedRows.map((doc) => (
-                    <TableRow key={doc.id}>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        sx={{
-                          fontWeight: 'bold',
-                          color: '#006990',
-                          textDecoration: 'underline',
-                        }}
-                      >
-                        {doc.documentNo}
-                      </TableCell>
-
-                      <TableCell>{doc.onBehalfOf}</TableCell>
-
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                        {doc.payee}
-                      </TableCell>
+              {status === 3 ? (
+                <Table size="small" stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Schedule No</TableCell>
+                      <TableCell>Total Amount</TableCell>
+                      <TableCell align="right">Schedule Date</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {selectedRows.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          sx={{
+                            fontWeight: 'bold',
+                            color: '#006990',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          {doc.scheduleNo}
+                        </TableCell>
+
+                        <TableCell align="center">{doc.totalAmount}</TableCell>
+
+                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                          {parseDate(doc.scheduleDate)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Table size="small" stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Document No</TableCell>
+                      <TableCell>On Behalf Of</TableCell>
+                      <TableCell align="right">Payee</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedRows.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          sx={{
+                            fontWeight: 'bold',
+                            color: '#006990',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          {doc.documentNo}
+                        </TableCell>
+
+                        <TableCell>{doc.onBehalfOf}</TableCell>
+
+                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                          {doc.payee}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </TableContainer>
           </div>
         )}

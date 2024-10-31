@@ -260,6 +260,8 @@ const financeEndpoints = {
   glDrillDown: (val) => `/Posting/GetGeneralLedgerDetail?GlAccountId=${val}`,
 
   postClaimtoFinance: 'Posting/PostClaimPIToLedger',
+
+  postScheduledPaymentToLedger: '/Posting/PostClaimPaymentToLedger',
 };
 
 export const apiService = {
