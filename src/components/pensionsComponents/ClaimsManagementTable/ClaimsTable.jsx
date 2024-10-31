@@ -69,7 +69,7 @@ const notificationStatusMap = {
   6: { name: 'COB', color: '#2ecc71' }, // Light Blue
 };
 
-const statusIcons = {
+export const statusIcons = {
   0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
   1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
   2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
@@ -477,6 +477,10 @@ const ClaimsTable = ({ status }) => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
+    returnToClaimsApproval: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
   };
 
   const [openApprove, setOpenApprove] = useState(0);
@@ -507,6 +511,11 @@ const ClaimsTable = ({ status }) => {
         rejectDocumentApproval: () => setOpenApprove(4),
         delegateApproval: () => {
           setOpenApprove(5);
+        },
+
+        returnToClaimsApproval: () => {
+          setOpenAction(1);
+          setOpenMoveStatus(true);
         },
       }),
   };

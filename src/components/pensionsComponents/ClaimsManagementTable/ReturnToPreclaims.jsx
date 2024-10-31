@@ -83,33 +83,41 @@ function ReturnToPreclaims({
     } catch (error) {
       console.error('An error occurred:', error);
     } finally {
-      setOpenCreateClaim(false);
       setSelectedRows && setSelectedRows([]); // Reset selected rows if applicable
       fetchAllPreclaims?.(); // Refetch preclaims if the function exists
     }
   };
+  const notificationStatusMap = {
+    0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
+    1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
+    2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
+    3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
+    4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+    5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+    6: { name: 'COB', color: '#2ecc71' }, // Light Blue
+  };
 
   // Check if clickedItem is an array and use the first item for title determination
-  const itemToCheck = Array.isArray(clickedItem) ? clickedItem[0] : clickedItem;
 
-  const title =
-    itemToCheck?.stage === 0 && moveStatus === 1
-      ? 'Return Claim(s) to MDA'
-      : itemToCheck?.stage === 0 && moveStatus === 0
-      ? 'Move Claim(s) to Validation'
-      : itemToCheck?.stage === 1 && moveStatus === 1
-      ? 'Return to Verification'
-      : itemToCheck?.stage === 1 && moveStatus === 0
-      ? 'Move to Approval'
-      : itemToCheck?.stage === 2 && moveStatus === 0
-      ? 'Move to Assessment'
-      : itemToCheck?.stage === 2 && moveStatus === 1
-      ? 'Return to Validation'
-      : itemToCheck?.stage === 3 && moveStatus === 0
-      ? 'Move to Assessment Approval'
-      : itemToCheck?.stage === 3 && moveStatus === 1
-      ? 'Return to Claims'
-      : 'Approve Claim(s)';
+  const stageOrder = Object.keys(notificationStatusMap).map(Number);
+
+  const getTitle = (stage, moveStatus) => {
+    const currentIndex = stageOrder.indexOf(stage);
+    const targetIndex = moveStatus === 1 ? currentIndex - 1 : currentIndex + 1;
+
+    if (targetIndex < 0 || targetIndex >= stageOrder.length) {
+      return 'No valid stage to move to';
+    }
+
+    const targetStageName = notificationStatusMap[stageOrder[targetIndex]].name;
+
+    return moveStatus === 1
+      ? `Return to ${targetStageName}`
+      : `Move to ${targetStageName}`;
+  };
+
+  const itemToCheck = Array.isArray(clickedItem) ? clickedItem[0] : clickedItem;
+  const title = getTitle(itemToCheck?.stage, moveStatus);
 
   return (
     <div>
@@ -146,7 +154,7 @@ function ReturnToPreclaims({
             fullWidth
             color="primary"
           >
-            Create
+            {title}
           </Button>
         </div>
         {errors.status && (

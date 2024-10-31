@@ -78,7 +78,7 @@ function PensionComputation({
           name: key,
           type:
             typeof value === 'boolean'
-              ? 'boolean' // Check if the value is boolean
+              ? 'switch' // Check if the value is boolean
               : containsDateKeyword || key === 'pensionable_service_months'
               ? 'text'
               : isValidISODate(value)

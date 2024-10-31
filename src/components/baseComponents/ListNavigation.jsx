@@ -173,8 +173,9 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
       status: [1],
     },
+
     {
-      name: 'Return to Approval',
+      name: 'Return to Validation',
       icon: Undo,
       action: 'returnToApproval',
       requiredPermissions: [],
@@ -189,11 +190,19 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
     },
 
     {
-      name: 'Return to Claims ',
+      name: 'Return to Claims Approval',
       icon: Undo,
-      action: 'returnToClaimsApprovals',
+      action: 'returnToClaimsApproval',
       requiredPermissions: [],
       status: [3],
+    },
+
+    {
+      name: 'Return to Assessment Data Capture',
+      icon: Undo,
+      action: 'returnToAssessmentDataCapture',
+      requiredPermissions: [],
+      status: [4],
     },
     {
       name: 'Compute Claim',
@@ -215,6 +224,28 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       action: 'viewComputationSummary',
       requiredPermissions: [],
     },
+    {
+      name: 'Return to Assessment',
+      icon: Undo,
+      action: 'returnToAssessment',
+      requiredPermissions: [],
+      status: [5],
+    },
+    {
+      name: 'Move to Directorate',
+      icon: TaskOutlined,
+      action: 'moveToDirectorate',
+      requiredPermissions: [],
+      status: [4],
+    },
+    {
+      name: 'Move to Controller of Budget',
+      icon: TaskOutlined,
+      action: 'moveToControllerOfBudget',
+      requiredPermissions: [],
+      status: [5],
+    },
+
     {
       name: 'Move to Assessment Approval',
       icon: Send,

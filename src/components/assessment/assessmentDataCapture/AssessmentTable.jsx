@@ -39,6 +39,7 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import ReturnToPreclaims from '@/components/pensionsComponents/ClaimsManagementTable/ReturnToPreclaims';
 import AssessmentCard from './AssessmentCard';
+import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -60,6 +61,8 @@ const notificationStatusMap = {
   2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
   3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+  5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+  6: { name: 'COB', color: '#2ecc71' }, // Light Blue
 };
 
 const colDefs = [
@@ -112,6 +115,39 @@ const colDefs = [
         >
           {status.name.toLowerCase()}
         </Button>
+      );
+    },
+  },
+  {
+    headerName: 'Approval Status',
+    field: 'approval_status',
+    width: 150,
+    filter: true,
+    cellRenderer: (params) => {
+      const status = statusIcons[params.value];
+      if (!status) return null;
+
+      const IconComponent = status.icon;
+
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconComponent
+            style={{
+              color: status.color,
+              marginRight: '6px',
+              fontSize: '17px',
+            }}
+          />
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'semibold',
+              fontSize: '13px',
+            }}
+          >
+            {status.name}
+          </span>
+        </div>
       );
     },
   },
@@ -334,7 +370,7 @@ const AssessmentTable = ({ status }) => {
           item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
         pensionAward_pensionCap_id:
           item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
-
+        approval_status: item?.document_status,
         //////
 
         retirement_date: item?.prospectivePensioner?.retirement_date,
@@ -396,29 +432,29 @@ const AssessmentTable = ({ status }) => {
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
-    // create: () => router.push("/pensions/preclaims/listing/new"),
-    // create: () => {
-    //   setOpenBaseCard(true);
-    //   setClickedItem(null);
-    // },
-    // edit: () => console.log("Edit clicked"),
-    // delete: () => console.log("Delete clicked"),
-    // reports: () => console.log("Reports clicked"),
-    // //notify: () => setOpenNotification(true),
-    // movetoValidation: () => {
-    //   setOpenAction(0);
-    //   setOpenMoveStatus(true);
-    // },
-    // movetoVerification: () => {
-    //   setOpenAction(1);
-    //   setOpenMoveStatus(true);
-    // },
+
     moveToAssessmentApproval: () => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
-    returnToClaimsApprovals: () => {
+
+    returnToAssessmentDataCapture: () => {
       setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+
+    moveToDirectorate: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+
+    returnToAssessment: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+
+    moveToControllerOfBudget: () => {
+      setOpenAction(0);
       setOpenMoveStatus(true);
     },
   };
@@ -440,6 +476,28 @@ const AssessmentTable = ({ status }) => {
     computeClaim: () => calculateAndAward(clickedItem?.id_claim),
     viewComputationBreakdown: () => setViewBreakDown(true),
     viewComputationSummary: () => setViewCompleteSummary(true),
+
+    moveToAssessmentApproval: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    returnToClaimsApprovals: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+    moveToDirectorate: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    returnToAssessment: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
+
+    moveToControllerOfBudget: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
   };
 
   const [computing, setComputing] = useState(false);
@@ -504,7 +562,7 @@ const AssessmentTable = ({ status }) => {
             open={open}
             onClick={handleClose}
           >
-            <span class="loader"></span>
+            {/* <span class="loader"></span> */}
             <div className="ml-3 font-semibold text-xl flex items-center">
               Computing
               <div className="ellipsis ml-1 mb-4">
@@ -516,7 +574,11 @@ const AssessmentTable = ({ status }) => {
           </Backdrop>
         )}
         <Dialog
-          open={openMoveStatus && selectedRows.length > 0}
+          open={
+            openPreclaimDialog
+              ? openMoveStatus // When openPreclaimDialog is true, only consider openMoveStatus.
+              : openMoveStatus && selectedRows.length > 0 // When openPreclaimDialog is false, check both openMoveStatus and selectedRows.length.
+          }
           onClose={() => setOpenMoveStatus(false)}
           sx={{
             '& .MuiDialog-paper': {
