@@ -109,6 +109,7 @@ function DeductionsDetails({ clickedItem }) {
           //  gridApiRef.current.api.showLoadingOverlay();
         }}
         rowSelection="multiple"
+        className="custom-grid ag-theme-quartz"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
           console.log('e.data', e.data);

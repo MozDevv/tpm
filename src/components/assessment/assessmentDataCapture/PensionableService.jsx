@@ -148,6 +148,7 @@ function PensionableService({ clickedItem, computed }) {
         }}
         noRowsOverlayComponent={BaseEmptyComponent}
         rowSelection="multiple"
+        className="custom-grid ag-theme-quartz"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
           console.log('e.data', e.data);

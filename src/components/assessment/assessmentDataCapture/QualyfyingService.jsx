@@ -183,6 +183,7 @@ function QualyfyingService({ clickedItem, computed }) {
           onGridReady(params);
           //  gridApiRef.current.api.showLoadingOverlay();
         }}
+        className="custom-grid ag-theme-quartz"
         rowSelection="multiple"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {

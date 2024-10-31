@@ -24,6 +24,7 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
       headerClass: 'prefix-header',
       filter: true,
       width: 250,
+      pinned: 'left',
     },
 
     {
@@ -302,16 +303,12 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
         noRowsOverlayComponent={BaseEmptyComponent}
-        // alwaysShowVerticalScroll={true}
-
-        // loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
-        // loadingOverlayComponentParams={loadingOverlayComponentParams}
-        // paginationPageSize={pageSize}
         onGridReady={(params) => {
           params.api.sizeColumnsToFit();
           onGridReady(params);
           //  gridApiRef.current.api.showLoadingOverlay();
         }}
+        className="custom-grid ag-theme-quartz"
         rowSelection="multiple"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
