@@ -1,21 +1,16 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { Tabs } from 'antd';
-import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { apiService } from '@/components/services/financeApi';
-import endpoints, {
-  apiService as setupsApiService,
-} from '@/components/services/setupsApi';
-import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCard';
-import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import { Button } from '@mui/material';
+import { parseDate } from '@/utils/dateFormatter';
 
 const { TabPane } = Tabs;
 
@@ -28,6 +23,9 @@ function ScheduledPaymentsCard({
   useRequestBody,
   transformData,
   setClickedItem,
+  exportScheduleLines,
+  gridApi,
+  setGridApi,
 }) {
   const [scheduleLines, setScheduleLines] = useState([]);
   const [deductionsAndRefunds, setDeductionsAndRefunds] = useState([]);
@@ -146,6 +144,13 @@ function ScheduledPaymentsCard({
       required: true,
     },
   ];
+  const gridApiRef = useRef(null);
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+    gridApiRef.current = params;
+    params.api.sizeColumnsToFit();
+  };
 
   return (
     <div className="p-2   mt-2">
@@ -176,13 +181,33 @@ function ScheduledPaymentsCard({
 
               <BaseCollapse name="Schedule Lines" titleFontSize="24">
                 <div className="flex-grow h-[350px] ag-theme-quartz mt-3 ">
-                  {' '}
+                  {/* <div className="flex flex-row gap-2 my-2 ml-5">
+                    <Button
+                      startIcon={
+                        <img src="/excel.png" height={28} width={28} alt="" />
+                      }
+                      //   className="text-[14px] font-semibold"
+                      sx={{
+                        fontSize: '13px',
+                        maxHeight: '40px',
+                        fontWeight: 'normal',
+                      }}
+                    >
+                      {' '}
+                      Export to Excel
+                    </Button>
+                  </div> */}
                   <AgGridReact
                     rowData={scheduleLines}
                     columnDefs={tableFields}
                     rowSelection="multiple"
                     defaultColDef={{ resizable: true, sortable: true }}
                     domLayout="autoHeight"
+                    className="custom-grid ag-theme-quartz"
+                    onGridReady={(params) => {
+                      //  params.api.sizeColumnsToFit();
+                      onGridReady(params);
+                    }}
                   />
                 </div>
               </BaseCollapse>

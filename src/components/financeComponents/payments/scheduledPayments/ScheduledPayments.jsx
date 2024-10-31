@@ -8,7 +8,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import { apiService } from '@/components/services/financeApi';
 
 import financeEndpoints from '@/components/services/financeApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 
 import PaymentsCard from '../PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
@@ -175,7 +175,18 @@ const ScheduledPayments = ({ status }) => {
 
   const [openAction, setOpenAction] = React.useState(false);
   const [dialogType, setDialogType] = React.useState(false);
+
+  const [exportScheduleLines, setExportScheduleLines] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [gridApi, setGridApi] = React.useState(null);
+
+  const exportData = () => {
+    gridApi.exportDataAsCsv({
+      fileName: `Scheduled Payments - ${parseDate(
+        clickedItem?.scheduleDate
+      )}.csv`, // Set the desired file name here
+    });
+  };
 
   const baseCardHandlers = {
     create: () => {
@@ -222,6 +233,10 @@ const ScheduledPayments = ({ status }) => {
         console.log('Post Payment');
       },
     }),
+
+    exportScheduleLines: () => {
+      exportData();
+    },
   };
 
   const title = clickedItem
@@ -288,7 +303,7 @@ const ScheduledPayments = ({ status }) => {
   return (
     <div className="">
       <Dialog
-        open={openPV && selectedRows.length > 0}
+        open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
         onClose={() => {
           setOpenPV(false);
           setIsSchedule(false);
@@ -325,6 +340,7 @@ const ScheduledPayments = ({ status }) => {
       >
         {clickedItem ? (
           <ScheduledPaymentsCard
+            exportScheduleLines={exportScheduleLines}
             fields={fields}
             apiEndpoint={financeEndpoints.updatePayment}
             postApiFunction={apiService.post}
@@ -332,6 +348,8 @@ const ScheduledPayments = ({ status }) => {
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={true}
             setClickedItem={setClickedItem}
+            gridApi={gridApi}
+            setGridApi={setGridApi}
             transformData={transformData}
           />
         ) : (

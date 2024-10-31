@@ -119,7 +119,7 @@ function PVActions({
         }
       } else if (status === 3) {
         endpoint = financeEndpoints.postScheduledPaymentToLedger;
-        successMessage = 'Payment Vouchers scheduled successfully';
+        successMessage = 'Payment Vouchers Posted successfully';
         errorMessage = 'Failed to schedule Payment Vouchers';
         requestData = {
           paymentSchedulesList: selectedIds.map((item) => ({

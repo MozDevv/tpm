@@ -389,6 +389,13 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       requiredPermissions: [],
       disabled: true,
     },
+    {
+      name: 'Export Schedule Lines to Excel',
+      icon: Launch,
+      action: 'exportScheduleLines',
+      disabled: false,
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
