@@ -114,7 +114,6 @@ const BaseDrilldown = ({
       setFilteredData(rowData);
       return;
     }
-
     const lowercasedKeyword = searchedKeyword.toLowerCase();
 
     const filtered = rowData.filter((row) =>
@@ -213,18 +212,19 @@ const BaseDrilldown = ({
             <Divider sx={{ mx: 2 }} />
           </div>
 
-          <div className="px-6 bg-gray-100 min-h-[60vh]">
+          <div className="px-6 bg-gray-100 min-h-[600px] max-h-[600px] h-[200px]">
             <AgGridReact
               noRowsOverlayComponent={BaseEmptyComponent}
               columnDefs={columnDefs}
               rowData={filteredData}
               pagination={false}
-              domLayout="autoHeight"
+              domLayout="normal"
               alwaysShowHorizontalScroll={true}
               onGridReady={(params) => {
                 params.api.sizeColumnsToFit();
                 onGridReady(params);
               }}
+              animateRows={true}
               rowSelection="multiple"
               onSelectionChanged={onSelectionChanged}
               className="custom-grid ag-theme-quartz"

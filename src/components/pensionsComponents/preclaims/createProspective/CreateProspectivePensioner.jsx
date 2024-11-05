@@ -33,7 +33,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
     console.log('Moving to next tab:', nextTab); // Debug line
-    setActiveKey(nextTab);
+    //setActiveKey(nextTab);
   };
 
   const moveToPreviousTab = () => {

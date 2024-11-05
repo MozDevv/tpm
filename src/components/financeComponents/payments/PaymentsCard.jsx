@@ -1,17 +1,17 @@
-import React, { use, useEffect, useState } from "react";
-import { Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import React, { use, useEffect, useState } from 'react';
+import { Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { AgGridReact } from "ag-grid-react";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
-import { apiService } from "@/components/services/financeApi";
+import { AgGridReact } from 'ag-grid-react';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { apiService } from '@/components/services/financeApi';
 import endpoints, {
   apiService as setupsApiService,
-} from "@/components/services/setupsApi";
-import BaseFinanceInputCard from "@/components/baseComponents/BaseFinanceInputCard";
-import BaseFinanceInputTable from "@/components/baseComponents/BaseFinanceInputTable";
-import financeEndpoints from "@/components/services/financeApi";
-import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
+} from '@/components/services/setupsApi';
+import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCard';
+import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
+import financeEndpoints from '@/components/services/financeApi';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 
 const { TabPane } = Tabs;
 
@@ -32,7 +32,7 @@ function PaymentsCard({
   const fetchNewOptions = async () => {
     try {
       const res = await apiService.get(financeEndpoints.getAllAccounts, {
-        "paging.pageSize": 2000,
+        'paging.pageSize': 2000,
       }); // Pass accountTypeId to the endpoint
       if (res.status === 200) {
         setAllOptions(
@@ -48,7 +48,7 @@ function PaymentsCard({
       }
 
       console.log(
-        "All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️",
+        'All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️',
         res.data.data.map((acc) => {
           return {
             id: acc.id,
@@ -76,7 +76,7 @@ function PaymentsCard({
         const res = await apiService.get(
           financeEndpoints.getProductPostingGroups,
           {
-            "paging.pageSize": 2000,
+            'paging.pageSize': 2000,
           }
         );
         if (res.status === 200) {
@@ -103,7 +103,7 @@ function PaymentsCard({
   const fetchBanksAndBranches = async () => {
     try {
       const res = await setupsApiService.get(endpoints.getBanks, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       const rawData = res.data.data;
 
@@ -119,13 +119,13 @@ function PaymentsCard({
           bankId: bank.id,
         }))
       );
-      console.log("banksData", banksData);
-      console.log("branchesData", branchesData);
+      console.log('banksData', banksData);
+      console.log('branchesData', branchesData);
 
       setBanks(banksData);
       setBranches(branchesData);
     } catch (error) {
-      console.log("Error fetching banks and branches:", error);
+      console.log('Error fetching banks and branches:', error);
     }
   };
   useEffect(() => {
@@ -134,97 +134,97 @@ function PaymentsCard({
 
   const tableFields = [
     {
-      value: "accountTypeId",
-      label: "Account Type",
-      type: "select",
+      value: 'accountTypeId',
+      label: 'Account Type',
+      type: 'select',
       required: true,
 
       options: [
         {
           id: 0,
-          name: "General_Ledger",
+          name: 'General_Ledger',
         },
         {
           id: 1,
-          name: "Vendor",
+          name: 'Vendor',
         },
         {
           id: 2,
-          name: "Customer",
+          name: 'Customer',
         },
         {
           id: 3,
-          name: "Bank",
+          name: 'Bank',
         },
       ],
     },
 
     {
-      value: "accountId",
-      label: "Account No",
-      type: "select",
+      value: 'accountId',
+      label: 'Account No',
+      type: 'select',
       required: true,
 
       options: allOptions && allOptions,
     },
     {
-      value: "accountNo",
-      label: "Account Name",
-      type: "text",
+      value: 'accountNo',
+      label: 'Account Name',
+      type: 'text',
       required: true,
       disabled: true,
       options: allOptions && allOptions,
     },
 
     {
-      value: "vatExcempt",
-      label: "VAT Excempt",
-      type: "select",
+      value: 'vatExcempt',
+      label: 'VAT Excempt',
+      type: 'select',
       options: [
-        { id: true, name: "Yes" },
-        { id: false, name: "No" },
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
       ],
       required: true,
     },
     {
-      value: "vatCode",
-      label: "VAT Code",
-      type: "select",
+      value: 'vatCode',
+      label: 'VAT Code',
+      type: 'select',
       required: true,
       options: productPostingGroups,
     },
     {
-      value: "taxCode",
-      label: "Tax Code",
-      type: "select",
+      value: 'taxCode',
+      label: 'Tax Code',
+      type: 'select',
       required: true,
       options: productPostingGroups,
     },
     {
-      value: "wtaxCode",
-      label: "W/Tax Code",
-      type: "select",
+      value: 'wtaxCode',
+      label: 'W/Tax Code',
+      type: 'select',
       required: true,
       options: productPostingGroups,
     },
     {
-      value: "wvatCode",
-      label: "W/T Vat Code",
-      type: "select",
+      value: 'wvatCode',
+      label: 'W/T Vat Code',
+      type: 'select',
       required: true,
       options: productPostingGroups,
     },
     {
-      value: "retentionCode",
-      label: "Retention Code",
-      type: "select",
+      value: 'retentionCode',
+      label: 'Retention Code',
+      type: 'select',
       required: true,
       options: productPostingGroups,
     },
     {
-      value: "amount",
-      label: "Amount",
-      type: "number",
+      value: 'amount',
+      label: 'Amount',
+      type: 'number',
       required: true,
       disabled: false,
     },
@@ -250,96 +250,108 @@ function PaymentsCard({
     //   ],
     // },
     {
-      value: "vatAmount",
-      label: "VAT Amount",
-      type: "number",
+      value: 'vatAmount',
+      label: 'VAT Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
     {
-      value: "taxAmount",
-      label: "Tax Amount",
-      type: "number",
+      value: 'taxAmount',
+      label: 'Tax Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
     {
-      value: "wtaxAmount",
-      label: "W/Tax Amount",
-      type: "number",
+      value: 'wtaxAmount',
+      label: 'W/Tax Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
     {
-      value: "wvatAmount",
-      label: "W/T Vat Amount",
-      type: "number",
+      value: 'wvatAmount',
+      label: 'W/T Vat Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
     {
-      value: "retentionAmount",
-      label: "Retention Amount",
-      type: "number",
+      value: 'retentionAmount',
+      label: 'Retention Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
     {
-      value: "netAmount",
-      label: "Net Amount",
-      type: "number",
+      value: 'netAmount',
+      label: 'Net Amount',
+      type: 'number',
       required: false,
       disabled: true,
     },
 
     {
-      value: "appliesToDocType",
-      label: "Applies To Doc Type",
-      type: "select",
+      value: 'appliesToDocType',
+      label: 'Applies To Doc Type',
+      type: 'select',
       options: [
-        { id: 0, name: "Payment Voucher" },
-        { id: 1, name: "Purchase Invoice" },
-        { id: 2, name: "Sales Invoice" },
-        { id: 3, name: "Receipt" },
-        { id: 4, name: "Purchase Credit Memo" },
-        { id: 5, name: "Sales Credit Memo" },
-        { id: 6, name: "Journal Voucher" },
+        { id: 0, name: 'Payment Voucher' },
+        { id: 1, name: 'Purchase Invoice' },
+        { id: 2, name: 'Sales Invoice' },
+        { id: 3, name: 'Receipt' },
+        { id: 4, name: 'Purchase Credit Memo' },
+        { id: 5, name: 'Sales Credit Memo' },
+        { id: 6, name: 'Journal Voucher' },
       ],
     },
     {
-      value: "appliesToDocNumber",
-      label: "Applies To Doc Number",
-      type: "text",
+      value: 'appliesToDocNumber',
+      label: 'Applies To Doc Number',
+      type: 'text',
     },
 
     {
-      value: "purpose",
-      label: "Purpose",
-      type: "text",
+      value: 'purpose',
+      label: 'Purpose',
+      type: 'text',
     },
     {
-      value: "bankId",
-      label: "Bank",
-      type: "select",
+      value: 'bankId',
+      label: 'Bank',
+      type: 'select',
       required: true,
       options: banks,
     },
     {
-      value: "bankBranchId",
-      label: "Bank Branch",
-      type: "select",
+      value: 'bankBranchId',
+      label: 'Bank Branch',
+      type: 'select',
       required: true,
       options: branches,
+    },
+    {
+      value: 'bankAccountNo',
+      label: 'Bank Account No',
+      type: 'text',
+      required: true,
+    },
+    {
+      value: 'bankAccountName',
+      label: 'Bank Account Name',
+      type: 'text',
+      required: true,
     },
   ];
 
   const totalAmounts1 = [
-    { name: "Number of Entries", value: 1 },
+    { name: 'Number of Entries', value: 1 },
 
-    { name: "Total Debit", value: "0.00" },
-    { name: "Total Credit", value: "0.00" },
-    { name: "Balance", value: "0.00" },
-    { name: "Total Balance", value: "0.00" },
+    { name: 'Total Debit', value: '0.00' },
+    { name: 'Total Credit', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+    { name: 'Total Balance', value: '0.00' },
   ];
 
   const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
@@ -351,7 +363,7 @@ function PaymentsCard({
           <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
               <div className="flex-grow">
-                {" "}
+                {' '}
                 {/* This allows the card to grow */}
                 <BaseAutoSaveInputCard
                   setClickedItem={setClickedItem}
@@ -373,7 +385,7 @@ function PaymentsCard({
 
               <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
                 <div className="flex-grow">
-                  {" "}
+                  {' '}
                   {/* Make this grow too */}
                   <BaseFinanceInputTable
                     allOptions={allOptions}
