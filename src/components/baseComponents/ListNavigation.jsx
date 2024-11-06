@@ -499,10 +499,15 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
   ];
 
   const handleApprovalClick = (action) => {
-    setParentAction(action);
-    setShowApprovalButtons(!showApprovalButtons);
+    if (parentAction === action) {
+      // If the same parent is clicked, toggle the approval buttons
+      setShowApprovalButtons(!showApprovalButtons);
+    } else {
+      // If a different parent is clicked, set the new parent and show the approval buttons
+      setParentAction(action);
+      setShowApprovalButtons(true);
+    }
   };
-
   // Define the reports button
   const reportsButton = {
     name: 'Reports',
