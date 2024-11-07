@@ -13,6 +13,8 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import {
   AccountBalance,
   AccountBalanceWallet,
+  Addchart,
+  AssuredWorkload,
   DragIndicator,
   KeyboardArrowRight,
   PeopleAltOutlined,
@@ -201,7 +203,7 @@ function Sidebar() {
 
     {
       title: 'Finance',
-      icon: <AccountBalanceWallet />,
+      icon: <AssuredWorkload />,
       children: [
         {
           title: 'General Ledger',
@@ -295,6 +297,31 @@ function Sidebar() {
             {
               title: 'Posted Payment Vouchers',
               path: '/pensions/finance/payments/posted',
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      title: 'PSSF Contributions',
+      icon: <Addchart />,
+      children: [
+        {
+          title: 'Enrollments',
+          subChildren: [
+            {
+              title: 'Batch Member Upload',
+              path: '/pensions/contributions/enrollments/batch-upload',
+            },
+          ],
+        },
+        {
+          title: 'Members',
+          subChildren: [
+            {
+              title: 'Member List',
+              path: '/pensions/contributions/members',
             },
           ],
         },
@@ -400,6 +427,10 @@ function Sidebar() {
             {
               title: 'Accounting Period',
               path: '/pensions/setups/accounting-period',
+            },
+            {
+              title: 'Sponsors Setups',
+              path: '/pensions/setups/sponsor-setups',
             },
             {
               title: 'Payment Methods',

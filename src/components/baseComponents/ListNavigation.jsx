@@ -419,6 +419,12 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       action: 'bankStatement',
       requiredPermissions: [],
     },
+    {
+      name: 'Upload Members',
+      icon: CloudUpload,
+      action: 'uploadMembers',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseChildren = [
@@ -495,6 +501,24 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
       icon: PersonAddAlt,
       disabled: approvalActions?.delegate,
       parent: 'approvalRequest',
+    },
+
+    {
+      name: 'Generate Members Template',
+      icon: Launch,
+      action: 'generateMembersTemplate',
+
+      disabled: true,
+      parent: 'uploadMembers',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Upload Members(xlsx)',
+      icon: Upload,
+      action: 'uploadMembers',
+      requiredPermissions: [],
+      disabled: true,
+      parent: 'uploadMembers',
     },
   ];
 

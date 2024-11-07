@@ -262,6 +262,27 @@ const financeEndpoints = {
   postClaimtoFinance: 'Posting/PostClaimPIToLedger',
 
   postScheduledPaymentToLedger: '/Posting/PostClaimPaymentToLedger',
+
+  //contributions
+
+  addSponsor: '/Contribution/AddSponsor',
+  getSponsors: '/Contribution/GetSponsors',
+  updateSponsor: '/Contribution/UpdateSponsor',
+  deleteSponsor: (id) => `/Contribution/DeleteSponsor?id=${id}`,
+
+  addBatchUpload: 'Contribution/AddMemberUploadBatch',
+  getBatchUploads: 'Contribution/GetMemberUploadBatches',
+  updateBatchUpload: 'Contribution/UpdateMemberUploadBatch',
+  deleteBatchUpload: (id) => `/Contribution/DeleteMemberUploadBatch?id=${id}`,
+
+  uploadMembersExcel: '/Contribution/UploadMembers',
+
+  getMemberUploadTemplate: 'Contribution/GetMemberUploadTemplate',
+
+  addMember: '/Contribution/AddMember',
+  getMembers: '/Contribution/GetMember',
+  updateMember: '/Contribution/UpdateMember',
+  deleteMember: (id) => `/Contribution/DeleteMember?id=${id}`,
 };
 
 export const apiService = {
