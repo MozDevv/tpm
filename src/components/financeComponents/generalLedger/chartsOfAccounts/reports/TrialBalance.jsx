@@ -86,13 +86,17 @@ const TrialBalance = () => {
     const doc = new jsPDF();
 
     // Add title to the top left
-    doc.setFontSize(18);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('Trial Balance Report', 10, 10);
 
     // Add date to the top right
-    const date = dayjs().format('MM/DD/YYYY');
-    doc.setFontSize(12);
+    const date = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text(
       date,
@@ -101,13 +105,13 @@ const TrialBalance = () => {
     );
 
     // Add logo to the middle
-    const imgWidth = 50; // Adjust the width of the logo
+    const imgWidth = 70; // Adjust the width of the logo
     const imgHeight = 20; // Adjust the height of the logo
     const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
     doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
 
     // Add margin bottom to separate the header from the table
-    const headerBottomMargin = 30;
+    const headerBottomMargin = 50;
 
     let body = [];
     let lastSubGroupName = '';
@@ -185,13 +189,17 @@ const TrialBalance = () => {
     const doc = new jsPDF();
     const body = [];
 
-    doc.setFontSize(18);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('Trial Balance Report', 10, 10);
 
     // Add date to the top right
-    const date = new Date().toLocaleDateString();
-    doc.setFontSize(12);
+    const date = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text(
       date,
@@ -200,7 +208,7 @@ const TrialBalance = () => {
     );
 
     // Add logo to the middle
-    const imgWidth = 50; // Adjust the width of the logo
+    const imgWidth = 70; // Adjust the width of the logo
     const imgHeight = 20; // Adjust the height of the logo
     const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
     doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
