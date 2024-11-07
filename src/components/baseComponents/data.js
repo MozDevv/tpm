@@ -193,6 +193,31 @@ export const menuItems = [
     path: '/pensions/directorate',
   },
   {
+    title: 'PSSF Contributions',
+
+    children: [
+      {
+        title: 'Enrollments',
+        subChildren: [
+          {
+            title: 'Batch Member Upload',
+            path: '/pensions/contributions/enrollments/batch-upload',
+          },
+        ],
+      },
+      {
+        title: 'Members',
+        subChildren: [
+          {
+            title: 'Member List',
+            path: '/pensions/contributions/members',
+          },
+        ],
+      },
+    ],
+  },
+
+  {
     title: 'Controller of Budget',
     path: '/pensions/cob',
   },
@@ -290,6 +315,10 @@ export const menuItems = [
           {
             title: 'Recoveries & Deductions',
             path: '/pensions/setups/finance-setups/recoveries-deductions',
+          },
+          {
+            title: 'Sponsors Setups',
+            path: '/pensions/setups/sponsor-setups',
           },
           {
             title: 'Vendor Posting Group',

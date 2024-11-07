@@ -288,33 +288,31 @@ const BankReconciliation = () => {
       name: 'balanceLastStatement',
       label: 'Last Statement Balance',
       type: 'amount',
-      required: true,
+      required: false,
     },
     {
       name: 'currentStatementBalance',
       label: 'Current Statement Balance',
       type: 'amount',
-      required: true,
+      required: false,
       disabled: true,
     },
     {
       name: 'file',
-      label: 'Upload Bank Statement(Excel)',
+      label: 'Upload Bank Statement (xlsx, xls, csv)',
       type: 'file',
       required: true,
-      fileName: 'Upload Bank Statement(Excel)',
+      fileName: 'Upload Bank Statement (xlsx, xls, csv)',
     },
     {
       name: 'isClosed',
       label: 'Is Closed',
       type: 'switch',
-      required: true,
     },
     {
       name: 'isReversed',
       label: 'Is Reversed',
       type: 'switch',
-      required: true,
     },
   ];
 

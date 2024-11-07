@@ -766,7 +766,7 @@ function NewPreclaim({
       // router.push(
       //   `/pensions/preclaims/listing/new/add-payment-details?id=${retireeId}`
       // );
-      moveToNextTab();
+      //   moveToNextTab();
       return;
     }
 
@@ -1019,7 +1019,7 @@ function NewPreclaim({
         });
 
         localStorage.removeItem('retireeFormData');
-        clickedItem && moveToNextTab();
+        //  clickedItem && moveToNextTab();
         setRetireeId(res.data.data);
         console.log('Retiree ID:', res.data.data);
         return;

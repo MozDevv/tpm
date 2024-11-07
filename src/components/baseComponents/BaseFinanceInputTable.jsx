@@ -32,6 +32,7 @@ import financeEndpoints from '../services/financeApi';
 import { de } from '@faker-js/faker';
 import { formatNumber } from '@/utils/numberFormatters';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
+import AmountCellEditor from './AmountCellEditor';
 
 const BaseFinanceInputTable = ({
   fields = [],
@@ -640,6 +641,24 @@ const BaseFinanceInputTable = ({
           );
           return selectedOption ? selectedOption.id : params.newValue;
         };
+      } else if (col.type === 'amount') {
+        columnDef.cellEditor = AmountCellEditor;
+
+        columnDef.valueFormatter = (params) => {
+          if (!params.value) return '';
+
+          // Optionally format the amount with commas and decimals
+          return formatNumber(params.value);
+        };
+
+        columnDef.cellRenderer = (params) => {
+          const { value } = params;
+          return formatNumber(value);
+        };
+        columnDef.valueParser = (params) => {
+          const parsedValue = parseFloat(params.newValue.replace(/,/g, ''));
+          return isNaN(parsedValue) ? params.newValue : parsedValue;
+        };
       } else if (col.hide) {
         columnDef.hide = true;
       } else if (col.value === 'phone_number') {
@@ -693,10 +712,6 @@ const BaseFinanceInputTable = ({
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue, api } = params;
         const field = colDef.field;
-
-        // console.log("Data", data);
-        // console.log("New Value", newValue);
-        // console.log("Column Definition", colDef);
 
         setDataAdded(true);
 

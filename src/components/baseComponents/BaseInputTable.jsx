@@ -619,8 +619,6 @@ const BaseInputTable = ({
 
         columnDef.valueFormatter = (params) => {
           if (!params.value) return '';
-
-          // Optionally format the amount with commas and decimals
           return formatNumber(params.value);
         };
 

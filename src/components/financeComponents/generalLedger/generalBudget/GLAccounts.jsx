@@ -421,6 +421,19 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
       label: 'Reconciliation',
       type: 'switch',
     },
+    {
+      name: 'incomeOrBalancesheet',
+      label: 'Income Or Balance Sheet',
+      type: 'select',
+      options: [
+        { id: 0, name: 'None' },
+        { id: 1, name: 'Income Statement' },
+        {
+          id: 2,
+          name: 'Balance Sheet',
+        },
+      ],
+    },
   ];
 
   return (
