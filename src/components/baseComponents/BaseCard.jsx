@@ -51,6 +51,7 @@ function BaseCard({
   isSecondaryCard,
   glAccountName,
   isSecondaryCard2,
+  isSecondaryCard3,
   isClaim,
   isClaimManagement,
   setClickedItem,
@@ -86,11 +87,19 @@ function BaseCard({
       minWidth: '30vw',
       maxWidth: '60vw',
     },
+    secondary3: {
+      minHeight: '75vh',
+      maxHeight: '75vh',
+      minWidth: '20vw',
+      maxWidth: '30vw',
+    },
   };
   const currentSize = isSecondaryCard
     ? expandSizes.secondary
     : isSecondaryCard2
     ? expandSizes.secondary2
+    : isSecondaryCard3
+    ? expandSizes.secondary3
     : isExpanded
     ? expandSizes.expanded
     : expandSizes.default;
@@ -181,7 +190,7 @@ function BaseCard({
           />
         ) : status === 6 ? (
           <ReturnToPreclaims
-            setOpenPreclaimDialog={setOpenPreclaimDialog}
+            //  setOpenPreclaimDialog={setOpenPreclaimDialog}
             setOpenCreateClaim={setOpenCreateClaim}
             clickedItem={clickedItem}
             moveStatus={status}
@@ -350,8 +359,16 @@ function BaseCard({
         />
       </Dialog>
       <div className="overflow-y-hidden p-5">
-        <div className="flex items-center justify-between w-full px-3 sticky top-0 z-[99999999] bg-white">
-          <div className="flex items-center gap-1 mt-10">
+        <div
+          className={`flex items-center justify-between w-full px-${
+            isSecondaryCard3 ? 0 : 3
+          } sticky top-0 z-[99999999] bg-white`}
+        >
+          <div
+            className={`flex items-center gap-1 is mt-${
+              isSecondaryCard3 ? 1 : 10
+            }`}
+          >
             <IconButton
               sx={{
                 border: '1px solid #006990',
@@ -382,16 +399,20 @@ function BaseCard({
             </IconButton>
           </div>
         </div>
-        <div className="w-full flex flex-col ">
-          <ListNavigation
-            handlers={updatedHandlers}
-            permissions={permissions}
-            status={status}
-            clickedItem={clickedItem}
-            openBaseCard={openBaseCard}
-          />
-          <Divider />
-        </div>
+        {title === 'Trial Balance' ? (
+          <></>
+        ) : (
+          <div className="w-full flex flex-col ">
+            <ListNavigation
+              handlers={updatedHandlers}
+              permissions={permissions}
+              status={status}
+              clickedItem={clickedItem}
+              openBaseCard={openBaseCard}
+            />
+            <Divider />
+          </div>
+        )}
         <div
           // className={`grid gap-2 ${
           //   isUserComponent

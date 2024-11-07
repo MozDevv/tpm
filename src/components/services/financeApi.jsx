@@ -283,6 +283,9 @@ const financeEndpoints = {
   getMembers: '/Contribution/GetMember',
   updateMember: '/Contribution/UpdateMember',
   deleteMember: (id) => `/Contribution/DeleteMember?id=${id}`,
+
+  //Reports
+  getTrialBalance: '/Reports/GetTrialBalance',
 };
 
 export const apiService = {

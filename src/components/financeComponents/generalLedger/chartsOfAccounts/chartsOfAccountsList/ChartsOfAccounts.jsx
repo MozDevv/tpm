@@ -15,6 +15,8 @@ import {
   getColumnDefsByType,
   getColumnDefsByType2,
 } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
+import TrialBalance from '../reports/TrialBalance';
+import { Dialog } from '@mui/material';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -24,6 +26,7 @@ function ChartsOfAccounts() {
   const [groupTypes, setGroupTypes] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [subGroups, setSubGroups] = useState([]);
+  const [openTrialBalanceReport, setOpenTrialBalanceReport] = useState(false);
 
   function calculateTotals(data) {
     let totals = {};
@@ -325,6 +328,8 @@ function ChartsOfAccounts() {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
+    'Trial Balance': () => setOpenTrialBalanceReport(true),
+    'Balance Sheet': () => setOpenTrialBalanceReport(true),
   };
 
   const handleRowClick = (row) => {
@@ -496,6 +501,22 @@ function ChartsOfAccounts() {
 
   return (
     <div className="flex flex-col">
+      <Dialog
+        open={openTrialBalanceReport}
+        onClose={() => setOpenTrialBalanceReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <TrialBalance />
+        </div>
+      </Dialog>
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
       <div
         className=" mt-[15px] mr-5"
@@ -569,7 +590,10 @@ function ChartsOfAccounts() {
           )}
         </BaseCard>
 
-        <ListNavigation handlers={handlers} />
+        <ListNavigation
+          handlers={handlers}
+          reportItems={['Trial Balance', 'Balance Sheet']}
+        />
         <div className="mt-6 overflow-hidden"></div>
       </div>
       <div

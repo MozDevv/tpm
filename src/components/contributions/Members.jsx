@@ -9,10 +9,6 @@ import { apiService } from '@/components/services/financeApi';
 import financeEndpoints from '@/components/services/financeApi';
 
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
-import { parseDate } from '@/utils/dateFormatter';
-import BaseInputCard from '../baseComponents/BaseInputCard';
-import generateExcelTemplate from '@/utils/excelHelper';
-import { name } from 'dayjs/locale/en-au';
 
 const Members = () => {
   const transformString = (str) => {
@@ -159,6 +155,14 @@ const Members = () => {
 
   const columnDefs = [
     {
+      field: 'payrollNumber',
+      headerName: 'Payroll Number',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      pinned: 'left',
+    },
+    {
       field: 'surname',
       headerName: 'Surname',
       headerClass: 'prefix-header',
@@ -186,13 +190,7 @@ const Members = () => {
       width: 150,
       filter: true,
     },
-    {
-      field: 'payrollNumber',
-      headerName: 'Payroll Number',
-      headerClass: 'prefix-header',
-      width: 150,
-      filter: true,
-    },
+
     {
       field: 'kraPin',
       headerName: 'KRA Pin',
