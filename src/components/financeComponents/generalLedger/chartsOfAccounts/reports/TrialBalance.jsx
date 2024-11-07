@@ -18,7 +18,9 @@ const TrialBalance = () => {
 
   const getTrialBalance = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.getTrialBalance);
+      const response = await apiService.get(financeEndpoints.getTrialBalance, {
+        'paging.pageSize': 12000,
+      });
       const data1 = response.data.data;
       setData(data1);
       setFilteredData(data1);
@@ -72,78 +74,188 @@ const TrialBalance = () => {
     XLSX.writeFile(workbook, 'report.xlsx');
   };
 
+  const formatNumber = (value) => {
+    const number = value || '0.00';
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(number);
+  };
+
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    const body = [];
-    let lastGroupName = null;
-    let lastSubGroupName = null;
+
+    // Add title to the top left
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Trial Balance Report', 10, 10);
+
+    // Add date to the top right
+    const date = dayjs().format('MM/DD/YYYY');
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(
+      date,
+      doc.internal.pageSize.getWidth() - 10 - doc.getTextWidth(date),
+      10
+    );
+
+    // Add logo to the middle
+    const imgWidth = 50; // Adjust the width of the logo
+    const imgHeight = 20; // Adjust the height of the logo
+    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+    doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
+
+    // Add margin bottom to separate the header from the table
+    const headerBottomMargin = 30;
+
+    let body = [];
+    let lastSubGroupName = '';
 
     filteredData.forEach((group) => {
+      if (group.groupName !== lastGroupName) {
+        body.push([
+          {
+            content: group.groupName,
+            styles: { fontStyle: 'bold' },
+          },
+          '',
+          '',
+        ]);
+        lastGroupName = group.groupName;
+      } else {
+        body.push([
+          {
+            content: '',
+            styles: { fontStyle: 'bold' },
+          },
+          '',
+          '',
+        ]);
+      }
+
       group.subGroups.forEach((subGroup) => {
+        if (subGroup.subGroupName !== lastSubGroupName) {
+          body.push([
+            {
+              content: '    ' + subGroup.subGroupName, // Indentation for subgroups
+              styles: { fontStyle: 'bold' },
+            },
+            '',
+            '',
+          ]);
+          lastSubGroupName = subGroup.subGroupName;
+        } else {
+          body.push([
+            {
+              content: '',
+              styles: { fontStyle: 'bold' },
+            },
+            '',
+            '',
+          ]);
+        }
+
         subGroup.accounts.forEach((account) => {
-          const row = [];
-          if (group.groupName !== lastGroupName) {
-            row.push(group.groupName);
-            lastGroupName = group.groupName;
-          } else {
-            row.push('');
-          }
-          if (subGroup.subGroupName !== lastSubGroupName) {
-            row.push(subGroup.subGroupName);
-            lastSubGroupName = subGroup.subGroupName;
-          } else {
-            row.push('');
-          }
-          row.push(account.accountName);
-          row.push(account.amount);
-          body.push(row);
+          body.push([
+            {
+              content: '        ' + account.accountName, // Indentation for accounts
+              styles: { fontStyle: 'normal' },
+            },
+            account.amount >= 0 ? formatNumber(account.amount) : '',
+            account.amount < 0 ? formatNumber(Math.abs(account.amount)) : '',
+          ]);
         });
       });
     });
 
     doc.autoTable({
-      head: [selectedColumns],
+      head: [['Name', 'Debit', 'Credit']],
       body: body,
+      startY: headerBottomMargin, // Start the table after the header margin
+      columnStyles: {
+        0: { cellWidth: 'auto' }, // Adjust column width if necessary
+      },
     });
+
     doc.save('report.pdf');
   };
 
   const handlePreviewPDF = () => {
     const doc = new jsPDF();
     const body = [];
-    let lastGroupName = null;
-    let lastSubGroupName = null;
+
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Trial Balance Report', 10, 10);
+
+    // Add date to the top right
+    const date = new Date().toLocaleDateString();
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(
+      date,
+      doc.internal.pageSize.getWidth() - 10 - doc.getTextWidth(date),
+      10
+    );
+
+    // Add logo to the middle
+    const imgWidth = 50; // Adjust the width of the logo
+    const imgHeight = 20; // Adjust the height of the logo
+    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
+    doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
+
+    // Add margin bottom to separate the header from the table
+    const headerBottomMargin = 30;
 
     filteredData.forEach((group) => {
+      if (group.groupName) {
+        body.push([
+          {
+            content: group.groupName,
+            styles: { fontStyle: 'bold' }, // No paddingLeft here
+          },
+          '',
+          '',
+        ]);
+      }
+
       group.subGroups.forEach((subGroup) => {
+        if (subGroup.subGroupName) {
+          body.push([
+            {
+              content: '    ' + subGroup.subGroupName, // Indentation for subgroups
+              styles: { fontStyle: 'bold' },
+            },
+            '',
+            '',
+          ]);
+        }
+
         subGroup.accounts.forEach((account) => {
-          const row = [];
-          if (group.groupName !== lastGroupName) {
-            row.push(group.groupName);
-            lastGroupName = group.groupName;
-          } else {
-            row.push('');
-          }
-          if (subGroup.subGroupName !== lastSubGroupName) {
-            row.push(subGroup.subGroupName);
-            lastSubGroupName = subGroup.subGroupName;
-          } else {
-            row.push('');
-          }
-          row.push(account.accountName);
-          row.push(account.amount);
-          body.push(row);
+          body.push([
+            {
+              content: '        ' + account.accountName, // Indentation for accounts
+              styles: { fontStyle: 'normal' },
+            },
+            account.amount >= 0 ? formatNumber(account.amount) : '',
+            account.amount < 0 ? formatNumber(Math.abs(account.amount)) : '',
+          ]);
         });
       });
     });
 
     doc.autoTable({
-      head: [selectedColumns],
+      head: [['Name', 'Debit', 'Credit']],
       body: body,
+      startY: headerBottomMargin, // Start the table after the header margin
+      columnStyles: {
+        0: { cellWidth: 'auto' }, // Adjust column width if necessary
+      },
     });
-    window.open(doc.output('bloburl'));
-  };
 
+    doc.save('preview.pdf');
+  };
   const formatColumnName = (columnName) => {
     return columnName
       .replace(/([A-Z])/g, ' $1')
