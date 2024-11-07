@@ -75,27 +75,27 @@ const TrialBalance = () => {
   const handleExportPDF = () => {
     const doc = new jsPDF();
     const body = [];
+    let lastGroupName = null;
+    let lastSubGroupName = null;
 
     filteredData.forEach((group) => {
-      body.push([
-        {
-          content: group.groupName,
-          colSpan: selectedColumns.length,
-          styles: { halign: 'left', fontStyle: 'bold' },
-        },
-      ]);
       group.subGroups.forEach((subGroup) => {
-        body.push([
-          {
-            content: subGroup.subGroupName,
-            colSpan: selectedColumns.length,
-            styles: { halign: 'left', fontStyle: 'bold', marginLeft: 10 },
-          },
-        ]);
         subGroup.accounts.forEach((account) => {
-          const row = selectedColumns.map(
-            (col) => account[col] || subGroup[col] || group[col]
-          );
+          const row = [];
+          if (group.groupName !== lastGroupName) {
+            row.push(group.groupName);
+            lastGroupName = group.groupName;
+          } else {
+            row.push('');
+          }
+          if (subGroup.subGroupName !== lastSubGroupName) {
+            row.push(subGroup.subGroupName);
+            lastSubGroupName = subGroup.subGroupName;
+          } else {
+            row.push('');
+          }
+          row.push(account.accountName);
+          row.push(account.amount);
           body.push(row);
         });
       });
@@ -111,27 +111,27 @@ const TrialBalance = () => {
   const handlePreviewPDF = () => {
     const doc = new jsPDF();
     const body = [];
+    let lastGroupName = null;
+    let lastSubGroupName = null;
 
     filteredData.forEach((group) => {
-      body.push([
-        {
-          content: group.groupName,
-          colSpan: selectedColumns.length,
-          styles: { halign: 'left', fontStyle: 'bold' },
-        },
-      ]);
       group.subGroups.forEach((subGroup) => {
-        body.push([
-          {
-            content: subGroup.subGroupName,
-            colSpan: selectedColumns.length,
-            styles: { halign: 'left', fontStyle: 'bold', marginLeft: 10 },
-          },
-        ]);
         subGroup.accounts.forEach((account) => {
-          const row = selectedColumns.map(
-            (col) => account[col] || subGroup[col] || group[col]
-          );
+          const row = [];
+          if (group.groupName !== lastGroupName) {
+            row.push(group.groupName);
+            lastGroupName = group.groupName;
+          } else {
+            row.push('');
+          }
+          if (subGroup.subGroupName !== lastSubGroupName) {
+            row.push(subGroup.subGroupName);
+            lastSubGroupName = subGroup.subGroupName;
+          } else {
+            row.push('');
+          }
+          row.push(account.accountName);
+          row.push(account.amount);
           body.push(row);
         });
       });
@@ -255,7 +255,7 @@ const TrialBalance = () => {
         </button>
       </div>
 
-      {/* Render Data */}
+      {/* Render Data
       <div className="mt-10">
         {filteredData.map((group, groupIndex) => (
           <div key={groupIndex} className="mb-4">
@@ -274,7 +274,7 @@ const TrialBalance = () => {
             ))}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

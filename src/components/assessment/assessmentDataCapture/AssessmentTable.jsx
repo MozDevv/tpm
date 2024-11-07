@@ -483,7 +483,7 @@ const AssessmentTable = ({ status }) => {
     reports: () => console.log('Reports clicked'),
 
     submit: () => setOpenAction(true),
-    createClaim: () => setOpenAction(true),
+    //createClaim: () => setOpenAction(true),
     computeClaim: () => calculateAndAward(clickedItem?.id_claim),
     viewComputationBreakdown: () => setViewBreakDown(true),
     viewComputationSummary: () => setViewCompleteSummary(true),
