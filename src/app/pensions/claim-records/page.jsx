@@ -15,7 +15,7 @@ function page() {
         <div className="text-primary mt-5 ml-3 mb-3 font-semibold text-xl">
           Claim Records List
         </div>
-        {/* <CustomBreadcrumbsList currentTitle="Controller of Budget" /> */}
+        <CustomBreadcrumbsList currentTitle="Claim Records List" />
       </div>
       <AssessmentTable status={7} />
     </div>

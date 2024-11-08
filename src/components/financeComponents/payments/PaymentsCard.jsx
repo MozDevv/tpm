@@ -186,48 +186,66 @@ function PaymentsCard({
       ],
       required: true,
     },
-    {
-      value: 'vatCode',
-      label: 'VAT Code',
-      type: 'select',
-      required: true,
-      options: productPostingGroups,
-    },
+
     {
       value: 'taxCode',
       label: 'Tax Code',
       type: 'select',
-      required: true,
+      notRequired: true,
       options: productPostingGroups,
     },
+    {
+      value: 'taxAmount',
+      label: 'Tax Amount',
+      type: 'amount',
+      notRequired: true,
+      disabled: true,
+    },
+
     {
       value: 'wtaxCode',
       label: 'W/Tax Code',
       type: 'select',
-      required: true,
+      notRequired: true,
       options: productPostingGroups,
     },
     {
-      value: 'wvatCode',
-      label: 'W/T Vat Code',
-      type: 'select',
-      required: true,
-      options: productPostingGroups,
+      value: 'wtaxAmount',
+      label: 'W/Tax Amount',
+      type: 'amount',
+      notRequired: true,
+      disabled: true,
     },
-    {
-      value: 'retentionCode',
-      label: 'Retention Code',
-      type: 'select',
-      required: true,
-      options: productPostingGroups,
-    },
+
     {
       value: 'amount',
       label: 'Amount',
       type: 'amount',
-      required: true,
+      notRequired: true,
       disabled: false,
     },
+    // {
+    //   value: 'wvatCode',
+    //   label: 'W/T Vat Code',
+    //   type: 'select',
+    //   required: true,
+    //   options: productPostingGroups,
+    // },
+    // {
+    //   value: 'retentionCode',
+    //   label: 'Retention Code',
+    //   type: 'select',
+    //   required: true,
+    //   options: productPostingGroups,
+    // },
+
+    // {
+    //   value: 'vatCode',
+    //   label: 'VAT Code',
+    //   type: 'select',
+    //   required: true,
+    //   options: productPostingGroups,
+    // },
 
     // {
     //   value: "currency",
@@ -249,46 +267,33 @@ function PaymentsCard({
     //     },
     //   ],
     // },
-    {
-      value: 'vatAmount',
-      label: 'VAT Amount',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
-    {
-      value: 'taxAmount',
-      label: 'Tax Amount',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
-    {
-      value: 'wtaxAmount',
-      label: 'W/Tax Amount',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
-    {
-      value: 'wvatAmount',
-      label: 'W/T Vat Amount',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
-    {
-      value: 'retentionAmount',
-      label: 'Retention Amount',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
+    // {
+    //   value: 'vatAmount',
+    //   label: 'VAT Amount',
+    //   type: 'amount',
+    //   required: false,
+    //   disabled: true,
+    // },
+
+    // {
+    //   value: 'wvatAmount',
+    //   label: 'W/T Vat Amount',
+    //   type: 'amount',
+    //   required: false,
+    //   disabled: true,
+    // },
+    // {
+    //   value: 'retentionAmount',
+    //   label: 'Retention Amount',
+    //   type: 'amount',
+    //   required: false,
+    //   disabled: true,
+    // },
     {
       value: 'netAmount',
       label: 'Net Amount',
       type: 'amount',
-      required: false,
+      notRequired: true,
       disabled: true,
     },
 
@@ -296,6 +301,7 @@ function PaymentsCard({
       value: 'appliesToDocType',
       label: 'Applies To Doc Type',
       type: 'select',
+      notRequired: true,
       options: [
         { id: 0, name: 'Payment Voucher' },
         { id: 1, name: 'Purchase Invoice' },
@@ -310,12 +316,14 @@ function PaymentsCard({
       value: 'appliesToDocNumber',
       label: 'Applies To Doc Number',
       type: 'text',
+      notRequired: true,
     },
 
     {
       value: 'purpose',
       label: 'Purpose',
       type: 'text',
+      notRequired: true,
     },
     {
       value: 'bankId',
@@ -323,12 +331,14 @@ function PaymentsCard({
       type: 'select',
       required: true,
       options: banks,
+      notRequired: true,
     },
     {
       value: 'bankBranchId',
       label: 'Bank Branch',
       type: 'select',
       required: true,
+      notRequired: true,
       options: branches,
     },
     {
@@ -336,12 +346,14 @@ function PaymentsCard({
       label: 'Bank Account No',
       type: 'text',
       required: true,
+      notRequired: true,
     },
     {
       value: 'bankAccountName',
       label: 'Bank Account Name',
       type: 'text',
       required: true,
+      notRequired: true,
     },
   ];
 

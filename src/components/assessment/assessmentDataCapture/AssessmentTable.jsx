@@ -64,7 +64,7 @@ const notificationStatusMap = {
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
   5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
   6: { name: 'Controller of Budget', color: '#2ecc71' }, // Light Blue
-  7: { name: 'Voucher Preparation', color: '#2ecc71' }, // Light Blue
+  7: { name: 'Voucher Preparation', color: '#8e44ad' },
 };
 
 const colDefs = [

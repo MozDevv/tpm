@@ -337,7 +337,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
     },
     {
       name: 'Create Payment Voucher',
-      icon: AddCircle,
+      icon: PostAdd,
       action: 'createPaymentVoucher',
       requiredPermissions: [],
       status: [7],

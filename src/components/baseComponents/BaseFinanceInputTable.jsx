@@ -158,7 +158,18 @@ const BaseFinanceInputTable = ({
 
           //setSelectedAccountTypeId(res.data.data[0].accountTypeId);
 
-          const sortedData = sortData(res.data.data || []);
+          const dataWithBankObject = res.data.data.map((row) => {
+            if (row.bankBranch) {
+              return {
+                ...row,
+                bankId: row.bankBranch.bank_id,
+                bankBranchId: row.bankBranch.id,
+              };
+            }
+            return row;
+          });
+
+          const sortedData = sortData(dataWithBankObject || []);
           console.log('Sorted Data:', sortedData);
 
           let lastEndDate = null;
@@ -223,6 +234,12 @@ const BaseFinanceInputTable = ({
 
   const isRowComplete = (row) => {
     return fields.every((field) => {
+      // If the field is not required, we don't need to check its value
+      if (field.notRequired) {
+        return true; // Skip this field since it's not required
+      }
+
+      // If the field is required, check if its value is defined, not null, and not an empty string
       return (
         row[field.value] !== undefined &&
         row[field.value] !== null &&
