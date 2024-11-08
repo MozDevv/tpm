@@ -12,7 +12,7 @@ import { formatDate } from '@/utils/dateFormatter';
 
 import PaymentsCard from './PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
-import { Dialog } from '@mui/material';
+import { Button, Dialog } from '@mui/material';
 import PVActions from './PVActions';
 
 const Payments = ({ status }) => {
@@ -90,6 +90,34 @@ const Payments = ({ status }) => {
     },
 
     {
+      headerName: 'Source',
+      field: 'source',
+      width: 180,
+      filter: true,
+      cellRenderer: (params) => {
+        const status = sourceStatus[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 3,
+
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name}
+          </Button>
+        );
+      },
+    },
+
+    {
       headerName: 'Payment Method',
       field: 'paymentMethodId',
       flex: 1,
@@ -149,6 +177,32 @@ const Payments = ({ status }) => {
       return a.toUpperCase();
     });
   };
+
+  //   {
+  //     NormalPayment,
+  //     ClaimPayment,
+  //     ClaimReceipt,
+  //     NormalReceipt,
+  //     ClaimPurchaseInvoice,
+  //     NormalPurchaseInvoice,
+  //     ClaimSalesInvoice,
+  //     NormalSalesInvoice,
+  //     GeneralJournals,
+  //     ClosingIncome,
+
+  // }
+  const sourceStatus = {
+    0: { name: 'Normal Payment', color: '#2ecc71' }, // Light Red
+    1: { name: 'Claim Payment', color: '#970FF2' }, // Bright Orange
+    2: { name: 'Claim Receipt', color: '#3498db' }, // Light Blue
+    3: { name: 'Normal Receipt', color: '#970FF2' }, // Amethyst
+    4: { name: 'Claim Purchase Invoice', color: '#970FF2' }, // Carrot Orange
+    5: { name: 'Normal Purchase Invoice', color: '#2ecc71' }, // Emerald
+    6: { name: 'Claim Sales Invoice', color: '#1abc9c' }, // Turquoise
+    7: { name: 'Normal Sales Invoice', color: '#9b59b6' }, // Amethyst
+    8: { name: 'General Journals', color: '#f1c40f' }, // Bright Yellow
+    9: { name: 'Closing Income', color: '#e67e22' }, // Carrot Orange
+  };
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -160,6 +214,7 @@ const Payments = ({ status }) => {
       narration: item.narration,
       isPosted: item.isPosted,
       documentNo: item.documentNo,
+      source: item.source,
     }));
   };
 
