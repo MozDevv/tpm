@@ -1,12 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
-import { IconButton } from '@mui/material';
+import { Backdrop, CircularProgress, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import './paymenVoucher.css';
 
 const PaymentVoucher = () => {
   const contentRef = useRef();
+  const [loading, setLoading] = useState(false);
 
   const handleDownload = () => {
+    setLoading(true);
     const element = contentRef.current;
 
     // A4 page dimensions in inches (Width x Height)
@@ -36,34 +39,68 @@ const PaymentVoucher = () => {
     const wrapper = document.createElement('div');
     wrapper.style.width = `${contentWidth * 96}px`; // Convert back to pixels for proper rendering
     wrapper.style.height = `${contentHeight * 96}px`;
+    wrapper.style.position = 'relative';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
     wrapper.style.justifyContent = 'center';
-    wrapper.appendChild(element.cloneNode(true));
+    wrapper.style.overflow = 'hidden';
+    // Create the watermark element
+    const watermark = document.createElement('div');
+    watermark.textContent = 'MOF - Pensions';
+    watermark.style.position = 'absolute';
+    watermark.style.left = '50%';
+    watermark.style.top = '50%';
+    watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+    watermark.style.fontSize = '5rem'; // Adjust the font size as needed
+    watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
+    watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
+    watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+    watermark.style.whiteSpace = 'nowrap';
+    watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
+    watermark.style.zIndex = '10'; // Ensure watermark is below content
 
-    const clonedElement = wrapper.firstChild;
+    wrapper.appendChild(watermark);
 
-    // Apply the calculated scale to the cloned content
+    const clonedElement = element.cloneNode(true);
     clonedElement.style.transform = `scale(${scale})`;
     clonedElement.style.transformOrigin = 'top left';
     clonedElement.style.width = `${contentWidth * 96}px`; // Revert to pixel values
     clonedElement.style.height = `${contentHeight * 96}px`;
 
-    // Optional: Apply negative margin to shift the content upwards if needed
-    //  clonedElement.style.marginTop = '-0.5in'; // Adjust as needed
+    wrapper.appendChild(clonedElement);
 
-    // Generate the PDF and save
     html2pdf()
       .set(options)
       .from(wrapper)
       .save()
       .then(() => {
         clonedElement.style.transform = ''; // Reset the transform after saving
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
       });
   };
 
   return (
     <div className="flex flex-col h-full">
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 99999 }}
+          open={open}
+          onClick={() => setLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Please wait while the PDF is being generated
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <IconButton
         sx={{
           position: 'absolute',
@@ -142,6 +179,14 @@ const PaymentVoucher = () => {
                   backgroundImage: `url('/mnt/data/image.png')`, // Add the correct path to your image
                   backgroundSize: 'contain',
                 }}
+              />
+
+              <img
+                src="/kenya.png"
+                alt=""
+                height={80}
+                width={140}
+                className="absolute left-[41%] top-[40px] opacity-40"
               />
 
               {/* Content over the image */}
