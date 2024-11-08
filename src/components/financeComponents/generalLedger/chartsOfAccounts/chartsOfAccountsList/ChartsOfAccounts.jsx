@@ -514,7 +514,7 @@ function ChartsOfAccounts() {
         }}
       >
         <div className="px-6">
-          <TrialBalance />
+          <TrialBalance setOpenTrialBalanceReport={setOpenTrialBalanceReport} />
         </div>
       </Dialog>
       <CustomBreadcrumbsList currentTitle="Chart of Accounts" />

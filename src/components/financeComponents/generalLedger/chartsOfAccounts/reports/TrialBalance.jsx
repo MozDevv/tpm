@@ -4,10 +4,11 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
-import { Button, Divider, TextField } from '@mui/material';
+import { Button, Divider, IconButton, TextField } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
+import { Close } from '@mui/icons-material';
 
-const TrialBalance = () => {
+const TrialBalance = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState([]);
@@ -73,13 +74,45 @@ const TrialBalance = () => {
     let totalDebit = 0;
     let totalCredit = 0;
 
-    // Add headers
-    wsData.push(['Name', 'Debit', 'Credit']);
+    // Add headers with styling
+    wsData.push([
+      {
+        v: 'Name',
+        s: {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'D9EAD3' } },
+          alignment: { horizontal: 'center' },
+        },
+      },
+      {
+        v: 'Debit',
+        s: {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'D9EAD3' } },
+          alignment: { horizontal: 'center' },
+        },
+      },
+      {
+        v: 'Credit',
+        s: {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'D9EAD3' } },
+          alignment: { horizontal: 'center' },
+        },
+      },
+    ]);
 
     filteredData.forEach((group) => {
       if (group.groupName) {
+        // Bold and larger font for group name
         wsData.push([
-          { v: group.groupName, s: { font: { bold: true } } },
+          {
+            v: group.groupName,
+            s: {
+              font: { bold: true, sz: 12 },
+              fill: { fgColor: { rgb: 'EAD1DC' } },
+            },
+          },
           '',
           '',
         ]);
@@ -87,8 +120,12 @@ const TrialBalance = () => {
 
       group.subGroups.forEach((subGroup) => {
         if (subGroup.subGroupName) {
+          // Subgroup names with bold and indent
           wsData.push([
-            { v: '    ' + subGroup.subGroupName, s: { font: { bold: true } } },
+            {
+              v: '    ' + subGroup.subGroupName,
+              s: { font: { bold: true }, fill: { fgColor: { rgb: 'FCE5CD' } } },
+            },
             '',
             '',
           ]);
@@ -100,8 +137,12 @@ const TrialBalance = () => {
           totalDebit += debit;
           totalCredit += credit;
 
+          // Account names with slight indentation
           wsData.push([
-            '        ' + account.accountName,
+            {
+              v: '        ' + account.accountName,
+              s: { alignment: { indent: 1 } },
+            },
             formatNumber(debit),
             formatNumber(credit),
           ]);
@@ -109,21 +150,49 @@ const TrialBalance = () => {
       });
     });
 
-    // Add totals row
+    // Add totals row with bold and background color
     wsData.push([
-      { v: 'Total', s: { font: { bold: true } } },
+      {
+        v: 'Total',
+        s: { font: { bold: true }, fill: { fgColor: { rgb: 'D9EAD3' } } },
+      },
       formatNumber(totalDebit),
       formatNumber(totalCredit),
     ]);
 
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // Set column widths
+    // Set column widths for better appearance
     ws['!cols'] = [
       { wch: 40 }, // Width of the "Name" column
       { wch: 15 }, // Width of the "Debit" column
       { wch: 15 }, // Width of the "Credit" column
     ];
+
+    // Set row heights, with different heights for headers and content
+    ws['!rows'] = wsData.map((row, index) => {
+      if (index === 0) {
+        return { hpx: 25 }; // Header row height
+      } else if (row[0].v.trim().length === 0) {
+        return { hpx: 20 }; // Group/Subgroup row height
+      } else {
+        return { hpx: 18 }; // Account rows height
+      }
+    });
+
+    // Add borders to each cell for clear separation
+    Object.keys(ws).forEach((cell) => {
+      if (cell[0] !== '!') {
+        // Ignore metadata keys like '!cols' and '!rows'
+        ws[cell].s = ws[cell].s || {};
+        ws[cell].s.border = {
+          top: { style: 'thin', color: { rgb: '000000' } },
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } },
+          right: { style: 'thin', color: { rgb: '000000' } },
+        };
+      }
+    });
 
     XLSX.utils.book_append_sheet(wb, ws, 'Trial Balance');
     XLSX.writeFile(wb, 'TrialBalance.xlsx');
@@ -375,6 +444,17 @@ const TrialBalance = () => {
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
         Trial Balance Report
       </h1>
+      <IconButton
+        onClick={() => setOpenTrialBalanceReport(false)}
+        sx={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          color: 'gray',
+        }}
+      >
+        <Close />
+      </IconButton>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
