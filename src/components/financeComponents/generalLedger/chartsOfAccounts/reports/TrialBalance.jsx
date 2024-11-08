@@ -238,6 +238,7 @@ const TrialBalance = ({ setOpenTrialBalanceReport }) => {
     const headerBottomMargin = 30;
 
     let body = [];
+    let lastGroupName = ''; // Initialize lastGroupName
     let lastSubGroupName = '';
     let totalDebit = 0;
     let totalCredit = 0;
@@ -326,9 +327,8 @@ const TrialBalance = ({ setOpenTrialBalanceReport }) => {
       },
     });
 
-    doc.save('report.pdf');
+    doc.save(`Trial Balance - ${new Date().toLocaleString()}.pdf`);
   };
-
   const handlePreviewPDF = () => {
     const doc = new jsPDF();
     const body = [];
