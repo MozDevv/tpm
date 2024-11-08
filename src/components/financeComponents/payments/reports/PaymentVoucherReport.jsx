@@ -139,7 +139,7 @@ const PaymentVoucher = () => {
               </div>
             </div>
             <p className="text-sm underline text-start font-bold pl-1 mt-[-10px]">
-              Payee's name and Address
+              Payee&apos;s name and Address
             </p>
 
             {/* Payee Details */}
@@ -624,12 +624,14 @@ const PaymentVoucher = () => {
         </div>
       </div>
 
-      <button
-        onClick={handleDownload}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded absolute bottom-6"
-      >
-        Download PDF
-      </button>
+      <div className="bg-white h-[70px] w-full">
+        <button
+          onClick={handleDownload}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded absolute bottom-6"
+        >
+          Download PDF
+        </button>
+      </div>
     </div>
   );
 };
