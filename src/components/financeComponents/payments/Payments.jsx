@@ -409,9 +409,9 @@ const Payments = ({ status }) => {
           onClose={() => setOpenTrialBalanceReport(false)}
           sx={{
             '& .MuiPaper-root': {
-              minHeight: '75vh',
+              minHeight: '95vh',
               maxHeight: '85vh',
-              minWidth: '80vw',
+              minWidth: '100vw',
               maxWidth: '35vw',
             },
             zIndex: 99999,
