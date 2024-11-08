@@ -409,15 +409,15 @@ const Payments = ({ status }) => {
           onClose={() => setOpenTrialBalanceReport(false)}
           sx={{
             '& .MuiPaper-root': {
-              minHeight: '95vh',
+              minHeight: '75vh',
               maxHeight: '85vh',
-              minWidth: '100vw',
+              minWidth: '30vw',
               maxWidth: '35vw',
             },
             zIndex: 99999,
           }}
         >
-          <div className="flex-grow overflow-auto px-6">
+          <div className="flex-grow overflow-hidden px-6">
             <PaymentVoucherReport
               setOpenTrialBalanceReport={setOpenTrialBalanceReport}
             />
