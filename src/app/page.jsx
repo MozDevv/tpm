@@ -7,11 +7,10 @@ const Auth = dynamic(() => import("@/components/authentication/Auth"));
 
 function Login() {
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
       {/* Left Column */}
-      <div className="h-full bg-white flex  justify-center flex-col">
-        <div className="pl-36">
-          {" "}
+      <div className="h-full bg-white flex items-center justify-center flex-col">
+        <div className="my-[50px]">
           {/* Logo and Welcome Section */}
           <img
             src="/logo.png"
@@ -20,9 +19,9 @@ function Login() {
             height={99}
             width={450}
           />
-          <div className="mt-[100px]">
+          <div className="my-[50px]">
             <div className="mt-10 w-[100px] mb-10 h-[12px] rounded-full bg-primary"></div>
-            <p className="text-[31px] leading-12 font-bold w-[480px] text-primary">
+            <p className="text-[31px] leading-12 font-bold w-[512px] text-primary">
               Welcome to Treasury Pension Management Information System
             </p>
           </div>

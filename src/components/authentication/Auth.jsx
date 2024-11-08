@@ -133,9 +133,9 @@ function Auth() {
   };
 
   return (
-    <div className="">
+    <div className="py-[20px]">
       {/* Login Form Section */}
-      <form action="" className="pt-10" onKeyDown={handleKeyDown}>
+      <form action="" onKeyDown={handleKeyDown}>
         {resetPassword ? (
           <>
             <Typography
@@ -149,7 +149,7 @@ function Auth() {
           </>
         ) : (
           <div className="text-primary text-[28px] font-bold"> Sign In</div>
-        )}{" "}
+        )}
         {/* Render error message if there are errors */}
         {errors.status && (
           <Typography sx={{ color: "crimson", fontWeight: 500, mb: 2 }}>
@@ -289,7 +289,7 @@ function Auth() {
             </Typography>
           </Box>
         )}
-        <div className="text-xs italic flex items-center gap-1 bottom-4 absolute font-bold text-gray-500 mb-8">
+        <div className="text-xs italic flex items-center gap-1 absolute font-bold text-gray-500 my-8">
           Powered By
           <span className="text-primary cursor-pointer underline hover:text-yellow-500">
             Agile
