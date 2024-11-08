@@ -68,10 +68,65 @@ const TrialBalance = () => {
   };
 
   const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-    XLSX.writeFile(workbook, 'report.xlsx');
+    const wb = XLSX.utils.book_new();
+    const wsData = [];
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    // Add headers
+    wsData.push(['Name', 'Debit', 'Credit']);
+
+    filteredData.forEach((group) => {
+      if (group.groupName) {
+        wsData.push([
+          { v: group.groupName, s: { font: { bold: true } } },
+          '',
+          '',
+        ]);
+      }
+
+      group.subGroups.forEach((subGroup) => {
+        if (subGroup.subGroupName) {
+          wsData.push([
+            { v: '    ' + subGroup.subGroupName, s: { font: { bold: true } } },
+            '',
+            '',
+          ]);
+        }
+
+        subGroup.accounts.forEach((account) => {
+          const debit = account.amount >= 0 ? account.amount : 0;
+          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
+          totalDebit += debit;
+          totalCredit += credit;
+
+          wsData.push([
+            '        ' + account.accountName,
+            formatNumber(debit),
+            formatNumber(credit),
+          ]);
+        });
+      });
+    });
+
+    // Add totals row
+    wsData.push([
+      { v: 'Total', s: { font: { bold: true } } },
+      formatNumber(totalDebit),
+      formatNumber(totalCredit),
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 40 }, // Width of the "Name" column
+      { wch: 15 }, // Width of the "Debit" column
+      { wch: 15 }, // Width of the "Credit" column
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Trial Balance');
+    XLSX.writeFile(wb, 'TrialBalance.xlsx');
   };
 
   const formatNumber = (value) => {
@@ -111,10 +166,12 @@ const TrialBalance = () => {
     doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
 
     // Add margin bottom to separate the header from the table
-    const headerBottomMargin = 50;
+    const headerBottomMargin = 30;
 
     let body = [];
     let lastSubGroupName = '';
+    let totalDebit = 0;
+    let totalCredit = 0;
 
     filteredData.forEach((group) => {
       if (group.groupName !== lastGroupName) {
@@ -161,17 +218,32 @@ const TrialBalance = () => {
         }
 
         subGroup.accounts.forEach((account) => {
+          const debit = account.amount >= 0 ? account.amount : 0;
+          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
+          totalDebit += debit;
+          totalCredit += credit;
+
           body.push([
             {
               content: '        ' + account.accountName, // Indentation for accounts
               styles: { fontStyle: 'normal' },
             },
-            account.amount >= 0 ? formatNumber(account.amount) : '',
-            account.amount < 0 ? formatNumber(Math.abs(account.amount)) : '',
+            formatNumber(debit),
+            formatNumber(credit),
           ]);
         });
       });
     });
+
+    // Add totals row
+    body.push([
+      {
+        content: 'Total',
+        styles: { fontStyle: 'bold', halign: 'right' },
+      },
+      formatNumber(totalDebit),
+      formatNumber(totalCredit),
+    ]);
 
     doc.autoTable({
       head: [['Name', 'Debit', 'Credit']],
@@ -179,6 +251,9 @@ const TrialBalance = () => {
       startY: headerBottomMargin, // Start the table after the header margin
       columnStyles: {
         0: { cellWidth: 'auto' }, // Adjust column width if necessary
+      },
+      styles: {
+        font: 'helvetica',
       },
     });
 
@@ -188,6 +263,8 @@ const TrialBalance = () => {
   const handlePreviewPDF = () => {
     const doc = new jsPDF();
     const body = [];
+    let totalDebit = 0;
+    let totalCredit = 0;
 
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -241,17 +318,32 @@ const TrialBalance = () => {
         }
 
         subGroup.accounts.forEach((account) => {
+          const debit = account.amount >= 0 ? account.amount : 0;
+          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
+          totalDebit += debit;
+          totalCredit += credit;
+
           body.push([
             {
               content: '        ' + account.accountName, // Indentation for accounts
               styles: { fontStyle: 'normal' },
             },
-            account.amount >= 0 ? formatNumber(account.amount) : '',
-            account.amount < 0 ? formatNumber(Math.abs(account.amount)) : '',
+            formatNumber(debit),
+            formatNumber(credit),
           ]);
         });
       });
     });
+
+    // Add totals row
+    body.push([
+      {
+        content: 'Total',
+        styles: { fontStyle: 'bold', halign: 'right' },
+      },
+      formatNumber(totalDebit),
+      formatNumber(totalCredit),
+    ]);
 
     doc.autoTable({
       head: [['Name', 'Debit', 'Credit']],
@@ -260,9 +352,17 @@ const TrialBalance = () => {
       columnStyles: {
         0: { cellWidth: 'auto' }, // Adjust column width if necessary
       },
+      styles: {
+        font: 'helvetica',
+      },
     });
 
-    doc.save('preview.pdf');
+    // Open the PDF in a new window/tab
+    const pdfDataUri = doc.output('datauristring');
+    const pdfWindow = window.open();
+    pdfWindow.document.write(
+      `<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`
+    );
   };
   const formatColumnName = (columnName) => {
     return columnName
@@ -272,7 +372,7 @@ const TrialBalance = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
-      <h1 className="text-2xl font-bold text-gray-700 mb-10 mt-[-20px]">
+      <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
         Trial Balance Report
       </h1>
 
@@ -344,6 +444,7 @@ const TrialBalance = () => {
             <label key={column} className="flex items-center text-gray-600">
               <input
                 type="checkbox"
+                disabled={true}
                 checked={selectedColumns.includes(column)}
                 onChange={() => handleColumnChange(column)}
                 className="mr-2"
@@ -354,7 +455,7 @@ const TrialBalance = () => {
         )}
       </div>
 
-      <div className=" bg-white py-4  border-t flex justify-between mt-[160px]  ">
+      <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
         <button
           onClick={handleExportExcel}
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
