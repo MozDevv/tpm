@@ -9,7 +9,7 @@ function Login() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
       {/* Left Column */}
-      <div className="h-full bg-white flex items-center justify-center flex-col">
+      <div className="bg-white flex items-center justify-center flex-col">
         <div className="my-[50px]">
           {/* Logo and Welcome Section */}
           <img
@@ -29,7 +29,7 @@ function Login() {
       </div>
 
       {/* Right Column */}
-      <div className="h-full flex items-center justify-center">
+      <div className=" flex items-center justify-center">
         <Auth />
       </div>
     </div>
