@@ -21,7 +21,7 @@ function Login() {
           />
           <div className="my-[50px]">
             <div className="mt-10 w-[100px] mb-10 h-[12px] rounded-full bg-primary"></div>
-            <p className="text-[31px] leading-12 font-bold w-[512px] text-primary">
+            <p className="text-[31px] leading-12 font-bold pr-[30px] w-[512px] text-primary">
               Welcome to Treasury Pension Management Information System
             </p>
           </div>
