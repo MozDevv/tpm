@@ -63,7 +63,8 @@ const notificationStatusMap = {
   3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
   5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
-  6: { name: 'COB', color: '#2ecc71' }, // Light Blue
+  6: { name: 'Controller of Budget', color: '#2ecc71' }, // Light Blue
+  7: { name: 'Voucher Preparation', color: '#2ecc71' }, // Light Blue
 };
 
 const colDefs = [
@@ -460,8 +461,11 @@ const AssessmentTable = ({ status }) => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
-
     moveToFinance: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    createPaymentVoucher: () => {
       setOpenPushToFinance(true);
     },
     returnToDirectorate: () => {
@@ -511,6 +515,10 @@ const AssessmentTable = ({ status }) => {
     },
 
     moveToFinance: () => {
+      setOpenAction(0);
+      setOpenMoveStatus(true);
+    },
+    createPaymentVoucher: () => {
       setOpenPushToFinance(true);
     },
 

@@ -85,6 +85,15 @@ export const menuItems = [
 
     children: [
       {
+        title: 'Claim Records',
+        subChildren: [
+          {
+            title: 'Claim Records List',
+            path: '/pensions/claim-records',
+          },
+        ],
+      },
+      {
         title: 'General Ledger',
         subChildren: [
           {

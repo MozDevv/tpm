@@ -95,6 +95,7 @@ function ReturnToPreclaims({
     4: { name: 'Assessment Approval', color: '#2ecc71' }, // Light Blue
     5: { name: 'Directorate', color: '#f39c12' }, // Bright Orange
     6: { name: 'Controller Of Budget', color: '#2ecc71' }, // Light Blue
+    7: { name: 'Finance', color: '#f39c12' }, // Bright Orange
   };
 
   // Check if clickedItem is an array and use the first item for title determination

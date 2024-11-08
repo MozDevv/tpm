@@ -336,6 +336,13 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       status: [5, 7],
     },
     {
+      name: 'Create Payment Voucher',
+      icon: AddCircle,
+      action: 'createPaymentVoucher',
+      requiredPermissions: [],
+      status: [7],
+    },
+    {
       name: 'Numbering Sections',
       icon: FormatListNumbered,
       action: 'numberingSections',
