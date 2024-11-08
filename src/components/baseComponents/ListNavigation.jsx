@@ -43,10 +43,10 @@ import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
-import { Divider } from '@mui/material';
+import { Divider, Menu, MenuItem } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
+const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
@@ -55,6 +55,29 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
 
   const [approvalActions, setApprovalActions] = useState([]);
   const [parentAction, setParentAction] = useState(null);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const hasReportItems = reportItems?.length > 0;
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (action) => {
+    console.log('Action:', action);
+    console.log('Handlers:', handlers);
+    if (handlers[action]) {
+      handlers[action]();
+    } else {
+      console.error(`Handler for action "${action}" not found.`);
+    }
+    handleMenuClose();
+  };
 
   const userId = auth.user ? auth.user.userId : null;
 
@@ -665,29 +688,19 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
         </div>
         <div>
           <Button
-            onClick={handlers[reportsButton.action]}
+            onClick={handleMenuOpen}
             sx={{ mb: -1, maxHeight: '25px' }}
             disabled={
-              !permissions?.includes(reportsButton.requiredPermissions[0])
+              reportItems?.length === 0 ||
+              !reportItems ||
+              !reportItems.length > 0
             }
             startIcon={
-              <IconButton
-                // disabled={
-                //   !permissions?.some((permission) =>
-                //     reportsButton.requiredPermissions.includes(permission)
-                //   )
-                // }
-                disabled
-              >
+              <IconButton disabled={hasReportItems ? false : true}>
                 <reportsButton.icon
                   sx={{
                     fontSize: '20px',
-                    // color: !permissions?.some((permission) =>
-                    //   reportsButton.requiredPermissions.includes(permission)
-                    // )
-                    //   ? "gray"
-                    //   : "primary",
-                    color: 'gray',
+                    color: !hasReportItems ? 'gray' : '#006990',
                   }}
                 />
               </IconButton>
@@ -697,6 +710,27 @@ const ListNavigation = ({ handlers, status, clickedItem, selectedRows }) => {
               {reportsButton.name}
             </p>
           </Button>
+
+          {reportItems && reportItems.length > 0 && (
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              sx={{
+                '& .MuiPaper-root': {
+                  width: '200px', // Adjust the width as needed
+
+                  // backgroundColor: '#f5f5f5', // Optional: change background color
+                },
+              }}
+            >
+              {reportItems.map((item, index) => (
+                <MenuItem key={index} onClick={() => handleMenuItemClick(item)}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Menu>
+          )}
           <Button
             onClick={handlers[openDetailsButton.action]}
             sx={{
