@@ -14,6 +14,7 @@ import PaymentsCard from './PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { Button, Dialog } from '@mui/material';
 import PVActions from './PVActions';
+import PaymentVoucherReport from './reports/PaymentVoucherReport';
 
 const Payments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -222,6 +223,8 @@ const Payments = ({ status }) => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [isSchedule, setIsSchedule] = React.useState(false);
   const [openPV, setOpenPV] = React.useState(false);
+  const [openTrialBalanceReport, setOpenTrialBalanceReport] =
+    React.useState(false);
   const handlers = {
     create: () => {
       setOpenBaseCard(true);
@@ -283,6 +286,8 @@ const Payments = ({ status }) => {
       setDialogType('branch');
       setOpenAction(true);
     },
+    'Payment Voucher Report': () => setOpenTrialBalanceReport(true),
+    'Gratuity Notification Letter': () => {},
     ...(status === 0 && {
       submitPaymentForApproval: () => {
         console.log('Submit Payment For Approval');
@@ -310,9 +315,6 @@ const Payments = ({ status }) => {
         setOpenPV(true);
         console.log('Post Payment');
       },
-
-      'Payment Voucher Report': () => {},
-      'Gratuity Notification Letter': () => {},
     }),
   };
 
@@ -401,6 +403,27 @@ const Payments = ({ status }) => {
 
   return (
     <div className="">
+      <div className="">
+        <Dialog
+          open={openTrialBalanceReport}
+          onClose={() => setOpenTrialBalanceReport(false)}
+          sx={{
+            '& .MuiPaper-root': {
+              minHeight: '75vh',
+              maxHeight: '85vh',
+              minWidth: '80vw',
+              maxWidth: '35vw',
+            },
+            zIndex: 99999,
+          }}
+        >
+          <div className="flex-grow overflow-auto px-6">
+            <PaymentVoucherReport
+              setOpenTrialBalanceReport={setOpenTrialBalanceReport}
+            />
+          </div>
+        </Dialog>
+      </div>
       <Dialog
         open={openPV && selectedRows.length > 0}
         onClose={() => {
@@ -439,16 +462,19 @@ const Payments = ({ status }) => {
         dialogType={dialogType}
       >
         {clickedItem ? (
-          <PaymentsCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updatePayment}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            setClickedItem={setClickedItem}
-            transformData={transformData}
-          />
+          <>
+            {' '}
+            <PaymentsCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.updatePayment}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              setClickedItem={setClickedItem}
+              transformData={transformData}
+            />{' '}
+          </>
         ) : (
           <BaseAutoSaveInputCard
             fields={fields}

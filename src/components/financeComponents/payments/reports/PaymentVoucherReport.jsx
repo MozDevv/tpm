@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 import html2pdf from 'html2pdf.js';
+import { IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 const PaymentVoucher = () => {
   const contentRef = useRef();
@@ -17,108 +19,453 @@ const PaymentVoucher = () => {
   };
 
   return (
-    <div className="p-4">
-      <div
-        ref={contentRef}
-        className="border border-black p-4 w-full max-w-2xl mx-auto"
+    <div className="flex flex-col h-full">
+      <IconButton
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+        }}
       >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <p className="font-bold">REPUBLIC OF KENYA</p>
-            <p>PAYMENT VOUCHER</p>
-            <p>(VOTED PROVISION)</p>
+        <Close />
+      </IconButton>
+      <div
+        style={{
+          transform: 'scale(0.9)', // Adjust the scale as needed
+          transformOrigin: 'center center',
+          width: '100%', // Ensure the width is 100% to fit the dialog
+          height: '100%', // Ensure the height is 100% to fit the dialog
+          overflow: 'auto', // Enable scrolling for overflow content
+        }}
+        className="flex-grow"
+      >
+        <div
+          ref={contentRef}
+          className="border border-black w-full max-w-3xl mx-auto text-end"
+        >
+          {/* Header */}
+          <p className="font-bold p-1">F.O.20 (Revised)</p>
+          <div className="flex justify-center items-center mb-4 ">
+            <div className="flex items-center justify-center flex-col">
+              <p className="font-bold uppercase underline">Republic of Kenya</p>
+              <p className="uppercase font-bold text-[18px]">Payment Voucher</p>
+              <p>(Voted Provision)</p>
+            </div>
           </div>
-          <p className="font-bold">F.O.20 (Revised)</p>
-        </div>
+          <p className="text-sm underline text-start font-bold pl-1">
+            Payee's name and Address
+          </p>
 
-        {/* Payee Details */}
-        <div className="border-b border-black mb-4 pb-2">
-          <p>
-            <strong>Bank Name:</strong> NATIONAL BANK OF KENYA LTD
-          </p>
-          <p>
-            <strong>Branch Name:</strong> N.B.K. - KAKAMEGA
-          </p>
-          <p>
-            <strong>Account No:</strong> 001521232560600
-          </p>
-          <p>
-            <strong>Pensioner Name:</strong> Joy Khalayi Chibeiya
-          </p>
-          <p>
-            <strong>Claim Type:</strong> Retirement On Age Ground
-          </p>
-          <p>
-            <strong>ID:</strong> 35729128
-          </p>
-        </div>
+          {/* Payee Details */}
+          <div className=" border-black mb-3">
+            <div className="grid grid-cols-2 gap-2 pl-1">
+              <div>
+                <p className="text-start flex flex-row ">
+                  <strong>Bank Name: </strong> NATIONAL BANK OF KENYA LTD
+                </p>
+                <p className="text-start flex flex-row gap-2">
+                  <strong>Branch Name:</strong> N.B.K. - KAKAMEGA
+                </p>
+                <p className="text-start flex flex-row gap-2">
+                  <strong>Pensioner Name:</strong> Joy Khalayi Chibeiya
+                </p>
+                <p className="text-start flex flex-row gap-2">
+                  <strong>Claim Type:</strong> Retirement On Age Ground
+                </p>
+              </div>
+              <div className="pr-1">
+                <p>
+                  <strong>Branch Name:</strong> 001521232560600
+                </p>
+                <p>
+                  <strong>Account No:</strong> 001521232560600
+                </p>
+                <p>
+                  <strong>ID:</strong> 35729128
+                </p>
+              </div>
+            </div>
+          </div>
 
-        {/* Table Headers */}
-        <div className="grid grid-cols-4 gap-4 border-b border-black mb-4 pb-2">
-          <p>
-            <strong>Particulars</strong>
-          </p>
-          <p>
-            <strong>LPO/LSO No.</strong>
-          </p>
-          <p>
-            <strong>Invoice No.</strong>
-          </p>
-          <p className="text-right">
-            <strong>Amount</strong>
-          </p>
-        </div>
+          <div className="relative ">
+            {/* Background image with low opacity */}
+            <div
+              className="absolute inset-0 bg-no-repeat bg-center opacity-10"
+              style={{
+                backgroundImage: `url('/mnt/data/image.png')`, // Add the correct path to your image
+                backgroundSize: 'contain',
+              }}
+            />
 
-        {/* Payment Details */}
-        <div className="grid grid-cols-4 gap-4 mb-4">
-          <p>Being Payment of Returned Gratuity/Liability</p>
-          <p>-</p>
-          <p>-</p>
-          <p className="text-right">5,124,998.85</p>
+            {/* Content over the image */}
+            <div className="relative z-10 border-t border-black">
+              {/* Table Headers */}
+              <div className="grid grid-cols-8 border-b border-black">
+                <p className="p-2 col-span-3 border-r border-black text-center pt-3">
+                  <strong>Particulars</strong>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">
+                  <strong>LPO/LSO No.</strong>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">
+                  <strong>Invoice No.</strong>
+                </p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  <strong>Sh.</strong>
+                </p>
+                <p className="p-2 col-span-1 text-right">
+                  <strong>Cts</strong>
+                </p>
+              </div>
 
-          <p>Liability:</p>
-          <p>-</p>
-          <p>-</p>
-          <p className="text-right">0.00</p>
+              {/* Payment Details */}
+              <div className="grid grid-cols-8 border-black">
+                <p className="p-2 col-span-3 border-r border-black text-start">
+                  Being Payment of Returned Gratuity/Liability
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  5,124,998
+                </p>
+                <p className="p-2 col-span-1 text-right">85</p>
+              </div>
 
-          <p>Income Tax:</p>
-          <p>-</p>
-          <p>-</p>
-          <p className="text-right">0.00</p>
+              <div className="grid grid-cols-8  border-black">
+                <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+                  Payable Amount: <p>5, 124, 000.85</p>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  0
+                </p>
+                <p className="p-2 col-span-1 text-right">00</p>
+              </div>
+              <div className="grid grid-cols-8  border-black">
+                <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+                  Liability: <p>0.00</p>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  0
+                </p>
+                <p className="p-2 col-span-1 text-right">00</p>
+              </div>
 
-          <p>Deduction to CAP:</p>
-          <p>-</p>
-          <p>-</p>
-          <p className="text-right">0.00</p>
+              <div className="grid grid-cols-8  border-black">
+                <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+                  Income Tax: <p>0.00</p>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  0
+                </p>
+                <p className="p-2 col-span-1 text-right">00</p>
+              </div>
 
-          <p className="font-bold">Net Payable:</p>
-          <p></p>
-          <p></p>
-          <p className="text-right font-bold">5,124,998.85</p>
-        </div>
+              <div className="grid grid-cols-8  border-black">
+                <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+                  Deduction To CAP:: <p>0.00</p>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-1 border-r border-black">-</p>
+                <p className="p-2 col-span-2 text-right border-r border-black">
+                  0
+                </p>
+                <p className="p-2 col-span-1 text-right">00</p>
+              </div>
 
-        {/* Total Amount */}
-        <div className="flex justify-between border-t border-black pt-2 mb-4">
-          <p>
-            <strong>Total (in words):</strong> FIVE MILLION ONE HUNDRED
-            TWENTY-FOUR THOUSAND NINE HUNDRED NINETY-EIGHT Shilling AND
-            EIGHTY-FIVE CENTS
-          </p>
-          <p className="font-bold">TOTAL Sh. 5,124,998.85</p>
-        </div>
+              <div className="grid grid-cols-8 border-b  border-black ">
+                <p className="p-2 col-span-3 border-r border-black text-start justify-between flex">
+                  Net Payable:{' '}
+                  <p className="font-bold border-l border-t border-black p-[1px]">
+                    5, 124, 000.85
+                  </p>
+                </p>
+                <p className="p-2 col-span-1 border-r border-black"></p>
+                <p className="p-2 col-span-1 border-r border-black"></p>
+                <p className="p-2 col-span-2 text-right border-r border-black"></p>
+                <p className="p-2 col-span-1 text-right">85</p>
+              </div>
+              <div className="grid grid-cols-8  border-black font-bold">
+                <p className="p-2 col-span-3  border-black text-start text-[14px]">
+                  Amount Payable (In Words):
+                </p>
+                <p className="p-2 col-span-1  border-black"></p>
+                <p className="p-2 col-span-1  border-black border-r">
+                  Total Sh.
+                </p>
+                <p className="p-2 col-span-2 text-right  border-black border-b">
+                  5,124,998
+                </p>
+                <p className="p-2 col-span-1 text-right border-b border-black">
+                  85
+                </p>
+              </div>
 
-        {/* Authority Reference */}
-        <div>
-          <p>
-            <strong>Authority Reference No.:</strong> APN/PC0000368915
-          </p>
+              {/* Total Amount */}
+              <div className="flex justify-between items-start  border-black pt-2 mb-1">
+                <p className="p-2 text-start">
+                  FIVE MILLION ONE HUNDRED TWENTY-FOUR THOUSAND NINE HUNDRED
+                  NINETY-EIGHT Shilling AND EIGHTY-FIVE CENTS
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Information */}
+          <div className="mb-2 border-b border-black pb-1 pl-2">
+            <p className="text-start flex flex-row gap-5">
+              <strong>Authority Reference No:</strong> APN/PC0000368915
+            </p>
+          </div>
+
+          {/*Voucher Examined By */}
+          <div className="grid grid-cols-2">
+            {/* Left Section */}
+            <div className="flex flex-col border-r border-black">
+              <strong className="text-center">EXAMINATION</strong>
+              <div className="flex flex-col items-start pl-3 border-b border-black pb-2 pr-1 pt-2">
+                <div className="flex flex-row gap-1 w-full">
+                  <strong>Voucher Examined By:</strong>
+                  <div className="flex-grow border-b border-gray-400 p-2"></div>
+                </div>
+                <div className="flex flex-row gap-1 w-full mt-2">
+                  <strong>Date:</strong>
+                  <div className="flex-grow border-b border-gray-400 p-2"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section */}
+            <div className="flex-flex-col ">
+              <strong className="text-center ">Internal Audit</strong>
+              <div className="flex flex-col items-start pl-3 border-b  border-black pb-2 pr-1 pt-2">
+                <div className="w-full border-b border-gray-400 p-2 mb-3"></div>
+                <div className="w-full border-b border-gray-400 p-2 mt-2"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Certification Section */}
+          <div className="grid grid-cols-2 border-b border-black pb-2">
+            <div className="border-r border-black pr-2">
+              <p className="font-bold uppercase text-center">VBC Certificate</p>
+              <p className="text-start pl-3">
+                I certify that the expenditure has been entered in the Vote Book
+                and that adequate funds to cover it are available against the
+                chargeable item as shown below.
+              </p>
+
+              {/* Approved Estimates/Allocation */}
+              <div className="flex flex-col pl-2">
+                <p className="text-start mt-2 mb-2">
+                  Approved Estimates/Allocation -
+                </p>
+                <div className="flex flex-row justify-between items-center gap-4 px-4">
+                  {/* Item No section */}
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">
+                      <strong>Item No:</strong>
+                    </p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+
+                  {/* Ksh section */}
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">Ksh.</p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+                </div>
+              </div>
+
+              {/* Less: Total Expenditure plus */}
+              <div className="flex flex-col pl-2">
+                <p className="text-start mt-2 mb-2">
+                  Less: Total Expenditure plus -
+                </p>
+                <div className="flex flex-row justify-between items-center gap-4 px-4">
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">
+                      <strong>Commitments.</strong>
+                    </p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">Ksh.</p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+                </div>
+
+                {/* Balance */}
+                <div className="flex flex-row justify-between items-center gap-4 px-4">
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">
+                      <strong>Balance.</strong>
+                    </p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">Ksh.</p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+                </div>
+              </div>
+
+              {/* Less: This ENTRY ---Vch */}
+              <div className="flex flex-col pl-2">
+                <p className="text-start mt-2 mb-2">
+                  Less: This ENTRY ---Vch. -
+                </p>
+                <div className="flex flex-row justify-between items-center gap-4 px-4">
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">
+                      <strong>No.</strong>
+                    </p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">Ksh.</p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+                </div>
+
+                {/* Balance */}
+                <div className="flex flex-row justify-between items-center gap-4 px-4">
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">
+                      <strong>Balance.</strong>
+                    </p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+
+                  <div className="flex items-center w-full">
+                    <p className="mr-2">Ksh.</p>
+                    <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                    {/* Input area */}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row justify-between items-center gap-4 pl-1 mt-2">
+                <div className="flex items-center w-full">
+                  <p className="mr-2">
+                    <strong>Date.</strong>
+                  </p>
+                  <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                  {/* Input area */}
+                </div>
+
+                <div className="flex items-center w-full">
+                  <p className="mr-2">Signature.</p>
+                  <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                  {/* Input area */}
+                </div>
+              </div>
+            </div>
+
+            {/* AIE Holder Certificate */}
+            <div className="pl-1">
+              <div className="flex flex-col border-b border-black pb-3 gap-5">
+                <div className="">
+                  <p className="font-bold uppercase text-center">
+                    AIE Holder Certificate
+                  </p>
+                  <p className="text-start">
+                    I certify that the expenditure detailed above has been
+                    incurred for the authorized purpose and should be charged to
+                    the item shown here below.
+                  </p>
+                  <div className="flex flex-row justify-between items-center gap-4 pl-1 mt-2">
+                    <div className="flex items-center w-full">
+                      <p className="mr-2">
+                        <strong>Date.</strong>
+                      </p>
+                      <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                      {/* Input area */}
+                    </div>
+
+                    <div className="flex items-center w-full">
+                      <p className="mr-2">Signature.</p>
+                      <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                      {/* Input area */}
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t border-black pt-2">
+                  <p className="font-bold uppercase text-center">
+                    Authorization
+                  </p>
+                  <p className="text-start">
+                    I certify that the rate/price charged is/are according to
+                    regulation/contract, fair and reasonable, that the
+                    expenditure has been incurred on proper authority and should
+                    be charged as under Where appropriate a certificate overleaf
+                    has been completed. I hereby AUTHORIZE payment of the amount
+                    shown above without any alteration.
+                  </p>
+                  <div className="flex flex-col items-center gap-4 pl-1 mt-2">
+                    <div className="flex items-center w-full">
+                      <p className="mr-2 font-bold">Signature.</p>
+                      <div className="flex-grow mr-1">
+                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <p className="text-[12px]">
+                          Accounting Officer/District Commisioner*
+                        </p>
+                      </div>
+
+                      {/* Input area */}
+                    </div>
+                    <div className="flex items-center w-full">
+                      <p className="mr-2">
+                        <strong>Date.</strong>
+                      </p>
+                      <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                      {/* Input area */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-4 grid grid-cols-3 text-sm">
+            <div className="col-span-2">
+              <p>
+                <strong>A.I.E No:</strong>
+              </p>
+              <p>
+                <strong>Account No:</strong> 0-970-8820-7320119
+              </p>
+            </div>
+            <div className="text-right">
+              <p>
+                <strong>Total Amount:</strong> 5,124,998.85
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       <button
         onClick={handleDownload}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded absolute bottom-6"
       >
         Download PDF
       </button>
