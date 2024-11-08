@@ -140,3 +140,7 @@ a:hover {
   font-family: 'Montserrat', sans-serif;
   background-color: rgb(243, 244, 246);
 }
+.courier-font {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+}

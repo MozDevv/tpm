@@ -8,6 +8,15 @@ const PaymentVoucher = () => {
 
   const handleDownload = () => {
     const element = contentRef.current;
+    const pageWidth = 8.5; // Width of a letter page in inches
+    const pageHeight = 11; // Height of a letter page in inches
+    const contentWidth = element.scrollWidth;
+    const contentHeight = element.scrollHeight;
+
+    const scaleX = pageWidth / (contentWidth / 96); // Convert pixels to inches (assuming 96 DPI)
+    const scaleY = pageHeight / (contentHeight / 96);
+    const scale = Math.min(scaleX, scaleY);
+
     const options = {
       margin: 0.5,
       filename: 'Payment_Voucher.pdf',
@@ -15,7 +24,16 @@ const PaymentVoucher = () => {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
     };
 
-    html2pdf().set(options).from(element).save();
+    element.style.transform = `scale(${scale})`;
+    element.style.transformOrigin = 'top left';
+
+    html2pdf()
+      .set(options)
+      .from(element)
+      .save()
+      .then(() => {
+        element.style.transform = ''; // Reset the transform after saving
+      });
   };
 
   return (
@@ -41,11 +59,11 @@ const PaymentVoucher = () => {
       >
         <div
           ref={contentRef}
-          className="border border-black w-full max-w-3xl mx-auto text-end"
+          className="border border-black w-full max-w-3xl mx-auto text-end courier-font"
         >
           {/* Header */}
-          <p className="font-bold p-1">F.O.20 (Revised)</p>
-          <div className="flex justify-center items-center mb-4 ">
+          <p className="font-bold absolute top-0 right-0">F.O.20 (Revised)</p>
+          <div className="flex justify-center items-center mb-3">
             <div className="flex items-center justify-center flex-col">
               <p className="font-bold uppercase underline">Republic of Kenya</p>
               <p className="uppercase font-bold text-[18px]">Payment Voucher</p>
@@ -444,22 +462,84 @@ const PaymentVoucher = () => {
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="mt-4 grid grid-cols-3 text-sm">
-            <div className="col-span-2">
-              <p>
-                <strong>A.I.E No:</strong>
-              </p>
-              <p>
-                <strong>Account No:</strong> 0-970-8820-7320119
-              </p>
+          {/* Payment Details */}
+
+          <div className="grid grid-cols-4 border-b border-black">
+            <div className="border-r border-black h-[55px]">
+              <p className="text-center pt-1 font-semibold">Vote</p>
             </div>
-            <div className="text-right">
-              <p>
-                <strong>Total Amount:</strong> 5,124,998.85
-              </p>
+            <div className="border-r border-black  h-[55px]">
+              <p className="text-center pt-1 font-semibold">Head</p>
+            </div>
+            <div className="border-r border-black  h-[55px]">
+              <p className="text-center pt-1 font-semibold">SubHead</p>
+            </div>
+            <div className=" border-black h-[55px]">
+              <p className="text-center pt-1 font-semibold">Item</p>
             </div>
           </div>
+
+          <div className="grid grid-cols-12 gap-0 border-black text-sm">
+            {/* Header Row */}
+            <div className="col-span-1 border-r border-black p-2 text-center">
+              A.I.E. No.
+            </div>
+            <div className="col-span-2 border-r border-black p-2 text-center">
+              Account No.
+            </div>
+            <div className="col-span-2 border-r border-black p-2 text-center">
+              Dept Vch.
+            </div>
+            <div className="col-span-1 border-r border-black p-2 text-center">
+              Station
+            </div>
+            <div className="col-span-3 grid grid-cols-2 border-r border-black">
+              <div className="col-span-2 text-center p-2 border-b border-black">
+                Cash Book
+              </div>
+              <div className="border-r border-black text-center p-2">
+                Vch. No.
+              </div>
+              <div className="text-center p-2">Date</div>
+            </div>
+            <div className="col-span-3 grid grid-cols-3">
+              <div className="col-span-3 text-center p-2 border-b border-black">
+                Amount
+              </div>
+              <div className="col-span-2 border-r border-black text-center p-2">
+                Sh.
+              </div>
+              <div className="col-span-1 text-center p-2">cts.</div>
+            </div>
+
+            {/* Data Row */}
+            <div className="col-span-1 border-t border-black border-r p-2 text-center">
+              0-970-8820-7320119
+            </div>
+            <div className="col-span-2 border-t border-black border-r p-2 text-center">
+              PV2023-24_022295
+            </div>
+            <div className="col-span-2 border-t border-black border-r p-2 text-center">
+              {/* Dept Vch content here */}
+            </div>
+            <div className="col-span-1 border-t border-black border-r p-2 text-center">
+              {/* Station content here */}
+            </div>
+            <div className="col-span-3 grid grid-cols-2 border-t border-black border-r">
+              <div className="border-r border-black p-2 text-center">
+                {/* Vch. No. */}
+              </div>
+              <div className="p-2 text-center">{/* Date */}</div>
+            </div>
+            <div className="col-span-3 grid grid-cols-3 border-t border-black">
+              <div className="col-span-2 border-r border-black p-2 text-right">
+                5,124,998.85
+              </div>
+              <div className="col-span-1 p-2 text-right"></div>
+            </div>
+          </div>
+
+          {/* Footer */}
         </div>
       </div>
 
