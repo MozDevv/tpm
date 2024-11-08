@@ -8,36 +8,51 @@ const PaymentVoucher = () => {
 
   const handleDownload = () => {
     const element = contentRef.current;
-    const pageWidth = 8.5; // Width of a letter page in inches
-    const pageHeight = 11; // Height of a letter page in inches
-    const contentWidth = element.scrollWidth;
-    const contentHeight = element.scrollHeight;
 
-    const scaleX = pageWidth / (contentWidth / 96); // Convert pixels to inches (assuming 96 DPI)
-    const scaleY = pageHeight / (contentHeight / 96);
-    const scale = Math.min(scaleX, scaleY);
+    // A4 page dimensions in inches (Width x Height)
+    const pageWidth = 8.27; // A4 width in inches
+    const pageHeight = 11.69; // A4 height in inches
 
+    // Convert content dimensions from pixels to inches (assuming 96 DPI)
+    const contentWidth = element.scrollWidth / 96; // in inches
+    const contentHeight = element.scrollHeight / 96; // in inches
+
+    // Calculate scaling factor to fit the content within the A4 page
+    const scaleX = pageWidth / contentWidth;
+    const scaleY = pageHeight / contentHeight;
+
+    // Use the minimum scale factor to ensure both width and height fit on the page
+    const scale = Math.min(scaleX, scaleY) * 0.85; // Reduce the scale factor by 15%
+
+    // Define options for the PDF
     const options = {
-      margin: 0.5,
+      margin: 0.5, // Default margin (in inches)
       filename: 'Payment_Voucher.pdf',
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
 
+    // Create a wrapper to hold the cloned content
     const wrapper = document.createElement('div');
-    wrapper.style.width = `${contentWidth}px`;
-    wrapper.style.height = `${contentHeight}px`;
+    wrapper.style.width = `${contentWidth * 96}px`; // Convert back to pixels for proper rendering
+    wrapper.style.height = `${contentHeight * 96}px`;
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
     wrapper.style.justifyContent = 'center';
     wrapper.appendChild(element.cloneNode(true));
 
     const clonedElement = wrapper.firstChild;
+
+    // Apply the calculated scale to the cloned content
     clonedElement.style.transform = `scale(${scale})`;
     clonedElement.style.transformOrigin = 'top left';
-    clonedElement.style.width = `${contentWidth}px`;
-    clonedElement.style.height = `${contentHeight}px`;
+    clonedElement.style.width = `${contentWidth * 96}px`; // Revert to pixel values
+    clonedElement.style.height = `${contentHeight * 96}px`;
 
+    // Optional: Apply negative margin to shift the content upwards if needed
+    //  clonedElement.style.marginTop = '-0.5in'; // Adjust as needed
+
+    // Generate the PDF and save
     html2pdf()
       .set(options)
       .from(wrapper)
@@ -86,20 +101,18 @@ const PaymentVoucher = () => {
                 <p>(Voted Provision)</p>
               </div>
             </div>
-            <p className="text-sm underline text-start font-bold pl-1">
+            <p className="text-sm underline text-start font-bold pl-1 mt-[-10px]">
               Payee's name and Address
             </p>
 
             {/* Payee Details */}
-            <div className=" border-black mb-3">
+            <div className=" border-black mb-2">
               <div className="grid grid-cols-2 gap-2 pl-1">
                 <div>
                   <p className="text-start flex flex-row ">
                     <strong>Bank Name: </strong> NATIONAL BANK OF KENYA LTD
                   </p>
-                  <p className="text-start flex flex-row gap-2">
-                    <strong>Branch Name:</strong> N.B.K. - KAKAMEGA
-                  </p>
+
                   <p className="text-start flex flex-row gap-2">
                     <strong>Pensioner Name:</strong> Joy Khalayi Chibeiya
                   </p>
@@ -135,113 +148,115 @@ const PaymentVoucher = () => {
               <div className="relative z-10 border-t border-black">
                 {/* Table Headers */}
                 <div className="grid grid-cols-8 border-b border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-center pt-3">
+                  <p className="p-1 col-span-3 border-r border-black text-center pt-1">
                     <strong>Particulars</strong>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">
                     <strong>LPO/LSO No.</strong>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">
                     <strong>Invoice No.</strong>
                   </p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     <strong>Sh.</strong>
                   </p>
-                  <p className="p-2 col-span-1 text-right">
+                  <p className="p-1 col-span-1 text-right">
                     <strong>Cts</strong>
                   </p>
                 </div>
 
                 {/* Payment Details */}
                 <div className="grid grid-cols-8 border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-start">
+                  <p className="p-1 col-span-3 border-r border-black text-start">
                     Being Payment of Returned Gratuity/Liability
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     5,124,998
                   </p>
-                  <p className="p-2 col-span-1 text-right">85</p>
+                  <p className="p-1 col-span-1 text-right">85</p>
                 </div>
 
-                <div className="grid grid-cols-8  border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
-                    Payable Amount: <p>5, 124, 000.85</p>
+                <div className="grid grid-cols-8 border-black">
+                  <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
+                    Payable Amount: <p>5,124,000.85</p>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     0
                   </p>
-                  <p className="p-2 col-span-1 text-right">00</p>
+                  <p className="p-1 col-span-1 text-right">00</p>
                 </div>
-                <div className="grid grid-cols-8  border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+
+                <div className="grid grid-cols-8 border-black">
+                  <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
                     Liability: <p>0.00</p>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     0
                   </p>
-                  <p className="p-2 col-span-1 text-right">00</p>
+                  <p className="p-1 col-span-1 text-right">00</p>
                 </div>
 
-                <div className="grid grid-cols-8  border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
+                <div className="grid grid-cols-8 border-black">
+                  <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
                     Income Tax: <p>0.00</p>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     0
                   </p>
-                  <p className="p-2 col-span-1 text-right">00</p>
+                  <p className="p-1 col-span-1 text-right">00</p>
                 </div>
 
-                <div className="grid grid-cols-8  border-black">
-                  <p className="p-2 col-span-3 border-r border-black text-start flex justify justify-between">
-                    Deduction To CAP:: <p>0.00</p>
+                <div className="grid grid-cols-8 border-black">
+                  <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
+                    Deduction To CAP: <p>0.00</p>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-1 border-r border-black">-</p>
-                  <p className="p-2 col-span-2 text-right border-r border-black">
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-1 border-r border-black">-</p>
+                  <p className="p-1 col-span-2 text-right border-r border-black">
                     0
                   </p>
-                  <p className="p-2 col-span-1 text-right">00</p>
+                  <p className="p-1 col-span-1 text-right">00</p>
                 </div>
 
-                <div className="grid grid-cols-8 border-b  border-black ">
-                  <p className="p-2 col-span-3 border-r border-black text-start justify-between flex">
+                <div className="grid grid-cols-8 border-b border-black">
+                  <p className="p-1 col-span-3 border-r border-black text-start justify-between flex">
                     Net Payable:{' '}
                     <p className="font-bold border-l border-t border-black p-[1px]">
-                      5, 124, 000.85
+                      5,124,000.85
                     </p>
                   </p>
-                  <p className="p-2 col-span-1 border-r border-black"></p>
-                  <p className="p-2 col-span-1 border-r border-black"></p>
-                  <p className="p-2 col-span-2 text-right border-r border-black"></p>
-                  <p className="p-2 col-span-1 text-right">85</p>
+                  <p className="p-1 col-span-1 border-r border-black"></p>
+                  <p className="p-1 col-span-1 border-r border-black"></p>
+                  <p className="p-1 col-span-2 text-right border-r border-black"></p>
+                  <p className="p-1 col-span-1 text-right">85</p>
                 </div>
-                <div className="grid grid-cols-8  border-black font-bold">
-                  <p className="p-2 col-span-3  border-black text-start text-[14px]">
+
+                <div className="grid grid-cols-8 border-black font-bold">
+                  <p className="p-1 col-span-3 border-black text-start text-[12px]">
                     Amount Payable (In Words):
                   </p>
-                  <p className="p-2 col-span-1  border-black"></p>
-                  <p className="p-2 col-span-1  border-black border-r">
+                  <p className="p-1 col-span-1 border-black"></p>
+                  <p className="p-1 col-span-1 border-black border-r">
                     Total Sh.
                   </p>
-                  <p className="p-2 col-span-2 text-right  border-black border-b">
+                  <p className="p-1 col-span-2 text-right border-black border-b">
                     5,124,998
                   </p>
-                  <p className="p-2 col-span-1 text-right border-b border-black">
+                  <p className="p-1 col-span-1 text-right border-b border-black">
                     85
                   </p>
                 </div>
 
                 {/* Total Amount */}
-                <div className="flex justify-between items-start  border-black pt-2 mb-1">
+                <div className="flex justify-between items-start  border-black pt-2 mb-1 mt-[-10px]">
                   <p className="p-2 text-start">
                     FIVE MILLION ONE HUNDRED TWENTY-FOUR THOUSAND NINE HUNDRED
                     NINETY-EIGHT Shilling AND EIGHTY-FIVE CENTS
@@ -261,25 +276,27 @@ const PaymentVoucher = () => {
             <div className="grid grid-cols-2">
               {/* Left Section */}
               <div className="flex flex-col border-r border-black">
-                <strong className="text-center">EXAMINATION</strong>
-                <div className="flex flex-col items-start pl-3 border-b border-black pb-2 pr-1 pt-2">
+                <strong className="text-center mt-[-10px]">EXAMINATION</strong>
+                <div className="flex flex-col items-start pl-3 border-b border-black  pr-1 pt-1">
                   <div className="flex flex-row gap-1 w-full">
                     <strong>Voucher Examined By:</strong>
-                    <div className="flex-grow border-b border-gray-400 p-2"></div>
+                    <div className="flex-grow border-b border-gray-400 p-1"></div>
                   </div>
-                  <div className="flex flex-row gap-1 w-full mt-2">
+                  <div className="flex flex-row gap-1 w-full mt-1">
                     <strong>Date:</strong>
-                    <div className="flex-grow border-b border-gray-400 p-2"></div>
+                    <div className="flex-grow border-b border-gray-400 p-1"></div>
                   </div>
                 </div>
               </div>
 
               {/* Right Section */}
-              <div className="flex-flex-col ">
-                <strong className="text-center ">Internal Audit</strong>
-                <div className="flex flex-col items-start pl-3 border-b  border-black pb-2 pr-1 pt-2">
-                  <div className="w-full border-b border-gray-400 p-2 mb-3"></div>
-                  <div className="w-full border-b border-gray-400 p-2 mt-2"></div>
+              <div className="flex flex-col w-full">
+                <strong className="text-center mt-[-10px]">
+                  Internal Audit
+                </strong>
+                <div className="flex flex-col items-start pl-3 border-b border-black  pr-1 pt-1">
+                  <div className="w-full border-b border-gray-400 p-1 mb-2"></div>
+                  <div className="w-full border-b border-gray-400 p-1 mt-1 mb-2"></div>
                 </div>
               </div>
             </div>
@@ -455,7 +472,7 @@ const PaymentVoucher = () => {
                       overleaf has been completed. I hereby AUTHORIZE payment of
                       the amount shown above without any alteration.
                     </p>
-                    <div className="flex flex-col items-center gap-4 pl-1 mt-2">
+                    <div className="flex flex-col items-center gap-2 pl-1 mt-[1px]">
                       <div className="flex items-center w-full">
                         <p className="mr-2 font-bold">Signature.</p>
                         <div className="flex-grow mr-1">
@@ -467,7 +484,7 @@ const PaymentVoucher = () => {
 
                         {/* Input area */}
                       </div>
-                      <div className="flex items-center w-full">
+                      <div className="flex items-center w-full mt-[-10px]">
                         <p className="mr-2">
                           <strong>Date.</strong>
                         </p>
