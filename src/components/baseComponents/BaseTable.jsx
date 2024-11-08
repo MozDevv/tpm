@@ -25,6 +25,7 @@ import BaseLoadingOverlay from './BaseLoadingOverlay';
 
 const BaseTable = ({
   columnDefs,
+  reportItems,
   fetchApiService,
   uploadExcel,
   fetchApiEndpoint,
@@ -240,6 +241,7 @@ const BaseTable = ({
             <ListNavigation
               handlers={!isSecondaryTable ? adjustedHandlers : handlers}
               selectedRows={selectedRows}
+              reportItems={reportItems}
             />
           </div>
         </Box>

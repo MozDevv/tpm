@@ -27,6 +27,7 @@ function BaseCard({
   setOpenBaseCard,
   children,
   title,
+  reportItems,
   status,
   clickedItem,
   handlers,
@@ -409,6 +410,7 @@ function BaseCard({
               status={status}
               clickedItem={clickedItem}
               openBaseCard={openBaseCard}
+              reportItems={reportItems}
             />
             <Divider />
           </div>

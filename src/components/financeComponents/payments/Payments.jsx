@@ -310,6 +310,9 @@ const Payments = ({ status }) => {
         setOpenPV(true);
         console.log('Post Payment');
       },
+
+      'Payment Voucher Report': () => {},
+      'Gratuity Notification Letter': () => {},
     }),
   };
 
@@ -391,6 +394,11 @@ const Payments = ({ status }) => {
       ? 'Scheduled Payment Vouchers'
       : 'Posted Payment Vouchers';
 
+  const reportItems = [
+    'Payment Voucher Report',
+    'Gratuity Notification Letter',
+  ];
+
   return (
     <div className="">
       <Dialog
@@ -417,6 +425,7 @@ const Payments = ({ status }) => {
         />
       </Dialog>
       <BaseCard
+        reportItems={reportItems}
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         handlers={baseCardHandlers}

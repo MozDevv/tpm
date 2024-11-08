@@ -60,7 +60,7 @@ function PVActions({
           successMessage = 'Payment Vouchers scheduled successfully';
           errorMessage = 'Failed to schedule Payment Vouchers';
           requestData = {
-            payments: selectedIds.map((item) => ({ paymentsId: item.id })),
+            payments: selectedIds.map((item) => ({ paymentId: item.id })),
           };
 
           // Make the API call for scheduling

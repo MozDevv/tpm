@@ -723,13 +723,14 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
-              sx={{
-                '& .MuiPaper-root': {
-                  width: '200px', // Adjust the width as needed
-
-                  // backgroundColor: '#f5f5f5', // Optional: change background color
-                },
-              }}
+              sx={
+                {
+                  // '& .MuiPaper-root': {
+                  //   width: '200px', // Adjust the width as needed
+                  //   // backgroundColor: '#f5f5f5', // Optional: change background color
+                  // },
+                }
+              }
             >
               {reportItems.map((item, index) => (
                 <MenuItem key={index} onClick={() => handleMenuItemClick(item)}>
