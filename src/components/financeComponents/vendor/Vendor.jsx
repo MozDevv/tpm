@@ -81,13 +81,16 @@ const Vendor = () => {
         'paging.pageSize': 100,
       });
 
-      setCountries(res.data.data);
-
       console.log('countries', res.data.data);
     } catch (error) {
       console.log(error.response);
     }
   };
+
+  // useEffect(() => {
+  //   fetchCountries();
+  // }, []);
+
   const fetchCities = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/Setups/GetCity`, {
