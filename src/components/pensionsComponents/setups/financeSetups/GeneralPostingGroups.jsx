@@ -1,31 +1,31 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
 const GeneralPostingGroups = () => {
   const [generalProductAcc, setGeneralProductAcc] = React.useState([]);
   const [generalBusinessAcc, setGeneralBusinessAcc] = React.useState([]);
   const columnDefs = [
     {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
       width: 90,
       filter: true,
-      pinned: "left",
+      pinned: 'left',
     },
     {
-      field: "generalProductPostingGroupId",
-      headerName: "General Product Posting Group",
-      headerClass: "prefix-header",
+      field: 'generalProductPostingGroupId',
+      headerName: 'General Product Posting Group',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       // valueFormatter: (params) =>
@@ -38,13 +38,13 @@ const GeneralPostingGroups = () => {
         const foundAccount = generalProductAcc.find(
           (acc) => acc.id === params.data.generalProductPostingGroupId
         );
-        return foundAccount ? foundAccount.name : "N/A";
+        return foundAccount ? foundAccount.name : 'N/A';
       },
     },
     {
-      field: "generalBusinessPostingGroupId",
-      headerName: "General Business Posting Group",
-      headerClass: "prefix-header",
+      field: 'generalBusinessPostingGroupId',
+      headerName: 'General Business Posting Group',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       // valueFormatter: (params) => {
@@ -57,54 +57,54 @@ const GeneralPostingGroups = () => {
         const foundAccount = generalBusinessAcc.find(
           (acc) => acc.id === params.data.generalBusinessPostingGroupId
         );
-        return foundAccount ? foundAccount.name : "N/A";
+        return foundAccount ? foundAccount.name : 'N/A';
       },
     },
 
     {
-      field: "description",
-      headerName: "Description",
-      headerClass: "prefix-header",
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "viewAll",
-      headerName: "View All",
-      headerClass: "prefix-header",
+      field: 'viewAll',
+      headerName: 'View All',
+      headerClass: 'prefix-header',
       filter: true,
       width: 100,
     },
 
     {
-      field: "salesAccount",
-      headerName: "Sales Account",
-      headerClass: "prefix-header",
+      field: 'salesAccount',
+      headerName: 'Sales Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.salesAccount),
     },
     {
-      field: "salesCreditMemoAccount",
-      headerName: "Sales Credit Memo Account",
-      headerClass: "prefix-header",
+      field: 'salesCreditMemoAccount',
+      headerName: 'Sales Credit Memo Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) =>
         getAccountName(params.data.salesCreditMemoAccount),
     },
     {
-      field: "purchaseAccount",
-      headerName: "Purchase Account",
-      headerClass: "prefix-header",
+      field: 'purchaseAccount',
+      headerName: 'Purchase Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) => getAccountName(params.data.purchaseAccount),
     },
     {
-      field: "purchaseCreditMemoAccount",
-      headerName: "Purchase Credit Memo Account",
-      headerClass: "prefix-header",
+      field: 'purchaseCreditMemoAccount',
+      headerName: 'Purchase Credit Memo Account',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueGetter: (params) =>
@@ -123,11 +123,11 @@ const GeneralPostingGroups = () => {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 150,
+        'paging.pageSize': 150,
       });
 
       const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
+        (acc) => acc.accountTypeName === 'POSTING'
       );
 
       setGlAccounts(
@@ -148,7 +148,7 @@ const GeneralPostingGroups = () => {
   const getAccountName = (id) => {
     const account =
       Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
+    return account ? account.name : '';
   };
 
   const transformData = (data) => {
@@ -174,10 +174,10 @@ const GeneralPostingGroups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -204,7 +204,7 @@ const GeneralPostingGroups = () => {
         const response = await apiService.get(
           financeEndpoints.getGeneralProductPostingGroups,
           {
-            "paging.pageSize": 150,
+            'paging.pageSize': 150,
           }
         );
 
@@ -226,7 +226,7 @@ const GeneralPostingGroups = () => {
         const response = await apiService.get(
           financeEndpoints.getGeneralBusinessPostingGroups,
           {
-            "paging.pageSize": 150,
+            'paging.pageSize': 150,
           }
         );
 
@@ -248,65 +248,64 @@ const GeneralPostingGroups = () => {
   }, []);
 
   const title = clickedItem
-    ? "General Posting Group"
-    : "Create New General Posting Group";
+    ? 'General Posting Group'
+    : 'Create New General Posting Group';
 
   const fields = [
     {
-      name: "generalProductPostingGroupId",
-      label: "General Product Posting Group",
-      type: "select",
+      name: 'generalProductPostingGroupId',
+      label: 'General Product Posting Group',
+      type: 'select',
       required: true,
       options: generalProductAcc,
     },
     {
-      name: "generalBusinessPostingGroupId",
-      label: "General Business Posting Group",
-      type: "select",
+      name: 'generalBusinessPostingGroupId',
+      label: 'General Business Posting Group',
+      type: 'select',
       required: true,
       options: generalBusinessAcc,
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
 
     {
-      name: "salesAccount",
-      label: "Sales Account",
-      type: "select",
+      name: 'salesAccount',
+      label: 'Sales Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
     {
-      name: "salesCreditMemoAccount",
-      label: "Sales Credit Memo Account",
-      type: "select",
-      required: true,
+      name: 'salesCreditMemoAccount',
+      label: 'Sales Credit Memo Account',
+      type: 'select',
       options: glAccounts,
       table: true,
     },
     {
-      name: "purchaseAccount",
-      label: "Purchase Account",
-      type: "select",
-      required: true,
+      name: 'purchaseAccount',
+      label: 'Purchase Account',
+      type: 'select',
+
       options: glAccounts,
       table: true,
     },
     {
-      name: "purchaseCreditMemoAccount",
-      label: "Purchase Credit Memo Account",
-      type: "select",
+      name: 'purchaseCreditMemoAccount',
+      label: 'Purchase Credit Memo Account',
+      type: 'select',
       required: true,
       options: glAccounts,
       table: true,
     },
 
-    { name: "viewAll", label: "View All", type: "switch", required: true },
+    { name: 'viewAll', label: 'View All', type: 'switch', required: true },
   ];
 
   return (

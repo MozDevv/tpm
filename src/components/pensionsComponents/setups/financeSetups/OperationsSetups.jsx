@@ -200,7 +200,6 @@ const OperationsSetups = () => {
           name: b.bankAccountName,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultAwardPostingGroup',
@@ -212,7 +211,6 @@ const OperationsSetups = () => {
           name: a.code,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultBankPostingGroup',
@@ -224,7 +222,6 @@ const OperationsSetups = () => {
           name: b.groupName,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultGeneralPostingGroup',
@@ -236,7 +233,6 @@ const OperationsSetups = () => {
           name: g.description,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultVendorPostingGroup',
@@ -248,7 +244,6 @@ const OperationsSetups = () => {
           name: v.groupName,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultCustomerPostingGroup',
@@ -260,7 +255,6 @@ const OperationsSetups = () => {
           name: c.description,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultVatPostingGroup',
@@ -272,7 +266,6 @@ const OperationsSetups = () => {
           name: v.description,
         };
       }),
-      required: true,
     },
     {
       name: 'defaultPaymentMethod',
@@ -284,7 +277,6 @@ const OperationsSetups = () => {
           name: p.code,
         };
       }),
-      required: true,
     },
   ];
 

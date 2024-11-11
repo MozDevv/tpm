@@ -252,7 +252,7 @@ const AwardPostingGroups = () => {
       name: 'pensionExpenseAccount',
       label: 'Pension Expense Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -261,7 +261,7 @@ const AwardPostingGroups = () => {
       name: 'gratiutyExpenseAccount',
       label: 'Gratuity Expense Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -269,7 +269,7 @@ const AwardPostingGroups = () => {
       name: 'pensionLiabilityAccount',
       label: 'Pension Liability Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -277,7 +277,7 @@ const AwardPostingGroups = () => {
       name: 'gratiutyLiabilityAccount',
       label: 'Gratiuty Liability Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },

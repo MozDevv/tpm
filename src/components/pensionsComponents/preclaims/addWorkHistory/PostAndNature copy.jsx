@@ -144,6 +144,14 @@ function PostAndNature({ id, clickedItem }) {
       { id: 'FourTerms', name: '4 Term' },
       { id: 'FiveTerms', name: '5 Term' },
     ],
+    'APN/PK': [
+      { id: 'ParliamentaryTerms', name: 'Parliamentary Terms' },
+      { id: 'OneTerm', name: '1 Term' },
+      { id: 'TwoTerms', name: '2 Term' },
+      { id: 'ThreeTerms', name: '3 Term' },
+      { id: 'FourTerms', name: '4 Term' },
+      { id: 'FiveTerms', name: '5 Term' },
+    ],
   };
 
   const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
