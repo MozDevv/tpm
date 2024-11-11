@@ -143,8 +143,8 @@ const TrialBalance = ({ setOpenTrialBalanceReport }) => {
               v: '        ' + account.accountName,
               s: { alignment: { indent: 1 } },
             },
-            formatNumber(debit),
-            formatNumber(credit),
+            debit,
+            credit,
           ]);
         });
       });

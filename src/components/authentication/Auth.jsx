@@ -1,7 +1,7 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { BASE_CORE_API } from "@/utils/constants";
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { BASE_CORE_API } from '@/utils/constants';
 import {
   Alert,
   Box,
@@ -12,19 +12,19 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ArrowForward,
   Password,
   Visibility,
   VisibilityOff,
-} from "@mui/icons-material";
-import axios from "axios";
-import ResetNewPassword from "../loginComponents/ResetNewPassword";
-import authEndpoints, { AuthApiService } from "../services/authApi";
-import { useAlert } from "@/context/AlertContext";
-import { message } from "antd";
-import { useAuth } from "@/context/AuthContext";
+} from '@mui/icons-material';
+import axios from 'axios';
+import ResetNewPassword from '../loginComponents/ResetNewPassword';
+import authEndpoints, { AuthApiService } from '../services/authApi';
+import { useAlert } from '@/context/AlertContext';
+import { message } from 'antd';
+import { useAuth } from '@/context/AuthContext';
 
 function Auth() {
   // Initialize Next.js router
@@ -32,8 +32,8 @@ function Auth() {
 
   const { login } = useAuth();
   // State variables for login form
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [resetPassword, setResetPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,17 +41,17 @@ function Auth() {
   // State variable for error handling
   const [errors, setErrors] = useState({
     status: false,
-    message: "",
+    message: '',
   });
 
   const [alert, setAlert] = useState({
     open: false,
-    message: "",
-    severity: "success",
+    message: '',
+    severity: 'success',
   });
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault(); // Prevent default form submission
       handleSignIn();
     }
@@ -64,12 +64,12 @@ function Auth() {
       password: password.trim(),
     };
 
-    console.log("payload", payload);
+    console.log('payload', payload);
     try {
       // Send login request to the server
       const res = await AuthApiService.post(authEndpoints.login, payload);
 
-      console.log("data", res.data);
+      console.log('data', res.data);
       if (res.data.isSuccess) {
         // Store token in local storage upon successful login
         //localStorage.setItem("token", res.data.data.token);
@@ -77,41 +77,41 @@ function Auth() {
         login(res.data.data.token);
 
         // Redirect user to the dashboard upon successful login
-        router.push("/pensions");
+        router.push('/pensions');
       }
     } catch (error) {
       console.log(error?.response?.data?.message);
 
       // Handle login errors
-      if (error?.response?.data?.message === "Wrong username or password") {
+      if (error?.response?.data?.message === 'Wrong username or password') {
         setErrors({
           status: true,
-          message: "Incorrect Username or Password. Please try again!",
+          message: 'Incorrect Username or Password. Please try again!',
         });
       } else if (
         error?.response?.data?.message ===
-        "Please change your password to LogIn"
+        'Please change your password to LogIn'
       ) {
         await handleResetPassword();
         // alert("Please reset your password before proceeding");
 
         setErrors({
           status: false,
-          message: "",
+          message: '',
         });
       } else if (
         error?.response?.status === 502 ||
         error?.response?.status === 503
       ) {
-        message.error("Service Unavailable, Please try again later");
+        message.error('Service Unavailable, Please try again later');
       } else if (error?.response?.status === 404) {
-        message.error("Resource not found");
+        message.error('Resource not found');
       } else if (error.response.data.isSuccess === false) {
         message.error(error.response.data.message);
       } else if (error?.response?.status === 401) {
-        message.error("Unauthorized access");
+        message.error('Unauthorized access');
       } else {
-        message.error("An unexpected error occurred, Please try again later");
+        message.error('An unexpected error occurred, Please try again later');
       }
     } finally {
       setLoading(false);
@@ -123,7 +123,7 @@ function Auth() {
       const response = await AuthApiService.post(
         `${BASE_CORE_API}api/Auth/ForgetPassword?email=${username}`
       );
-      console.log("response", response);
+      console.log('response', response);
       if (response.data.isSuccess) {
         router.push(`/reset?username=${username}`);
       }
@@ -148,11 +148,11 @@ function Auth() {
             </Typography>
           </>
         ) : (
-          <div className="text-primary text-[28px] font-bold"> Sign In</div>
+          <div className="text-primary  text-[28px] font-bold"> Sign In</div>
         )}
         {/* Render error message if there are errors */}
         {errors.status && (
-          <Typography sx={{ color: "crimson", fontWeight: 500, mb: 2 }}>
+          <Typography sx={{ color: 'crimson', fontWeight: 500, mb: 2 }}>
             {errors.message}
           </Typography>
         )}
@@ -163,19 +163,19 @@ function Auth() {
         ) : (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               mt: 4,
-              gap: "20px",
+              gap: '20px',
             }}
           >
             <FormControl>
               <FormLabel
                 sx={{
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  color: "gray",
-                  mb: "3px",
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  color: 'gray',
+                  mb: '3px',
                 }}
               >
                 Username/Email
@@ -185,27 +185,27 @@ function Auth() {
                 onChange={(e) => setUsername(e.target.value)}
                 type="text"
                 sx={{
-                  height: "48px",
-                  width: "512px",
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: errors.status ? "crimson" : "grey",
+                  height: '48px',
+                  width: '512px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: errors.status ? 'crimson' : 'grey',
                     },
                   },
                 }}
                 fullWidth
                 placeholder="123@email.com"
-                inputProps={{ style: { height: "12px" } }}
+                inputProps={{ style: { height: '12px' } }}
                 required
               />
             </FormControl>
             <FormControl>
               <FormLabel
                 sx={{
-                  fontSize: "13px",
-                  mb: "3px",
-                  color: "gray",
-                  fontWeight: "700",
+                  fontSize: '13px',
+                  mb: '3px',
+                  color: 'gray',
+                  fontWeight: '700',
                 }}
               >
                 Password
@@ -215,13 +215,13 @@ function Auth() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="123456"
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: errors.status ? "crimson" : "grey",
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: errors.status ? 'crimson' : 'grey',
                     },
                   },
                 }}
-                inputProps={{ style: { height: "12px" } }}
+                inputProps={{ style: { height: '12px' } }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -235,7 +235,7 @@ function Auth() {
                     </InputAdornment>
                   ),
                 }}
-                type={!showPassword ? "password" : "text"}
+                type={!showPassword ? 'password' : 'text'}
                 fullWidth
                 required
               />
@@ -243,15 +243,15 @@ function Auth() {
             <Button
               fullWidth
               sx={{
-                backgroundColor: "primary.main",
-                "&:hover": { backgroundColor: "#006990" },
-                pl: "20px",
-                display: "flex",
-                color: "white",
-                justifyContent: "space-between",
-                textTransform: "none",
-                fontWeight: "500",
-                mt: "10px",
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: '#006990' },
+                pl: '20px',
+                display: 'flex',
+                color: 'white',
+                justifyContent: 'space-between',
+                textTransform: 'none',
+                fontWeight: '500',
+                mt: '10px',
               }}
               onClick={handleSignIn}
               //  onClick={() => router.push("/otp")}
@@ -263,13 +263,13 @@ function Auth() {
 
             <Typography
               sx={{
-                display: "flex",
-                gap: "3px",
-                fontSize: "13px",
+                display: 'flex',
+                gap: '3px',
+                fontSize: '13px',
                 fontFamily: '"Montserrat", Arial, sans-serif',
-                fontWeight: "700",
-                color: "#939AAC",
-                mt: "30px",
+                fontWeight: '700',
+                color: '#939AAC',
+                mt: '30px',
               }}
             >
               Forgot Your Password?
@@ -277,11 +277,11 @@ function Auth() {
                 // component="link"
                 onClick={() => router.push(`/otp`)}
                 sx={{
-                  fontSize: "13px",
-                  textDecoration: "underline",
-                  fontWeight: "700",
-                  color: "#F3A92A",
-                  cursor: "pointer",
+                  fontSize: '13px',
+                  textDecoration: 'underline',
+                  fontWeight: '700',
+                  color: '#F3A92A',
+                  cursor: 'pointer',
                 }}
               >
                 Reset
