@@ -15,6 +15,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import { Button, Dialog } from '@mui/material';
 import PVActions from './PVActions';
 import PaymentVoucherReport from './reports/PaymentVoucherReport';
+import GratuityLetterReport from './reports/GratuityLetterReport';
 
 const Payments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -269,6 +270,8 @@ const Payments = ({ status }) => {
   const [dialogType, setDialogType] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
+  const [openGratuity, setOpenGratuity] = React.useState(false);
+
   const baseCardHandlers = {
     create: () => {
       setOpenBaseCard(true);
@@ -287,7 +290,7 @@ const Payments = ({ status }) => {
       setOpenAction(true);
     },
     'Payment Voucher Report': () => setOpenTrialBalanceReport(true),
-    'Gratuity Notification Letter': () => {},
+    'Gratuity Notification Letter': () => setOpenGratuity(true),
     ...(status === 0 && {
       submitPaymentForApproval: () => {
         console.log('Submit Payment For Approval');
@@ -420,7 +423,25 @@ const Payments = ({ status }) => {
           <div className="flex-grow overflow-hidden px-6">
             <PaymentVoucherReport
               setOpenTrialBalanceReport={setOpenTrialBalanceReport}
+              clickedItem={clickedItem}
             />
+          </div>
+        </Dialog>
+        <Dialog
+          open={openGratuity}
+          onClose={() => setOpenGratuity(false)}
+          sx={{
+            '& .MuiPaper-root': {
+              minHeight: '75vh',
+              maxHeight: '85vh',
+              minWidth: '30vw',
+              maxWidth: '35vw',
+            },
+            zIndex: 99999,
+          }}
+        >
+          <div className="flex-grow overflow-hidden px-6">
+            <GratuityLetterReport setOpenGratuity={setOpenGratuity} />
           </div>
         </Dialog>
       </div>

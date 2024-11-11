@@ -239,15 +239,19 @@ function PostAndNature({ id, clickedItem }) {
         { id: false, name: 'No' },
       ],
     },
-    {
-      label: 'Is Central Government(Yes/No)',
-      value: 'is_central_government',
-      type: 'select',
-      options: [
-        { id: true, name: 'Yes' },
-        { id: false, name: 'No' },
-      ],
-    },
+    ...(clickedItem?.was_in_mixed_service
+      ? [
+          {
+            label: 'Is Central Government(Yes/No)',
+            value: 'is_central_government',
+            type: 'select',
+            options: [
+              { id: true, name: 'Yes' },
+              { id: false, name: 'No' },
+            ],
+          },
+        ]
+      : []),
     {
       label: 'Nature of Salary Scale',
       value: 'nature_of_salary_scale',

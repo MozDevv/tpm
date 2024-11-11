@@ -1,13 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import { Backdrop, CircularProgress, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import './paymenVoucher.css';
 import { useAuth } from '@/context/AuthContext';
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
 
-const PaymentVoucher = () => {
+const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState(null);
 
   const handleDownload = () => {
     setLoading(true);
@@ -84,6 +86,58 @@ const PaymentVoucher = () => {
   };
   const { auth } = useAuth();
 
+  const fetchPVReport = async () => {
+    try {
+      const res = apiService.get(
+        financeEndpoints.getPaymentVoucherReport(clickedItem?.id)
+      );
+
+      if (res.status === 200) {
+        setReport(res.data.data);
+      }
+
+      /* RESPONSE RETURNED IS: 
+      {
+    "data": [
+        {
+            "bankName": null,
+            "bankBranchName": null,
+            "pensionerName": "Malcom",
+            "bankAccountNo": null,
+            "claimType": null,
+            "idNumber": null,
+            "paymentAmount": 0,
+            "accountNo": null,
+            "voucherCode": "PV0000017",
+            "deductionsAndOtherPayments": [
+                {
+                    "description": null,
+                    "liabilityAmt": 3545126.9999999999999999999432
+                }
+            ]
+        }
+    ],
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalCount": 1,
+    "pageSize": 10,
+    "hasPreviousPage": false,
+    "hasNextPage": false,
+    "messages": null,
+    "succeeded": true,
+    "validationErrors": null,
+    "exception": null,
+    "code": 0
+} */
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPVReport();
+  }, []);
+
   return (
     <div className="flex flex-col h-full">
       {loading && (
@@ -149,11 +203,12 @@ const PaymentVoucher = () => {
                 <div className="grid grid-cols-2 gap-2 pl-1">
                   <div>
                     <p className="text-start flex flex-row ">
-                      <strong>Bank Name: </strong> NATIONAL BANK OF KENYA LTD
+                      <strong>Bank Name: </strong>
+                      {report?.bankName}
                     </p>
 
                     <p className="text-start flex flex-row gap-2">
-                      <strong>Pensioner Name:</strong> Joy Khalayi Chibeiya
+                      <strong>Pensioner Name:</strong> {report?.pensionerName}
                     </p>
                     <p className="text-start flex flex-row gap-2">
                       <strong>Claim Type:</strong> Retirement On Age Ground
@@ -161,13 +216,13 @@ const PaymentVoucher = () => {
                   </div>
                   <div className="pr-1">
                     <p>
-                      <strong>Branch Name:</strong> 001521232560600
+                      <strong>Branch Name:</strong> {report?.bankBranchName}
                     </p>
                     <p>
-                      <strong>Account No:</strong> 001521232560600
+                      <strong>Account No:</strong> {report?.bankAccountNo}
                     </p>
                     <p>
-                      <strong>ID:</strong> 35729128
+                      <strong>ID:</strong> {report?.idNumber}
                     </p>
                   </div>
                 </div>
@@ -641,12 +696,18 @@ const PaymentVoucher = () => {
         </div>
       </div>
 
-      <div className="bg-white h-[70px] w-full">
+      <div className="bg-white h-[70px] flex justify-between items-center absolute bottom-3 px-1 w-[95%]">
         <button
           onClick={handleDownload}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded absolute bottom-6"
+          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
         >
           Download PDF
+        </button>
+        <button
+          onClick={() => setOpenTrialBalanceReport(false)} // Assuming this is the cancel action
+          className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+        >
+          Cancel
         </button>
       </div>
     </div>

@@ -286,6 +286,9 @@ const financeEndpoints = {
 
   //Reports
   getTrialBalance: '/Reports/GetTrialBalance',
+
+  getPaymentVoucherReport: (id) =>
+    `/Reports/GetPaymentVoucherReport?PaymentId=${id}`,
 };
 
 export const apiService = {
