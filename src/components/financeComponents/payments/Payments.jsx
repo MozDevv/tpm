@@ -217,6 +217,7 @@ const Payments = ({ status }) => {
       isPosted: item.isPosted,
       documentNo: item.documentNo,
       source: item.source,
+      prospectivePensionerId: item.prospectivePensionerId,
     }));
   };
 
@@ -470,6 +471,8 @@ const Payments = ({ status }) => {
       </Dialog>
       <BaseCard
         reportItems={reportItems}
+        isClaim={true}
+        retireeId={clickedItem?.prospectivePensionerId}
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         handlers={baseCardHandlers}
@@ -481,6 +484,13 @@ const Payments = ({ status }) => {
         openAction={openAction}
         useRequestBody={true}
         dialogType={dialogType}
+        steps={[
+          'Payment Creation',
+          'Payment Approval',
+          'Payment Scheduling',
+          'Payment Posting',
+        ]}
+        activeStep={status}
       >
         {clickedItem ? (
           <>

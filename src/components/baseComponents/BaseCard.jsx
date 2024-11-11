@@ -59,6 +59,7 @@ function BaseCard({
   steps,
   activeStep,
   documentNo,
+  retireeId,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -456,7 +457,10 @@ function BaseCard({
                         }
                         key="1"
                       >
-                        <PensionerDetailSummary clickedItem={clickedItem} />
+                        <PensionerDetailSummary
+                          clickedItem={clickedItem}
+                          retireeId={retireeId}
+                        />
                       </TabPane>
                       <TabPane
                         tab={

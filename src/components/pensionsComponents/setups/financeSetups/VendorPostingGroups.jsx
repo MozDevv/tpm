@@ -216,7 +216,7 @@ const VendorPostingGroups = () => {
       name: 'serviceChargeAccount',
       label: 'Service Charge Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -224,7 +224,7 @@ const VendorPostingGroups = () => {
       name: 'invoiceRoundingAccount',
       label: 'Invoice Rounding Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -232,7 +232,7 @@ const VendorPostingGroups = () => {
       name: 'drCurrencyRoundingAccount',
       label: 'Dr Currency Rounding Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -240,7 +240,7 @@ const VendorPostingGroups = () => {
       name: 'crCurrencyRoundingAccount',
       label: 'Cr Currency Rounding Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -248,7 +248,7 @@ const VendorPostingGroups = () => {
       name: 'drRoundingAccount',
       label: 'Dr Rounding Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },
@@ -256,7 +256,7 @@ const VendorPostingGroups = () => {
       name: 'crRoundingAccount',
       label: 'Cr Rounding Account',
       type: 'select',
-      required: true,
+
       options: glAccounts,
       table: true,
     },

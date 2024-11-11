@@ -1,62 +1,42 @@
-import { Avatar, Divider, IconButton } from "@mui/material";
-import { EmailOutlined, PhoneOutlined } from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
-import { notificationStatusMap } from "./Preclaims";
-import { message } from "antd";
+import { Avatar, Divider, IconButton } from '@mui/material';
+import { EmailOutlined, PhoneOutlined } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { notificationStatusMap } from './Preclaims';
+import { message } from 'antd';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
+} from '@/components/services/preclaimsApi';
 
-import { parseDate } from "@/utils/dateFormatter";
+import { parseDate } from '@/utils/dateFormatter';
 
-function PensionerDetailSummary({ clickedItem }) {
+function PensionerDetailSummary({ clickedItem, retireeId }) {
   const id = clickedItem?.id;
 
   const [awardDocuments, setAwardDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [retiree, setRetiree] = useState(clickedItem);
+  const fetchRetiree = async () => {
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(retireeId)
+      );
+      const retiree = res.data.data[0];
+      setRetiree(retiree);
+    } catch (error) {}
+  };
 
   useEffect(() => {
-    const getAwardDocuments = async () => {
-      try {
-        const res = await apiService.get(
-          preClaimsEndpoints.getAwardDocuments(id)
-        );
-        console.log("Award documents:", res.data?.data[0]);
-        const documents =
-          res.data?.data[0]?.prospectivePensionerDocumentSelections?.map(
-            (selection) => ({
-              id: selection.id,
-              name: selection.documentType.name,
-              description: selection.documentType.description,
-              extensions: selection.documentType.extenstions,
-              required: selection.required,
-              pensioner_upload: selection.pensioner_upload,
-            })
-          );
-
-        // Filter documents to upload based on pensioner_upload: false
-        // const uploadableDocuments = !documents.filter(
-        //   (doc) => !doc.pensioner_upload
-        // );
-
-        setAwardDocuments(documents);
-      } catch (error) {
-        console.log("Error fetching award documents:", error);
-        // message.error("Failed to fetch award documents.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getAwardDocuments();
-  }, [id]);
-
+    console.log('retireeId ❤️', retireeId);
+    if (retireeId) {
+      fetchRetiree();
+    }
+  }, []);
   return (
     <div className="mt-5">
       <div className="flex items-center flex-col justify-center p-2 gap-2">
-        <Avatar sx={{ height: "100px", width: "100px" }} />
+        <Avatar sx={{ height: '100px', width: '100px' }} />
         <div className="flex flex-col mt-5 gap-2 items-center justify-center">
-          <h5 className="font-semibold text-primary text-base">{`${clickedItem?.first_name} ${clickedItem?.surname}`}</h5>
+          <h5 className="font-semibold text-primary text-base">{`${retiree?.first_name} ${retiree?.surname}`}</h5>
         </div>
       </div>
 
@@ -67,7 +47,7 @@ function PensionerDetailSummary({ clickedItem }) {
             <PhoneOutlined />
           </IconButton>
           <h6 className="font-medium text-primary text-xs">
-            {clickedItem?.phone_number}
+            {retiree?.phone_number}
           </h6>
         </div>
 
@@ -76,15 +56,15 @@ function PensionerDetailSummary({ clickedItem }) {
             <EmailOutlined />
           </IconButton>
           <h6 className="font-medium text-primary text-xs">
-            {clickedItem?.email_address}
+            {retiree?.email_address}
           </h6>
         </div>
       </div>
-      {clickedItem?.prospectivePensionerAwards && (
+      {retiree?.prospectivePensionerAwards && (
         <div className="my-3 p-2 flex gap-3 flex-col">
           <Divider />
           <div className="flex flex-col gap-2">
-            {clickedItem.prospectivePensionerAwards.map((award) => (
+            {retiree.prospectivePensionerAwards.map((award) => (
               <div key={award.id} className="flex items-center gap-2">
                 <h6 className="font-medium text-primary text-xs">
                   Claim Type:
@@ -93,10 +73,10 @@ function PensionerDetailSummary({ clickedItem }) {
               </div>
             ))}
           </div>
-          {clickedItem?.exit_grounds && (
+          {retiree?.exit_grounds && (
             <div className="flex items-center gap-2">
               <h6 className="font-medium text-primary text-xs">Exit Reason:</h6>
-              <span className="text-xs">{clickedItem?.exit_grounds}</span>
+              <span className="text-xs">{retiree?.exit_grounds}</span>
             </div>
           )}
         </div>
@@ -107,14 +87,14 @@ function PensionerDetailSummary({ clickedItem }) {
       <div className="mt-8 p-2 flex gap-3 flex-col">
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Personal Number</h6>
-          <span className="text-xs">{clickedItem?.personal_number}</span>
+          <span className="text-xs">{retiree?.personal_number}</span>
         </div>
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">
             Date of First Appointment
           </h6>
           <span className="text-xs">
-            {parseDate(clickedItem?.date_of_first_appointment)}
+            {parseDate(retiree?.date_of_first_appointment)}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -122,27 +102,25 @@ function PensionerDetailSummary({ clickedItem }) {
             Date of Confirmation
           </h6>
           <span className="text-xs">
-            {parseDate(clickedItem?.date_of_confirmation)}
+            {parseDate(retiree?.date_of_confirmation)}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Retirement Date</h6>
-          <span className="text-xs">
-            {parseDate(clickedItem?.retirement_date)}
-          </span>
+          <span className="text-xs">{parseDate(retiree?.retirement_date)}</span>
         </div>
-        {clickedItem?.pension_award && (
+        {retiree?.pension_award && (
           <div className="flex items-center gap-2">
             <h6 className="font-medium text-primary text-xs">
-              Ministry / Department:{" "}
+              Ministry / Department:{' '}
             </h6>
-            <span className="text-xs">{clickedItem?.pension_award}</span>
+            <span className="text-xs">{retiree?.pension_award}</span>
           </div>
         )}
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Status:</h6>
           <span className="text-xs">
-            {notificationStatusMap[clickedItem?.notification_status]?.name}
+            {notificationStatusMap[retiree?.notification_status]?.name}
           </span>
         </div>
       </div>

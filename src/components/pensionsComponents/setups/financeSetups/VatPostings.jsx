@@ -1,103 +1,103 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
-import { name } from "dayjs/locale/en-au";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
+import { name } from 'dayjs/locale/en-au';
 
 const VatPostings = () => {
   const columnDefs = [
     {
-      field: "no",
-      headerName: "No",
-      headerClass: "prefix-header",
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
       width: 90,
       filter: true,
-      pinned: "left",
+      pinned: 'left',
     },
 
     {
-      field: "vatBusinessPostingGroupId",
-      headerName: "VAT Business Posting Group",
+      field: 'vatBusinessPostingGroupId',
+      headerName: 'VAT Business Posting Group',
       filter: true,
       valueGetter: (params) => {
         const account = businessPostings?.find(
           (acc) => acc.id === params.data.vatBusinessPostingGroupId
         );
-        return account?.name ?? "N/A";
+        return account?.name ?? 'N/A';
       },
       width: 250,
     },
     {
-      field: "vatProductPostingGroupId",
-      headerName: "VAT Product Posting Group",
+      field: 'vatProductPostingGroupId',
+      headerName: 'VAT Product Posting Group',
       filter: true,
       valueGetter: (params) => {
         const account = productPostings?.find(
           (acc) => acc.id === params.data.vatProductPostingGroupId
         );
-        return account?.name ?? "N/A";
+        return account?.name ?? 'N/A';
       },
       width: 250,
     },
 
     {
-      field: "vatIdentifier",
-      headerName: "Vat Identifier",
+      field: 'vatIdentifier',
+      headerName: 'Vat Identifier',
       filter: true,
       hide: true,
     },
     {
-      field: "vatPercentage",
-      headerName: "Vat Percentage",
+      field: 'vatPercentage',
+      headerName: 'Vat Percentage',
       filter: true,
     },
     {
-      field: "vatCalculationType",
-      headerName: "Vat Calculation Type",
+      field: 'vatCalculationType',
+      headerName: 'Vat Calculation Type',
       filter: true,
     },
     {
-      field: "salesVATAccountId",
-      headerName: "Sales Vat Account",
+      field: 'salesVATAccountId',
+      headerName: 'Sales Vat Account',
       filter: true,
       valueGetter: (params) => getAccountName(params.data.salesVATAccountId),
       width: 250,
     },
     {
-      field: "description",
-      headerName: "Description",
+      field: 'description',
+      headerName: 'Description',
       filter: true,
     },
     {
-      field: "purchaseVATAccountId",
-      headerName: "Purchase Vat Account",
+      field: 'purchaseVATAccountId',
+      headerName: 'Purchase Vat Account',
       filter: true,
       valueGetter: (params) => getAccountName(params.data.purchaseVATAccountId),
       width: 250,
     },
     {
-      field: "reverseChargeVATAccountId",
-      headerName: "Reverse Charge Vat Account",
+      field: 'reverseChargeVATAccountId',
+      headerName: 'Reverse Charge Vat Account',
       filter: true,
       valueGetter: (params) =>
         getAccountName(params.data.reverseChargeVATAccountId),
       width: 250,
     },
     {
-      field: "vatClauseCode",
-      headerName: "Vat Clause Code",
+      field: 'vatClauseCode',
+      headerName: 'Vat Clause Code',
       filter: true,
     },
     {
-      field: "taxCategory",
-      headerName: "Tax Category",
+      field: 'taxCategory',
+      headerName: 'Tax Category',
       filter: true,
     },
   ];
@@ -113,11 +113,11 @@ const VatPostings = () => {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
-        "paging.pageSize": 150,
+        'paging.pageSize': 150,
       });
 
       const accounts = response.data.data.filter(
-        (acc) => acc.accountTypeName === "POSTING"
+        (acc) => acc.accountTypeName === 'POSTING'
       );
 
       setGlAccounts(
@@ -139,7 +139,7 @@ const VatPostings = () => {
   const getAccountName = (id) => {
     const account =
       Array.isArray(glAccounts) && glAccounts.find((acc) => acc.id === id);
-    return account ? account.name : "";
+    return account ? account.name : '';
   };
 
   const transformData = (data) => {
@@ -168,10 +168,10 @@ const VatPostings = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -194,14 +194,14 @@ const VatPostings = () => {
   const [productPostings, setProductPostings] = React.useState([]);
   const [businessPostings, setBusinessPostings] = React.useState([]);
 
-  const title = clickedItem ? "VAT Posting " : "Create New VAT Posting Group";
+  const title = clickedItem ? 'VAT Posting ' : 'Create New VAT Posting Group';
 
   const fetchProductPostings = async () => {
     try {
       const response = await apiService.get(
         financeEndpoints.getProductPostingGroups,
         {
-          "paging.pageSize": 150,
+          'paging.pageSize': 150,
         }
       );
 
@@ -224,7 +224,7 @@ const VatPostings = () => {
       const response = await apiService.get(
         financeEndpoints.getBusinessPostingGroups,
         {
-          "paging.pageSize": 150,
+          'paging.pageSize': 150,
         }
       );
 
@@ -245,64 +245,64 @@ const VatPostings = () => {
 
   const fields = [
     {
-      name: "vatBusinessPostingGroupId",
-      label: "VAT Business Posting Group",
-      type: "autocomplete",
+      name: 'vatBusinessPostingGroupId',
+      label: 'VAT Business Posting Group',
+      type: 'autocomplete',
       required: true,
       options: businessPostings,
     },
     {
-      name: "vatProductPostingGroupId",
-      label: "VAT Product Posting Group",
-      type: "autocomplete",
+      name: 'vatProductPostingGroupId',
+      label: 'VAT Product Posting Group',
+      type: 'autocomplete',
       required: true,
       options: productPostings,
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
 
     {
-      name: "vatIdentifier",
-      label: "VAT Identifier",
-      type: "text",
+      name: 'vatIdentifier',
+      label: 'VAT Identifier',
+      type: 'text',
       required: true,
     },
     {
-      name: "vatPercentage",
-      label: "VAT Percentage",
-      type: "text",
+      name: 'vatPercentage',
+      label: 'VAT Percentage',
+      type: 'text',
       required: true,
     },
     {
-      name: "vatCalculationType",
-      label: "VAT Calculation Type",
-      type: "select",
+      name: 'vatCalculationType',
+      label: 'VAT Calculation Type',
+      type: 'select',
       required: true,
       options: [
-        { id: 0, name: "Normal VAT" },
-        { id: 1, name: "Full VAT" },
-        { id: 2, name: "Reverse Charge VAT" },
-        { id: 3, name: "Sales VAT" },
+        { id: 0, name: 'Normal VAT' },
+        { id: 1, name: 'Full VAT' },
+        { id: 2, name: 'Reverse Charge VAT' },
+        { id: 3, name: 'Sales VAT' },
       ],
     },
     {
-      name: "salesVATAccountId",
-      label: "Sales Vat Account",
-      type: "select",
-      required: true,
+      name: 'salesVATAccountId',
+      label: 'Sales Vat Account',
+      type: 'select',
+
       options: glAccounts,
       table: true,
     },
 
     {
-      name: "purchaseVATAccountId",
-      label: "Purchase VAT Account",
-      type: "select",
-      required: true,
+      name: 'purchaseVATAccountId',
+      label: 'Purchase VAT Account',
+      type: 'select',
+
       options: glAccounts.map((account) => ({
         id: account.id,
         name: account.name,
@@ -312,25 +312,23 @@ const VatPostings = () => {
       table: true,
     },
     {
-      name: "reverseChargeVATAccountId",
-      label: "Reverse Charge Vat Account",
-      type: "select",
-      required: true,
+      name: 'reverseChargeVATAccountId',
+      label: 'Reverse Charge Vat Account',
+      type: 'select',
+
       options: glAccounts,
       table: true,
     },
 
     {
-      name: "vatClauseCode",
-      label: "Vat Clause Code",
-      type: "text",
-      required: true,
+      name: 'vatClauseCode',
+      label: 'Vat Clause Code',
+      type: 'text',
     },
     {
-      name: "taxCategory",
-      label: "Tax Category",
-      type: "text",
-      required: true,
+      name: 'taxCategory',
+      label: 'Tax Category',
+      type: 'text',
     },
   ];
 
