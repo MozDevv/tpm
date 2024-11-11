@@ -92,9 +92,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
         financeEndpoints.getPaymentVoucherReport(clickedItem?.id)
       );
 
-      if (res.status === 200) {
-        setReport(res.data.data);
-      }
+      setReport(res.data.data[0]);
 
       /* RESPONSE RETURNED IS: 
       {

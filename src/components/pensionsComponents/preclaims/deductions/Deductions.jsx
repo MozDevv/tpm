@@ -70,7 +70,7 @@ const columnDefs = [
   },
 ];
 
-const Deductions = (id, clickedItem2) => {
+const Deductions = ({ id, clickedItem2 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -141,33 +141,7 @@ const Deductions = (id, clickedItem2) => {
       type: 'number',
       required: true,
     },
-    // {
-    //   label: "Deduction Type",
-    //   value: "deduction_type",
-    //   type: "select",
-    //   options: [
-    //     { id: 0, name: "Salary Overpayment" },
-    //     { id: 1, name: "Work Deductions" },
-    //     { id: 2, name: "Abetement" },
-    //   ],
-    // },
-    // {
-    //   label: "Deduction Payee",
-    //   value: "deduction_payee",
-    //   type: "select",
-    //   options: [
-    //     {
-    //       id: 0,
-    //       name: "MDA",
-    //     },
-    //     {
-    //       id: 1,
-    //       name: "Treasury",
-    //     },
-    //   ],
 
-    //   required: true,
-    // },
     {
       label: 'MDA',
       value: 'mda_id',
@@ -200,7 +174,7 @@ const Deductions = (id, clickedItem2) => {
 
   const fetchMaintenance = async () => {
     try {
-      const res = await apiService.get(endpoints.getDeductions(id.id));
+      const res = await apiService.get(endpoints.getDeductions(id));
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
@@ -224,18 +198,18 @@ const Deductions = (id, clickedItem2) => {
       <BaseInputTable
         title="Deductions"
         fields={fields}
-        id={id.id}
+        id={id}
         disableAll={
-          clickedItem2?.clickedItem?.notification_status !== 2 &&
-          clickedItem2?.clickedItem?.notification_status !== null &&
-          clickedItem2?.clickedItem?.notification_status !== 0 &&
-          clickedItem2?.clickedItem?.notification_status !== 3
+          clickedItem2?.notification_status !== 2 &&
+          clickedItem2?.notification_status !== null &&
+          clickedItem2?.notification_status !== 0 &&
+          clickedItem2?.notification_status !== 3
         }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}
         putApiService={apiService.put}
-        getEndpoint={endpoints.getDeductions(id.id)}
+        getEndpoint={endpoints.getDeductions(id)}
         postEndpoint={endpoints.createDeductions}
         putEndpoint={endpoints.updateGovernmentSalary}
         passProspectivePensionerId={true}

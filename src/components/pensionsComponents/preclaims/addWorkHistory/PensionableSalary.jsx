@@ -222,7 +222,7 @@ function PensionableSalary({ id, clickedItem }) {
             label: 'Review Period',
             value: 'review_period',
             type: 'date',
-            disabled: true,
+            disabled: false,
             notRequired: true,
           },
           {
