@@ -5,30 +5,25 @@ import { Close } from '@mui/icons-material';
 import './paymenVoucher.css';
 import { useAuth } from '@/context/AuthContext';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
 const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
 
+  const [pdfBlob, setPdfBlob] = useState(null);
+
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+
   const handleDownload = () => {
     setLoading(true);
     const element = contentRef.current;
 
-    // A4 page dimensions in inches (Width x Height)
-    const pageWidth = 8.27; // A4 width in inches
-    const pageHeight = 11.69; // A4 height in inches
-
-    // Convert content dimensions from pixels to inches (assuming 96 DPI)
-    const contentWidth = element.scrollWidth / 96; // in inches
-    const contentHeight = element.scrollHeight / 96; // in inches
-
-    // Calculate scaling factor to fit the content within the A4 page
-    const scaleX = pageWidth / contentWidth;
-    const scaleY = pageHeight / contentHeight;
-
-    // Use the minimum scale factor to ensure both width and height fit on the page
-    const scale = Math.min(scaleX, scaleY) * 0.85; // Reduce the scale factor by 15%
+    // Reduced fixed dimensions for the content (in pixels)
+    const fixedWidth = 750; // Reduced width in pixels
+    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
     // Define options for the PDF
     const options = {
@@ -40,13 +35,14 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
     // Create a wrapper to hold the cloned content
     const wrapper = document.createElement('div');
-    wrapper.style.width = `${contentWidth * 96}px`; // Convert back to pixels for proper rendering
-    wrapper.style.height = `${contentHeight * 96}px`;
+    wrapper.style.width = `${fixedWidth}px`;
+    wrapper.style.height = `${fixedHeight}px`;
     wrapper.style.position = 'relative';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
     wrapper.style.justifyContent = 'center';
     wrapper.style.overflow = 'hidden';
+
     // Create the watermark element
     const watermark = document.createElement('div');
     watermark.textContent = 'MOF - Pensions';
@@ -65,10 +61,11 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
     wrapper.appendChild(watermark);
 
     const clonedElement = element.cloneNode(true);
+    const scale = 0.86; // Scale factor to reduce the size
     clonedElement.style.transform = `scale(${scale})`;
     clonedElement.style.transformOrigin = 'top left';
-    clonedElement.style.width = `${contentWidth * 96}px`; // Revert to pixel values
-    clonedElement.style.height = `${contentHeight * 96}px`;
+    clonedElement.style.width = `${fixedWidth}px`;
+    clonedElement.style.height = `${fixedHeight}px`;
 
     wrapper.appendChild(clonedElement);
 
@@ -77,7 +74,71 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
       .from(wrapper)
       .save()
       .then(() => {
-        clonedElement.style.transform = ''; // Reset the transform after saving
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  const generatePdfBlob = () => {
+    setLoading(true);
+    const element = contentRef.current;
+
+    // Reduced fixed dimensions for the content (in pixels)
+    const fixedWidth = 750; // Reduced width in pixels
+    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
+
+    // Define options for the PDF
+    const options = {
+      margin: 0.5, // Default margin (in inches)
+      filename: 'Payment_Voucher.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+    };
+
+    // Create a wrapper to hold the cloned content
+    const wrapper = document.createElement('div');
+    wrapper.style.width = `${fixedWidth}px`;
+    wrapper.style.height = `${fixedHeight}px`;
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.overflow = 'hidden';
+
+    // Create the watermark element
+    const watermark = document.createElement('div');
+    watermark.textContent = 'MOF - Pensions';
+    watermark.style.position = 'absolute';
+    watermark.style.left = '50%';
+    watermark.style.top = '50%';
+    watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+    watermark.style.fontSize = '5rem'; // Adjust the font size as needed
+    watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
+    watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
+    watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+    watermark.style.whiteSpace = 'nowrap';
+    watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
+    watermark.style.zIndex = '10'; // Ensure watermark is below content
+
+    wrapper.appendChild(watermark);
+
+    const clonedElement = element.cloneNode(true);
+    const scale = 0.86; // Scale factor to reduce the size
+    clonedElement.style.transform = `scale(${scale})`;
+    clonedElement.style.transformOrigin = 'top left';
+    clonedElement.style.width = `${fixedWidth}px`;
+    clonedElement.style.height = `${fixedHeight}px`;
+
+    wrapper.appendChild(clonedElement);
+
+    html2pdf()
+      .set(options)
+      .from(wrapper)
+      .outputPdf('blob')
+      .then((pdfBlob) => {
+        setPdfBlob(pdfBlob);
         setLoading(false);
       })
       .catch(() => {
@@ -92,45 +153,19 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
         financeEndpoints.getPaymentVoucherReport(clickedItem?.id)
       );
 
-      setReport(res.data.data[0]);
-
-      /* RESPONSE RETURNED IS: 
-      {
-    "data": [
-        {
-            "bankName": null,
-            "bankBranchName": null,
-            "pensionerName": "Malcom",
-            "bankAccountNo": null,
-            "claimType": null,
-            "idNumber": null,
-            "paymentAmount": 0,
-            "accountNo": null,
-            "voucherCode": "PV0000017",
-            "deductionsAndOtherPayments": [
-                {
-                    "description": null,
-                    "liabilityAmt": 3545126.9999999999999999999432
-                }
-            ]
-        }
-    ],
-    "currentPage": 1,
-    "totalPages": 1,
-    "totalCount": 1,
-    "pageSize": 10,
-    "hasPreviousPage": false,
-    "hasNextPage": false,
-    "messages": null,
-    "succeeded": true,
-    "validationErrors": null,
-    "exception": null,
-    "code": 0
-} */
+      if (res.data.succeeded) {
+        console.log('Generating Blob >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        setReport(res.data.data[0]);
+        generatePdfBlob();
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    generatePdfBlob();
+  }, []);
 
   useEffect(() => {
     fetchPVReport();
@@ -138,6 +173,13 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
   return (
     <div className="flex flex-col h-full">
+      {pdfBlob && (
+        <iframe
+          src={URL.createObjectURL(pdfBlob)}
+          style={{ width: '100%', height: '100vh', border: 'none' }}
+          title="Payment Voucher PDF"
+        />
+      )}
       {loading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: 99999 }}
@@ -164,6 +206,19 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
       >
         <Close />
       </IconButton>
+
+      {pdfBlob && (
+        <div style={{ height: '100vh' }}>
+          <Worker
+            workerUrl={`https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js`}
+          >
+            <Viewer
+              fileUrl={URL.createObjectURL(pdfBlob)}
+              plugins={[defaultLayoutPluginInstance]}
+            />
+          </Worker>
+        </div>
+      )}
       <div
         style={{
           transform: 'scale(0.9)', // Adjust the scale as needed
@@ -171,6 +226,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           width: '100%', // Ensure the width is 100% to fit the dialog
           height: '100%', // Ensure the height is 100% to fit the dialog
           overflow: 'auto', // Enable scrolling for overflow content
+          display: 'none',
         }}
         className="flex-grow"
       >
@@ -694,7 +750,10 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
         </div>
       </div>
 
-      <div className="bg-white h-[70px] flex justify-between items-center absolute bottom-3 px-1 w-[95%]">
+      <div
+        className="bg-white h-[120px] mb-[-30px] flex justify-between items-center absolute bottom-3 px-4 w-full"
+        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+      >
         <button
           onClick={handleDownload}
           className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
