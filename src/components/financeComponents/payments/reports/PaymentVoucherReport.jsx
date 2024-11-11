@@ -326,14 +326,14 @@ const PaymentVoucher = () => {
                   <strong className="text-center mt-[-10px]">
                     EXAMINATION
                   </strong>
-                  <div className="flex flex-col items-start pl-3 border-b border-black  pr-1 pt-1">
+                  <div className="flex flex-col items-start pl-3 border-b border-black  pr-1">
                     <div className="flex flex-row gap-1 w-full">
                       <strong>Voucher Examined By:</strong>
                       <div className="flex-grow border-b border-gray-400 p-1"></div>
                     </div>
-                    <div className="flex flex-row gap-1 w-full mt-1">
-                      <strong>Date:</strong>
-                      <div className="flex-grow border-b border-gray-400 p-1"></div>
+                    <div className="flex flex-row gap-1 w-full mb-[5px]">
+                      <strong className="">Date:</strong>
+                      <div className="flex-grow border-b border-gray-400 p-1 "></div>
                     </div>
                   </div>
                 </div>
