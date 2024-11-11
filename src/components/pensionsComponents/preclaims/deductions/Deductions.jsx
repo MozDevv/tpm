@@ -138,7 +138,7 @@ const Deductions = ({ id, clickedItem2 }) => {
     {
       label: 'Amount',
       value: 'amount',
-      type: 'number',
+      type: 'amount',
       required: true,
     },
 
