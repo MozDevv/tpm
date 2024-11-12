@@ -196,7 +196,7 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
         >
           {/* <span class="loader"></span> */}
           <div className="ml-3 font-semibold text-xl flex items-center">
-            Please wait while the Report is being generated
+            Generating report, please hold on
             <div className="ellipsis ml-1 mb-4">
               <span>.</span>
               <span>.</span>
