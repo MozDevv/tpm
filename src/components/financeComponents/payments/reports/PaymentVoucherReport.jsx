@@ -7,11 +7,13 @@ import { useAuth } from '@/context/AuthContext';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { amountToWords, formatBankAccount } from '@/utils/numberFormatters';
 
 const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
+  const { auth } = useAuth();
 
   const [pdfBlob, setPdfBlob] = useState(null);
 
@@ -21,7 +23,6 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
     setLoading(true);
     const element = contentRef.current;
 
-    // Reduced fixed dimensions for the content (in pixels)
     const fixedWidth = 750; // Reduced width in pixels
     const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
@@ -82,11 +83,10 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   };
 
   const generatePdfBlob = () => {
-    setLoading(true);
     const element = contentRef.current;
 
     // Reduced fixed dimensions for the content (in pixels)
-    const fixedWidth = 750; // Reduced width in pixels
+    const fixedWidth = 770; // Reduced width in pixels
     const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
     // Define options for the PDF
@@ -145,18 +145,17 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
         setLoading(false);
       });
   };
-  const { auth } = useAuth();
 
   const fetchPVReport = async () => {
+    setLoading(true);
     try {
-      const res = apiService.get(
+      const res = await apiService.get(
         financeEndpoints.getPaymentVoucherReport(clickedItem?.id)
       );
 
       if (res.data.succeeded) {
-        console.log('Generating Blob >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.log('Report:', res.data.data[0]);
         setReport(res.data.data[0]);
-        generatePdfBlob();
       }
     } catch (error) {
       console.log(error);
@@ -164,12 +163,17 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   };
 
   useEffect(() => {
-    generatePdfBlob();
+    fetchPVReport();
   }, []);
 
   useEffect(() => {
-    fetchPVReport();
-  }, []);
+    if (report) {
+      // Add a small delay to ensure the DOM is fully updated
+      setTimeout(() => {
+        generatePdfBlob();
+      }, 100); // Adjust the delay as needed
+    }
+  }, [report]);
 
   return (
     <div className="flex flex-col h-full">
@@ -180,6 +184,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           title="Payment Voucher PDF"
         />
       )}
+
       {loading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: 99999 }}
@@ -197,28 +202,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           </div>
         </Backdrop>
       )}
-      <IconButton
-        sx={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-        }}
-      >
-        <Close />
-      </IconButton>
 
-      {pdfBlob && (
-        <div style={{ height: '100vh' }}>
-          <Worker
-            workerUrl={`https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js`}
-          >
-            <Viewer
-              fileUrl={URL.createObjectURL(pdfBlob)}
-              plugins={[defaultLayoutPluginInstance]}
-            />
-          </Worker>
-        </div>
-      )}
       <div
         style={{
           transform: 'scale(0.9)', // Adjust the scale as needed
@@ -238,8 +222,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 F.O.20 (Revised)
               </p>
               <div className="flex justify-center items-center mb-3">
-                <div className="flex items-center justify-center flex-col">
-                  <p className="font-bold uppercase underline">
+                <div className="flex items-center justify-center flex-col gap-2">
+                  <p className="font-bold uppercase underline underline-offset-4">
                     Republic of Kenya
                   </p>
                   <p className="uppercase font-bold text-[18px]">
@@ -253,14 +237,13 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
               </p>
 
               {/* Payee Details */}
-              <div className=" border-black mb-2">
+              <div className="border-black mb-2">
                 <div className="grid grid-cols-2 gap-2 pl-1">
                   <div>
-                    <p className="text-start flex flex-row ">
+                    <p className="text-start flex flex-row">
                       <strong>Bank Name: </strong>
                       {report?.bankName}
                     </p>
-
                     <p className="text-start flex flex-row gap-2">
                       <strong>Pensioner Name:</strong> {report?.pensionerName}
                     </p>
@@ -268,14 +251,14 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                       <strong>Claim Type:</strong> Retirement On Age Ground
                     </p>
                   </div>
-                  <div className="pr-1">
-                    <p>
+                  <div className="pr-1 items-start">
+                    <p className="text-start flex flex-row gap-2">
                       <strong>Branch Name:</strong> {report?.bankBranchName}
                     </p>
-                    <p>
+                    <p className="text-start flex flex-row gap-2">
                       <strong>Account No:</strong> {report?.bankAccountNo}
                     </p>
-                    <p>
+                    <p className="text-start flex flex-row gap-2">
                       <strong>ID:</strong> {report?.idNumber}
                     </p>
                   </div>
@@ -336,14 +319,25 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
-                      Payable Amount: <p>5,124,000.85</p>
+                      Payable Amount
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black">
-                      0
+                      {report?.paymentAmount
+                        ? Math.floor(report.paymentAmount).toLocaleString(
+                            'en-US'
+                          )
+                        : '0'}
                     </p>
-                    <p className="p-1 col-span-1 text-right">00</p>
+                    <p className="p-1 col-span-1 text-right">
+                      {report?.paymentAmount
+                        ? report.paymentAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-8 border-black">
@@ -414,8 +408,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                   {/* Total Amount */}
                   <div className="flex justify-between items-start  border-black pt-2 mb-1 mt-[-10px]">
                     <p className="p-2 text-start">
-                      FIVE MILLION ONE HUNDRED TWENTY-FOUR THOUSAND NINE HUNDRED
-                      NINETY-EIGHT Shilling AND EIGHTY-FIVE CENTS
+                      {report?.paymentAmount
+                        ? amountToWords(report.paymentAmount)
+                        : 'Zero Shillings Only'}
                     </p>
                   </div>
                 </div>
@@ -707,14 +702,12 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 </div>
 
                 {/* Data Row */}
-                <div className="col-span-1 border-t border-black border-r p-2 text-center">
-                  0-970-8820-7320119
+                <div className="col-span-1 border-t border-black border-r p-2 text-center"></div>
+                <div className="col-span-2 border-t border-black border-r p-2 text-start">
+                  {formatBankAccount(report?.accountNo, 4, '-')}
                 </div>
-                <div className="col-span-2 border-t border-black border-r p-2 text-center">
-                  PV2023-24_022295
-                </div>
-                <div className="col-span-2 border-t border-black border-r p-2 text-center">
-                  {/* Dept Vch content here */}
+                <div className="col-span-2 border-t border-black border-r p-2 text-start">
+                  {report?.voucherCode}
                 </div>
                 <div className="col-span-1 border-t border-black border-r p-2 text-center">
                   {/* Station content here */}
