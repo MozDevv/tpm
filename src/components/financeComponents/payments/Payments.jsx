@@ -435,14 +435,17 @@ const Payments = ({ status }) => {
             '& .MuiPaper-root': {
               minHeight: '75vh',
               maxHeight: '85vh',
-              minWidth: '30vw',
-              maxWidth: '35vw',
+              minWidth: '45vw',
+              maxWidth: '55vw',
             },
             zIndex: 99999,
           }}
         >
-          <div className="flex-grow overflow-hidden px-6">
-            <GratuityLetterReport setOpenGratuity={setOpenGratuity} />
+          <div className="flex-grow overflow-hidden">
+            <GratuityLetterReport
+              setOpenGratuity={setOpenGratuity}
+              clickedItem={clickedItem}
+            />
           </div>
         </Dialog>
       </div>

@@ -176,7 +176,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   }, [report]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={`flex flex-col h-full`}>
       {pdfBlob && (
         <iframe
           src={URL.createObjectURL(pdfBlob)}
@@ -193,7 +193,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
         >
           {/* <span class="loader"></span> */}
           <div className="ml-3 font-semibold text-xl flex items-center">
-            Please wait while the PDF is being generated
+            Please wait while the Report is being generated
             <div className="ellipsis ml-1 mb-4">
               <span>.</span>
               <span>.</span>

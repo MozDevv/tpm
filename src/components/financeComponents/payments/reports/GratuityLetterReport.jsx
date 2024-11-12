@@ -1,8 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
-const GratuityLetterReport = ({ setOpenGratuity }) => {
+import { Backdrop } from '@mui/material';
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
+const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState(null);
+  const [pdfBlob, setPdfBlob] = useState(null);
+
   const handleDownload = () => {
     setLoading(true);
     const element = contentRef.current;
@@ -74,138 +79,260 @@ const GratuityLetterReport = ({ setOpenGratuity }) => {
         setLoading(false);
       });
   };
+  const fetchPVReport = async () => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        financeEndpoints.getPaymentVoucherReport(clickedItem?.id)
+      );
+
+      if (res.data.succeeded) {
+        console.log('Report:', res.data.data[0]);
+        setReport(res.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchPVReport();
+  }, []);
+
+  const generatePdfBlob = () => {
+    setTimeout(() => {
+      const element = contentRef.current;
+
+      // Define fixed dimensions for the content (in pixels)
+      const fixedWidth = 770; // Width in pixels
+      const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
+
+      // Define options for the PDF
+      const options = {
+        margin: 0.5, // Default margin (in inches)
+        filename: 'Gratuity_Letter.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+      };
+
+      // Create a wrapper to hold the cloned content
+      const wrapper = document.createElement('div');
+      wrapper.style.width = `${fixedWidth}px`;
+      wrapper.style.height = `${fixedHeight}px`;
+      wrapper.style.position = 'relative';
+      wrapper.style.display = 'flex';
+      wrapper.style.alignItems = 'center';
+      wrapper.style.justifyContent = 'center';
+      wrapper.style.overflow = 'hidden';
+
+      // Create the watermark element
+      const watermark = document.createElement('div');
+      watermark.textContent = 'MOF - Pensions';
+      watermark.style.position = 'absolute';
+      watermark.style.left = '50%';
+      watermark.style.top = '50%';
+      watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+      watermark.style.fontSize = '5rem'; // Adjust the font size as needed
+      watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
+      watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
+      watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+      watermark.style.whiteSpace = 'nowrap';
+      watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
+      watermark.style.zIndex = '10'; // Ensure watermark is below content
+
+      wrapper.appendChild(watermark);
+
+      const clonedElement = element.cloneNode(true);
+      const scale = 0.86; // Scale factor to reduce the size
+      clonedElement.style.transform = `scale(${scale})`;
+      clonedElement.style.transformOrigin = 'top left';
+      clonedElement.style.width = `${fixedWidth}px`;
+      clonedElement.style.height = `${fixedHeight}px`;
+
+      wrapper.appendChild(clonedElement);
+
+      html2pdf()
+        .set(options)
+        .from(wrapper)
+        .outputPdf('blob')
+        .then((pdfBlob) => {
+          setPdfBlob(pdfBlob);
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }, 100); // Adjust the delay as needed
+  };
+  useEffect(() => {
+    if (report) {
+      // Add a small delay to ensure the DOM is fully updated
+      setTimeout(() => {
+        generatePdfBlob();
+      }, 100); // Adjust the delay as needed
+    }
+  }, [report]);
 
   return (
     <div
       className="flex-grow"
       style={{
-        transform: 'scale(0.9)', // Adjust the scale as needed
-        transformOrigin: 'center center',
         width: '100%', // Ensure the width is 100% to fit the dialog
         height: '100%', // Ensure the height is 100% to fit the dialog
         overflow: 'auto', // Enable scrolling for overflow content
       }}
     >
-      {' '}
-      <div ref={contentRef} className="courier-font  p-8 max-w-3xl mx-auto ">
-        {/* Header */}
-        <div className="text-center mx-auto flex flex-col items-center">
-          <h1 className="font-bold text-lg">MINISTRY OF FINANCE</h1>
-          <img src="/kenya.png" alt="" height={40} width={60} className="" />
-          <h2 className="text-md">PENSIONS DEPARTMENT</h2>
-        </div>
-        <div className="flex justify-end mb-6">
-          {/* Left section */}
-
-          {/* Right section */}
-          <div className="text-right  ">
-            <p className="text-sm">MINISTRY OF FINANCE</p>
-            <p className="text-sm">PENSIONS DEPARTMENT</p>
-            <p className="text-sm">P.O BOX 20191</p>
-            <p className="text-sm">NAIROBI</p>
-            <p className="text-sm">14-MAY-24</p>
+      {pdfBlob && (
+        <iframe
+          src={URL.createObjectURL(pdfBlob)}
+          style={{ width: '100%', height: '100vh', border: 'none' }}
+          title="Payment Voucher PDF"
+        />
+      )}
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 99999 }}
+          open={open}
+          onClick={() => setLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Please wait while the Report is being generated
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
           </div>
-        </div>
+        </Backdrop>
+      )}
+      <div
+        style={{
+          display: 'none',
+        }}
+      >
+        <div ref={contentRef} className="courier-font  p-8 max-w-3xl mx-auto ">
+          {/* Header */}
+          <div className="text-center mx-auto flex flex-col items-center">
+            <h1 className="font-bold text-lg">MINISTRY OF FINANCE</h1>
+            <img src="/kenya.png" alt="" height={40} width={60} className="" />
+            <h2 className="text-md">PENSIONS DEPARTMENT</h2>
+          </div>
+          <div className="flex justify-end mb-6">
+            {/* Left section */}
 
-        {/* Reference and Address */}
+            {/* Right section */}
+            <div className="text-right  ">
+              <p className="text-sm">MINISTRY OF FINANCE</p>
+              <p className="text-sm">PENSIONS DEPARTMENT</p>
+              <p className="text-sm">P.O BOX 20191</p>
+              <p className="text-sm">NAIROBI</p>
+              <p className="text-sm">14-MAY-24</p>
+            </div>
+          </div>
 
-        <div className="mb-6">
-          <p className="text-sm mb-2">
-            <strong>REF:</strong> APN/PC0000406440
-          </p>
-          <p className="text-sm ">Eunice Wangari Gichuiri</p>
-          <p className="text-sm ">P.O. Box 1734</p>
-          <p className="text-sm ">NAIVASHA</p>
-          <p className="text-sm ">Kenya</p>
-        </div>
+          {/* Reference and Address */}
 
-        {/* Letter Body */}
-        <div className="mb-6">
-          <p className="text-sm mb-4">Dear Pensioner,</p>
-          <p className="text-sm mb-4">
-            You have been awarded a pension gratuity of KShs 8,395,477.00 and a
-            monthly pension of KShs 104,943.00 with effect from 08-JUL-23.
-          </p>
-          <p className="text-sm mb-4">
-            Your monthly pension is payable in arrears and payments for the
-            period 08-JUL-23 to 30-APR-24 have been included in the gratuity
-            cheque. Subsequent monthly payments will follow.
-          </p>
-          <p className="text-sm mb-4">
-            A cheque for KShs 7,204,993.80 being net of:
-          </p>
+          <div className="mb-6">
+            <p className="text-sm mb-2">
+              <strong>REF:</strong> APN/PC0000406440
+            </p>
+            <p className="text-sm ">{report?.pensionerName}</p>
+            <p className="text-sm ">P.O. Box 1734</p>
+            <p className="text-sm ">NAIVASHA</p>
+            <p className="text-sm ">Kenya</p>
+          </div>
 
-          {/* Deductions Table */}
-          <div className="ml-6">
-            <ul className="text-sm list-none space-y-[2px]">
-              <li className="flex justify-between">
-                <span>(i) Govt. Liability</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-[110px]">KShs .00</span>
-              </li>
-              <li className="flex justify-between">
-                <span>(ii) Income Tax (cap 470)</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-11">KShs 2,138,643.10</span>
-              </li>
-              <li className="flex justify-between">
-                <span>(iii) Abatement</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-[110px]">KShs .00</span>
-              </li>
-              <li className="flex justify-between">
-                <span>(iv) WCPS Recovery</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-[110px]">KShs .00</span>
-              </li>
-              <li className="flex justify-between">
-                <span>(v) With Holding Tax</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-[67px]">KShs 77,573.30</span>
-              </li>
-            </ul>
+          {/* Letter Body */}
+          <div className="mb-6">
+            <p className="text-sm mb-4">Dear Pensioner,</p>
+            <p className="text-sm mb-4">
+              You have been awarded a pension gratuity of KShs 8,395,477.00 and
+              a monthly pension of KShs 104,943.00 with effect from 08-JUL-23.
+            </p>
+            <p className="text-sm mb-4">
+              Your monthly pension is payable in arrears and payments for the
+              period 08-JUL-23 to 30-APR-24 have been included in the gratuity
+              cheque. Subsequent monthly payments will follow.
+            </p>
+            <p className="text-sm mb-4">
+              A cheque for KShs 7,204,993.80 being net of:
+            </p>
+
+            {/* Deductions Table */}
+            <div className="ml-6">
+              <ul className="text-sm list-none space-y-[2px]">
+                <li className="flex justify-between">
+                  <span>(i) Govt. Liability</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-[110px]">KShs .00</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>(ii) Income Tax (cap 470)</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-11">KShs 2,138,643.10</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>(iii) Abatement</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-[110px]">KShs .00</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>(iv) WCPS Recovery</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-[110px]">KShs .00</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>(v) With Holding Tax</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-[67px]">KShs 77,573.30</span>
+                </li>
+              </ul>
+
+              <p className="text-sm mt-4">
+                <li className="flex justify-between">
+                  <span> ALL totaling to</span>
+                  <span className="flex-grow border-dashed border-b border-black mx-2"></span>
+                  <span className="mr-[67px]">KShs 77,573.30</span>
+                </li>
+              </p>
+            </div>
 
             <p className="text-sm mt-4">
-              <li className="flex justify-between">
-                <span> ALL totaling to</span>
-                <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                <span className="mr-[67px]">KShs 77,573.30</span>
-              </li>
+              In respect of your gratuity/pension arrears has been sent to ABSA
+              BANK ELDORET.
+            </p>
+            <p className="text-sm mt-4">
+              Please note that NO CHANGES TO THE BANK ACCOUNT you have provided
+              will be processed within SIX MONTHS from the date of this letter
+              and thereafter not more than ONCE A YEAR.
             </p>
           </div>
 
-          <p className="text-sm mt-4">
-            In respect of your gratuity/pension arrears has been sent to ABSA
-            BANK ELDORET.
-          </p>
-          <p className="text-sm mt-4">
-            Please note that NO CHANGES TO THE BANK ACCOUNT you have provided
-            will be processed within SIX MONTHS from the date of this letter and
-            thereafter not more than ONCE A YEAR.
-          </p>
-        </div>
+          {/* Closing */}
+          <div className="mt-8">
+            <p className="text-sm">Yours faithfully,</p>
+            <p className="text-sm mt-4">FOR: DIRECTOR OF PENSIONS</p>
+          </div>
 
-        {/* Closing */}
-        <div className="mt-8">
-          <p className="text-sm">Yours faithfully,</p>
-          <p className="text-sm mt-4">FOR: DIRECTOR OF PENSIONS</p>
+          {/* CC Section */}
+          <div className="mt-8">
+            <p className="text-sm font-bold">C.C.</p>
+            <p className="text-sm">
+              P-No.: 273053 <br />
+              TSC - THE TEACHERS SERVICE COMMISSION <br />
+              P.O Box Private Bag <br />
+              MOI Avenue <br />
+              NAI - NAIROBI <br />
+              1000 - Nairobi Province <br />
+              KE - Kenya
+            </p>
+          </div>
         </div>
-
-        {/* CC Section */}
-        <div className="mt-8">
-          <p className="text-sm font-bold">C.C.</p>
-          <p className="text-sm">
-            P-No.: 273053 <br />
-            TSC - THE TEACHERS SERVICE COMMISSION <br />
-            P.O Box Private Bag <br />
-            MOI Avenue <br />
-            NAI - NAIROBI <br />
-            1000 - Nairobi Province <br />
-            KE - Kenya
-          </p>
-        </div>
-      </div>{' '}
-      <div className="bg-white h-[70px] flex justify-between items-center absolute bottom-3 px-1 w-[95%]">
+      </div>
+      <div
+        className="bg-white h-[120px] mb-[-30px] flex justify-between items-center absolute bottom-3 px-4 w-full"
+        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+      >
         <button
           onClick={handleDownload}
           className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
