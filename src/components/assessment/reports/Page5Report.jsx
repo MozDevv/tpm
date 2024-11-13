@@ -7,7 +7,8 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
-const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
+//const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
+
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -95,10 +96,12 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
     fetchPVReport();
   }, []);
 
-  const generatePdfBlob = () => {
-    if (typeof window === 'undefined') return;
-    setTimeout(() => {
+  const generatePdfBlob = async () => {
+    setTimeout(async () => {
       const element = contentRef.current;
+
+      // Dynamically import html2pdf.js
+      const html2pdf = (await import('html2pdf.js')).default;
 
       // Define fixed dimensions for the content (in pixels)
       const fixedWidth = 770; // Width in pixels
@@ -121,23 +124,6 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       wrapper.style.alignItems = 'center';
       wrapper.style.justifyContent = 'center';
       wrapper.style.overflow = 'hidden';
-
-      //   // Create the watermark element
-      //   const watermark = document.createElement('div');
-      //   watermark.textContent = 'MOF - Pensions';
-      //   watermark.style.position = 'absolute';
-      //   watermark.style.left = '50%';
-      //   watermark.style.top = '50%';
-      //   watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
-      //   watermark.style.fontSize = '5rem'; // Adjust the font size as needed
-      //   watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
-      //   watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
-      //   watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
-      //   watermark.style.whiteSpace = 'nowrap';
-      //   watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
-      //   watermark.style.zIndex = '10'; // Ensure watermark is below content
-
-      //   wrapper.appendChild(watermark);
 
       const clonedElement = element.cloneNode(true);
       const scale = 0.99; // Scale factor to reduce the size
