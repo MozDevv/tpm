@@ -16,52 +16,52 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
   const [pensionableService, setPensionableService] = useState([]);
 
-  const handleDownload = async () => {
-    setLoading(true);
+  //   const handleDownload = async () => {
+  //     setLoading(true);
 
-    const element = contentRef.current;
+  //     const element = contentRef.current;
 
-    // Load html2pdf.js dynamically, only in the browser
-    const html2pdf = (await import('html2pdf.js')).default;
+  //     // Load html2pdf.js dynamically, only in the browser
+  //     const html2pdf = (await import('html2pdf.js')).default;
 
-    const fixedWidth = 750; // Reduced width in pixels
-    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
+  //     const fixedWidth = 750; // Reduced width in pixels
+  //     const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
-    const options = {
-      margin: 0.5, // Default margin (in inches)
-      filename: 'Page 5.pdf',
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-    };
+  //     const options = {
+  //       margin: 0.5, // Default margin (in inches)
+  //       filename: 'Page 5.pdf',
+  //       html2canvas: { scale: 2 },
+  //       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+  //     };
 
-    const wrapper = document.createElement('div');
-    wrapper.style.width = `${fixedWidth}px`;
-    wrapper.style.height = `${fixedHeight}px`;
-    wrapper.style.position = 'relative';
-    wrapper.style.display = 'flex';
-    wrapper.style.alignItems = 'center';
-    wrapper.style.justifyContent = 'center';
-    wrapper.style.overflow = 'hidden';
+  //     const wrapper = document.createElement('div');
+  //     wrapper.style.width = `${fixedWidth}px`;
+  //     wrapper.style.height = `${fixedHeight}px`;
+  //     wrapper.style.position = 'relative';
+  //     wrapper.style.display = 'flex';
+  //     wrapper.style.alignItems = 'center';
+  //     wrapper.style.justifyContent = 'center';
+  //     wrapper.style.overflow = 'hidden';
 
-    const clonedElement = element.cloneNode(true);
-    clonedElement.style.transform = 'scale(1)';
-    clonedElement.style.transformOrigin = 'top left';
-    clonedElement.style.width = `${fixedWidth}px`;
-    clonedElement.style.height = `${fixedHeight}px`;
+  //     const clonedElement = element.cloneNode(true);
+  //     clonedElement.style.transform = 'scale(1)';
+  //     clonedElement.style.transformOrigin = 'top left';
+  //     clonedElement.style.width = `${fixedWidth}px`;
+  //     clonedElement.style.height = `${fixedHeight}px`;
 
-    wrapper.appendChild(clonedElement);
+  //     wrapper.appendChild(clonedElement);
 
-    html2pdf()
-      .set(options)
-      .from(wrapper)
-      .save()
-      .then(() => {
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
+  //     html2pdf()
+  //       .set(options)
+  //       .from(wrapper)
+  //       .save()
+  //       .then(() => {
+  //         setLoading(false);
+  //       })
+  //       .catch(() => {
+  //         setLoading(false);
+  //       });
+  //   };
   const fetchPVReport = async () => {
     setLoading(true);
     try {
@@ -484,7 +484,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
       >
         <button
-          onClick={handleDownload}
+          // onClick={handleDownload}
           className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
         >
           Download PDF
