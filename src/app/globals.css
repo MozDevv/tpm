@@ -144,3 +144,6 @@ a:hover {
   font-family: 'Courier New', Courier, monospace;
   font-size: 12px;
 }
+.word-spacing {
+  word-spacing: 0.1em; /* Adjust the value as needed */
+}

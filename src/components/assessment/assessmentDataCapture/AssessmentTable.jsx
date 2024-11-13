@@ -41,6 +41,7 @@ import ReturnToPreclaims from '@/components/pensionsComponents/ClaimsManagementT
 import AssessmentCard from './AssessmentCard';
 import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
 import PushToFinance from './PushToFinance';
+import Page5Report from '../reports/Page5Report';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -480,6 +481,7 @@ const AssessmentTable = ({ status }) => {
   const [viewBreakDown, setViewBreakDown] = useState(false);
   const [viewCompleteSummary, setViewCompleteSummary] = useState(false);
   const [computed, setComputed] = useState(false);
+  const [openReport, setOpenReport] = useState(false);
 
   const baseCardHandlers = {
     edit: () => console.log('Edit clicked'),
@@ -525,6 +527,10 @@ const AssessmentTable = ({ status }) => {
     returnToDirectorate: () => {
       setOpenAction(1);
       setOpenMoveStatus(true);
+    },
+
+    'Page 5 Report': () => {
+      setOpenReport(true);
     },
   };
 
@@ -583,6 +589,26 @@ const AssessmentTable = ({ status }) => {
 
   return (
     <>
+      <Dialog
+        open={openReport}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <Page5Report
+            setOpenGratuity={setOpenReport}
+            clickedItem={clickedItem}
+          />
+        </div>
+      </Dialog>
       <Dialog
         open={
           openPreclaimDialog
@@ -663,6 +689,7 @@ const AssessmentTable = ({ status }) => {
           openAction={openAction}
           setOpenAction={setOpenAction}
           isClaim={true}
+          reportItems={['Page 5 Report']}
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[
