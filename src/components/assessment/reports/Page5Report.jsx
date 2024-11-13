@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import html2pdf from 'html2pdf.js';
+import dynamic from 'next/dynamic';
 import { Backdrop } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {
@@ -7,6 +7,7 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
+const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -95,6 +96,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   }, []);
 
   const generatePdfBlob = () => {
+    if (typeof window === 'undefined') return;
     setTimeout(() => {
       const element = contentRef.current;
 
