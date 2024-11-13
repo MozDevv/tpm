@@ -7,7 +7,11 @@ import { useAuth } from '@/context/AuthContext';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-import { amountToWords, formatBankAccount } from '@/utils/numberFormatters';
+import {
+  amountToWords,
+  formatBankAccount,
+  formatNumber,
+} from '@/utils/numberFormatters';
 
 const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const contentRef = useRef();
@@ -311,9 +315,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
-                    <p className="p-1 col-span-2 text-right border-r border-black">
-                      5,124,998
-                    </p>
+                    <p className="p-1 col-span-2 text-right border-r border-black"></p>
                     <p className="p-1 col-span-1 text-right">85</p>
                   </div>
 
@@ -324,15 +326,13 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black">
-                      {report?.paymentAmount
-                        ? Math.floor(report.paymentAmount).toLocaleString(
-                            'en-US'
-                          )
+                      {report?.grossAmount
+                        ? Math.floor(report.grossAmount).toLocaleString('en-US')
                         : '0'}
                     </p>
                     <p className="p-1 col-span-1 text-right">
-                      {report?.paymentAmount
-                        ? report.paymentAmount
+                      {report?.grossAmount
+                        ? report.grossAmount
                             .toString()
                             .split('.')[1]
                             ?.slice(0, 2) || '00'
@@ -342,45 +342,99 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
-                      Liability: <p>0.00</p>
+                      Liability:
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black">
-                      0
+                      {report?.totalLiabilityAmount
+                        ? Math.floor(
+                            report.totalLiabilityAmount
+                          ).toLocaleString('en-US')
+                        : '0'}
                     </p>
-                    <p className="p-1 col-span-1 text-right">00</p>
+                    <p className="p-1 col-span-1 text-right">
+                      {report?.totalLiabilityAmount
+                        ? report.totalLiabilityAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
-                      Income Tax: <p>0.00</p>
+                      Total Tax Amount:
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black">
-                      0
+                      {report?.totalTaxAmount
+                        ? Math.floor(report.totalTaxAmount).toLocaleString(
+                            'en-US'
+                          )
+                        : '0'}
                     </p>
-                    <p className="p-1 col-span-1 text-right">00</p>
+                    <p className="p-1 col-span-1 text-right">
+                      {report?.totalTaxAmount
+                        ? report.totalTaxAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
+                    </p>
                   </div>
-
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
-                      Deduction To CAP: <p>0.00</p>
+                      Total Monthly Pension Amount
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black">
-                      0
+                      {report?.totalMonthlyPensionAmount
+                        ? Math.floor(
+                            report.totalMonthlyPensionAmount
+                          ).toLocaleString('en-US')
+                        : '0'}
                     </p>
-                    <p className="p-1 col-span-1 text-right">00</p>
+                    <p className="p-1 col-span-1 text-right">
+                      {report?.totalMonthlyPensionAmount
+                        ? report.totalMonthlyPensionAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-8 border-black">
+                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
+                      Total Refund Amount
+                    </p>
+                    <p className="p-1 col-span-1 border-r border-black">-</p>
+                    <p className="p-1 col-span-1 border-r border-black">-</p>
+                    <p className="p-1 col-span-2 text-right border-r border-black">
+                      {report?.totalRefundAmount
+                        ? Math.floor(report.totalRefundAmount).toLocaleString(
+                            'en-US'
+                          )
+                        : '0'}
+                    </p>
+                    <p className="p-1 col-span-1 text-right">
+                      {report?.totalRefundAmount
+                        ? report.totalRefundAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-8 border-b border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start justify-between flex">
                       Net Payable:{' '}
                       <p className="font-bold border-l border-t border-black p-[1px]">
-                        5,124,000.85
+                        {formatNumber(report?.netAmount)}
                       </p>
                     </p>
                     <p className="p-1 col-span-1 border-r border-black"></p>
@@ -397,19 +451,26 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                     <p className="p-1 col-span-1 border-black border-r">
                       Total Sh.
                     </p>
-                    <p className="p-1 col-span-2 text-right border-black border-b">
-                      5,124,998
+                    <p className="p-1 col-span-2 text-right border-r border-black border-b">
+                      {report?.netAmount
+                        ? Math.floor(report.netAmount).toLocaleString('en-US')
+                        : '0'}
                     </p>
-                    <p className="p-1 col-span-1 text-right border-b border-black">
-                      85
+                    <p className="p-1 col-span-1 text-right border-b border-black ">
+                      {report?.netAmount
+                        ? report.netAmount
+                            .toString()
+                            .split('.')[1]
+                            ?.slice(0, 2) || '00'
+                        : '00'}
                     </p>
                   </div>
 
                   {/* Total Amount */}
                   <div className="flex justify-between items-start  border-black pt-2 mb-1 mt-[-10px]">
                     <p className="p-2 text-start">
-                      {report?.paymentAmount
-                        ? amountToWords(report.paymentAmount)
+                      {report?.netAmount
+                        ? amountToWords(report.netAmount)
                         : 'Zero Shillings Only'}
                     </p>
                   </div>
@@ -704,8 +765,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 {/* Data Row */}
                 <div className="col-span-1 border-t border-black border-r p-2 text-center"></div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">
-                  {report?.accountNo
-                    ? formatBankAccount(report?.accountNo, 4, '-')
+                  {report?.pensionExpenseAccountNo
+                    ? formatBankAccount(report?.pensionExpenseAccountNo, 4, '-')
                     : 'N/A'}
                 </div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">
@@ -722,7 +783,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 </div>
                 <div className="col-span-3 grid grid-cols-3 border-t border-black">
                   <div className="col-span-2 border-r border-black p-2 text-right">
-                    5,124,998.85
+                    {formatNumber(report?.netAmount)}
                   </div>
                   <div className="col-span-1 p-2 text-right"></div>
                 </div>
