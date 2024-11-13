@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import { Backdrop } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import { formatNumber } from '@/utils/numberFormatters';
 const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -246,8 +247,10 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
           <div className="mb-6">
             <p className="text-sm mb-4">Dear Pensioner,</p>
             <p className="text-sm mb-4">
-              You have been awarded a pension gratuity of KShs 8,395,477.00 and
-              a monthly pension of KShs 104,943.00 with effect from 08-JUL-23.
+              You have been awarded a pension gratuity of KShs{' '}
+              {formatNumber(report?.netAmount)} and a monthly pension of KShs
+              {formatNumber(report?.totalMonthlyPensionAmount)} with effect from
+              08-JUL-23.
             </p>
             <p className="text-sm mb-4">
               Your monthly pension is payable in arrears and payments for the
@@ -255,7 +258,8 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
               cheque. Subsequent monthly payments will follow.
             </p>
             <p className="text-sm mb-4">
-              A cheque for KShs 7,204,993.80 being net of:
+              A cheque for KShs {formatNumber(report?.grossAmount)} being net
+              of:
             </p>
 
             {/* Deductions Table */}
@@ -264,12 +268,28 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
                 <li className="flex justify-between">
                   <span>(i) Govt. Liability</span>
                   <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                  <span className="mr-[110px]">KShs .00</span>
+                  <span className="mr-[110px]">
+                    KShs{' '}
+                    {report?.totalLiabilityAmount
+                      ? report.totalLiabilityAmount.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : '0.00'}
+                  </span>
                 </li>
                 <li className="flex justify-between">
                   <span>(ii) Income Tax (cap 470)</span>
                   <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                  <span className="mr-11">KShs 2,138,643.10</span>
+                  <span className="mr-11">
+                    KShs{' '}
+                    {report?.totalTaxAmount
+                      ? report.totalTaxAmount.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : '0.00'}
+                  </span>
                 </li>
                 <li className="flex justify-between">
                   <span>(iii) Abatement</span>
@@ -284,15 +304,23 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
                 <li className="flex justify-between">
                   <span>(v) With Holding Tax</span>
                   <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                  <span className="mr-[67px]">KShs 77,573.30</span>
+                  <span className="mr-[67px]">KShs .00</span>
                 </li>
               </ul>
 
               <p className="text-sm mt-4">
                 <li className="flex justify-between">
-                  <span> ALL totaling to</span>
+                  <span>ALL totaling to</span>
                   <span className="flex-grow border-dashed border-b border-black mx-2"></span>
-                  <span className="mr-[67px]">KShs 77,573.30</span>
+                  <span className="mr-[67px]">
+                    KShs{' '}
+                    {report?.netAmount
+                      ? report.netAmount.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : '0.00'}
+                  </span>
                 </li>
               </p>
             </div>
