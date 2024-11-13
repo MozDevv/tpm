@@ -16,14 +16,17 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
   const [pensionableService, setPensionableService] = useState([]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setLoading(true);
+
     const element = contentRef.current;
+
+    // Load html2pdf.js dynamically, only in the browser
+    const html2pdf = (await import('html2pdf.js')).default;
 
     const fixedWidth = 750; // Reduced width in pixels
     const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
-    // Define options for the PDF
     const options = {
       margin: 0.5, // Default margin (in inches)
       filename: 'Page 5.pdf',
@@ -31,7 +34,6 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
 
-    // Create a wrapper to hold the cloned content
     const wrapper = document.createElement('div');
     wrapper.style.width = `${fixedWidth}px`;
     wrapper.style.height = `${fixedHeight}px`;
@@ -41,26 +43,8 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
     wrapper.style.justifyContent = 'center';
     wrapper.style.overflow = 'hidden';
 
-    // Create the watermark element
-    const watermark = document.createElement('div');
-    watermark.textContent = '';
-    watermark.style.position = 'absolute';
-    watermark.style.left = '50%';
-    watermark.style.top = '50%';
-    watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
-    watermark.style.fontSize = '5rem'; // Adjust the font size as needed
-    watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
-    watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
-    watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
-    watermark.style.whiteSpace = 'nowrap';
-    watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
-    watermark.style.zIndex = '10'; // Ensure watermark is below content
-
-    wrapper.appendChild(watermark);
-
     const clonedElement = element.cloneNode(true);
-    const scale = 1; // Scale factor to reduce the size
-    clonedElement.style.transform = `scale(${scale})`;
+    clonedElement.style.transform = 'scale(1)';
     clonedElement.style.transformOrigin = 'top left';
     clonedElement.style.width = `${fixedWidth}px`;
     clonedElement.style.height = `${fixedHeight}px`;
