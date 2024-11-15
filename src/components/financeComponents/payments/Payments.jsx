@@ -218,6 +218,7 @@ const Payments = ({ status }) => {
       documentNo: item.documentNo,
       source: item.source,
       prospectivePensionerId: item.prospectivePensionerId,
+      claimId: item?.claimId,
     }));
   };
 

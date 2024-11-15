@@ -17,7 +17,7 @@ function page() {
         </div>
         <CustomBreadcrumbsList currentTitle="Claim Records List" />
       </div>
-      <AssessmentTable status={7} />
+      <AssessmentTable statusArr={[7, 8, 9, 10, 11]} />
     </div>
   );
 }

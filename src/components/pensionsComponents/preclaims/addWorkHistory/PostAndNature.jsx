@@ -1,36 +1,12 @@
 import { useAlert } from '@/context/AlertContext';
 import React, { useEffect, useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Dialog,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Select,
-  MenuItem,
-  TextField,
-  FormControl,
-  IconButton,
-} from '@mui/material';
 import dayjs from 'dayjs';
 import { message } from 'antd';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
-import axios from 'axios';
 import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
-import { useMda } from '@/context/MdaContext';
 import endpoints from '@/components/services/setupsApi';
-import { th } from '@faker-js/faker';
 import EditableTable from '@/components/baseComponents/EditableTable';
-import { BASE_CORE_API } from '@/utils/constants';
 
 function PostAndNature({ id, loading, setLoading, status }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);

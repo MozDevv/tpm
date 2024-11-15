@@ -1,33 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
-import { Button } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import { Button } from '@mui/material';
+import { AgGridReact } from 'ag-grid-react';
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { he } from "@faker-js/faker";
-import Contributions from "./Contributions";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { he } from '@faker-js/faker';
+import Contributions from './Contributions';
 
 const columnDefs = [
-  { headerName: "No", field: "no", sortable: true, filter: true },
-  { headerName: "Year", field: "year", sortable: true, filter: true },
+  { headerName: 'No', field: 'no', sortable: true, filter: true },
+  { headerName: 'Year', field: 'year', sortable: true, filter: true },
   {
-    headerName: "Total Contributions",
-    field: "total_contributions",
+    headerName: 'Total Contributions',
+    field: 'total_contributions',
     sortable: true,
     filter: true,
   },
-  { headerName: "Interest", field: "intrest", sortable: true, filter: true },
+  { headerName: 'Interest', field: 'intrest', sortable: true, filter: true },
   {
-    headerName: "Total Contributions With Interest",
-    field: "total_contributions_with_intrest",
+    headerName: 'Total Contributions With Interest',
+    field: 'total_contributions_with_intrest',
+    sortable: true,
+    filter: true,
+  },
+  {
+    headerName: 'Parliamentary Terms',
+    field: 'parliamentary_term_setup_id',
     sortable: true,
     filter: true,
   },
@@ -48,6 +54,7 @@ const ParliamentContributions = (id) => {
       intrest: item.intrest,
       total_contributions_with_intrest: item.total_contributions_with_intrest,
       intrest_amount: item.intrest_amount,
+      parliamentary_term_setup_id: item.parliamentary_term_setup_id,
     }));
   };
 
@@ -66,38 +73,65 @@ const ParliamentContributions = (id) => {
       const { data, totalCount } = res.data;
       setMdas(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
+  const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
+  const fetchTerms = async () => {
+    try {
+      const res = await apiService.get(endpoints.getParliamentaryTermsSetups);
+
+      if (res.status === 200) {
+        setParliamentarianTerms(res.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching Full Term:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTerms();
+  }, []);
+
   const title = clickedItem
-    ? "Parliamentary Contributions"
-    : "Add a New Parliamentary Contribution";
+    ? 'Parliamentary Contributions'
+    : 'Add a New Parliamentary Contribution';
 
   const fields = [
     {
-      id: "year",
-      label: "Year",
-      name: "year",
-      type: "number",
+      id: 'year',
+      label: 'Year',
+      name: 'year',
+      type: 'number',
     },
     {
-      id: "total_contributions",
-      label: "Total Contributions",
-      name: "total_contributions",
-      type: "number",
+      id: 'total_contributions',
+      label: 'Total Contributions',
+      name: 'total_contributions',
+      type: 'number',
     },
     {
-      id: "intrest",
-      label: "Interest",
-      name: "intrest",
-      type: "number",
+      id: 'intrest',
+      label: 'Interest',
+      name: 'intrest',
+      type: 'number',
     },
     {
-      id: "total_contributions_with_intrest",
-      label: "Total Contributions With Interest",
-      name: "total_contributions_with_intrest",
-      type: "number",
+      id: 'total_contributions_with_intrest',
+      label: 'Total Contributions With Interest',
+      name: 'total_contributions_with_intrest',
+      type: 'number',
+    },
+    {
+      id: 'parliamentary_term_setup_id',
+      label: 'Parliamentary Terms',
+      name: 'parliamentary_term_setup_id',
+      type: 'select',
+      options: parliamenterianTerms.map((term) => ({
+        id: term.id,
+        name: term.name,
+      })),
     },
   ];
 
@@ -115,7 +149,7 @@ const ParliamentContributions = (id) => {
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -143,6 +177,7 @@ const ParliamentContributions = (id) => {
         isSecondaryCard={true}
       >
         <Contributions
+          parliamenterianTerms={parliamenterianTerms}
           id={id.id}
           apiEndpoint={endpoints.createParliamentContributions}
           postApiFunction={apiService.post}
@@ -170,11 +205,11 @@ const ParliamentContributions = (id) => {
       <div
         className="ag-theme-quartz"
         style={{
-          height: "60vh",
+          height: '60vh',
 
-          mt: "20px",
+          mt: '20px',
 
-          overflowY: "auto",
+          overflowY: 'auto',
         }}
       >
         <AgGridReact

@@ -122,7 +122,6 @@ const BaseInputTable = ({
               { start: 'fromDate', end: 'toDate' },
               { start: 'date', end: 'endDate' },
               { start: 'date', end: 'enddate' },
-
               { start: 'start_date', end: 'end_date' },
             ];
 
@@ -893,6 +892,8 @@ const BaseInputTable = ({
       // Loop through date pairs to find a filled end date
       for (const { start, end } of datePairs) {
         if (lastRow && lastRow[end]) {
+          console.log('Last Row:', lastRow);
+          console.log('End Date:', lastRow[end]);
           previousEndDate = lastRow[end];
           break;
         }

@@ -33,7 +33,9 @@ const ApprovalStages = () => {
 
     const fetchApprovalTypes = async () => {
       try {
-        const res = await apiService.get(endpoints.getApprovalTypes);
+        const res = await apiService.get(endpoints.getApprovalTypes, {
+          'paging.pageSize': 1000,
+        });
         const data = res.data.data.map((item) => ({
           id: item.id,
           name: item.approval_type_name,
@@ -59,7 +61,7 @@ const ApprovalStages = () => {
     try {
       const res = await apiService.get(endpoints.getApprovalUsers);
       const data = res.data.data.map((item) => ({
-        id: item.id,
+        id: item.primary_approver_id,
         name: users.find((user) => user.id === item.primary_approver_id)?.name,
         row1: users.find((user) => user.id === item.primary_approver_id)?.name,
         row2: users.find((user) => user.id === item.secondary_approver_id)

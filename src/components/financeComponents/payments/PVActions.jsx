@@ -21,6 +21,8 @@ import { formatNumber } from '@/utils/numberFormatters';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { truncateMessage } from '@/utils/handyFuncs';
+import claimsEndpoints from '@/components/services/claimsApi';
+import { apiService as apiServicecliam } from '@/components/services/claimsApi';
 
 function PVActions({
   selectedRows,
@@ -54,7 +56,6 @@ function PVActions({
 
       if (status === 2) {
         if (isSchedule) {
-          console.log('isSchedule >>', isSchedule);
           // Case for scheduling
           endpoint = financeEndpoints.createPaymentSchedule;
           successMessage = 'Payment Vouchers scheduled successfully';
@@ -67,142 +68,71 @@ function PVActions({
           const res = await apiService.post(endpoint, requestData);
 
           if (res && res.data && res.data.succeeded && res.status === 200) {
+            await updateClaimStatus(); // Call the function to update claim status
             setSelectedRows([]);
             setOpenPostGL(false);
             setOpenBaseCard && setOpenBaseCard(false);
             message.success(successMessage);
-          } else if (
-            res &&
-            res.data &&
-            res.data.messages.length > 0 &&
-            !res.data.succeeded
-          ) {
-            setErrors({
-              status: true,
-              message: res.data.messages[0],
-            });
-            message.error(truncateMessage(res.data.messages[0], 100));
           } else {
-            message.error(errorMessage);
+            handleErrorResponse(res, errorMessage);
           }
         } else {
+          // Case for posting to ledger
           endpoint = financeEndpoints.postPaymentToLedger;
-          successMessage = 'Payment Voucher(s) Posted to Legder successfully';
+          successMessage = 'Payment Voucher(s) Posted to Ledger successfully';
           errorMessage = 'Failed to post Payment Vouchers';
           requestData = {
             paymentsList: selectedIds.map((item) => ({ paymentId: item.id })),
           };
-          // Make the API call for scheduling
+
+          // Make the API call for posting
           const res = await apiService.post(endpoint, requestData);
 
           if (res && res.data && res.data.succeeded && res.status === 200) {
+            await updateClaimStatus(); // Call the function to update claim status
             setSelectedRows([]);
             setOpenPostGL(false);
             setOpenBaseCard && setOpenBaseCard(false);
             message.success(successMessage);
-          } else if (
-            res &&
-            res.data &&
-            res.data.messages.length > 0 &&
-            !res.data.succeeded
-          ) {
-            setErrors({
-              status: true,
-              message: res.data.messages[0],
-            });
-            message.error(truncateMessage(res.data.messages[0], 100));
           } else {
-            message.error(errorMessage);
+            handleErrorResponse(res, errorMessage);
           }
-
-          return; // Exit the function after processing case 2 actions
         }
       } else if (status === 3) {
+        // Case for scheduled payments
         endpoint = financeEndpoints.postScheduledPaymentToLedger;
         successMessage = 'Payment Vouchers Posted successfully';
-        errorMessage = 'Failed to schedule Payment Vouchers';
+        errorMessage = 'Failed to post Payment Vouchers';
         requestData = {
           paymentSchedulesList: selectedIds.map((item) => ({
             paymentScheduleId: item.id,
           })),
         };
 
-        // Make the API call for scheduling
         const res = await apiService.post(endpoint, requestData);
 
         if (res && res.data && res.data.succeeded && res.status === 200) {
+          await updateClaimStatus(); // Call the function to update claim status
           setSelectedRows([]);
           setOpenPostGL(false);
           setOpenBaseCard && setOpenBaseCard(false);
           message.success(successMessage);
-        } else if (
-          res &&
-          res.data &&
-          res.data.messages.length > 0 &&
-          !res.data.succeeded
-        ) {
-          setErrors({
-            status: true,
-            message: res.data.messages[0],
-          });
-          message.error(truncateMessage(res.data.messages[0], 100));
         } else {
-          message.error(errorMessage);
+          handleErrorResponse(res, errorMessage);
         }
       } else {
+        // Case for other statuses
         const processRequests = selectedIds.map(async ({ id }) => {
-          switch (status) {
-            case 0:
-              endpoint = financeEndpoints.submitPVforApproval(id);
-              successMessage =
-                'Payment Voucher submitted for approval successfully';
-              errorMessage = 'Failed to submit Payment Voucher for approval';
-              break;
-            case 1:
-              endpoint = financeEndpoints.approvePv(id);
-              successMessage = 'Payment Voucher approved successfully';
-              errorMessage = 'Failed to approve Payment Voucher';
-              break;
-            case 3:
-              endpoint = financeEndpoints.postPaymentVoucher(id);
-              successMessage = 'Payment Voucher posted successfully';
-              errorMessage = 'Failed to post Payment Voucher';
-              break;
-            default:
-              message.error('Invalid action');
-              return;
-          }
-
-          // Make API call for each ID
-          const res = await apiService.post(endpoint);
-
-          if (res && res.data && res.data.succeeded && res.status === 200) {
-            return { success: true, id };
-          } else if (
-            res &&
-            res.data &&
-            res.data.messages.length > 0 &&
-            !res.data.succeeded
-          ) {
-            setErrors({
-              status: true,
-              message: res.data.messages[0],
-            });
-            message.error(truncateMessage(res.data.messages[0], 100));
-            return { success: false, id };
-          } else {
-            message.error(errorMessage);
-            return { success: false, id };
-          }
+          return processIndividualRequest(id);
         });
 
-        // Execute all individual requests concurrently
         const results = await Promise.all(processRequests);
         const allSucceeded = results.every(
           (result) => result && result.success
         );
 
         if (allSucceeded) {
+          await updateClaimStatus(); // Call the function to update claim status
           setSelectedRows([]);
           setOpenPostGL(false);
           setOpenBaseCard && setOpenBaseCard(false);
@@ -216,6 +146,87 @@ function PVActions({
       message.error(
         'An unexpected error occurred while processing the action.'
       );
+    }
+  };
+
+  // Function to update claim status
+  const updateClaimStatus = async () => {
+    const data = {
+      claim_id: clickedItem.claimId,
+      action: 0, // Update action as needed
+      comments:
+        'Lorem Ipsum Dolor jjsdjjndjsnjasjkjjjjjjjj jjjjjjjj  jjjjjjj jjjjjjjj', // Update comments as needed
+    };
+
+    try {
+      const response = await apiServicecliam.post(
+        claimsEndpoints.moveClaimStatus,
+        data
+      );
+      if (
+        response &&
+        response.data &&
+        response.data.succeeded &&
+        response.status === 200
+      ) {
+        message.success('Claim status updated successfully');
+      } else {
+        message.error('Failed to update claim status');
+      }
+    } catch (error) {
+      console.error('Error updating claim status:', error);
+      message.error('An error occurred while updating the claim status');
+    }
+  };
+
+  // Helper function to handle error responses
+  const handleErrorResponse = (res, errorMessage) => {
+    if (
+      res &&
+      res.data &&
+      res.data.messages.length > 0 &&
+      !res.data.succeeded
+    ) {
+      setErrors({
+        status: true,
+        message: res.data.messages[0],
+      });
+      message.error(truncateMessage(res.data.messages[0], 100));
+    } else {
+      message.error(errorMessage);
+    }
+  };
+
+  // Helper function to process individual requests
+  const processIndividualRequest = async (id) => {
+    let endpoint, successMessage, errorMessage;
+
+    switch (status) {
+      case 0:
+        endpoint = financeEndpoints.submitPVforApproval(id);
+        successMessage = 'Payment Voucher submitted for approval successfully';
+        errorMessage = 'Failed to submit Payment Voucher for approval';
+        break;
+      case 1:
+        endpoint = financeEndpoints.approvePv(id);
+        successMessage = 'Payment Voucher approved successfully';
+        errorMessage = 'Failed to approve Payment Voucher';
+        break;
+      case 3:
+        endpoint = financeEndpoints.postPaymentVoucher(id);
+        successMessage = 'Payment Voucher posted successfully';
+        errorMessage = 'Failed to post Payment Voucher';
+        break;
+      default:
+        message.error('Invalid action');
+        return;
+    }
+
+    const res = await apiService.post(endpoint);
+    if (res && res.data && res.data.succeeded && res.status === 200) {
+      return { success: true, id };
+    } else {
+      return { success: false, id };
     }
   };
 

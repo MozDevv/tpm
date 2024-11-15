@@ -57,6 +57,28 @@ const SchemaCellRenderer = ({ value }) => {
   );
 };
 
+/*
+
+
+  public enum ClaimStage
+    {
+        VERIFICATION,
+        VALIDATION,
+        APPROVAL,
+        ASSESSMENT_DATA_CAPTURE, //TODO: Remove this
+        ASSESSMENT_APPROVAL, //TODO: Remove this
+        DIRECTORATE,
+        COB,
+        Finance,
+        Finance_Voucher_Preparation,
+        Finance_Voucher_Approval,
+        Finance_Voucher_Scheduled_For_Payment,
+        Finance_Voucher_Paid
+    }
+ 
+ 
+*/
+
 const notificationStatusMap = {
   0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
   1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
@@ -65,7 +87,11 @@ const notificationStatusMap = {
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
   5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
   6: { name: 'Controller of Budget', color: '#2ecc71' }, // Light Blue
-  7: { name: 'Voucher Preparation', color: '#8e44ad' },
+  7: { name: 'Finance', color: '#f39c12' }, // Bright Orange
+  8: { name: 'Finance Voucher Preparation', color: '#2ecc71' }, // Light Blue
+  9: { name: 'Finance Voucher Approval', color: '#f39c12' }, // Bright Orange
+  10: { name: 'Finance Voucher Scheduled For Payment', color: '#2ecc71' }, // Light Blue
+  11: { name: 'Finance Voucher Paid', color: '#f39c12' }, // Bright Orange
 };
 
 const colDefs = [
@@ -260,7 +286,7 @@ const colDefs = [
   },
 ];
 
-const AssessmentTable = ({ status }) => {
+const AssessmentTable = ({ status, statusArr }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -297,14 +323,24 @@ const AssessmentTable = ({ status }) => {
   const [loading, setLoading] = useState(false);
 
   const fetchAllPreclaims = async () => {
-    const filters =
-      status !== null && status !== undefined
-        ? {
-            'filterCriterion.criterions[0].propertyName': 'stage',
-            'filterCriterion.criterions[0].propertyValue': status,
-            'filterCriterion.criterions[0].criterionType': 0,
-          }
-        : {};
+    let filters = {};
+
+    if (status !== null && status !== undefined) {
+      // When a single status value is provided
+      filters = {
+        'filterCriterion.criterions[0].propertyName': 'stage',
+        'filterCriterion.criterions[0].propertyValue': status,
+        'filterCriterion.criterions[0].criterionType': 0,
+      };
+    } else if (statusArr && statusArr.length > 0) {
+      // When statusArr is provided, loop through it and populate criterions array
+      statusArr.forEach((status, index) => {
+        filters[`filterCriterion.criterions[${index}].propertyName`] = 'stage';
+        filters[`filterCriterion.criterions[${index}].propertyValue`] = status;
+        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+      });
+    }
+
     setLoading(true);
     try {
       const res = await assessApiService.get(
