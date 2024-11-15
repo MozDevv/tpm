@@ -349,6 +349,9 @@ const AssessmentTable = ({ status, statusArr }) => {
           'paging.pageNumber': pageNumber,
           'paging.pageSize': pageSize,
           ...filters,
+          ...(statusArr && statusArr.length > 0
+            ? { 'filterCriterion.compositionType': 1 }
+            : {}),
         }
       );
       const rawData = res.data.data;
