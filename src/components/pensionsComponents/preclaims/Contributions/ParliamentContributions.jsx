@@ -109,19 +109,19 @@ const ParliamentContributions = (id) => {
       id: 'total_contributions',
       label: 'Total Contributions',
       name: 'total_contributions',
-      type: 'number',
+      type: 'amount',
     },
     {
       id: 'intrest',
       label: 'Interest',
       name: 'intrest',
-      type: 'number',
+      type: 'amount',
     },
     {
       id: 'total_contributions_with_intrest',
       label: 'Total Contributions With Interest',
       name: 'total_contributions_with_intrest',
-      type: 'number',
+      type: 'amount',
     },
     {
       id: 'parliamentary_term_setup_id',

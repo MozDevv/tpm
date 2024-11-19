@@ -14,6 +14,8 @@ const claimsEndpoints = {
 
   getClaims: '/api/Claims/getClaims',
   moveClaimStatus: '/api/claims/MoveClaimStatus',
+
+  mdas: '/api/Setups/Getmdas',
 };
 api.interceptors.request.use(
   (config) => {

@@ -174,7 +174,9 @@ function PVActions({
         message.error('Failed to update claim status');
       }
     } catch (error) {
-      console.error('Error updating claim status:', error);
+      console.log('Error updating claim status:', error);
+      console.log('Claims Data', data);
+      console.error('Error updating claim status:', error.response);
       message.error('An error occurred while updating the claim status');
     }
   };

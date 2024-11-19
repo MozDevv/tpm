@@ -44,6 +44,7 @@ import ListNavigation from '@/components/baseComponents/ListNavigation';
 import ReturnToPreclaims from './ReturnToPreclaims';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import ClaimVerification from './reports/ClaimVerification';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -438,6 +439,7 @@ const ClaimsTable = ({ status }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
+  const [openClaimVerification, setOpenClaimVerification] = useState(false);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -481,6 +483,8 @@ const ClaimsTable = ({ status }) => {
       setOpenAction(1);
       setOpenMoveStatus(true);
     },
+
+    'Claims Verification Register': () => setOpenClaimVerification(true),
   };
 
   const [openApprove, setOpenApprove] = useState(0);
@@ -529,6 +533,24 @@ const ClaimsTable = ({ status }) => {
 
   return (
     <>
+      <Dialog
+        open={openClaimVerification}
+        onClose={() => setOpenClaimVerification(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <ClaimVerification
+            setOpenTrialBalanceReport={setOpenClaimVerification}
+          />
+        </div>
+      </Dialog>
       <div className=" relative h-full w-full overflow-hidden">
         <BaseApprovalCard
           clickedItem={clickedItem}
@@ -600,37 +622,9 @@ const ClaimsTable = ({ status }) => {
           />
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2">
-          {/* <div className="flex justify-between flex-row mt-2">
-            <div className="flex gap-2 items-center pl-3">
-              <div className="flex items-center gap-2 mt-2 ml-2">
-                <Button onClick={() => exportData()} sx={{ maxHeight: "25px" }}>
-                  <img
-                    src="/excel.png"
-                    alt="Open in Excel"
-                    height={20}
-                    width={20}
-                  />
-                  <p className="font-medium text-gray text-sm ">
-                    Open in Excel
-                  </p>
-                </Button>
-                <div className="">
-                  <IconButton
-                    onClick={() =>
-                      setOpenFilter((prevOpenFilter) => !prevOpenFilter)
-                    }
-                  >
-                    <Tooltip title="filter items" placement="top">
-                      <FilterAlt sx={{ color: "primary.main" }} />
-                    </Tooltip>
-                  </IconButton>
-                </div>
-              </div>
-            </div>
-          </div> */}
           <ListNavigation
             handlers={handlers}
-            // permissions={permissions}
+            reportItems={['Claims Verification Register']}
             status={status}
           />
           <Divider sx={{ mt: 2, mb: 1, ml: 2 }} />

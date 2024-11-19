@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { Backdrop } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {

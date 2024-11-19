@@ -35,6 +35,7 @@ function Contributions({
         {
           'filterCriterion.criterions[0].propertyName': 'id',
           'filterCriterion.criterions[0].propertyValue': clickedItem.id,
+          'paging.pageSize': 1000,
         }
       );
       const data = res.data.data;
