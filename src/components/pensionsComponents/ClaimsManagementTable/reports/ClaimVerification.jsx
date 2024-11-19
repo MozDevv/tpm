@@ -15,6 +15,7 @@ import { apiService } from '@/components/services/claimsApi';
 import claimsEndpoints from '@/components/services/claimsApi';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { checkIsDate, isValidISODate } from '@/utils/dateFormatter';
 
 const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
@@ -66,6 +67,11 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       headerName: 'Reference No.',
       field: 'claim_id',
       width: 150,
+    },
+    {
+      headerName: 'Created Date',
+      field: 'authority_for_retirement_dated',
+      width: 180,
     },
     {
       headerName: 'Email Address',
@@ -120,11 +126,6 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       cellRenderer: function (params) {
         return params.value ? new Date(params.value).toLocaleDateString() : '';
       },
-    },
-    {
-      headerName: 'Created Date',
-      field: 'authority_for_retirement_dated',
-      width: 180,
     },
   ];
 
@@ -621,14 +622,22 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                     <td className="text-gray-600 text-start pl-3">
                       {rowIndex + 1}
                     </td>
-                    {filteredColDefs.map((cell, cellIndex) => (
-                      <td
-                        key={cellIndex}
-                        className="text-gray-600 text-start pl-3"
-                      >
-                        {row[cell.field] || '-'}
-                      </td>
-                    ))}
+                    {filteredColDefs.map((cell, cellIndex) => {
+                      const field = fields.find((f) => f.name === cell.field);
+                      return (
+                        <td
+                          key={cellIndex}
+                          className="text-gray-600 text-start pl-3"
+                        >
+                          {field &&
+                          field.type === 'date' &&
+                          dayjs(row[cell.field]).isValid()
+                            ? dayjs(row[cell.field]).format('DD-MMM-YY')
+                            : row[cell.field]}
+                        </td>
+                      );
+                    })}
+
                     <td className=" ml-2 border-b border-gray-400 h-7"></td>
                   </tr>
                 ))}
