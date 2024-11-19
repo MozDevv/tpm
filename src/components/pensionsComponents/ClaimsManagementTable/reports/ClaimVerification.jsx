@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Autocomplete,
+  Backdrop,
   Button,
   Dialog,
   IconButton,
@@ -260,9 +261,6 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     // Load html2pdf.js dynamically, only in the browser
     const html2pdf = (await import('html2pdf.js')).default;
 
-    const fixedWidth = 750; // Reduced width in pixels
-    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
-
     const options = {
       margin: 0.5, // Default margin (in inches)
       filename: 'Page 5.pdf',
@@ -271,8 +269,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     };
 
     const wrapper = document.createElement('div');
-    wrapper.style.width = `${fixedWidth}px`;
-    wrapper.style.height = `${fixedHeight}px`;
+
     wrapper.style.position = 'relative';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
@@ -280,10 +277,8 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     wrapper.style.overflow = 'hidden';
 
     const clonedElement = element.cloneNode(true);
-    clonedElement.style.transform = 'scale(0.8)';
+    clonedElement.style.transform = 'scale(0.9)';
     clonedElement.style.transformOrigin = 'top left';
-    clonedElement.style.width = `${fixedWidth}px`;
-    clonedElement.style.height = `${fixedHeight}px`;
 
     wrapper.appendChild(clonedElement);
 
@@ -308,7 +303,6 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
 
       // Define fixed dimensions for the content (in pixels)
       const fixedWidth = 770; // Width in pixels
-      const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
       // Define options for the PDF
       const options = {
@@ -321,7 +315,6 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       // Create a wrapper to hold the cloned content
       const wrapper = document.createElement('div');
       wrapper.style.width = `${fixedWidth}px`;
-      wrapper.style.height = `${fixedHeight}px`;
       wrapper.style.position = 'relative';
       wrapper.style.display = 'flex';
       wrapper.style.alignItems = 'center';
@@ -329,11 +322,10 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       wrapper.style.overflow = 'hidden';
 
       const clonedElement = element.cloneNode(true);
-      const scale = 0.8; // Scale factor to reduce the size
+      const scale = 0.9; // Scale factor to reduce the size
       clonedElement.style.transform = `scale(${scale})`;
       clonedElement.style.transformOrigin = 'top left';
       clonedElement.style.width = `${fixedWidth}px`;
-      clonedElement.style.height = `${fixedHeight}px`;
 
       wrapper.appendChild(clonedElement);
 
@@ -506,6 +498,23 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 99999 }}
+          open={open}
+          onClick={() => setLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating report, please hold on
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <h1 className="text-[24px] font-bold text-primary mb-14 mt-[-20px]">
         Claim Verification Register Report
       </h1>
@@ -553,35 +562,41 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       <div className="hidden">
         <div ref={contentRef} className=" pb-3">
           <div className="text-center mx-auto flex flex-col items-center font-sans mb-4">
-            <img src="/kenya.png" alt="" height={60} width={60} className="" />
+            <img src="/kenya.png" alt="" height={80} width={80} className="" />
             <h2 className="text-base font-bold">PENSIONS DEPARTMENT</h2>
           </div>
-          <div className="flex flex-row gap-2 justify-center text-[18px] courier-font pb-3">
-            <div className="text-gray-500 border-b-[1px] pb-1 border-black">
+          <div className="flex flex-row gap-2 justify-center text-[13px] font-sans pb-3 ">
+            <p className="border-b border-black pb-1">
               Claims Verification Register Approval For
-            </div>
+            </p>
+
             <div className="font-semibold">RG4</div>
-            <div className="text-gray-500 border-b-[1px] pb-1 border-black">
+            <div className="border-b border-black pb-1">
               Work Group On Date Of
             </div>
             <div className="font-semibold">27-APR-21</div>
-            <div className="text-gray-500 pb-1">To</div>
+            <div className="">To</div>
             <div className="font-semibold">05-MAY-24</div>
           </div>
           <div className="w-full pb-5">
-            <table className="w-full bg-white border-collapse courier-font">
+            <table className="w-full bg-white border-collapse font-sans text-[11px]">
               <thead>
                 <tr>
+                  <th className="text-left px-4 py-2 font-bold">SL. No</th>
                   {filteredColDefs.map((header, index) => (
                     <th key={index} className="text-left px-4 py-2 font-bold">
                       {header.headerName}
                     </th>
                   ))}
+                  <th className="text-left px-4 py-2 font-bold">Signature</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-[11px]">
                 {filteredData.map((row, rowIndex) => (
                   <tr key={rowIndex}>
+                    <td className="text-gray-600 text-start pl-3">
+                      {rowIndex + 1}
+                    </td>
                     {filteredColDefs.map((cell, cellIndex) => (
                       <td
                         key={cellIndex}
@@ -590,6 +605,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                         {row[cell.field] || '-'}
                       </td>
                     ))}
+                    <td className=" ml-2 border-b border-gray-400 h-7"></td>
                   </tr>
                 ))}
               </tbody>
