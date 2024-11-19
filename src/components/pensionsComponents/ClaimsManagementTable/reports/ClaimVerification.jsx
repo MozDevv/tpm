@@ -9,7 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
-import { Add, Close, RemoveCircle } from '@mui/icons-material';
+import { Add, Close, Remove, RemoveCircle } from '@mui/icons-material';
 import ClaimRegister from './ClaimRegister';
 import { apiService } from '@/components/services/claimsApi';
 import claimsEndpoints from '@/components/services/claimsApi';
@@ -40,6 +40,9 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [rowData, setRowData] = useState([]);
+
+  const [designations, setDesignations] = useState([]);
+  const [exitGrounds, setExitGrounds] = useState([]);
 
   const colDefs = [
     {
@@ -154,7 +157,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
         is_wcps: item?.prospectivePensioner?.is_wcps,
         email_address: item?.prospectivePensioner?.email_address,
         notification_status: item?.prospectivePensioner?.notification_status,
-        gender: item?.prospectivePensioner?.gender,
+        gender: item?.prospectivePensioner?.gender === 0 ? 'Male' : 'Female',
         phone_number: item?.prospectivePensioner?.phone_number,
         personal_number: item?.prospectivePensioner?.personal_number,
         surname: item?.prospectivePensioner?.surname,
@@ -213,6 +216,9 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
         exit_grounds: item?.prospectivePensioner?.exitGround.name,
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
+
+        grade_id: item?.grade_id ?? '',
+        designation_id: item?.designation_id ?? '',
       }));
 
       setRowData(mappedData);
@@ -237,7 +243,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     const start = startDate ? dayjs(startDate) : null;
     const end = endDate ? dayjs(endDate) : null;
 
-    const filtered = rowData.filter((row) => {
+    const filtered = filteredData.filter((row) => {
       const rowDate = dayjs(row.authority_for_retirement_dated);
 
       return (
@@ -413,8 +419,8 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       name: 'gender',
       type: 'select',
       options: [
-        { id: 1, name: 'Female' },
-        { id: 0, name: 'Male' },
+        { id: 'Female', name: 'Female' },
+        { id: 'Male', name: 'Male' },
       ],
     },
     {
@@ -736,7 +742,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
             <Button
               onClick={handleShowMoreColumns}
               variant="text"
-              startIcon={<Add />}
+              startIcon={showAllColumns ? <Remove /> : <Add />}
             >
               {showAllColumns ? 'Show Less' : 'Add More Columns'}
             </Button>

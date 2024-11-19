@@ -193,7 +193,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         }}
       >
         <div ref={contentRef} className="  p-4 max-w-3xl mx-auto ">
-          <div className="p-8 courier-font word-spacing  text-[15px] bg-white text-black max-w-4xl mx-auto ">
+          <div className="p-8 font-sans word-spacing  text-[11px] bg-white text-black max-w-4xl mx-auto ">
             <div className="text-center mx-auto flex flex-col items-center font-sans mb-4">
               <h1 className="font-bold text-base">MINISTRY OF FINANCE</h1>
               <img
