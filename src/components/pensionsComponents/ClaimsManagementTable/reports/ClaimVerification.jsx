@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import {
   Autocomplete,
   Backdrop,
@@ -13,6 +13,8 @@ import { Add, Close, RemoveCircle } from '@mui/icons-material';
 import ClaimRegister from './ClaimRegister';
 import { apiService } from '@/components/services/claimsApi';
 import claimsEndpoints from '@/components/services/claimsApi';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
@@ -26,8 +28,12 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     'Reference No.',
   ]);
   const [skipBlankEntries, setSkipBlankEntries] = useState(true);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+
+  const [startDate, setStartDate] = useState(
+    dayjs().startOf('year').format('YYYY-MM-DD')
+  );
+  const [endDate, setEndDate] = useState(dayjs().format('YYYY-MM-DD'));
+
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -115,6 +121,11 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
         return params.value ? new Date(params.value).toLocaleDateString() : '';
       },
     },
+    {
+      headerName: 'Created Date',
+      field: 'authority_for_retirement_dated',
+      width: 180,
+    },
   ];
 
   const getClaims = async () => {
@@ -137,6 +148,8 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
         comments: item?.comments,
         pensioner_full_name: `${item?.prospectivePensioner?.first_name} ${item?.prospectivePensioner?.surname}`,
         maintenance_case: item?.prospectivePensioner?.maintenance_case,
+        authority_for_retirement_dated:
+          item?.prospectivePensioner?.authority_for_retirement_dated,
         is_wcps: item?.prospectivePensioner?.is_wcps,
         email_address: item?.prospectivePensioner?.email_address,
         notification_status: item?.prospectivePensioner?.notification_status,
@@ -216,24 +229,28 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     getClaims();
   }, []);
 
-  const handleDateFilter = () => {
-    const filtered = data.filter((group) => {
-      return group.subGroups.some((subGroup) => {
-        return subGroup.accounts.some((account) => {
-          const rowStartDate = dayjs(account.startDate);
-          const rowEndDate = dayjs(account.endDate);
-          const start = startDate ? dayjs(startDate) : null;
-          const end = endDate ? dayjs(endDate) : null;
+  dayjs.extend(isSameOrAfter);
+  dayjs.extend(isSameOrBefore);
 
-          return (
-            (!start || rowStartDate.isSameOrAfter(start)) &&
-            (!end || rowEndDate.isSameOrBefore(end))
-          );
-        });
-      });
+  const handleDateFilter = () => {
+    const start = startDate ? dayjs(startDate) : null;
+    const end = endDate ? dayjs(endDate) : null;
+
+    const filtered = rowData.filter((row) => {
+      const rowDate = dayjs(row.authority_for_retirement_dated);
+
+      return (
+        (!start || rowDate.isSameOrAfter(start)) &&
+        (!end || rowDate.isSameOrBefore(end))
+      );
     });
+
     setFilteredData(filtered);
   };
+
+  useEffect(() => {
+    handleAddFilter();
+  }, []);
 
   const formatColumnName = (columnName) => {
     return columnName
@@ -263,7 +280,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
 
     const options = {
       margin: 0.5, // Default margin (in inches)
-      filename: 'Page 5.pdf',
+      filename: 'Claims Verification Register Approvals.pdf',
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
@@ -402,6 +419,11 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       ],
     },
     {
+      label: 'Created Date',
+      name: 'authority_for_retirement_dated',
+      type: 'date',
+    },
+    {
       label: 'Email Address',
       name: 'email_address',
       type: 'text',
@@ -536,7 +558,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
               <iframe
                 src={URL.createObjectURL(pdfBlob)}
                 style={{ width: '100%', height: '100vh', border: 'none' }}
-                title="Page 5 PDF"
+                title="Claims Verification Register Approvals PDF"
               />
             )}{' '}
           </div>
@@ -574,9 +596,13 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
             <div className="border-b border-black pb-1">
               Work Group On Date Of
             </div>
-            <div className="font-semibold">27-APR-21</div>
+            <div className="font-semibold">
+              {dayjs(startDate).format('DD-MMM-YY')}
+            </div>
             <div className="">To</div>
-            <div className="font-semibold">05-MAY-24</div>
+            <div className="font-semibold">
+              {dayjs(endDate).format('DD-MMM-YY')}
+            </div>
           </div>
           <div className="w-full pb-5">
             <table className="w-full bg-white border-collapse font-sans text-[11px]">
