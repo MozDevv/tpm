@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Dialog, IconButton, MenuItem, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  IconButton,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
 import { Add, Close, RemoveCircle } from '@mui/icons-material';
 import ClaimRegister from './ClaimRegister';
@@ -207,14 +214,6 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
   useEffect(() => {
     getClaims();
   }, []);
-
-  const handleColumnChange = (column) => {
-    setSelectedColumns((prev) =>
-      prev.includes(column)
-        ? prev.filter((col) => col !== column)
-        : [...prev, column]
-    );
-  };
 
   const handleDateFilter = () => {
     const filtered = data.filter((group) => {
@@ -463,11 +462,19 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
     },
   ]);
 
-  const handleAddFilter = () => {
-    setFilters([
-      ...filters,
-      { label: '', name: '', value: '', type: 'text', options: [] },
-    ]);
+  const handleColumnChange = (column) => {
+    setSelectedColumns((prev) =>
+      prev.includes(column)
+        ? prev.filter((col) => col !== column)
+        : [...prev, column]
+    );
+  };
+
+  const handleAddFilter = (fieldName) => {
+    const field = fields.find((f) => f.name === fieldName);
+    if (field) {
+      setFilters([...filters, { ...field, value: '' }]);
+    }
   };
 
   const handleFilterChange = (index, field, value) => {
@@ -509,7 +516,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
           '& .MuiPaper-root': {
             minHeight: '90vh',
             maxHeight: '85vh',
-            minWidth: '95vw',
+            minWidth: '65vw',
             maxWidth: '35vw',
           },
         }}
@@ -544,9 +551,9 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
         </div>
       </Dialog>
       <div className="hidden">
-        <div ref={contentRef} className="overflow-x-auto">
+        <div ref={contentRef} className=" pb-3">
           <div className="text-center mx-auto flex flex-col items-center font-sans mb-4">
-            <img src="/kenya.png" alt="" height={40} width={60} className="" />
+            <img src="/kenya.png" alt="" height={60} width={60} className="" />
             <h2 className="text-base font-bold">PENSIONS DEPARTMENT</h2>
           </div>
           <div className="flex flex-row gap-2 justify-center text-[18px] courier-font pb-3">
@@ -561,7 +568,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
             <div className="text-gray-500 pb-1">To</div>
             <div className="font-semibold">05-MAY-24</div>
           </div>
-          <div className="w-full overflow-x-auto">
+          <div className="w-full pb-5">
             <table className="w-full bg-white border-collapse courier-font">
               <thead>
                 <tr>
@@ -703,25 +710,32 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                     </label>
                     <div className="flex-grow border-b-2 border-dashed border-gray-200 mx-2"></div>
                     {filter.type === 'select' ? (
-                      <TextField
-                        select
-                        variant="outlined"
-                        size="small"
-                        value={filter.value}
+                      <Autocomplete
+                        options={field.options}
+                        getOptionLabel={(option) => option.name}
+                        onChange={(event, newValue) =>
+                          handleFilterChange(index, 'value', newValue?.id || '')
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            name={filter.name}
+                            onChange={(e) =>
+                              handleFilterChange(index, 'value', e.target.value)
+                            }
+                          />
+                        )}
+                        value={
+                          field.options.find(
+                            (option) => option.id === filter.value
+                          ) || null
+                        }
                         className="w-1/2"
                         onBlur={applyFilters}
-                        onChange={
-                          (e) =>
-                            handleFilterChange(index, 'value', e.target.value) // Fix value handling
-                        }
-                      >
-                        <MenuItem value="">Select {field.label}</MenuItem>
-                        {field.options?.map((option) => (
-                          <MenuItem key={option.id} value={option.id}>
-                            {option.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                      />
                     ) : (
                       <TextField
                         value={filter.value}
@@ -734,7 +748,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                         InputProps={{
                           style: {
                             height: '36px',
-                            padding: '0 14px',
+                            padding: '0 4px',
                           },
                         }}
                         InputLabelProps={{
@@ -779,7 +793,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                 </IconButton>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {availableFields.map((field, index) => (
+                {fields.map((field, index) => (
                   <label
                     key={index}
                     className="flex items-center text-gray-900 text-[13px]"
@@ -788,6 +802,9 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                       type="checkbox"
                       onChange={() => handleAddFilter(field.name)}
                       className="mr-2"
+                      checked={filters.some(
+                        (filter) => filter.name === field.name
+                      )}
                     />
                     {field.label}
                   </label>
@@ -803,7 +820,7 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
                   ml: 'auto',
                 }}
               >
-                Add More
+                Done
               </Button>
             </div>
           </Dialog>
