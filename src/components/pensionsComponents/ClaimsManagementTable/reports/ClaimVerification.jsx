@@ -245,12 +245,10 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
       );
     });
 
+    generatePdfBlob();
+
     setFilteredData(filtered);
   };
-
-  useEffect(() => {
-    handleAddFilter();
-  }, []);
 
   const formatColumnName = (columnName) => {
     return columnName
