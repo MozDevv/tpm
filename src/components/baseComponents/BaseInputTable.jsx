@@ -264,6 +264,12 @@ const BaseInputTable = ({
 
   const isRowComplete = (row) => {
     return fields.every((field) => {
+      // If the field is not required, we don't need to check its value
+      if (field.notRequired) {
+        return true; // Skip this field since it's not required
+      }
+
+      // If the field is required, check if its value is defined, not null, and not an empty string
       return (
         row[field.value] !== undefined &&
         row[field.value] !== null &&

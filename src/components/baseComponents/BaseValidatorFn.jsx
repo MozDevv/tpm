@@ -10,7 +10,18 @@ export const baseValidatorFn = {
     if (!phoneRegex.test(value)) return ' Phone number must be 10 digits';
     return null;
   },
+  phoneNumber: (value) => {
+    const phoneRegex = /^[0-9]{10}$/; // Example: 10-digit phone number
+    if (!phoneRegex.test(value)) return ' Phone number must be 10 digits';
+    return null;
+  },
   kra_pin: (value) => {
+    const kraPinRegex = /^[A-Z0-9]{13}$/; // Example: 13-character KRA PIN
+    if (!kraPinRegex.test(value))
+      return ' KRA pin should have a format of A1234567890A';
+    return null;
+  },
+  kraPin: (value) => {
     const kraPinRegex = /^[A-Z0-9]{13}$/; // Example: 13-character KRA PIN
     if (!kraPinRegex.test(value))
       return ' KRA pin should have a format of A1234567890A';
@@ -31,7 +42,19 @@ export const baseValidatorFn = {
     if (!emailRegex.test(value)) return 'Please enter a valid email address';
     return null;
   },
+
+  emailAdress: (value) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Example: email address
+    if (!emailRegex.test(value)) return 'Please enter a valid email address';
+    return null;
+  },
   national_id: (value) => {
+    const nationalIdRegex = /^[0-9]{7,8}$/; // Example: 7-8 digit national ID
+    if (!nationalIdRegex.test(value))
+      return ' Please enter a valid national ID';
+    return null;
+  },
+  nationalId: (value) => {
     const nationalIdRegex = /^[0-9]{7,8}$/; // Example: 7-8 digit national ID
     if (!nationalIdRegex.test(value))
       return ' Please enter a valid national ID';

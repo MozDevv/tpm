@@ -287,6 +287,11 @@ const financeEndpoints = {
   updateMember: '/Contribution/UpdateMember',
   deleteMember: (id) => `/Contribution/DeleteMember?id=${id}`,
 
+  addMemberNextOfKin: '/Contribution/AddMemberNextOfKin',
+  getMemberNextOfKin: (id) => `/Contribution/GetMemberNextOfKin?MemberId=${id}`,
+  updateMemberNextOfKin: '/Contribution/UpdateMemberNextOfKin',
+  deleteMemberNextOfKin: (id) => `/Contribution/DeleteMemberNextOfKin?id=${id}`,
+
   //Reports
   getTrialBalance: '/Reports/GetTrialBalance',
 

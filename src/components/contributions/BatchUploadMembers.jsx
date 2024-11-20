@@ -110,7 +110,7 @@ const BatchUploadMembers = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? clickedItem?.batchNo
+    ? 'Batch - ' + clickedItem?.batchNo
     : 'Create Batch Member Upload';
 
   const [vendorPG, setVendorPG] = React.useState([]);

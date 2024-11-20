@@ -43,7 +43,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
 
   const { activeCapName } = useMda();
   return (
-    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto">
+    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto   ">
       <div>
         <div>
           <div className="px-5 mt-[-10px]">
