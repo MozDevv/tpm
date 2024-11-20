@@ -262,25 +262,27 @@ const AccountingPeriod = () => {
               setClickedItem={setClickedItem}
               clickedItem={clickedItem}
             />
-            <BaseInputTable
-              title="Accounting Period"
-              fields={subgroupFields}
-              id={clickedItem?.id}
-              idLabel="accountingPeriodId"
-              getApiService={apiService.get}
-              postApiService={apiService.post}
-              putApiService={apiService.put}
-              getEndpoint={financeEndpoints.getAccountingPeriodById(
-                clickedItem?.id
-              )}
-              deleteApiService={apiService.delete}
-              apiService={apiService}
-              deleteEndpoint={financeEndpoints.deleteAccountingPeriodLines}
-              postEndpoint={financeEndpoints.addAccountingPeriodLines}
-              putEndpoint={financeEndpoints.updateAccountingPeriodLines}
-              passProspectivePensionerId={true}
-              fetchChildren="accountingPeriodLines"
-            />
+            <div className="max-h-[450px] overflow-y-auto">
+              <BaseInputTable
+                title="Accounting Period"
+                fields={subgroupFields}
+                id={clickedItem?.id}
+                idLabel="accountingPeriodId"
+                getApiService={apiService.get}
+                postApiService={apiService.post}
+                putApiService={apiService.put}
+                getEndpoint={financeEndpoints.getAccountingPeriodById(
+                  clickedItem?.id
+                )}
+                deleteApiService={apiService.delete}
+                apiService={apiService}
+                deleteEndpoint={financeEndpoints.deleteAccountingPeriodLines}
+                postEndpoint={financeEndpoints.addAccountingPeriodLines}
+                putEndpoint={financeEndpoints.updateAccountingPeriodLines}
+                passProspectivePensionerId={true}
+                fetchChildren="accountingPeriodLines"
+              />
+            </div>
           </div>
         ) : (
           <BaseAutoSaveInputCard
