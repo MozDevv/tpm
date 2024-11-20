@@ -56,12 +56,15 @@ const financeEndpoints = {
     `/AccountsSetup/DeleteAccountSubGroup?id=${id}`,
 
   addAccountingPeriod: '/AccountsSetup/AddAccountingPeriod',
+  getAccountingPeriodById: (id) =>
+    `/AccountsSetup/GetAccountingPeriod?id=${id}`,
   getAccountingPeriods: '/AccountsSetup/GetAccountingPeriod',
   updateAccountingPeriod: '/AccountsSetup/UpdateAccountingPeriod',
   deleteAccountingPeriod: (id) =>
     `/AccountsSetup/DeleteAccountingPeriod?id=${id}`,
 
   getAccountingPeriodLines: '/AccountsSetup/GetAccountingPeriodLines',
+
   addAccountingPeriodLines: '/AccountsSetup/AddAccountingPeriodLine',
   updateAccountingPeriodLines: '/AccountsSetup/UpdateAccountingPeriodLine',
   deleteAccountingPeriodLines: (id) =>

@@ -10,6 +10,8 @@ import { dateFormatter, formatDate } from '@/utils/dateFormatter';
 import financeEndpoints from '@/components/services/financeApi';
 import BaseSecondaryTable from '@/components/baseComponents/BaseSecondaryTable';
 import BaseSecondaryCard from '@/components/baseComponents/BaseSecondaryCard';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const columnDefs = [
   {
@@ -139,7 +141,6 @@ const AccountingPeriod = () => {
       name: 'isClosed',
       label: 'Is Closed',
       type: 'switch',
-      required: true,
     },
   ];
   const subGroupColumnDefs = [
@@ -177,14 +178,42 @@ const AccountingPeriod = () => {
   ];
 
   const subgroupFields = [
-    { name: 'startDate', label: 'Start Date', type: 'date', required: true },
-    { name: 'monthName', label: 'Month Name', type: 'text', required: true },
-    { name: 'description', label: 'Description', type: 'text', required: true },
     {
-      name: 'isDateLocked',
-      label: 'Is Date Locked',
-      type: 'switch',
+      value: 'monthName',
+      label: 'Month Name',
+      type: 'select',
       required: true,
+      options: [
+        { id: 'January', name: 'January' },
+        { id: 'February', name: 'February' },
+        { id: 'March', name: 'March' },
+        { id: 'April', name: 'April' },
+        { id: 'May', name: 'May' },
+        { id: 'June', name: 'June' },
+        { id: 'July', name: 'July' },
+        { id: 'August', name: 'August' },
+        { id: 'September', name: 'September' },
+        { id: 'October', name: 'October' },
+        { id: 'November', name: 'November' },
+        { id: 'December', name: 'December' },
+      ],
+    },
+    { value: 'startDate', label: 'Start Date', type: 'date', required: true },
+    {
+      value: 'description',
+      label: 'Description',
+      type: 'text',
+      required: true,
+    },
+    {
+      value: 'isDateLocked',
+      label: 'Is Date Locked',
+      type: 'select',
+      notRequired: true,
+      options: [
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
+      ],
     },
     // {
     //   name: "isInventoryPeriodClosed",
@@ -204,29 +233,6 @@ const AccountingPeriod = () => {
 
   return (
     <div className="">
-      <BaseSecondaryCard
-        openBaseCard={openSubGroup}
-        setOpenBaseCard={setOpenSubGroup}
-        title={
-          clickedSubGroup
-            ? 'Edit Accounting Period'
-            : 'Create New Accounting Period'
-        }
-        clickedItem={clickedSubGroup}
-        deleteApiEndpoint={financeEndpoints.deleteAccountingPeriodLines(
-          clickedSubGroup?.id
-        )}
-        deleteApiService={apiService.delete}
-        fields={subgroupFields}
-        updateEndpoint={financeEndpoints.updateAccountingPeriodLines}
-        createEndpoint={financeEndpoints.addAccountingPeriodLines}
-        postApiFunction={apiService.post}
-        setPostedData={setPostedData}
-        id={clickedItem?.id}
-        idLabel="accountingPeriodId"
-        isBranch={true}
-        setClickedItem={setClickedSubGroup}
-      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -241,37 +247,56 @@ const AccountingPeriod = () => {
       >
         {clickedItem ? (
           <div className="">
-            <BaseInputCard
+            <BaseAutoSaveInputCard
               fields={fields}
-              apiEndpoint={financeEndpoints.updateAccountingPeriod}
+              apiEndpoint={financeEndpoints.addAccountingPeriod}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updateAccountingPeriod}
               postApiFunction={apiService.post}
-              clickedItem={clickedItem}
-              useRequestBody={true}
+              getApiEndpoint={financeEndpoints.getAccountingPeriods}
+              getApiFunction={apiService.get}
+              transformData={transformData}
               setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+              clickedItem={clickedItem}
             />
-            <BaseSecondaryTable
-              columnDefs={subGroupColumnDefs}
-              rowData={clickedItem?.subGroups}
-              onRowClicked={(e) => {
-                console.log('Row clicked', e.data);
-                setClickedSubGroup(e.data);
-                setOpenSubGroup(true);
-              }}
-              handleButtonClick={() => {
-                setOpenSubGroup(true);
-                setClickedSubGroup(null);
-              }}
-              title={'Accounting Period Lines'}
+            <BaseInputTable
+              title="Accounting Period"
+              fields={subgroupFields}
+              id={clickedItem?.id}
+              idLabel="accountingPeriodId"
+              getApiService={apiService.get}
+              postApiService={apiService.post}
+              putApiService={apiService.put}
+              getEndpoint={financeEndpoints.getAccountingPeriodById(
+                clickedItem?.id
+              )}
+              deleteApiService={apiService.delete}
+              apiService={apiService}
+              deleteEndpoint={financeEndpoints.deleteAccountingPeriodLines}
+              postEndpoint={financeEndpoints.addAccountingPeriodLines}
+              putEndpoint={financeEndpoints.updateAccountingPeriodLines}
+              passProspectivePensionerId={true}
+              fetchChildren="accountingPeriodLines"
             />
           </div>
         ) : (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addAccountingPeriod}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateAccountingPeriod}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+            getApiEndpoint={financeEndpoints.getAccountingPeriodById}
+            getApiFunction={apiService.get}
+            transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
           />
         )}
       </BaseCard>

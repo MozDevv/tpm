@@ -36,8 +36,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
     };
 
     const wrapper = document.createElement('div');
-    wrapper.style.width = `${fixedWidth}px`;
-    wrapper.style.height = `${fixedHeight}px`;
+
     wrapper.style.position = 'relative';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
@@ -47,8 +46,6 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
     const clonedElement = element.cloneNode(true);
     clonedElement.style.transform = 'scale(1)';
     clonedElement.style.transformOrigin = 'top left';
-    clonedElement.style.width = `${fixedWidth}px`;
-    clonedElement.style.height = `${fixedHeight}px`;
 
     wrapper.appendChild(clonedElement);
 
@@ -116,8 +113,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
       // Create a wrapper to hold the cloned content
       const wrapper = document.createElement('div');
-      wrapper.style.width = `${fixedWidth}px`;
-      wrapper.style.height = `${fixedHeight}px`;
+
       wrapper.style.position = 'relative';
       wrapper.style.display = 'flex';
       wrapper.style.alignItems = 'center';
@@ -128,8 +124,6 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       const scale = 0.99; // Scale factor to reduce the size
       clonedElement.style.transform = `scale(${scale})`;
       clonedElement.style.transformOrigin = 'top left';
-      clonedElement.style.width = `${fixedWidth}px`;
-      clonedElement.style.height = `${fixedHeight}px`;
 
       wrapper.appendChild(clonedElement);
 
@@ -306,7 +300,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
             {/* Pensionable Service */}
             {/* Pensionable Service */}
             <div className="mt-4">
-              <h2 className="font-semibold mb-2">Pensionable Service</h2>
+              <h2 className="font-bold mb-2">Pensionable Service</h2>
 
               <table className="w-full border-collapse text-center ml-[-15px]">
                 <thead>
@@ -377,9 +371,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
             {/* Pensionable Service In Months */}
             <div className="mt-4">
-              <h2 className="font-semibold mb-2">
-                Pensionable Service In Months
-              </h2>
+              <h2 className="font-bold mb-2">Pensionable Service In Months</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">

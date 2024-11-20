@@ -71,7 +71,9 @@ const Members = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? clickedItem?.payrollNumber : 'Create New Member';
+  const title = clickedItem
+    ? 'Member' + clickedItem?.payrollNumber
+    : 'Create New Member';
 
   const [vendorPG, setVendorPG] = React.useState([]);
 

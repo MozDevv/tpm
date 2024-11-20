@@ -170,8 +170,44 @@ const BaseInputTable = ({
               console.log('Fetched Children Data:', childrenData);
 
               console.log('childrenData', childrenData);
+
+              const lastRow = childrenData[childrenData.length - 1];
+
+              const lastMonthName = lastRow?.monthName;
+
+              const startDate = lastRow?.startDate;
+
+              const monthNames = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+              ];
+
+              if (lastRow && lastMonthName && startDate) {
+                const currentMonthIndex = monthNames.indexOf(lastMonthName);
+                const nextMonthDate = dayjs(startDate).add(1, 'month');
+
+                const nextMonthName =
+                  monthNames[(currentMonthIndex + 1) % monthNames.length];
+
+                defaultRows[0].monthName = nextMonthName;
+                defaultRows[0].startDate = nextMonthDate.format(
+                  'YYYY-MM-DDTHH:mm:ss[Z]'
+                );
+              }
+
+              console.log('Last Month Name:', lastMonthName);
               // Merge sortedData with childrenData
-              return [...childrenData, ...sortedData];
+              return [...childrenData, ...defaultRows];
             } else {
               return [...sortedData, ...defaultRows];
             }
@@ -200,10 +236,9 @@ const BaseInputTable = ({
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
-              console.log('Fetched Children Data:', childrenData);
 
               // Merge sortedData with childrenData
-              return [...childrenData, ...sortedData];
+              return [...childrenData, ...defaultRows];
             } else {
               return [...sortedData, ...defaultRows];
             }
@@ -337,9 +372,9 @@ const BaseInputTable = ({
         } else if (
           res.status === 200 &&
           !res.data.succeeded &&
-          res.data.message.length > 0
+          res.data.messages.length > 0
         ) {
-          message.error(res.data.message[0]);
+          message.error(res.data.messages[0]);
           setCellError(data.id, null, res.data.message[0]);
           throw new Error(res.data.message[0]);
         }
@@ -370,6 +405,14 @@ const BaseInputTable = ({
             });
           });
           throw new Error('An error occurred while submitting the data.');
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.messages.length > 0
+        ) {
+          message.error(res.data.messages[0]);
+          setCellError(data.id, null, res.data.message[0]);
+          throw new Error(res.data.message[0]);
         }
       }
     } catch (error) {
