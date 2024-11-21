@@ -1,0 +1,30 @@
+/* ag-theme-quartz-dark.css */
+.ag-theme-quartz-dark {
+  --ag-background-color: #1c1f25;
+  --ag-header-background-color: #2a2d35;
+  --ag-odd-row-background-color: #2a2d35;
+  --ag-even-row-background-color: #2a2d35;
+  --ag-font-color: #ffffff;
+  --ag-border-color: transparent; /* Set border color to transparent */
+  --ag-header-foreground-color: #ffffff;
+  --ag-row-hover-color: #3a3f47;
+  --ag-selected-row-background-color: #3a3f47;
+  --ag-icon-color: #ffffff;
+  --ag-input-focus-border-color: #3a3f47;
+
+  /* Explicitly remove borders */
+}
+
+.ag-root-wrapper,
+.ag-header,
+.ag-body-viewport,
+.ag-cell,
+.ag-row,
+.ag-header-cell,
+.ag-footer,
+.ag-status-bar {
+  border: none !important;
+}
+.ag-root-wrapper {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box-shadow */
+}

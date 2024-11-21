@@ -150,9 +150,18 @@ const BaseAutoSaveInputCardWithSections = ({
       }
     }
 
+    // Date validation and formatting
+    if (field.type === 'date' && value) {
+      if (!dayjs(value, 'YYYY-MM-DD', true).isValid()) {
+        newErrors[field.name] = `${field.label} is not a valid date`;
+      } else {
+        formData[field.name] = dayjs(value).format('YYYY-MM-DDTHH:mm:ss[Z]');
+      }
+    }
+
     // Required field validation
     if (field.required && !value) {
-      newErrors[field.name] = `     `;
+      newErrors[field.name] = `   `;
     }
 
     return newErrors;

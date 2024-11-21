@@ -192,13 +192,11 @@ const Members = ({ status }) => {
         name: 'lastName',
         label: 'Last Name',
         type: 'text',
-        required: true,
       },
       {
         name: 'otherName',
         label: 'Other Name',
         type: 'text',
-        required: true,
       },
       {
         name: 'gender',
