@@ -198,6 +198,7 @@ const Members = ({ status }) => {
         name: 'otherName',
         label: 'Other Name',
         type: 'text',
+        required: true,
       },
       {
         name: 'gender',
@@ -637,7 +638,7 @@ const Members = ({ status }) => {
                   idLabel="memberId"
                   getApiService={apiService.get}
                   postApiService={apiService.post}
-                  putApiService={apiService.put}
+                  putApiService={apiService.post}
                   getEndpoint={financeEndpoints.getMemberNextOfKin(
                     clickedItem?.id
                   )}

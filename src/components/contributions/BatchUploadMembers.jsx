@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -12,6 +12,8 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import { parseDate } from '@/utils/dateFormatter';
 import BaseInputCard from '../baseComponents/BaseInputCard';
 import generateExcelTemplate from '@/utils/excelHelper';
+import endpoints from '../services/setupsApi';
+import { apiService as setupsApiService } from '../services/setupsApi';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -188,15 +190,39 @@ const BatchUploadMembers = () => {
     };
     fetchSponsors();
   }, []);
+
+  const [mdas, setMdas] = useState([]);
+
+  const fetchMdas = async () => {
+    try {
+      const res = await setupsApiService.get(endpoints.mdas, {
+        'paging.pageNumber': 1,
+        'paging.pageSize': 1000,
+      });
+      setMdas(
+        res.data.data.map((mda) => ({
+          id: mda.id,
+          name: mda.description,
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching MDAs:', error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    fetchMdas();
+  }, []);
   const uploadFields = [
     {
       name: 'sponsorId',
       label: 'Sponsor',
-      type: 'select',
+      type: 'autocomplete',
       required: true,
-      options: sponsors.map((sponsor) => ({
+      options: mdas.map((sponsor) => ({
         id: sponsor.id,
-        name: sponsor.sponsorName,
+        name: sponsor.name,
       })),
     },
     {

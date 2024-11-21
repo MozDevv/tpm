@@ -11,6 +11,8 @@ import { parseDate } from '@/utils/dateFormatter';
 import { name } from 'dayjs/locale/en-au';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import endpoints from '@/components/services/setupsApi';
+import { apiService as setupsApiService } from '@/components/services/setupsApi';
 
 const OperationsSetups = () => {
   const transformString = (str) => {
@@ -27,6 +29,7 @@ const OperationsSetups = () => {
   const [customerPostingGroups, setCustomerPostingGroups] = React.useState([]);
   const [vatPostingGroups, setVatPostingGroups] = React.useState([]);
   const [paymentMethods, setPaymentMethods] = React.useState([]);
+  const [mdas, setMdas] = React.useState([]);
 
   useEffect(() => {
     const fetchBankAccounts = async () => {
@@ -130,7 +133,25 @@ const OperationsSetups = () => {
         console.log(error);
       }
     };
+    const fetchMdas = async () => {
+      try {
+        const res = await setupsApiService.get(endpoints.mdas, {
+          'paging.pageNumber': 1,
+          'paging.pageSize': 1000,
+        });
+        setMdas(
+          res.data.data.map((mda) => ({
+            id: mda.id,
+            name: mda.description,
+          }))
+        );
+      } catch (error) {
+        console.error('Error fetching MDAs:', error);
+        return [];
+      }
+    };
 
+    fetchMdas();
     fetchBankAccounts();
     fetchAwardPostingGroups();
     fetchBankPostingGroups();
@@ -153,6 +174,7 @@ const OperationsSetups = () => {
       defaultCustomerPostingGroup: item.defaultCustomerPostingGroup,
       defaultVatPostingGroup: item.defaultVatPostingGroup,
       defaultPaymentMethod: item.defaultPaymentMethod,
+      deductionToCapMda: item.deductionToCapMda,
     }));
   };
 
@@ -275,6 +297,17 @@ const OperationsSetups = () => {
         return {
           id: p.id,
           name: p.code,
+        };
+      }),
+    },
+    {
+      name: 'deductionToCapMda',
+      label: 'Deduction to Cap MDA',
+      type: 'autocomplete',
+      options: mdas.map((m) => {
+        return {
+          id: m.id,
+          name: m.name,
         };
       }),
     },
