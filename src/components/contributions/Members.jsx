@@ -19,7 +19,7 @@ import BaseInputTable from '../baseComponents/BaseInputTable';
 import BaseFinanceInputTable from '../baseComponents/BaseFinanceInputTable';
 import { Button } from '@mui/material';
 
-const Members = () => {
+const Members = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -675,7 +675,11 @@ const Members = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getMembers}
+        fetchApiEndpoint={
+          status || status === 0
+            ? financeEndpoints.getMemberByStatus(status)
+            : financeEndpoints.getMembers
+        }
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
