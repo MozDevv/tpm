@@ -38,6 +38,7 @@ import {
 } from '@mui/icons-material';
 import { truncateMessage } from '@/utils/handyFuncs';
 import MuiPhoneNumber from 'mui-phone-number';
+import { baseValidatorFn } from './BaseValidatorFn';
 
 const BaseAutoSaveInputCardWithSections = ({
   fields,
@@ -100,77 +101,15 @@ const BaseAutoSaveInputCardWithSections = ({
   }, [clickedItem]);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const handleInputChange = (e) => {
-    setUnsavedChanges(true);
-    const { name, value, type, checked, multiple } = e.target;
+    const { name, value, type } = e.target;
+    const parsedValue = type === 'number' ? Number(value) : value;
 
-    if (name === selectedLabel) {
-      setSelectedValue(value);
-    }
-    if (type === 'text') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-    if (type === 'number') {
-      if (value === '') {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: null,
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value * 1,
-        }));
-      }
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: parsedValue,
+    }));
 
-    // if (name === filterValue && fields && value) {
-    //   const options = fields.find(
-    //     (field) => field.name === filterValue
-    //   ).options;
-    // }
-
-    if (name === 'bank_id' && value) {
-      const filteredBranches = banks.filter(
-        (branch) => branch.bankId === value
-      );
-
-      setSelectedBank(filteredBranches);
-    }
-    if (name === fieldName && value !== '' && options) {
-      console.log('Filtering options...', options);
-
-      const filtered = options.filter((item) => item[filterKey] === value);
-
-      console.log('Filtered options: ', filtered);
-
-      setResultFunction(filtered); // Set the filtered result
-    }
-    if (multiple) {
-      const values = Array.from(
-        e.target.selectedOptions,
-        (option) => option.value
-      );
-      setFormData((prev) => ({
-        ...prev,
-        [name]: values,
-      }));
-    } else if (type === 'checkbox') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
     setIsEditing(true);
-
-    // validateForm();
   };
 
   const handleAmountChange = (e) => {
@@ -183,99 +122,40 @@ const BaseAutoSaveInputCardWithSections = ({
   };
 
   const { mdaId } = useMda();
-  const validateForm = () => {
-    const newErrors = {};
+  const flattenedFields = Object.keys(fields).reduce((acc, section) => {
+    return acc.concat(fields[section]);
+  }, []);
 
-    const flattenedFields = Object.keys(fields).reduce((acc, section) => {
+  useEffect(() => {
+    const combinedFields = Object.keys(fields).reduce((acc, section) => {
       return acc.concat(fields[section]);
     }, []);
 
-    flattenedFields.forEach((field) => {
-      const value = formData[field.name];
+    const errors = combinedFields.reduce((acc, field) => {
+      const fieldErrors = validateField(field, formData[field.name]);
+      return { ...acc, ...fieldErrors };
+    }, {});
 
-      // Required field validation
+    setErrors(errors);
+  }, [formData]);
 
-      if (field.name === 'accountCode' && value) {
-      }
-      if (field.name === 'accountName' && value) {
-      }
-      if (
-        field.required &&
-        (value === undefined || value === null || value === '')
-      ) {
-        newErrors[field.name] = `${field.label} is required`;
-      }
+  const validateField = (field, value) => {
+    const newErrors = {};
 
-      // Date validation
-      // if (field.type === "date" && value) {
-      //   if (!dayjs(value, "YYYY-MM-DD", true).isValid()) {
-      //     newErrors[field.name] = `${field.label} is not a valid date`;
-      //   } else {
-      //     formData[field.name] = dayjs(value).toISOString();
-      //   }
-      // }
-
-      if ((field.type === 'date' || field.name === 'dob') && value) {
-        if (!dayjs(value, 'YYYY-MM-DD', true).isValid()) {
-          newErrors[field.name] = `${field.label} is not a valid date`;
-        } else {
-          formData[field.name] = dayjs(value).format('YYYY-MM-DDTHH:mm:ss[Z]');
-        }
+    // Use baseValidatorFn for validation
+    if (baseValidatorFn[field.name]) {
+      const error = baseValidatorFn[field.name](value);
+      if (error) {
+        newErrors[field.name] = `${error}`;
       }
-      // KRA PIN validation
-      if (field.name === 'kra_pin' && value) {
-        if (value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
-          newErrors[field.name] = `${field.label} is not valid`;
-        }
-      }
+    }
 
-      // National ID validation
-      if (field.name === 'national_id' && value) {
-        if (value && !/^\d+$/.test(value)) {
-          newErrors[field.name] = `${field.label} is not valid`;
-        }
-      }
+    // Required field validation
+    if (field.required && !value) {
+      newErrors[field.name] = `     `;
+    }
 
-      // Email validation
-      if ((field.name === 'email' || field.name === 'email_address') && value) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(value)) {
-          newErrors[field.name] = `${field.label} is not a valid email`;
-        }
-      }
-
-      // Phone number validation
-      if (field.name === 'phone_number' && value) {
-        if (value && !/^\d+$/.test(value)) {
-          newErrors[field.name] = `${field.label} is not a valid phone number`;
-        }
-      }
-
-      if (field.type === 'number' && value) {
-        formData[field.name] = value * 1;
-      }
-
-      if (field.type === 'switch' && value === undefined) {
-        formData[field.name] = false;
-      }
-
-      if (field.name === 'mda_id' && field.hide) {
-        formData[field.name] = mdaId;
-      }
-
-      // Account number validation
-      if (field.name === 'account_number' && value) {
-        const accountNumberPattern = /^[0-9]{10,20}$/; // Adjust pattern for account number format
-        if (!accountNumberPattern.test(value)) {
-          newErrors[
-            field.name
-          ] = `${field.label} is not a valid account number`;
-        }
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   useEffect(() => {
@@ -291,7 +171,7 @@ const BaseAutoSaveInputCardWithSections = ({
   const [saving, setSaving] = useState(false);
 
   const handleAutoSave = async () => {
-    if (validateForm()) {
+    if (errors && Object.keys(errors).length === 0) {
       setSaving(1);
       setOpenBaseCard(true);
       setUnsavedChanges(false);
@@ -763,6 +643,7 @@ const BaseAutoSaveInputCardWithSections = ({
                         onBlur={handleAutoSave}
                         variant="outlined"
                         size="small"
+                        helperText={errors[field.name]}
                         value={formData[field.name] || ''}
                         onChange={handleInputChange}
                         error={!!errors[field.name]}

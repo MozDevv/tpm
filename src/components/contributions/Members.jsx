@@ -192,6 +192,7 @@ const Members = () => {
         name: 'lastName',
         label: 'Last Name',
         type: 'text',
+        required: true,
       },
       {
         name: 'otherName',
@@ -333,14 +334,14 @@ const Members = () => {
       {
         name: 'phoneNumber',
         label: 'Phone Number',
-        type: 'text',
-        required: true,
+        type: 'phonenumber',
+        //   required: true,
       },
       {
         name: 'emailAdress',
         label: 'Email Address',
         type: 'email',
-        required: true,
+        // required: true,
       },
       {
         name: 'postalAddress',
@@ -366,13 +367,13 @@ const Members = () => {
   };
 
   const membershipStatusMap = {
-    0: { name: 'Active', color: '#e74c3c' }, // Light Red
-    1: { name: 'Deferred', color: '#f39c12' }, // Orange
-    2: { name: 'Died', color: '#2ecc71' }, // Green
+    0: { name: 'Active', color: '#2ecc71' }, // Green
+    1: { name: 'Deferred', color: '#e74c3c' }, // Red
+    2: { name: 'Died', color: '#95a5a6' }, // Grey
     3: { name: 'Retired', color: '#9b59b6' }, // Purple
-    4: { name: 'Leave of absence', color: '#3498db' }, // Blue
-    5: { name: 'Secondment', color: '#1abc9c' }, // Turquoise
-    6: { name: 'Fully paid', color: '#e67e22' }, // Carrot
+    4: { name: 'Leave of absence', color: '#f39c12' }, // Orange
+    5: { name: 'Secondment', color: '#3498db' }, // Blue
+    6: { name: 'Fully paid', color: '#1abc9c' }, // Turquoise
   };
   const columnDefs = [
     {
@@ -420,7 +421,7 @@ const Members = () => {
           <Button
             variant="text"
             sx={{
-              ml: 3,
+              ml: 1,
               // borderColor: status.color,
               maxHeight: '22px',
               cursor: 'pointer',

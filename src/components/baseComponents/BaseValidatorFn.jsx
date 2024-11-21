@@ -11,10 +11,13 @@ export const baseValidatorFn = {
     return null;
   },
   phoneNumber: (value) => {
-    const phoneRegex = /^[0-9]{10}$/; // Example: 10-digit phone number
-    if (!phoneRegex.test(value)) return ' Phone number must be 10 digits';
+    const phoneRegex = /^\+?[\d\s]{7,15}$/; // Allows +, spaces, and 7 to 15 digits
+    if (!phoneRegex.test(value)) {
+      return 'Phone number is not valid.';
+    }
     return null;
   },
+
   kra_pin: (value) => {
     const kraPinRegex = /^[A-Z0-9]{13}$/; // Example: 13-character KRA PIN
     if (!kraPinRegex.test(value))

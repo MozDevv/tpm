@@ -9,6 +9,9 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
 import { name } from 'dayjs/locale/en-au';
+import { Tabs } from 'antd';
+import TabPane from 'antd/es/tabs/TabPane';
+import ApproverUsers from './ApproverUsers';
 
 const ApprovalStages = () => {
   const [users, setUsers] = useState([]);
@@ -199,14 +202,14 @@ const ApprovalStages = () => {
       type: 'text',
       required: true,
     },
-    {
-      name: 'primary_approver_id',
-      label: 'Approver',
-      type: 'table',
-      row1: 'Primary Approver',
-      row2: 'Secondary Approver',
-      options: approvers,
-    },
+    // {
+    //   name: 'primary_approver_id',
+    //   label: 'Approver',
+    //   type: 'table',
+    //   row1: 'Primary Approver',
+    //   row2: 'Secondary Approver',
+    //   options: approvers,
+    // },
     {
       name: 'on_reject_return_to',
       label: 'On Reject Return To',
@@ -214,7 +217,11 @@ const ApprovalStages = () => {
       options: users,
     },
   ];
+  const [activeKey, setActiveKey] = useState('1');
 
+  const handleTabChange = (key) => {
+    setActiveKey(key);
+  };
   return (
     <div className="">
       <BaseCard
@@ -228,14 +235,39 @@ const ApprovalStages = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateApprovalStage}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
+          <Tabs
+            activeKey={activeKey}
+            onChange={handleTabChange}
+            className="!bg-transparent z-50 ml-4"
+            style={{ zIndex: 999999999 }}
+            tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
+          >
+            <TabPane
+              tab={
+                <span className="text-primary font-montserrat ">
+                  Approval Stage
+                </span>
+              }
+              key="1"
+            >
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={endpoints.updateApprovalStage}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <span className="text-primary font-montserrat ">Approvers</span>
+              }
+              key="2"
+            >
+              <ApproverUsers />
+            </TabPane>
+          </Tabs>
         ) : (
           <BaseInputCard
             fields={fields}
