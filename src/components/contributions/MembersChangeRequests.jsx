@@ -13,13 +13,13 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import BaseAutoSaveInputCardWithSections from '../baseComponents/BaseAutoSaveInputCardWithSections';
 import endpoints from '../services/setupsApi';
 import { apiService as setupsApiService } from '../services/setupsApi';
-import { message, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
 import BaseInputTable from '../baseComponents/BaseInputTable';
 import BaseFinanceInputTable from '../baseComponents/BaseFinanceInputTable';
 import { Button } from '@mui/material';
 
-const Members = ({ status }) => {
+const MembersChangeRequests = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -60,21 +60,6 @@ const Members = ({ status }) => {
     }));
   };
 
-  const handleChangeRequest = async () => {
-    try {
-      const res = await apiService.post(
-        financeEndpoints.addMemberChangeRequest,
-        clickedItem
-      );
-
-      if (res.status === 200) {
-        message.success('Change request created successfully');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const [uploadExcel, setUploadExcel] = React.useState(false);
   const [sponsors, setSponsors] = React.useState([]);
 
@@ -104,8 +89,6 @@ const Members = ({ status }) => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
-
-    createChangeRequest: () => handleChangeRequest(),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -599,6 +582,7 @@ const Members = ({ status }) => {
         deleteApiEndpoint={financeEndpoints.deleteMember(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
+        {' '}
         {clickedItem ? (
           <>
             <Tabs
@@ -710,4 +694,4 @@ const Members = ({ status }) => {
   );
 };
 
-export default Members;
+export default MembersChangeRequests;

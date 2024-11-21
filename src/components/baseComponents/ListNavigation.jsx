@@ -38,6 +38,7 @@ import {
   CloudUpload,
   PriceCheck,
   AssuredWorkload,
+  PlaylistAdd,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -424,6 +425,12 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       icon: Launch,
       action: 'exportScheduleLines',
       disabled: false,
+      requiredPermissions: [],
+    },
+    {
+      name: 'Create Change Request',
+      icon: PlaylistAdd,
+      action: 'createChangeRequest',
       requiredPermissions: [],
     },
   ];

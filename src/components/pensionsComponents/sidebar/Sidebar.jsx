@@ -372,6 +372,19 @@ function Sidebar() {
             },
           ],
         },
+        {
+          title: 'Change Requests',
+          subChildren: [
+            {
+              title: 'Member Change Requests',
+              path: '/pensions/contributions/change-requests',
+            },
+            {
+              title: 'Next of Kin Change Requests',
+              path: '/pensions/contributions/change-requests/next-of-kin',
+            },
+          ],
+        },
       ],
     },
 

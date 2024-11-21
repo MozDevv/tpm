@@ -284,6 +284,13 @@ const financeEndpoints = {
 
   addMember: '/Contribution/AddMember',
   getMembers: '/Contribution/GetMember',
+  getMemberById: (id) => `/Contribution/GetMember?id=${id}`,
+
+  addMemberChangeRequest: '/Contribution/AddMemberChangeRequest',
+  getMemberChangeRequests: '/Contribution/GetMemberChangeRequests',
+  updateMemberChangeRequest: '/Contribution/UpdateMemberChangeRequest',
+  deleteMemberChangeRequest: (id) =>
+    `/Contribution/DeleteMemberChangeRequest?id=${id}`,
 
   getMemberByStatus: (status) =>
     `/Contribution/GetMember?MembershipStatus=${status}`,

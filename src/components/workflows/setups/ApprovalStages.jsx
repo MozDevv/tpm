@@ -265,7 +265,7 @@ const ApprovalStages = () => {
               }
               key="2"
             >
-              <ApproverUsers />
+              <ApproverUsers clickedItem={clickedItem} />
             </TabPane>
           </Tabs>
         ) : (

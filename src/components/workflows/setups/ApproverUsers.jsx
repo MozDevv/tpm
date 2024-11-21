@@ -17,7 +17,7 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { Add, PersonAddAlt1, PersonRemove, Remove } from '@mui/icons-material';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
-function ApproverUsers() {
+function ApproverUsers({ clickedItem }) {
   const [users, setUsers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -25,43 +25,58 @@ function ApproverUsers() {
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedMda, setSelectedMda] = useState('');
+  const [approversForThisStage, setApproversForThisStage] = useState([]);
+
+  const fetchApproversForThisStage = async () => {
+    try {
+      // Fetch users first
+      await fetchUsers();
+
+      const res = await apiService.get(
+        endpoints.getApproversForASpecificStage(clickedItem?.id)
+      );
+
+      // Map approvers with user details
+      const approversData = res.data.data.map((item) => {
+        const user = users.find((user) => user.id === item.primary_approver_id);
+        return {
+          userId: item.primary_approver_id,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          mdaId: user?.mdaId || '',
+          roleId: user?.roleId || '',
+        };
+      });
+
+      setApproversForThisStage(approversData);
+    } catch (error) {
+      console.error('Error fetching approvers:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const res = await apiService.get(endpoints.getUsers, {
+        'paging.pageSize': 1000,
+      });
+      const usersData = res.data.data.map((item, index) => ({
+        no: index,
+        id: item.id,
+        name: item.email,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        email: item.email,
+        mdaId: item.mdaId,
+        roleId: item.roleId,
+      }));
+      setUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchApprovers = async () => {
-      try {
-        const res = await apiService.get(endpoints.getApprovalUsers, {
-          'paging.pageSize': 1000,
-        });
-        const approversData = res.data.data.map((item) => ({
-          userId: item.primary_approver_id,
-        }));
-        setApprovers(approversData);
-      } catch (error) {
-        console.error('Error fetching approvers:', error);
-      }
-    };
-
-    const fetchUsers = async () => {
-      try {
-        const res = await apiService.get(endpoints.getUsers, {
-          'paging.pageSize': 1000,
-        });
-        const usersData = res.data.data.map((item, index) => ({
-          no: index,
-          id: item.id,
-          name: item.email,
-          firstName: item.firstName,
-          lastName: item.lastName,
-          email: item.email,
-          mdaId: item.mdaId,
-          roleId: item.roleId,
-        }));
-        setUsers(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
     const fetchMdas = async () => {
       try {
         const res = await apiService.get(endpoints.mdas, {
@@ -97,26 +112,104 @@ function ApproverUsers() {
       }
     };
 
-    const fetchData = async () => {
-      await fetchApprovers();
-      await fetchUsers();
-    };
-
-    fetchRoles();
-    fetchData();
+    fetchApproversForThisStage();
+    fetchUsers();
     fetchMdas();
-  }, []);
+    fetchRoles();
+  }, [clickedItem]);
 
-  const approverDetails = approvers.map((approver) => {
-    const user = users.find((user) => user.id === approver.userId);
-    return user ? { ...approver, ...user } : approver;
-  });
+  const handleOpenDialog = async () => {
+    setOpenDialog(true);
+    try {
+      await fetchUsers();
+
+      const res = await apiService.get(endpoints.getApprovalUsers, {
+        'paging.pageSize': 1000,
+      });
+      const approversData = res.data.data.map((item) => {
+        const user = users.find((user) => user.id === item.primary_approver_id);
+        return {
+          userId: item.primary_approver_id,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          mdaId: user?.mdaId || '',
+          roleId: user?.roleId || '',
+        };
+      });
+      setApprovers(approversData);
+    } catch (error) {
+      console.error('Error fetching approvers:', error);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleAddApprover = async (selectedUser) => {
+    try {
+      await addApproverForThisStage(selectedUser.userId);
+      await fetchApproversForThisStage();
+      handleCloseDialog();
+    } catch (error) {
+      console.error('Error adding approver:', error);
+    }
+  };
+
+  const addApproverForThisStage = async (userId) => {
+    const data = {
+      approval_stage_id: clickedItem?.id,
+      primary_approver_id: userId,
+    };
+    try {
+      const res = await apiService.post(
+        endpoints.createApproverForASpecificStage,
+        data
+      );
+      if (res.status === 200) {
+        await fetchApproversForThisStage();
+        console.log('Approver added successfully');
+      }
+    } catch (error) {
+      console.error('Error adding approver:', error);
+    }
+  };
 
   const filteredUsers = users.filter(
     (user) =>
       (!selectedRole || user.roleId === selectedRole) &&
       (!selectedMda || user.mdaId === selectedMda)
   );
+
+  const fetchApprovers = async () => {
+    try {
+      // Fetch users first
+      await fetchUsers();
+
+      // Fetch all approvers
+      const res = await apiService.get(endpoints.getApprovalUsers, {
+        'paging.pageSize': 1000,
+      });
+
+      // Map approvers with user details
+      const approversData = res.data.data.map((item) => {
+        const user = users.find((user) => user.id === item.primary_approver_id);
+        return {
+          userId: item.primary_approver_id,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          mdaId: user?.mdaId || '',
+          roleId: user?.roleId || '',
+        };
+      });
+
+      setApprovers(approversData);
+    } catch (error) {
+      console.error('Error fetching approvers:', error);
+    }
+  };
 
   const columnDefs = [
     {
@@ -169,21 +262,10 @@ function ApproverUsers() {
     },
   ];
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handleAddApprover = (selectedUser) => {
-    setApprovers((prevApprovers) => [
-      ...prevApprovers,
-      { userId: selectedUser.id },
-    ]);
-    handleCloseDialog();
-  };
+  const approverDetails = approversForThisStage.map((approver) => {
+    const user = users.find((user) => user.id === approver.userId);
+    return user ? { ...approver, ...user } : approver;
+  });
 
   return (
     <div>
@@ -314,7 +396,7 @@ function ApproverUsers() {
             style={{ height: 400, width: '100%' }}
           >
             <AgGridReact
-              rowData={filteredUsers}
+              rowData={approvers}
               noRowsOverlayComponent={BaseEmptyComponent}
               columnDefs={columnDefs}
               pagination={false}

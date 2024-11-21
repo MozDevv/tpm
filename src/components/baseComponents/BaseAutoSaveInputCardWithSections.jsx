@@ -79,7 +79,7 @@ const BaseAutoSaveInputCardWithSections = ({
     }));
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialFormData || {});
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
   const [showWarningDialog, setShowWarningDialog] = useState(false);
@@ -160,21 +160,12 @@ const BaseAutoSaveInputCardWithSections = ({
     }
 
     // Required field validation
-    if (field.required && !value) {
+    if (field.required && !value && field.name !== 'membershipStatus') {
       newErrors[field.name] = `   `;
     }
 
     return newErrors;
   };
-
-  useEffect(() => {
-    if (formData.total_emoluments) {
-      setFormData((prev) => ({
-        ...prev,
-        contribution_amount: (prev.total_emoluments * 0.02).toFixed(2),
-      }));
-    }
-  }, [formData.total_emoluments]);
 
   const [recordId, setRecordId] = useState(clickedItem ? clickedItem.id : null);
   const [saving, setSaving] = useState(false);
@@ -202,23 +193,23 @@ const BaseAutoSaveInputCardWithSections = ({
             message.error('Error saving record');
           }
         } else {
-          console.log('Record ID exists, updating...');
-          console.log('PUT API Endp oint: ', updateApiEndpoint);
-
-          res = await putApiFunction(updateApiEndpoint, {
-            ...formData,
-            id: recordId,
-          });
-          if (res.data.succeeded) {
-            setSaving(2);
-            // message.success("Record updated successfully");
-            await getInitialData(recordId);
-          } else if (res.data.succeeded === false && res.data.messages[0]) {
-            setSaving(3);
-            message.error(truncateMessage(res.data.messages[0], 100));
-          } else {
-            setSaving(3);
-          }
+          // console.log('Record ID exists, updating...');
+          // console.log('PUT API Endp oint: ', updateApiEndpoint);
+          // res = await putApiFunction(updateApiEndpoint, {
+          //   ...formData,
+          //   id: recordId,
+          // });
+          // if (res.data.succeeded) {
+          //   setSaving(2);
+          //   // message.success("Record updated successfully");
+          //   await getInitialData(recordId);
+          // } else if (res.data.succeeded === false && res.data.messages[0]) {
+          //   setSaving(3);
+          //   message.error(truncateMessage(res.data.messages[0], 100));
+          // } else {
+          //   setSaving(3);
+          // }
+          setSaving(2);
         }
       } catch (error) {
         setSaving(3);
@@ -236,8 +227,8 @@ const BaseAutoSaveInputCardWithSections = ({
       const res = await getApiFunction(getApiEndpoint(id));
       if (res.status === 200) {
         const data = transformData(res.data.data);
-        setClickedItem(data[0]);
-        setFormData(data[0]);
+        setClickedItem(data[0] || {});
+        setFormData(data[0] ? data[0] : {});
         console.log('Get Initial Data Transfomred: ', formData);
       }
     } catch (error) {

@@ -367,6 +367,13 @@ const endpoints = {
   getParliamentaryTermsSetups: '/api/Setups/GetParliamentaryTermSetups',
   createParliamentaryTerms: '/api/Setups/CreateParliamentaryTermSetup',
 
+  /////
+
+  getApproversForASpecificStage: (id) =>
+    `/api/ApprovalSetUps/GetApprovalStageUser?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].propertyName=approval_stage_id`,
+
+  createApproverForASpecificStage:
+    '/api/ApprovalSetUps/CreateApprovalStageUser',
   getGeneralSettings: '/api/Setups/GetGeneralSettings',
   createGeneralSettings: '/api/Setups/CreateGeneralSettings',
   getRateOfInjury: '/api/Setups/GetRateOfInjuryForCap189Setups',
