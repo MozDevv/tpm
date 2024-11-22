@@ -39,6 +39,7 @@ import {
   PriceCheck,
   AssuredWorkload,
   PlaylistAdd,
+  EditNote,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -471,7 +472,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
     },
     {
       name: 'Change Request',
-      icon: PlaylistAdd,
+      icon: EditNote,
       action: 'changeRequest',
       requiredPermissions: [],
     },
