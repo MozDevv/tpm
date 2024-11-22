@@ -379,6 +379,191 @@ const Members = ({ status }) => {
       },
     ],
   };
+  const inputFields = {
+    personalDetails: [
+      {
+        name: 'surname',
+        label: 'Surname',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'firstName',
+        label: 'First Name',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'lastName',
+        label: 'Last Name',
+        type: 'text',
+      },
+      {
+        name: 'otherName',
+        label: 'Other Name',
+        type: 'text',
+      },
+      {
+        name: 'gender',
+        label: 'Gender',
+        type: 'select',
+        required: true,
+        options: [
+          { id: 'Male', name: 'Male' },
+          { id: 'Female', name: 'Female' },
+        ],
+      },
+
+      {
+        name: 'kraPin',
+        label: 'KRA Pin',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'nationalId',
+        label: 'National ID',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'pssfNumber',
+        label: 'PSSF Number',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'dateOfBirth',
+        label: 'Date of Birth',
+        type: 'date',
+        required: true,
+      },
+      {
+        name: 'maritalStatus',
+        label: 'Marital Status',
+        type: 'select',
+
+        options: [
+          { id: 0, name: 'Single' },
+          { id: 1, name: 'Married' },
+          { id: 2, name: 'Divorced' },
+          { id: 3, name: 'Widowed' },
+        ],
+      },
+    ],
+    contributionDetails: [
+      {
+        name: 'membershipStatus',
+        label: 'Membership Status',
+        type: 'select',
+        // required: true,
+        options: [
+          {
+            id: 0,
+            name: 'Active',
+          },
+          {
+            id: 1,
+            name: 'Deferred',
+          },
+          {
+            id: 2,
+            name: 'Died',
+          },
+          {
+            id: 3,
+            name: 'Retired',
+          },
+          {
+            id: 4,
+            name: 'Leave of absence',
+          },
+          {
+            id: 5,
+            name: 'Secondment',
+          },
+          {
+            id: 6,
+            name: 'Fully paid',
+          },
+        ],
+      },
+
+      {
+        name: 'sponsorId',
+        label: 'Sponsor',
+        type: 'autocomplete',
+        required: true,
+        options: mdas.map((sponsor) => ({
+          id: sponsor.id,
+          name: sponsor.name,
+        })),
+      },
+      {
+        name: 'professionId',
+        label: 'Profession',
+        type: 'autocomplete',
+        required: true,
+        options: designations.map((profession) => ({
+          id: profession.id,
+          name: profession.name,
+        })),
+      },
+      {
+        name: 'dateOfJoiningScheme',
+        label: 'Date of Joining Scheme',
+        type: 'date',
+        required: true,
+      },
+      {
+        name: 'dateOfEmployment',
+        label: 'Date of Employment',
+        type: 'date',
+        required: true,
+      },
+      {
+        name: 'dateOfLeaving',
+        label: 'Date of Leaving',
+        type: 'date',
+        required: true,
+      },
+    ],
+
+    contactDetails: [
+      {
+        name: 'phoneNumber',
+        label: 'Phone Number',
+        type: 'phonenumber',
+        //   required: true,
+      },
+      {
+        name: 'emailAdress',
+        label: 'Email Address',
+        type: 'email',
+        // required: true,
+      },
+      {
+        name: 'postalAddress',
+        label: 'Postal Address',
+        type: 'text',
+      },
+      {
+        name: 'postalCode',
+        label: 'Postal Code',
+        type: 'text',
+      },
+      {
+        name: 'county',
+        label: 'County',
+        type: 'select',
+
+        options: counties.map((county) => ({
+          id: county.id,
+          name: county.name,
+        })),
+      },
+    ],
+  };
 
   const membershipStatusMap = {
     0: { name: 'Active', color: '#2ecc71' }, // Green
@@ -670,7 +855,7 @@ const Members = ({ status }) => {
           </>
         ) : (
           <BaseAutoSaveInputCardWithSections
-            fields={fields}
+            fields={inputFields}
             apiEndpoint={financeEndpoints.addMember}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateMember}
