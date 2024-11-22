@@ -6,6 +6,7 @@
 .pnp.js
 .yarn/install-state.gz
 
+
 # testing
 /coverage
 
@@ -41,3 +42,5 @@ next-env.d.ts
 zdeploy.yaml
 zdeploy live.md
 pipeline-treasury.yml
+
+next.config.mjs

@@ -30,8 +30,6 @@ steps:
         # Clean up unused Docker images
         sudo docker image prune -af
 
-        npm i --force
-
         # Pull the latest code from the repository
         git reset --hard origin/main
         git pull
