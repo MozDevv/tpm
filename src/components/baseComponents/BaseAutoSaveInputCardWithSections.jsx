@@ -501,7 +501,13 @@ const BaseAutoSaveInputCardWithSections = ({
                       />
                     ) : field.type === 'autocomplete' ? (
                       <Autocomplete
-                        options={field.options}
+                        options={
+                          field.name === 'professionId' && formData?.sponsorId
+                            ? field.options.filter(
+                                (option) => option.mdaId === formData?.sponsorId
+                              )
+                            : field.options
+                        }
                         disabled={disableAll}
                         getOptionLabel={(option) => option.name}
                         onChange={(event, newValue) => {
