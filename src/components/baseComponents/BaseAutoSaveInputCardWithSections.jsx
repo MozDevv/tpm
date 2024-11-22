@@ -62,6 +62,7 @@ const BaseAutoSaveInputCardWithSections = ({
   filterKey,
   setResultFunction,
   setOpenDrilldown,
+  disableAll,
 }) => {
   const initialFormData = Object.keys(fields).reduce((acc, section) => {
     fields[section].forEach((field) => {
@@ -193,6 +194,7 @@ const BaseAutoSaveInputCardWithSections = ({
             message.error('Error saving record');
           }
         } else {
+          setClickedItem({ ...formData, memberId: formData?.id });
           // console.log('Record ID exists, updating...');
           // console.log('PUT API Endp oint: ', updateApiEndpoint);
           // res = await putApiFunction(updateApiEndpoint, {
@@ -335,6 +337,7 @@ const BaseAutoSaveInputCardWithSections = ({
                         <Select
                           multiple
                           size="small"
+                          disabled={disableAll}
                           name={field.name}
                           value={formData[field.name] || []}
                           onChange={handleInputChange}
@@ -380,6 +383,7 @@ const BaseAutoSaveInputCardWithSections = ({
                               {...params}
                               variant="outlined"
                               size="small"
+                              disabled={disableAll}
                               fullWidth
                               name={field.name}
                               error={!!errors[field.name]}
@@ -455,8 +459,8 @@ const BaseAutoSaveInputCardWithSections = ({
                           onBlur={handleAutoSave}
                           size="small"
                           fullWidth
+                          disabled={disableAll}
                           name={field.name}
-                          disabled={field.disabled}
                           value={formData[field.name]}
                           onChange={handleInputChange}
                           error={!!errors[field.name]}
@@ -486,6 +490,7 @@ const BaseAutoSaveInputCardWithSections = ({
                       <TextField
                         name={field.name}
                         type="date"
+                        disabled={disableAll}
                         variant="outlined"
                         onBlur={handleAutoSave}
                         size="small"
@@ -497,6 +502,7 @@ const BaseAutoSaveInputCardWithSections = ({
                     ) : field.type === 'autocomplete' ? (
                       <Autocomplete
                         options={field.options}
+                        disabled={disableAll}
                         getOptionLabel={(option) => option.name}
                         onChange={(event, newValue) => {
                           handleInputChange({
@@ -512,6 +518,7 @@ const BaseAutoSaveInputCardWithSections = ({
                             variant="outlined"
                             size="small"
                             fullWidth
+                            disabled={disableAll}
                             name={field.name}
                             error={!!errors[field.name]}
                             onBlur={handleAutoSave}
@@ -606,7 +613,6 @@ const BaseAutoSaveInputCardWithSections = ({
                       <MuiPhoneNumber
                         defaultCountry="ke"
                         name={field.name}
-                        disabled={field.disabled}
                         value={formData[field.name]}
                         onChange={(value) =>
                           handleInputChange({
@@ -614,6 +620,7 @@ const BaseAutoSaveInputCardWithSections = ({
                           })
                         }
                         onBlur={handleAutoSave}
+                        disabled={disableAll}
                         error={!!errors[field.name]}
                         variant="outlined"
                         size="small"
@@ -640,6 +647,7 @@ const BaseAutoSaveInputCardWithSections = ({
                       <TextField
                         type={field.type}
                         name={field.name}
+                        disabled={disableAll}
                         onBlur={handleAutoSave}
                         variant="outlined"
                         size="small"
@@ -648,7 +656,6 @@ const BaseAutoSaveInputCardWithSections = ({
                         onChange={handleInputChange}
                         error={!!errors[field.name]}
                         required={field.required}
-                        disabled={field.disabled}
                         fullWidth
                       />
                     )}

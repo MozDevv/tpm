@@ -287,7 +287,9 @@ const financeEndpoints = {
   getMemberById: (id) => `/Contribution/GetMember?id=${id}`,
 
   addMemberChangeRequest: '/Contribution/AddMemberChangeRequest',
-  getMemberChangeRequests: '/Contribution/GetMemberChangeRequests',
+  getMemberChangeRequests: '/Contribution/GetMemberChangeRequest',
+  getMemberChangeRequestById: (id) =>
+    `/Contribution/GetMemberChangeRequest?id=${id}`,
   updateMemberChangeRequest: '/Contribution/UpdateMemberChangeRequest',
   deleteMemberChangeRequest: (id) =>
     `/Contribution/DeleteMemberChangeRequest?id=${id}`,

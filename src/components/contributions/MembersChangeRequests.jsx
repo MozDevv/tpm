@@ -13,7 +13,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 import BaseAutoSaveInputCardWithSections from '../baseComponents/BaseAutoSaveInputCardWithSections';
 import endpoints from '../services/setupsApi';
 import { apiService as setupsApiService } from '../services/setupsApi';
-import { Tabs } from 'antd';
+import { message, Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
 import BaseInputTable from '../baseComponents/BaseInputTable';
 import BaseFinanceInputTable from '../baseComponents/BaseFinanceInputTable';
@@ -55,6 +55,7 @@ const MembersChangeRequests = ({ status }) => {
       postalCode: item.postalCode,
       county: item.county,
       maritalStatus: item.maritalStatus,
+      memberId: item.memberId,
 
       // roles: item.roles,
     }));
@@ -66,28 +67,25 @@ const MembersChangeRequests = ({ status }) => {
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
+    approveChangeRequest: async (id) => {
+      const body = {
+        id: clickedItem?.memberId,
+        memberChangeRequestId: clickedItem?.id,
+      };
+      try {
+        const res = await apiService.post(financeEndpoints.updateMember, body);
+        if (res.status === 200) {
+          message.success('Member Change Request Approved Successfully');
+          setTimeout(() => {
+            setOpenBaseCard(false);
+          }, 1500);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   };
 
@@ -607,11 +605,11 @@ const MembersChangeRequests = ({ status }) => {
                     apiEndpoint={financeEndpoints.addMember}
                     putApiFunction={apiService.post}
                     updateApiEndpoint={financeEndpoints.updateMember}
-                    deleteApiEndpoint={financeEndpoints.deleteMember(
+                    deleteApiEndpoint={financeEndpoints.deleteMemberChangeRequest(
                       clickedItem?.id
                     )}
                     postApiFunction={apiService.post}
-                    getApiEndpoint={financeEndpoints.getMemberById(
+                    getApiEndpoint={financeEndpoints.getMemberChangeRequestById(
                       clickedItem?.id
                     )}
                     getApiFunction={apiService.get}
@@ -624,15 +622,8 @@ const MembersChangeRequests = ({ status }) => {
                   />
                 </div>
               </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Next of Kin Information
-                  </span>
-                }
-                key="2"
-              >
-                <BaseInputTable
+
+              {/* <BaseInputTable
                   title="Next of Kin Information"
                   fields={nextOfKinFields}
                   id={clickedItem?.id}
@@ -649,8 +640,7 @@ const MembersChangeRequests = ({ status }) => {
                   postEndpoint={financeEndpoints.addMemberNextOfKin}
                   putEndpoint={financeEndpoints.updateMemberNextOfKin}
                   passProspectivePensionerId={true}
-                />
-              </TabPane>
+                /> */}
             </Tabs>
           </>
         ) : (
@@ -678,17 +668,13 @@ const MembersChangeRequests = ({ status }) => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={
-          status || status === 0
-            ? financeEndpoints.getMemberByStatus(status)
-            : financeEndpoints.getMembers
-        }
+        fetchApiEndpoint={financeEndpoints.getMemberChangeRequests}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Member List"
-        currentTitle="Member List"
+        breadcrumbTitle="Member Change Requests List"
+        currentTitle="Member Change Requests List"
       />
     </div>
   );

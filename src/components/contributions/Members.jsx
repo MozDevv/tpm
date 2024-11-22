@@ -26,6 +26,8 @@ const Members = ({ status }) => {
     });
   };
 
+  const [disableAll, setDisableAll] = useState(true);
+
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -40,9 +42,7 @@ const Members = ({ status }) => {
       otherName: item.otherName,
       gender: item.gender,
       dateOfBirth: item.dateOfBirth,
-
       memberUploadBatchId: item.memberUploadBatchId,
-
       membershipStatus: item.membershipStatus,
       sponsorId: item.sponsorId,
       professionId: item.professionId,
@@ -55,6 +55,7 @@ const Members = ({ status }) => {
       postalCode: item.postalCode,
       county: item.county,
       maritalStatus: item.maritalStatus,
+      memberId: item.id,
 
       // roles: item.roles,
     }));
@@ -75,9 +76,6 @@ const Members = ({ status }) => {
     }
   };
 
-  const [uploadExcel, setUploadExcel] = React.useState(false);
-  const [sponsors, setSponsors] = React.useState([]);
-
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -96,16 +94,16 @@ const Members = ({ status }) => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
 
-    createChangeRequest: () => handleChangeRequest(),
+    changeRequest: () => {
+      setDisableAll(!disableAll);
+    },
+    sendChangeRequestForApproval: () => {
+      handleChangeRequest();
+    },
+    cancelChangeRequest: () => {},
+
+    // createChangeRequest: () => handleChangeRequest(),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -619,6 +617,7 @@ const Members = ({ status }) => {
                 <div className="font-montserrat mt-[-20px] ml-[-14px]">
                   {' '}
                   <BaseAutoSaveInputCardWithSections
+                    disableAll={disableAll}
                     fields={fields}
                     apiEndpoint={financeEndpoints.addMember}
                     putApiFunction={apiService.post}

@@ -46,6 +46,7 @@ import workflowsEndpoints, {
 } from '../services/workflowsApi';
 import { Divider, Menu, MenuItem } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
+import { name } from 'dayjs/locale/en-au';
 
 const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
   const { auth } = useAuth();
@@ -433,6 +434,12 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'createChangeRequest',
       requiredPermissions: [],
     },
+    {
+      name: 'Approve Change Request',
+      icon: CheckCircle,
+      action: 'approveChangeRequest',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
@@ -462,9 +469,34 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'uploadMembers',
       requiredPermissions: [],
     },
+    {
+      name: 'Change Request',
+      icon: PlaylistAdd,
+      action: 'changeRequest',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseChildren = [
+    // Change Request Actions
+
+    {
+      name: 'Send For Approval',
+      icon: IosShare,
+      action: 'sendChangeRequestForApproval',
+      requiredPermissions: [],
+      parent: 'changeRequest',
+      disabled: true,
+    },
+    {
+      name: 'Cancel Change Request',
+      icon: CancelScheduleSend,
+      action: 'cancelChangeRequest',
+      requiredPermissions: [],
+      parent: 'changeRequest',
+      disabled: true,
+    },
+
     // Bank Statement Actions
 
     {
@@ -473,7 +505,6 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'importBankStatement',
       requiredPermissions: [],
       parent: 'bankStatement',
-      disabled: true,
     },
     {
       name: 'Remove Current Statement',
@@ -481,7 +512,6 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'removeUploadedStatement',
       requiredPermissions: [],
       parent: 'bankStatement',
-      disabled: true,
     },
 
     // Match Actions
@@ -677,7 +707,10 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
           <div className="flex gap-6 items-center">
             {collapseParents.map((button, index) => (
               <Button
-                onClick={() => handleApprovalClick(button.action)}
+                onClick={() => {
+                  handleApprovalClick(button.action);
+                  handlers[button.action]();
+                }}
                 sx={{
                   mb: -1,
                   maxHeight: '25px',
