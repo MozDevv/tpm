@@ -15,15 +15,17 @@ import {
   AccountBalanceWallet,
   Addchart,
   AssuredWorkload,
+  AutoGraph,
   DragIndicator,
   KeyboardArrowRight,
   PeopleAltOutlined,
   Person,
+  QueryStats,
   Wallet,
   Widgets,
 } from '@mui/icons-material';
 import styles from './sidebar.module.css';
-import { Box, Divider, IconButton } from '@mui/material';
+import { Box, Button, Divider, IconButton } from '@mui/material';
 import { BarChart, Payments, SupportAgent } from '@mui/icons-material';
 import { useSelectedItem } from '@/context/NavItemContext';
 import { useIsLoading } from '@/context/LoadingContext';
@@ -842,6 +844,57 @@ function Sidebar() {
         <Divider />
         <h6 className={styles.h6}>ADMINISTRATION</h6>
         {renderMenuItems(filteredAdminItems)}
+        <h6 className={styles.h6}>REPORTS</h6>
+
+        <React.Fragment key={'Reports'}>
+          <ListItem
+            button
+            sx={{
+              mb: '5px',
+              backgroundColor:
+                open['Reports'] || selectedItem === 'Reports'
+                  ? '#E5F0F4'
+                  : 'transparent',
+              borderRadius: '30px',
+              color:
+                open['Reports'] || selectedItem === 'Reports'
+                  ? '#006990'
+                  : '#1F1F1F',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 105, 144, 0.1)',
+              },
+            }}
+            onClick={() =>
+              window.open(
+                'http://localhost:8088/superset/dashboard/p/0KrJVaM9N6m/',
+                '_blank'
+              )
+            }
+          >
+            <ListItemIcon
+              sx={{
+                color:
+                  open['Reports'] || selectedItem === 'Reports'
+                    ? '#006990'
+                    : '#1F1F1F',
+              }}
+            >
+              <AutoGraph />
+            </ListItemIcon>
+            <ListItemText
+              sx={{
+                color:
+                  open['Reports'] || selectedItem === 'Reports'
+                    ? '#006990'
+                    : 'gray',
+                fontWeight: 700,
+              }}
+              // className="font-bold"
+            >
+              <p className={styles.nav_title}> {'Reports'}</p>
+            </ListItemText>
+          </ListItem>
+        </React.Fragment>
       </List>
     </Box>
   );

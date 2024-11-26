@@ -136,7 +136,9 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         .outputPdf('blob')
         .then((pdfBlob) => {
           setPdfBlob(pdfBlob);
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
         })
         .catch(() => {
           setLoading(false);

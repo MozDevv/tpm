@@ -637,7 +637,7 @@ const AssessmentTable = ({ status, statusArr }) => {
         onClose={() => setOpenReport(false)}
         sx={{
           '& .MuiPaper-root': {
-            minHeight: '95vh',
+            minHeight: '90vh',
             maxHeight: '85vh',
             minWidth: '45vw',
             maxWidth: '55vw',
