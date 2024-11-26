@@ -12,6 +12,7 @@ import {
   formatBankAccount,
   formatNumber,
 } from '@/utils/numberFormatters';
+import { Empty } from 'antd';
 
 const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const contentRef = useRef();
@@ -214,14 +215,24 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           </Button>
         </div>
       </div>
-      {pdfBlob && (
+      {pdfBlob ? (
         <iframe
           src={URL.createObjectURL(pdfBlob)}
-          style={{ width: '100%', height: '100vh', border: 'none' }}
-          title="Payment Voucher PDF"
+          style={{
+            width: '100%',
+            height: '100vh',
+            border: 'none',
+            overflow: 'auto',
+          }}
+          title="Page 5 PDF"
         />
-      )}
-
+      ) : (
+        <div className="flex items-center justify-center min-h-[65vh]">
+          <div className="text-center">
+            <Empty description="No PDF available to display." />
+          </div>
+        </div>
+      )}{' '}
       {loading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: 99999 }}
@@ -239,7 +250,6 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           </div>
         </Backdrop>
       )}
-
       <div
         style={{
           transform: 'scale(0.9)', // Adjust the scale as needed
