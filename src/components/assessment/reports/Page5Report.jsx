@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop } from '@mui/material';
+import { Backdrop, Button } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
+import dayjs from 'dayjs';
+import { Cancel, GetApp } from '@mui/icons-material';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
@@ -106,7 +108,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       // Define options for the PDF
       const options = {
         margin: 0.5, // Default margin (in inches)
-        filename: 'Gratuity_Letter.pdf',
+        filename: 'Page 5.pdf',
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
       };
@@ -158,10 +160,48 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         overflow: 'auto', // Enable scrolling for overflow content
       }}
     >
+      <div
+        className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+      >
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Page 5 Report
+          </h2>
+          <p className="text-sm text-gray-500">
+            Detailed analysis and insights
+          </p>
+        </div>
+        <div className="space-x-4">
+          <Button
+            onClick={handleDownload}
+            variant="contained"
+            color="primary"
+            startIcon={<GetApp />}
+            className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
+          >
+            Download PDF
+          </Button>
+          <Button
+            onClick={() => setOpenGratuity(false)}
+            variant="outlined"
+            color="primary"
+            startIcon={<Cancel />}
+            className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
       {pdfBlob && (
         <iframe
           src={URL.createObjectURL(pdfBlob)}
-          style={{ width: '100%', height: '100vh', border: 'none' }}
+          style={{
+            width: '100%',
+            height: '100vh',
+            border: 'none',
+            overflow: 'auto',
+          }}
           title="Page 5 PDF"
         />
       )}
@@ -181,285 +221,163 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
           </div>
         </Backdrop>
       )}
-      <div
-        style={{
-          display: 'none',
-        }}
-      >
-        <div ref={contentRef} className="  p-4 max-w-3xl mx-auto ">
-          <div className="p-8 font-sans word-spacing  text-[11px] bg-white text-black max-w-4xl mx-auto ">
-            <div className="text-center mx-auto flex flex-col items-center font-sans mb-4">
-              <h1 className="font-bold text-base">MINISTRY OF FINANCE</h1>
-              <img
-                src="/kenya.png"
-                alt=""
-                height={40}
-                width={60}
-                className=""
-              />
-              <h2 className="text-base font-bold">PENSIONS DEPARTMENT</h2>
-              <div className="border-b-2 border-black pb-1">
-                <h2 className="font-bold text-base text-center">
-                  Pensions Benefit Computation Appendix
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex flex-col gap-2 font-semibold ">
-                <p>
-                  Pension Number:{' '}
-                  <strong className="font-normal ml-3">
-                    {clickedItem?.claim_id}
-                  </strong>
+      <div className="hidden">
+        <div ref={contentRef} className="p-4 max-w-3xl mx-auto overflow-auto ">
+          <div className="py-8 text-sm font-sans border border-black max-w-2xl mx-auto ">
+            <div className="border-b border-black px-2 ">
+              <p className="mb-2 mr-1">
+                I certify that the pensions/Gratuity which may be paid to the
+                officer/Legal personal Representative in accordance with the
+                pensions Act, as amended and the Pensions Regulations now in
+                force amounts to Ksh.
+                <span className="inline gap-1">
+                  <span className="font-bold mr-1">349,288.00</span>
+                  per year commencing from
+                  <span className="font-bold ml-1">01-JUL-22</span>
+                </span>
+              </p>
+              <p className="mb-2">
+                As he exercised the option for Reduced Pension and Gratuity, the
+                reduced pension Amounts to Ksh.{' '}
+                <span className="font-bold">261,966.00</span> <br />
+                per year with a gratuity of Ksh.{' '}
+                <span className="font-bold">300,038.74</span>
+              </p>
+              <div className="py-3 flex w-full justify-between relative">
+                <p className="absolute bottom-4">
+                  Date: <span className="font-bold ">24-MAY-24</span>
                 </p>
-                <p>
-                  Ministry/Department:{' '}
-                  <strong className="font-normal ml-3">
-                    {clickedItem?.mda_description}
-                  </strong>
+                <div className=""></div>
+                <div className="flex flex-col gap-1">
+                  <div className="border-b border-gray-800 h-7"></div>
+                  <p className="text-right font-bold">
+                    Chief Pensions Officer
+                  </p>{' '}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-b border-black p-2">
+              <p className="font-semibold">
+                THE CONTROLLER AND AUDITOR-GENERAL,
+              </p>
+              <p>NAIROBI.</p>
+              <p>Forwarded for favour of verification and return.</p>
+              <div className="py-1 flex w-full justify-between relative">
+                <p className="absolute bottom-2">
+                  Date: <span className="font-bold ">24-MAY-24</span>
                 </p>
-
-                {clickedItem?.prospectivePensionerAwards.length > 0 &&
-                  clickedItem?.prospectivePensionerAwards?.map((award) => (
-                    <p key={award.id}>
-                      Claim Type:
-                      <strong className="font-normal ml-3">
-                        {' '}
-                        {award.pension_award?.prefix}
-                      </strong>
-                    </p>
-                  ))}
+                <div className=""></div>
+                <div className="flex flex-col gap-1">
+                  <div className="border-b border-gray-800 h-7"></div>
+                  <p className="text-right font-bold">
+                    Chief Pensions Officer
+                  </p>{' '}
+                </div>
               </div>
-              <div className="font-semibold">
-                <p>
-                  Pensioner Name:{' '}
-                  <strong className="font-normal ml-3">
-                    {clickedItem?.first_name} {clickedItem?.surname}
-                  </strong>
+            </div>
+
+            <div className="border-b px-2 pt-1 border-black pb-2">
+              <p className="font-semibold">SECRETARY/DIRECTOR OF PENSIONS,</p>
+              <p className="font-semibold">PENSIONS DEPARTMENT, TREASURY,</p>
+              <p>Computation Agreed.</p>
+
+              <p>
+                Ref No: <span className="font-bold">APN/PC0386062M</span>
+              </p>
+              <div className="py-1 flex w-full justify-between relative">
+                <p className="absolute bottom-2">
+                  Date: <span className="font-bold ">24-MAY-24</span>
                 </p>
-              </div>
-            </div>
-
-            {/* Qualifying Service */}
-            <div className="mt-4">
-              <h2 className="font-semibold   ">Qualifying Service</h2>
-
-              <div className="flex flex-row justify-between mt-2">
-                <div className="text-center">
-                  <p className="font-semibold">Date Of Joining:</p>
-                  <p className="text-gray-700">
-                    {new Date(
-                      report?.qualifying_service_date_of_joining
-                    ).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold">Date Of Leaving:</p>
-                  <p className="text-gray-700">
-                    {new Date(
-                      report?.qualifying_service_date_of_leaving
-                    ).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold">Years:</p>
-                  <p className="text-gray-700">
-                    {report?.qualifying_service_years}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold">Months:</p>
-                  <p className="text-gray-700">
-                    {report?.qualifying_service_months}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold">Days:</p>
-                  <p className="text-gray-700">
-                    {report?.qualifying_service_days}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold">Cumulative Months:</p>
-                  <p className="text-gray-700">
-                    {report?.qualifying_service_cumulative_months}
-                  </p>
+                <div className=""></div>
+                <div className="flex flex-col gap-1">
+                  <div className="border-b border-gray-800 h-7"></div>
+                  <p className="text-right font-bold">
+                    Controller and Auditor-General
+                  </p>{' '}
                 </div>
               </div>
             </div>
 
-            {/* Pensionable Service */}
-            {/* Pensionable Service */}
-            <div className="mt-4">
-              <h2 className="font-bold mb-2">Pensionable Service</h2>
-
-              <table className="w-full border-collapse text-center ml-[-15px]">
-                <thead>
-                  <tr>
-                    <th className="py-1 w-18">From Date</th>
-                    <th className="py-1 w-18">To Date</th>
-                    <th className="py-1 w-22">Employment Type</th>
-                    <th className="py-1 w-[90px]"></th>
-                    <th className="py-1 w-[90px]"></th>
-                    <th className="py-1 w-[90px]"></th>
-                    <th className="py-1 w-[90px]"></th>
-                  </tr>
-                </thead>
-                <tbody className="text-[13px]">
-                  {pensionableService?.map((service) => (
-                    <tr key={service.id}>
-                      <td className="py-1 text-gray-700">
-                        {new Date(service.from_date).toLocaleDateString(
-                          'en-GB',
-                          {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          }
-                        )}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {new Date(service.to_date).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </td>
-                      <td className="py-1 text-gray-700">(full)</td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_years}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_months}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_days}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_cumulative_months}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className="font-bold">
-                    <td className="py-1">Total</td>
-                    <td colSpan="2" className="py-1"></td>
-                    <td className="py-1 text-gray-700">
-                      {pensionableService?.total_years}
-                    </td>
-                    <td className="py-1 text-gray-700">
-                      {pensionableService?.total_months}
-                    </td>
-                    <td className="py-1 text-gray-700">
-                      {pensionableService?.total_days}
-                    </td>
-                    <td className="py-1 text-gray-700">
-                      {pensionableService?.total_cumulative_months}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pensionable Service In Months */}
-            <div className="mt-4">
-              <h2 className="font-bold mb-2">Pensionable Service In Months</h2>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Current Salary:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.current_salary)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Last 3year Total Sal:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.last_3year_total)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Average Salary:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.average_salary)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Max Govt Salary:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.max_government_salary)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Pension Emoluments:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.pensionable_emolument)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Undreduced Pension:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.unreduced_pension)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Reduced Pension:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.reduced_pension)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Gratuity/Lumpsum:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.lumpsum_amount)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Monthly Pension:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.monthly_pension)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <strong className="w-1/2">Abatement:</strong>
-                    <span className="w-1/2 text-right">
-                      {formatNumber(report?.abatement)}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2"></div>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-8">
-              <div className="flex gap-1">
-                <strong>Signature And Date Of Chief Pensions Officer</strong>
-                <div className="border-b border-gray-800 flex-grow h-7"></div>{' '}
-              </div>
-              <div className="flex flex-row gap-8">
-                <p className="mt-2 flex gap-2">
-                  Created by: <strong>{auth?.user?.name}</strong>
+            <div className="px-2 pt-2 border-black p">
+              <p className="font-bold text-center mb-1">AWARD APPROVED</p>
+              <p className="font-semibold">CHIEF ACCOUNT (PENSIONS)</p>
+              <p>
+                A reduced pension{' '}
+                <span className="font-bold">
+                  TWO HUNDRED SIXTY-ONE THOUSAND NINE HUNDRED SIXTY-SIX
+                  SHILLINGS
+                </span>{' '}
+              </p>
+              <p className="my-2">
+                W.E.F. <span className="font-bold">01-JUL-22</span>
+              </p>
+              <p>
+                Together with a{' '}
+                <span className="font-bold capitalize">
+                  THREE HUNDRED THOUSAND THIRTY-EIGHT Shilling AND SEVENTY-FOUR
+                  Cents
+                </span>{' '}
+              </p>
+              <p className="mt-4 gap-2  flex">
+                <span className="underline">Income Tax</span>
+                <span className="font-bold">ZERO Shillings</span>
+              </p>
+              <p className="mt-1 gap-2 flex ">
+                <span className="underline">Refund</span>
+                <span className="font-bold">ZERO Shillings</span>
+              </p>
+              <div className="py-1 flex w-full justify-between relative">
+                <p className="absolute bottom-2">
+                  Date: <span className="font-bold ">24-MAY-24</span>
                 </p>
-                <p className="mt-2 flex gap-2">
-                  Date: <strong>{new Date().toLocaleDateString()}</strong>
-                </p>
+                <div className=""></div>
+                <div className="flex flex-col gap-1">
+                  <div className="border-b border-gray-800 h-7"></div>
+                  <p className="text-right font-bold">
+                    Director of Pensions, Treasury
+                  </p>{' '}
+                </div>
               </div>
             </div>
+
+            <div className="px-2">
+              <p>COPY TO:</p>
+              <p>
+                The Accounting Officer, P/S{' '}
+                <span className="font-bold">
+                  THE TEACHERS SERVICE COMMISSION
+                </span>
+              </p>
+              <p className="flex gap-2 my-1">
+                Mr./Miss/Mrs.{' '}
+                <span className="font-bold mr-4">
+                  NANCY JEPEKEMBOI KABUTEI--
+                </span>{' '}
+                PO Box <span className="font-bold">14</span>
+              </p>
+              <p className="flex space-x-2">
+                <span>MARIGAT,</span>
+                <span>Rift Valley Province,</span>
+                <span>Kenya</span>
+              </p>
+            </div>
+          </div>
+          <div className=" pt-4 text-xs flex justify-between ">
+            <p>
+              Printed By: <span className="font-bold">{auth?.user?.name}</span>
+            </p>
+            <p>
+              Date:{' '}
+              <span className="font-bold">
+                {dayjs().format('DD-MMM-YY HH:mm:ss')}
+              </span>
+            </p>
           </div>
         </div>
       </div>
-      <div
-        className="bg-white h-[120px] mb-[-30px] flex justify-between items-center absolute bottom-3 px-4 w-full"
+      {/* <div
+        className="bg-white h-[80px] mb-[-30px] flex justify-between items-center  px-4 w-full"
         style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
       >
         <button
@@ -474,7 +392,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         >
           Cancel
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -20,12 +20,12 @@ const ClaimRegister = ({ headerCols, rowData, contentRef, pdfBlob }) => {
             <div className="text-gray-700  underline">
               Claims Verification Register Approval For
             </div>{' '}
-            <div
+            {/* <div
               className="text-gray-700  
           "
             >
               RG4
-            </div>
+            </div> */}
             <div className="text-gray-700  underline">
               Work Group On Date Of{' '}
             </div>

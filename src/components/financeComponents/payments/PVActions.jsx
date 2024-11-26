@@ -68,7 +68,7 @@ function PVActions({
           const res = await apiService.post(endpoint, requestData);
 
           if (res && res.data && res.data.succeeded && res.status === 200) {
-            await updateClaimStatus(); // Call the function to update claim status
+            handleUpdateClaimStatus(); // Call the function to update claim status
             setSelectedRows([]);
             setOpenPostGL(false);
             setOpenBaseCard && setOpenBaseCard(false);
@@ -89,7 +89,7 @@ function PVActions({
           const res = await apiService.post(endpoint, requestData);
 
           if (res && res.data && res.data.succeeded && res.status === 200) {
-            await updateClaimStatus(); // Call the function to update claim status
+            handleUpdateClaimStatus(); // Call the function to update claim status
             setSelectedRows([]);
             setOpenPostGL(false);
             setOpenBaseCard && setOpenBaseCard(false);
@@ -112,7 +112,7 @@ function PVActions({
         const res = await apiService.post(endpoint, requestData);
 
         if (res && res.data && res.data.succeeded && res.status === 200) {
-          await updateClaimStatus(); // Call the function to update claim status
+          handleUpdateClaimStatus(); // Call the function to update claim status
           setSelectedRows([]);
           setOpenPostGL(false);
           setOpenBaseCard && setOpenBaseCard(false);
@@ -132,7 +132,7 @@ function PVActions({
         );
 
         if (allSucceeded) {
-          await updateClaimStatus(); // Call the function to update claim status
+          handleUpdateClaimStatus(); // Call the function to update claim status
           setSelectedRows([]);
           setOpenPostGL(false);
           setOpenBaseCard && setOpenBaseCard(false);
@@ -149,6 +149,15 @@ function PVActions({
     }
   };
 
+  const handleUpdateClaimStatus = () => {
+    selectedRows.forEach((row) => {
+      if (row.claimId) {
+        updateClaimStatus(row.claimId);
+      } else {
+        message.error('Claim ID not found');
+      }
+    });
+  };
   // Function to update claim status
   const updateClaimStatus = async () => {
     const data = {
@@ -175,7 +184,7 @@ function PVActions({
       }
     } catch (error) {
       console.log('Error updating claim status:', error);
-      console.log('Claims Data', data);
+      console.log('Claims Data', clickedItem);
       console.error('Error updating claim status:', error.response);
       message.error('An error occurred while updating the claim status');
     }

@@ -42,6 +42,7 @@ import AssessmentCard from './AssessmentCard';
 import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
 import PushToFinance from './PushToFinance';
 import Page5Report from '../reports/Page5Report';
+import AppendixReport from '../reports/AppendixReport';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -568,8 +569,11 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenMoveStatus(true);
     },
 
+    Appendix: () => {
+      setOpenReport(1);
+    },
     'Page 5 Report': () => {
-      setOpenReport(true);
+      setOpenReport(2);
     },
   };
 
@@ -629,12 +633,32 @@ const AssessmentTable = ({ status, statusArr }) => {
   return (
     <>
       <Dialog
-        open={openReport}
+        open={openReport === 1}
         onClose={() => setOpenReport(false)}
         sx={{
           '& .MuiPaper-root': {
-            minHeight: '75vh',
+            minHeight: '95vh',
             maxHeight: '85vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <AppendixReport
+            setOpenGratuity={setOpenReport}
+            clickedItem={clickedItem}
+          />
+        </div>
+      </Dialog>
+      <Dialog
+        open={openReport === 2}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
             minWidth: '45vw',
             maxWidth: '55vw',
           },
@@ -728,7 +752,7 @@ const AssessmentTable = ({ status, statusArr }) => {
           openAction={openAction}
           setOpenAction={setOpenAction}
           isClaim={true}
-          reportItems={['Page 5 Report']}
+          reportItems={['Appendix', 'Page 5 Report']}
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[

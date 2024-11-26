@@ -414,8 +414,8 @@ const Payments = ({ status }) => {
           onClose={() => setOpenTrialBalanceReport(false)}
           sx={{
             '& .MuiPaper-root': {
-              minHeight: '75vh',
-              maxHeight: '85vh',
+              minHeight: '90vh',
+              maxHeight: '90vh',
               minWidth: '45vw',
               maxWidth: '55vw',
             },
@@ -434,8 +434,8 @@ const Payments = ({ status }) => {
           onClose={() => setOpenGratuity(false)}
           sx={{
             '& .MuiPaper-root': {
-              minHeight: '75vh',
-              maxHeight: '85vh',
+              minHeight: '90vh',
+              maxHeight: '90vh',
               minWidth: '45vw',
               maxWidth: '55vw',
             },

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
-import { Backdrop } from '@mui/material';
+import { Backdrop, Button } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { formatNumber } from '@/utils/numberFormatters';
+import { Cancel, GetApp } from '@mui/icons-material';
 const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -182,6 +183,39 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
         overflow: 'auto', // Enable scrolling for overflow content
       }}
     >
+      <div
+        className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+      >
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Page 5 Report
+          </h2>
+          <p className="text-sm text-gray-500">
+            Detailed analysis and insights
+          </p>
+        </div>
+        <div className="space-x-4">
+          <Button
+            onClick={handleDownload}
+            variant="contained"
+            color="primary"
+            startIcon={<GetApp />}
+            className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
+          >
+            Download PDF
+          </Button>
+          <Button
+            onClick={() => setOpenGratuity(false)}
+            variant="outlined"
+            color="primary"
+            startIcon={<Cancel />}
+            className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
       {pdfBlob && (
         <iframe
           src={URL.createObjectURL(pdfBlob)}
@@ -356,23 +390,6 @@ const GratuityLetterReport = ({ setOpenGratuity, clickedItem }) => {
             </p>
           </div>
         </div>
-      </div>
-      <div
-        className="bg-white h-[120px] mb-[-30px] flex justify-between items-center absolute bottom-3 px-4 w-full"
-        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
-      >
-        <button
-          onClick={handleDownload}
-          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-        >
-          Download PDF
-        </button>
-        <button
-          onClick={() => setOpenGratuity(false)} // Assuming this is the cancel action
-          className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition duration-300"
-        >
-          Cancel
-        </button>
       </div>
     </div>
   );

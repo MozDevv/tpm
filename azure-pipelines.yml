@@ -27,6 +27,9 @@ steps:
         # Navigate to the project directory
         cd pmis
 
+        # Ensure the current user has permissions for node_modules
+        sudo chown -R $(whoami) /home/***/pmis/node_modules
+
         # Clean up unused Docker images
         sudo docker image prune -af
 
@@ -34,16 +37,31 @@ steps:
         git reset --hard origin/main
         git pull
 
-        # Build the Docker image with no cache
-        sudo docker build --no-cache -t agilesam/pmis:latest .
+        # Build the Docker image without cache to ensure fresh build
+        sudo docker build --no-cache -t pmis .
+
+        # Tag the Docker image for Docker Hub (optional step, can be uncommented)
+        # sudo docker tag pmis agilesam/pmis:latest
 
         # Log in to Docker Hub
         echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
 
-        # Push the Docker image to Docker Hub
-        sudo docker push agilesam/pmis:latest
+        # Push the Docker image to Docker Hub (optional step, can be uncommented)
+        # sudo docker push agilesam/pmis:latest
 
+        # Stop and remove the existing container if it exists
+        sudo docker stop pmis-core || true
+        sudo docker rm pmis-core || true
 
+        # Run the new Docker container
+        sudo docker run --name pmis-core -p 4000:3000 -d pmis
+
+        # Clean up Docker images and builder
+        sudo docker image prune -af
+        sudo docker builder prune -f
+
+        # Restart Nginx to apply any changes
+        sudo systemctl restart nginx
 
         echo "Deployment completed successfully"
       EOF
