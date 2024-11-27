@@ -568,6 +568,7 @@ const ClaimsTable = ({ status }) => {
       >
         <div className="px-6">
           <GP178Report
+            clickedItem={clickedItem}
             setOpenGP178Report={setOpenGP178Report}
             retireeId={clickedItem?.retiree}
           />

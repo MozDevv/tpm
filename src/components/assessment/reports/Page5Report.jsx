@@ -213,19 +213,8 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
             <Empty description="No PDF available to display." />
           </div>
         </div>
-      )}{' '}
-      {pdfBlob && (
-        <iframe
-          src={URL.createObjectURL(pdfBlob)}
-          style={{
-            width: '100%',
-            height: '100vh',
-            border: 'none',
-            overflow: 'auto',
-          }}
-          title="Page 5 PDF"
-        />
       )}
+
       {loading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: 99999 }}
