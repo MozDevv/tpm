@@ -45,6 +45,7 @@ import ReturnToPreclaims from './ReturnToPreclaims';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import ClaimVerification from './reports/ClaimVerification';
+import GP178Report from './reports/GP178Report';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -488,6 +489,7 @@ const ClaimsTable = ({ status }) => {
   };
 
   const [openApprove, setOpenApprove] = useState(0);
+  const [openGP178Report, setOpenGP178Report] = useState(false);
 
   const baseCardHandlers = {
     edit: () => console.log('Edit clicked'),
@@ -513,6 +515,7 @@ const ClaimsTable = ({ status }) => {
         cancelApprovalRequest: () => setOpenApprove(2),
         approveDocument: () => setOpenApprove(3),
         rejectDocumentApproval: () => setOpenApprove(4),
+        'Detailed Report': () => setOpenGP178Report(true),
         delegateApproval: () => {
           setOpenApprove(5);
         },
@@ -548,6 +551,25 @@ const ClaimsTable = ({ status }) => {
         <div className="px-6">
           <ClaimVerification
             setOpenTrialBalanceReport={setOpenClaimVerification}
+          />
+        </div>
+      </Dialog>
+      <Dialog
+        open={openGP178Report}
+        onClose={() => setOpenGP178Report(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '80vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <GP178Report
+            setOpenGP178Report={setOpenGP178Report}
+            retireeId={clickedItem?.retiree}
           />
         </div>
       </Dialog>
@@ -600,6 +622,7 @@ const ClaimsTable = ({ status }) => {
           status={clickedItem?.stage}
           // openAction={openAction}
           // setOpenAction={setOpenAction}
+          reportItems={['Detailed Report']}
           setClickedItem={setClickedItem}
           fetchAllPreclaims={fetchAllPreclaims}
           openAction={openAction}

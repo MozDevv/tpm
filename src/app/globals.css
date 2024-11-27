@@ -187,3 +187,18 @@ a:hover {
     opacity: 0;
   }
 }
+.list-lower-alpha-brackets {
+  list-style-type: none;
+  counter-reset: list;
+}
+
+.list-lower-alpha-brackets li {
+  counter-increment: list;
+  position: relative;
+}
+
+.list-lower-alpha-brackets li::before {
+  content: '(' counter(list, lower-alpha) ')';
+  position: absolute;
+  left: -1.5em; /* Adjust this value to position the brackets correctly */
+}

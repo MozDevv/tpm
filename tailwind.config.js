@@ -24,6 +24,8 @@ module.exports = {
       fontFamily: {
         montserrat: ['Montserrat', 'Arial', 'sans-serif'],
         roboto: ['Roboto', 'Arial', 'sans-serif'],
+        calibri: ['Calibri', 'Arial', 'sans-serif'],
+        times: ['Times New Roman', 'Times', 'serif'],
       },
       fontSize: {
         '2xl': '1.875rem',
