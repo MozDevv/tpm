@@ -10,7 +10,7 @@ import endpoints, {
 } from '@/components/services/setupsApi';
 import { formatDate, parseDate } from '@/utils/dateFormatter';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Button, Divider } from '@mui/material';
+import { Backdrop, Button, Divider } from '@mui/material';
 import { Cancel, GetApp } from '@mui/icons-material';
 import { Empty } from 'antd';
 import React, { useEffect, useRef } from 'react';
@@ -212,7 +212,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
   const getClaimPensionableService = async () => {
@@ -324,14 +324,11 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
         .outputPdf('blob')
         .then((pdfBlob) => {
           setPdfBlob(pdfBlob);
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
         })
         .catch(() => {
           setLoading(false);
         });
-    }, 100); // Adjust the delay as needed
+    }); // Adjust the delay as needed
   };
 
   useEffect(() => {
@@ -348,6 +345,8 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
         generatePdfBlob();
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -356,6 +355,22 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
 
   return (
     <div className="">
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 99999 }}
+          open={open}
+          onClick={() => setLoading(false)}
+        >
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating report, please hold on
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <div
         className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
         style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
@@ -692,7 +707,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
               {/* PART IV  PERIODS OF ABSENCE WITHOUT SALARY */}
 
               <div>
-                <h2 className="text-base font-semibold mb-4">
+                <h2 className=" font-semibold mb-4">
                   14. Periods of absence without salary:
                 </h2>
                 <table className="min-w-full border border-black">
@@ -813,15 +828,15 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                             </div>
                             <div className="col-span-1 flex flex-col relative">
                               <p className="">
-                                Salary @ £ _______________________________ p.a.
+                                Salary @ £ ___________________________ p.a.
                               </p>
                               <p className="absolute top-0 right-[45%] font-bold">
                                 {formatNumber(row.salary)}
                               </p>
                               <p className="mt-2">
-                                Pensionable Allowance @ £ _________________ p.a.
+                                Pensionable Allowance @ £ _____________ p.a.
                               </p>
-                              <p className="absolute top-8 right-[25%] font-bold">
+                              <p className="absolute top-7 right-[25%] font-bold">
                                 {formatNumber(row.pensionable_allowance)}
                               </p>
                             </div>
@@ -1076,25 +1091,17 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                     I certify that the Pension/Gratuity which may be paid to the
                     officer/legal personal representative in accordance with the
                     Pensions Act, as amended and the Pensions Regulations now in
-                    force amounts to K£
-                    <span className="border-b border-black w-20 inline-block mx-2"></span>
-                    per year commencing from
-                    <span className="border-b border-black w-20 inline-block mx-2"></span>
-                    .
+                    force amounts to K£ _________________________ per year
+                    commencing from _________________________ .
                   </p>
                   <p className="text-justify mb-6">
                     *As he exercised the option for Reduced Pension and
                     Gratuity, the reduced pension amounts to K£
-                    <span className="border-b border-black w-20 inline-block mx-2"></span>
-                    per year with a gratuity of K£
-                    <span className="border-b border-black w-20 inline-block mx-2"></span>
-                    .
+                    _________________________ per year with a gratuity of K£
+                    _________________________ .
                   </p>
                   <div className="flex justify-between items-center mb-6">
-                    <p>
-                      Date:{' '}
-                      <span className="border-b border-black w-40 inline-block"></span>
-                    </p>
+                    <p>Date: _________________________________ </p>
                     <div className="flex flex-col">
                       <p>_____________________________</p>
                       <p className="italic text-center">
@@ -1116,10 +1123,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                     <p>Forwarded for favour of verification and return.</p>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <p>
-                      Date:{' '}
-                      <span className="border-b border-black w-40 inline-block"></span>
-                    </p>
+                    <p>Date: _________________________________ </p>
                     <div className="flex flex-col">
                       <p>_______________________________</p>
                       <p className="italic text-center">
@@ -1144,10 +1148,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                     <p>Computation agreed.</p>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <p>
-                      Date:{' '}
-                      <span className="border-b border-black w-40 inline-block"></span>
-                    </p>
+                    <p>Date: _________________________________ </p>
                     <div className="flex flex-col">
                       <p>_______________________________</p>
                       <p className="italic text-center">
@@ -1160,7 +1161,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                   <Divider
                     sx={{
                       backgroundColor: '#000',
-                      height: 3,
+                      height: 2,
                       marginBottom: '1rem',
                     }}
                   />
@@ -1170,10 +1171,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                     </p>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <p>
-                      Date:{' '}
-                      <span className="border-b border-black w-40 inline-block"></span>
-                    </p>
+                    <p>Date: _________________________________ </p>
                     <div className="flex flex-col">
                       <p>_______________________________</p>
                       <p className="italic text-center">
