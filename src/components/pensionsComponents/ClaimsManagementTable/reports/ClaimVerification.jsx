@@ -9,13 +9,21 @@ import {
   TextField,
 } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
-import { Add, Close, Remove, RemoveCircle } from '@mui/icons-material';
+import {
+  Add,
+  Cancel,
+  Close,
+  GetApp,
+  Remove,
+  RemoveCircle,
+} from '@mui/icons-material';
 import ClaimRegister from './ClaimRegister';
 import { apiService } from '@/components/services/claimsApi';
 import claimsEndpoints from '@/components/services/claimsApi';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { checkIsDate, isValidISODate } from '@/utils/dateFormatter';
+import { Empty } from 'antd';
 
 const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
@@ -552,37 +560,64 @@ const ClaimVerification = ({ setOpenTrialBalanceReport }) => {
           '& .MuiPaper-root': {
             minHeight: '90vh',
             maxHeight: '85vh',
-            minWidth: '65vw',
+            minWidth: '55vw',
             maxWidth: '35vw',
           },
         }}
       >
         <div>
           <div className="">
-            {pdfBlob && (
+            <div
+              className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+              style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+            >
+              <div className="flex flex-col">
+                <h2 className="text-xl font-bold text-gray-800 mb-2">
+                  Claim Verification Register Report
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Detailed analysis and insights
+                </p>
+              </div>
+              <div className="space-x-4">
+                <Button
+                  onClick={handleDownload}
+                  variant="contained"
+                  color="primary"
+                  startIcon={<GetApp />}
+                  className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
+                >
+                  Download PDF
+                </Button>
+                <Button
+                  onClick={() => setOpenClaimRegister(false)}
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<Cancel />}
+                  className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+            {pdfBlob ? (
               <iframe
                 src={URL.createObjectURL(pdfBlob)}
-                style={{ width: '100%', height: '100vh', border: 'none' }}
-                title="Claims Verification Register Approvals PDF"
+                style={{
+                  width: '100%',
+                  height: '100vh',
+                  border: 'none',
+                  overflow: 'auto',
+                }}
+                title="Claim Verificaion PDF"
               />
+            ) : (
+              <div className="flex items-center justify-center min-h-[65vh]">
+                <div className="text-center">
+                  <Empty description="No PDF available to display." />
+                </div>
+              </div>
             )}{' '}
-          </div>
-          <div
-            className="bg-white h-[120px] mb-[-30px] flex justify-between items-center absolute bottom-3 px-4 w-full"
-            style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
-          >
-            <button
-              onClick={handleDownload}
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-            >
-              Download PDF
-            </button>
-            <button
-              onClick={() => setOpenClaimRegister(false)} // Assuming this is the cancel action
-              className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition duration-300"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </Dialog>
