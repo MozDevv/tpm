@@ -331,6 +331,18 @@ const financeEndpoints = {
 
   getPaymentVoucherReport: (id) =>
     `/Reports/GetPaymentVoucherReport?PaymentId=${id}`,
+
+  getContributionType: '/Contribution/GetContributionType',
+  createContributionType: '/Contribution/AddContributionType',
+  updateContributionType: '/Contribution/UpdateContributionType',
+  deleteContributionType: (id) => `/Contribution/DeleteContributionType/${id}`,
+
+  getContributionBatches: '/Contribution/GetContributionBatches',
+  uploadContributions: '/Contribution/UploadContributions',
+
+  getContributions: '/Contribution/GetContributions',
+
+  
 };
 
 export const apiService = {

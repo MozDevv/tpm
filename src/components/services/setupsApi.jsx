@@ -426,6 +426,12 @@ const endpoints = {
 
   getProspectivePensionerReviewPeriods: (id) =>
     `api/ProspectivePensioners/GetProspectivePensionerReviewPeriods?prospective_pensioner_id=${id}`,
+
+  getContributionType: '/api/Contribution/GetContributionType',
+  createContributionType: '/api/Contribution/AddContributionType',
+  updateContributionType: '/api/Contribution/UpdateContributionType',
+  deleteContributionType: (id) =>
+    `/api/Contribution/DeleteContributionType/${id}`,
 };
 
 export const apiService = {

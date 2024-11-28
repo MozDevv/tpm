@@ -315,6 +315,15 @@ export const menuItems = [
         path: '/pensions/setups/beneficiaries-relationships',
       },
       {
+        title: 'Contributions Setups',
+        subChildren: [
+          {
+            title: 'Contribution Types',
+            path: '/pensions/setups/contribution-types',
+          },
+        ],
+      },
+      {
         title: 'Finance Setup',
         subChildren: [
           {

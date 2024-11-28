@@ -387,6 +387,28 @@ function Sidebar() {
             },
           ],
         },
+        /**Under Contribution Menu 1 Contribution Processing 2 Contribution Approval 3 Contribution Posting 4 Contribution Reverse */
+        {
+          title: 'Contributions',
+          subChildren: [
+            {
+              title: 'Contribution Processing',
+              path: '/pensions/contributions/contribution-processing',
+            },
+            {
+              title: 'Contribution Approval',
+              path: '/pensions/contributions/contribution-approval',
+            },
+            {
+              title: 'Contribution Posting',
+              path: '/pensions/contributions/contribution-posting',
+            },
+            {
+              title: 'Contribution Reverse',
+              path: '/pensions/contributions/contribution-reverse',
+            },
+          ],
+        },
       ],
     },
 
@@ -539,6 +561,15 @@ function Sidebar() {
             {
               title: 'General Product Posting Groups',
               path: '/pensions/setups/general-product-posting-groups',
+            },
+          ],
+        },
+        {
+          title: 'Contributions Setups',
+          subChildren: [
+            {
+              title: 'Contribution Types',
+              path: '/pensions/setups/contribution-types',
             },
           ],
         },
