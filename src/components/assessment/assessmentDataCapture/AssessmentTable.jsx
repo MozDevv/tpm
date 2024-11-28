@@ -43,6 +43,7 @@ import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTab
 import PushToFinance from './PushToFinance';
 import Page5Report from '../reports/Page5Report';
 import AppendixReport from '../reports/AppendixReport';
+import GP178Report from '@/components/pensionsComponents/ClaimsManagementTable/reports/GP178Report';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -522,6 +523,7 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [viewCompleteSummary, setViewCompleteSummary] = useState(false);
   const [computed, setComputed] = useState(false);
   const [openReport, setOpenReport] = useState(false);
+  const [openGP178Report, setOpenGP178Report] = useState(false);
 
   const baseCardHandlers = {
     edit: () => console.log('Edit clicked'),
@@ -574,6 +576,9 @@ const AssessmentTable = ({ status, statusArr }) => {
     },
     'Page 5 Report': () => {
       setOpenReport(2);
+    },
+    'Detailed Report': () => {
+      setOpenGP178Report(true);
     },
   };
 
@@ -632,6 +637,26 @@ const AssessmentTable = ({ status, statusArr }) => {
 
   return (
     <>
+      <Dialog
+        open={openGP178Report}
+        onClose={() => setOpenGP178Report(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '60vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <GP178Report
+            clickedItem={clickedItem}
+            setOpenGP178Report={setOpenGP178Report}
+            retireeId={clickedItem?.retiree}
+          />
+        </div>
+      </Dialog>
       <Dialog
         open={openReport === 1}
         onClose={() => setOpenReport(false)}
@@ -752,7 +777,7 @@ const AssessmentTable = ({ status, statusArr }) => {
           openAction={openAction}
           setOpenAction={setOpenAction}
           isClaim={true}
-          reportItems={['Appendix', 'Page 5 Report']}
+          reportItems={['Appendix', 'Page 5 Report', 'Detailed Report']}
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[

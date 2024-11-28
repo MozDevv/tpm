@@ -10,8 +10,8 @@ import endpoints, {
 } from '@/components/services/setupsApi';
 import { formatDate, parseDate } from '@/utils/dateFormatter';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Backdrop, Button, Divider } from '@mui/material';
-import { Cancel, GetApp } from '@mui/icons-material';
+import { Backdrop, Button, Divider, IconButton } from '@mui/material';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { Empty } from 'antd';
 import React, { useEffect, useRef } from 'react';
 
@@ -382,6 +382,9 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
           </p>
         </div>
         <div className="space-x-4">
+          <IconButton onClick={generatePdfBlob}>
+            <Refresh />
+          </IconButton>
           <Button
             onClick={handleDownload}
             variant="contained"
@@ -624,44 +627,40 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
               12. Details of posts held, the nature of the salary scale of each
               post and the nature of the terms of service of the officer:
             </h2>
-            <table className="min-w-full border border-black">
+            <table className="min-w-full border border-black border-collapse">
               <thead>
-                <tr>
-                  <th className="border border-black px-4 py-2 text-left">
+                <tr className="border-b border-r border-black">
+                  <th className="px-4 border-r border-black py-2 text-left">
                     Date
                   </th>
-                  <th className="border border-black px-4 py-2 text-left">
+                  <th className="px-4 border-r border-black py-2 text-left">
                     Post
                   </th>
-                  <th className="border border-black px-4 py-2 text-left">
+                  <th className="px-4 border-r border-black py-2 text-left">
                     Whether Pensionable (Yes/No)
                   </th>
-                  <th className="border border-black px-4 py-2 text-left">
+                  <th className="px-4 py-2 text-left border-r border-black">
                     Nature of Salary Scale*
                   </th>
-                  <th className="border border-black px-4 py-2 text-left">
-                    Nature of Service†
-                  </th>
+                  <th className="px-4 py-2 text-left">Nature of Service†</th>
                 </tr>
               </thead>
               <tbody>
                 {postAndNatureData.map((item) => (
-                  <tr key={item.id}>
-                    <td className="border border-black px-4 py-2">
+                  <tr key={item.id} className="border-b border-r border-black">
+                    <td className="px-4 py-2 border-r border-black">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
-                    <td className="border border-black px-4 py-2">
+                    <td className="px-4 py-2 border-r border-black">
                       {item.post}
                     </td>
-                    <td className="border border-black px-4 py-2">
+                    <td className="px-4 py-2 border-r border-black">
                       {item.was_pensionable ? 'Yes' : 'No'}
                     </td>
-                    <td className="border border-black px-4 py-2">
+                    <td className="px-4 py-2 border-r border-black">
                       {item.nature_of_salary_scale}
                     </td>
-                    <td className="border border-black px-4 py-2">
-                      {item.nature_of_service}
-                    </td>
+                    <td className="px-4 py-2">{item.nature_of_service}</td>
                   </tr>
                 ))}
               </tbody>
@@ -678,27 +677,27 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                 </h2>
                 <table className="min-w-full border border-black">
                   <thead>
-                    <tr>
-                      <th className="border border-black px-4 py-2">
+                    <tr className="border-b border-black">
+                      <th className="border-r border-black px-4 py-2">
                         Date of Leaving Civil Employment
                       </th>
-                      <th className="border border-black px-4 py-2">
+                      <th className="border-r border-black px-4 py-2">
                         Date of Joining H.M. Forces
                       </th>
-                      <th className="border border-black px-4 py-2">
+                      <th className="border-r border-black px-4 py-2">
                         Date of Leaving H.M. Forces
                       </th>
-                      <th className="border border-black px-4 py-2">
+                      <th className="px-4 py-2">
                         Date of Resuming Civil Employment
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="py-4">
-                      <td className="border border-black px-4 py-6"></td>
-                      <td className="border border-black px-4 py-6"></td>
-                      <td className="border border-black px-4 py-6"></td>
-                      <td className="border border-black px-4 py-6"></td>
+                    <tr className="py-4  border-black">
+                      <td className="border-r border-black px-4 py-6"></td>
+                      <td className="border-r border-black px-4 py-6"></td>
+                      <td className="border-r border-black px-4 py-6"></td>
+                      <td className=" border-black px-4 py-6"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -724,10 +723,12 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                     </tr>
                     <tr>
                       <th></th>
-                      <th className="border border-black px-4 py-1">
+                      <th className="border-r border-l border-black px-4 py-1">
                         Start Date
                       </th>
-                      <th className="border border-black px-4 py-1">To Date</th>
+                      <th className="border-r border-black px-4 py-1">
+                        To Date
+                      </th>
                       <th className="border-r border-black"></th>
                       <th></th>
                     </tr>
@@ -735,19 +736,19 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                   <tbody>
                     {periodsOfAbsence.map((item) => (
                       <tr key={item.id}>
-                        <td className="border border-black px-4 py-2">
+                        <td className="border-r border-t border-black px-4 py-2">
                           {new Date(item.start_date).getFullYear()}
                         </td>
-                        <td className="border border-black px-4 py-2">
+                        <td className="border-r border-t border-black px-4 py-2">
                           {new Date(item.start_date).toLocaleDateString()}
                         </td>
-                        <td className="border border-black px-4 py-2">
+                        <td className="border-r border-t border-black px-4 py-2">
                           {new Date(item.end_date).toLocaleDateString()}
                         </td>
-                        <td className="border border-black px-4 py-2">
+                        <td className="border-r border-t border-black px-4 py-2">
                           {item.number_of_days}
                         </td>
-                        <td className="border border-black px-4 py-2">
+                        <td className=" border-t border-black px-4 py-2">
                           {item.cause_of_absence}
                         </td>
                       </tr>
@@ -1016,7 +1017,7 @@ const GP178Report = ({ retireeId, clickedItem, setOpenGP178Report }) => {
                   }}
                 />
                 {/* Section for Part III - Computation of Pension/Gratuity */}
-                <h3 className="font-bold underline text-center mt-8 mb-4">
+                <h3 className="font-bold underline text-center mt-[260px]">
                   PART III - COMPUTATION OF PENSION/GRATUITY
                 </h3>
 

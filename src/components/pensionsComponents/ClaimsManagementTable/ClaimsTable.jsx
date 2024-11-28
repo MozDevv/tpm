@@ -561,7 +561,7 @@ const ClaimsTable = ({ status }) => {
           '& .MuiPaper-root': {
             minHeight: '75vh',
             maxHeight: '85vh',
-            minWidth: '80vw',
+            minWidth: '60vw',
             maxWidth: '35vw',
           },
         }}
