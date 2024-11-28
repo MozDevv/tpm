@@ -71,12 +71,10 @@ function Auth() {
 
       console.log('data', res.data);
       if (res.data.isSuccess) {
-        // Store token in local storage upon successful login
-        //localStorage.setItem("token", res.data.data.token);
-
         login(res.data.data.token);
 
-        // Redirect user to the dashboard upon successful login
+        localStorage.setItem('refreshToken', res.data.data.refreshToken);
+
         router.push('/pensions');
       }
     } catch (error) {

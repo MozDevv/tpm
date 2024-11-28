@@ -32,9 +32,31 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      alert('Session Expired. You will be redirected to the login page.');
-      // Redirect to the login page
-      window.location.href = '/'; // Update with your login route
+      const token = localStorage.getItem('token');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (token && refreshToken) {
+        // Refresh token
+        return axios
+          .post(`${BASE_CORE_API}/api/Auth/RefreshToken`, {
+            token,
+            refreshToken,
+          })
+          .then((response) => {
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+            // Reload the page after successful token refresh
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.log('error', error);
+            alert('Session Expired. You will be redirected to the login page.');
+            window.location.href = '/';
+          });
+      } else {
+        alert('Session Expired. You will be redirected to the login page.');
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }

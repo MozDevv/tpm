@@ -19,16 +19,38 @@ const setAuthorizationHeader = () => {
 };
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response && error.response.status === 401) {
-      alert('Session Expired. You will be redirected to the login page.');
-      // Redirect to the login page
-      window.location.href = '/'; // Update with your login route
+      const token = localStorage.getItem('token');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (token && refreshToken) {
+        // Refresh token
+        try {
+          const response = await axios.post(
+            `${BASE_CORE_API}/api/Auth/RefreshToken`,
+            {
+              jwtToken: token,
+              refreshToken: refreshToken,
+            }
+          );
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+          // Reload the page after successful token refresh
+          window.location.reload();
+        } catch (error_1) {
+          console.log('error', error_1);
+          alert('Session Expired. You will be redirected to the login page.');
+          window.location.href = '/';
+        }
+      } else {
+        alert('Session Expired. You will be redirected to the login page.');
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }
 );
-
 const financeEndpoints = {
   fetchGlAccounts: '/Accounts/GetGLAccounts',
   fetchGlAccountsById: (id) => `/Accounts/GetGLAccounts?budgetId=${id}`,
