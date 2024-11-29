@@ -1134,6 +1134,7 @@ const BaseInputTable = ({
                 height: '400px',
                 minHehight: '100px',
               }}
+              className={disableAll ? 'custom-grid' : ''}
               onCellKeyDown={onCellKeyDown}
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}

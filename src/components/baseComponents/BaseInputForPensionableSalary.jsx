@@ -1233,6 +1233,7 @@ const BaseInputForPensionableSalary = ({
               gridOptions={{
                 singleClickEdit: true,
               }}
+              className={disableAll && 'custom-grid'}
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
