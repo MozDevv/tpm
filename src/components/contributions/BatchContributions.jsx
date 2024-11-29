@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -9,12 +9,19 @@ import { apiService } from '@/components/services/financeApi';
 import financeEndpoints from '@/components/services/financeApi';
 
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
-import { parseDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 import BaseInputCard from '../baseComponents/BaseInputCard';
 import generateExcelTemplate from '@/utils/excelHelper';
 import endpoints from '../services/setupsApi';
 import { apiService as setupsApiService } from '../services/setupsApi';
-
+import BaseTabs from '../baseComponents/BaseTabs';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import BaseEmptyComponent from '../baseComponents/BaseEmptyComponent';
+import ListNavigation from '../baseComponents/ListNavigation';
+import { Button } from '@mui/material';
+import { Launch } from '@mui/icons-material';
 const BatchContributions = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -30,12 +37,10 @@ const BatchContributions = () => {
       description: item.description,
       contributionTypeId: item.contributionTypeId,
 
+      ...item,
       // roles: item.roles,
     }));
   };
-
-  const [uploadExcel, setUploadExcel] = React.useState(false);
-  const [sponsors, setSponsors] = React.useState([]);
 
   const generateMembersTemplate = () => {
     const mapDataFunction = (data) => [
@@ -109,13 +114,27 @@ const BatchContributions = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [gridApi, setGridApi] = React.useState(null);
+  const gridApiRef = useRef(null);
 
   const title = clickedItem
-    ? 'Batch - ' + clickedItem?.periodReference
+    ? 'Batch - ' + clickedItem?.description
     : 'Create Batch Contribution';
 
   const [vendorPG, setVendorPG] = React.useState([]);
   const [contributionTypes, setContributionTypes] = React.useState([]);
+  const [contributionBatch, setContributionBatch] = React.useState([]);
+
+  const fetchContributionBatches = async () => {
+    try {
+      const response = await financeApiService.get(
+        financeEndpoints.getContributionBatches
+      );
+      setContributionBatch(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchContributionsTypes = async () => {
     try {
@@ -129,6 +148,7 @@ const BatchContributions = () => {
   };
 
   useEffect(() => {
+    fetchContributionBatches();
     fetchContributionsTypes();
   }, []);
   const fields = [
@@ -160,6 +180,82 @@ const BatchContributions = () => {
       type: 'file',
       required: true,
       fileName: 'Upload Contributions Excel',
+    },
+  ];
+
+  const fetchedFields = [
+    {
+      name: 'description',
+      label: 'Description',
+      type: 'text',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'periodReference',
+      label: 'Period Reference',
+      type: 'date',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'contributionTypeId',
+      label: 'Contribution Type',
+      type: 'select',
+      options: contributionTypes.map((item) => ({
+        id: item.id,
+        name: item.contributionTypeName,
+      })),
+      required: true,
+      disabled: true,
+    },
+
+    {
+      name: 'noOfStaff',
+      label: 'No Of Staff',
+      type: 'number',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'batchTotal',
+      label: 'Batch Total',
+      type: 'amount',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'totalNewEntrants',
+      label: 'Total New Entrants',
+      type: 'number',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'totalDormant',
+      label: 'Total Dormant',
+      type: 'number',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'totalExitedMembers',
+      label: 'Total Exited Members',
+      type: 'number',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'batchStatus',
+      label: 'Batch Status',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Pending' },
+        { id: 1, name: 'Approved' },
+        { id: 2, name: 'Posted' },
+      ],
+      required: true,
+      disabled: true,
     },
   ];
 
@@ -197,7 +293,211 @@ const BatchContributions = () => {
         return '';
       },
     },
+    {
+      field: 'noOfStaff',
+      headerName: 'No Of Staff',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'batchTotal',
+      headerName: 'Batch Total',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'totalNewEntrants',
+      headerName: 'Total New Entrants',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'totalDormant',
+      headerName: 'Total Dormant',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'totalExitedMembers',
+      headerName: 'Total Exited Members',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'batchStatus',
+      headerName: 'Batch Status',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
   ];
+
+  const membersColumnDefs = [
+    {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      width: 90,
+      filter: true,
+      valueGetter: 'node.rowIndex + 1',
+    },
+
+    {
+      field: 'memberName',
+      headerName: 'Member Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'personalNumber',
+      headerName: 'Personal Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'employeeContribution',
+      headerName: 'Employee Contribution',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'employerContribution',
+      headerName: 'Employer Contribution',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'totalContribution',
+      headerName: 'Total Contribution',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'periodReference',
+      headerName: 'Period Reference',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return params.value ? parseDate(params.value) : '';
+      },
+    },
+    {
+      field: 'isNewMember',
+      headerName: 'Is New Member',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+
+    {
+      field: 'contributionTypeId',
+      headerName: 'Contribution Type ',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        if (contributionTypes && contributionTypes.length > 0) {
+          const contributionType = contributionTypes.find(
+            (item) => item.id === params.value
+          );
+          return contributionType ? contributionType.contributionTypeName : '';
+        }
+        return '';
+      },
+    },
+  ];
+
+  const exportData = () => {
+    gridApi.exportDataAsCsv({
+      fileName: `members.csv`, // Set the desired file name here
+    });
+  };
+
+  const tabPanes = [
+    {
+      key: '1',
+      title: 'Batch Information',
+      content: (
+        <div>
+          <BaseAutoSaveInputCard
+            fields={fetchedFields}
+            apiEndpoint={financeEndpoints.uploadContributions}
+            getApiEndpoint={financeEndpoints.getContributionBatches}
+            getApiService={apiService.get}
+            postApiFunction={apiService.post}
+            useRequestBody={false}
+            transformData={transformData}
+            setOpenBaseCard={setOpenBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
+            refreshData={false}
+          />
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Batch Contributions',
+      content: (
+        <div className="ag-theme-quartz min-h-[600px] max-h-[600px] h-[200px]  gap-3">
+          <Button
+            variant="text"
+            onClick={exportData}
+            startIcon={
+              <img
+                src="/excel.png"
+                alt="excel"
+                className=""
+                height={20}
+                width={24}
+              />
+            }
+            sx={{
+              color: '#006990',
+              fontSize: '14px',
+              fontWeight: 'semibold',
+              textTransform: 'none',
+              alignItems: 'start',
+              mb: 1,
+            }}
+          >
+            Export to Excel
+          </Button>
+          <AgGridReact
+            columnDefs={membersColumnDefs}
+            rowData={clickedItem?.contributions || []}
+            pagination={false}
+            domLayout="normal"
+            alwaysShowHorizontalScroll={true}
+            onGridReady={(params) => {
+              params.api.sizeColumnsToFit();
+              onGridReady(params);
+            }}
+            noRowsOverlayComponent={BaseEmptyComponent}
+            rowSelection="multiple"
+            className="custom-grid ag-theme-quartz"
+            onRowClicked={(e) => {
+              console.log('e.data', e.data);
+              setClickedRow(e.data);
+              setOpenBaseCard(true);
+            }}
+          />
+        </div>
+      ),
+    },
+    //
+  ];
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+    gridApiRef.current = params;
+    params.api.sizeColumnsToFit();
+  };
 
   return (
     <div className="">
@@ -211,18 +511,9 @@ const BatchContributions = () => {
         deleteApiEndpoint={financeEndpoints.deleteVendor(clickedItem?.id)}
         deleteApiService={apiService.post}
       >
-        {' '}
         {clickedItem ? (
           <>
-            <BaseInputCard
-              fields={fields}
-              apiEndpoint={financeEndpoints.uploadContributions}
-              postApiFunction={apiService.post}
-              useRequestBody={false}
-              setOpenBaseCard={setOpenBaseCard}
-              isBranch={true}
-              refreshData={false}
-            />
+            <BaseTabs tabPanes={tabPanes} />
           </>
         ) : (
           <BaseInputCard
@@ -247,8 +538,8 @@ const BatchContributions = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Contributions Processing"
-        currentTitle="Contributions Processing"
+        breadcrumbTitle="Contribution Processing"
+        currentTitle="Contribution Processing"
       />
     </div>
   );
