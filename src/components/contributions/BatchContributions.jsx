@@ -253,11 +253,23 @@ const BatchContributions = () => {
         { id: 0, name: 'Pending' },
         { id: 1, name: 'Approved' },
         { id: 2, name: 'Posted' },
+        { id: 3, name: 'Reversed' },
       ],
       required: true,
       disabled: true,
     },
   ];
+
+  const notificationStatusMap = {
+    0: { name: 'Pending', color: '#f39c12' }, // Light Red
+    1: { name: 'Approved', color: '#49D907' }, // Bright Orange
+    2: { name: 'Posted', color: '#3498db' }, // Light Blue
+    3: { name: 'Reversed', color: '#970FF2' }, // Amethyst
+    4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
+    5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
+    6: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
+    7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
+  };
 
   const columnDefs = [
     {
@@ -279,21 +291,6 @@ const BatchContributions = () => {
       flex: 1,
     },
     {
-      field: 'contributionTypeId',
-      headerName: 'Contribution Type',
-      headerClass: 'prefix-header',
-      flex: 1,
-      valueFormatter: (params) => {
-        if (contributionTypes && contributionTypes.length > 0) {
-          const contributionType = contributionTypes.find(
-            (item) => item.id === params.value
-          );
-          return contributionType ? contributionType.contributionTypeName : '';
-        }
-        return '';
-      },
-    },
-    {
       field: 'noOfStaff',
       headerName: 'No Of Staff',
       headerClass: 'prefix-header',
@@ -305,6 +302,51 @@ const BatchContributions = () => {
       headerClass: 'prefix-header',
       flex: 1,
     },
+    {
+      field: 'batchStatus',
+      headerName: 'Batch Status',
+      headerClass: 'prefix-header',
+      flex: 1,
+      cellRenderer: (params) => {
+        const status = notificationStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 3,
+              // borderColor: status.color,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name}
+          </Button>
+        );
+      },
+    },
+    {
+      field: 'contributionTypeId',
+      headerName: 'Contribution Type',
+      headerClass: 'prefix-header',
+      flex: 1,
+      valueFormatter: (params) => {
+        if (contributionTypes && contributionTypes.length > 0) {
+          const contributionType = contributionTypes.find(
+            (item) => item.id === params.value
+          );
+          return contributionType
+            ? contributionType.contributionTypeName
+            : 'N/A';
+        }
+        return 'N/A';
+      },
+    },
+
     {
       field: 'totalNewEntrants',
       headerName: 'Total New Entrants',
@@ -320,12 +362,6 @@ const BatchContributions = () => {
     {
       field: 'totalExitedMembers',
       headerName: 'Total Exited Members',
-      headerClass: 'prefix-header',
-      flex: 1,
-    },
-    {
-      field: 'batchStatus',
-      headerName: 'Batch Status',
       headerClass: 'prefix-header',
       flex: 1,
     },
