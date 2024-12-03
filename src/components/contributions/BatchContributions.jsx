@@ -557,6 +557,8 @@ const BatchContributions = ({ status }) => {
           message.success('Contributions submitted for approval successfully');
           fetchContributionBatches();
           setOpenContirbutionsActions(false);
+        } else {
+          message.error('Failed to submit contributions for approval');
         }
       } catch (error) {
         message.error('Failed to submit contributions for approval');

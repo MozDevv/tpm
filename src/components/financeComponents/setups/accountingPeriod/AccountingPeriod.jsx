@@ -270,7 +270,7 @@ const AccountingPeriod = () => {
                 idLabel="accountingPeriodId"
                 getApiService={apiService.get}
                 postApiService={apiService.post}
-                putApiService={apiService.put}
+                putApiService={apiService.post}
                 getEndpoint={financeEndpoints.getAccountingPeriodById(
                   clickedItem?.id
                 )}
