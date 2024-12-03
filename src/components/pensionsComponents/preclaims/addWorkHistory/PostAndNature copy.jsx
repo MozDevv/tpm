@@ -1,5 +1,5 @@
-import { useAlert } from '@/context/AlertContext';
-import React, { useEffect, useState } from 'react';
+import { useAlert } from "@/context/AlertContext";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,29 +18,30 @@ import {
   TextField,
   FormControl,
   IconButton,
-} from '@mui/material';
-import dayjs from 'dayjs';
-import { message } from 'antd';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
-import axios from 'axios';
+} from "@mui/material";
+import dayjs from "dayjs";
+import { message } from "antd";
+import { Delete, Edit, Visibility } from "@mui/icons-material";
+import axios from "axios";
 import preClaimsEndpoints, {
   apiService,
-} from '@/components/services/preclaimsApi';
-import { useMda } from '@/context/MdaContext';
-import endpoints from '@/components/services/setupsApi';
-import EditableTable from '@/components/baseComponents/EditableTable';
-import BaseInputTable from '@/components/baseComponents/BaseInputTable';
-import { BASE_CORE_API } from '@/utils/constants';
+} from "@/components/services/preclaimsApi";
+import { useMda } from "@/context/MdaContext";
+import endpoints from "@/components/services/setupsApi";
+import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import { BASE_CORE_API } from "@/utils/constants";
 
 function PostAndNature({ id, clickedItem }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    date: '',
-    post: '',
+    date: "",
+    was_seconded: false,
+    post: "",
     was_pensionable: false,
-    nature_of_salary_scale: '',
-    nature_of_service: '',
+    nature_of_salary_scale: "",
+    nature_of_service: "",
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -57,7 +58,7 @@ function PostAndNature({ id, clickedItem }) {
           (a, b) => new Date(a.date) - new Date(b.date)
         );
 
-        console.log('Post and Nature Data:', sortedData);
+        console.log("Post and Nature Data:", sortedData);
         setPostAndNatureData(res.data.data);
         return res.data.data;
       }
@@ -73,10 +74,10 @@ function PostAndNature({ id, clickedItem }) {
     }
   }, [id]);
 
-  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState('');
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
 
-  const [mdaId, setMdaId] = useState('');
-  const [cap, setCap] = useState('');
+  const [mdaId, setMdaId] = useState("");
+  const [cap, setCap] = useState("");
 
   const [pensionAward, setPensionAward] = useState(null);
 
@@ -95,9 +96,9 @@ function PostAndNature({ id, clickedItem }) {
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
       console.log(
-        'first appointment',
+        "first appointment",
         res.data.data[0].date_of_first_appointment,
-        'date of confirmation',
+        "date of confirmation",
         res.data.data[0].date_of_confirmation
       );
     } catch (error) {
@@ -114,11 +115,11 @@ function PostAndNature({ id, clickedItem }) {
   const fetchDesignations = async () => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        'paging.pageSize': 1000,
+        "paging.pageSize": 1000,
       });
       setDesignations(res.data.data);
     } catch (error) {
-      console.error('Error fetching Designations:', error);
+      console.error("Error fetching Designations:", error);
     }
   };
 
@@ -127,38 +128,38 @@ function PostAndNature({ id, clickedItem }) {
   }, []);
   const natureOfServiceOptions = {
     CAP189: [
-      { id: 'Probation', name: 'Probation' },
-      { id: 'Permanent', name: 'Permanent' },
-      { id: 'Temporary', name: 'Temporary' },
-      { id: 'Contract', name: 'Contract' },
+      { id: "Probation", name: "Probation" },
+      { id: "Permanent", name: "Permanent" },
+      { id: "Temporary", name: "Temporary" },
+      { id: "Contract", name: "Contract" },
     ],
     CAP199: [
-      { id: 'ReckonableService', name: 'Reckonable Service' },
-      { id: 'NonReckonableService', name: 'Non-Reckonable Service' },
+      { id: "ReckonableService", name: "Reckonable Service" },
+      { id: "NonReckonableService", name: "Non-Reckonable Service" },
     ],
     CAP196: [
-      { id: 'ParliamentaryTerms', name: 'Parliamentary Terms' },
-      { id: 'OneTerm', name: '1 Term' },
-      { id: 'TwoTerms', name: '2 Term' },
-      { id: 'ThreeTerms', name: '3 Term' },
-      { id: 'FourTerms', name: '4 Term' },
-      { id: 'FiveTerms', name: '5 Term' },
+      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
     ],
-    'APN/PK': [
-      { id: 'ParliamentaryTerms', name: 'Parliamentary Terms' },
-      { id: 'OneTerm', name: '1 Term' },
-      { id: 'TwoTerms', name: '2 Term' },
-      { id: 'ThreeTerms', name: '3 Term' },
-      { id: 'FourTerms', name: '4 Term' },
-      { id: 'FiveTerms', name: '5 Term' },
+    "APN/PK": [
+      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
     ],
-    'DSO/RK': [
-      { id: 'ParliamentaryTerms', name: 'Parliamentary Terms' },
-      { id: 'OneTerm', name: '1 Term' },
-      { id: 'TwoTerms', name: '2 Term' },
-      { id: 'ThreeTerms', name: '3 Term' },
-      { id: 'FourTerms', name: '4 Term' },
-      { id: 'FiveTerms', name: '5 Term' },
+    "DSO/RK": [
+      { id: "ParliamentaryTerms", name: "Parliamentary Terms" },
+      { id: "OneTerm", name: "1 Term" },
+      { id: "TwoTerms", name: "2 Term" },
+      { id: "ThreeTerms", name: "3 Term" },
+      { id: "FourTerms", name: "4 Term" },
+      { id: "FiveTerms", name: "5 Term" },
     ],
   };
 
@@ -171,7 +172,7 @@ function PostAndNature({ id, clickedItem }) {
         setParliamentarianTerms(res.data.data);
       }
     } catch (error) {
-      console.error('Error fetching Full Term:', error);
+      console.error("Error fetching Full Term:", error);
     }
   };
 
@@ -181,12 +182,12 @@ function PostAndNature({ id, clickedItem }) {
   }, []);
 
   const fields = [
-    ...(cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK'
+    ...(cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK"
       ? [
           {
-            label: 'Parliamentary Term',
-            value: 'parliamentary_term_setup_id',
-            type: 'select',
+            label: "Parliamentary Term",
+            value: "parliamentary_term_setup_id",
+            type: "select",
             options: parliamenterianTerms.map((term) => ({
               id: term.id,
               name: term.name,
@@ -199,37 +200,45 @@ function PostAndNature({ id, clickedItem }) {
             })),
           },
           {
-            label: 'Was Full Term Served (Yes/No)',
-            value: 'was_full_term',
-            type: 'select',
+            label: "Was Full Term Served (Yes/No)",
+            value: "was_full_term",
+            type: "select",
             options: [
-              { id: true, name: 'Yes' },
-              { id: false, name: 'No' },
+              { id: true, name: "Yes" },
+              { id: false, name: "No" },
             ],
           },
         ]
       : []),
     {
-      label: 'Start Date',
-      value: 'date',
-      type: 'date',
+      label: "Start Date",
+      value: "date",
+      type: "date",
       disabled:
-        cap === 'CAP196' || cap === 'DSO/RK' || cap === 'APN/PK' ? true : false,
+        cap === "CAP196" || cap === "DSO/RK" || cap === "APN/PK" ? true : false,
     },
     ...(clickedItem?.was_in_mixed_service
       ? [
           {
-            label: 'End Date',
-            value: 'end_date',
-            type: 'date',
+            label: "End Date",
+            value: "end_date",
+            type: "date",
           },
         ]
       : []),
-
     {
-      label: 'Post',
-      value: 'post',
-      type: 'select',
+      label: "Seconded(Yes/No)",
+      value: "seconded",
+      type: "select",
+      options: [
+        { id: true, name: "Yes" },
+        { id: false, name: "No" },
+      ],
+    },
+    {
+      label: "Post",
+      value: "post",
+      type: "select",
       options: designations
         .filter((designation) => designation?.mda?.id === mdaId)
         .map((designation) => ({
@@ -240,49 +249,49 @@ function PostAndNature({ id, clickedItem }) {
     ...(clickedItem?.was_in_mixed_service
       ? [
           {
-            label: 'Salary',
-            value: 'amount',
-            type: 'amount',
+            label: "Salary",
+            value: "amount",
+            type: "amount",
           },
         ]
       : []),
     {
-      label: 'Whether Pensionable(Yes/No)',
-      value: 'was_pensionable',
-      type: 'select',
+      label: "Whether Pensionable(Yes/No)",
+      value: "was_pensionable",
+      type: "select",
       options: [
-        { id: true, name: 'Yes' },
-        { id: false, name: 'No' },
+        { id: true, name: "Yes" },
+        { id: false, name: "No" },
       ],
     },
     ...(clickedItem?.was_in_mixed_service
       ? [
           {
-            label: 'Is Central Government(Yes/No)',
-            value: 'is_central_government',
-            type: 'select',
+            label: "Is Central Government(Yes/No)",
+            value: "is_central_government",
+            type: "select",
             options: [
-              { id: true, name: 'Yes' },
-              { id: false, name: 'No' },
+              { id: true, name: "Yes" },
+              { id: false, name: "No" },
             ],
           },
         ]
       : []),
     {
-      label: 'Nature of Salary Scale',
-      value: 'nature_of_salary_scale',
-      type: 'select',
+      label: "Nature of Salary Scale",
+      value: "nature_of_salary_scale",
+      type: "select",
       options: [
-        { id: 'P', name: 'Pensionable' },
-        { id: 'Prob', name: 'Probation' },
-        { id: 'T', name: 'Temporary' },
-        { id: 'C', name: 'Contract' },
+        { id: "P", name: "Pensionable" },
+        { id: "Prob", name: "Probation" },
+        { id: "T", name: "Temporary" },
+        { id: "C", name: "Contract" },
       ],
     },
     {
-      label: 'Nature of Service',
-      value: 'nature_of_service',
-      type: 'select',
+      label: "Nature of Service",
+      value: "nature_of_service",
+      type: "select",
       options: natureOfServiceOptions[cap] || [],
     },
   ];
@@ -311,7 +320,7 @@ function PostAndNature({ id, clickedItem }) {
         putEndpoint={preClaimsEndpoints.updatePostAndNature}
         deleteEndpoint={preClaimsEndpoints.deletePostAndNature}
         passProspectivePensionerId={true}
-      />{' '}
+      />{" "}
     </div>
   );
 }
