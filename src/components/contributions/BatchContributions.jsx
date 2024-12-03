@@ -21,7 +21,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import BaseEmptyComponent from '../baseComponents/BaseEmptyComponent';
 import ListNavigation from '../baseComponents/ListNavigation';
 import { Button, Dialog, Divider, IconButton } from '@mui/material';
-import { Close, IosShare, Launch } from '@mui/icons-material';
+import { ArrowBack, Close, IosShare, Launch } from '@mui/icons-material';
 import ContirbutionsActions from './ContirbutionsActions';
 import { message } from 'antd';
 const BatchContributions = ({ status }) => {
@@ -579,24 +579,42 @@ const BatchContributions = ({ status }) => {
         open={openContirbutionsActions && selectedRows.length > 0}
         onClose={() => setOpenContirbutionsActions(false)}
       >
-        <IconButton
-          onClick={() => setOpenContirbutionsActions(false)}
-          sx={{
-            position: 'absolute',
-            top: '15px',
-            right: '15px',
-            color: 'primary',
-          }}
-        >
-          <Close
+        <div className="pt-10 px-5 overflow-y-auto h-[70vh] flex flex-col gap-2">
+          <div className={`flex items-center gap-1`}>
+            <IconButton
+              sx={{
+                border: '1px solid #006990',
+                borderRadius: '50%',
+                padding: '3px',
+                marginRight: '10px',
+                color: '#006990',
+              }}
+              onClick={() => setOpenContirbutionsActions(false)}
+            >
+              <ArrowBack sx={{ color: '#006990' }} />
+            </IconButton>
+            <p className="text-lg text-primary font-semibold">
+              Batch Contributions to be Submitted for Approval
+            </p>
+          </div>
+          <IconButton
+            onClick={() => setOpenContirbutionsActions(false)}
             sx={{
-              color: 'primary.main',
+              position: 'absolute',
+              top: '15px',
+              right: '15px',
+              color: 'primary',
             }}
-          />
-        </IconButton>
-        <div className="pt-10 px-5 overflow-y-auto h-[70vh]">
+          >
+            <Close
+              sx={{
+                color: 'primary.main',
+              }}
+            />
+          </IconButton>
+
           <Button
-            variant="contained"
+            variant="text"
             onClick={handleSubmitBatchForApproval}
             startIcon={<IosShare />}
             sx={{
@@ -604,14 +622,17 @@ const BatchContributions = ({ status }) => {
               fontWeight: 'semibold',
               textTransform: 'none',
               alignItems: 'start',
-              mb: 2,
+
+              mt: 2,
+              width: '320px',
             }}
           >
             Send Contributions for Approval
           </Button>
+          <Divider className="mb-2" />
           {selectedRows.map((row, index) => (
-            <div key={index} className="mb-4">
-              <h3 className="text-lg font-semibold mb-4 text-primary">{`Contributions for ${row.description}`}</h3>
+            <div key={index} className="mb-4  pt-4 px-4">
+              <h3 className="text-[15px]  italic font-semibold mb-4 text-primary">{`Contributions for ${row.description}`}</h3>
               <div className="ag-theme-quartz min-h-[200px] max-h-[400px] h-[200px] gap-3">
                 <AgGridReact
                   columnDefs={membersColumnDefs}
