@@ -169,12 +169,6 @@ const AccountingPeriod = () => {
       headerClass: 'prefix-header',
       filter: true,
     },
-    // {
-    //   field: "isInventoryPeriodClosed",
-    //   headerName: "Is Inventory Period Closed",
-    //   headerClass: "prefix-header",
-    //   filter: true,
-    // },
   ];
 
   const subgroupFields = [
@@ -215,12 +209,6 @@ const AccountingPeriod = () => {
         { id: false, name: 'No' },
       ],
     },
-    // {
-    //   name: "isInventoryPeriodClosed",
-    //   label: "Is Inventory Period Closed",
-    //   type: "switch",
-    //   required: true,
-    // },
   ];
   useEffect(() => {
     if (postedData) {
