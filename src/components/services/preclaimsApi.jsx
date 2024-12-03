@@ -28,7 +28,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response.status === 401) {
+      console.log('Token expired. Refreshing token...');
       const token = localStorage.getItem('token');
       const refreshToken = localStorage.getItem('refreshToken');
 

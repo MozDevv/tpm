@@ -14,28 +14,152 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { he } from '@faker-js/faker';
 import Contributions from './Contributions';
+import {
+  Add,
+  ArticleOutlined,
+  BarChart,
+  FileDownload,
+  Launch,
+} from '@mui/icons-material';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const columnDefs = [
-  { headerName: 'No', field: 'no', sortable: true, filter: true },
-  { headerName: 'Year', field: 'year', sortable: true, filter: true },
   {
-    headerName: 'Total Contributions',
-    field: 'total_contributions',
+    headerName: 'Year',
+    field: 'year',
     sortable: true,
     filter: true,
+    width: 150,
+    pinned: 'left',
+    checkBoxSelection: true,
   },
-  { headerName: 'Interest', field: 'intrest', sortable: true, filter: true },
+  // {
+  //   headerName: 'Interest',
+  //   field: 'intrest',
+  //   sortable: true,
+  //   filter: true,
+  //   valueFormatter: (params) => formatNumber(params.value),
+  //   pinned: 'left',
+  //   width: 150,
+  // },
+
+  // {
+  //   headerName: 'Parliamentary Terms',
+  //   field: 'parliamentary_term_setup_id',
+  //   sortable: true,
+  //   filter: true,
+  //   pinned: 'left',
+  // },
+
   {
-    headerName: 'Total Contributions With Interest',
+    headerName: 'January',
+    field: 'january',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'February',
+    field: 'february',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'March',
+    field: 'march',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'April',
+    field: 'april',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  { headerName: 'May', field: 'may', sortable: true, filter: true, width: 100 },
+  {
+    headerName: 'June',
+    field: 'june',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'July',
+    field: 'july',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'August',
+    field: 'august',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'September',
+    field: 'september',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'October',
+    field: 'october',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'November',
+    field: 'november',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'December',
+    field: 'december',
+    sortable: true,
+    filter: true,
+    width: 100,
+    valueFormatter: (params) =>
+      params.value ? formatNumber(params.value) : '-',
+  },
+  {
+    headerName: 'Total Annual Salary',
     field: 'total_contributions_with_intrest',
     sortable: true,
     filter: true,
-  },
-  {
-    headerName: 'Parliamentary Terms',
-    field: 'parliamentary_term_setup_id',
-    sortable: true,
-    filter: true,
+    pinned: 'right',
+    width: 150,
+
+    valueFormatter: (params) => formatNumber(params.value),
   },
 ];
 
@@ -46,16 +170,27 @@ const ParliamentContributions = (id) => {
   const pageSize = 10; // Number of records per page
 
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
-    return data.map((item, index) => ({
-      id: item.id,
-      no: index + 1 + pageSize * (pageNumber - 1),
-      year: item.year,
-      total_contributions: item.total_contributions,
-      intrest: item.intrest,
-      total_contributions_with_intrest: item.total_contributions_with_intrest,
-      intrest_amount: item.intrest_amount,
-      parliamentary_term_setup_id: item.parliamentary_term_setup_id,
-    }));
+    return data.map((item, index) => {
+      const monthMap = item.lines.reduce((acc, line) => {
+        const monthName = new Date(0, line.month - 1)
+          .toLocaleString('default', { month: 'long' })
+          .toLowerCase();
+        acc[monthName] = line.contribution;
+        return acc;
+      }, {});
+
+      return {
+        id: item.id,
+        no: index + 1 + pageSize * (pageNumber - 1),
+        year: item.year,
+        total_contributions: item.total_contributions,
+        intrest: item.intrest,
+        total_contributions_with_intrest: item.total_contributions_with_intrest,
+        intrest_amount: item.intrest_amount,
+        parliamentary_term_setup_id: item.parliamentary_term_setup_id,
+        ...monthMap,
+      };
+    });
   };
 
   //
@@ -176,32 +311,79 @@ const ParliamentContributions = (id) => {
         deleteApiService={apiService.delete}
         isSecondaryCard={true}
       >
-        <Contributions
-          parliamenterianTerms={parliamenterianTerms}
-          id={id.id}
-          apiEndpoint={endpoints.createParliamentContributions}
-          postApiFunction={apiService.post}
-          clickedItem={clickedItem}
-          setClickedItem={setClickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          useRequestBody={true}
-          isBranch={false}
-        />
+        {clickedItem ? (
+          <Contributions
+            parliamenterianTerms={parliamenterianTerms}
+            id={id.id}
+            apiEndpoint={endpoints.createParliamentContributions}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            setClickedItem={setClickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+            isBranch={false}
+          />
+        ) : (
+          <BaseInputCard
+            fields={fields}
+            apiEndpoint={endpoints.createParliamentContributions}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
+          />
+        )}
       </BaseCard>
 
-      <Button
-        variant="contained"
-        onClick={() => {
-          setOpenBaseCard(true);
-          setClickedItem(null);
-        }}
-        sx={{
-          my: 2,
-        }}
-      >
-        Add Parliamentary Contributions
-      </Button>
-
+      <div className="flex justify-between w-full items-center">
+        <div className="flex gap-6 items-center">
+          <Button
+            variant="text"
+            startIcon={<Add />}
+            onClick={() => {
+              setOpenBaseCard(true);
+              setClickedItem(null);
+            }}
+            sx={{
+              my: 2,
+            }}
+          >
+            Add Parliamentary Contributions
+          </Button>
+          <Button
+            variant="text"
+            startIcon={<Launch />}
+            onClick={() => {}}
+            sx={{
+              my: 2,
+            }}
+          >
+            Generate Upload Template
+          </Button>
+          <Button
+            variant="text"
+            startIcon={<FileDownload />}
+            onClick={() => {}}
+            sx={{
+              my: 2,
+            }}
+          >
+            Import Parliamentary Contributions (xlsx)
+          </Button>
+        </div>
+        <div className="">
+          <Button
+            variant="text"
+            startIcon={<ArticleOutlined />}
+            onClick={() => {}}
+            sx={{
+              my: 2,
+            }}
+          >
+            Reports
+          </Button>
+        </div>
+      </div>
       <div
         className="ag-theme-quartz"
         style={{
@@ -213,24 +395,20 @@ const ParliamentContributions = (id) => {
         }}
       >
         <AgGridReact
-          columnDefs={columnDefs}
+          columnDefs={columnDefs.map((col) => ({
+            ...col,
+            headerTooltip: col.headerName,
+          }))}
           rowData={filteredData}
           pagination={false}
           domLayout="autoHeight"
+          className="custom-grid"
           alwaysShowHorizontalScroll={true}
           // paginationPageSize={pageSize}
-          onGridReady={(params) => {
-            params.api.sizeColumnsToFit();
-            // onGridReady(params);
-          }}
-          // onPaginationChanged={(params) =>
-          //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-          // }
+          onGridReady={(params) => {}}
           onRowClicked={(e) => {
             setOpenBaseCard(true);
             setClickedItem(e.data);
-            // setUserClicked(e.data);
-            //handleClickUser(e.data);
           }}
         />
       </div>

@@ -44,6 +44,7 @@ import PushToFinance from './PushToFinance';
 import Page5Report from '../reports/Page5Report';
 import AppendixReport from '../reports/AppendixReport';
 import GP178Report from '@/components/pensionsComponents/ClaimsManagementTable/reports/GP178Report';
+import DsoReport from '@/components/pensionsComponents/ClaimsManagementTable/reports/DsoReport';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -649,13 +650,23 @@ const AssessmentTable = ({ status, statusArr }) => {
           },
         }}
       >
-        <div className="px-6">
-          <GP178Report
-            clickedItem={clickedItem}
-            setOpenGP178Report={setOpenGP178Report}
-            retireeId={clickedItem?.retiree}
-          />
-        </div>
+        {clickedItem && clickedItem.mda_pensionCap_name === 'CAP189' ? (
+          <div className="px-6">
+            <GP178Report
+              clickedItem={clickedItem}
+              setOpenGP178Report={setOpenGP178Report}
+              retireeId={clickedItem?.retiree}
+            />
+          </div>
+        ) : (
+          <div className="px-6">
+            <DsoReport
+              clickedItem={clickedItem}
+              setOpenGP178Report={setOpenGP178Report}
+              retireeId={clickedItem?.retiree}
+            />
+          </div>
+        )}
       </Dialog>
       <Dialog
         open={openReport === 1}
