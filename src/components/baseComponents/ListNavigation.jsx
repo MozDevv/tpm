@@ -448,6 +448,12 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'generateContributionUploadTemplate',
       requiredPermissions: [],
     },
+    {
+      name: 'Submit Contributions for Approval',
+      icon: Send,
+      action: 'submitContributionsForApproval',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

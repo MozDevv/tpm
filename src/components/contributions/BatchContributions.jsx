@@ -20,15 +20,19 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import BaseEmptyComponent from '../baseComponents/BaseEmptyComponent';
 import ListNavigation from '../baseComponents/ListNavigation';
-import { Button } from '@mui/material';
-import { Launch } from '@mui/icons-material';
-const BatchContributions = () => {
+import { Button, Dialog, Divider, IconButton } from '@mui/material';
+import { Close, IosShare, Launch } from '@mui/icons-material';
+import ContirbutionsActions from './ContirbutionsActions';
+import { message } from 'antd';
+const BatchContributions = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
     });
   };
 
+  const [openContirbutionsActions, setOpenContirbutionsActions] =
+    useState(false);
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -38,7 +42,6 @@ const BatchContributions = () => {
       contributionTypeId: item.contributionTypeId,
 
       ...item,
-      // roles: item.roles,
     }));
   };
 
@@ -86,6 +89,7 @@ const BatchContributions = () => {
     generateContributionUploadTemplate: () => {
       generateMembersTemplate();
     },
+    submitContributionsForApproval: () => setOpenContirbutionsActions(true),
   };
 
   const baseCardHandlers = {
@@ -121,6 +125,7 @@ const BatchContributions = () => {
   const [vendorPG, setVendorPG] = React.useState([]);
   const [contributionTypes, setContributionTypes] = React.useState([]);
   const [contributionBatch, setContributionBatch] = React.useState([]);
+  const [selectedRows, setSelectedRows] = React.useState(null);
 
   const fetchContributionBatches = async () => {
     try {
@@ -278,6 +283,15 @@ const BatchContributions = () => {
       pinned: 'left',
       valueFormatter: (params) => {
         return params.value ? parseDate(params.value) : '';
+      },
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">
+            {parseDate(params.value)}
+          </p>
+        );
       },
     },
 
@@ -532,8 +546,93 @@ const BatchContributions = () => {
     params.api.sizeColumnsToFit();
   };
 
+  const handleSubmitBatchForApproval = async () => {
+    selectedRows.forEach(async (row) => {
+      try {
+        const response = await apiService.post(
+          financeEndpoints.submitBatchForApproval,
+          { contributionBatchId: row.id }
+        );
+        if (response.status === 200 && response.data.succeeded) {
+          message.success('Contributions submitted for approval successfully');
+          fetchContributionBatches();
+          setOpenContirbutionsActions(false);
+        }
+      } catch (error) {
+        message.error('Failed to submit contributions for approval');
+        console.log(error);
+      }
+    });
+  };
+
   return (
     <div className="">
+      <Dialog
+        sx={{
+          '& .MuiDialog-paper': {
+            minWidth: '70vw',
+            height: 'auto',
+            minHeight: '75vh',
+            position: 'relative',
+          },
+        }}
+        open={openContirbutionsActions && selectedRows.length > 0}
+        onClose={() => setOpenContirbutionsActions(false)}
+      >
+        <IconButton
+          onClick={() => setOpenContirbutionsActions(false)}
+          sx={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+            color: 'primary',
+          }}
+        >
+          <Close
+            sx={{
+              color: 'primary.main',
+            }}
+          />
+        </IconButton>
+        <div className="pt-10 px-5 overflow-y-auto h-[70vh]">
+          <Button
+            variant="contained"
+            onClick={handleSubmitBatchForApproval}
+            startIcon={<IosShare />}
+            sx={{
+              fontSize: '14px',
+              fontWeight: 'semibold',
+              textTransform: 'none',
+              alignItems: 'start',
+              mb: 2,
+            }}
+          >
+            Send Contributions for Approval
+          </Button>
+          {selectedRows.map((row, index) => (
+            <div key={index} className="mb-4">
+              <h3 className="text-lg font-semibold mb-4 text-primary">{`Contributions for ${row.description}`}</h3>
+              <div className="ag-theme-quartz min-h-[200px] max-h-[400px] h-[200px] gap-3">
+                <AgGridReact
+                  columnDefs={membersColumnDefs}
+                  rowData={row.contributions || []}
+                  pagination={false}
+                  domLayout="autoheight"
+                  alwaysShowHorizontalScroll={true}
+                  onGridReady={(params) => {
+                    params.api.sizeColumnsToFit();
+                    onGridReady(params);
+                  }}
+                  noRowsOverlayComponent={BaseEmptyComponent}
+                  rowSelection="multiple"
+                  className="custom-grid ag-theme-quartz"
+                />
+              </div>
+              <Divider className="py-4" />
+            </div>
+          ))}
+        </div>
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -573,6 +672,9 @@ const BatchContributions = () => {
         handlers={handlers}
         breadcrumbTitle="Contribution Processing"
         currentTitle="Contribution Processing"
+        onSelectionChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+        }}
       />
     </div>
   );
