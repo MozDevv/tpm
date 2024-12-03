@@ -48,33 +48,27 @@ const BatchContributions = () => {
         'Payroll Number',
         'KRA Pin',
         'National ID',
-        'PSSF Number',
-        'Surname',
-        'First Name',
-        'Last Name',
-        'Other Name',
-        'Gender',
-        'Date of Birth',
+        'Employee Contribution',
+        'Employer Contribution',
+        'Period Reference',
+        'MDA Code',
       ], // Headers
       ...data.map((item) => [
         item.payrollNumber, // Payroll Number
         item.kraPin, // KRA Pin
         item.nationalId, // National ID
-        item.pssfNumber, // PSSF Number
-        item.surname, // Surname
-        item.firstName, // First Name
-        item.lastName, // Last Name
-        item.otherName, // Other Name
-        item.gender, // Gender
-        new Date(item.dateOfBirth).toLocaleDateString('en-GB'),
+        item.employeeContribution, // Employee Contribution
+        item.employerContribution, // Employer Contribution
+        new Date(item.periodReference).toLocaleDateString('en-GB'), // Period Reference
+        item.mdaCode, // MDA Code
       ]),
     ];
 
     generateExcelTemplate(
-      financeEndpoints.getMemberUploadTemplate,
+      financeEndpoints.generateContributionTemplate,
       mapDataFunction,
-      'members_upload_template.xlsx',
-      'Members Template'
+      'contribution_upload_template.xlsx',
+      'Contributions Template'
     );
   };
 
@@ -89,6 +83,9 @@ const BatchContributions = () => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
+    generateContributionUploadTemplate: () => {
+      generateMembersTemplate();
+    },
   };
 
   const baseCardHandlers = {

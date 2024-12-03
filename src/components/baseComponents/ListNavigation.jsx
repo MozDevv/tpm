@@ -442,6 +442,12 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'approveChangeRequest',
       requiredPermissions: [],
     },
+    {
+      name: 'Generate Contribution Upload Template',
+      icon: Launch,
+      action: 'generateContributionUploadTemplate',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

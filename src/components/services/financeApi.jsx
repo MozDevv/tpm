@@ -342,7 +342,7 @@ const financeEndpoints = {
 
   getContributions: '/Contribution/GetContributions',
 
-  
+  generateContributionTemplate: '/Contribution/GetContributionUploadTemplate',
 };
 
 export const apiService = {
