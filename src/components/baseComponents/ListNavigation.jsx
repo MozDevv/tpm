@@ -127,6 +127,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
     {
       name: 'Open in Excel',
       icon: OpenInNew,
+      image: '/excel.png',
       action: 'openInExcel',
       requiredPermissions: [],
     },
@@ -441,6 +442,18 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'approveChangeRequest',
       requiredPermissions: [],
     },
+    {
+      name: 'Generate Contribution Upload Template',
+      icon: Launch,
+      action: 'generateContributionUploadTemplate',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Submit Contributions for Approval',
+      icon: Send,
+      action: 'submitContributionsForApproval',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
@@ -640,19 +653,29 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
             ) || button.disabled
           }
           startIcon={
-            <button.icon
-              sx={{
-                fontSize: '20px',
-                mr: '2px',
-                color:
-                  button.requiredPermissions.some(
-                    (permission) => !permissions?.includes(permission)
-                  ) || button.disabled
-                    ? 'gray'
-                    : 'primary',
-              }}
-              color="primary"
-            />
+            button.image ? (
+              <img
+                src={button.image}
+                alt="excel"
+                className=""
+                height={18}
+                width={24}
+              />
+            ) : (
+              <button.icon
+                sx={{
+                  fontSize: '20px',
+                  mr: '2px',
+                  color:
+                    button.requiredPermissions.some(
+                      (permission) => !permissions?.includes(permission)
+                    ) || button.disabled
+                      ? 'gray'
+                      : 'primary',
+                }}
+                color="primary"
+              />
+            )
           }
         >
           <p className="font-medium text-gray -ml-2 text-sm">{button.name}</p>

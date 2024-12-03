@@ -555,6 +555,7 @@ const BaseAutoSaveInputCard = ({
                 variant="outlined"
                 onBlur={handleAutoSave}
                 size="small"
+                disabled={field.disabled}
                 error={!!errors[field.name]}
                 value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
                 // helperText={errors[field.name]}
