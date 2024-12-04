@@ -80,9 +80,7 @@ function PostAndNature({ id, clickedItem }) {
   const [cap, setCap] = useState("");
 
   const [pensionAward, setPensionAward] = useState(null);
-  const [isSeconded, setIsSeconded] = useState(true);
-
-  //const [pensio]
+  const [isSeconded, setIsSeconded] = useState(false);
 
   const fetchProspectivePensioners = async () => {
     try {
