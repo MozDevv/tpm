@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Backdrop, Button, Divider, IconButton } from '@mui/material';
 import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { parseDate2 } from '@/utils/dateFormatter';
-const DsoReport = ({ setOpenGP178Report, clickedItem }) => {
+const Cap196Death = ({ setOpenGP178Report, clickedItem }) => {
   const contentRef = useRef(null);
   const [pdfBlob, setPdfBlob] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -79,17 +79,25 @@ const DsoReport = ({ setOpenGP178Report, clickedItem }) => {
       {pdfBlob && (
         <iframe
           src={URL.createObjectURL(pdfBlob)}
-          style={{ width: '100%', height: '100vh', border: 'none' }}
+          style={{
+            width: '100%',
+            height: '100vh',
+            border: 'none',
+            display: 'none',
+          }}
           title="Page 5 PDF"
         />
       )}
-      <div className="hidden">
+      <div className="">
         <div
           ref={contentRef}
           className="p-8 max-w-2xl overflow-y-auto mx-auto  font-times"
         >
           <div className="">
             <div className="text-center items-center justify-center  flex flex-col">
+              <p className="uppercase font-bold text-[22px] mb-4">
+                Republic of Kenya
+              </p>{' '}
               <img
                 src="/kenya.png"
                 alt=""
@@ -97,10 +105,6 @@ const DsoReport = ({ setOpenGP178Report, clickedItem }) => {
                 width={140}
                 className="w-[120px] h-[100px]"
               />
-
-              <p className="uppercase font-bold text-[22px] mb-4">
-                Republic of Kenya
-              </p>
               <p className="font-bold uppercase text-[20px] px-7">
                 The Retirement Benefits (Deputy President and Designated State
                 Officers) Act
@@ -199,7 +203,7 @@ const DsoReport = ({ setOpenGP178Report, clickedItem }) => {
 
             {/************        PART B STATEMENT OF PARTICULARS           ******** */}
 
-            <div className="mb-4 mt-12">
+            <div className="mb-4 mt-5">
               <p className="uppercase font-bold">
                 Part B - Statement of Particulars
               </p>
@@ -474,4 +478,4 @@ const DsoReport = ({ setOpenGP178Report, clickedItem }) => {
   );
 };
 
-export default DsoReport;
+export default Cap196Death;

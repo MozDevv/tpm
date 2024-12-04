@@ -202,3 +202,33 @@ a:hover {
   position: absolute;
   left: -1.5em; /* Adjust this value to position the brackets correctly */
 }
+.custom-line-through {
+  position: relative;
+  width: fit-content;
+}
+
+.custom-line-through::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px; /* Adjust this value to push the line lower */
+  height: 1px; /* Adjust the thickness of the line */
+  background-color: black; /* Adjust the color of the line */
+}
+.custom-underline {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+
+.custom-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px; /* Adjust this value to push the underline down */
+  height: 1px; /* Adjust the thickness of the underline */
+  background-color: black; /* Adjust the color of the underline */
+  width: 100%;
+}

@@ -45,6 +45,7 @@ import Page5Report from '../reports/Page5Report';
 import AppendixReport from '../reports/AppendixReport';
 import GP178Report from '@/components/pensionsComponents/ClaimsManagementTable/reports/GP178Report';
 import DsoReport from '@/components/pensionsComponents/ClaimsManagementTable/reports/DsoReport';
+import Cap196Death from '@/components/pensionsComponents/ClaimsManagementTable/reports/Cap196Death';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -660,7 +661,12 @@ const AssessmentTable = ({ status, statusArr }) => {
           </div>
         ) : (
           <div className="px-6">
-            <DsoReport
+            {/* <DsoReport
+              clickedItem={clickedItem}
+              setOpenGP178Report={setOpenGP178Report}
+              retireeId={clickedItem?.retiree}
+            /> */}
+            <Cap196Death
               clickedItem={clickedItem}
               setOpenGP178Report={setOpenGP178Report}
               retireeId={clickedItem?.retiree}

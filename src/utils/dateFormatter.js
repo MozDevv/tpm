@@ -40,3 +40,15 @@ export const isValidISODate = (dateString) => {
   const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
   return isoDateRegex.test(dateString) && !isNaN(Date.parse(dateString));
 };
+///1960-10-10T00:00:00Z to 10/10/1960
+export const parseDate2 = (date) => {
+  if (date) {
+    return new Date(date)
+      .toISOString()
+      .split('T')[0]
+      .split('-')
+      .reverse()
+      .join('/');
+  }
+  return '';
+};

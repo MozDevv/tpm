@@ -29,8 +29,6 @@ export const generatePdfBlob = async (contentRef, setPdfBlob, setLoading) => {
 
     const clonedElement = element.cloneNode(true);
     const scale = 0.99; // Scale factor to reduce the size
-    clonedElement.style.transform = `scale(${scale})`;
-    clonedElement.style.transformOrigin = 'top left';
 
     wrapper.appendChild(clonedElement);
 
@@ -41,8 +39,51 @@ export const generatePdfBlob = async (contentRef, setPdfBlob, setLoading) => {
       .then((pdfBlob) => {
         setPdfBlob(pdfBlob);
       })
+      .then(() => {
+        setLoading(false);
+      })
       .catch(() => {
+        setLoading(false);
+      })
+      .finally(() => {
         setLoading(false);
       });
   });
+};
+
+export const downloadPdf = async (element, setLoading) => {
+  setLoading(true);
+
+  const html2pdf = (await import('html2pdf.js')).default;
+
+  const options = {
+    margin: 0.5,
+    filename: 'Page 5.pdf',
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+  };
+
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'relative';
+  wrapper.style.display = 'flex';
+  wrapper.style.alignItems = 'center';
+  wrapper.style.justifyContent = 'center';
+  wrapper.style.overflow = 'hidden';
+
+  const clonedElement = element.cloneNode(true);
+  clonedElement.style.transform = 'scale(0.99)';
+  clonedElement.style.transformOrigin = 'top left';
+
+  wrapper.appendChild(clonedElement);
+
+  html2pdf()
+    .set(options)
+    .from(wrapper)
+    .save()
+    .then(() => {
+      setLoading(false);
+    })
+    .catch(() => {
+      setLoading(false);
+    });
 };
