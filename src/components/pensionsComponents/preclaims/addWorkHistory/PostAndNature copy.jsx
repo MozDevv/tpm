@@ -58,7 +58,7 @@ function PostAndNature({ id, clickedItem }) {
           (a, b) => new Date(a.date) - new Date(b.date)
         );
 
-        console.log("Post and Nature Data:", sortedData);
+        // console.log("Post and Nature Data:", sortedData);
         setPostAndNatureData(res.data.data);
         return res.data.data;
       }
@@ -80,14 +80,18 @@ function PostAndNature({ id, clickedItem }) {
   const [cap, setCap] = useState("");
 
   const [pensionAward, setPensionAward] = useState(null);
-
-  //const [pensio]
+  const [isSeconded, setIsSeconded] = useState(false);
 
   const fetchProspectivePensioners = async () => {
     try {
       const res = await apiService.get(
         preClaimsEndpoints.getProspectivePensioner(id)
       );
+      const isSeconded = res.data.data.some((item) => item.seconded);
+
+      setIsSeconded(isSeconded);
+      console.log("isSeconded", isSeconded);
+
       setDateOfConfirmation(res.data.data[0].date_of_confirmation);
 
       setDateOfFirstAppointment(res.data.data[0].date_of_first_appointment);
@@ -95,12 +99,12 @@ function PostAndNature({ id, clickedItem }) {
       setCap(res.data.data[0].mda.pensionCap.name);
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
-      console.log(
-        "first appointment",
-        res.data.data[0].date_of_first_appointment,
-        "date of confirmation",
-        res.data.data[0].date_of_confirmation
-      );
+      // console.log(
+      //   "first appointment",
+      //   res.data.data[0].date_of_first_appointment,
+      //   "date of confirmation",
+      //   res.data.data[0].date_of_confirmation
+      // );
     } catch (error) {
       console.log(error);
     }
@@ -226,15 +230,19 @@ function PostAndNature({ id, clickedItem }) {
           },
         ]
       : []),
-    {
-      label: "Seconded(Yes/No)",
-      value: "seconded",
-      type: "select",
-      options: [
-        { id: true, name: "Yes" },
-        { id: false, name: "No" },
-      ],
-    },
+    ...(cap === "CAP189"
+      ? [
+          {
+            label: "Seconded(Yes/No)",
+            value: "seconded",
+            type: "select",
+            options: [
+              { id: true, name: "Yes" },
+              { id: false, name: "No" },
+            ],
+          },
+        ]
+      : []),
     {
       label: "Post",
       value: "post",
@@ -251,6 +259,15 @@ function PostAndNature({ id, clickedItem }) {
           {
             label: "Salary",
             value: "amount",
+            type: "amount",
+          },
+        ]
+      : []),
+    ...(isSeconded
+      ? [
+          {
+            label: "Salary",
+            value: "salary",
             type: "amount",
           },
         ]
