@@ -40,9 +40,10 @@ function PVActions({
 
   useEffect(() => {
     if (clickedItem) {
-      setSelectedRows([clickedItem]);
+      setSelectedRows(selectedRows);
     }
-  }, [clickedItem, setSelectedRows]);
+  }, [selectedRows]);
+
   const handlePostToGL = async () => {
     const selectedIds = selectedRows.map((journal) => ({
       id: journal.id,
