@@ -44,3 +44,4 @@ zdeploy live.md
 pipeline-treasury.yml
 
 next.config.mjs
+.env
