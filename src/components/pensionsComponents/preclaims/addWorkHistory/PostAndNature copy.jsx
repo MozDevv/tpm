@@ -273,7 +273,7 @@ function PostAndNature({ id, clickedItem }) {
           {
             label: "Salary",
             value: "salary",
-            type: "salary",
+            type: "amount",
           },
         ]
       : []),
