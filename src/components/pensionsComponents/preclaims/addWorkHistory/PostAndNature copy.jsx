@@ -87,8 +87,13 @@ function PostAndNature({ id, clickedItem }) {
       const res = await apiService.get(
         preClaimsEndpoints.getProspectivePensioner(id)
       );
-      const isSeconded = res.data.data.some((item) => item.seconded);
 
+      const response = await apiService.get(
+        preClaimsEndpoints.getPostandNatureofSalaries(id)
+      );
+      console.log("The Prospective Pensioner data is: ", response.data.data);
+
+      const isSeconded = response.data.data.some((item) => item.seconded);
       setIsSeconded(isSeconded);
       console.log("isSeconded", isSeconded);
 
@@ -268,7 +273,7 @@ function PostAndNature({ id, clickedItem }) {
           {
             label: "Salary",
             value: "salary",
-            type: "amount",
+            type: "salary",
           },
         ]
       : []),

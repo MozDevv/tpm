@@ -55,11 +55,7 @@ function Navbar() {
   const router = useRouter();
   const { auth, login, logout } = useAuth();
 
-  console.log("auth**&&&&&&&&", auth?.user?.name);
-
   const { mdaId } = useMda();
-
-  console.log("MDA ID**************", mdaId);
 
   const handleLogout = () => {
     if (localStorage.getItem("token")) {

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import preClaimsEndpoints, {
   apiService,
-} from '@/components/services/preclaimsApi';
-import React, { useEffect, useState } from 'react';
+} from "@/components/services/preclaimsApi";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,16 +14,16 @@ import {
   Button,
   Dialog,
   IconButton,
-} from '@mui/material';
-import { Edit, Delete, Visibility } from '@mui/icons-material';
-import dayjs from 'dayjs';
-import { useAlert } from '@/context/AlertContext';
-import { message } from 'antd';
-import EditableTable from '@/components/baseComponents/EditableTable';
-import BaseInputTable from '@/components/baseComponents/BaseInputTable';
-import endpoints from '@/components/services/setupsApi';
-import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
-import { parseDate, parseDateSlash } from '@/utils/dateFormatter';
+} from "@mui/material";
+import { Edit, Delete, Visibility } from "@mui/icons-material";
+import dayjs from "dayjs";
+import { useAlert } from "@/context/AlertContext";
+import { message } from "antd";
+import EditableTable from "@/components/baseComponents/EditableTable";
+import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import endpoints from "@/components/services/setupsApi";
+import BaseInputForPensionableSalary from "@/components/baseComponents/BaseInputForPensionableSalary";
+import { parseDate, parseDateSlash } from "@/utils/dateFormatter";
 
 function PensionableSalary({ id, clickedItem }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
@@ -97,10 +97,10 @@ function PensionableSalary({ id, clickedItem }) {
       setHasNewDesignation(hasNewDesignation);
       setHasReviewPeriods(hasReviewPeriods);
 
-      console.log('Has Review Periods:', hasReviewPeriods);
+      // console.log('Has Review Periods:', hasReviewPeriods);
       setAddAditionalCols(hasReviewPeriods);
       setPensionableSalary(res.data.data);
-      console.log('Pensionable Salary', res.data.data);
+      // console.log('Pensionable Salary', res.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -111,7 +111,7 @@ function PensionableSalary({ id, clickedItem }) {
   const fetchDesignations = async (postNames) => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        'paging.pageSize': 1000,
+        "paging.pageSize": 1000,
       });
       const filteredDesignations =
         postNames.length > 0
@@ -120,19 +120,19 @@ function PensionableSalary({ id, clickedItem }) {
             )
           : res.data.data;
 
-      console.log('Filtered Designations:', filteredDesignations);
+      // console.log('Filtered Designations:', filteredDesignations);
       setDesignations(filteredDesignations);
     } catch (error) {
-      console.error('Error fetching Designations:', error);
+      console.error("Error fetching Designations:", error);
     }
   };
   const fetchAllDesignations = async () => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        'paging.pageSize': 1000,
+        "paging.pageSize": 1000,
       });
 
-      console.log('Clikec from Pensionable  cs', clickedItem);
+      // console.log('Clikec from Pensionable  cs', clickedItem);
 
       setDesignations(
         res.data.data.filter((designation) =>
@@ -142,7 +142,7 @@ function PensionableSalary({ id, clickedItem }) {
         )
       );
     } catch (error) {
-      console.error('Error fetching Designations:', error);
+      console.error("Error fetching Designations:", error);
     }
   };
 
@@ -196,39 +196,39 @@ function PensionableSalary({ id, clickedItem }) {
     getProspectivePensionerReviewPeriods();
   }, []);
   const fields = [
-    { label: 'Start Date', value: 'start_date', type: 'date' },
-    { label: 'End Date', value: 'end_date', type: 'date' },
+    { label: "Start Date", value: "start_date", type: "date" },
+    { label: "End Date", value: "end_date", type: "date" },
     {
-      label: 'Mode of Salary Increment',
-      value: 'mode_of_salary_increment',
-      type: 'select',
+      label: "Mode of Salary Increment",
+      value: "mode_of_salary_increment",
+      type: "select",
       options: [
-        { id: 0, name: 'Entry' },
-        { id: 1, name: 'Increment' },
-        { id: 2, name: 'Promotion' },
-        { id: 3, name: 'Review' },
+        { id: 0, name: "Entry" },
+        { id: 1, name: "Increment" },
+        { id: 2, name: "Promotion" },
+        { id: 3, name: "Review" },
       ],
     },
-    { label: 'Salary in ksh', value: 'salary', type: 'amount' },
+    { label: "Salary in ksh", value: "salary", type: "amount" },
     {
-      label: 'Pensionable Allowance',
-      value: 'pensionable_allowance',
-      type: 'amount',
+      label: "Pensionable Allowance",
+      value: "pensionable_allowance",
+      type: "amount",
     },
 
     ...((hasNewDesignation && hasReviewPeriods) || addAditionalCols === 3
       ? [
           {
-            label: 'Review Period',
-            value: 'review_period',
-            type: 'date',
+            label: "Review Period",
+            value: "review_period",
+            type: "date",
             disabled: false,
             notRequired: true,
           },
           {
-            label: 'New Designation',
-            value: 'new_designation_id',
-            type: 'select',
+            label: "New Designation",
+            value: "new_designation_id",
+            type: "select",
             options: designations.map((designation) => ({
               name: designation.name,
               id: designation.id,
@@ -239,9 +239,9 @@ function PensionableSalary({ id, clickedItem }) {
       : hasNewDesignation || addAditionalCols === 3
       ? [
           {
-            label: 'New Designation',
-            value: 'new_designation_id',
-            type: 'select',
+            label: "New Designation",
+            value: "new_designation_id",
+            type: "select",
             options: designations.map((designation) => ({
               name: designation.name,
               id: designation.id,
@@ -252,9 +252,9 @@ function PensionableSalary({ id, clickedItem }) {
       : hasNewDesignation || addAditionalCols === 2
       ? [
           {
-            label: 'New Designation',
-            value: 'new_designation_id',
-            type: 'select',
+            label: "New Designation",
+            value: "new_designation_id",
+            type: "select",
             options: designations.map((designation) => ({
               name: designation.name,
               id: designation.id,
@@ -267,10 +267,10 @@ function PensionableSalary({ id, clickedItem }) {
   const dynamicReviewFields = reviewPeriods.map((period) => ({
     label: `${parseDateSlash(period.review_date)} Salary Revision`,
     value: `new_salary_${period.review_date
-      .split('T')[0]
-      .replaceAll('-', '_')}`,
+      .split("T")[0]
+      .replaceAll("-", "_")}`,
     notRequired: true,
-    type: 'amount',
+    type: "amount",
     disabled: true,
   }));
   const finalFields = [...fields, ...dynamicReviewFields];
