@@ -1066,7 +1066,10 @@ const Preclaims = ({ status }) => {
                   loadingOverlayComponentParams={loadingOverlayComponentParams}
                   //  pagination={true}
                   rowData={filteredData}
-                  columnDefs={colDefs}
+                  columnDefs={colDefs.map((col) => ({
+                    ...col,
+                    headerTooltip: col.headerName,
+                  }))}
                   rowSelection="multiple"
                   noRowsOverlayComponent={BaseEmptyComponent}
                   onSelectionChanged={onSelectionChanged}

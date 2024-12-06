@@ -632,28 +632,30 @@ const BatchContributions = ({ status }) => {
             Send Contributions for Approval
           </Button>
           <Divider className="mb-2" />
-          {selectedRows.map((row, index) => (
-            <div key={index} className="mb-4  pt-4 px-4">
-              <h3 className="text-[15px]  italic font-semibold mb-4 text-primary">{`Contributions for ${row.description}`}</h3>
-              <div className="ag-theme-quartz min-h-[200px] max-h-[400px] h-[200px] gap-3">
-                <AgGridReact
-                  columnDefs={membersColumnDefs}
-                  rowData={row.contributions || []}
-                  pagination={false}
-                  domLayout="autoheight"
-                  alwaysShowHorizontalScroll={true}
-                  onGridReady={(params) => {
-                    params.api.sizeColumnsToFit();
-                    onGridReady(params);
-                  }}
-                  noRowsOverlayComponent={BaseEmptyComponent}
-                  rowSelection="multiple"
-                  className="custom-grid ag-theme-quartz"
-                />
+          {selectedRows &&
+            selectedRows.length > 0 &&
+            selectedRows.map((row, index) => (
+              <div key={index} className="mb-4  pt-4 px-4">
+                <h3 className="text-[15px]  italic font-semibold mb-4 text-primary">{`Contributions for ${row.description}`}</h3>
+                <div className="ag-theme-quartz min-h-[200px] max-h-[400px] h-[200px] gap-3">
+                  <AgGridReact
+                    columnDefs={membersColumnDefs}
+                    rowData={row.contributions || []}
+                    pagination={false}
+                    domLayout="autoheight"
+                    alwaysShowHorizontalScroll={true}
+                    onGridReady={(params) => {
+                      params.api.sizeColumnsToFit();
+                      onGridReady(params);
+                    }}
+                    noRowsOverlayComponent={BaseEmptyComponent}
+                    rowSelection="multiple"
+                    className="custom-grid ag-theme-quartz"
+                  />
+                </div>
+                <Divider className="py-4" />
               </div>
-              <Divider className="py-4" />
-            </div>
-          ))}
+            ))}
         </div>
       </Dialog>
       <BaseCard

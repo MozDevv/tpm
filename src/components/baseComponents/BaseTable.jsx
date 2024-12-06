@@ -380,7 +380,10 @@ const BaseTable = ({
             }}
           >
             <AgGridReact
-              columnDefs={columnDefs}
+              columnDefs={columnDefs.map((col) => ({
+                ...col,
+                headerTooltip: col.headerName,
+              }))}
               rowData={filteredData}
               pagination={false}
               domLayout="autoHeight"
