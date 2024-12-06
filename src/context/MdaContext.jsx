@@ -25,8 +25,6 @@ export const MdaProvider = ({ children }) => {
         documentID: userId,
       });
       if (res.status === 200) {
-        console.log("mdata", res.data.data.mdaId);
-
         if (!res.data.data.mdaId && typeof window !== "undefined") {
           localStorage.removeItem("mdaId");
         }
@@ -38,8 +36,6 @@ export const MdaProvider = ({ children }) => {
 
         fetchMdas(res.data.data.mdaId);
       }
-
-      console.log("User details fetched successfully:", res.data);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -58,18 +54,11 @@ export const MdaProvider = ({ children }) => {
       const currentMdaName = userMda?.name;
       setActiveCapName(currentCapName);
 
-      console.log("Current MDA: ********", userMda);
-
-      console.log("Current CAP: ********", currentCap);
-
-      console.log("MDA ID: ********", mdaId);
       // setCurrentMda(userMda);
 
       setActivePensionCap(currentCap);
 
       setMdaName(currentMdaName);
-
-      console.log("Current MDA: ********", currentCap);
     } catch (error) {
       console.error("Error fetching MDAs:", error);
     }
