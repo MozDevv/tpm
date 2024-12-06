@@ -28,9 +28,11 @@ import {
   UploadFileOutlined,
   UploadOutlined,
   Upload as MuiUpload,
+  Launch,
 } from '@mui/icons-material';
 
 const BaseInputCard = ({
+  handlePreview,
   fields,
   apiEndpoint,
   postApiFunction,
@@ -381,6 +383,10 @@ const BaseInputCard = ({
     setIsEditing(true);
   };
 
+  const handlePreviewInBaseInputCard = (file) => {
+    handlePreview(file);
+  };
+
   return (
     <div className="py-6 px-15">
       {inputTitle && (
@@ -592,10 +598,11 @@ const BaseInputCard = ({
                 label={formData[field.name] ? 'Yes' : 'No'}
               />
             ) : field.type === 'file' && field.fileName ? (
-              <>
+              <div className="flex justify-between ">
                 <Upload
                   beforeUpload={(file) => {
                     handleFileUpload(file); // Capture the file and store it
+                    handlePreview && handlePreview(file);
                     return false; // Prevent the auto-upload, we'll handle it manually
                   }}
                 >
@@ -611,7 +618,26 @@ const BaseInputCard = ({
                     Click to Upload
                   </AntButton>
                 </Upload>
-              </>
+                {formData[field.name] && handlePreview && (
+                  <div className="mb-4">
+                    <AntButton
+                      onClick={() =>
+                        handlePreviewInBaseInputCard(formData[field.name])
+                      }
+                      type="primary"
+                      icon={
+                        <Launch
+                          sx={{
+                            fontSize: '20px',
+                          }}
+                        />
+                      }
+                    >
+                      Preview File
+                    </AntButton>
+                  </div>
+                )}
+              </div>
             ) : field.type === 'date' ? (
               <TextField
                 name={field.name}

@@ -14,6 +14,11 @@ import BaseInputCard from '../baseComponents/BaseInputCard';
 import generateExcelTemplate from '@/utils/excelHelper';
 import endpoints from '../services/setupsApi';
 import { apiService as setupsApiService } from '../services/setupsApi';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { Button } from '@mui/material';
+import BaseTabs from '../baseComponents/BaseTabs';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -142,6 +147,17 @@ const BatchUploadMembers = () => {
       type: 'date',
       required: true,
     },
+    ...(clickedItem
+      ? []
+      : [
+          {
+            name: 'file',
+            label: 'Upload Excel',
+            type: 'file',
+            required: true,
+            fileName: 'Upload Members Excel',
+          },
+        ]),
   ];
 
   const columnDefs = [
@@ -214,29 +230,281 @@ const BatchUploadMembers = () => {
   useEffect(() => {
     fetchMdas();
   }, []);
-  const uploadFields = [
+
+  const formData = new FormData();
+
+  const [previewDetails, setPreviewDetails] = useState([]);
+
+  const handlePreview = async (file) => {
+    console.log('Preview clicked');
+    formData.append('file', file);
+
+    try {
+      const res = await apiService.post(
+        financeEndpoints.previewMemberDetails,
+        formData
+      );
+
+      if (res.data.succeeded) {
+        setPreviewDetails(res.data.data);
+        console.log('Preview data:', res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const membershipStatusMap = {
+    0: { name: 'Active', color: '#2ecc71' }, // Green
+    1: { name: 'Deferred', color: '#e74c3c' }, // Red
+    2: { name: 'Died', color: '#95a5a6' }, // Grey
+    3: { name: 'Retired', color: '#9b59b6' }, // Purple
+    4: { name: 'Leave of absence', color: '#f39c12' }, // Orange
+    5: { name: 'Secondment', color: '#3498db' }, // Blue
+    6: { name: 'Fully paid', color: '#1abc9c' }, // Turquoise
+  };
+  const previewColdefs = [
     {
-      name: 'sponsorId',
-      label: 'Sponsor',
-      type: 'autocomplete',
-      required: true,
-      options: mdas.map((sponsor) => ({
-        id: sponsor.id,
-        name: sponsor.name,
-      })),
+      field: 'payrollNumber',
+      headerName: 'Payroll Number',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      pinned: 'left',
     },
     {
-      name: 'file',
-      label: 'Upload Excel',
-      type: 'file',
-      required: true,
-      fileName: 'Upload Members Excel',
+      field: 'surname',
+      headerName: 'Surname',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'firstName',
+      headerName: 'First Name',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'lastName',
+      headerName: 'Last Name',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+
+    {
+      field: 'membershipStatus',
+      headerName: 'Membership Status',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+
+      cellRenderer: (params) => {
+        const status = membershipStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 1,
+              // borderColor: status.color,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name}
+          </Button>
+        );
+      },
+    },
+    {
+      field: 'kraPin',
+      headerName: 'KRA Pin',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'nationalId',
+      headerName: 'National ID',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'pssfNumber',
+      headerName: 'PSSF Number',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'gender',
+      headerName: 'Gender',
+      headerClass: 'prefix-header',
+      width: 100,
+      filter: true,
+    },
+    {
+      field: 'dateOfBirth',
+      headerName: 'Date of Birth',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => {
+        return new Date(params.value).toLocaleDateString('en-GB');
+      },
+    },
+    {
+      field: 'sponsorId',
+      headerName: 'Sponsor ID',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => {
+        return mdas.find((sponsor) => sponsor.id === params.value)?.name;
+      },
+    },
+
+    {
+      field: 'dateOfJoiningScheme',
+      headerName: 'Date of Joining Scheme',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'dateOfEmployment',
+      headerName: 'Date of Employment',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'dateOfLeaving',
+      headerName: 'Date of Leaving',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+    {
+      field: 'emailAdress',
+      headerName: 'Email Address',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+    },
+
+    {
+      field: 'maritalStatus',
+      headerName: 'Marital Status',
+      headerClass: 'prefix-header',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => {
+        const options = [
+          { id: 0, name: 'Single' },
+          { id: 1, name: 'Married' },
+          { id: 2, name: 'Divorced' },
+          { id: 3, name: 'Widowed' },
+        ];
+        const option = options.find((opt) => opt.id === params.value);
+        return option ? option.name : '';
+      },
     },
   ];
 
+  const fetchMembers = async () => {};
+
+  const tabPanes = [
+    {
+      key: '1',
+      title: 'Batch Information',
+      content: (
+        <div>
+          <BaseAutoSaveInputCard
+            fields={fields}
+            apiEndpoint={financeEndpoints.addBatchUpload}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateBatchUpload}
+            postApiFunction={apiService.post}
+            getApiEndpoint={financeEndpoints.getBatchUploads}
+            getApiFunction={apiService.get}
+            transformData={transformData}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+            openBaseCard={openBaseCard}
+            setClickedItem={setClickedItem}
+            clickedItem={clickedItem}
+          />
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Batch Members',
+      content: (
+        <div className="ag-theme-quartz min-h-[600px] max-h-[600px] h-[200px]  gap-3">
+          <Button
+            variant="text"
+            // onClick={exportData}
+            startIcon={
+              <img
+                src="/excel.png"
+                alt="excel"
+                className=""
+                height={20}
+                width={24}
+              />
+            }
+            sx={{
+              color: '#006990',
+              fontSize: '14px',
+              fontWeight: 'semibold',
+              textTransform: 'none',
+              alignItems: 'start',
+              mb: 1,
+            }}
+          >
+            Export to Excel
+          </Button>
+          <AgGridReact
+            columnDefs={previewColdefs}
+            rowData={previewDetails}
+            pagination={false}
+            domLayout="normal"
+            alwaysShowHorizontalScroll={true}
+            onGridReady={(params) => {
+              params.api.sizeColumnsToFit();
+              // onGridReady(params);
+            }}
+            animateRows={true}
+            rowSelection="multiple"
+            className="custom-grid ag-theme-quartz"
+          />
+        </div>
+      ),
+    },
+    //
+  ];
   return (
     <div className="">
-      <BaseCard
+      {/* <BaseCard
         openBaseCard={uploadExcel}
         setOpenBaseCard={setUploadExcel}
         title={'Upload Budget'}
@@ -253,7 +521,7 @@ const BatchUploadMembers = () => {
           isBranch={true}
           refreshData={false}
         />
-      </BaseCard>
+      </BaseCard> */}
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -265,44 +533,40 @@ const BatchUploadMembers = () => {
         deleteApiService={apiService.post}
       >
         {' '}
-        {clickedItem ? (
+        {!clickedItem ? (
           <>
-            {' '}
-            <BaseAutoSaveInputCard
+            <BaseInputCard
               fields={fields}
               apiEndpoint={financeEndpoints.addBatchUpload}
-              putApiFunction={apiService.post}
-              updateApiEndpoint={financeEndpoints.updateBatchUpload}
-              deleteApiEndpoint={financeEndpoints.deleteBatchUpload(
-                clickedItem?.id
-              )}
               postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.getBatchUploads}
-              getApiFunction={apiService.get}
-              transformData={transformData}
               setOpenBaseCard={setOpenBaseCard}
-              useRequestBody={true}
+              useRequestBody={false}
               openBaseCard={openBaseCard}
               setClickedItem={setClickedItem}
               clickedItem={clickedItem}
+              handlePreview={handlePreview}
             />
           </>
         ) : (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addBatchUpload}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateBatchUpload}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getBatchUploads}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-            clickedItem={clickedItem}
-          />
+          <BaseTabs tabPanes={tabPanes} />
+        )}
+        {!clickedItem && previewDetails && previewDetails.length > 0 && (
+          <div className="px-6 bg-gray-100 min-h-[600px] max-h-[600px] h-[200px]">
+            <AgGridReact
+              columnDefs={previewColdefs}
+              rowData={previewDetails}
+              pagination={false}
+              domLayout="normal"
+              alwaysShowHorizontalScroll={true}
+              onGridReady={(params) => {
+                params.api.sizeColumnsToFit();
+                // onGridReady(params);
+              }}
+              animateRows={true}
+              rowSelection="multiple"
+              className="custom-grid ag-theme-quartz"
+            />
+          </div>
         )}
       </BaseCard>
       <BaseTable

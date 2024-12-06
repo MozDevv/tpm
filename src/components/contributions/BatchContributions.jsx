@@ -33,6 +33,7 @@ const BatchContributions = ({ status }) => {
 
   const [openContirbutionsActions, setOpenContirbutionsActions] =
     useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -86,9 +87,7 @@ const BatchContributions = ({ status }) => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
-    generateContributionUploadTemplate: () => {
-      generateMembersTemplate();
-    },
+
     submitContributionsForApproval: () => setOpenContirbutionsActions(true),
   };
 
@@ -105,16 +104,15 @@ const BatchContributions = ({ status }) => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
-    // generateMembersTemplate: () => {
-    //   generateMembersTemplate();
-    // },
-    // uploadMembers: () => {
-    //   setUploadExcel(true);
-    // },
+    ...(!clickedItem && {
+      generateContributionUploadTemplate: () => {
+        generateMembersTemplate();
+      },
+    }),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
+
   const [gridApi, setGridApi] = React.useState(null);
   const gridApiRef = useRef(null);
 
@@ -567,6 +565,23 @@ const BatchContributions = ({ status }) => {
     });
   };
 
+  const [openPreview, setOpenPreview] = useState(false);
+
+  const formData = new FormData();
+
+  const handlePreview = async (file) => {
+    console.log('Preview clicked');
+
+    try {
+      const res = await apiService.post(
+        financeEndpoints.previewMemberDetails,
+        formData
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="">
       <Dialog
@@ -674,6 +689,7 @@ const BatchContributions = ({ status }) => {
           </>
         ) : (
           <BaseInputCard
+            handlePreview={handlePreview}
             fields={fields}
             apiEndpoint={financeEndpoints.uploadContributions}
             postApiFunction={apiService.post}

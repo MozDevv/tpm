@@ -20,27 +20,29 @@ const columnDefs = [
     headerClass: 'prefix-header',
     width: 90,
     filter: true,
+    width: 150,
   },
   {
     field: 'budgetName',
     headerName: 'Budget Name',
     headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
     field: 'budgetDescription',
     headerName: 'Budget Description',
     headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
     field: 'startDate',
     headerName: 'Start Date',
     headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
+
     valueFormatter: (params) => parseDate(params.value),
   },
   {
@@ -48,8 +50,16 @@ const columnDefs = [
     headerName: 'End Date',
     headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
+
     valueFormatter: (params) => parseDate(params.value),
+  },
+  {
+    field: 'isBlocked',
+    headerName: 'Is Blocked',
+    headerClass: 'prefix-header',
+    filter: true,
+    flex: 1,
   },
 ];
 

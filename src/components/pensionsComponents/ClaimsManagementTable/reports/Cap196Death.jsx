@@ -105,23 +105,9 @@ const Cap196Death = ({ setOpenGP178Report, clickedItem }) => {
                 width={140}
                 className="w-[120px] h-[100px]"
               />
-              <p className="font-bold uppercase text-[20px] px-7">
-                The Retirement Benefits (Deputy President and Designated State
-                Officers) Act
-              </p>
-              <p className="italic mt-4">(Act No. 8 of 2015)</p>
             </div>
 
-            <Divider
-              sx={{
-                backgroundColor: '#000',
-                height: 2,
-                mt: 2,
-                marginBottom: '1rem',
-              }}
-            />
-
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-4 mt-8">
               <div>
                 <p>
                   Ref. No:{' '}
@@ -131,89 +117,136 @@ const Cap196Death = ({ setOpenGP178Report, clickedItem }) => {
                 </p>
               </div>
               <div>
-                <p>Executive Office of the President</p>
-                <p>P.O Box 30510-00100</p>
-                <p>Nairobi</p>
-                <p className="mt-2">
-                  Date:{' '}
-                  <span className="custom-underline">February 8, 2016</span>
-                </p>
+                <p>Date ________________________</p>
               </div>
             </div>
 
             <div className="mb-4">
-              <p>
-                To: The Permanent Secretary/The National Treasury
-                <br />
-                P.O Box 30007-00100
-                <br />
-                <span className="custom-underline font-semibold">Nairobi</span>
-              </p>
+              <div>
+                <p>The Secretary</p>
+                <p>Pensions Department</p>
+                <p>Ministry of Finance</p>
+                <p>P.O Box 30510-00100</p>
+                <p>Nairobi</p>
+                <p className="mt-2">Dear Sir/Madam</p>
+              </div>
             </div>
 
-            <div className="mb-4">
-              <p className="font-semibold custom-underline">
-                For the attention of: Pensions Secretary/Director of Pensions
+            <div className="mb-[150px]">
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-bold  ">
+                  RE: PAYMENT OF DEATH GRATUITY - HON. JOSEPH NGUGI NYUMU{' '}
+                  <h2 className="text-md mb-3 font-bold ml-9 custom-underline">
+                    FORMER MEMBER OF PARLIAMENT
+                  </h2>
+                </h1>
+              </div>
+              <p className="mb-6">
+                Enclosed herein please find the underlisted documents in respect
+                of Hon. Joseph Ngugi Nyumu’s death benefits:
               </p>
+              <ol className="list-decimal pl-8 ">
+                <li>Schedule of his pension contributions</li>
+                <li>
+                  Minutes of Parliamentary Pensions Committee which approved and
+                  authorised payment
+                </li>
+                <li>Clearance Certificate from Kenya Revenue Authority</li>
+                <li>
+                  Photo copy of his identification card and death certificate
+                </li>
+                <li>His next of kin bank details</li>
+                <li>
+                  Copy of the swift transfer for his contributions for March,
+                  April and May 2013
+                </li>
+              </ol>
+              <p className="mb-6 mt-4">
+                I confirm that the former Member of Parliament has no Government
+                liabilities.
+              </p>
+              <div className="mt-10">
+                <p className="mb-2">Yours faithfully,</p>
+                <p className="font-bold italic mb-6"></p>
+                <p>
+                  <span className="font-bold">Lilian N. Wata</span> <br />
+                  <span>For: The Clerk of the National Assembly</span>
+                </p>
+              </div>
             </div>
-
-            <div className="mb-4">
-              <p className="font-semibold  text-[16px] uppercase mb-2 ">
-                Claim for the Retirement Pension or Death Gratuity
-              </p>
-              <p>
-                The following particulars are furnished in support of a claim
-                for award under the provision of the Retirement Benefits (Deputy
-                President and Designated State Officers) Act (ACT No. 8 OF
-                2015):
-              </p>
-            </div>
-
-            <ul className="list-none mb-4">
-              <li className="custom-line-through">
-                *Unreduced Retirement Pension
-              </li>
-              <li>*Reduced Retirement Pension and Gratuity</li>
-              <li className="custom-line-through">*Death Gratuity</li>
-            </ul>
-
-            <p className="italic text-left"></p>
 
             {/************        PART A PERSON ENTA           ******** */}
+            <p className="uppercase font-bold text-[22px] mb-8 text-center">
+              Republic of Kenya
+            </p>
+            <div className="">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p>
+                    Ref. No:{' '}
+                    <span className="custom-underline font-bold">
+                      88028537/163
+                    </span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p>Clerk of the National Assembly</p>
+                  <p>Parliamentary Buildings</p>
+                  <p>P.O Box 30510-00100</p>
+                  <p className="custom-underline">Nairobi</p>
+                  <p className="mt-3">
+                    Date:{' '}
+                    <span className="custom-underline">February 8, 2016</span>
+                  </p>
+                </div>
+              </div>
 
-            <div className="mt-[60px]">
-              <p className="uppercase font-bold">
-                Part A - Person Entitled to Benefits{' '}
-                <span className="italic">(w.e.f 1st January, 1993):</span>
-              </p>
-              <p className="italic text-left w-full"></p>
+              <div className="mb-4">
+                <p>
+                  The Permanent Secretary
+                  <br />
+                  Ministry of Finance
+                  <br />
+                  P.O Box 30007-00100
+                  <br />
+                  <span className="custom-underline font-semibold">
+                    Nairobi
+                  </span>
+                </p>
+              </div>
+
+              <div className="mb-4 text-center">
+                <p className="font-semibold  custom-underline text-center uppercase">
+                  ( Attention: pensions department){' '}
+                </p>
+              </div>
+
+              <div className="mb-4 text-center">
+                <p className="font-semibold text-center text-[16px] uppercase mb-2 custom-underline">
+                  Claim for the Retirement Pension or Death Gratuity
+                </p>
+              </div>
             </div>
+            <p>
+              The following particulars are furnished in support of a claim for:
+            </p>
 
-            <ul className="list-none mb-6 space-y-1 mt-5">
+            <ul className="list-none mb-4 pl-6">
               <li className="custom-line-through">
-                a) Retired Deputy President
+                Unreduced(Uncommuted) Retirement Pension
               </li>
-              <li className="custom-line-through">b) Retired Prime Minister</li>
-              <li>c) Retired Vice-President</li>
-              <li className="custom-line-through">d) Retired Speaker</li>
               <li className="custom-line-through">
-                e) Spouse/Child/Legal Personal Representative of a, b, c, or d
+                Reduced Retirement Pension and Gratuity
               </li>
+              <li className="custom-line-through">Refund of Contributions</li>
+              <li className="custom-line-through">Widows/Children Pension</li>
+              <li className="custom-line-through">Death Gratuity</li>
             </ul>
 
-            {/************        PART B STATEMENT OF PARTICULARS           ******** */}
-
-            <div className="mb-4 mt-5">
-              <p className="uppercase font-bold">
-                Part B - Statement of Particulars
-              </p>
-              <div className="mr-0"></div>
-            </div>
-
-            <div className="space-y-6">
+            <div className="space-y-6 mb-5">
               <div className="">
                 <p className="flex gap-1">
-                  1. Full name of Entitled Person:
+                  1. Full name of the Claimant:
                   <span className="font-semibold custom-underline">
                     {clickedItem?.first_name} {clickedItem?.surname}{' '}
                     {clickedItem?.other_name}
@@ -223,7 +256,7 @@ const Cap196Death = ({ setOpenGP178Report, clickedItem }) => {
 
               <div className="">
                 <p>
-                  2. Personal Number/Identification Number of Entitled Person:
+                  2. Payroll Number:
                   <span className="custom-underline font-semibold">
                     {clickedItem?.personal_number}
                   </span>
