@@ -142,7 +142,7 @@ function PreclaimsNotifications({
         allDocuments.push(...documents);
       }
 
-      console.log("allDocuments", allDocuments);
+      // console.log("allDocuments", allDocuments);
       setAwardDocuments(allDocuments);
     } catch (error) {
       console.error("Error fetching award documents:", error);
@@ -154,10 +154,10 @@ function PreclaimsNotifications({
   useEffect(() => {
     if (selectedRows.length > 0) {
       fetchAwardDocuments(selectedRows);
-      console.log(
-        "prospectivePensionerDocumentSelections",
-        selectedRows.map((r) => r.id)
-      );
+      // console.log(
+      //   "prospectivePensionerDocumentSelections",
+      //   selectedRows.map((r) => r.id)
+      // );
     }
   }, [selectedRows]);
 

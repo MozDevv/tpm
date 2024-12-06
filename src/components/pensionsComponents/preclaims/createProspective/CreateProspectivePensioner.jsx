@@ -1,27 +1,25 @@
-import React, { useState } from 'react';
-import { Tabs } from 'antd';
+import React, { useState } from "react";
+import { Tabs } from "antd";
 
-import NewPreclaim from '../NewPreclaim';
-import AddPensionersWorkHistory from '../addWorkHistory/AddPensionersWorkHistory';
-import AddBankDetails from '../AddBankDetails';
-import AddDocuments from '../documents/AddDocuments';
-import ViewBeneficiaries from '../ViewBeneficiaries';
-import MaintenanceCase from '../maintenanceCase/MaintenanceCase';
-import Deductions from '../deductions/Deductions';
-import ParliamentContributions from '../Contributions/ParliamentContributions';
-import WomenAndChildren from '../wcps/WomenAndChildren';
-import WcpsCard from '../wcps/WcpsCard';
-import { useMda } from '@/context/MdaContext';
-import Liabilities from '../liabilities/Liabilities';
-import GovernmentSalary from '../governmentSalary/GovernmentSalary';
+import NewPreclaim from "../NewPreclaim";
+import AddPensionersWorkHistory from "../addWorkHistory/AddPensionersWorkHistory";
+import AddBankDetails from "../AddBankDetails";
+import AddDocuments from "../documents/AddDocuments";
+import ViewBeneficiaries from "../ViewBeneficiaries";
+import MaintenanceCase from "../maintenanceCase/MaintenanceCase";
+import Deductions from "../deductions/Deductions";
+import ParliamentContributions from "../Contributions/ParliamentContributions";
+import WomenAndChildren from "../wcps/WomenAndChildren";
+import WcpsCard from "../wcps/WcpsCard";
+import { useMda } from "@/context/MdaContext";
+import Liabilities from "../liabilities/Liabilities";
+import GovernmentSalary from "../governmentSalary/GovernmentSalary";
 
 const { TabPane } = Tabs;
 
 function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
-  console.log('clickedItem', clickedItem);
-
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState('1');
+  const [activeKey, setActiveKey] = useState("1");
 
   const activeRetireeId =
     retireeId !== null ? retireeId : clickedItem ? clickedItem.id : undefined;
@@ -32,7 +30,6 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log('Moving to next tab:', nextTab); // Debug line
     //setActiveKey(nextTab);
   };
 
@@ -192,8 +189,8 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       </TabPane>
                     )}
 
-                    {(activeCapName === 'CAP196' ||
-                      clickedItem?.mda_pensionCap_name === 'CAP196') && (
+                    {(activeCapName === "CAP196" ||
+                      clickedItem?.mda_pensionCap_name === "CAP196") && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
@@ -205,7 +202,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         <ParliamentContributions id={clickedItem?.id} />
                       </TabPane>
                     )}
-                    {activeCapName === 'CAP199' && (
+                    {activeCapName === "CAP199" && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">

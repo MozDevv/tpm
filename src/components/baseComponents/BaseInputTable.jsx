@@ -80,8 +80,6 @@ const BaseInputTable = ({
     });
   };
 
-  console.log("================================", fields);
-
   const sortData = (data) => {
     const dateField = data[0]?.date
       ? "date"
@@ -104,18 +102,10 @@ const BaseInputTable = ({
 
   const [dataAdded, setDataAdded] = useState(false);
   const fetchData = async () => {
-    console.log(
-      "Fetching Data from Editable Table",
-      getEndpoint,
-      getApiService
-    );
-
     if (dataAdded) {
       try {
         const res = await getApiService(getEndpoint);
         if (res.status === 200) {
-          console.log("Fetched Data from Editable Table", res.data.data);
-
           setRowData((prevRowData) => {
             const datePairs = [
               { start: "date", end: "end_date" },
@@ -141,8 +131,6 @@ const BaseInputTable = ({
             if (sortedData.length > 0) {
               const lastRow = sortedData[sortedData.length - 1];
 
-              console.log("Last Row:", lastRow);
-
               for (const { start, end } of datePairs) {
                 if (lastRow[end]) {
                   lastEndDate = lastRow[end];
@@ -150,8 +138,6 @@ const BaseInputTable = ({
                   break;
                 }
               }
-
-              console.log("Last End Date Before Formatting:", lastEndDate);
             }
 
             if (lastEndDate && matchingStartField) {
@@ -162,16 +148,11 @@ const BaseInputTable = ({
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
 
-            console.log("Default Rows:", defaultRows);
-
             // Determine if we should fetch and append children
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
-              console.log("Fetched Children Data:", childrenData);
-
-              console.log("childrenData", childrenData);
 
               const lastRow = childrenData[childrenData.length - 1];
 
@@ -207,7 +188,6 @@ const BaseInputTable = ({
                 );
               }
 
-              console.log("Last Month Name:", lastMonthName);
               // Merge sortedData with childrenData
               return [...childrenData, ...defaultRows];
             } else {
@@ -222,7 +202,6 @@ const BaseInputTable = ({
       try {
         const res = await getApiService(getEndpoint);
         if (res.status === 200) {
-          console.log("Fetched Data from Editable Table", res.data.data);
           setRowData((prevRowData) => {
             const defaultRows = Array.from({ length: 1 }, () =>
               fields.reduce((acc, field) => {
@@ -261,7 +240,6 @@ const BaseInputTable = ({
   const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.sizeColumnsToFit();
-    console.log("Grid is ready, API set:", gridApiRef.current);
   }, []);
 
   const isRowComplete = (row) => {
@@ -334,7 +312,6 @@ const BaseInputTable = ({
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
-    console.log("Formatted Form Data:", formattedFormData);
     if (id) {
       formattedFormData[idLabel] = id;
     }
@@ -346,9 +323,6 @@ const BaseInputTable = ({
       }
     });
 
-    console.log("Formatted Form Data After Date Handling:", formattedFormData);
-
-    console.log("Formatted Form Data:", formattedFormData);
     try {
       if (data.id) {
         const res = await putApiService(putEndpoint, {
@@ -426,7 +400,7 @@ const BaseInputTable = ({
     } catch (error) {
       // Log the error and set a generic row error if needed
       setCellError(data.id, null, error.message || "An unknown error occurred");
-      console.log(error);
+      // console.log(error);
       throw error;
     }
   };
@@ -481,9 +455,6 @@ const BaseInputTable = ({
           const rowId = data.id;
           const options = col.options || [];
 
-          // console.log("Params", params);
-          // console.log("COL", colDef);
-          // console.log("DATA", data);
           const isValidDateString = (dateString) => {
             const date = new Date(dateString);
             return !isNaN(date.getTime());
@@ -528,8 +499,6 @@ const BaseInputTable = ({
             const selectedOption = selectedField.options.find(
               (option) => option.id === id
             );
-
-            // console.log("Selected Option:", selectedOption);
 
             return selectedOption ? selectedOption.name : id;
           };
@@ -649,8 +618,6 @@ const BaseInputTable = ({
               (option) => option[filterBy] === dynamicFilterValue
             );
 
-            console.log("Filtered options:", col.options, filteredOptions);
-
             return {
               options: filteredOptions, // Pass filtered options to the editor
               defaultValue: params.value, // Pass the current value as default
@@ -712,10 +679,6 @@ const BaseInputTable = ({
 
         setDataAdded(true);
 
-        console.log("Data >>>>>>>>", data);
-        console.log("Field >>>>>>>>", field);
-        console.log("New Value >>>>>>>>", newValue);
-
         const datePair = findDatePair(field);
 
         if (datePair && data[datePair.start] && data[datePair.end]) {
@@ -728,8 +691,6 @@ const BaseInputTable = ({
 
           const error = baseValidatorFn.endDate(endDate, startDate);
 
-          console.log("Start Date:", currentStartDate);
-          console.log("End Date:", endDate);
           if (error) {
             message.error(`Validation Error on ${field}: ${error}`);
             setCellError(data.id, field, error);
@@ -771,13 +732,9 @@ const BaseInputTable = ({
           } else {
             handleClearError(data, field);
           }
-
-          console.log("Padded Account Number >>>>>>>>", paddedValue);
         }
 
         if (colDef.cellEditor === "CustomSelectCellEditor") {
-          console.log("Selected Value:", newValue);
-
           const selectField = fields.find(
             (field) => field.value === colDef.field
           );
@@ -843,14 +800,7 @@ const BaseInputTable = ({
 
             // Store the formatted date in data for ag-Grid
             data.date = formattedDate;
-
-            console.log("Generated Date:", data.date); // This will log the date in the machine's default format
           }
-
-          console.log(
-            "data.parliamentary_term_setup_id",
-            data.parliamentary_term_setup_id
-          );
         }
 
         if (data.designationId) {
@@ -868,9 +818,6 @@ const BaseInputTable = ({
             "days"
           );
         }
-
-        console.log("Cell Value Changed:", params);
-        console.log("Updated Data:", data);
 
         if (validators[field]) {
           const error = validators[field](newValue);
@@ -926,8 +873,6 @@ const BaseInputTable = ({
         editedData.push(node.data);
       });
 
-      console.log("Edited data:", editedData);
-
       const lastRow = editedData[editedData.length - 1];
       let previousEndDate = null;
 
@@ -943,8 +888,6 @@ const BaseInputTable = ({
       // Loop through date pairs to find a filled end date
       for (const { start, end } of datePairs) {
         if (lastRow && lastRow[end]) {
-          console.log("Last Row:", lastRow);
-          console.log("End Date:", lastRow[end]);
           previousEndDate = lastRow[end];
           break;
         }
@@ -1037,10 +980,6 @@ const BaseInputTable = ({
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-      console.log("JSON Data:", jsonData);
-      console.log("Sheet Name:", sheetName);
-      console.log("Sheet Data:", sheet);
-
       setRowData((prevData) => {
         const transformedData = jsonData.map((item) => {
           return fields.reduce((acc, field) => {
@@ -1058,7 +997,6 @@ const BaseInputTable = ({
           }, 1500);
         }
       }
-      console.log("Row Data:", rowData);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -1136,7 +1074,7 @@ const BaseInputTable = ({
                 height: "400px",
                 minHehight: "100px",
               }}
-              className={disableAll ? 'custom-grid' : ''}
+              className={disableAll ? "custom-grid" : ""}
               onCellKeyDown={onCellKeyDown}
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}
