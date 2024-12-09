@@ -1,16 +1,17 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
 
 const Approvers = () => {
   const [users, setUsers] = useState([]);
+  const [mdas, setMdas] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,45 +20,91 @@ const Approvers = () => {
         const data = res.data.data.map((item) => ({
           id: item.id,
           name: item.email,
+          ...item,
+          mdaId: item.mdaId,
         }));
         setUsers(data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
+      }
+    };
+    const fetchMdas = async () => {
+      try {
+        const res = await apiService.get(endpoints.mdas);
+        const data = res.data.data.map((item) => ({
+          ...item,
+        }));
+        setMdas(data);
+        fetchUsers();
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchUsers();
+    fetchMdas();
   }, []);
 
   const columnDefs = [
     {
-      field: "primary_approver_id",
-      headerName: "Primary Approver",
-      headerClass: "prefix-header",
+      field: 'primary_approver_id',
+      headerName: 'Name',
+      headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
         const user = users.find((user) => user.id === params.value);
-        return user?.name || "N/A";
+        return user ? `${user.firstName} ${user.lastName}` : 'N/A';
       },
     },
     {
-      field: "secondary_approver_id",
-      headerName: "Secondary Approver",
-      headerClass: "prefix-header",
+      field: 'primary_approver_id',
+      headerName: 'Role',
+      headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
         const user = users.find((user) => user.id === params.value);
-        return user?.name || "N/A";
+        return user?.department?.name || 'N/A';
       },
     },
     {
-      field: "direct_approver_id",
-      headerName: "Direct Approver",
-      headerClass: "prefix-header",
+      field: 'primary_approver_id',
+      headerName: 'Ministry/Department',
+      headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
         const user = users.find((user) => user.id === params.value);
-        return user?.name || "N/A";
+        const mda = mdas.find((mda) => mda.id === user?.mdaId);
+        return mda?.name || '-';
+      },
+    },
+
+    {
+      field: 'primary_approver_id',
+      headerName: 'Primary Approver',
+      headerClass: 'prefix-header',
+      filter: true,
+      valueFormatter: (params) => {
+        const user = users.find((user) => user.id === params.value);
+        return user?.name || 'N/A';
+      },
+    },
+    {
+      field: 'secondary_approver_id',
+      headerName: 'Secondary Approver',
+      headerClass: 'prefix-header',
+      filter: true,
+      valueFormatter: (params) => {
+        const user = users.find((user) => user.id === params.value);
+        return user?.name || 'N/A';
+      },
+    },
+    {
+      field: 'direct_approver_id',
+      headerName: 'Direct Approver',
+      headerClass: 'prefix-header',
+      filter: true,
+      valueFormatter: (params) => {
+        const user = users.find((user) => user.id === params.value);
+        return user?.name || 'N/A';
       },
     },
   ];
@@ -89,10 +136,10 @@ const Approvers = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -113,27 +160,27 @@ const Approvers = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Approver" : "Create a New Approver";
+  const title = clickedItem ? 'Approver' : 'Create a New Approver';
 
   const fields = [
     {
-      name: "primary_approver_id",
-      label: "Primary Approver",
-      type: "autocomplete",
+      name: 'primary_approver_id',
+      label: 'Primary Approver',
+      type: 'autocomplete',
       options: users,
     },
 
     {
-      name: "secondary_approver_id",
-      label: "Secondary Approver",
-      type: "autocomplete",
+      name: 'secondary_approver_id',
+      label: 'Secondary Approver',
+      type: 'autocomplete',
       options: users,
     },
 
     {
-      name: "direct_approver_id",
-      label: "Direct Approver",
-      type: "autocomplete",
+      name: 'direct_approver_id',
+      label: 'Direct Approver',
+      type: 'autocomplete',
       options: users,
     },
   ];
