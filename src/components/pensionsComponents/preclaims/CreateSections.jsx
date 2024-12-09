@@ -651,16 +651,20 @@ export const createSections = (
       //     "CAP195",
       //   ],
       // },
-      {
-        label: 'Women & Children Pension Scheme (WCPS)',
-        name: 'is_wcps',
-        type: 'select',
-        children: [
-          { id: 0, name: 'Yes' },
-          { id: 1, name: 'No' },
-        ],
-        pensionCap: ['CAP189', 'CAP190', 'CAP195', 'CAP195'],
-      },
+      ...(formData.gender === 0
+        ? [
+            {
+              label: 'Women & Children Pension Scheme (WCPS)',
+              name: 'is_wcps',
+              type: 'select',
+              children: [
+                { id: 0, name: 'Yes' },
+                { id: 1, name: 'No' },
+              ],
+              pensionCap: ['CAP189', 'CAP190', 'CAP195', 'CAP195'],
+            },
+          ]
+        : []),
 
       {
         label: 'Maintenance Allowance',

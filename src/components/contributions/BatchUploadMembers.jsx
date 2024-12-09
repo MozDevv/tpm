@@ -19,6 +19,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { Button } from '@mui/material';
 import BaseTabs from '../baseComponents/BaseTabs';
+import { saveAs } from 'file-saver';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -43,40 +44,33 @@ const BatchUploadMembers = () => {
   const [uploadExcel, setUploadExcel] = React.useState(false);
   const [sponsors, setSponsors] = React.useState([]);
 
-  const generateMembersTemplate = () => {
-    const mapDataFunction = (data) => [
-      [
-        'Payroll Number',
-        'KRA Pin',
-        'National ID',
-        'PSSF Number',
-        'Surname',
-        'First Name',
-        'Last Name',
-        'Other Name',
-        'Gender',
-        'Date of Birth',
-      ], // Headers
-      ...data.map((item) => [
-        item.payrollNumber, // Payroll Number
-        item.kraPin, // KRA Pin
-        item.nationalId, // National ID
-        item.pssfNumber, // PSSF Number
-        item.surname, // Surname
-        item.firstName, // First Name
-        item.lastName, // Last Name
-        item.otherName, // Other Name
-        item.gender, // Gender
-        new Date(item.dateOfBirth).toLocaleDateString('en-GB'),
-      ]),
-    ];
+  const generateMembersTemplate = async () => {
+    try {
+      // Fetch the file as a blob
+      const res = await apiService.get(
+        financeEndpoints.downloadMemberTemplate,
+        {
+          responseType: 'blob', // Axios will treat the response as a binary Blob
+        }
+      );
 
-    generateExcelTemplate(
-      financeEndpoints.getMemberUploadTemplate,
-      mapDataFunction,
-      'members_upload_template.xlsx',
-      'Members Template'
-    );
+      // Check if the response is a valid Blob
+      if (res.data instanceof Blob) {
+        // Create a download link for the Blob
+        const url = URL.createObjectURL(res.data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'Member Upload Template.xlsx'; // Set desired file name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link); // Clean up DOM
+        URL.revokeObjectURL(url); // Release memory
+      } else {
+        console.error('Invalid file data received from the API.');
+      }
+    } catch (error) {
+      console.error('Error downloading template:', error);
+    }
   };
 
   const handlers = {
@@ -267,7 +261,7 @@ const BatchUploadMembers = () => {
       field: 'payrollNumber',
       headerName: 'Payroll Number',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       pinned: 'left',
     },
@@ -275,21 +269,21 @@ const BatchUploadMembers = () => {
       field: 'surname',
       headerName: 'Surname',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
       field: 'firstName',
       headerName: 'First Name',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
       field: 'lastName',
       headerName: 'Last Name',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
 
@@ -297,7 +291,7 @@ const BatchUploadMembers = () => {
       field: 'membershipStatus',
       headerName: 'Membership Status',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
 
       cellRenderer: (params) => {
@@ -326,21 +320,21 @@ const BatchUploadMembers = () => {
       field: 'kraPin',
       headerName: 'KRA Pin',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
       field: 'nationalId',
       headerName: 'National ID',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
       field: 'pssfNumber',
       headerName: 'PSSF Number',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
@@ -354,7 +348,7 @@ const BatchUploadMembers = () => {
       field: 'dateOfBirth',
       headerName: 'Date of Birth',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('en-GB');
@@ -364,7 +358,7 @@ const BatchUploadMembers = () => {
       field: 'sponsorId',
       headerName: 'Sponsor ID',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => {
         return mdas.find((sponsor) => sponsor.id === params.value)?.name;
@@ -375,7 +369,7 @@ const BatchUploadMembers = () => {
       field: 'dateOfJoiningScheme',
       headerName: 'Date of Joining Scheme',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => parseDate(params.value),
     },
@@ -383,7 +377,7 @@ const BatchUploadMembers = () => {
       field: 'dateOfEmployment',
       headerName: 'Date of Employment',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => parseDate(params.value),
     },
@@ -391,7 +385,7 @@ const BatchUploadMembers = () => {
       field: 'dateOfLeaving',
       headerName: 'Date of Leaving',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => parseDate(params.value),
     },
@@ -399,14 +393,14 @@ const BatchUploadMembers = () => {
       field: 'phoneNumber',
       headerName: 'Phone Number',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
     {
       field: 'emailAdress',
       headerName: 'Email Address',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
     },
 
@@ -414,7 +408,7 @@ const BatchUploadMembers = () => {
       field: 'maritalStatus',
       headerName: 'Marital Status',
       headerClass: 'prefix-header',
-      width: 150,
+      width: 200,
       filter: true,
       valueFormatter: (params) => {
         const options = [
@@ -559,7 +553,6 @@ const BatchUploadMembers = () => {
               domLayout="normal"
               alwaysShowHorizontalScroll={true}
               onGridReady={(params) => {
-                params.api.sizeColumnsToFit();
                 // onGridReady(params);
               }}
               animateRows={true}

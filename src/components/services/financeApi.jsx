@@ -345,6 +345,7 @@ const financeEndpoints = {
   generateContributionTemplate: '/Contribution/GetContributionUploadTemplate',
   submitBatchForApproval: '/Contribution/SubmitContributionForApproval',
   previewMemberDetails: '/Contribution/PreviewMemberDetails',
+  downloadMemberTemplate: '/Contribution/DownloadMemberTemplate',
 };
 
 export const apiService = {
