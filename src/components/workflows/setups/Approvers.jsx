@@ -30,14 +30,21 @@ const Approvers = () => {
     };
     const fetchMdas = async () => {
       try {
-        const res = await apiService.get(endpoints.mdas);
-        const data = res.data.data.map((item) => ({
-          ...item,
-        }));
-        setMdas(data);
-        fetchUsers();
+        const res = await apiService.get(endpoints.mdas, {
+          'paging.pageSize': 1000,
+        });
+
+        if (res.data && Array.isArray(res.data.data)) {
+          const data = res.data.data.map((item) => ({
+            ...item,
+          }));
+          setMdas(data);
+          fetchUsers();
+        } else {
+          console.error('Invalid data format received from the API.');
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching MDAs:', error);
       }
     };
 
