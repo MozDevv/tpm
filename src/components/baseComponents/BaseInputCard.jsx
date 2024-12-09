@@ -52,6 +52,7 @@ const BaseInputCard = ({
   setPostedData,
   banks,
   refreshData,
+  setInputData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -85,6 +86,11 @@ const BaseInputCard = ({
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, multiple } = e.target;
+
+    setInputData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
     if (name === selectedLabel) {
       setSelectedValue(value);

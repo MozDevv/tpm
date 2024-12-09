@@ -165,30 +165,35 @@ const Approvers = () => {
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [inputData, setInputData] = React.useState({});
+  ``;
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem ? 'Approver' : 'Create a New Approver';
 
   const fields = [
+    ...(clickedItem
+      ? []
+      : [{ name: 'mdaId', label: 'MDA', type: 'autocomplete', options: mdas }]),
     {
       name: 'primary_approver_id',
       label: 'Primary Approver',
       type: 'autocomplete',
-      options: users,
+      options: users.filter((user) => user.mdaId === inputData.mdaId),
     },
 
     {
       name: 'secondary_approver_id',
       label: 'Secondary Approver',
       type: 'autocomplete',
-      options: users,
+      options: users.filter((user) => user.mdaId === inputData.mdaId),
     },
 
     {
       name: 'direct_approver_id',
       label: 'Direct Approver',
       type: 'autocomplete',
-      options: users,
+      options: users.filter((user) => user.mdaId === inputData.mdaId),
     },
   ];
 
@@ -215,6 +220,7 @@ const Approvers = () => {
           />
         ) : (
           <BaseInputCard
+            setInputData={setInputData}
             fields={fields}
             apiEndpoint={endpoints.createApprovalUser}
             postApiFunction={apiService.post}
