@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useState, useEffect } from 'react';
 import {
   List,
   ListItem,
@@ -9,11 +9,11 @@ import {
   Grid,
   Checkbox,
   Box,
-} from "@mui/material";
-import CreatePermission from "../Roles/CreatePermission";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { useAlert } from "@/context/AlertContext";
-import MenuList from "./MenuList";
+} from '@mui/material';
+import CreatePermission from '../Roles/CreatePermission';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { useAlert } from '@/context/AlertContext';
+import MenuList from './MenuList';
 
 const Menus = () => {
   const [clickedRole, setClickedRole] = useState(null);
@@ -29,7 +29,7 @@ const Menus = () => {
         console.log(res.data);
       }
     } catch (error) {
-      console.error("Error fetching menu items:", error.response);
+      console.error('Error fetching menu items:', error.response);
     }
   };
 
@@ -40,7 +40,7 @@ const Menus = () => {
         setRolesList(res.data.data);
       }
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      console.error('Error fetching roles:', error);
     }
   };
 
@@ -63,16 +63,16 @@ const Menus = () => {
           Create Role
         </Button>
       </div>
-      <Grid container sx={{ bgcolor: "white", mt: 4 }}>
-        <Grid item xs={2.5} sx={{ maxHeight: "100%" }}>
+      <Grid container sx={{ bgcolor: 'white', mt: 4 }}>
+        <Grid item xs={2.5} sx={{ maxHeight: '100%' }}>
           <p className="text-primary mb-3 ml-5 mt-5 text-base">Roles</p>
           <Divider />
           <List
             sx={{
-              mt: "20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
+              mt: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
             }}
           >
             {rolesList.map((role) => (
@@ -83,13 +83,13 @@ const Menus = () => {
                   fetchMenuItems(role.roleId);
                 }}
                 sx={{
-                  cursor: "pointer",
-                  py: "12px",
-                  borderRadius: "5px",
+                  cursor: 'pointer',
+                  py: '12px',
+                  borderRadius: '5px',
                   backgroundColor:
                     clickedRole && clickedRole.roleId === role.roleId
-                      ? "#E5F0F4"
-                      : "",
+                      ? '#E5F0F4'
+                      : '',
                 }}
               >
                 <p className="text-gray-600 font-medium text-[13px]">
@@ -104,7 +104,7 @@ const Menus = () => {
           {clickedRole ? (
             <div>
               <p className="text-primary mb-5 ml-6 mt-5 text-base font-semibold">
-                Sidebar Menu Items allowed for{" "}
+                Sidebar Menu Items allowed for{' '}
                 {
                   rolesList.find((role) => role.roleId === clickedRole.roleId)
                     ?.name
@@ -112,20 +112,23 @@ const Menus = () => {
               </p>
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
+                  display: 'flex',
+                  flexDirection: 'column',
                   gap: 2,
-                  maxHeight: "60vh",
-                  overflowY: "auto",
+                  maxHeight: '60vh',
+                  overflowY: 'auto',
                 }}
               >
                 <Box
                   sx={{
-                    display: "flex",
+                    display: 'flex',
                     gap: 2,
                   }}
                 >
-                  <MenuList roleId={clickedRole.roleId} roleName={clickedRole?.name}/>
+                  <MenuList
+                    roleId={clickedRole.roleId}
+                    roleName={clickedRole?.name}
+                  />
                 </Box>
               </Box>
             </div>

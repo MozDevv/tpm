@@ -54,7 +54,7 @@ const Approvers = () => {
   const columnDefs = [
     {
       field: 'primary_approver_id',
-      headerName: 'Name',
+      headerName: 'Approver Name',
       headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
@@ -64,7 +64,7 @@ const Approvers = () => {
     },
     {
       field: 'primary_approver_id',
-      headerName: 'Role',
+      headerName: 'Approver Role',
       headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
@@ -74,7 +74,7 @@ const Approvers = () => {
     },
     {
       field: 'primary_approver_id',
-      headerName: 'Ministry/Department',
+      headerName: 'Approver Ministry/Department',
       headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
@@ -173,28 +173,51 @@ const Approvers = () => {
 
   const fields = [
     ...(clickedItem
-      ? []
-      : [{ name: 'mdaId', label: 'MDA', type: 'autocomplete', options: mdas }]),
-    {
-      name: 'primary_approver_id',
-      label: 'Primary Approver',
-      type: 'autocomplete',
-      options: users.filter((user) => user.mdaId === inputData.mdaId),
-    },
+      ? [
+          {
+            name: 'primary_approver_id',
+            label: 'Primary Approver',
+            type: 'autocomplete',
+            options: users,
+          },
 
-    {
-      name: 'secondary_approver_id',
-      label: 'Secondary Approver',
-      type: 'autocomplete',
-      options: users.filter((user) => user.mdaId === inputData.mdaId),
-    },
+          {
+            name: 'secondary_approver_id',
+            label: 'Secondary Approver',
+            type: 'autocomplete',
+            options: users,
+          },
 
-    {
-      name: 'direct_approver_id',
-      label: 'Direct Approver',
-      type: 'autocomplete',
-      options: users.filter((user) => user.mdaId === inputData.mdaId),
-    },
+          {
+            name: 'direct_approver_id',
+            label: 'Direct Approver',
+            type: 'autocomplete',
+            options: users,
+          },
+        ]
+      : [
+          { name: 'mdaId', label: 'MDA', type: 'autocomplete', options: mdas },
+          {
+            name: 'primary_approver_id',
+            label: 'Primary Approver',
+            type: 'autocomplete',
+            options: users.filter((user) => user.mdaId === inputData.mdaId),
+          },
+
+          {
+            name: 'secondary_approver_id',
+            label: 'Secondary Approver',
+            type: 'autocomplete',
+            options: users.filter((user) => user.mdaId === inputData.mdaId),
+          },
+
+          {
+            name: 'direct_approver_id',
+            label: 'Direct Approver',
+            type: 'autocomplete',
+            options: users.filter((user) => user.mdaId === inputData.mdaId),
+          },
+        ]),
   ];
 
   return (
