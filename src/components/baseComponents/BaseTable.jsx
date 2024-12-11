@@ -390,7 +390,7 @@ const BaseTable = ({
               pagination={false}
               domLayout={scrollable ? 'normal' : 'autoHeight'}
               alwaysShowHorizontalScroll={true}
-              noRowsOverlayComponent={BaseEmptyComponent}
+              // noRowsOverlayComponent={BaseEmptyComponent}
               // alwaysShowVerticalScroll={true}
 
               loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
