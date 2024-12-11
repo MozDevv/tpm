@@ -22,6 +22,7 @@ import { FilterList, SortByAlpha } from '@mui/icons-material';
 import BaseCard from './BaseCard';
 import { useSearch } from '@/context/SearchContext';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
+import BaseEmptyComponent from './BaseEmptyComponent';
 
 const BaseTable = ({
   columnDefs,
@@ -45,6 +46,7 @@ const BaseTable = ({
   openSubGroup,
   onSelectionChange,
   openPostToGL,
+  scrollable,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -386,8 +388,9 @@ const BaseTable = ({
               }))}
               rowData={filteredData}
               pagination={false}
-              domLayout="autoHeight"
+              domLayout={scrollable ? 'normal' : 'autoHeight'}
               alwaysShowHorizontalScroll={true}
+              noRowsOverlayComponent={BaseEmptyComponent}
               // alwaysShowVerticalScroll={true}
 
               loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader

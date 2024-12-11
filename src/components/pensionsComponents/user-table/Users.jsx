@@ -284,6 +284,7 @@ const Users = () => {
         )}
       </BaseCard>
       <BaseTable
+        scrollable={true}
         openBaseCard={openBaseCard}
         refreshData={refreshData}
         clickedItem={clickedItem}

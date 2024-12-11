@@ -17,6 +17,8 @@ import {
 } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 import TrialBalance from '../reports/TrialBalance';
 import { Dialog } from '@mui/material';
+import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -599,7 +601,7 @@ function ChartsOfAccounts() {
       <div
         className="ag-theme-quartz"
         style={{
-          height: `${gridHeight}px`,
+          height: gridHeight ? `${gridHeight}px` : '65vh',
           width: '100%',
           overflow: 'hidden',
           maxHeight: '600px',
@@ -612,6 +614,7 @@ function ChartsOfAccounts() {
             setOpenBaseCard(true);
             setClickedItem(e.data);
           }}
+          noRowsOverlayComponent={BaseEmptyComponent}
           // onRowClicked={(e) => {
           //   // setOpenBaseCard(true);
           //   setClickedItem(e.data);
