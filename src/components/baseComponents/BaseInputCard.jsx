@@ -87,10 +87,11 @@ const BaseInputCard = ({
   const handleInputChange = (e) => {
     const { name, value, type, checked, multiple } = e.target;
 
-    setInputData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setInputData &&
+      setInputData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
 
     if (name === selectedLabel) {
       setSelectedValue(value);
