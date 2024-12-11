@@ -11,51 +11,6 @@ import RecordCard from '../recordCard/RecordCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-const columnDefs = [
-  { field: 'no', headerName: 'No', width: 90, filter: true },
-  { field: 'email', headerName: 'Email', filter: true, width: 150, hide: true },
-  { field: 'firstName', headerName: 'First Name', filter: true, width: 150 },
-  { field: 'lastName', headerName: 'Last Name', filter: true, width: 150 },
-  {
-    field: 'employeeNumber',
-    headerName: 'Employee Number',
-    filter: true,
-    width: 150,
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    filter: true,
-    width: 250,
-    hide: false,
-  },
-  {
-    field: 'idNumber',
-    headerName: 'ID Number',
-    filter: true,
-    width: 150,
-  },
-  {
-    field: 'phoneNumber',
-    headerName: 'Phone Number',
-    filter: true,
-    width: 150,
-  },
-  {
-    field: 'roleId',
-    headerName: 'Role ID',
-    filter: true,
-    width: 250,
-    hide: true,
-  },
-  {
-    field: 'defaultPasswordChanged',
-    headerName: 'Default Password Changed',
-    filter: true,
-    width: 200,
-  },
-];
-
 const Users = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -79,6 +34,7 @@ const Users = () => {
       lockoutEnd: item.lockoutEnd,
       defaultPasswordGracePeriod: item.defaultPasswordGracePeriod,
       capName: mdas.find((m) => m.id === item.mdaId)?.pensionCap.name,
+      mdaName: mdas.find((m) => m.id === item.mdaId)?.description,
     }));
   };
 
@@ -117,6 +73,67 @@ const Users = () => {
 
   const [refreshData, setRefreshData] = React.useState(false);
   const [mdas, setMdas] = React.useState([]);
+  const columnDefs = [
+    { field: 'no', headerName: 'No', width: 90, filter: true },
+    {
+      field: 'email',
+      headerName: 'Email',
+      filter: true,
+      width: 150,
+      hide: true,
+    },
+    { field: 'firstName', headerName: 'First Name', filter: true, width: 150 },
+    { field: 'lastName', headerName: 'Last Name', filter: true, width: 150 },
+    {
+      field: 'employeeNumber',
+      headerName: 'Employee Number',
+      filter: true,
+      width: 150,
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      filter: true,
+      width: 250,
+      hide: false,
+    },
+    {
+      field: 'idNumber',
+      headerName: 'ID Number',
+      filter: true,
+      width: 150,
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      filter: true,
+      width: 150,
+    },
+    {
+      field: 'roleId',
+      headerName: 'Role ID',
+      filter: true,
+      width: 250,
+      hide: true,
+    },
+    {
+      field: 'mdaId',
+      headerName: 'MDA Name',
+      filter: true,
+      width: 250,
+      valueFormatter: (params) => {
+        return mdas && mdas.length > 0
+          ? mdas.find((m) => m.id === params.value)?.description
+          : '-';
+      },
+    },
+    {
+      field: 'defaultPasswordChanged',
+      headerName: 'Default Password Changed',
+      filter: true,
+      width: 200,
+    },
+  ];
 
   const pageNumber = 1;
   const pageSize = 12;
