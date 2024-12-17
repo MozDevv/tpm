@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Upload, Modal, message, Tooltip } from 'antd';
-import { Backdrop, Button, Chip } from '@mui/material';
+import { Table, Upload, Modal, message, Tooltip, Empty } from 'antd';
+import { Backdrop, Button, Chip, Dialog, IconButton } from '@mui/material';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import preClaimsEndpoints, {
@@ -9,6 +9,8 @@ import preClaimsEndpoints, {
 import Spinner from '@/components/spinner/Spinner';
 import { useRouter } from 'next/navigation';
 import { BASE_CORE_API } from '@/utils/constants';
+import BaseLoadingBackdrop from '@/components/baseComponents/BaseLoadingBackdrop';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 
 const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
@@ -21,6 +23,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [uploadButtonDisabled, setUploadButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [clickedDocument, setClickedDocument] = useState(null);
   const router = useRouter();
 
   const getAwardDocuments = async () => {
@@ -77,7 +80,10 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
 
     const maxSize = 2 * 1024 * 1024; // 2MB size limit
 
-    if (file.status === 'uploading') return;
+    if (file.status === 'uploading') {
+      console.log('Uploading file:', file);
+      // return;
+    }
 
     // Validate file size
     if (file.size > maxSize) {
@@ -261,7 +267,10 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
       render: (_, record) => (
         <Button
           variant="contained"
-          onClick={() => handlePreview(record)}
+          onClick={() => {
+            handlePreview(record);
+            setClickedDocument(record);
+          }}
           disabled={!record.edms_id}
           size="small"
         >
@@ -271,91 +280,180 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     },
   ];
 
+  const handleDownload = () => {
+    if (!previewContent) {
+      message.error('No preview content available for download.');
+      return;
+    }
+
+    try {
+      // Extract Base64 string from the embed source
+      const base64String = previewContent.props.src.split(',')[1];
+
+      // Convert Base64 to a Blob
+      const byteCharacters = atob(base64String);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+      // Create a downloadable link
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${clickedDocument?.name || 'document'}.pdf`;
+      document.body.appendChild(link);
+
+      // Programmatically trigger the download
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Error during download:', error);
+      message.error('Failed to download file.');
+    }
+  };
+
   return (
     <>
-      {!uploading && (
-        <Backdrop
-          sx={{ color: '#fff', zIndex: 99999 }}
-          open={open}
-          onClick={() => setLoading(false)}
+      <div>
+        {uploading && (
+          <BaseLoadingBackdrop
+            open={uploading}
+            onClose={() => setUploading(false)}
+            message="Document upload in progress, please hold on"
+          />
+        )}
+        {loading && (
+          <BaseLoadingBackdrop
+            open={loading}
+            onClose={() => setLoading(false)}
+            message="Generating Document, please hold on"
+          />
+        )}
+      </div>
+      <>
+        <Table
+          columns={columns}
+          dataSource={awardDocuments}
+          pagination={false}
+          scroll={{ x: 'max-content' }}
+          style={{
+            borderCollapse: 'collapse',
+            marginTop: '40px',
+          }}
+          components={{
+            header: {
+              cell: (props) => (
+                <th
+                  {...props}
+                  style={{
+                    ...props.style,
+
+                    color: '#333', // Header text color
+                    fontWeight: 'bold', // Header font weight
+                  }}
+                />
+              ),
+            },
+            body: {
+              row: (props) => (
+                <tr
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: '40px', // Adjust row height
+                  }}
+                />
+              ),
+              cell: (props) => (
+                <td
+                  {...props}
+                  style={{
+                    ...props.style,
+                    padding: '8px', // Adjust cell padding
+                  }}
+                />
+              ),
+            },
+          }}
+        />
+
+        <Dialog
+          open={previewVisible}
+          onClose={() => setPreviewVisible(false)}
+          sx={{
+            '& .MuiPaper-root': {
+              minHeight: '75vh',
+              maxHeight: '85vh',
+              minWidth: '60vw',
+              maxWidth: '35vw',
+            },
+          }}
         >
-          <div className="ml-3 font-semibold text-xl flex items-center">
-            Uploading File, Please wait
-            <div className="ellipsis ml-1 mb-4">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
+          <div
+            className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+            style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+          >
+            <div className="flex flex-col">
+              <h2 className="text-xl font-bold text-gray-800 mb-2">
+                {clickedDocument?.name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {clickedDocument?.description}
+              </p>
+            </div>
+            <div className="space-x-4">
+              <IconButton onClick={handlePreview}>
+                <Refresh />
+              </IconButton>
+              <Button
+                onClick={handleDownload}
+                variant="contained"
+                color="primary"
+                startIcon={<GetApp />}
+                className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
+              >
+                Download PDF
+              </Button>
+              <Button
+                onClick={() => setPreviewVisible(false)}
+                variant="outlined"
+                color="primary"
+                startIcon={<Cancel />}
+                className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+              >
+                Cancel
+              </Button>
             </div>
           </div>
-        </Backdrop>
-      )}
-      {loading ? (
-        <div className="mb-20">
-          {' '}
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <Table
-            columns={columns}
-            dataSource={awardDocuments}
-            pagination={false}
-            scroll={{ x: 'max-content' }}
-            style={{
-              borderCollapse: 'collapse',
-              marginTop: '40px',
-            }}
-            components={{
-              header: {
-                cell: (props) => (
-                  <th
-                    {...props}
-                    style={{
-                      ...props.style,
-
-                      color: '#333', // Header text color
-                      fontWeight: 'bold', // Header font weight
-                    }}
-                  />
-                ),
-              },
-              body: {
-                row: (props) => (
-                  <tr
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '40px', // Adjust row height
-                    }}
-                  />
-                ),
-                cell: (props) => (
-                  <td
-                    {...props}
-                    style={{
-                      ...props.style,
-                      padding: '8px', // Adjust cell padding
-                    }}
-                  />
-                ),
-              },
-            }}
-          />
-          <Modal
-            visible={previewVisible}
-            title={previewTitle}
-            footer={null}
-            onCancel={() => setPreviewVisible(false)}
-            width={1000}
-            height={800}
-            bodyStyle={{ height: '80vh', overflowY: 'auto' }}
-            style={{ top: 40, height: '80vh', overflowY: 'auto', zIndex: 2000 }} // Increased zIndex value
-            zIndex={2000} // Also add zIndex to Modal
-          >
-            {previewContent}
-          </Modal>
-        </>
-      )}
+          {previewContent ? (
+            <div className="h-[100vh] overflow-auto">{previewContent}</div>
+          ) : (
+            <div className="flex items-center justify-center min-h-[65vh]">
+              <div className="text-center">
+                <Empty description="No PDF available to display." />
+              </div>
+            </div>
+          )}
+        </Dialog>
+        {/* <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={() => setPreviewVisible(false)}
+          width={1000}
+          height={800}
+          bodyStyle={{ height: '80vh', overflowY: 'auto' }}
+          style={{ top: 40, height: '80vh', overflowY: 'auto', zIndex: 2000 }} // Increased zIndex value
+          zIndex={2000} // Also add zIndex to Modal
+        >
+          {previewContent}
+        </Modal> */}
+      </>
     </>
   );
 };

@@ -1,5 +1,6 @@
-import claimsEndpoints, { apiService } from '@/components/services/claimsApi';
-import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import preClaimsEndpoints, {
+  apiService,
+} from '@/components/services/preclaimsApi';
 import { useAlert } from '@/context/AlertContext';
 import { Close } from '@mui/icons-material';
 import { Button, IconButton, TextareaAutosize } from '@mui/material';
