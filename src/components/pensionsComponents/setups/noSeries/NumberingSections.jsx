@@ -42,13 +42,24 @@ function NumberingSections() {
     }
   };
 
-  const handleNumberSeriesChange = (value, record) => {
+  const handleNumberSeriesChange = async (value, record) => {
     const updatedRows = {
       ...editableRows,
       [record.id]: value,
     };
     setEditableRows(updatedRows);
     setSaveEnabled(true);
+    try {
+      const response = await apiService.put(endpoints.editNumberingSection, {
+        id: record.id,
+        numberSeriesId: value,
+      });
+      if (response.status === 200 && response.data.succeeded) {
+        message.success('Changes saved successfully');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const saveChanges = async () => {
@@ -93,15 +104,16 @@ function NumberingSections() {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
       title: 'Section',
       dataIndex: 'section',
       key: 'section',
     },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+
     {
       title: 'Number Series',
       dataIndex: 'numberSeries',
@@ -115,7 +127,7 @@ function NumberingSections() {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={numberingSections}
+        dataSource={numberingSections.sort((a, b) => a.section - b.section)}
         pagination={false}
         scroll={{ y: 680 }}
         style={{
@@ -157,14 +169,6 @@ function NumberingSections() {
           },
         }}
       />
-      <Button
-        variant="contained"
-        onClick={saveChanges}
-        disabled={!saveEnabled}
-        sx={{ marginTop: 5 }}
-      >
-        Save
-      </Button>
     </div>
   );
 }

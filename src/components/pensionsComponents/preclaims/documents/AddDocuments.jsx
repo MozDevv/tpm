@@ -150,6 +150,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     } catch (error) {
       console.log('Error fetching document:', error);
       message.error('Failed to fetch document.');
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -317,6 +318,19 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (loading || uploading) {
+      timer = setTimeout(() => {
+        message.error('Failed to load resource');
+        setLoading(false);
+        setUploading(false);
+      }, 60000); // 1 minute
+    }
+
+    return () => clearTimeout(timer);
+  }, [loading, uploading]);
+
   return (
     <>
       <div>
@@ -395,14 +409,14 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
           }}
         >
           <div
-            className="bg-white h-[80px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+            className="bg-white h-[90px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
             style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
           >
             <div className="flex flex-col">
-              <h2 className="text-xl font-bold text-gray-800 mb-2">
+              <h2 className="text-xl font-bold text-gray-800 mt-1">
                 {clickedDocument?.name}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 py-2">
                 {clickedDocument?.description}
               </p>
             </div>
