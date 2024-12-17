@@ -27,13 +27,14 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
 
   useEffect(() => {
     console.log('retireeId ❤️', retireeId);
+    console.log('clickedItem 🟢👌', clickedItem);
     if (retireeId) {
       fetchRetiree();
     }
   }, []);
   return (
     <div className="mt-5">
-      <div className="flex items-center flex-col justify-center p-2 gap-2">
+      <div className="flex items-center flex-col justify-center p-2 gap-2 font-montserrat">
         <Avatar sx={{ height: '100px', width: '100px' }} />
         <div className="flex flex-col mt-5 gap-2 items-center justify-center">
           <h5 className="font-semibold text-primary text-base">{`${retiree?.first_name} ${retiree?.surname}`}</h5>
@@ -84,14 +85,14 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
 
       <Divider />
 
-      <div className="mt-8 p-2 flex gap-3 flex-col">
+      <div className="mt-8  flex gap-3 flex-col font-montserrat">
         <div className="flex items-center gap-2">
-          <h6 className="font-medium text-primary text-xs">Personal Number</h6>
+          <h6 className="font-medium text-primary text-xs">Personal Number:</h6>
           <span className="text-xs">{retiree?.personal_number}</span>
         </div>
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">
-            Date of First Appointment
+            Date of First Appointment:
           </h6>
           <span className="text-xs">
             {parseDate(retiree?.date_of_first_appointment)}
@@ -99,7 +100,7 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
         </div>
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">
-            Date of Confirmation
+            Date of Confirmation:
           </h6>
           <span className="text-xs">
             {parseDate(retiree?.date_of_confirmation)}
@@ -109,14 +110,12 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
           <h6 className="font-medium text-primary text-xs">Retirement Date</h6>
           <span className="text-xs">{parseDate(retiree?.retirement_date)}</span>
         </div>
-        {retiree?.pension_award && (
-          <div className="flex items-center gap-2">
-            <h6 className="font-medium text-primary text-xs">
-              Ministry / Department:{' '}
-            </h6>
-            <span className="text-xs">{retiree?.pension_award}</span>
-          </div>
-        )}
+
+        <div className="flex items-center">
+          <h6 className="font-medium text-primary text-xs">MDA: </h6>
+          <span className="text-xs pl-1">{clickedItem?.mda_description}</span>
+        </div>
+
         <div className="flex items-center gap-2">
           <h6 className="font-medium text-primary text-xs">Status:</h6>
           <span className="text-xs">

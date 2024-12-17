@@ -200,13 +200,13 @@ function NoSeriesCard({
                   idLabel="numberSeriesId"
                   getApiService={apiService.get}
                   apiService={apiService}
-                  postApiService={apiService.put}
-                  putApiService={apiService.post}
+                  postApiService={apiService.post}
+                  putApiService={apiService.put}
                   getEndpoint={endpoints.getNumberSeriesLineByCode(
                     clickedItem.code
                   )}
                   postEndpoint={endpoints.createNumberSeriesLine}
-                  putEndpoint={endpoints.createNumberSeriesLine}
+                  putEndpoint={endpoints.editNumberSeriesLine}
                   deleteEndpoint={endpoints.deleteNumberSeriesLine}
                   passProspectivePensionerId={false}
                 />

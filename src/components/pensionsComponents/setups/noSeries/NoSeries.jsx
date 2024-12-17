@@ -1,38 +1,38 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
-import NoSeriesCard from "./NoSeriesCard";
-import NumberingSections from "./NumberingSections";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import NoSeriesCard from './NoSeriesCard';
+import NumberingSections from './NumberingSections';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
-    width: 90,
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
+    flex: 1,
     filter: true,
   },
   {
-    field: "code",
-    headerName: "Code",
-    headerClass: "prefix-header",
-    width: 90,
+    field: 'code',
+    headerName: 'Code',
+    headerClass: 'prefix-header',
+    flex: 1,
     filter: true,
   },
 
   {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
 ];
 
@@ -60,10 +60,10 @@ const NoSeries = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
     numberingSections: () => setOpenNumberingSections(true),
   };
 
@@ -90,15 +90,15 @@ const NoSeries = () => {
     React.useState(false);
 
   const title = clickedItem
-    ? "No. Series Details"
-    : "Create New No. Series Details";
+    ? 'No. Series Details'
+    : 'Create New No. Series Details';
 
   const fields = [
-    { name: "code", label: "Code", type: "text", required: true },
+    { name: 'code', label: 'Code', type: 'text', required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
   ];
@@ -106,29 +106,29 @@ const NoSeries = () => {
   const updatedFields = [
     ...fields,
     {
-      name: "starting_no",
-      label: "Starting No",
-      type: "text",
+      name: 'starting_no',
+      label: 'Starting No',
+      type: 'text',
     },
     {
-      name: "ending_no",
-      label: "Ending No",
-      type: "text",
+      name: 'ending_no',
+      label: 'Ending No',
+      type: 'text',
     },
     {
-      name: "increment_by",
-      label: "Increment By",
-      type: "text",
+      name: 'increment_by',
+      label: 'Increment By',
+      type: 'text',
     },
     {
-      name: "start_date",
-      label: "Start Date",
-      type: "date",
+      name: 'start_date',
+      label: 'Start Date',
+      type: 'date',
     },
     {
-      name: "end_date",
-      label: "End Date",
-      type: "date",
+      name: 'end_date',
+      label: 'End Date',
+      type: 'date',
     },
   ];
 
@@ -136,46 +136,46 @@ const NoSeries = () => {
 
   const numberSeriesLinefields = [
     {
-      name: "startingDate",
-      label: "Starting Date",
-      type: "date",
+      name: 'startingDate',
+      label: 'Starting Date',
+      type: 'date',
     },
     {
-      name: "startingNumber",
-      label: "starting No",
-      type: "text",
+      name: 'startingNumber',
+      label: 'starting No',
+      type: 'text',
     },
     {
-      name: "endingNumber",
-      label: "End Number",
-      type: "text",
+      name: 'endingNumber',
+      label: 'End Number',
+      type: 'text',
     },
     {
-      name: "lastDateUsed",
-      label: "Last Date Used",
-      type: "date",
+      name: 'lastDateUsed',
+      label: 'Last Date Used',
+      type: 'date',
     },
     {
-      name: "lastNumberUsed",
-      label: "Last Number Used",
-      type: "number",
+      name: 'lastNumberUsed',
+      label: 'Last Number Used',
+      type: 'number',
     },
     {
-      name: "incrementByNumber",
-      label: "Increment By",
-      type: "number",
-    },
-
-    {
-      name: "warningNumber",
-      label: "Warning Number",
-      type: "text",
+      name: 'incrementByNumber',
+      label: 'Increment By',
+      type: 'number',
     },
 
     {
-      name: "allowGapsInNumbers",
-      label: "Allow Gaps In Numbers",
-      type: "switch",
+      name: 'warningNumber',
+      label: 'Warning Number',
+      type: 'text',
+    },
+
+    {
+      name: 'allowGapsInNumbers',
+      label: 'Allow Gaps In Numbers',
+      type: 'switch',
       default: true,
     },
   ];
@@ -191,7 +191,7 @@ const NoSeries = () => {
         isUserComponent={false}
         deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
         deleteApiService={apiService.post}
-        status={"numberSeriesLine"}
+        status={'numberSeriesLine'}
         setOpenAction={setOpenAction}
         openAction={openAction}
         fields={numberSeriesLinefields}
@@ -225,7 +225,7 @@ const NoSeries = () => {
         openBaseCard={openNumberingSections}
         setOpenBaseCard={setOpenNumberingSections}
         ///handlers={handlers}
-        title={"Numbering Sections"}
+        title={'Numbering Sections'}
         clickedItem={clickedItem}
         isUserComponent={false}
         fields={numberSeriesLinefields}
