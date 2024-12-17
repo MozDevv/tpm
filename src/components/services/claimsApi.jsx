@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-catch */
 'use client';
+import { BASE_CORE_API } from '@/utils/constants';
 import axios from 'axios';
 
-export const API_BASE_URL = 'https://tntportalapi.agilebiz.co.ke';
-
+export const API_BASE_URL = `${BASE_CORE_API}`;
 const api = axios.create({
   baseURL: API_BASE_URL,
 });

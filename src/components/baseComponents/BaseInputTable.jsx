@@ -56,6 +56,7 @@ const BaseInputTable = ({
   filterCol,
   disableAll,
   scrollable,
+  scrollableHeight,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -1066,7 +1067,7 @@ const BaseInputTable = ({
             style={{
               maxHeight: '500px',
               width: '100%',
-              height: scrollable ? '50vh' : 0,
+              height: scrollable ? scrollableHeight || '50vh' : 0,
             }}
           >
             <AgGridReact

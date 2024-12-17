@@ -331,7 +331,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
           <BaseLoadingBackdrop
             open={loading}
             onClose={() => setLoading(false)}
-            message="Generating Document, please hold on"
+            message="Loading Files, please hold on"
           />
         )}
       </div>

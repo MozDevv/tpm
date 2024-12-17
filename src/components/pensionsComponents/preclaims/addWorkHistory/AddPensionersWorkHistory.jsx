@@ -63,61 +63,33 @@ function AddPensionersWorkHistory({
   }, []);
 
   return (
-    <div className="p-2 w-full  max-h-[100vh] overflow-hidden flex flex-col">
+    <div className="p-2 overflow-hidden flex flex-col">
       <div className="flex justify-between items-center px-6 sticky top-0 bg-white z-10">
         <div></div>
-        {/* <div className="flex items-center gap-4">
-          <Button
-            variant="outlined"
-            sx={{ mb: 3, mt: 2 }}
-            onClick={handlePrevious}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ mb: 3, mt: 2 }}
-            onClick={moveToNextTab}
-          >
-            Next
-          </Button>
-        </div> */}
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-[200px] max-h-[90vh]">
-        <Suspense fallback={<Spinner />}>
-          {pensionAward ? (
-            <MixedServicePost
-              status={status}
-              id={id}
-              loading={loading}
-              setLoading={setLoading}
-              dateOfFirstAppointment={dateOfFirstAppointment}
-              mixedService={true}
-            />
-          ) : (
-            // ) : activeCapName === "APN/PK" ||
-            //   activeCapName === "CAP196" ||
-            //   activeCapName === "DSO/RK" ? (
-            //   <MixedServicePost
-            //     status={status}
-            //     id={id}
-            //     loading={loading}
-            //     setLoading={setLoading}
-            //     dateOfFirstAppointment={dateOfFirstAppointment}
-            //     isParliamentarian={true}
-            //   />
-            <PostAndNature
-              id={id}
-              status={status}
-              clickedItem={clickedItem}
-              loading={loading}
-              setLoading={setLoading}
-              dateOfFirstAppointment={dateOfFirstAppointment}
-              activeCapName={activeCapName}
-            />
-          )}
-        </Suspense>
+      <div className=" overflow-y-auto h-[70vh]">
+        {pensionAward ? (
+          <MixedServicePost
+            status={status}
+            id={id}
+            loading={loading}
+            setLoading={setLoading}
+            dateOfFirstAppointment={dateOfFirstAppointment}
+            mixedService={true}
+          />
+        ) : (
+          <PostAndNature
+            id={id}
+            status={status}
+            clickedItem={clickedItem}
+            loading={loading}
+            setLoading={setLoading}
+            dateOfFirstAppointment={dateOfFirstAppointment}
+            activeCapName={activeCapName}
+          />
+        )}
+
         <Suspense fallback={<Spinner />}>
           <PensionableSalary
             id={id}
