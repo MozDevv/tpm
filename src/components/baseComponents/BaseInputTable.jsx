@@ -1067,7 +1067,7 @@ const BaseInputTable = ({
             style={{
               maxHeight: '500px',
               width: '100%',
-              height: scrollable ? scrollableHeight || '50vh' : 0,
+              height: scrollable ? '50vh' : 'auto',
             }}
           >
             <AgGridReact

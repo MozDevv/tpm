@@ -322,7 +322,7 @@ function PostAndNature({ id, clickedItem }) {
   const [recordId, setRecordId] = useState();
 
   return (
-    <div className="">
+    <div className="pb-5">
       <BaseInputTable
         title="Post and Nature of Service"
         fields={fields}
