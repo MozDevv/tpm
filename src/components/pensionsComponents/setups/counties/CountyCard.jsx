@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { AgGridReact } from "ag-grid-react";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+import { AgGridReact } from 'ag-grid-react';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import endpoints, { apiService } from '@/components/services/setupsApi';
 
 const { TabPane } = Tabs;
 
@@ -17,7 +17,7 @@ function CountyCard({
   useRequestBody,
 }) {
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const activeRetireeId = [];
   const handleTabChange = (key) => {
@@ -26,7 +26,7 @@ function CountyCard({
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log("Moving to next tab:", nextTab); // Debug line
+    console.log('Moving to next tab:', nextTab); // Debug line
     setActiveKey(nextTab);
   };
 
@@ -37,7 +37,7 @@ function CountyCard({
 
   const columnDefs = [
     //{ headerName: "B", field: "branch_code" },
-    { headerName: "Constituency Name", field: "constituency_name" },
+    { headerName: 'Constituency Name', field: 'constituency_name' },
   ];
 
   return (
@@ -83,12 +83,13 @@ function CountyCard({
                     title="Constituencies"
                     fields={[
                       {
-                        value: "constituency_name",
-                        label: "Constituency Name",
-                        type: "text",
+                        value: 'constituency_name',
+                        label: 'Constituency Name',
+                        type: 'text',
                         required: true,
                       },
                     ]}
+                    scrollable={true}
                     id={clickedItem?.id}
                     idLabel="county_id"
                     getApiService={apiService.get}

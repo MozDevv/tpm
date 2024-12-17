@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Table, Upload, Modal, message, Tooltip } from "antd";
-import { Button, Chip } from "@mui/material";
-import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { Table, Upload, Modal, message, Tooltip } from 'antd';
+import { Backdrop, Button, Chip } from '@mui/material';
+import { UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import Spinner from "@/components/spinner/Spinner";
-import { useRouter } from "next/navigation";
-import { BASE_CORE_API } from "@/utils/constants";
+} from '@/components/services/preclaimsApi';
+import Spinner from '@/components/spinner/Spinner';
+import { useRouter } from 'next/navigation';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
@@ -17,9 +17,10 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [fileList, setFileList] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewContent, setPreviewContent] = useState(null);
-  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewTitle, setPreviewTitle] = useState('');
   const [uploadButtonDisabled, setUploadButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
   const getAwardDocuments = async () => {
@@ -51,7 +52,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
       setAwardDocuments(sortedDocuments);
       // setAwardDocuments(documents);
     } catch (error) {
-      console.log("Error fetching award documents:", error);
+      console.log('Error fetching award documents:', error);
       //message.error("Failed to fetch award documents.");
     } finally {
       setLoading(false);
@@ -70,35 +71,35 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     setUploadButtonDisabled(!requiredDocumentsUploaded);
   }, [awardDocuments]);
 
-  // Handle file change and upload
   const handleChange = async (info, record) => {
+    setUploading(true);
     const { file } = info;
 
     const maxSize = 2 * 1024 * 1024; // 2MB size limit
 
-    if (file.status === "uploading") return;
+    if (file.status === 'uploading') return;
 
     // Validate file size
     if (file.size > maxSize) {
-      message.error("File size exceeds 2MB. Please upload a smaller file.");
+      message.error('File size exceeds 2MB. Please upload a smaller file.');
       return;
     }
 
     const formData = new FormData();
-    formData.append("id", id);
-    formData.append("submissions[0].document_selection_id", record.id);
-    formData.append("submissions[0].uploaded_file", file.originFileObj);
-    formData.append("is_mda", true);
+    formData.append('id', id);
+    formData.append('submissions[0].document_selection_id', record.id);
+    formData.append('submissions[0].uploaded_file', file.originFileObj);
+    formData.append('is_mda', true);
 
     try {
       const res = await axios.post(
         `${BASE_CORE_API}api/ProspectivePensioners/ReceiveProspectivePensionerDocuments`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       if (res.status === 200) {
-        message.success("File uploaded successfully");
+        message.success('File uploaded successfully');
         setFileList((prevFileList) => [
           ...prevFileList.filter((f) => f.uid !== record.id),
           {
@@ -110,15 +111,15 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
           },
         ]);
         getAwardDocuments();
-        // window.location.reload();
       }
     } catch (error) {
-      console.error("Upload error:", error);
-      message.error("File upload failed.");
+      console.error('Upload error:', error);
+      message.error('File upload failed.');
+    } finally {
+      setUploading(false);
     }
   };
 
-  // Handle file preview
   const handlePreview = async (record) => {
     setLoading(true);
     try {
@@ -138,11 +139,11 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
         setPreviewTitle(record.name);
         setPreviewVisible(true);
       } else {
-        message.error("No preview available for this document.");
+        message.error('No preview available for this document.');
       }
     } catch (error) {
-      console.log("Error fetching document:", error);
-      message.error("Failed to fetch document.");
+      console.log('Error fetching document:', error);
+      message.error('Failed to fetch document.');
     } finally {
       setLoading(false);
     }
@@ -154,77 +155,66 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
 
   const columns = [
     {
-      title: "Document Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Document Name',
+      dataIndex: 'name',
+      key: 'name',
       render: (name, record) => (
         <>
-          {name}{" "}
+          {name}{' '}
           {record.has_two_sides && record.side && (
             <Chip
               label={record.side}
               size="small"
               variant="contained"
               sx={{
-                maxHeight: "20px",
-                fontSize: "10px",
-                mb: "8px",
-                borderWidth: "2px",
+                maxHeight: '20px',
+                fontSize: '10px',
+                mb: '8px',
+                borderWidth: '2px',
               }}
-              color={record.side === "Front" ? "primary" : "secondary"}
+              color={record.side === 'Front' ? 'primary' : 'secondary'}
             />
           )}
         </>
       ),
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
-      title: "Status",
-      dataIndex: "uploaded",
-      key: "uploaded",
+      title: 'Status',
+      dataIndex: 'uploaded',
+      key: 'uploaded',
       render: (_, record) =>
         record.edms_id ? (
           record.pensioner_upload ? (
-            <Button sx={{ color: "green", fontSize: "12px", fontWeight: 500 }}>
+            <Button sx={{ color: 'green', fontSize: '12px', fontWeight: 500 }}>
               Uploaded by retiree
             </Button>
           ) : (
-            <Button sx={{ fontSize: "12px", fontWeight: 500 }}>
+            <Button sx={{ fontSize: '12px', fontWeight: 500 }}>
               Uploaded by MDA user
             </Button>
           )
         ) : (
-          <Button sx={{ color: "red", fontSize: "12px", fontWeight: 500 }}>
+          <Button sx={{ color: 'red', fontSize: '12px', fontWeight: 500 }}>
             Not Uploaded
           </Button>
         ),
     },
     {
-      title: "Extensions",
-      dataIndex: "extensions",
-      key: "extensions",
+      title: 'Extensions',
+      dataIndex: 'extensions',
+      key: 'extensions',
     },
-    // {
-    //   title: "Uploaded By",
-    //   dataIndex: "pensioner_upload",
-    //   key: "uploaded",
-    //   render: (_, record) =>
-    //     record.pensioner_upload ? (
-    //       <Button sx={{ fontSize: "12px" }}>Uploaded By Retiree</Button>
-    //     ) : (
-    //       <Button sx={{ color: "red", fontSize: "12px" }}></Button>
-    //     ),
-    // },
 
     status !== 5
       ? {
-          title: "Select File",
-          dataIndex: "select",
-          key: "select",
+          title: 'Select File',
+          dataIndex: 'select',
+          key: 'select',
           render: (_, record) => (
             <Upload
               name="file"
@@ -238,23 +228,23 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
                 size="small"
                 disabled={record.pensioner_upload}
               >
-                {record.edms_id ? "Update File" : "Select File"}
+                {record.edms_id ? 'Update File' : 'Select File'}
               </Button>
             </Upload>
           ),
         }
       : {},
     {
-      title: "Uploaded File",
-      dataIndex: "selectedFile",
-      key: "selectedFile",
+      title: 'Uploaded File',
+      dataIndex: 'selectedFile',
+      key: 'selectedFile',
       width: 250,
       ellipsis: true,
       render: (_, record) => {
         const file = fileList.find((f) => f.uid === record.id);
         const fileName = file
           ? file.name
-          : record?.uploadedDetails || "No file uploaded";
+          : record?.uploadedDetails || 'No file uploaded';
         return (
           <Tooltip title={fileName}>
             <span>
@@ -265,9 +255,9 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
       },
     },
     {
-      title: "Preview File",
-      dataIndex: "preview",
-      key: "preview",
+      title: 'Preview File',
+      dataIndex: 'preview',
+      key: 'preview',
       render: (_, record) => (
         <Button
           variant="contained"
@@ -281,16 +271,27 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
     },
   ];
 
-  const handlePrevious = () => {
-    //router.push(`/pensions/preclaims/listing/new/add-work-history?id=${id}`);
-    moveToPreviousTab();
-  };
-
   return (
     <>
+      {!uploading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 99999 }}
+          open={open}
+          onClick={() => setLoading(false)}
+        >
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Uploading File, Please wait
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       {loading ? (
         <div className="mb-20">
-          {" "}
+          {' '}
           <Spinner />
         </div>
       ) : (
@@ -299,10 +300,10 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
             columns={columns}
             dataSource={awardDocuments}
             pagination={false}
-            scroll={{ x: "max-content" }}
+            scroll={{ x: 'max-content' }}
             style={{
-              borderCollapse: "collapse",
-              marginTop: "40px",
+              borderCollapse: 'collapse',
+              marginTop: '40px',
             }}
             components={{
               header: {
@@ -311,9 +312,9 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
                     {...props}
                     style={{
                       ...props.style,
-                      // Header background color
-                      color: "#333", // Header text color
-                      fontWeight: "bold", // Header font weight
+
+                      color: '#333', // Header text color
+                      fontWeight: 'bold', // Header font weight
                     }}
                   />
                 ),
@@ -324,7 +325,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
                     {...props}
                     style={{
                       ...props.style,
-                      height: "40px", // Adjust row height
+                      height: '40px', // Adjust row height
                     }}
                   />
                 ),
@@ -333,7 +334,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
                     {...props}
                     style={{
                       ...props.style,
-                      padding: "8px", // Adjust cell padding
+                      padding: '8px', // Adjust cell padding
                     }}
                   />
                 ),
@@ -347,8 +348,8 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
             onCancel={() => setPreviewVisible(false)}
             width={1000}
             height={800}
-            bodyStyle={{ height: "80vh", overflowY: "auto" }}
-            style={{ top: 40, height: "80vh", overflowY: "auto", zIndex: 2000 }} // Increased zIndex value
+            bodyStyle={{ height: '80vh', overflowY: 'auto' }}
+            style={{ top: 40, height: '80vh', overflowY: 'auto', zIndex: 2000 }} // Increased zIndex value
             zIndex={2000} // Also add zIndex to Modal
           >
             {previewContent}

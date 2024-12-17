@@ -1,29 +1,29 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import BankCard from "../banks/BankCard";
-import CountyCard from "./CountyCard";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import BankCard from '../banks/BankCard';
+import CountyCard from './CountyCard';
 
 const columnDefs = [
   {
-    field: "county_code",
-    headerName: "County Code",
-    headerClass: "prefix-header",
-    width: 90,
+    field: 'county_code',
+    headerName: 'County Code',
+    headerClass: 'prefix-header',
+    flex: 1,
     filter: true,
   },
   {
-    field: "county_name",
-    headerName: "County Name",
-    headerClass: "prefix-header",
+    field: 'county_name',
+    headerName: 'County Name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
 ];
 
@@ -52,10 +52,10 @@ const Counties = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -75,7 +75,7 @@ const Counties = () => {
       //  setClickedItem(item);
     },
     createConstituency: () => {
-      setDialogType("branch");
+      setDialogType('branch');
       setOpenAction(true);
     },
   };
@@ -85,7 +85,7 @@ const Counties = () => {
 
   const title = clickedItem
     ? `${clickedItem.county_name} County`
-    : "Create New County";
+    : 'Create New County';
 
   const [bankTypes, setBankTypes] = React.useState([]);
   const [countries, setCountries] = React.useState([]);
@@ -96,7 +96,7 @@ const Counties = () => {
 
       setCountries(res.data.data);
 
-      console.log("countries", res.data.data);
+      console.log('countries', res.data.data);
     } catch (error) {
       console.log(error.response);
     }
@@ -108,21 +108,21 @@ const Counties = () => {
 
   const fields = [
     {
-      name: "county_code",
-      label: "County Code",
-      type: "text",
+      name: 'county_code',
+      label: 'County Code',
+      type: 'text',
       required: true,
     },
     {
-      name: "county_name",
-      label: "Name",
-      type: "text",
+      name: 'county_name',
+      label: 'Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "country_id",
-      label: "Country",
-      type: "select",
+      name: 'country_id',
+      label: 'Country',
+      type: 'select',
       options: countries.map((type) => ({
         id: type.id,
         name: type.country_name,
@@ -132,15 +132,15 @@ const Counties = () => {
 
   const branchFields = [
     {
-      name: "constituency_name",
-      label: "Constituency Name",
-      type: "text",
+      name: 'constituency_name',
+      label: 'Constituency Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "country_id",
-      label: "Country",
-      type: "select",
+      name: 'country_id',
+      label: 'Country',
+      type: 'select',
       options: countries.map((type) => ({
         id: type.id,
         name: type.country_name,
@@ -149,8 +149,8 @@ const Counties = () => {
   ];
 
   const bankTypeFields = [
-    { name: "type", label: "Bank Type", type: "text", required: true },
-    { name: "description", label: "Description", type: "text", required: true },
+    { name: 'type', label: 'Bank Type', type: 'text', required: true },
+    { name: 'description', label: 'Description', type: 'text', required: true },
   ];
 
   return (

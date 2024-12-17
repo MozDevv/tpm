@@ -1,58 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
 
   {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "created_date",
-    headerName: "Created Date",
-    headerClass: "prefix-header",
+    field: 'created_date',
+    headerName: 'Created Date',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
     valueFormatter: (params) => formatDate(params.value),
   },
   {
-    field: "departmentId",
-    headerName: "departmentID",
-    headerClass: "prefix-header",
+    field: 'departmentId',
+    headerName: 'departmentID',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
     hide: true,
   },
   {
-    field: "departmentName",
-    headerName: "Department",
-    headerClass: "prefix-header",
+    field: 'departmentName',
+    headerName: 'Department',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
   },
 ];
 
@@ -89,10 +89,10 @@ const Roles = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -113,20 +113,20 @@ const Roles = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Role" : "Create a New Role";
+  const title = clickedItem ? 'Role' : 'Create a New Role';
 
   const fields = [
-    { name: "name", label: "Name", type: "text", required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     {
-      name: "departmentId",
-      label: "Select Department",
-      type: "select",
+      name: 'departmentId',
+      label: 'Select Department',
+      type: 'select',
       required: true,
       options: departments.map((d) => ({
         id: d.departmentId,
@@ -143,7 +143,7 @@ const Roles = () => {
       const { data, totalCount } = res.data;
       setDepartments(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
