@@ -322,7 +322,7 @@ function PostAndNature({ id, clickedItem }) {
   const [recordId, setRecordId] = useState();
 
   return (
-    <div className="mb-2 ">
+    <div className="">
       <BaseInputTable
         title="Post and Nature of Service"
         fields={fields}
@@ -333,8 +333,6 @@ function PostAndNature({ id, clickedItem }) {
           clickedItem?.notification_status !== 0 &&
           clickedItem?.notification_status !== 3
         }
-        scrollable={true}
-        scrollableHeight="30vh"
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}

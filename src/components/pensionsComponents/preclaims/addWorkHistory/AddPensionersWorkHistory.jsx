@@ -79,15 +79,7 @@ function AddPensionersWorkHistory({
             mixedService={true}
           />
         ) : (
-          <PostAndNature
-            id={id}
-            status={status}
-            clickedItem={clickedItem}
-            loading={loading}
-            setLoading={setLoading}
-            dateOfFirstAppointment={dateOfFirstAppointment}
-            activeCapName={activeCapName}
-          />
+          <></>
         )}
 
         <Suspense fallback={<Spinner />}>
