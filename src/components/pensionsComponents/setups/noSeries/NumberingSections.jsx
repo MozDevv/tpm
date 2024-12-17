@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Table, message } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Table, message } from 'antd';
 import {
   MenuItem,
   Select,
   FormControl,
   InputLabel,
   Button,
-} from "@mui/material";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+} from '@mui/material';
+import endpoints, { apiService } from '@/components/services/setupsApi';
 
 function NumberingSections() {
   const [numberingSections, setNumberingSections] = useState([]);
@@ -23,22 +23,22 @@ function NumberingSections() {
   const getNumberingSections = async () => {
     try {
       const response = await apiService.get(endpoints.getNumberingSections, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setNumberingSections(response.data.data);
     } catch (error) {
-      console.error("Error fetching numbering sections:", error);
+      console.error('Error fetching numbering sections:', error);
     }
   };
 
   const getNumberSeriesOptions = async () => {
     try {
       const response = await apiService.get(endpoints.getNumberSeries, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setNumberSeriesOptions(response.data.data);
     } catch (error) {
-      console.error("Error fetching number series options:", error);
+      console.error('Error fetching number series options:', error);
     }
   };
 
@@ -65,22 +65,22 @@ function NumberingSections() {
       });
 
       await Promise.all(updateRequests);
-      message.success("Changes saved successfully");
+      message.success('Changes saved successfully');
       setSaveEnabled(false);
     } catch (error) {
-      console.error("Error saving changes:", error);
+      console.error('Error saving changes:', error);
     }
   };
 
   const renderSelect = (text, record) => (
     <FormControl variant="outlined" fullWidth>
       <Select
-        value={editableRows[record.id] || text?.id || ""}
+        value={editableRows[record.id] || text?.id || ''}
         onChange={(event) =>
           handleNumberSeriesChange(event.target.value, record)
         }
         size="small"
-        sx={{ width: "200px" }}
+        sx={{ width: '200px' }}
       >
         {numberSeriesOptions.map((option) => (
           <MenuItem key={option.id} value={option.id}>
@@ -93,19 +93,19 @@ function NumberingSections() {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: "Section",
-      dataIndex: "section",
-      key: "section",
+      title: 'Section',
+      dataIndex: 'section',
+      key: 'section',
     },
     {
-      title: "Number Series",
-      dataIndex: "numberSeries",
-      key: "numberSeries",
+      title: 'Number Series',
+      dataIndex: 'numberSeries',
+      key: 'numberSeries',
       render: (text, record) => renderSelect(text, record),
     },
   ];
@@ -117,8 +117,9 @@ function NumberingSections() {
         columns={columns}
         dataSource={numberingSections}
         pagination={false}
+        scroll={{ y: 680 }}
         style={{
-          borderCollapse: "collapse",
+          borderCollapse: 'collapse',
         }}
         components={{
           header: {
@@ -128,8 +129,8 @@ function NumberingSections() {
                 style={{
                   ...props.style,
                   // Header background color
-                  color: "#333", // Header text color
-                  fontWeight: "bold", // Header font weight
+                  color: '#333', // Header text color
+                  fontWeight: 'bold', // Header font weight
                 }}
               />
             ),
@@ -140,7 +141,7 @@ function NumberingSections() {
                 {...props}
                 style={{
                   ...props.style,
-                  height: "40px", // Adjust row height
+                  height: '40px', // Adjust row height
                 }}
               />
             ),
@@ -149,7 +150,7 @@ function NumberingSections() {
                 {...props}
                 style={{
                   ...props.style,
-                  padding: "8px", // Adjust cell padding
+                  padding: '8px', // Adjust cell padding
                 }}
               />
             ),

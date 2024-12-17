@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { message, Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { AgGridReact } from "ag-grid-react";
-import { formatDate } from "@/utils/dateFormatter";
-import NumberingSections from "./NumberingSections";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import React, { useEffect, useState } from 'react';
+import { message, Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { AgGridReact } from 'ag-grid-react';
+import { formatDate } from '@/utils/dateFormatter';
+import NumberingSections from './NumberingSections';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const { TabPane } = Tabs;
 
@@ -18,7 +18,7 @@ function NoSeriesCard({
   useRequestBody,
 }) {
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const activeRetireeId = [];
   const handleTabChange = (key) => {
@@ -27,7 +27,7 @@ function NoSeriesCard({
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log("Moving to next tab:", nextTab); // Debug line
+    console.log('Moving to next tab:', nextTab); // Debug line
     setActiveKey(nextTab);
   };
 
@@ -38,46 +38,46 @@ function NoSeriesCard({
 
   const noSeriesLineColDefs = [
     {
-      field: "startingNumber",
-      headerName: "Starting No",
-      headerClass: "prefix-header",
+      field: 'startingNumber',
+      headerName: 'Starting No',
+      headerClass: 'prefix-header',
       width: 180,
       filter: true,
     },
     {
-      field: "endingNumber",
-      headerName: "Ending No",
-      headerClass: "prefix-header",
+      field: 'endingNumber',
+      headerName: 'Ending No',
+      headerClass: 'prefix-header',
       width: 180,
       filter: true,
     },
     {
-      field: "incrementByNumber",
-      headerName: "Increment By",
-      headerClass: "prefix-header",
+      field: 'incrementByNumber',
+      headerName: 'Increment By',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "lastDateUsed",
-      headerName: "Last Date Used",
-      headerClass: "prefix-header",
+      field: 'lastDateUsed',
+      headerName: 'Last Date Used',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueFormatter: (params) => formatDate(params.value),
     },
     {
-      field: "startingDate",
-      headerName: "Starting Date",
-      headerClass: "prefix-header",
+      field: 'startingDate',
+      headerName: 'Starting Date',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
       valueFormatter: (params) => formatDate(params.value),
     },
     {
-      field: "allowGapsInNumbers",
-      headerName: "Allow Gaps In Numbers",
-      headerClass: "prefix-header",
+      field: 'allowGapsInNumbers',
+      headerName: 'Allow Gaps In Numbers',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
@@ -85,27 +85,27 @@ function NoSeriesCard({
 
   const numberSeriesLinefields = [
     {
-      value: "startingNumber",
-      label: "Starting Number",
-      type: "text",
+      value: 'startingNumber',
+      label: 'Starting Number',
+      type: 'text',
       required: true,
     },
     {
-      value: "endingNumber",
-      label: "Ending Number",
-      type: "text",
+      value: 'endingNumber',
+      label: 'Ending Number',
+      type: 'text',
       required: true,
     },
     {
-      value: "startingDate",
-      label: "Starting Date",
-      type: "date",
+      value: 'startingDate',
+      label: 'Starting Date',
+      type: 'date',
       required: true,
     },
     {
-      value: "incrementByNumber",
-      label: "Increment By",
-      type: "number",
+      value: 'incrementByNumber',
+      label: 'Increment By',
+      type: 'number',
       required: true,
     },
     // {
@@ -115,18 +115,18 @@ function NoSeriesCard({
     // },
 
     {
-      value: "allowGapsInNumbers",
-      label: "Allow Gaps In Numbers",
-      type: "select",
+      value: 'allowGapsInNumbers',
+      label: 'Allow Gaps In Numbers',
+      type: 'select',
       options: [
-        { id: true, name: "Yes" },
-        { id: false, name: "No" },
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
       ],
     },
     {
-      value: "warningNumber",
-      label: "Warning Number",
-      type: "text",
+      value: 'warningNumber',
+      label: 'Warning Number',
+      type: 'text',
     },
     // {
     //   value: "lastNumberUsed",
@@ -143,7 +143,7 @@ function NoSeriesCard({
         endpoints.getNumberSeriesLineByCode(clickedItem.code)
       );
 
-      console.log("response", response.data.data[0].numberSeriesLines);
+      console.log('response', response.data.data[0].numberSeriesLines);
 
       setNumberSeriesLine(response.data.data[0].numberSeriesLines);
     } catch (error) {
