@@ -57,6 +57,9 @@ const BaseInputTable = ({
   disableAll,
   scrollable,
   scrollableHeight,
+  setCurrentRow,
+  deleteApiService,
+  setSeconded,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -262,7 +265,10 @@ const BaseInputTable = ({
 
   const deleteRow = async (rowId) => {
     try {
-      const res = await apiService.delete(deleteEndpoint(rowId));
+      // const res = await apiService.delete(deleteEndpoint(rowId));
+      const res = deleteApiService
+        ? await apiService.post(deleteEndpoint(rowId))
+        : await apiService.delete(deleteEndpoint(rowId));
       if (
         res.status === 200 ||
         res.status === 204 ||
@@ -679,8 +685,25 @@ const BaseInputTable = ({
         const { colDef, data, newValue } = params;
         const field = colDef.field;
 
-        setDataAdded(true);
+        if (setSeconded && data.seconded) {
+          console.log('Setting current row', data);
+          setSeconded(data.seconded);
+        } else {
+          setSeconded(false);
+        }
 
+        setDataAdded(true);
+        // if (data.seconded) {
+        //   const postField = fields.find((field) => field.value === 'post');
+        //   if (postField) {
+        //     postField.type = 'text';
+        //   }
+        // } else{
+        //   const postField = fields.find((field) => field.value === 'post');
+        //   if (postField) {
+        //     postField.type = 'select';
+        //   }
+        // }
         const datePair = findDatePair(field);
 
         if (datePair && data[datePair.start] && data[datePair.end]) {
