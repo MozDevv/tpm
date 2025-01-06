@@ -35,7 +35,7 @@ steps:
         git pull
 
         # Build the Docker image with no cache
-        sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://pmistest-api.treasury.go.ke/ -t agilesam/pmis:latest .
+        sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/ -t agilesam/pmis:latest .
 
         sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://tntapi.agilebiz.co.ke/ -t pmis .
 

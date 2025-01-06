@@ -169,22 +169,13 @@ function AwardsTable({ clickedItem, computed }) {
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}
-        // alwaysShowVerticalScroll={true}
-
-        // loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
-        // loadingOverlayComponentParams={loadingOverlayComponentParams}
-        // paginationPageSize={pageSize}
         onGridReady={(params) => {
           params.api.sizeColumnsToFit();
           onGridReady(params);
-          //  gridApiRef.current.api.showLoadingOverlay();
         }}
         rowSelection="multiple"
-        // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
           console.log('e.data', e.data);
-          //   setOpenBaseCard(true);
-          //   setClickedItem(e.data);
         }}
       />
     </div>

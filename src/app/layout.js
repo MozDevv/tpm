@@ -15,7 +15,7 @@ import { SearchContext, SearchContextProvider } from '@/context/SearchContext';
 import { StatusProvider } from '@/context/StatusContext';
 
 export const metadata = {
-  title: 'TPMIS',
+  title: 'PMIS',
   description: '',
 };
 

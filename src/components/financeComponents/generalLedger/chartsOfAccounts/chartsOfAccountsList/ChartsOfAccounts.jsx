@@ -328,6 +328,7 @@ function ChartsOfAccounts() {
     },
     edit: () => console.log('Edit clicked'),
     delete: () => console.log('Delete clicked'),
+
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
     'Trial Balance': () => setOpenTrialBalanceReport(true),
@@ -335,7 +336,7 @@ function ChartsOfAccounts() {
   };
 
   const handleRowClick = (row) => {
-    console.log('Row clicked:', row); // Handle row click and access row data here
+    console.log('Row clicked:', row);
     setClickedItem(row);
     setOpenBaseCard(true);
   };

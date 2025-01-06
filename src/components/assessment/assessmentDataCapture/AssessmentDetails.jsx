@@ -20,14 +20,6 @@ function AssessmentDetails({
 }) {
   const [openSections, setOpenSections] = useState({});
 
-  const handleToggleSection = (key) => {
-    setOpenSections((prevOpenSections) => {
-      return {
-        ...prevOpenSections,
-        [key]: !prevOpenSections[key],
-      };
-    });
-  };
   return (
     <div className="flex-col h-[900px]">
       <div className="max-h-[500px] overflow-y-auto ">

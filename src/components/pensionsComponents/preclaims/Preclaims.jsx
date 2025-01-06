@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
   Avatar,
   Typography,
@@ -15,7 +15,7 @@ import {
   MenuItem,
   Tooltip,
   Pagination,
-} from "@mui/material";
+} from '@mui/material';
 import {
   AccessTime,
   AccessTimeOutlined,
@@ -39,39 +39,39 @@ import {
   TaskAltOutlined,
   Verified,
   Visibility,
-} from "@mui/icons-material";
-import "./ag-theme.css";
-import CreatePreclaim from "./CreatePreclaim";
+} from '@mui/icons-material';
+import './ag-theme.css';
+import CreatePreclaim from './CreatePreclaim';
 
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import PreclaimsNotifications from "./PreclaimsNotifications";
-import PreclaimDialog from "./PreclaimDialog";
-import { useAlert } from "@/context/AlertContext";
-import axios from "axios";
-import Spinner from "@/components/spinner/Spinner";
-import ReactPaginate from "react-paginate";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useMda } from "@/context/MdaContext";
-import ListNavigation from "@/components/baseComponents/ListNavigation";
-import BaseCard from "@/components/baseComponents/BaseCard";
-import CreateProspectivePensioner from "./createProspective/CreateProspectivePensioner";
-import { useSearch } from "@/context/SearchContext";
-import { Spin } from "antd";
-import BaseLoadingOverlay from "@/components/baseComponents/BaseLoadingOverlay";
-import BaseApprovalCard from "@/components/baseComponents/BaseApprovalCard";
-import { useStatus } from "@/context/StatusContext";
-import BaseEmptyComponent from "@/components/baseComponents/BaseEmptyComponent";
+} from '@/components/services/preclaimsApi';
+import PreclaimsNotifications from './PreclaimsNotifications';
+import PreclaimDialog from './PreclaimDialog';
+import { useAlert } from '@/context/AlertContext';
+import axios from 'axios';
+import Spinner from '@/components/spinner/Spinner';
+import ReactPaginate from 'react-paginate';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useMda } from '@/context/MdaContext';
+import ListNavigation from '@/components/baseComponents/ListNavigation';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import CreateProspectivePensioner from './createProspective/CreateProspectivePensioner';
+import { useSearch } from '@/context/SearchContext';
+import { Spin } from 'antd';
+import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import { useStatus } from '@/context/StatusContext';
+import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
-    <Box sx={{ display: "flex", p: 1, alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: 'flex', p: 1, alignItems: 'center', gap: 1 }}>
       <Avatar variant="rounded" sx={{ height: 28, width: 28 }} />
       <Typography
         variant="body2"
-        sx={{ fontWeight: 600, color: "primary.main" }}
+        sx={{ fontWeight: 600, color: 'primary.main' }}
       >
         {value}
       </Typography>
@@ -80,29 +80,29 @@ const SchemaCellRenderer = ({ value }) => {
 };
 
 export const notificationStatusMap = {
-  0: { name: "UNNOTIFIED", color: "#e74c3c" }, // Light Red
-  1: { name: "SCHEDULED", color: "#f39c12" }, // Bright Orange
-  2: { name: "NOTIFIED", color: "#3498db" }, // Light Blue
-  3: { name: "SUBMITTED", color: "#970FF2" }, // Amethyst
-  4: { name: "IN REVIEW", color: "#970FF2" }, // Carrot Orange
-  5: { name: "PENDING APPROVAL", color: "#1abc9c" }, // Light Turquoise
-  6: { name: "CLAIM CREATED", color: "#49D907" }, // Belize Hole Blue
-  7: { name: "RETURNED FOR CLARIFICATION", color: "#E4A11B" }, // Light Green
+  0: { name: 'UNNOTIFIED', color: '#e74c3c' }, // Light Red
+  1: { name: 'SCHEDULED', color: '#f39c12' }, // Bright Orange
+  2: { name: 'NOTIFIED', color: '#3498db' }, // Light Blue
+  3: { name: 'SUBMITTED', color: '#970FF2' }, // Amethyst
+  4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
+  5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
+  6: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
+  7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
 };
 
 const statusIcons = {
-  0: { icon: Visibility, name: "Open", color: "#1976d2" }, // Blue
-  1: { icon: AccessTime, name: "Pending", color: "#fbc02d" }, // Yellow
-  2: { icon: Verified, name: "Approved", color: "#2e7d32" }, // Green
-  3: { icon: Cancel, name: "Rejected", color: "#d32f2f" }, // Red
+  0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+  1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
 export const colDefs = [
   {
-    headerName: "No",
-    field: "no_series",
+    headerName: 'No',
+    field: 'no_series',
     width: 150,
-    pinned: "left", // Pinning to the left ensures it's the first column
+    pinned: 'left', // Pinning to the left ensures it's the first column
     checkboxSelection: true,
     headerCheckboxSelection: true,
     // valueGetter: (params) => {
@@ -116,34 +116,34 @@ export const colDefs = [
     },
   },
   {
-    headerName: "First Name",
-    field: "first_name",
+    headerName: 'First Name',
+    field: 'first_name',
     width: 150,
 
     filter: true,
   },
   {
-    headerName: "Surname",
-    field: "surname",
+    headerName: 'Surname',
+    field: 'surname',
     width: 150,
   },
 
   {
-    headerName: "Email Address",
-    field: "email_address",
+    headerName: 'Email Address',
+    field: 'email_address',
     width: 200,
     filter: true,
   },
   {
-    headerName: "Retiree ID",
-    field: "retiree",
+    headerName: 'Retiree ID',
+    field: 'retiree',
     width: 150,
     hide: true,
   },
 
   {
-    headerName: "Notification Status",
-    field: "notification_status",
+    headerName: 'Notification Status',
+    field: 'notification_status',
     width: 180,
     filter: true,
     cellRenderer: (params) => {
@@ -155,12 +155,12 @@ export const colDefs = [
           variant="text"
           sx={{
             ml: 3,
-            // borderColor: status.color,
-            maxHeight: "22px",
-            cursor: "pointer",
+
+            maxHeight: '22px',
+            cursor: 'pointer',
             color: status.color,
-            fontSize: "10px",
-            fontWeight: "bold",
+            fontSize: '10px',
+            fontWeight: 'bold',
           }}
         >
           {status.name.toLowerCase()}
@@ -169,8 +169,8 @@ export const colDefs = [
     },
   },
   {
-    headerName: "Approval Status",
-    field: "approval_status",
+    headerName: 'Approval Status',
+    field: 'approval_status',
     width: 150,
     filter: true,
     cellRenderer: (params) => {
@@ -180,19 +180,19 @@ export const colDefs = [
       const IconComponent = status.icon;
 
       return (
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <IconComponent
             style={{
               color: status.color,
-              marginRight: "6px",
-              fontSize: "17px",
+              marginRight: '6px',
+              fontSize: '17px',
             }}
           />
           <span
             style={{
               color: status.color,
-              fontWeight: "semibold",
-              fontSize: "13px",
+              fontWeight: 'semibold',
+              fontSize: '13px',
             }}
           >
             {status.name}
@@ -202,139 +202,139 @@ export const colDefs = [
     },
   },
   {
-    headerName: "Gender",
-    field: "gender",
+    headerName: 'Gender',
+    field: 'gender',
     width: 120,
     cellRenderer: (params) => {
-      return params.value === 0 ? "Male" : "Female";
+      return params.value === 0 ? 'Male' : 'Female';
     },
   },
   {
-    headerName: "Phone Number",
-    field: "phone_number",
+    headerName: 'Phone Number',
+    field: 'phone_number',
     width: 180,
   },
   {
-    headerName: "Personal Number",
-    field: "personal_number",
+    headerName: 'Personal Number',
+    field: 'personal_number',
     width: 180,
   },
 
   {
-    headerName: "Pension Award",
-    field: "pension_award",
+    headerName: 'Pension Award',
+    field: 'pension_award',
     width: 200,
   },
   {
-    headerName: "Name",
-    field: "name",
+    headerName: 'Name',
+    field: 'name',
     width: 150,
   },
   {
-    headerName: "Other Name",
-    field: "other_name",
+    headerName: 'Other Name',
+    field: 'other_name',
     width: 150,
   },
   {
-    headerName: "National ID",
-    field: "national_id",
+    headerName: 'National ID',
+    field: 'national_id',
     width: 150,
   },
   {
-    headerName: "KRA PIN",
-    field: "kra_pin",
+    headerName: 'KRA PIN',
+    field: 'kra_pin',
     width: 150,
   },
   {
-    headerName: "Retirement Date",
-    field: "retirement_date",
+    headerName: 'Retirement Date',
+    field: 'retirement_date',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Date of Birth",
-    field: "dob",
+    headerName: 'Date of Birth',
+    field: 'dob',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Date of Confirmation",
-    field: "date_of_confirmation",
+    headerName: 'Date of Confirmation',
+    field: 'date_of_confirmation',
     width: 200,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : "";
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
-    headerName: "Last Basic Salary Amount",
-    field: "last_basic_salary_amount",
+    headerName: 'Last Basic Salary Amount',
+    field: 'last_basic_salary_amount',
     width: 200,
   },
   {
-    headerName: "MDA Code",
-    field: "mda_code",
+    headerName: 'MDA Code',
+    field: 'mda_code',
     width: 150,
   },
   {
-    headerName: "MDA Description",
-    field: "mda_description",
+    headerName: 'MDA Description',
+    field: 'mda_description',
     width: 200,
   },
   {
-    headerName: "MDA Pension Cap Code",
-    field: "mda_pensionCap_code",
+    headerName: 'MDA Pension Cap Code',
+    field: 'mda_pensionCap_code',
     width: 200,
   },
   {
-    headerName: "MDA Pension Cap Name",
-    field: "mda_pensionCap_name",
+    headerName: 'MDA Pension Cap Name',
+    field: 'mda_pensionCap_name',
     width: 200,
   },
   {
-    headerName: "MDA Pension Cap Description",
-    field: "mda_pensionCap_description",
+    headerName: 'MDA Pension Cap Description',
+    field: 'mda_pensionCap_description',
     width: 250,
   },
 
   {
-    headerName: "Pension Award Prefix",
-    field: "pensionAward_prefix",
+    headerName: 'Pension Award Prefix',
+    field: 'pensionAward_prefix',
     width: 200,
   },
   {
-    headerName: "Pension Award Code",
-    field: "pensionAward_code",
+    headerName: 'Pension Award Code',
+    field: 'pensionAward_code',
     width: 180,
   },
   {
-    headerName: "Pension Award Description",
-    field: "pensionAward_description",
+    headerName: 'Pension Award Description',
+    field: 'pensionAward_description',
     width: 250,
   },
 
   {
-    headerName: "Pension Award Pension Cap Name",
-    field: "pensionAward_pensionCap_name",
+    headerName: 'Pension Award Pension Cap Name',
+    field: 'pensionAward_pensionCap_name',
     width: 250,
   },
   {
-    headerName: "Pension Award Pension Cap Description",
-    field: "pensionAward_pensionCap_description",
+    headerName: 'Pension Award Pension Cap Description',
+    field: 'pensionAward_pensionCap_description',
     width: 300,
   },
   {
-    headerName: "Pension Award Pension Cap ID",
-    field: "pensionAward_pensionCap_id",
+    headerName: 'Pension Award Pension Cap ID',
+    field: 'pensionAward_pensionCap_id',
     width: 250,
     hide: true,
   },
   {
-    headerName: "ID",
-    field: "id",
+    headerName: 'ID',
+    field: 'id',
     width: 150,
     hide: true,
   },
@@ -462,34 +462,34 @@ const Preclaims = ({ status }) => {
       filterColumn && filterValue && (status || status === 0)
         ? {
             ...(filterColumn && {
-              "filterCriterion.criterions[2].propertyName": filterColumn,
+              'filterCriterion.criterions[2].propertyName': filterColumn,
             }),
             ...(filterValue && {
-              "filterCriterion.criterions[2].propertyValue": filterValue,
+              'filterCriterion.criterions[2].propertyValue': filterValue,
             }),
             ...(filterType && {
-              "filterCriterion.criterions[2].criterionType": filterType,
+              'filterCriterion.criterions[2].criterionType': filterType,
             }),
           }
         : filterColumn && filterValue
         ? {
             ...(filterColumn && {
-              "filterCriterion.criterions[1].propertyName": filterColumn,
+              'filterCriterion.criterions[1].propertyName': filterColumn,
             }),
             ...(filterValue && {
-              "filterCriterion.criterions[1].propertyValue": filterValue,
+              'filterCriterion.criterions[1].propertyValue': filterValue,
             }),
             ...(filterType && {
-              "filterCriterion.criterions[1].criterionType": filterType,
+              'filterCriterion.criterions[1].criterionType': filterType,
             }),
           }
         : {};
     const sort = {
       ...(sortColumn && {
-        "sortProperties.propertyName": sortColumn,
+        'sortProperties.propertyName': sortColumn,
       }),
       ...(sortCriteria !== 0 && {
-        "sortProperties.sortCriteria": sortCriteria,
+        'sortProperties.sortCriteria': sortCriteria,
       }),
     };
 
@@ -500,7 +500,7 @@ const Preclaims = ({ status }) => {
 
   const { setActiveCapName } = useMda();
 
-  const mdaId = localStorage.getItem("mdaId");
+  const mdaId = localStorage.getItem('mdaId');
 
   // console.log("auth?.user?.email ***********", auth?.user?.email);
 
@@ -515,30 +515,30 @@ const Preclaims = ({ status }) => {
     const adjustedFilter =
       (status || status === 0) && status !== 5 && mdaId
         ? {
-            "filterCriterion.criterions[0].propertyName": "notification_status",
-            "filterCriterion.criterions[0].propertyValue": status,
-            "filterCriterion.criterions[0].criterionType": 0,
-            "filterCriterion.criterions[1].propertyName": "mda_id",
-            "filterCriterion.criterions[1].propertyValue": mdaId,
-            "filterCriterion.criterions[1].criterionType": 0,
+            'filterCriterion.criterions[0].propertyName': 'notification_status',
+            'filterCriterion.criterions[0].propertyValue': status,
+            'filterCriterion.criterions[0].criterionType': 0,
+            'filterCriterion.criterions[1].propertyName': 'mda_id',
+            'filterCriterion.criterions[1].propertyValue': mdaId,
+            'filterCriterion.criterions[1].criterionType': 0,
           }
         : status === 5
         ? {
-            "filterCriterion.criterions[0].propertyName": "notification_status",
-            "filterCriterion.criterions[0].propertyValue": status,
-            "filterCriterion.criterions[0].criterionType": 0,
+            'filterCriterion.criterions[0].propertyName': 'notification_status',
+            'filterCriterion.criterions[0].propertyValue': status,
+            'filterCriterion.criterions[0].criterionType': 0,
           }
         : !status && status !== 0 && mdaId
         ? {
-            "filterCriterion.criterions[0].propertyName": "mda_id",
-            "filterCriterion.criterions[0].propertyValue": mdaId,
-            "filterCriterion.criterions[0].criterionType": 0,
+            'filterCriterion.criterions[0].propertyName': 'mda_id',
+            'filterCriterion.criterions[0].propertyValue': mdaId,
+            'filterCriterion.criterions[0].criterionType': 0,
           }
         : !mdaId && status
         ? {
-            "filterCriterion.criterions[0].propertyName": "notification_status",
-            "filterCriterion.criterions[0].propertyValue": status,
-            "filterCriterion.criterions[0].criterionType": 0,
+            'filterCriterion.criterions[0].propertyName': 'notification_status',
+            'filterCriterion.criterions[0].propertyValue': status,
+            'filterCriterion.criterions[0].criterionType': 0,
           }
         : !mdaId && !status
         ? {}
@@ -546,8 +546,8 @@ const Preclaims = ({ status }) => {
     //  setLoading(true);
     try {
       const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
-        "paging.pageNumber": pageNumber,
-        "paging.pageSize": pageSize,
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': pageSize,
 
         ...sort,
         ...adjustedFilter,
@@ -589,7 +589,7 @@ const Preclaims = ({ status }) => {
         }
       }
     } catch (error) {
-      console.error("Error fetching preclaims:", error);
+      console.error('Error fetching preclaims:', error);
       return []; // Return an empty array or handle error as needed
     } finally {
       // setLoading(false);
@@ -629,22 +629,22 @@ const Preclaims = ({ status }) => {
       filterColumn && filterValue
         ? {
             ...(filterColumn && {
-              "filterCriterion.criterions[2].propertyName": filterColumn,
+              'filterCriterion.criterions[2].propertyName': filterColumn,
             }),
             ...(filterValue && {
-              "filterCriterion.criterions[2].propertyValue": filterValue,
+              'filterCriterion.criterions[2].propertyValue': filterValue,
             }),
             ...(filterType && {
-              "filterCriterion.criterions[2].criterionType": filterType,
+              'filterCriterion.criterions[2].criterionType': filterType,
             }),
           }
         : {};
     const sort = {
       ...(sortColumn && {
-        "sortProperties.propertyName": sortColumn,
+        'sortProperties.propertyName': sortColumn,
       }),
       ...(sortCriteria !== 0 && {
-        "sortProperties.sortCriteria": sortCriteria,
+        'sortProperties.sortCriteria': sortCriteria,
       }),
     };
 
@@ -662,7 +662,7 @@ const Preclaims = ({ status }) => {
 
     const allUnnotified = selectedData.every(
       (item) =>
-        notificationStatusMap[item.notification_status]?.name === "UNNOTIFIED"
+        notificationStatusMap[item.notification_status]?.name === 'UNNOTIFIED'
     );
     setIsSendNotificationEnabled(allUnnotified);
 
@@ -685,27 +685,27 @@ const Preclaims = ({ status }) => {
   useEffect(() => {
     const filter = status
       ? {
-          "filterCriterion.criterions[0].propertyName": "notification_status",
-          "filterCriterion.criterions[0].propertyValue": status,
-          "filterCriterion.criterions[0].criterionType": 0,
+          'filterCriterion.criterions[0].propertyName': 'notification_status',
+          'filterCriterion.criterions[0].propertyValue': status,
+          'filterCriterion.criterions[0].criterionType': 0,
         }
       : {
           ...(filterColumn && {
-            "filterCriterion.criterions[0].propertyName": filterColumn,
+            'filterCriterion.criterions[0].propertyName': filterColumn,
           }),
           ...(filterValue && {
-            "filterCriterion.criterions[0].propertyValue": filterValue,
+            'filterCriterion.criterions[0].propertyValue': filterValue,
           }),
           ...(filterType && {
-            "filterCriterion.criterions[0].criterionType": filterType,
+            'filterCriterion.criterions[0].criterionType': filterType,
           }),
         };
     const sort = {
       ...(sortColumn && {
-        "sortProperties.propertyName": sortColumn,
+        'sortProperties.propertyName': sortColumn,
       }),
       ...(sortCriteria !== 0 && {
-        "sortProperties.sortCriteria": sortCriteria,
+        'sortProperties.sortCriteria': sortCriteria,
       }),
     };
 
@@ -724,12 +724,12 @@ const Preclaims = ({ status }) => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
     ...(status === 1 && {
-      approvalRequest: () => console.log("Approval Request clicked"),
+      approvalRequest: () => console.log('Approval Request clicked'),
       sendApprovalRequest: () => setOpenApprove(1),
       cancelApprovalRequest: () => setOpenApprove(2),
       approveDocument: () => setOpenApprove(3),
@@ -742,15 +742,15 @@ const Preclaims = ({ status }) => {
   };
 
   const baseCardHandlers = {
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
     notify: () => {
       setOpenNotification(true);
     },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
-    approvalRequest: () => console.log("Approval Request clicked"),
+    approvalRequest: () => console.log('Approval Request clicked'),
     sendApprovalRequest: () => setOpenApprove(1),
     cancelApprovalRequest: () => setOpenApprove(2),
     approveDocument: () => setOpenApprove(3),
@@ -762,8 +762,8 @@ const Preclaims = ({ status }) => {
   };
 
   const title = clickedItem
-    ? "Pensioner Details"
-    : "Create Prospective Pensioner";
+    ? 'Pensioner Details'
+    : 'Create Prospective Pensioner';
 
   const handlePaginationChange = (newPageNumber) => {
     setPageNumber(newPageNumber);
@@ -798,7 +798,7 @@ const Preclaims = ({ status }) => {
   }, [rowData, searchedKeyword]);
 
   const loadingOverlayComponentParams = useMemo(() => {
-    return { loadingMessage: "Loading NOT..." };
+    return { loadingMessage: 'Loading NOT...' };
   }, []);
 
   const resetFilters = () => {
@@ -848,13 +848,13 @@ const Preclaims = ({ status }) => {
             isClaim={true}
             activeStep={clickedItem?.notification_status}
             steps={[
-              "Data Capture",
-              "Notification Scheduling",
-              "Retiree Notification",
-              "Preclaim Submission",
-              "Preclaim Review",
-              "Pending Approval",
-              "Claim Creation",
+              'Data Capture',
+              'Notification Scheduling',
+              'Retiree Notification',
+              'Preclaim Submission',
+              'Preclaim Review',
+              'Pending Approval',
+              'Claim Creation',
             ]}
           >
             <CreateProspectivePensioner
@@ -901,11 +901,11 @@ const Preclaims = ({ status }) => {
               <Collapse
                 in={openFilter}
                 sx={{
-                  bgcolor: "white",
+                  bgcolor: 'white',
                   mt: 2,
-                  borderRadius: "10px",
-                  color: "black",
-                  borderRadius: "10px",
+                  borderRadius: '10px',
+                  color: 'black',
+                  borderRadius: '10px',
                 }}
                 timeout="auto"
                 unmountOnExit
@@ -936,7 +936,7 @@ const Preclaims = ({ status }) => {
                       <label className="text-xs font-semibold text-gray-600">
                         Keyword
                       </label>
-                      {filterColumn === "notification_status" ? (
+                      {filterColumn === 'notification_status' ? (
                         <>
                           <select
                             className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
@@ -952,7 +952,7 @@ const Preclaims = ({ status }) => {
                             <option value={6}>CLAIM CREATED</option>
                           </select>
                         </>
-                      ) : filterColumn === "gender" ? (
+                      ) : filterColumn === 'gender' ? (
                         <>
                           <select
                             className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
@@ -984,19 +984,19 @@ const Preclaims = ({ status }) => {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                     anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
+                      vertical: 'bottom',
+                      horizontal: 'right',
                     }}
                     transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
+                      vertical: 'top',
+                      horizontal: 'right',
                     }}
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
                   >
-                    <MenuItem value={"EQUAL"}>Equal</MenuItem>
-                    <MenuItem value={"NOT_EQUAL"}>Contains</MenuItem>
-                    <MenuItem value={"CONTAINS"}>Not Equal</MenuItem>
+                    <MenuItem value={'EQUAL'}>Equal</MenuItem>
+                    <MenuItem value={'NOT_EQUAL'}>Contains</MenuItem>
+                    <MenuItem value={'CONTAINS'}>Not Equal</MenuItem>
                   </Menu>
                   <Divider />
 
@@ -1005,7 +1005,7 @@ const Preclaims = ({ status }) => {
                       Sort By:
                     </label>
                     <div className="flex items-center ">
-                      {" "}
+                      {' '}
                       <select
                         name="role"
                         value={sortColumn}
@@ -1020,13 +1020,13 @@ const Preclaims = ({ status }) => {
                       <Tooltip
                         title={
                           sortCriteria === 1
-                            ? "Ascending Order"
-                            : "Desceding Order"
+                            ? 'Ascending Order'
+                            : 'Desceding Order'
                         }
                         placement="top"
                       >
                         <IconButton
-                          sx={{ mr: "-10px", ml: "-4px" }}
+                          sx={{ mr: '-10px', ml: '-4px' }}
                           onClick={() => {
                             setSortCriteria(sortCriteria === 1 ? 2 : 1);
                           }}
@@ -1039,14 +1039,14 @@ const Preclaims = ({ status }) => {
                 </div>
                 <Button
                   variant="contained"
-                  sx={{ ml: 2, width: "80%", mr: 2, mt: "-4" }}
+                  sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
                   onClick={handleFilters}
                 >
                   Apply Filters
                 </Button>
                 <Button
                   variant="outlined"
-                  sx={{ ml: 2, width: "80%", mr: 2, mt: 2 }}
+                  sx={{ ml: 2, width: '80%', mr: 2, mt: 2 }}
                   onClick={resetFilters}
                 >
                   Reset Filters
@@ -1055,9 +1055,9 @@ const Preclaims = ({ status }) => {
               <div
                 className="ag-theme-quartz flex flex-col"
                 style={{
-                  padding: "20px",
-                  marginLeft: "-10px",
-                  width: openFilter ? "calc(100vw - 300px)" : "100vw",
+                  padding: '20px',
+                  marginLeft: '-10px',
+                  width: openFilter ? 'calc(100vw - 300px)' : '100vw',
                 }}
               >
                 <AgGridReact
@@ -1093,9 +1093,9 @@ const Preclaims = ({ status }) => {
                 {totalPages > 1 && (
                   <Box
                     sx={{
-                      mt: "40px",
-                      display: "flex",
-                      justifyContent: "center",
+                      mt: '40px',
+                      display: 'flex',
+                      justifyContent: 'center',
                     }}
                   >
                     <Pagination

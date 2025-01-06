@@ -390,20 +390,13 @@ const BaseTable = ({
               pagination={false}
               domLayout={scrollable ? 'normal' : 'autoHeight'}
               alwaysShowHorizontalScroll={true}
-              // noRowsOverlayComponent={BaseEmptyComponent}
-              // alwaysShowVerticalScroll={true}
-
-              loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+              loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
-              // paginationPageSize={pageSize}
               onGridReady={(params) => {
                 params.api.sizeColumnsToFit();
                 onGridReady(params);
                 gridApiRef.current.api.showLoadingOverlay();
               }}
-              // onPaginationChanged={(params) =>
-              //   handlePaginationChange(params.api.paginationGetCurrentPage() + 1)
-              // }
               rowSelection="multiple"
               onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
@@ -413,8 +406,6 @@ const BaseTable = ({
                 console.log('e.data', e.data);
                 setOpenBaseCard(true);
                 setClickedItem(e.data);
-                // setUserClicked(e.data);
-                //handleClickUser(e.data);
               }}
             />
           </div>
