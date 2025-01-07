@@ -232,3 +232,11 @@ a:hover {
   background-color: black; /* Adjust the color of the underline */
   width: 100%;
 }
+.custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #28a745; /* Greenish color */
+  border-color: #28a745;
+}
+
+.custom-checkbox .ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #218838; /* Slightly darker green for hover */
+}

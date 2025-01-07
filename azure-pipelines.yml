@@ -37,7 +37,7 @@ steps:
         # Build the Docker image with no cache
         sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/ -t agilesam/pmis:latest .
 
-        sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://tntapi.agilebiz.co.ke/ -t pmis .
+        # sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://tntapi.agilebiz.co.ke/ -t pmis .
 
         # Log in to Docker Hub
         echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin

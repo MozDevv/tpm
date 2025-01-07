@@ -1,5 +1,5 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 import {
   Autocomplete,
   TextField,
@@ -15,17 +15,17 @@ import {
   Paper,
   IconButton,
   FormControlLabel,
-} from "@mui/material";
+} from '@mui/material';
 
 import {
   ArrowBack,
   ExpandLess,
   KeyboardArrowRight,
   OpenInFull,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { useAlert } from "@/context/AlertContext";
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { useAlert } from '@/context/AlertContext';
 
 const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
@@ -37,7 +37,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   const fetchDocumentTypes = async () => {
     try {
       const res = await apiService.get(endpoints.documentTypes, {
-        "paging.pageSize": 200,
+        'paging.pageSize': 200,
       });
       setDocuments(res.data.data);
     } catch (error) {
@@ -46,7 +46,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
   };
 
   useEffect(() => {
-    console.log("awardDocuments", rowClicked.awardDocuments);
+    console.log('awardDocuments', rowClicked.awardDocuments);
     const selected = rowClicked.awardDocuments.map((_) => _.document);
     setDefaultDocuments([...selected]);
 
@@ -79,7 +79,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     }
   }, [rowClicked]);
 
-  const handleDocumentChange = (event, newValue) => {
+  const handleDocumentChange = async (event, newValue) => {
     debugger;
     // const newDocuments = newValue.filter(
     //   (newDoc) =>
@@ -151,7 +151,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
       })),
     };
 
-    console.log("Data to be submitted: ", data);
+    console.log('Data to be submitted: ', data);
 
     try {
       const res = await apiService.post(endpoints.mapPensionerAwards, data);
@@ -160,13 +160,13 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         setAlert({
           open: true,
           message: `Documents successfully mapped to ${rowClicked.name}`,
-          severity: "success",
+          severity: 'success',
         });
-        console.log("Response:", res.data);
+        console.log('Response:', res.data);
         setOpenAward(false);
       }
     } catch (error) {
-      console.error("Error submitting documents:", error);
+      console.error('Error submitting documents:', error);
     }
   };
 
@@ -181,10 +181,10 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
             <Button
               variant="contained"
               color="primary"
-              sx={{ boxShadow: "none", textTransform: "none", mr: "-40px" }}
+              sx={{ boxShadow: 'none', textTransform: 'none', mr: '-40px' }}
               onClick={handleSubmit}
             >
-              Submit
+              Save Changes
             </Button>
           </div>
         </div>
@@ -201,8 +201,8 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
           <TextField {...params} label="Select Documents" variant="outlined" />
         )}
         sx={{
-          "& .MuiOutlinedInput-root": {
-            boxShadow: "none",
+          '& .MuiOutlinedInput-root': {
+            boxShadow: 'none',
           },
         }}
       />
@@ -213,9 +213,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
             <TableRow>
               <TableCell
                 sx={{
-                  fontWeight: "semibold",
-                  backgroundColor: "#fff",
-                  position: "sticky",
+                  fontWeight: 'semibold',
+                  backgroundColor: '#fff',
+                  position: 'sticky',
                   top: 0,
                   zIndex: 1,
                 }}
@@ -225,9 +225,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
               <TableCell
                 align="center"
                 sx={{
-                  fontWeight: "semibold",
-                  backgroundColor: "#fff",
-                  position: "sticky",
+                  fontWeight: 'semibold',
+                  backgroundColor: '#fff',
+                  position: 'sticky',
                   top: 0,
                   zIndex: 1,
                 }}
@@ -237,9 +237,9 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
               <TableCell
                 align="center"
                 sx={{
-                  fontWeight: "semibold",
-                  backgroundColor: "#fff",
-                  position: "sticky",
+                  fontWeight: 'semibold',
+                  backgroundColor: '#fff',
+                  position: 'sticky',
                   top: 0,
                   zIndex: 1,
                 }}
@@ -254,15 +254,15 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
               <TableRow
                 key={doc.document.id}
                 sx={{
-                  height: "auto", // dynamically adjust row height
-                  "&:nth-of-type(even)": { backgroundColor: "#f9f9f9" },
+                  height: 'auto', // dynamically adjust row height
+                  '&:nth-of-type(even)': { backgroundColor: '#f9f9f9' },
                 }}
               >
                 <TableCell>{doc.document.name}</TableCell>
                 <TableCell align="center">
                   <Checkbox
                     checked={doc.pensionerUpload}
-                    onChange={handleCheckboxChange(index, "pensionerUpload")}
+                    onChange={handleCheckboxChange(index, 'pensionerUpload')}
                   />
                 </TableCell>
                 <TableCell align="center">
@@ -272,7 +272,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                         control={
                           <Checkbox
                             checked={doc.front}
-                            onChange={handleCheckboxChange(index, "front")}
+                            onChange={handleCheckboxChange(index, 'front')}
                           />
                         }
                         label="Front"
@@ -281,7 +281,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
                         control={
                           <Checkbox
                             checked={doc.back}
-                            onChange={handleCheckboxChange(index, "back")}
+                            onChange={handleCheckboxChange(index, 'back')}
                           />
                         }
                         label="Back"

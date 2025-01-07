@@ -20,6 +20,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { Button } from '@mui/material';
 import BaseTabs from '../baseComponents/BaseTabs';
 import { saveAs } from 'file-saver';
+import axios from 'axios';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -47,29 +48,27 @@ const BatchUploadMembers = () => {
   const generateMembersTemplate = async () => {
     try {
       // Fetch the file as a blob
-      const res = await apiService.get(
-        financeEndpoints.downloadMemberTemplate,
+      const response = await axios.get(
+        'http://192.168.3.68:9090/api/Contribution/DownloadMemberTemplate',
         {
-          responseType: 'blob', // Axios will treat the response as a binary Blob
+          responseType: 'blob', // Specify that the response is a binary Blob
         }
       );
 
-      // Check if the response is a valid Blob
-      if (res.data instanceof Blob) {
-        // Create a download link for the Blob
-        const url = URL.createObjectURL(res.data);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'Member Upload Template.xlsx'; // Set desired file name
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link); // Clean up DOM
-        URL.revokeObjectURL(url); // Release memory
-      } else {
-        console.error('Invalid file data received from the API.');
-      }
+      // Create a blob URL and trigger the download
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Member Upload Template.xlsx'); // Set desired file name
+      document.body.appendChild(link);
+      link.click();
+      link.remove(); // Clean up
+      window.URL.revokeObjectURL(url); // Release memory
     } catch (error) {
-      console.error('Error downloading template:', error);
+      console.error('Error downloading the file:', error);
     }
   };
 

@@ -8,7 +8,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import { apiService } from '@/components/services/financeApi';
 
 import financeEndpoints from '@/components/services/financeApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 
 import PaymentsCard from './PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
@@ -98,7 +98,6 @@ const Payments = ({ status }) => {
       filter: true,
       cellRenderer: (params) => {
         const status = sourceStatus[params.value];
-        if (!status) return null;
 
         return (
           <Button
@@ -169,7 +168,7 @@ const Payments = ({ status }) => {
       field: 'postingDate',
       flex: 1,
       valueFormatter: (params) => {
-        return formatDate(params.value);
+        return parseDate(params.value);
       },
     },
   ];
@@ -180,19 +179,6 @@ const Payments = ({ status }) => {
     });
   };
 
-  //   {
-  //     NormalPayment,
-  //     ClaimPayment,
-  //     ClaimReceipt,
-  //     NormalReceipt,
-  //     ClaimPurchaseInvoice,
-  //     NormalPurchaseInvoice,
-  //     ClaimSalesInvoice,
-  //     NormalSalesInvoice,
-  //     GeneralJournals,
-  //     ClosingIncome,
-
-  // }
   const sourceStatus = {
     0: { name: 'Normal Payment', color: '#2ecc71' }, // Light Red
     1: { name: 'Claim Payment', color: '#970FF2' }, // Bright Orange

@@ -266,7 +266,7 @@ const endpoints = {
   getMenus: '/api/MenuItemsSetup/GetMenuJSON',
 
   //Get Menu Items
-  getMenuItems: '/api/MenuItemsSetup/GetMenuItems',
+  getMenuItems: 'api/MenuItemsSetup/GetMenuItems',
 
   //Get MenuRole
   getMenuRole: (roleId) => `/api/MenuItemsSetup/GetMenuJSON/${roleId}`,

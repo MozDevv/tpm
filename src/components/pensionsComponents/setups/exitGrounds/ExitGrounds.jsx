@@ -1,47 +1,48 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { Button } from "@mui/material";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { Button } from '@mui/material';
 
-import { name } from "dayjs/locale/en-au";
-import ExitGroundsCard from "./ExitGroundsCard";
-import TabPane from "antd/es/tabs/TabPane";
-import { Tabs } from "antd";
+import { name } from 'dayjs/locale/en-au';
+import ExitGroundsCard from './ExitGroundsCard';
+import TabPane from 'antd/es/tabs/TabPane';
+import { Tabs } from 'antd';
 
 const columnDefs = [
   {
-    field: "code",
-    headerName: "Code",
-    headerClass: "prefix-header",
+    field: 'code',
+    headerName: 'Code',
+    headerClass: 'prefix-header',
     filter: true,
   },
 
   {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
 
   {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "has_commutation",
-    headerName: "Commutable",
-    headerClass: "prefix-header",
+    field: 'has_commutation',
+    headerName: 'Commutable',
+    headerClass: 'prefix-header',
     filter: true,
+    flex: 1,
   },
 ];
 
@@ -71,16 +72,16 @@ const ExitGrounds = () => {
   };
 
   const handlers = {
-    filter: () => console.log("Filter clicked"),
-    openInExcel: () => console.log("Export to Excel clicked"),
+    filter: () => console.log('Filter clicked'),
+    openInExcel: () => console.log('Export to Excel clicked'),
     // create: () => {
     //   setOpenBaseCard(true);
     //   setClickedItem(null);
     // },
     // edit: () => console.log("Edit clicked"),
     // delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -97,7 +98,7 @@ const ExitGrounds = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? `${clickedItem.name} ` : "Create New Exit Ground";
+  const title = clickedItem ? `${clickedItem.name} ` : 'Create New Exit Ground';
 
   const [pensionCaps, setPensionCaps] = React.useState([]);
 
@@ -109,7 +110,7 @@ const ExitGrounds = () => {
         console.log(res.data.data);
       }
     } catch (e) {
-      console.error("Error fetching data:", e);
+      console.error('Error fetching data:', e);
     }
   };
 
@@ -117,12 +118,12 @@ const ExitGrounds = () => {
     fetchPensionCaps();
   }, []);
   const fields = [
-    { name: "code", label: "Code", type: "text", required: true },
-    { name: "name", label: "Name", type: "text", required: true },
+    { name: 'code', label: 'Code', type: 'text', required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true },
     {
-      name: "pension_cap_id",
-      label: "Pension Cap",
-      type: "select",
+      name: 'pension_cap_id',
+      label: 'Pension Cap',
+      type: 'select',
       required: true,
       options: pensionCaps.map((item) => ({
         id: item.id,
@@ -130,9 +131,9 @@ const ExitGrounds = () => {
       })),
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     // {
@@ -148,19 +149,19 @@ const ExitGrounds = () => {
     //   // required: true,
     // },
     {
-      name: "has_commutation",
-      label: "Commutable",
-      type: "switch",
+      name: 'has_commutation',
+      label: 'Commutable',
+      type: 'switch',
       required: true,
     },
     {
-      name: "is_death",
-      label: "For Deaceased Persons",
-      type: "switch",
+      name: 'is_death',
+      label: 'For Deaceased Persons',
+      type: 'switch',
       required: true,
     },
   ];
-  const [activeKey, setActiveKey] = React.useState("1");
+  const [activeKey, setActiveKey] = React.useState('1');
   const handleTabChange = (key) => {
     setActiveKey(key);
   };
