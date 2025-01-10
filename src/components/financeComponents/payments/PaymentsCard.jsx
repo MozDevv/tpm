@@ -175,6 +175,12 @@ function PaymentsCard({
       disabled: true,
       options: allOptions && allOptions,
     },
+    {
+      value: 'narration',
+      label: 'Narration',
+      type: 'text',
+      required: true,
+    },
 
     {
       value: 'vatExcempt',

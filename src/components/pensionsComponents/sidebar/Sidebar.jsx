@@ -309,6 +309,10 @@ function Sidebar() {
               title: 'Posted Payment Vouchers',
               path: '/pensions/finance/payments/posted',
             },
+            {
+              title: 'Rejected Payment Vouchers',
+              path: '/pensions/finance/payments/rejected',
+            },
           ],
         },
       ],

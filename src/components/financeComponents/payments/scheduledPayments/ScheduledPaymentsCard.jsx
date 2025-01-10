@@ -1,5 +1,5 @@
 import React, { use, useEffect, useRef, useState } from 'react';
-import { Tabs } from 'antd';
+import { message, Tabs } from 'antd';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -26,6 +26,8 @@ function ScheduledPaymentsCard({
   exportScheduleLines,
   gridApi,
   setGridApi,
+  loading,
+  setSelectedLines,
 }) {
   const [scheduleLines, setScheduleLines] = useState([]);
   const [deductionsAndRefunds, setDeductionsAndRefunds] = useState([]);
@@ -71,12 +73,23 @@ function ScheduledPaymentsCard({
       setDeductionsAndRefunds(data);
     });
   }, []);
+  useEffect(() => {
+    // fetchBanksAndBranches();
+    fetchScheduleLines(clickedItem?.id).then((data) => {
+      setScheduleLines(data);
+    });
+    fetchDeductionsRefunds().then((data) => {
+      setDeductionsAndRefunds(data);
+    });
+  }, [loading]);
 
   const tableFields = [
     {
       field: 'documentNo',
       headerName: 'Document No',
       filter: true,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
     },
     {
       field: 'description',
@@ -207,6 +220,11 @@ function ScheduledPaymentsCard({
                     onGridReady={(params) => {
                       //  params.api.sizeColumnsToFit();
                       onGridReady(params);
+                    }}
+                    onSelectionChanged={(params) => {
+                      const selectedRows = params.api.getSelectedRows();
+                      console.log(selectedRows);
+                      setSelectedLines(selectedRows);
                     }}
                   />
                 </div>

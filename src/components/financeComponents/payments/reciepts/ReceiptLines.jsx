@@ -190,6 +190,7 @@ function RecieptLines({ clickedItem }) {
       type: 'number',
       required: true,
     },
+    { value: 'narration', label: 'Narration', type: 'text', required: true },
     {
       value: 'description',
       label: 'Description',

@@ -21,15 +21,16 @@ const columnDefs = [
   {
     headerName: 'Document No',
     field: 'documentNo',
-    width: 90,
+
     pinned: 'left', // Pinning to the left ensures it's the first column
     checkboxSelection: true,
     headerCheckboxSelection: true,
+    flex: 1,
   },
   {
     headerName: 'Document Type',
     field: 'documentType',
-    width: 100,
+    flex: 1,
     valueFormatter: (params) => {
       const options = [
         { id: 0, name: 'Payment Voucher' },
@@ -47,35 +48,40 @@ const columnDefs = [
       return selectedOption ? selectedOption.name : '';
     },
   },
-
+  {
+    headerName: 'Narration',
+    field: 'narration',
+    flex: 1,
+  },
   {
     headerName: 'Amount',
     field: 'amount',
-    width: 150,
+    flex: 1,
     cellStyle: { marginLeft: '50px' },
     valueFormatter: (params) => {
       return params.value ? formatNumber(params.value) : '0.00';
     },
   },
+
   {
     headerName: 'External Document No',
     field: 'externalDocumentNo',
-    width: 150,
+    flex: 1,
   },
   {
     headerName: 'Posting Date',
     field: 'postingDate',
-    width: 150,
-    valueFormatter: (params) => {
-      return params.value ? parseDate(params.value) : '';
+    flex: 1,
+    cellRenderer: function (params) {
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
   {
     headerName: 'VAT Date',
     field: 'vatDate',
-    width: 150,
-    valueFormatter: (params) => {
-      return params.value ? parseDate(params.value) : '';
+    flex: 1,
+    cellRenderer: function (params) {
+      return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
 ];
@@ -98,6 +104,7 @@ const GeneralJournals = () => {
 
       amount: item.amount,
       isPosted: item.isPosted,
+      ...item,
     }));
   };
 
@@ -181,6 +188,11 @@ const GeneralJournals = () => {
     {
       name: 'externalDocumentNo',
       label: 'External Document No',
+      type: 'text',
+    },
+    {
+      name: 'narration',
+      label: 'Narration',
       type: 'text',
     },
     {

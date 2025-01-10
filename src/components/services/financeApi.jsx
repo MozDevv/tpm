@@ -346,6 +346,8 @@ const financeEndpoints = {
   submitBatchForApproval: '/Contribution/SubmitContributionForApproval',
   previewMemberDetails: '/Contribution/PreviewMemberDetails',
   downloadMemberTemplate: '/Contribution/DownloadMemberTemplate',
+
+  removePaymentFromSchedule: '/Posting/RemovePaymentVoucherFromSchedule',
 };
 
 export const apiService = {

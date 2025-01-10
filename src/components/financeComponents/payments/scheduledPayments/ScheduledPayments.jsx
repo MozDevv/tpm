@@ -16,6 +16,7 @@ import { Dialog } from '@mui/material';
 import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
 import ScheduledPaymentsCard from './ScheduledPaymentsCard';
+import { message } from 'antd';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -85,7 +86,7 @@ const ScheduledPayments = ({ status }) => {
       headerName: 'Schedule Date',
       field: 'scheduleDate',
       type: 'date',
-      valueFormatter: (params) => formatDate(params.value),
+      cellRenderer: (params) => parseDate(params.value),
     },
     {
       headerName: 'Total Amount',
@@ -95,7 +96,7 @@ const ScheduledPayments = ({ status }) => {
         fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
         textAlign: 'right',
       }),
-      valueFormatter: (params) => {
+      cellRenderer: (params) => {
         return formatNumber(params.value);
       },
     },
@@ -133,6 +134,36 @@ const ScheduledPayments = ({ status }) => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [isSchedule, setIsSchedule] = React.useState(false);
   const [openPV, setOpenPV] = React.useState(false);
+
+  const [selectedLines, setSelectedLines] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const handleRemovePayments = async () => {
+    try {
+      const res = await apiService.post(
+        financeEndpoints.removePaymentFromSchedule,
+        {
+          paymentVouchers: selectedLines.map((row) => ({
+            paymentScheduleLineId: row.paymentId,
+          })),
+        }
+      );
+
+      if (res.data.succeeded) {
+        message.success('Payments removed successfully');
+      } else if (res.data.messages[0]) {
+        message.error(res.data.messages[0]);
+      } else {
+        message.error('An error occured while removing the payments');
+      }
+    } catch (error) {
+      message.error('An error occured while removing the payments');
+      console.log(error);
+    } finally {
+      setLoading((prev) => !prev);
+    }
+  };
+
   const handlers = {
     create: () => {
       setOpenBaseCard(true);
@@ -231,6 +262,9 @@ const ScheduledPayments = ({ status }) => {
       postPaymentVoucher: () => {
         setOpenPV(true);
         console.log('Post Payment');
+      },
+      removePaymentsFromSchedule: () => {
+        handleRemovePayments();
       },
     }),
 
@@ -340,6 +374,8 @@ const ScheduledPayments = ({ status }) => {
       >
         {clickedItem ? (
           <ScheduledPaymentsCard
+            selectedLines={selectedLines}
+            setSelectedLines={setSelectedLines}
             exportScheduleLines={exportScheduleLines}
             fields={fields}
             apiEndpoint={financeEndpoints.updatePayment}
@@ -351,6 +387,7 @@ const ScheduledPayments = ({ status }) => {
             gridApi={gridApi}
             setGridApi={setGridApi}
             transformData={transformData}
+            loading={loading}
           />
         ) : (
           <BaseAutoSaveInputCard

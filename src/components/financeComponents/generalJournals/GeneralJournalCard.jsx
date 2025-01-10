@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import React, { useEffect, useState } from 'react';
+import { Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { AgGridReact } from "ag-grid-react";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
-import { apiService } from "@/components/services/financeApi";
-import BaseFinanceInputCard from "@/components/baseComponents/BaseFinanceInputCard";
-import BaseFinanceInputTable from "@/components/baseComponents/BaseFinanceInputTable";
-import financeEndpoints from "@/components/services/financeApi";
-import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
+import { AgGridReact } from 'ag-grid-react';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { apiService } from '@/components/services/financeApi';
+import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCard';
+import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
+import financeEndpoints from '@/components/services/financeApi';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 
 const { TabPane } = Tabs;
 
@@ -29,7 +29,7 @@ function GeneralJournalCard({
   const fetchNewOptions = async () => {
     try {
       const res = await apiService.get(financeEndpoints.getAllAccounts, {
-        "paging.pageSize": 2000,
+        'paging.pageSize': 2000,
       }); // Pass accountTypeId to the endpoint
       if (res.status === 200) {
         setAllOptions(
@@ -45,7 +45,7 @@ function GeneralJournalCard({
       }
 
       console.log(
-        "All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️",
+        'All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️',
         res.data.data.map((acc) => {
           return {
             id: acc.id,
@@ -66,34 +66,34 @@ function GeneralJournalCard({
   }, []);
   const tableFields = [
     {
-      value: "accountTypeId",
-      label: "Account Type",
-      type: "select",
+      value: 'accountTypeId',
+      label: 'Account Type',
+      type: 'select',
       required: true,
       options: [
         {
           id: 0,
-          name: "General_Ledger",
+          name: 'General_Ledger',
         },
         {
           id: 1,
-          name: "Vendor",
+          name: 'Vendor',
         },
         {
           id: 2,
-          name: "Customer",
+          name: 'Customer',
         },
         {
           id: 3,
-          name: "Bank",
+          name: 'Bank',
         },
       ],
     },
 
     {
-      value: "accountId",
-      label: "Account No",
-      type: "select",
+      value: 'accountId',
+      label: 'Account No',
+      type: 'select',
       required: true,
       // options: selectedAccountTypeId
       //   ? selectedAccountTypeId.map((acc) => {
@@ -107,42 +107,48 @@ function GeneralJournalCard({
       options: allOptions && allOptions,
     },
     {
-      value: "accountName",
-      label: "Account Name",
-      type: "text",
+      value: 'accountName',
+      label: 'Account Name',
+      type: 'text',
       required: true,
       disabled: true,
       options: allOptions && allOptions,
     },
 
     {
-      value: "debitAmount",
-      label: "Debit Amount",
-      type: "number",
+      value: 'debitAmount',
+      label: 'Debit Amount',
+      type: 'number',
       required: true,
     },
     {
-      value: "creditAmount",
-      label: "Credit Amount",
-      type: "number",
+      value: 'creditAmount',
+      label: 'Credit Amount',
+      type: 'number',
       required: true,
     },
     {
-      value: "amount",
-      label: "Amount",
-      type: "number",
+      value: 'amount',
+      label: 'Amount',
+      type: 'number',
       required: true,
       disabled: true,
+    },
+    {
+      value: 'narration',
+      label: 'Narration',
+      type: 'text',
+      required: true,
     },
   ];
 
   const totalAmounts1 = [
-    { name: "Number of Entries", value: 1 },
+    { name: 'Number of Entries', value: 1 },
 
-    { name: "Total Debit", value: "0.00" },
-    { name: "Total Credit", value: "0.00" },
-    { name: "Balance", value: "0.00" },
-    { name: "Total Balance", value: "0.00" },
+    { name: 'Total Debit', value: '0.00' },
+    { name: 'Total Credit', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+    { name: 'Total Balance', value: '0.00' },
   ];
 
   const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
@@ -154,7 +160,7 @@ function GeneralJournalCard({
           <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
             <div className="flex flex-col">
               <div className="flex-grow">
-                {" "}
+                {' '}
                 {/* This allows the card to grow */}
                 <BaseAutoSaveInputCard
                   setClickedItem={setClickedItem}
@@ -174,7 +180,7 @@ function GeneralJournalCard({
 
               <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
                 <div className="flex-grow">
-                  {" "}
+                  {' '}
                   {/* Make this grow too */}
                   <BaseFinanceInputTable
                     allOptions={allOptions}

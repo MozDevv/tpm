@@ -232,6 +232,7 @@ const Payments = ({ status }) => {
     ...(status === 1 && {
       approvePaymentVoucher: () => {
         setOpenPV(true);
+
         console.log('Approve Payment');
       },
     }),
@@ -287,8 +288,10 @@ const Payments = ({ status }) => {
     }),
     ...(status === 1 && {
       approvePaymentVoucher: () => {
-        setOpenPV(true);
+        setSelectedRows([clickedItem]);
+        console.log('selectedRows', selectedRows);
         console.log('Approve Payment');
+        setOpenPV(true);
       },
     }),
     ...(status === 2 && {
@@ -385,7 +388,9 @@ const Payments = ({ status }) => {
       ? 'Approved Payment Vouchers'
       : status === 3
       ? 'Scheduled Payment Vouchers'
-      : 'Posted Payment Vouchers';
+      : status === 4
+      ? 'Posted Payment Vouchers'
+      : 'Rejected Payment Vouchers';
 
   const reportItems = [
     'Payment Voucher Report',
@@ -394,48 +399,6 @@ const Payments = ({ status }) => {
 
   return (
     <div className="">
-      <div className="">
-        <Dialog
-          open={openTrialBalanceReport}
-          onClose={() => setOpenTrialBalanceReport(false)}
-          sx={{
-            '& .MuiPaper-root': {
-              minHeight: '90vh',
-              maxHeight: '90vh',
-              minWidth: '45vw',
-              maxWidth: '55vw',
-            },
-            zIndex: 99999,
-          }}
-        >
-          <div className="flex-grow overflow-hidden">
-            <PaymentVoucherReport
-              setOpenTrialBalanceReport={setOpenTrialBalanceReport}
-              clickedItem={clickedItem}
-            />
-          </div>
-        </Dialog>
-        <Dialog
-          open={openGratuity}
-          onClose={() => setOpenGratuity(false)}
-          sx={{
-            '& .MuiPaper-root': {
-              minHeight: '90vh',
-              maxHeight: '90vh',
-              minWidth: '45vw',
-              maxWidth: '55vw',
-            },
-            zIndex: 99999,
-          }}
-        >
-          <div className="flex-grow overflow-hidden">
-            <GratuityLetterReport
-              setOpenGratuity={setOpenGratuity}
-              clickedItem={clickedItem}
-            />
-          </div>
-        </Dialog>
-      </div>
       <Dialog
         open={openPV && selectedRows.length > 0}
         onClose={() => {
@@ -447,6 +410,7 @@ const Payments = ({ status }) => {
         sx={{
           padding: '20px',
           maxHeight: '90vh',
+          zIndex: 999999999,
         }}
       >
         <PVActions
@@ -459,81 +423,126 @@ const Payments = ({ status }) => {
           setSelectedRows={setSelectedRows}
         />
       </Dialog>
-      <BaseCard
-        reportItems={reportItems}
-        isClaim={true}
-        retireeId={clickedItem?.prospectivePensionerId}
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={title}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        isUserComponent={false}
-        setOpenAction={setOpenAction}
-        openAction={openAction}
-        useRequestBody={true}
-        dialogType={dialogType}
-        steps={[
-          'Payment Creation',
-          'Payment Approval',
-          'Payment Scheduling',
-          'Payment Posting',
-        ]}
-        activeStep={status}
-      >
-        {clickedItem ? (
-          <>
-            {' '}
-            <PaymentsCard
+      <div className="">
+        <div className="">
+          <Dialog
+            open={openTrialBalanceReport}
+            onClose={() => setOpenTrialBalanceReport(false)}
+            sx={{
+              '& .MuiPaper-root': {
+                minHeight: '90vh',
+                maxHeight: '90vh',
+                minWidth: '45vw',
+                maxWidth: '55vw',
+              },
+              zIndex: 99999,
+            }}
+          >
+            <div className="flex-grow overflow-hidden">
+              <PaymentVoucherReport
+                setOpenTrialBalanceReport={setOpenTrialBalanceReport}
+                clickedItem={clickedItem}
+              />
+            </div>
+          </Dialog>
+          <Dialog
+            open={openGratuity}
+            onClose={() => setOpenGratuity(false)}
+            sx={{
+              '& .MuiPaper-root': {
+                minHeight: '90vh',
+                maxHeight: '90vh',
+                minWidth: '45vw',
+                maxWidth: '55vw',
+              },
+              zIndex: 99999,
+            }}
+          >
+            <div className="flex-grow overflow-hidden">
+              <GratuityLetterReport
+                setOpenGratuity={setOpenGratuity}
+                clickedItem={clickedItem}
+              />
+            </div>
+          </Dialog>
+        </div>
+
+        <BaseCard
+          reportItems={reportItems}
+          isClaim={true}
+          retireeId={clickedItem?.prospectivePensionerId}
+          openBaseCard={openBaseCard}
+          setOpenBaseCard={setOpenBaseCard}
+          handlers={baseCardHandlers}
+          title={title}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          isUserComponent={false}
+          setOpenAction={setOpenAction}
+          openAction={openAction}
+          useRequestBody={true}
+          dialogType={dialogType}
+          steps={[
+            'Payment Creation',
+            'Payment Approval',
+            'Payment Scheduling',
+            'Payment Posting',
+          ]}
+          activeStep={status}
+        >
+          {clickedItem ? (
+            <>
+              {' '}
+              <PaymentsCard
+                fields={fields}
+                apiEndpoint={financeEndpoints.updatePayment}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+                setClickedItem={setClickedItem}
+                transformData={transformData}
+              />{' '}
+            </>
+          ) : (
+            <BaseAutoSaveInputCard
               fields={fields}
-              apiEndpoint={financeEndpoints.updatePayment}
+              apiEndpoint={financeEndpoints.addPayment}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updatePayment}
               postApiFunction={apiService.post}
-              clickedItem={clickedItem}
+              getApiEndpoint={financeEndpoints.getPaymentById(status)}
+              getApiFunction={apiService.get}
+              transformData={transformData}
               setOpenBaseCard={setOpenBaseCard}
               useRequestBody={true}
+              openBaseCard={openBaseCard}
               setClickedItem={setClickedItem}
-              transformData={transformData}
-            />{' '}
-          </>
-        ) : (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addPayment}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updatePayment}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getPaymentById(status)}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-          />
-        )}
-      </BaseCard>
-      <BaseTable
-        openPostToGL={openPV}
-        openAction={openAction}
-        openBaseCard={openBaseCard}
-        onSelectionChange={handleSelectionChange}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={
-          status === 0
-            ? financeEndpoints.getPaymentByStages(status)
-            : financeEndpoints.getPaymentByStages(status)
-        }
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle={navTitle}
-        currentTitle={navTitle}
-      />
+            />
+          )}
+        </BaseCard>
+        <BaseTable
+          openPostToGL={openPV}
+          openAction={openAction}
+          openBaseCard={openBaseCard}
+          onSelectionChange={handleSelectionChange}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          setOpenBaseCard={setOpenBaseCard}
+          columnDefs={columnDefs}
+          fetchApiEndpoint={
+            status === 0
+              ? financeEndpoints.getPaymentByStages(status)
+              : financeEndpoints.getPaymentByStages(status)
+          }
+          fetchApiService={apiService.get}
+          transformData={transformData}
+          pageSize={30}
+          handlers={handlers}
+          breadcrumbTitle={navTitle}
+          currentTitle={navTitle}
+        />
+      </div>
     </div>
   );
 };
