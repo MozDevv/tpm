@@ -20,7 +20,11 @@ export const dateFormatter = (dateS) => {
 
 export const parseDate = (date) => {
   if (date) {
-    return new Date(date).toISOString().split('T')[0];
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0'); // Ensure two digits for day
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
   }
   return '';
 };

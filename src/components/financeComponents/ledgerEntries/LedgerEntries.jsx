@@ -268,7 +268,7 @@ const LedgerEntries = ({ type }) => {
             headerName: 'Transaction Date',
             flex: 1,
             filter: true,
-            valueFormatter: (params) => formatDate(params.value),
+            valueFormatter: (params) => parseDate(params.value),
           },
           {
             field: 'amount',
@@ -382,7 +382,11 @@ const LedgerEntries = ({ type }) => {
             flex: 1,
             filter: true,
             valueFormatter: (params) => {
-              return formatNumber(params.value);
+              const number = params.value;
+              return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(number);
             },
             cellStyle: { textAlign: 'center' },
           },
@@ -392,7 +396,7 @@ const LedgerEntries = ({ type }) => {
             headerName: 'Transaction Date',
             flex: 1,
             filter: true,
-            valueFormatter: (params) => parseDate(params.value),
+            cellRenderer: (params) => parseDate(params.value),
           },
 
           // {

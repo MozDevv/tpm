@@ -47,6 +47,7 @@ function ChartsOfAccounts() {
       if (item.accountTypeName === 'POSTING' && sectionKey) {
         // Accumulate totals for POSTING accounts
         currentTotal += item.amount || 0;
+
         currentBudgetTotal += item.budgetAmount || 0;
       }
 
@@ -64,6 +65,8 @@ function ChartsOfAccounts() {
   }
 
   const totals = calculateTotals(rowData);
+
+  console.log('totals', totals);
 
   const colDefs = [
     {
@@ -94,6 +97,8 @@ function ChartsOfAccounts() {
               data.accountTypeName === 'END_TOTAL'
             ? '15px'
             : '4px',
+        textTransform:
+          data.accountTypeName === 'HEADING' ? 'uppercase' : 'none',
         fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
         fontSize: '14px',
       }),
@@ -108,7 +113,9 @@ function ChartsOfAccounts() {
         const rowId = params.data.id;
 
         if (accountType === 'END_TOTAL') {
-          return formatNumber(totals[rowId]?.totalAmount || 0);
+          console.log('totals[rowId]?.totalAmount', totals[rowId]?.totalAmount);
+          console.log('id for end total', rowId);
+          return formatNumber(totals[rowId]?.totalAmount);
         }
 
         return accountType === 'BEGIN_TOTAL' || accountType === 'HEADING'
@@ -117,6 +124,8 @@ function ChartsOfAccounts() {
       },
       cellRenderer: (params) => {
         const accountType = params.data.accountTypeName;
+
+        const rowId = params.data.id;
 
         // If it's not BEGIN_TOTAL or HEADING, render clickable amount
         if (
@@ -137,7 +146,7 @@ function ChartsOfAccounts() {
           );
         }
 
-        return formatNumber(params.value); // For other types, return normal formatted value
+        return formatNumber(totals[rowId]?.totalAmount); // For other types, return normal formatted value
       },
       cellStyle: ({ data }) => ({
         fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
@@ -427,7 +436,16 @@ function ChartsOfAccounts() {
       type: 'text',
       required: true,
     },
-
+    {
+      name: 'incomeOrBalancesheet',
+      label: 'Income or Balance Sheet',
+      type: 'select',
+      options: [
+        { id: 0, name: 'None' },
+        { id: 1, name: 'Income' },
+        { id: 2, name: 'Balance Sheet' },
+      ],
+    },
     {
       name: 'group',
       label: 'Category',
@@ -600,7 +618,7 @@ function ChartsOfAccounts() {
         <div className="mt-6 overflow-hidden"></div>
       </div>
       <div
-        className="ag-theme-quartz"
+        className="ag-theme-quartz font-segoe"
         style={{
           height: gridHeight ? `${gridHeight}px` : '65vh',
           width: '100%',
@@ -620,6 +638,7 @@ function ChartsOfAccounts() {
           //   // setOpenBaseCard(true);
           //   setClickedItem(e.data);
           // }}
+          className="font-segoe"
           onGridReady={onGridReady}
           animateRows={true}
           rowHeight={rowHeight}

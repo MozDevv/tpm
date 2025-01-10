@@ -19,6 +19,5 @@ export const createColDefsDynamically = (dataObject) => {
 
 export const getValueById = (array, valueKey, params) => {
   const id = params.data[params.colDef.field];
-
   return array?.find((item) => item.id === id)?.[valueKey] || 'N/A';
 };

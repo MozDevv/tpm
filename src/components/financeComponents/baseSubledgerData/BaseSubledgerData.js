@@ -262,30 +262,44 @@ export const getColumnDefsByType2 = (type, allOptions) => {
     case 'General Ledger Entries':
       return [
         {
+          field: 'transactionDate',
+          headerName: 'Transaction Date',
+          flex: 1,
+          filter: true,
+          valueFormatter: (params) => parseDate(params.value),
+        },
+        {
+          field: 'narration',
+          headerName: 'Narration',
+          flex: 1,
+          filter: true,
+        },
+        {
           field: 'documentNo',
           headerName: 'Document No',
           flex: 1,
           filter: true,
-          pinned: 'left',
         },
-        {
-          field: 'accountNo',
-          headerName: 'Account No',
-          flex: 1,
-          filter: true,
-        },
-        {
-          field: 'accountName',
-          headerName: 'Account Name',
-          flex: 1,
-          filter: true,
-          valueFormatter: (params) => {
-            const account = allOptions?.find(
-              (acc) => acc.glAccountNo === params.data.accountNo
-            );
-            return account?.glAccountName ?? 'N/A';
-          },
-        },
+
+        // {
+        //   field: 'accountNo',
+        //   headerName: 'Account No',
+        //   flex: 1,
+        //   filter: true,
+        // },
+        // {
+        //   field: 'accountName',
+        //   headerName: 'Account Name',
+        //   flex: 1,
+        //   filter: true,
+        //   valueFormatter: (params) => {
+        //     const account = allOptions?.find(
+        //       (acc) => acc.glAccountNo === params.data.accountNo
+        //     );
+        //     return account?.glAccountName ?? 'N/A';
+        //   },
+        // },
+
         {
           field: 'amount',
           headerName: 'Amount',
@@ -295,14 +309,6 @@ export const getColumnDefsByType2 = (type, allOptions) => {
             return formatNumber(params.value);
           },
           cellStyle: { textAlign: 'center' },
-        },
-
-        {
-          field: 'transactionDate',
-          headerName: 'Transaction Date',
-          flex: 1,
-          filter: true,
-          valueFormatter: (params) => parseDate(params.value),
         },
       ];
 
@@ -326,6 +332,7 @@ export const transformDataByType = (data) => {
           transactionDate: item.transactionDate,
           amount: item.amount,
           description: transformString(item.description),
+          ...item,
         };
 
       case 'Bank Account Ledger Entries':
@@ -340,6 +347,7 @@ export const transformDataByType = (data) => {
           amount: item.amount,
           description: transformString(item.description),
           glEntryNo: item.glEntryNo,
+          ...item,
         };
 
       case 'General Ledger Entries':
@@ -351,6 +359,7 @@ export const transformDataByType = (data) => {
           transactionDate: item.transactionDate,
           amount: item.amount,
           accountNo: item.accountNo,
+          ...item,
         };
 
       default:

@@ -685,11 +685,16 @@ const BaseInputTable = ({
         const { colDef, data, newValue } = params;
         const field = colDef.field;
 
-        if (setSeconded && data.seconded) {
-          console.log('Setting current row', data);
-          setSeconded(data.seconded);
-        } else {
-          setSeconded(false);
+        console.log('Cell value changed:', field, newValue);
+        console.log('all entered data', data);
+
+        if (setSeconded) {
+          if (data.seconded) {
+            console.log('Setting current row', data);
+            setSeconded(data.seconded);
+          } else {
+            setSeconded(false);
+          }
         }
 
         setDataAdded(true);

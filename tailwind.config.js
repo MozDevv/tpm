@@ -26,6 +26,7 @@ module.exports = {
         roboto: ['Roboto', 'Arial', 'sans-serif'],
         calibri: ['Calibri', 'Arial', 'sans-serif'],
         times: ['Times New Roman', 'Times', 'serif'],
+        segoe: ['Segoe UI', 'Arial', 'sans-serif'],
       },
       fontSize: {
         '2xl': '1.875rem',
