@@ -68,6 +68,7 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
   const [approvalEntries, setApprovalEntries] = useState([]);
 
   const userId = auth.user ? auth.user.userId : null;
+
   const getApprovalEntries = () => {
     const documentId = clickedItem.no_series
       ? clickedItem.no_series

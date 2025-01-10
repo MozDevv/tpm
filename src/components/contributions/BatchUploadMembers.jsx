@@ -21,6 +21,7 @@ import { Button } from '@mui/material';
 import BaseTabs from '../baseComponents/BaseTabs';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -49,26 +50,25 @@ const BatchUploadMembers = () => {
     try {
       // Fetch the file as a blob
       const response = await axios.get(
-        'http://192.168.3.68:9090/api/Contribution/DownloadMemberTemplate',
+        `${BASE_CORE_API}api/Contribution/DownloadMemberTemplate`,
         {
           responseType: 'blob', // Specify that the response is a binary Blob
         }
       );
 
-      // Create a blob URL and trigger the download
       const blob = new Blob([response.data], {
         type: response.headers['content-type'],
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'Member Upload Template.xlsx'); // Set desired file name
+      link.setAttribute('download', 'Member Upload Template.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove(); // Clean up
       window.URL.revokeObjectURL(url); // Release memory
     } catch (error) {
-      console.error('Error downloading the file:', error);
+      console.error('Error downloading te file:', error);
     }
   };
 

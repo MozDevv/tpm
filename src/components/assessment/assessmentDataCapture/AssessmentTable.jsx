@@ -784,6 +784,7 @@ const AssessmentTable = ({ status, statusArr }) => {
         </Dialog>
 
         <BaseCard
+          documentNo={clickedItem && clickedItem?.no_series}
           openBaseCard={openPreclaimDialog}
           setOpenBaseCard={setOpenPreclaimDialog}
           handlers={baseCardHandlers}

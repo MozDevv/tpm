@@ -1,104 +1,104 @@
-import React from "react";
+import React from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
   {
-    field: "requiredLength",
-    headerName: "Required Length",
-    headerClass: "prefix-header",
+    field: 'requiredLength',
+    headerName: 'Required Length',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requiredUniqueChars",
-    headerName: "Required Unique Chars",
-    headerClass: "prefix-header",
+    field: 'requiredUniqueChars',
+    headerName: 'Required Unique Chars',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requireNonAlphanumeric",
-    headerName: "Require Non Alphanumeric",
-    headerClass: "prefix-header",
+    field: 'requireNonAlphanumeric',
+    headerName: 'Require Non Alphanumeric',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requireUppercase",
-    headerName: "Require Uppercase",
-    headerClass: "prefix-header",
+    field: 'requireUppercase',
+    headerName: 'Require Uppercase',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requireLowercase",
-    headerName: "Require Lowercase",
-    headerClass: "prefix-header",
+    field: 'requireLowercase',
+    headerName: 'Require Lowercase',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "passExpieryDurationInDays",
-    headerName: "Pass Expiery Duration In Days",
-    headerClass: "prefix-header",
+    field: 'passExpieryDurationInDays',
+    headerName: 'Pass Expiery Duration In Days',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requiredUppercaseCount",
-    headerName: "Required Uppercase Count",
-    headerClass: "prefix-header",
+    field: 'requiredUppercaseCount',
+    headerName: 'Required Uppercase Count',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requiredLowercaseCount",
-    headerName: "Required Lowercase Count",
-    headerClass: "prefix-header",
+    field: 'requiredLowercaseCount',
+    headerName: 'Required Lowercase Count',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requiredDigitCount",
-    headerName: "Required Digit Count",
-    headerClass: "prefix-header",
+    field: 'requiredDigitCount',
+    headerName: 'Required Digit Count',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "requireDigit",
-    headerName: "Require Digit",
-    headerClass: "prefix-header",
+    field: 'requireDigit',
+    headerName: 'Require Digit',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "isActive",
-    headerName: "Is Active",
-    headerClass: "prefix-header",
+    field: 'isActive',
+    headerName: 'Is Active',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "defaultPasswordGracePeriod",
-    headerName: "Default Password Grace Period",
-    headerClass: "prefix-header",
+    field: 'defaultPasswordGracePeriod',
+    headerName: 'Default Password Grace Period',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
 ];
 
@@ -135,10 +135,10 @@ const PasswordRules = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -159,80 +159,80 @@ const PasswordRules = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Password Rule" : "Create New Password Rule";
+  const title = clickedItem ? 'Password Rule' : 'Create New Password Rule';
 
   const fields = [
     {
-      name: "requiredLength",
-      label: "Required Length",
-      type: "number",
+      name: 'requiredLength',
+      label: 'Required Length',
+      type: 'number',
       required: true,
     },
     {
-      name: "requiredUniqueChars",
-      label: "Required Unique Chars",
-      type: "number",
+      name: 'requiredUniqueChars',
+      label: 'Required Unique Chars',
+      type: 'number',
       required: true,
     },
     {
-      name: "passExpieryDurationInDays",
-      label: "Pass Expiery Duration In Days",
-      type: "number",
+      name: 'passExpieryDurationInDays',
+      label: 'Pass Expiery Duration In Days',
+      type: 'number',
       required: true,
     },
     {
-      name: "defaultPasswordGracePeriod",
-      label: "Default Password Grace Period",
-      type: "number",
+      name: 'defaultPasswordGracePeriod',
+      label: 'Default Password Grace Period',
+      type: 'number',
       required: true,
     },
     {
-      name: "requiredUppercaseCount",
-      label: "Required Uppercase Count",
-      type: "number",
+      name: 'requiredUppercaseCount',
+      label: 'Required Uppercase Count',
+      type: 'number',
       required: true,
     },
     {
-      name: "requiredLowercaseCount",
-      label: "Required Lowercase Count",
-      type: "number",
+      name: 'requiredLowercaseCount',
+      label: 'Required Lowercase Count',
+      type: 'number',
       required: true,
     },
     {
-      name: "requiredDigitCount",
-      label: "Required Digit Count",
-      type: "number",
+      name: 'requiredDigitCount',
+      label: 'Required Digit Count',
+      type: 'number',
       required: true,
     },
     {
-      name: "requireDigit",
-      label: "Require Digit",
-      type: "switch",
+      name: 'requireDigit',
+      label: 'Require Digit',
+      type: 'switch',
       required: true,
     },
     {
-      name: "requireNonAlphanumeric",
-      label: "Require Non Alphanumeric",
-      type: "switch",
+      name: 'requireNonAlphanumeric',
+      label: 'Require Non Alphanumeric',
+      type: 'switch',
       required: true,
     },
     {
-      name: "requireUppercase",
-      label: "Require Uppercase",
-      type: "switch",
+      name: 'requireUppercase',
+      label: 'Require Uppercase',
+      type: 'switch',
       required: true,
     },
     {
-      name: "requireLowercase",
-      label: "Require Lowercase",
-      type: "switch",
+      name: 'requireLowercase',
+      label: 'Require Lowercase',
+      type: 'switch',
       required: true,
     },
 
     {
-      name: "isActive",
-      label: "Is Active",
-      type: "switch",
+      name: 'isActive',
+      label: 'Is Active',
+      type: 'switch',
       required: true,
     },
   ];
