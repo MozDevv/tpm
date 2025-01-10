@@ -26,7 +26,15 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
       width: 250,
       pinned: 'left',
     },
-
+    {
+      headerName: 'Pensioner Number',
+      field: 'pensioner_number',
+      width: 200,
+      filter: true,
+      cellRenderer: (params) => {
+        return <p className="text-primary font-semibold ">{params.value}</p>;
+      },
+    },
     {
       field: 'net_amount',
       headerName: 'Net Amount',

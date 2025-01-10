@@ -114,6 +114,15 @@ const colDefs = [
     },
   },
   {
+    headerName: 'Pensioner Number',
+    field: 'pensioner_number',
+    width: 200,
+    filter: true,
+    cellRenderer: (params) => {
+      return <p className="text-primary font-semibold ">{params.value}</p>;
+    },
+  },
+  {
     headerName: 'First Name',
     field: 'first_name',
     width: 150,
@@ -439,6 +448,7 @@ const AssessmentTable = ({ status, statusArr }) => {
 
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
+        ...item,
       }));
 
       setRowData(mappedData);
