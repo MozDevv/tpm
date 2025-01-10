@@ -36,7 +36,6 @@ export const createSections = (
         label: 'Personal Number',
         name: 'personal_number',
         type: 'text',
-
         pensionCap: [
           'CAP189',
 

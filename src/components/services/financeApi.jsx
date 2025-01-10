@@ -348,6 +348,8 @@ const financeEndpoints = {
   downloadMemberTemplate: '/Contribution/DownloadMemberTemplate',
 
   removePaymentFromSchedule: '/Posting/RemovePaymentVoucherFromSchedule',
+  addPaymentsToSchedule:
+    '/Posting/AddNewPaymentVouchersToExistingPaymentSchedule',
 };
 
 export const apiService = {

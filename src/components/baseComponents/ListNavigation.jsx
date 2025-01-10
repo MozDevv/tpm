@@ -430,11 +430,18 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       requiredPermissions: [],
     },
     {
+      name: 'Add Payment(s) to Schedule',
+      icon: Add,
+      action: 'addPaymentsToSchedule',
+      requiredPermissions: [],
+    },
+    {
       name: 'Remove Payment(s) from Schedule',
       icon: PlaylistRemove,
       action: 'removePaymentsFromSchedule',
       requiredPermissions: [],
     },
+
     {
       name: 'Create Change Request',
       icon: PlaylistAdd,

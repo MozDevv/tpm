@@ -17,6 +17,7 @@ import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
 import ScheduledPaymentsCard from './ScheduledPaymentsCard';
 import { message } from 'antd';
+import AddSchedules from './AddSchedules';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -139,12 +140,17 @@ const ScheduledPayments = ({ status }) => {
   const [loading, setLoading] = React.useState(false);
 
   const handleRemovePayments = async () => {
+    if (selectedLines.length === 0) {
+      message.warning('Please select a payment to remove');
+      return;
+    }
+    console.log();
     try {
       const res = await apiService.post(
         financeEndpoints.removePaymentFromSchedule,
         {
           paymentVouchers: selectedLines.map((row) => ({
-            paymentScheduleLineId: row.paymentId,
+            paymentScheduleLineId: row.id,
           })),
         }
       );
@@ -210,6 +216,7 @@ const ScheduledPayments = ({ status }) => {
   const [exportScheduleLines, setExportScheduleLines] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
   const [gridApi, setGridApi] = React.useState(null);
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const exportData = () => {
     gridApi.exportDataAsCsv({
@@ -262,9 +269,6 @@ const ScheduledPayments = ({ status }) => {
       postPaymentVoucher: () => {
         setOpenPV(true);
         console.log('Post Payment');
-      },
-      removePaymentsFromSchedule: () => {
-        handleRemovePayments();
       },
     }),
 
@@ -334,8 +338,24 @@ const ScheduledPayments = ({ status }) => {
       ? 'Scheduled Payment Vouchers'
       : 'Posted Payment Vouchers';
 
+  const scheduleHandlers = {
+    ...(status === 3 && {
+      removePaymentsFromSchedule: () => {
+        handleRemovePayments();
+      },
+      addPaymentsToSchedule: () => {
+        setOpenDialog(true);
+      },
+    }),
+  };
+
   return (
     <div className="">
+      <AddSchedules
+        clickedItem={clickedItem}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+      />
       <Dialog
         open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
         onClose={() => {
@@ -374,6 +394,7 @@ const ScheduledPayments = ({ status }) => {
       >
         {clickedItem ? (
           <ScheduledPaymentsCard
+            baseCardHandlers={scheduleHandlers}
             selectedLines={selectedLines}
             setSelectedLines={setSelectedLines}
             exportScheduleLines={exportScheduleLines}

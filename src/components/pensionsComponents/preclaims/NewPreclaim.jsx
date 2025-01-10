@@ -419,7 +419,8 @@ function NewPreclaim({
       name !== 'kra_pin' &&
       name !== 'tax_exempt_certificate_number' &&
       name !== 'email_address' &&
-      name !== 'tribe'
+      name !== 'tribe' &&
+      name !== 'personal_number'
     ) {
       parsedValue = toProperCase(parsedValue);
     }

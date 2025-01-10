@@ -11,6 +11,7 @@ import { formatNumber } from '@/utils/numberFormatters';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import { Button } from '@mui/material';
 import { parseDate } from '@/utils/dateFormatter';
+import ListNavigation from '@/components/baseComponents/ListNavigation';
 
 const { TabPane } = Tabs;
 
@@ -28,6 +29,7 @@ function ScheduledPaymentsCard({
   setGridApi,
   loading,
   setSelectedLines,
+  baseCardHandlers,
 }) {
   const [scheduleLines, setScheduleLines] = useState([]);
   const [deductionsAndRefunds, setDeductionsAndRefunds] = useState([]);
@@ -210,6 +212,9 @@ function ScheduledPaymentsCard({
                       Export to Excel
                     </Button>
                   </div> */}
+                  <div className="mb-5 mt-[-10px]">
+                    <ListNavigation handlers={baseCardHandlers} />
+                  </div>
                   <AgGridReact
                     rowData={scheduleLines}
                     columnDefs={tableFields}
