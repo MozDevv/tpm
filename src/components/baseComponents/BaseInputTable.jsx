@@ -31,6 +31,7 @@ import { VisuallyHiddenInput } from '@/utils/handyComponents';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
 import AmountCellEditor from './AmountCellEditor';
 import { formatNumber } from '@/utils/numberFormatters';
+import CustomPhoneNumberCellEditor from './CustomPhoneNumberCellEditor';
 
 const BaseInputTable = ({
   fields = [],
@@ -607,6 +608,8 @@ const BaseInputTable = ({
           // Parse the user input into a date
           return parseDate(params.newValue);
         };
+      } else if (col.type === 'phone_number') {
+        columnDef.cellEditor = CustomPhoneNumberCellEditor;
       } else if (col.type === 'select' && col.options && col.options.length) {
         columnDef.cellEditor = CustomSelectCellEditor;
 

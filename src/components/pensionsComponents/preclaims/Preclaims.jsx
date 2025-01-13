@@ -750,15 +750,19 @@ const Preclaims = ({ status }) => {
     },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
-    approvalRequest: () => console.log('Approval Request clicked'),
-    sendApprovalRequest: () => setOpenApprove(1),
-    cancelApprovalRequest: () => setOpenApprove(2),
-    approveDocument: () => setOpenApprove(3),
-    rejectDocumentApproval: () => setOpenApprove(4),
-    delegateApproval: () => {
-      setOpenApprove(5);
-      setWorkFlowChange(Date.now());
-    },
+    ...(status !== 0
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
 
   const title = clickedItem

@@ -150,7 +150,7 @@ const AddBeneficiaries = ({ id }) => {
     {
       value: 'mobile_number',
       label: 'Mobile Number',
-      type: 'text',
+      type: 'phone_number',
     },
   ];
 

@@ -1,5 +1,6 @@
 import 'dayjs/locale/en-au';
 import dayjs from 'dayjs';
+import { el } from '@faker-js/faker';
 export const validateField = (name, value, formData) => {
   let error = '';
   if (name === 'date_of_first_appointment' && value && formData.dob) {
@@ -45,6 +46,57 @@ export const validateField = (name, value, formData) => {
 
     if (taxExemptCertificateDate.isAfter(retirementDate)) {
       error = 'Tax Exempt Certificate Date cannot be after retirement date';
+    }
+  }
+
+  if (
+    name === 'date_of_injury_for_cap189' &&
+    value &&
+    formData.retirement_date &&
+    formData.date_of_confirmation
+  ) {
+    const confirmationDate = dayjs(formData.date_of_confirmation);
+    const retirementDate = dayjs(formData.retirement_date);
+    const injuryDate = dayjs(value);
+    if (injuryDate.isAfter(dayjs())) {
+      error = 'Date of injury cannot be in the future';
+    } else if (injuryDate.isBefore(confirmationDate)) {
+      error = 'Date of injury cannot be before date of confirmation';
+    } else if (injuryDate.isAfter(retirementDate)) {
+      error = 'Date of injury cannot be after retirement date';
+    }
+  }
+  if (
+    name === 'date_of_injury_for_cap199' &&
+    value &&
+    formData.retirement_date &&
+    formData.date_of_confirmation
+  ) {
+    const confirmationDate = dayjs(formData.date_of_confirmation);
+    const retirementDate = dayjs(formData.retirement_date);
+    const injuryDate = dayjs(value);
+    if (injuryDate.isAfter(dayjs())) {
+      error = 'Date of injury cannot be in the future';
+    } else if (injuryDate.isBefore(confirmationDate)) {
+      error = 'Date of injury cannot be before date of confirmation';
+    } else if (injuryDate.isAfter(retirementDate)) {
+      error = 'Date of injury cannot be after retirement date';
+    }
+  }
+  if (name === 'salary_at_injury_for_cap199' && value) {
+    if (value.toString().length > 8) {
+      error = 'Salary at the time of injury should not exceed 8 digits';
+    }
+  }
+  if (name === 'salary_at_injury_for_cap189' && value) {
+    if (value.toString().length > 8) {
+      error = 'Salary at the time of injury should not exceed 8 digits';
+    }
+  }
+
+  if (name === 'last_basic_salary_amount' && value) {
+    if (value.toString().length > 8) {
+      error = 'Last salary amount should not exceed 8 digits';
     }
   }
   if (name === 'last_pay_date' && value && formData.date_of_confirmation) {

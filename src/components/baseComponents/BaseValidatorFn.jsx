@@ -45,6 +45,7 @@ export const baseValidatorFn = {
     if (!emailRegex.test(value)) return 'Please enter a valid email address';
     return null;
   },
+  mobile_number: (value) => {},
 
   emailAdress: (value) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Example: email address
