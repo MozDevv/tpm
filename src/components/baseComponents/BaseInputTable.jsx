@@ -471,17 +471,21 @@ const BaseInputTable = ({
 
           const hasError = rowErrors[rowId] && rowErrors[rowId][field];
           const error = `
-          <div>
-            <strong style="display: block; margin-bottom: 8px;">⚠️ Validation Error:</strong>
-            <span style="font-weight: normal;">Your Entry of 
-              <strong style="">"${
-                value && isValidDateString(value) ? parseDate(value) : value
-              }</strong>
-          
-            "</span> is not an acceptable value for 
-            <strong>${colDef.headerName}</strong>. 
-            ${hasError ? rowErrors[rowId][field] : ''}
-          </div>
+        <div>
+  <strong style="display: block; margin-bottom: 8px; padding-left: 15px;">
+    <span style="font-size: 1.5em;">⚠️</span> Validation Error
+  </strong>
+  <span style="font-weight: normal;">
+    Your Entry of 
+    <strong style="font-weight: bold; color: #d9534f;">
+      "${value && isValidDateString(value) ? parseDate(value) : value}"
+    </strong>
+  </span> 
+  is not an acceptable value for 
+  <strong>${colDef.headerName}</strong>. 
+  <br />
+ <div style="color: #d9534f;">${hasError ? rowErrors[rowId][field] : ''}</div>
+</div>
         `;
 
           const formatDate = (dateString) => {
@@ -519,31 +523,47 @@ const BaseInputTable = ({
               ? getNameById(value)
               : value;
 
-          return (
-            <div style={{ position: 'relative', display: 'flex' }}>
-              {hasError && (
-                <Tooltip
-                  title={<div dangerouslySetInnerHTML={{ __html: error }} />}
-                  arrow
-                  PopperProps={{
-                    sx: {
-                      '& .MuiTooltip-tooltip': {
-                        //   borderLeft: "2px solid crimson",
-                        fontSize: '0.75rem',
-                        padding: '0.5rem',
-                        borderRadius: '4px',
-                        maxWidth: '200px',
-                        wordWrap: 'break-word',
-                      },
-                    },
-                  }}
-                >
+          return hasError ? (
+            <Tooltip
+              title={<div dangerouslySetInnerHTML={{ __html: error }} />}
+              arrow
+              PopperProps={{
+                sx: {
+                  '& .MuiTooltip-tooltip': {
+                    backgroundColor: '#f5f5f5', // Lighter background for better contrast
+                    color: '#333', // Darker text for readability
+                    fontSize: '0.875rem', // Slightly larger text for better readability
+                    padding: '8px', // More spacious padding
+                    borderRadius: '8px', // Rounded corners
+                    maxWidth: '250px',
+                    wordWrap: 'break-word', // Prevent long words from breaking the layout
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+                    transition: 'opacity 0.3s ease-in-out', // Smooth fade-in transition
+                  },
+                  '& .MuiTooltip-arrow': {
+                    color: '#f5f5f5', // Matching the background color of the tooltip
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {displayValue}
+                {hasError && (
                   <IconButton
                     style={{
                       position: 'absolute',
                       right: 0,
                       top: '50%',
                       transform: 'translateY(-50%)',
+                      backgroundColor: 'transparent', // Ensure the background is transparent
+                      border: 'none', // Remove any borders
+                      padding: '4px', // Add a bit of padding for easier clicking
                     }}
                     size="small"
                     onClick={() => {
@@ -560,12 +580,17 @@ const BaseInputTable = ({
                       });
                     }}
                   >
-                    <Cancel fontSize="small" sx={{ color: 'crimson' }} />
+                    <Cancel fontSize="small" sx={{ color: '#d9534f' }} />{' '}
+                    {/* Clear button with a user-friendly color */}
                   </IconButton>
-                </Tooltip>
-              )}
-              {displayValue}
-            </div>
+                )}
+              </div>
+            </Tooltip>
+          ) : (
+            <>
+              {' '}
+              <div>{displayValue}</div>
+            </>
           );
         },
 
@@ -736,7 +761,9 @@ const BaseInputTable = ({
           if (validator) {
             const error = validator(newValue);
             if (error) {
-              message.error(`Validation Error on ${field}: ${error}`);
+              if (field !== 'mobile_number') {
+                message.error(`Validation Error on ${field}: ${error}`);
+              }
               setCellError(data.id, field, error);
               return;
             } else {
@@ -745,9 +772,8 @@ const BaseInputTable = ({
           }
         }
         if (field === 'account_number') {
-          // Remove any non-numeric characters from the new value
           const cleanedValue = newValue.replace(/\D/g, '');
-          // Pad the value with zeros at the start if it's less than 15 digits
+
           const paddedValue = cleanedValue.padStart(15, '0');
 
           // Update the data with the cleaned and padded value

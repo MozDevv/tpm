@@ -108,6 +108,33 @@ export const baseValidatorFn = {
     }
     return null;
   },
+  dob: (value) => {
+    const dobDate = dayjs(value);
+    const age = dayjs().diff(dobDate, 'year');
+    if (age < 18) {
+      return 'User must be at least 18 years old';
+    }
+    return null;
+  },
+  mobile_number: (value) => {
+    if (value.length < 13 || value.length > 17) {
+      return 'Mobile number must be between 13 and 17 digits';
+    }
+    if (value.startsWith('+254') && value.length !== 13) {
+      return 'Kenyan mobile number must be exactly 13 digits';
+    }
+    return null;
+  },
+
+  /**national id more than 7 less than 10 */
+
+  identifier: (value) => {
+    if (value.length < 7 || value.length > 10) {
+      return 'National ID must be between 7 and 10 digits';
+    }
+    return null;
+  },
+
   // account_number: (value) => {
   //   const accountNumberRegex = /^[0-9]{10}$/;
   //   if (!accountNumberRegex.test(value))

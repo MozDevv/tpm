@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
-import { ArrowBack, OpenInFull } from '@mui/icons-material';
+import { ArrowBack, CloseFullscreen, OpenInFull } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import PensionerDetailSummary from '../pensionsComponents/preclaims/PensionerDetailSummary';
 import { Divider, message, Tabs } from 'antd';
@@ -61,7 +61,7 @@ function BaseCard({
   documentNo,
   retireeId,
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
 
   const expandSizes = {
@@ -390,13 +390,23 @@ function BaseCard({
           <div className="flex items-center">
             <IconButton onClick={() => setIsExpanded(!isExpanded)}>
               <Tooltip title={isExpanded ? 'Shrink' : 'Expand'}>
-                <OpenInFull
-                  color="primary"
-                  sx={{
-                    fontSize: '18px',
-                    mt: '4px',
-                  }}
-                />
+                {isExpanded ? (
+                  <CloseFullscreen
+                    color="primary"
+                    sx={{
+                      fontSize: '18px',
+                      mt: '4px',
+                    }}
+                  />
+                ) : (
+                  <OpenInFull
+                    color="primary"
+                    sx={{
+                      fontSize: '18px',
+                      mt: '4px',
+                    }}
+                  />
+                )}
               </Tooltip>
             </IconButton>
           </div>
