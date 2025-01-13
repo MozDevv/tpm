@@ -453,7 +453,7 @@ const AssessmentTable = ({ status, statusArr }) => {
 
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
-        ...item,
+        pensioner_number: item?.pensioner_number,
       }));
 
       setRowData(mappedData);
