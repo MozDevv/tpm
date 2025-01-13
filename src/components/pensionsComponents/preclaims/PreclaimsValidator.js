@@ -112,18 +112,15 @@ export const validateField = (name, value, formData) => {
     }
   } else if (name === 'passport_number' && value) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
-      error =
-        'Passport number must be alphanumeric, second character must be "K", e.g., CK00001';
+      error = 'Passport number must be valid';
     }
   } else if (name === 'passport_no' && value) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
-      error =
-        'Passport number must be alphanumeric, second character must be "K", e.g., CK00001';
+      error = 'Passport number must be valid';
     }
   } else if (name === 'death_certificate_number' && value) {
     if (!/^[\d/]+$/.test(value)) {
-      error =
-        'Death certificate number must contain only numeric values and the "/" character';
+      error = 'Death certificate must be valid.';
     }
   } else if (name === 'date_of_first_appointment' && value && formData.dob) {
     const dobDate = dayjs(formData.dob);

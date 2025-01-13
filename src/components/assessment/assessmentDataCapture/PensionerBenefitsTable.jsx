@@ -152,7 +152,8 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
       const data = res.data.data.map((item) => {
         return {
           ...item,
-          pensionAward: item?.pensionAward.prefix,
+          pensionAward: item?.pensionAward.name,
+          pensioner_number: item?.pensioner_award_code,
         };
       });
 
