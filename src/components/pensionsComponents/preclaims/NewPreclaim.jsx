@@ -43,6 +43,7 @@ import './ag-theme.css';
 import MuiPhoneNumber from 'mui-phone-number';
 import { toProperCase } from '@/utils/numberFormatters';
 import AddBeneficiaries from './AddBeneficiaries';
+import { validateField } from './PreclaimsValidator';
 
 dayjs.extend(isSameOrBefore);
 
@@ -333,80 +334,6 @@ function NewPreclaim({
   const [formData, setFormData] = useState(getInitialFormData());
   const router = useRouter();
 
-  const validateField = (name, value, formData) => {
-    let error = '';
-
-    if (
-      name === 'email_address' &&
-      value &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-    ) {
-      error = 'Invalid email format';
-      // } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
-      //   error = "Must be a valid phone number";
-    } else if (name === 'dob' && value) {
-      const dobDate = dayjs(value);
-      const age = dayjs().diff(dobDate, 'year');
-      if (age < 18) {
-        error = 'User must be at least 18 years old';
-      }
-    } else if (name === 'national_id' && value && !/^\d+$/.test(value)) {
-      error = 'Must be a valid National ID';
-    } else if (
-      name === 'kra_pin' &&
-      value &&
-      !/^[A-Z]\d{9}[A-Z]$/.test(value)
-    ) {
-      error = 'Must be a valid KRA PIN';
-    } else if (name === 'last_basic_salary_amount' && value && isNaN(value)) {
-      error = 'Must be a valid number';
-      // } else if (
-      //   name === "phone_number" &&
-      //   value &&
-      //   !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
-      // ) {
-      //   error = "Must be a valid phone number";
-    } else if (
-      name.includes('date') &&
-      name !== 'date_from_which_pension_will_commence' &&
-      name !== 'retirement_date' &&
-      name !== 'last_pay_date' &&
-      value &&
-      dayjs(value).isAfter(dayjs())
-    ) {
-      error = 'Date cannot be in the future';
-      // } else if (name === "date_of_first_appointment" && value && formData.dob) {
-      //   const dobDate = dayjs(formData.dob);
-      //   const appointmentDate = dayjs(value);
-      //   const ageAtAppointment = appointmentDate.diff(dobDate, "year");
-      //   if (ageAtAppointment < 18) {
-      //     error =
-      //       "Date of first appointment must be at least 18 years after date of birth";
-      //   }
-    } else if (
-      name === 'date_of_confirmation' &&
-      value &&
-      formData.date_of_first_appointment
-    ) {
-      const appointmentDate = dayjs(formData.date_of_first_appointment);
-      const confirmationDate = dayjs(value);
-      if (confirmationDate.isBefore(appointmentDate)) {
-        error =
-          'Date of confirmation cannot be before date of first appointment';
-      }
-    } else if (name === 'tax_exempt_certificate_number' && value === '') {
-      if (formData.pwd === 0 && value === '') {
-        error = 'Tax Exempt Certificate Number is required';
-      }
-    } else if (name === 'tax_exempt_certificate_date' && value === '') {
-      if (formData.pwd === 0 && value === '') {
-        error = 'Tax Exempt Certificate Date is required';
-      }
-    }
-
-    return error;
-  };
-
   const handleInputChange = (e) => {
     if (retireeId) {
       setEditMode(true);
@@ -420,7 +347,8 @@ function NewPreclaim({
       name !== 'tax_exempt_certificate_number' &&
       name !== 'email_address' &&
       name !== 'tribe' &&
-      name !== 'personal_number'
+      name !== 'personal_number' &&
+      name !== 'passport_no'
     ) {
       parsedValue = toProperCase(parsedValue);
     }

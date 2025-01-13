@@ -289,21 +289,40 @@ export const createSections = (
         ],
         pensionCap: ['CAP199'],
       },
-      {
-        label: 'National ID/Passport No.',
-        name: 'national_id',
-        type: 'text',
-        pensionCap: [
-          'CAP189',
+      ...(formData.identifier_type === 0
+        ? [
+            {
+              label: 'National ID',
+              name: 'national_id',
+              type: 'text',
+              pensionCap: [
+                'CAP189',
 
-          'CAP196',
-          'APN/PK',
-          'CAP190',
-          'CAP195',
-          'DSO/RK',
-          'CAP195',
-        ],
-      },
+                'CAP196',
+                'APN/PK',
+                'CAP190',
+                'CAP195',
+                'DSO/RK',
+                'CAP195',
+              ],
+            },
+          ]
+        : [
+            {
+              label: 'Passport No.',
+              name: 'passport_no',
+              type: 'text',
+              pensionCap: [
+                'CAP189',
+                'CAP196',
+                'APN/PK',
+                'CAP190',
+                'CAP195',
+                'DSO/RK',
+                'CAP195',
+              ],
+            },
+          ]),
       {
         label: 'Military ID',
         name: 'national_id',

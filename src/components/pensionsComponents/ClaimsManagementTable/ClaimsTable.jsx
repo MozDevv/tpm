@@ -98,15 +98,15 @@ const colDefs = [
       );
     },
   },
-  {
-    headerName: 'Pensioner Number',
-    field: 'pensioner_number',
-    width: 200,
-    filter: true,
-    cellRenderer: (params) => {
-      return <p className="text-primary font-semibold ">{params.value}</p>;
-    },
-  },
+  // {
+  //   headerName: 'Pensioner Number',
+  //   field: 'pensioner_number',
+  //   width: 200,
+  //   filter: true,
+  //   cellRenderer: (params) => {
+  //     return <p className="text-primary font-semibold ">{params.value}</p>;
+  //   },
+  // },
   {
     headerName: 'First Name',
     field: 'first_name',
@@ -418,7 +418,6 @@ const ClaimsTable = ({ status }) => {
 
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
-        ...item,
       }));
 
       setRowData(mappedData);
