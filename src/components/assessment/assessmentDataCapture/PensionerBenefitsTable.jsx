@@ -156,7 +156,6 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
           pensioner_number: item?.pensioner_award_code,
         };
       });
-
       setQualifyingService(data);
     } catch (error) {
       console.log('Error getting pensioner Benefits >>>>>>>>>>>:', error);

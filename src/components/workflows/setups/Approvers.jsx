@@ -16,7 +16,9 @@ const Approvers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await apiService.get(endpoints.getUsers);
+        const res = await apiService.get(endpoints.getUsers, {
+          'paging.pageSize': 1000,
+        });
         const data = res.data.data.map((item) => ({
           id: item.id,
           name: item.email,

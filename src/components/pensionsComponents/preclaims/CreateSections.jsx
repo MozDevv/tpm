@@ -741,7 +741,7 @@ export const createSections = (
               ],
             },
             {
-              label: 'Tax Exempt Certificate Date',
+              label: 'Tax Exempt Certificate Expiry Date',
               name: 'tax_exempt_certificate_date',
               type: 'date',
               pensionCap: [

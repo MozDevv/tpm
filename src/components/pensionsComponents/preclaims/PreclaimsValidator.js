@@ -2,6 +2,65 @@ import 'dayjs/locale/en-au';
 import dayjs from 'dayjs';
 export const validateField = (name, value, formData) => {
   let error = '';
+  if (name === 'date_of_first_appointment' && value && formData.dob) {
+    const dobDate = dayjs(formData.dob);
+    const appointmentDate = dayjs(value); // Using `value` for the current input
+
+    // Debugging: Check if the dates are valid
+    if (!dobDate.isValid() || !appointmentDate.isValid()) {
+      error = 'Invalid date format';
+      return error;
+    }
+
+    console.log('DOB:', dobDate.format('YYYY-MM-DD'));
+    console.log('Appointment Date:', appointmentDate.format('YYYY-MM-DD'));
+    console.log(
+      '15 Years After DOB:',
+      dobDate.add(15, 'years').format('YYYY-MM-DD')
+    );
+
+    if (appointmentDate.isBefore(dobDate.add(15, 'years'))) {
+      error =
+        'Date of first appointment must be at least 15 years after date of birth';
+    }
+  }
+
+  if (name === 'retirement_date' && value && formData.date_of_confirmation) {
+    const confirmationDate = dayjs(formData.date_of_confirmation);
+    const retirementDate = dayjs(value);
+
+    if (retirementDate.isBefore(confirmationDate)) {
+      error = 'Retirement date cannot be before date of confirmation';
+    }
+  }
+  /**change tax exempt certificate date to tax exempt certificate expiry date */
+
+  if (
+    name === 'tax_exempt_certificate_date' &&
+    value &&
+    formData.retirement_date
+  ) {
+    const retirementDate = dayjs(formData.retirement_date);
+    const taxExemptCertificateDate = dayjs(value);
+
+    if (taxExemptCertificateDate.isAfter(retirementDate)) {
+      error = 'Tax Exempt Certificate Date cannot be after retirement date';
+    }
+  }
+  if (name === 'last_pay_date' && value && formData.date_of_confirmation) {
+    const confirmationDate = dayjs(formData.date_of_confirmation);
+    const lastPayDate = dayjs(value);
+
+    if (lastPayDate.isBefore(confirmationDate)) {
+      error = 'Last pay date cannot be before date of confirmation';
+    }
+  } else if (name === 'tax_exempt_certificate_number' && value) {
+    const regex = /^NCPWD\/\d{1,8}$/; // Starts with 'NCPWD/', followed by up to 8 digits
+
+    if (!regex.test(value)) {
+      error = 'Tax Exempt Certificate Number is not valid';
+    }
+  }
 
   if (
     name === 'email_address' &&
@@ -121,14 +180,6 @@ export const validateField = (name, value, formData) => {
   } else if (name === 'death_certificate_number' && value) {
     if (!/^[\d/]+$/.test(value)) {
       error = 'Death certificate must be valid.';
-    }
-  } else if (name === 'date_of_first_appointment' && value && formData.dob) {
-    const dobDate = dayjs(formData.dob);
-    const appointmentDate = dayjs(value);
-
-    if (appointmentDate.isBefore(dobDate.add(15, 'years'))) {
-      error =
-        'Date of first appointment must be at least 15 years after date of birth';
     }
   }
 
