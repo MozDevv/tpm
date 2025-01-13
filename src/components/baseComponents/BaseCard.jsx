@@ -61,7 +61,7 @@ function BaseCard({
   documentNo,
   retireeId,
 }) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(isClaim ? true : false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
 
   const expandSizes = {
@@ -394,7 +394,7 @@ function BaseCard({
                   <CloseFullscreen
                     color="primary"
                     sx={{
-                      fontSize: '18px',
+                      fontSize: '20px',
                       mt: '4px',
                     }}
                   />
