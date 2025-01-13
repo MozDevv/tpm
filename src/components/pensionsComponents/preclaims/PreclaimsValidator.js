@@ -202,10 +202,12 @@ export const validateField = (name, value, formData) => {
   ) {
     error =
       "Only alphabetic characters, spaces, apostrophes ('), and hyphens (-) are allowed";
-  } else if (name === 'phone_number' && value && !/^\+2547\d{8}$/.test(value)) {
-    error = 'Phone number must be a valid Kenyan phone number';
-  } else if (name === 'phone_number' && value.length !== 13) {
-    error = 'Phone number must be exactly 13 digits long';
+  } else if (name === 'phone_number' && value) {
+    if (value.length < 13 || value.length > 17) {
+      error = 'Phone number must be between 13 and 17 digits';
+    } else if (value.startsWith('+254') && value.length !== 13) {
+      error = 'Kenyan phone number must be exactly 13 digits';
+    }
   } else if (name === 'date_of_death' && value) {
     const deathDate = dayjs(value);
     const dobDate = formData.dob ? dayjs(formData.dob) : null;
@@ -219,7 +221,7 @@ export const validateField = (name, value, formData) => {
     if (!/^\d+$/.test(value)) {
       error = 'National ID must contain only numeric values';
     } else if (value.length < 7 || value.length > 9) {
-      error = 'National ID must be between 7 and 9 digits';
+      error = 'National ID is not valid';
     }
   } else if (name === 'passport_number' && value) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {

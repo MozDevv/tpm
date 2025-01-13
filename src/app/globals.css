@@ -239,3 +239,6 @@ a:hover {
 .custom-checkbox .ant-checkbox:hover .ant-checkbox-inner {
   border-color: #218838; /* Slightly darker green for hover */
 }
+.transition {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}

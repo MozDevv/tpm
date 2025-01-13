@@ -720,15 +720,17 @@ const Preclaims = ({ status }) => {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
     // create: () => router.push("/pensions/preclaims/listing/new"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
+    ...(status === 0 && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
+    }),
     edit: () => console.log('Edit clicked'),
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
-    ...(status === 1 && {
+    ...(status !== 0 && {
       approvalRequest: () => console.log('Approval Request clicked'),
       sendApprovalRequest: () => setOpenApprove(1),
       cancelApprovalRequest: () => setOpenApprove(2),
