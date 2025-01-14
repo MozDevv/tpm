@@ -172,12 +172,12 @@ const ScheduledPayments = ({ status }) => {
   };
 
   const handlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
+    // create: () => {
+    //   setOpenBaseCard(true);
+    //   setClickedItem(null);
+    // },
+    // edit: () => console.log('Edit clicked'),
+    // delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
     ...(status === 0 && {
