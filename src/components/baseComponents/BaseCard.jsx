@@ -60,6 +60,7 @@ function BaseCard({
   activeStep,
   documentNo,
   retireeId,
+  customDeleteFunction,
 }) {
   const [isExpanded, setIsExpanded] = useState(isClaim ? true : false);
   const [isDetailsVisible, setDetailsVisible] = useState(true);
@@ -117,17 +118,26 @@ function BaseCard({
   };
 
   const handleDeleteItem = async () => {
-    try {
-      const res = await deleteApiService(deleteApiEndpoint);
-
-      if (res.status === 200 || res.status === 201 || res.data.succeeded) {
-        //  fetchAllPreclaims();
+    if (customDeleteFunction) {
+      try {
+        await customDeleteFunction(); // Call the custom delete function
         message.success(`${title} deleted successfully`);
         setIsDialogOpen(false);
         setOpenBaseCard(false);
+      } catch (error) {
+        console.error('Error deleting item:', error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const res = await deleteApiService(deleteApiEndpoint);
+        if (res.status === 200 || res.status === 201 || res.data.succeeded) {
+          message.success(`${title} deleted successfully`);
+          setIsDialogOpen(false);
+          setOpenBaseCard(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

@@ -30,6 +30,7 @@ function ScheduledPaymentsCard({
   loading,
   setSelectedLines,
   baseCardHandlers,
+  openDialog,
 }) {
   const [scheduleLines, setScheduleLines] = useState([]);
   const [deductionsAndRefunds, setDeductionsAndRefunds] = useState([]);
@@ -75,6 +76,15 @@ function ScheduledPaymentsCard({
       setDeductionsAndRefunds(data);
     });
   }, []);
+  useEffect(() => {
+    // fetchBanksAndBranches();
+    fetchScheduleLines(clickedItem?.id).then((data) => {
+      setScheduleLines(data);
+    });
+    fetchDeductionsRefunds().then((data) => {
+      setDeductionsAndRefunds(data);
+    });
+  }, [openDialog]);
   useEffect(() => {
     // fetchBanksAndBranches();
     fetchScheduleLines(clickedItem?.id).then((data) => {

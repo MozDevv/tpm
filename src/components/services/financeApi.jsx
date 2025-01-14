@@ -350,6 +350,8 @@ const financeEndpoints = {
   removePaymentFromSchedule: '/Posting/RemovePaymentVoucherFromSchedule',
   addPaymentsToSchedule:
     '/Posting/AddNewPaymentVouchersToExistingPaymentSchedule',
+
+  deletePaymentSchedule: '/Posting/DeletePaymentSchedule',
 };
 
 export const apiService = {

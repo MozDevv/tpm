@@ -144,7 +144,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       name: 'Delete',
       icon: Delete,
       action: 'delete',
-      requiredPermissions: ['preclaims.delete.prospective_pensioner'],
+      requiredPermissions: [],
     },
     {
       name: 'Notify',

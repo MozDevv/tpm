@@ -22,18 +22,24 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
 
   const fetchPayments = async () => {
     try {
-      const res = await apiService.get(financeEndpoints.getPaymentByStages(3), {
+      const res = await apiService.get(financeEndpoints.getPaymentByStages(2), {
         'paging.pageSize': 1000,
       });
       const paymentsData = res.data.data.map((item, index) => ({
-        no: index + 1,
-        paymentId: item.id,
-        amount: item.amount,
-        date: item.date,
-        method: item.method,
-        status: item.status,
-        ...item,
+        id: item.id,
+        payee: item.payee,
+        postingDate: item.postingDate,
+        onBehalfOf: item.onBehalfOf,
+        bankAccountId: item.bankAccountId,
+        paymentMethodId: item.paymentMethodId,
+        narration: item.narration,
+        isPosted: item.isPosted,
+        documentNo: item.documentNo,
+        source: item.source,
+        prospectivePensionerId: item.prospectivePensionerId,
+        claimId: item?.claimId,
       }));
+      console.log('paymentsData:', res.data.data);
       setPayments(paymentsData);
     } catch (error) {
       console.error('Error fetching payments:', error);
@@ -43,6 +49,9 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
   useEffect(() => {
     fetchPayments();
   }, [clickedItem]);
+  useEffect(() => {
+    fetchPayments();
+  }, [openDialog]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -60,19 +69,20 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
   const handleAddPayments = async () => {
     const payload = {
       payments: selectedPayments.map((payment) => ({
-        paymentId: payment.paymentId,
+        paymentId: payment.id,
       })),
       paymentScheduleId: clickedItem?.id,
     };
 
     try {
-      const response = await apiService.post(
+      const res = await apiService.post(
         financeEndpoints.addPaymentsToSchedule,
         payload
       );
 
       if (res.data.succeeded) {
         message.success('Payments added successfully');
+        handleCloseDialog();
       } else if (res.data.messages[0]) {
         message.error(res.data.messages[0]);
       } else {
@@ -148,7 +158,7 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
     {
       headerName: 'Payment Voucher No',
       field: 'documentNo',
-      flex: 1,
+      width: 140,
       pinned: 'left',
       checkboxSelection: true,
       headerCheckboxSelection: true,
@@ -161,12 +171,17 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
     {
       headerName: 'Payee',
       field: 'payee',
-      flex: 1,
+      width: 140,
     },
     {
       headerName: 'On Behalf Of',
       field: 'onBehalfOf',
-      flex: 1,
+      width: 140,
+    },
+    {
+      headerName: 'Narration',
+      field: 'narration',
+      width: 180,
     },
     {
       headerName: 'Source',
@@ -193,21 +208,11 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
         );
       },
     },
-    {
-      headerName: 'Payment Method',
-      field: 'paymentMethodId',
-      flex: 1,
-      valueFormatter: (params) => {
-        const paymentMethod = paymentMethods.find(
-          (method) => method.id === params.value
-        );
-        return paymentMethod ? paymentMethod.name : '';
-      },
-    },
+
     {
       headerName: 'Bank Account',
       field: 'bankAccountId',
-      flex: 1,
+      width: 140,
       valueFormatter: (params) => {
         const bankAccount = bankAccounts.find(
           (account) => account.id === params.value
@@ -218,7 +223,7 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
     {
       headerName: 'Posting Date',
       field: 'postingDate',
-      flex: 1,
+      width: 140,
       valueFormatter: (params) => {
         return parseDate(params.value);
       },
@@ -274,6 +279,7 @@ function AddSchedules({ clickedItem, openDialog, setOpenDialog }) {
               noRowsOverlayComponent={BaseEmptyComponent}
               rowSelection="multiple"
               onSelectionChanged={handleRowSelection}
+              className="custom-grid ag-theme-quartz"
             />
           </div>
         </DialogContent>

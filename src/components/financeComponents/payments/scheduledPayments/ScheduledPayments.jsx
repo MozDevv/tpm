@@ -87,7 +87,7 @@ const ScheduledPayments = ({ status }) => {
       headerName: 'Schedule Date',
       field: 'scheduleDate',
       type: 'date',
-      cellRenderer: (params) => parseDate(params.value),
+      valueFormatter: (params) => parseDate(params.value),
     },
     {
       headerName: 'Total Amount',
@@ -96,8 +96,9 @@ const ScheduledPayments = ({ status }) => {
       cellStyle: ({ data }) => ({
         fontWeight: data.accountTypeName !== 'POSTING' ? 'bold' : 'normal',
         textAlign: 'right',
+        color: '#006990',
       }),
-      cellRenderer: (params) => {
+      valueFormatter: (params) => {
         return formatNumber(params.value);
       },
     },
@@ -349,6 +350,25 @@ const ScheduledPayments = ({ status }) => {
     }),
   };
 
+  const handleDeleteSchedule = async () => {
+    const payload = {
+      paymentSchedules: [
+        {
+          paymentScheduleId: clickedItem.id,
+        },
+      ],
+    };
+
+    try {
+      const res = await apiService.post(
+        financeEndpoints.deletePaymentSchedule,
+        payload
+      );
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
+    }
+  };
+
   return (
     <div className="">
       <AddSchedules
@@ -391,9 +411,11 @@ const ScheduledPayments = ({ status }) => {
         openAction={openAction}
         useRequestBody={true}
         dialogType={dialogType}
+        customDeleteFunction={handleDeleteSchedule}
       >
         {clickedItem ? (
           <ScheduledPaymentsCard
+            openDialog={openDialog}
             baseCardHandlers={scheduleHandlers}
             selectedLines={selectedLines}
             setSelectedLines={setSelectedLines}
