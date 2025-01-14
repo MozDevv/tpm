@@ -1,5 +1,5 @@
-import { useAlert } from "@/context/AlertContext";
-import React, { useEffect, useState } from "react";
+import { useAlert } from '@/context/AlertContext';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,18 +18,18 @@ import {
   TextField,
   FormControl,
   IconButton,
-} from "@mui/material";
-import dayjs from "dayjs";
-import { message } from "antd";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
-import axios from "axios";
+} from '@mui/material';
+import dayjs from 'dayjs';
+import { message } from 'antd';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
+import axios from 'axios';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import { useMda } from "@/context/MdaContext";
-import endpoints from "@/components/services/setupsApi";
-import EditableTable from "@/components/baseComponents/EditableTable";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+} from '@/components/services/preclaimsApi';
+import { useMda } from '@/context/MdaContext';
+import endpoints from '@/components/services/setupsApi';
+import EditableTable from '@/components/baseComponents/EditableTable';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 function MixedServicePost({
   id,
@@ -42,11 +42,11 @@ function MixedServicePost({
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    date: "",
-    post: "",
+    date: '',
+    post: '',
     was_pensionable: false,
-    nature_of_salary_scale: "",
-    nature_of_service: "",
+    nature_of_salary_scale: '',
+    nature_of_service: '',
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -79,10 +79,10 @@ function MixedServicePost({
     }
   }, [id]);
 
-  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState("");
+  const [dateOfFirstAppointment, setDateOfFirstAppointment] = useState('');
 
-  const [mdaId, setMdaId] = useState("");
-  const [cap, setCap] = useState("");
+  const [mdaId, setMdaId] = useState('');
+  const [cap, setCap] = useState('');
 
   const [pensionAward, setPensionAward] = useState(null);
 
@@ -96,20 +96,20 @@ function MixedServicePost({
       setDateOfConfirmation(
         new Date(res.data.data[0].date_of_confirmation)
           .toISOString()
-          .split("T")[0]
+          .split('T')[0]
       );
 
       setDateOfFirstAppointment(
         new Date(res.data.data[0].date_of_first_appointment)
           .toISOString()
-          .split("T")[0]
+          .split('T')[0]
       );
 
       setCap(res.data.data[0].mda.pensionCap.name);
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
       console.log(
-        "first appointment",
+        'first appointment',
         res.data.data[0].date_of_first_appointment
       );
     } catch (error) {
@@ -126,12 +126,12 @@ function MixedServicePost({
   const fetchDesignations = async () => {
     try {
       const res = await apiService.get(endpoints.getDesignations, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setDesignations(res.data.data);
       return res.data.data;
     } catch (error) {
-      console.error("Error fetching Designations:", error);
+      console.error('Error fetching Designations:', error);
     }
   };
 
@@ -140,39 +140,41 @@ function MixedServicePost({
   }, []);
   const natureOfServiceOptions = {
     CAP189: [
-      { id: "Probation", name: "Probation" },
-      { id: "Permanent", name: "Permanent" },
-      { id: "Temporary", name: "Temporary" },
-      { id: "Contract", name: "Contract" },
+      { id: 'Probation', name: 'Probation' },
+      { id: 'Permanent', name: 'Permanent' },
+      { id: 'Temporary', name: 'Temporary' },
+      { id: 'Contract', name: 'Contract' },
     ],
     CAP199: [
-      { id: "ReckonableService", name: "Reckonable Service" },
-      { id: "NonReckonableService", name: "Non-Reckonable Service" },
+      { id: 'ReckonableService', name: 'Reckonable Service' },
+      { id: 'NonReckonableService', name: 'Non-Reckonable Service' },
     ],
     CAP196: [
-      { id: "OneTerm", name: "1 Term" },
-      { id: "TwoTerms", name: "2 Term" },
-      { id: "ThreeTerms", name: "3 Term" },
-      { id: "FourTerms", name: "4 Term" },
-      { id: "FiveTerms", name: "5 Term" },
+      { id: 'OneTerm', name: '1 Term' },
+      { id: 'TwoTerms', name: '2 Term' },
+      { id: 'ThreeTerms', name: '3 Term' },
+      { id: 'FourTerms', name: '4 Term' },
+      { id: 'FiveTerms', name: '5 Term' },
     ],
-    "DSO/RK": [
-      { id: "OneTerm", name: "1 Term" },
-      { id: "TwoTerms", name: "2 Term" },
-      { id: "ThreeTerms", name: "3 Term" },
-      { id: "FourTerms", name: "4 Term" },
-      { id: "FiveTerms", name: "5 Term" },
+    'DSO/RK': [
+      { id: 'OneTerm', name: '1 Term' },
+      { id: 'TwoTerms', name: '2 Term' },
+      { id: 'ThreeTerms', name: '3 Term' },
+      { id: 'FourTerms', name: '4 Term' },
+      { id: 'FiveTerms', name: '5 Term' },
     ],
   };
 
   const fields = [
     //{label: "Date Of First Appointment", value: "date_of_first_appointment", type: "date"},
-    { label: "Start Date", value: "date", type: "date" },
-    { label: "End Date", value: "enddate", type: "date" },
+    { label: 'Start Date', value: 'date', type: 'date' },
+    ...(mixedService
+      ? [{ label: 'End Date', value: 'enddate', type: 'date' }]
+      : []),
     {
-      label: "Post",
-      value: "post",
-      type: "select",
+      label: 'Post',
+      value: 'post',
+      type: 'select',
       options: designations
         .filter((designation) => designation?.mda?.id === mdaId)
         .map((designation) => ({
@@ -181,42 +183,42 @@ function MixedServicePost({
         })),
     },
     {
-      label: "Whether Pensionable(Yes/No)",
-      value: "was_pensionable",
-      type: "select",
+      label: 'Whether Pensionable(Yes/No)',
+      value: 'was_pensionable',
+      type: 'select',
       options: [
-        { id: true, name: "Yes" },
-        { id: false, name: "No" },
+        { id: true, name: 'Yes' },
+        { id: false, name: 'No' },
       ],
     },
     {
-      label: "Nature of Salary Scale",
-      value: "nature_of_salary_scale",
-      type: "text",
+      label: 'Nature of Salary Scale',
+      value: 'nature_of_salary_scale',
+      type: 'text',
     },
 
     {
-      label: "Nature of Service",
-      value: "nature_of_service",
-      type: "select",
+      label: 'Nature of Service',
+      value: 'nature_of_service',
+      type: 'select',
       options: natureOfServiceOptions[cap] || [],
     },
     ...(mixedService
       ? [
           {
-            label: "Salary Per Annum",
-            value: "salaryP_a",
-            type: "number",
+            label: 'Salary Per Annum',
+            value: 'salaryP_a',
+            type: 'number',
           },
           {
-            label: "Pensionable Allowance Nature",
-            value: "pensionableAllowanceNature",
-            type: "text",
+            label: 'Pensionable Allowance Nature',
+            value: 'pensionableAllowanceNature',
+            type: 'text',
           },
           {
-            label: "Pensionable Allowance Rate P/A",
-            value: "pensionableAllowanceRateP_a",
-            type: "number",
+            label: 'Pensionable Allowance Rate P/A',
+            value: 'pensionableAllowanceRateP_a',
+            type: 'number',
           },
         ]
       : []),
@@ -226,13 +228,13 @@ function MixedServicePost({
     const { name, value, type } = e.target;
     const updatedFormData = {
       ...formData,
-      [name]: type === "radio" ? JSON.parse(value) : value,
+      [name]: type === 'radio' ? JSON.parse(value) : value,
     };
 
     // Automatically set related fields based on 'whether pensionable'
-    if (name === "was_pensionable") {
-      updatedFormData.nature_of_salary_scale = value === true ? "P" : "";
-      updatedFormData.nature_of_service = value === true ? "Permanent" : "";
+    if (name === 'was_pensionable') {
+      updatedFormData.nature_of_salary_scale = value === true ? 'P' : '';
+      updatedFormData.nature_of_service = value === true ? 'Permanent' : '';
     }
 
     setFormData(updatedFormData);
@@ -241,9 +243,9 @@ function MixedServicePost({
   const handleSubmit = async (data) => {
     const formattedFormData = { ...data, prospective_pensioner_id: id };
     Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes("date")) {
+      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          "YYYY-MM-DDTHH:mm:ss[Z]"
+          'YYYY-MM-DDTHH:mm:ss[Z]'
         );
       }
     });
@@ -268,9 +270,9 @@ function MixedServicePost({
         setAlert({
           open: true,
           message: `Post and Nature of Service ${
-            isEditMode ? "updated" : "added"
+            isEditMode ? 'updated' : 'added'
           } successfully`,
-          severity: "success",
+          severity: 'success',
         });
         setOpen(false);
       }
@@ -282,7 +284,7 @@ function MixedServicePost({
           });
         });
         setValidationErrors(errors);
-        throw new Error("Validation Error");
+        throw new Error('Validation Error');
       }
     } catch (error) {
       console.log(error);
@@ -293,7 +295,7 @@ function MixedServicePost({
   const handleEdit = (item) => {
     const formattedItem = {
       ...item,
-      date: dayjs(item.date).format("YYYY-MM-DD"),
+      date: dayjs(item.date).format('YYYY-MM-DD'),
     };
 
     setFormData(formattedItem);
@@ -308,8 +310,8 @@ function MixedServicePost({
       fetchPostandNature();
       setAlert({
         open: true,
-        message: "Post and Nature deleted successfully",
-        severity: "success",
+        message: 'Post and Nature deleted successfully',
+        severity: 'success',
       });
       setOpenDeleteDialog(false);
     } catch (error) {
@@ -324,7 +326,7 @@ function MixedServicePost({
       ? postAndNatureData.map((item) => ({
           ...item,
           id: item.id,
-          date: dayjs(item.date).format("YYYY-MM-DD"),
+          date: dayjs(item.date).format('YYYY-MM-DD'),
           post: item.post,
           was_pensionable: item.was_pensionable,
           nature_of_salary_scale: item.nature_of_salary_scale,
@@ -333,17 +335,17 @@ function MixedServicePost({
       : [
           {
             date: dateOfFirstAppointment,
-            post: "",
+            post: '',
             was_pensionable: false,
-            nature_of_salary_scale: "C",
-            nature_of_service: "",
+            nature_of_salary_scale: 'C',
+            nature_of_service: '',
           },
           {
             date: dateOfConfirmation,
-            post: "",
+            post: '',
             was_pensionable: true,
-            nature_of_salary_scale: "C",
-            nature_of_service: "",
+            nature_of_salary_scale: 'C',
+            nature_of_service: '',
           },
         ];
 

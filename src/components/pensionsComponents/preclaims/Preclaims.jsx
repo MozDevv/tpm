@@ -720,7 +720,7 @@ const Preclaims = ({ status }) => {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
     // create: () => router.push("/pensions/preclaims/listing/new"),
-    ...(status === 0 && {
+    ...((status === 0 || !status) && {
       create: () => {
         setOpenBaseCard(true);
         setClickedItem(null);
@@ -730,7 +730,7 @@ const Preclaims = ({ status }) => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
-    ...(status !== 0 && {
+    ...((status === 1 || status === 5) && {
       approvalRequest: () => console.log('Approval Request clicked'),
       sendApprovalRequest: () => setOpenApprove(1),
       cancelApprovalRequest: () => setOpenApprove(2),
@@ -744,6 +744,12 @@ const Preclaims = ({ status }) => {
   };
 
   const baseCardHandlers = {
+    ...((status === 0 || !status) && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
+    }),
     edit: () => console.log('Edit clicked'),
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
@@ -752,7 +758,7 @@ const Preclaims = ({ status }) => {
     },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
-    ...(status !== 0
+    ...(status === 1 || status === 5
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),

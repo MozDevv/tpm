@@ -48,3 +48,4 @@ next.config.mjs
 .env
 
 /src/utils/constants.js
+certificates

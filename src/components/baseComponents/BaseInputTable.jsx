@@ -133,25 +133,46 @@ const BaseInputTable = ({
             const sortedData = sortData(res.data.data);
 
             let lastEndDate = null;
+            let lastStartDate = null;
             let matchingStartField = null;
+
             if (sortedData.length > 0) {
               const lastRow = sortedData[sortedData.length - 1];
 
               for (const { start, end } of datePairs) {
-                if (lastRow[end]) {
-                  lastEndDate = lastRow[end];
+                const endDate = lastRow[end];
+                const startDate = lastRow[start];
+
+                if (
+                  endDate &&
+                  dayjs(endDate).isValid() &&
+                  !endDate.includes('1901') &&
+                  !endDate.includes('0001')
+                ) {
+                  lastEndDate = endDate;
                   matchingStartField = start;
                   break;
+                }
+
+                if (!endDate && startDate && dayjs(startDate).isValid()) {
+                  lastStartDate = startDate;
+                  matchingStartField = start;
                 }
               }
             }
 
-            if (lastEndDate && matchingStartField) {
-              const formattedEndDate = dayjs(lastEndDate)
-                .add(1, 'day')
-                .format('YYYY-MM-DDTHH:mm:ss[Z]');
-
-              defaultRows[0][matchingStartField] = formattedEndDate;
+            if (matchingStartField) {
+              if (lastEndDate) {
+                const formattedEndDate = dayjs(lastEndDate)
+                  .add(1, 'day')
+                  .format('YYYY-MM-DDTHH:mm:ss[Z]');
+                defaultRows[0][matchingStartField] = formattedEndDate;
+              } else if (lastStartDate) {
+                const formattedStartDate = dayjs(lastStartDate)
+                  .add(1, 'day')
+                  .format('YYYY-MM-DDTHH:mm:ss[Z]');
+                defaultRows[0][matchingStartField] = formattedStartDate;
+              }
             }
 
             // Determine if we should fetch and append children
