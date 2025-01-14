@@ -748,9 +748,9 @@ const BaseInputTable = ({
           if (!startDate.isSame(dateOfConfirmation2, 'day')) {
             console.error('Start date mismatch');
             message.error(
-              `Start Date must match the Retiree's Date of First Appointment (<strong>${dateOfConfirmation2.format(
+              `Start Date must match the Retiree's Date of First Appointment ${dateOfConfirmation2.format(
                 'DD/MM/YYYY'
-              )}</strong>).`
+              )}.`
             );
             setCellError(
               data.id,
