@@ -105,12 +105,6 @@ function PostAndNature({ id, clickedItem }) {
       setCap(res.data.data[0].mda.pensionCap.name);
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
-      // console.log(
-      //   "first appointment",
-      //   res.data.data[0].date_of_first_appointment,
-      //   "date of confirmation",
-      //   res.data.data[0].date_of_confirmation
-      // );
     } catch (error) {
       console.log(error);
     }
@@ -334,6 +328,7 @@ function PostAndNature({ id, clickedItem }) {
   return (
     <div className="pb-5">
       <BaseInputTable
+        dateOfFirstAppointment={dateOfFirstAppointment}
         title="Post and Nature of Service"
         fields={fields}
         id={id}

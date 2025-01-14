@@ -78,108 +78,8 @@ function PeriodsOfAbsence({ id, status, clickedItem }) {
     },
   ];
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (data) => {
-    const formattedFormData = { ...data, prospective_pensioner_id: id };
-    Object.keys(formData).forEach((key) => {
-      if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
-        formattedFormData[key] = dayjs(formattedFormData[key]).format(
-          'YYYY-MM-DDTHH:mm:ss[Z]'
-        );
-      }
-    });
-
-    try {
-      if (data.id) {
-        const res = await apiService.post(
-          preClaimsEndpoints.UpdatePeriodsOfAbsence,
-          {
-            ...formattedFormData,
-            id: editId,
-          }
-        );
-
-        if (res.status === 200 && res.data.succeeded) {
-          fetchPeriodsOfAbsence();
-          setOpen(false);
-          message.success('Period of Absence updated successfully');
-        } else if (res.data.validationErrors.length > 0) {
-          res.data.validationErrors.forEach((error) => {
-            error.errors.forEach((err) => {
-              message.error(`${error.field}: ${err}`);
-            });
-          });
-        } else if (
-          res.status === 200 &&
-          !res.data.succeeded &&
-          res.data.message.length > 0
-        ) {
-          message.error(res.data.message[0]);
-          throw new Error(res.data.message[0]);
-        }
-      } else {
-        const res = await apiService.post(
-          preClaimsEndpoints.createPeriodsOfAbsence,
-          formattedFormData
-        );
-
-        if (res.status === 200 && res.data.succeeded) {
-          fetchPeriodsOfAbsence();
-          setOpen(false);
-
-          message.success('Period of Absence added successfully');
-        }
-        if (res.data.validationErrors.length > 0) {
-          res.data.validationErrors.forEach((error) => {
-            error.errors.forEach((err) => {
-              message.error(`${error.field}: ${err}`);
-            });
-          });
-          throw new Error('An error occurred while submitting the data.');
-        }
-      }
-    } catch (error) {
-      throw error;
-      console.log(error);
-    }
-  };
-
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState();
-
-  const handleEdit = (item) => {
-    const formattedItem = {
-      ...item,
-      start_date: dayjs(item.start_date).format('YYYY-MM-DD'),
-      end_date: dayjs(item.end_date).format('YYYY-MM-DD'),
-    };
-
-    setFormData(formattedItem);
-    setOpen(true);
-    setEditId(item.id);
-    setIsEditMode(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await apiService.post(
-        preClaimsEndpoints.deletePeriodsOfAbsence(recordId)
-      );
-      fetchPeriodsOfAbsence();
-      setAlert({
-        open: true,
-        message: 'Periods of abscence deleted successfully',
-        severity: 'success',
-      });
-      setOpenDeleteDialog(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
   const [recordId, setRecordId] = useState();
@@ -199,13 +99,15 @@ function PeriodsOfAbsence({ id, status, clickedItem }) {
             clickedItem?.notification_status !== 3
           }
           idLabel="prospective_pensioner_id"
+          deleteApiService={true}
+          apiService={apiService}
           getApiService={apiService.get}
           postApiService={apiService.post}
           putApiService={apiService.put}
           getEndpoint={preClaimsEndpoints.getPeriodsOfAbsence(id)}
           postEndpoint={preClaimsEndpoints.createPeriodsOfAbsence}
           putEndpoint={preClaimsEndpoints.UpdatePeriodsOfAbsence}
-          deleteEndpoint={preClaimsEndpoints.deletePeriodsOfAbsence(id)}
+          deleteEndpoint={preClaimsEndpoints.deletePeriodsOfAbsence}
           passProspectivePensionerId={true}
         />
       </div>

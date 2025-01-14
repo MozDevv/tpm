@@ -61,6 +61,7 @@ const BaseInputTable = ({
   setCurrentRow,
   deleteApiService,
   setSeconded,
+  dateOfFirstAppointment,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -733,9 +734,36 @@ const BaseInputTable = ({
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue } = params;
         const field = colDef.field;
+        const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
-        console.log('Cell value changed:', field, newValue);
-        console.log('all entered data', data);
+        // Validate the first row's date (rowIndex === 0) with dateOfFirstAppointment passed as props
+        if (
+          dateOfFirstAppointment &&
+          rowIndex === 0 &&
+          field === 'date' &&
+          data.date
+        ) {
+          const dateOfConfirmation2 = dayjs(dateOfFirstAppointment);
+          const startDate = dayjs(data.date);
+          if (!startDate.isSame(dateOfConfirmation2, 'day')) {
+            console.error('Start date mismatch');
+            message.error(
+              `Start Date must match the Retiree's Date of First Appointment (<strong>${dateOfConfirmation2.format(
+                'DD/MM/YYYY'
+              )}</strong>).`
+            );
+            setCellError(
+              data.id,
+              'date',
+              `Start Date must match the Retiree's Date of First Appointment <strong>${dateOfConfirmation2.format(
+                'DD/MM/YYYY'
+              )}</strong>.`
+            );
+            return;
+          } else {
+            handleClearError(data, 'date');
+          }
+        }
 
         if (setSeconded) {
           if (data.seconded) {
