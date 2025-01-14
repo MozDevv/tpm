@@ -107,7 +107,7 @@ function ReturnToPreclaims({
     const targetIndex = moveStatus === 1 ? currentIndex - 1 : currentIndex + 1;
 
     if (targetIndex < 0 || targetIndex >= stageOrder.length) {
-      return 'No valid stage to move to';
+      return 'Return Claim to MDA for clarification';
     }
 
     const targetStageName = notificationStatusMap[stageOrder[targetIndex]].name;
