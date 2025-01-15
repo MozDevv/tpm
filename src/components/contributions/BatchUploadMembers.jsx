@@ -24,7 +24,7 @@ import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
 import { generateErrorTooltip } from '../baseComponents/generateErrorTooltip';
 import { Close, HighlightOff } from '@mui/icons-material';
-import { Alert } from 'antd';
+import { Alert, message } from 'antd';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -242,8 +242,14 @@ const BatchUploadMembers = () => {
       );
 
       if (res.data.succeeded) {
-        setPreviewDetails(res.data.data);
-        console.log('Preview data:', res.data.data);
+        if (res.data.data.some((detail) => detail.errorMessage)) {
+          message.error('Some records have errors. Please upload a valid file');
+          setPreviewDetails(res.data.data);
+          console.log('Preview data:', res.data.data);
+        } else {
+          message.success('Preview successful');
+          setPreviewDetails(res.data.data);
+        }
       }
     } catch (error) {
       console.log(error);
