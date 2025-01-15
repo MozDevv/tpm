@@ -170,6 +170,9 @@ export const validateField = (name, value, formData) => {
     name !== 'date_from_which_pension_will_commence' &&
     name !== 'retirement_date' &&
     name !== 'last_pay_date' &&
+    name !== 'date_of_death' &&
+    name !== 'date_of_injury_for_cap199' &&
+    name !== 'date_of_injury_for_cap189' &&
     value
   ) {
     const inputDate = dayjs(value);
@@ -228,7 +231,11 @@ export const validateField = (name, value, formData) => {
     } else if (value.startsWith('+254') && value.length !== 13) {
       error = 'Kenyan phone number must be exactly 13 digits';
     }
-  } else if (name === 'date_of_death' && value) {
+  } else if (
+    name === 'date_of_death' &&
+    value &&
+    formData.mortality_status === 1
+  ) {
     const deathDate = dayjs(value);
     const dobDate = formData.dob ? dayjs(formData.dob) : null;
 
@@ -244,14 +251,18 @@ export const validateField = (name, value, formData) => {
       error = 'National ID is not valid';
     }
   } else if (
-    name === 'passport_number' &&
+    name === 'passport_no' &&
     value &&
     formData.identifier_type === 1
   ) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
       error = 'Passport number must be valid';
     }
-  } else if (name === 'death_certificate_number' && value) {
+  } else if (
+    name === 'death_certificate_number' &&
+    value &&
+    formData.mortality_status === 1
+  ) {
     if (!/^[\d/]+$/.test(value)) {
       error = 'Death certificate must be valid.';
     }
