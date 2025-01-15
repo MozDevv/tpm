@@ -104,7 +104,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.succeeded) {
         message.success('File uploaded successfully');
         setFileList((prevFileList) => [
           ...prevFileList.filter((f) => f.uid !== record.id),
@@ -117,6 +117,8 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
           },
         ]);
         getAwardDocuments();
+      } else {
+        message.error('File upload failed. Please try again.');
       }
     } catch (error) {
       console.error('Upload error:', error);
