@@ -511,10 +511,10 @@ function ChartsOfAccounts() {
   const rowHeight = 40;
 
   useEffect(() => {
-    const totalHeight = Math.min(
-      rowData.length * rowHeight + 50,
-      window.innerHeight - 100
-    );
+    const totalHeight =
+      Array.isArray(rowData) && rowData && rowData.length > 0
+        ? Math.min(rowData.length * rowHeight + 50, window.innerHeight - 100)
+        : '400px';
     setGridHeight(totalHeight);
   }, [rowData]);
 
