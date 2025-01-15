@@ -386,29 +386,29 @@ const BaseTable = ({
               columnDefs={columnDefs.map((col) => ({
                 ...col,
                 headerTooltip: col.headerName,
-                cellRenderer:
-                  col.cellRenderer || col.valueFormatter
-                    ? undefined
-                    : (params) => {
-                        if (typeof params.data[col.field] === 'boolean') {
-                          return (
-                            <div className="ml-11">
-                              <Checkbox
-                                checked={params.data[col.field]}
-                                className="custom-checkbox"
-                                onChange={(e) => {
-                                  // Prevent the checkbox state from changing
-                                  params.node.setDataValue(
-                                    params.colDef.field,
-                                    params.value
-                                  );
-                                }}
-                              />
-                            </div>
-                          );
-                        }
-                        return params.value; // Default renderer for non-boolean columns
-                      },
+                // cellRenderer:
+                //   col.cellRenderer || col.valueFormatter
+                //     ? undefined
+                //     : (params) => {
+                //         if (typeof params.data[col.field] === 'boolean') {
+                //           return (
+                //             <div className="ml-11">
+                //               <Checkbox
+                //                 checked={params.data[col.field]}
+                //                 className="custom-checkbox"
+                //                 onChange={(e) => {
+                //                   // Prevent the checkbox state from changing
+                //                   params.node.setDataValue(
+                //                     params.colDef.field,
+                //                     params.value
+                //                   );
+                //                 }}
+                //               />
+                //             </div>
+                //           );
+                //         }
+                //         return params.value; // Default renderer for non-boolean columns
+                //       },
               }))}
               rowData={filteredData}
               pagination={false}

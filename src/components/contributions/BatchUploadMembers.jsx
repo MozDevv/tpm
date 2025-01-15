@@ -23,7 +23,8 @@ import { saveAs } from 'file-saver';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
 import { generateErrorTooltip } from '../baseComponents/generateErrorTooltip';
-import { Close } from '@mui/icons-material';
+import { Close, HighlightOff } from '@mui/icons-material';
+import { Alert } from 'antd';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -268,7 +269,7 @@ const BatchUploadMembers = () => {
       },
       pinned: 'left',
 
-      cellStyle: (params) => {
+      cellRenderer: (params) => {
         // Ensure errorMessage exists before accessing it
         const errorMessage = params.data.errorMessage || {};
 
@@ -316,29 +317,19 @@ const BatchUploadMembers = () => {
                   position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'space-between',
                 }}
               >
-                <IconButton
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    padding: '4px',
-                  }}
-                  size="small"
-                >
-                  <Close fontSize="small" sx={{ color: '#d9534f' }} />
-                </IconButton>
-                {params.value}
+                <HighlightOff fontSize="large" sx={{ color: '#d9534f' }} />
+
+                {(params.node.rowIndex + 1).toString()}
               </div>
             </Tooltip>
           );
         }
 
-        return params.value; // Return value when no error
+        return (params.node.rowIndex + 1).toString(); // Return value when no error
       },
     },
     {
@@ -917,20 +908,31 @@ const BatchUploadMembers = () => {
           <BaseTabs tabPanes={tabPanes} />
         )}
         {!clickedItem && previewDetails && previewDetails.length > 0 && (
-          <div className="px-6 bg-gray-100 min-h-[600px] max-h-[600px] h-[200px]">
-            <AgGridReact
-              columnDefs={previewColdefs}
-              rowData={previewDetails}
-              pagination={false}
-              domLayout="normal"
-              alwaysShowHorizontalScroll={true}
-              onGridReady={(params) => {
-                // onGridReady(params);
-              }}
-              animateRows={true}
-              rowSelection="multiple"
-              className="custom-grid ag-theme-quartz"
-            />
+          <div className="">
+            {previewDetails.some((detail) => detail.errorMessage) && (
+              <div className="pb-3">
+                <Alert
+                  message="Some records have errors. Please upload a valid file"
+                  type="error"
+                  showIcon
+                />
+              </div>
+            )}
+            <div className="px-6 bg-gray-100 min-h-[600px] max-h-[600px] h-[200px]">
+              <AgGridReact
+                columnDefs={previewColdefs}
+                rowData={previewDetails}
+                pagination={false}
+                domLayout="normal"
+                alwaysShowHorizontalScroll={true}
+                onGridReady={(params) => {
+                  // onGridReady(params);
+                }}
+                animateRows={true}
+                rowSelection="multiple"
+                className="custom-grid ag-theme-quartz"
+              />
+            </div>
           </div>
         )}
       </BaseCard>
