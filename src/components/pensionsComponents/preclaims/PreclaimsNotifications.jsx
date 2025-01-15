@@ -1,5 +1,5 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Chip,
@@ -7,15 +7,15 @@ import {
   MenuItem,
   TextField,
   TextareaAutosize,
-} from "@mui/material";
+} from '@mui/material';
 import preClaimsEndpoints, {
   apiService,
-} from "@/components/services/preclaimsApi";
-import endpoints from "@/components/services/setupsApi";
-import { useAlert } from "@/context/AlertContext";
-import { useMda } from "@/context/MdaContext";
-import { List, message } from "antd";
-import { useAuth } from "@/context/AuthContext";
+} from '@/components/services/preclaimsApi';
+import endpoints from '@/components/services/setupsApi';
+import { useAlert } from '@/context/AlertContext';
+import { useMda } from '@/context/MdaContext';
+import { List, message } from 'antd';
+import { useAuth } from '@/context/AuthContext';
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -25,9 +25,9 @@ function PreclaimsNotifications({
 
   selectedRows,
 }) {
-  const [scheduleStartDate, setScheduleStartDate] = useState("");
-  const [periodEndDate, setPeriodEndDate] = useState("");
-  const [comments, setComments] = useState("");
+  const [scheduleStartDate, setScheduleStartDate] = useState('');
+  const [periodEndDate, setPeriodEndDate] = useState('');
+  const [comments, setComments] = useState('');
 
   const { mdaId } = useMda();
 
@@ -47,7 +47,7 @@ function PreclaimsNotifications({
       const res = await apiService.get(endpoints.mdas);
       setMdas(res.data.data);
     } catch (error) {
-      console.error("Error fetching MDAs:", error);
+      console.error('Error fetching MDAs:', error);
     }
   };
 
@@ -71,8 +71,8 @@ function PreclaimsNotifications({
       return date.toISOString();
     };
 
-    if (mdaId === "" || mdaId === null) {
-      message.error("Login as an MDA user to send notifications");
+    if (mdaId === '' || mdaId === null) {
+      message.error('Login as an MDA user to send notifications');
       return;
     }
 
@@ -93,8 +93,8 @@ function PreclaimsNotifications({
       if (res.data.succeeded === true) {
         await fetchAllPreclaims();
         setAlert({
-          message: "Notification sent successfully",
-          severity: "success",
+          message: 'Notification sent successfully',
+          severity: 'success',
           open: true,
         });
 
@@ -103,12 +103,12 @@ function PreclaimsNotifications({
         if (Array.isArray(res.data.messages) && res.data.messages.length > 0) {
           message.error(res.data.messages[0]);
         } else {
-          message.error("Failed to send notification");
+          message.error('Failed to send notification');
         }
       }
     } catch (error) {
       console.log(error.response);
-      console.log("data", data);
+      console.log('data', data);
     } finally {
       setOpenNotification(false);
     }
@@ -145,7 +145,7 @@ function PreclaimsNotifications({
       // console.log("allDocuments", allDocuments);
       setAwardDocuments(allDocuments);
     } catch (error) {
-      console.error("Error fetching award documents:", error);
+      console.error('Error fetching award documents:', error);
     } finally {
       // setLoading(false);
     }
@@ -170,8 +170,7 @@ function PreclaimsNotifications({
       fullWidth
       maxWidth="sm"
       sx={{
-        padding: "20px",
-        maxHeight: "90vh",
+        padding: '20px',
       }}
     >
       {/* {JSON.stringify(awardDocuments)} */}
@@ -193,26 +192,27 @@ function PreclaimsNotifications({
               size="small"
               bordered
               style={{
-                overflowY: "auto",
-                mx: "20px",
+                maxHeight: '250px',
+                overflowY: 'auto',
+                mx: '20px',
               }}
               dataSource={awardDocuments}
               renderItem={(doc) => (
                 <List.Item>
-                  <p className="font-montserrat flex gap-2">
-                    {doc.name}{" "}
+                  <p className="font-montserrat flex gap-2 cursor-pointer">
+                    {doc.name}{' '}
                     {doc.has_two_sides && doc.side && (
                       <Chip
                         label={doc.side}
                         size="small"
                         variant="contained"
                         sx={{
-                          maxHeight: "20px",
-                          fontSize: "9px",
-                          mb: "10px",
-                          borderWidth: "2px",
+                          maxHeight: '20px',
+                          fontSize: '9px',
+                          mb: '10px',
+                          borderWidth: '2px',
                         }}
-                        color={doc.side === "Front" ? "primary" : "secondary"}
+                        color={doc.side === 'Front' ? 'primary' : 'secondary'}
                       />
                     )}
                   </p>
