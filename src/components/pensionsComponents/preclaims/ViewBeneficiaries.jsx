@@ -9,6 +9,7 @@ import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
 import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
+import { PORTAL_BASE_URL } from '@/utils/constants';
 
 function ViewBeneficiaries({
   viewBeneficiaries,
@@ -23,7 +24,7 @@ function ViewBeneficiaries({
   const getBeneficiaries = async () => {
     try {
       const res = await apiService.get(
-        `http://192.168.3.68:8080/portal/getBeneficiaries/${clickedItem.id}`
+        `${PORTAL_BASE_URL}/portal/getBeneficiaries/${clickedItem.id}`
       );
 
       const beneficiariesData = res.data;

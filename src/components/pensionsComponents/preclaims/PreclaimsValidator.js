@@ -227,9 +227,9 @@ export const validateField = (name, value, formData) => {
       "Only alphabetic characters, spaces, apostrophes ('), and hyphens (-) are allowed";
   } else if (name === 'phone_number' && value) {
     if (value.length < 13 || value.length > 17) {
-      error = 'Phone number must be between 13 and 17 digits';
+      error = 'Enter a valid phone number';
     } else if (value.startsWith('+254') && value.length !== 13) {
-      error = 'Kenyan phone number must be exactly 13 digits';
+      error = 'Enter a valid Kenyan phone number';
     }
   } else if (
     name === 'date_of_death' &&

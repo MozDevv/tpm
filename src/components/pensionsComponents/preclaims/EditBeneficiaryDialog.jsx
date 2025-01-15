@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,17 +10,18 @@ import {
   Collapse,
   MenuItem,
   Autocomplete,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ArrowBack,
   Close,
   ExpandLess,
   KeyboardArrowRight,
   Launch,
-} from "@mui/icons-material";
-import { message, Modal } from "antd";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import axios from "axios";
+} from '@mui/icons-material';
+import { message, Modal } from 'antd';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import axios from 'axios';
+import { PORTAL_BASE_URL } from '@/utils/constants';
 
 function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
   const [formData, setFormData] = React.useState(beneficiary || {});
@@ -32,7 +33,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
 
   React.useEffect(() => {
     setFormData(beneficiary || {});
-    console.log("beneficiary", beneficiary);
+    console.log('beneficiary', beneficiary);
   }, [beneficiary]);
 
   const handleChange = (e) => {
@@ -45,89 +46,89 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
 
   const handleSave = () => {
     // Add save logic here
-    console.log("Saving data:", formData);
+    console.log('Saving data:', formData);
     onClose();
   };
 
   // Define fields based on provided column structure
   const fields = {
     personalDetails: [
-      { label: "First Name", name: "first_name", type: "text" },
-      { label: "Surname", name: "surname", type: "text" },
-      { label: "Identification Number", name: "identifier", type: "text" },
-      { label: "National ID", name: "national_id", type: "text" },
-      { label: "Email Address", name: "email_address", type: "email" },
-      { label: "Phone", name: "mobile_number", type: "text" },
-      { label: "Address", name: "address", type: "text" },
-      { label: "City", name: "city", type: "text" },
-      { label: "Date of Birth", name: "dob", type: "date" },
-      { label: "Percentage", name: "percentage", type: "number" },
-      { label: "Date of Death", name: "date_of_death", type: "date" },
+      { label: 'First Name', name: 'first_name', type: 'text' },
+      { label: 'Surname', name: 'surname', type: 'text' },
+      { label: 'Identification Number', name: 'identifier', type: 'text' },
+      { label: 'National ID', name: 'national_id', type: 'text' },
+      { label: 'Email Address', name: 'email_address', type: 'email' },
+      { label: 'Phone', name: 'mobile_number', type: 'text' },
+      { label: 'Address', name: 'address', type: 'text' },
+      { label: 'City', name: 'city', type: 'text' },
+      { label: 'Date of Birth', name: 'dob', type: 'date' },
+      { label: 'Percentage', name: 'percentage', type: 'number' },
+      { label: 'Date of Death', name: 'date_of_death', type: 'date' },
       {
-        label: "Guardian Surname",
-        name: ["guardian", "surname"],
-        type: "text",
+        label: 'Guardian Surname',
+        name: ['guardian', 'surname'],
+        type: 'text',
       },
       {
-        label: "Guardian First Name",
-        name: ["guardian", "first_name"],
-        type: "text",
+        label: 'Guardian First Name',
+        name: ['guardian', 'first_name'],
+        type: 'text',
       },
       {
-        label: "Guardian Identifier",
-        name: ["guardian", "identifier"],
-        type: "text",
+        label: 'Guardian Identifier',
+        name: ['guardian', 'identifier'],
+        type: 'text',
       },
       {
-        label: "Guardian Mobile Number",
-        name: ["guardian", "mobile_number"],
-        type: "text",
+        label: 'Guardian Mobile Number',
+        name: ['guardian', 'mobile_number'],
+        type: 'text',
       },
       {
-        label: "Guardian Address",
-        name: ["guardian", "address"],
-        type: "text",
+        label: 'Guardian Address',
+        name: ['guardian', 'address'],
+        type: 'text',
       },
       {
-        label: "Guardian Email Address",
-        name: ["guardian", "email_address"],
-        type: "email",
+        label: 'Guardian Email Address',
+        name: ['guardian', 'email_address'],
+        type: 'email',
       },
-      { label: "Guardian City", name: ["guardian", "city"], type: "text" },
+      { label: 'Guardian City', name: ['guardian', 'city'], type: 'text' },
 
-      { label: "Timestamp", name: "timestamp", type: "text" },
+      { label: 'Timestamp', name: 'timestamp', type: 'text' },
 
       // { label: "Preview URL", name: "preview_url", type: "text" },
-      { label: "Share Percentage", name: "share_percentage", type: "number" },
+      { label: 'Share Percentage', name: 'share_percentage', type: 'number' },
       {
-        label: "Identification Type",
-        name: "identification_type",
-        type: "text",
+        label: 'Identification Type',
+        name: 'identification_type',
+        type: 'text',
       },
-      { label: "Display Name", name: "display_name", type: "text" },
-      { label: "Other Name", name: "other_name", type: "text" },
-      { label: "Postal Address", name: "postal_address", type: "text" },
-      { label: "Postal Code", name: "postal_code", type: "text" },
+      { label: 'Display Name', name: 'display_name', type: 'text' },
+      { label: 'Other Name', name: 'other_name', type: 'text' },
+      { label: 'Postal Address', name: 'postal_address', type: 'text' },
+      { label: 'Postal Code', name: 'postal_code', type: 'text' },
 
-      { label: "Postal Code Name", name: "postal_code_name", type: "text" },
-      { label: "Gender", name: "gender", type: "text" },
-      { label: "Parent Name", name: "parent_name", type: "text" },
-      { label: "Relationship", name: "relationship", type: "text" },
-      { label: "KRA PIN", name: "kra_pin", type: "text" },
+      { label: 'Postal Code Name', name: 'postal_code_name', type: 'text' },
+      { label: 'Gender', name: 'gender', type: 'text' },
+      { label: 'Parent Name', name: 'parent_name', type: 'text' },
+      { label: 'Relationship', name: 'relationship', type: 'text' },
+      { label: 'KRA PIN', name: 'kra_pin', type: 'text' },
       // { label: "Is Guardian", name: "is_guardian", type: "text" },
 
       // { label: "Deceased", name: "deceased", type: "" },
       {
-        label: "Birth Certificate Number",
-        name: "birth_cert_no",
-        type: "text",
+        label: 'Birth Certificate Number',
+        name: 'birth_cert_no',
+        type: 'text',
       },
     ],
     paymentDetails: [
-      { label: "Bank", name: "bank", type: "text" },
-      { label: "Bank Branch", name: "bank_branch", type: "text" },
-      { label: "Account Name", name: "account_name", type: "text" },
-      { label: "Account Number", name: "account_number", type: "text" },
+      { label: 'Bank', name: 'bank', type: 'text' },
+      { label: 'Bank Branch', name: 'bank_branch', type: 'text' },
+      { label: 'Account Name', name: 'account_name', type: 'text' },
+      { label: 'Account Number', name: 'account_number', type: 'text' },
     ],
   };
 
@@ -140,7 +141,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
 
   const [previewVisible, setPreviewVisible] = React.useState(false);
   const [previewContent, setPreviewContent] = React.useState(null);
-  const [previewTitle, setPreviewTitle] = React.useState("");
+  const [previewTitle, setPreviewTitle] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
   const handlePreviewBirthCertificate = async () => {
@@ -149,23 +150,23 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://tntportalapi.agilebiz.co.ke/portal/birthCert/${id}/${formData.birth_cert_no}`,
+        `${PORTAL_BASE_URL}/portal/birthCert/${id}/${formData.birth_cert_no}`,
         {
-          responseType: "arraybuffer",
+          responseType: 'arraybuffer',
         }
       );
       const base64Data = res.data;
-      console.log("base64Data", base64Data);
+      console.log('base64Data', base64Data);
       if (base64Data) {
-        setPreviewContent(new Blob([res.data], { type: "application/pdf" }));
-        setPreviewTitle("Birth Certificate");
+        setPreviewContent(new Blob([res.data], { type: 'application/pdf' }));
+        setPreviewTitle('Birth Certificate');
         setPreviewVisible(true);
       } else {
-        message.error("No preview available for this document.");
+        message.error('No preview available for this document.');
       }
     } catch (error) {
-      console.error("Error fetching birth certificate:", error);
-      message.error("Failed to fetch birth certificate.");
+      console.error('Error fetching birth certificate:', error);
+      message.error('Failed to fetch birth certificate.');
     } finally {
       setLoading(false);
     }
@@ -178,25 +179,25 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         onClose={onClose}
         maxWidth="lg"
         fullWidth
-        sx={{ padding: "20px" }}
+        sx={{ padding: '20px' }}
       >
         <div className="p-8 ">
           <DialogTitle>
             <div className="flex  flex-row gap-1 items-center">
               <IconButton
                 sx={{
-                  border: "1px solid #006990",
-                  borderRadius: "50%",
-                  padding: "3px",
-                  marginRight: "10px",
-                  color: "#006990",
+                  border: '1px solid #006990',
+                  borderRadius: '50%',
+                  padding: '3px',
+                  marginRight: '10px',
+                  color: '#006990',
                 }}
                 onClick={onClose}
               >
-                <ArrowBack sx={{ color: "#006990" }} />
+                <ArrowBack sx={{ color: '#006990' }} />
               </IconButton>
               <p className="text-primary py-3 text-lg font-bold">
-                {isGuardian ? "Guardian" : "Beneficiary"} :{" "}
+                {isGuardian ? 'Guardian' : 'Beneficiary'} :{' '}
                 {beneficiary?.relationship}
               </p>
             </div>
@@ -206,19 +207,19 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
               <div key={sectionKey} className="p-2 ">
                 <div className="flex items-center gap-2">
                   <h6 className="font-semibold text-primary text-sm">
-                    {sectionKey.replace(/([A-Z])/g, " $1").toUpperCase()}
+                    {sectionKey.replace(/([A-Z])/g, ' $1').toUpperCase()}
                   </h6>
                   <IconButton
-                    sx={{ ml: "-5px", zIndex: 1 }}
+                    sx={{ ml: '-5px', zIndex: 1 }}
                     onClick={() => handleToggleSection(sectionKey)}
                   >
                     {!openSections[sectionKey] ? (
                       <KeyboardArrowRight
-                        sx={{ color: "primary.main", fontSize: "14px" }}
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
                       />
                     ) : (
                       <ExpandLess
-                        sx={{ color: "primary.main", fontSize: "14px" }}
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
                       />
                     )}
                   </IconButton>
@@ -247,7 +248,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                           <label className="text-xs font-semibold text-gray-600">
                             {field.label}
                           </label>
-                          {field.type === "select" ? (
+                          {field.type === 'select' ? (
                             <TextField
                               select
                               variant="outlined"
@@ -255,14 +256,14 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                               fullWidth
                               disabled={true}
                               name={field.name}
-                              value={fieldValue || ""}
+                              value={fieldValue || ''}
                               onChange={handleChange}
                               // Add logic for options if needed
                             >
                               <MenuItem value="">Select {field.label}</MenuItem>
                               {/* Map options here if needed */}
                             </TextField>
-                          ) : field.type === "autocomplete" ? (
+                          ) : field.type === 'autocomplete' ? (
                             <Autocomplete
                               options={field.children || []}
                               disabled={true}
@@ -271,7 +272,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                                 handleChange({
                                   target: {
                                     name: field.name,
-                                    value: newValue ? newValue.id : "",
+                                    value: newValue ? newValue.id : '',
                                   },
                                 });
                               }}
@@ -299,10 +300,10 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                               size="small"
                               value={
                                 (fieldValue === 2
-                                  ? "Female"
+                                  ? 'Female'
                                   : fieldValue === 1
-                                  ? "Male"
-                                  : fieldValue) || ""
+                                  ? 'Male'
+                                  : fieldValue) || ''
                               }
                               onChange={handleChange}
                               fullWidth
@@ -313,7 +314,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                     })}
 
                     {formData.birth_cert_no &&
-                      sectionKey === "personalDetails" && (
+                      sectionKey === 'personalDetails' && (
                         <Button
                           startIcon={<Launch />}
                           variant="outlined"
@@ -359,13 +360,13 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         onCancel={() => setPreviewVisible(false)}
         width={800}
         height={600}
-        bodyStyle={{ padding: 0, height: "75vh", top: 20, mt: 20 }}
+        bodyStyle={{ padding: 0, height: '75vh', top: 20, mt: 20 }}
         zIndex={2000}
       >
         {previewContent && (
           <iframe
             src={URL.createObjectURL(previewContent)}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: '100%', height: '100%' }}
           />
         )}
       </Modal>
