@@ -11,17 +11,19 @@ import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { parseDate } from '@/utils/dateFormatter';
 import BaseInputCard from '../baseComponents/BaseInputCard';
-import generateExcelTemplate from '@/utils/excelHelper';
+
 import endpoints from '../services/setupsApi';
 import { apiService as setupsApiService } from '../services/setupsApi';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { Button } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import BaseTabs from '../baseComponents/BaseTabs';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
+import { generateErrorTooltip } from '../baseComponents/generateErrorTooltip';
+import { Close } from '@mui/icons-material';
 
 const BatchUploadMembers = () => {
   const transformString = (str) => {
@@ -159,7 +161,7 @@ const BatchUploadMembers = () => {
       headerName: 'Batch No',
       headerClass: 'prefix-header',
       flex: 1,
-      filter: true,
+
       pinned: 'left',
     },
 
@@ -257,15 +259,110 @@ const BatchUploadMembers = () => {
   };
   const previewColdefs = [
     {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      width: 100,
+      valueFormatter: (params) => {
+        return (params.node.rowIndex + 1).toString(); // Convert to string explicitly
+      },
+      pinned: 'left',
+
+      cellStyle: (params) => {
+        // Ensure errorMessage exists before accessing it
+        const errorMessage = params.data.errorMessage || {};
+
+        const hasError = Object.keys(errorMessage).length > 0;
+
+        if (hasError) {
+          const fieldsWithErrors = Object.keys(errorMessage);
+          const errorTooltip = `
+              <div>
+                <strong style="display: block; margin-bottom: 8px; padding-left: 15px;">
+                  <span style="font-size: 1.5em;">⚠️</span> Validation Error
+                </strong>
+                <div style="color: #d9534f;">
+                  Error in the following fields: ${fieldsWithErrors.join(', ')}
+                </div>
+              </div>
+            `;
+
+          // If there’s an error, return the tooltip and the value in a styled div
+          return (
+            <Tooltip
+              title={<div dangerouslySetInnerHTML={{ __html: errorTooltip }} />}
+              arrow
+              PopperProps={{
+                sx: {
+                  '& .MuiTooltip-tooltip': {
+                    backgroundColor: '#f5f5f5',
+                    color: '#333',
+                    fontSize: '0.875rem',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    maxWidth: '250px',
+                    wordWrap: 'break-word',
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'opacity 0.3s ease-in-out',
+                  },
+                  '& .MuiTooltip-arrow': {
+                    color: '#f5f5f5',
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <IconButton
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '4px',
+                  }}
+                  size="small"
+                >
+                  <Close fontSize="small" sx={{ color: '#d9534f' }} />
+                </IconButton>
+                {params.value}
+              </div>
+            </Tooltip>
+          );
+        }
+
+        return params.value; // Return value when no error
+      },
+    },
+    {
       field: 'payrollNumber',
       headerName: 'Payroll Number',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
-      pinned: 'left',
+      cellRenderer: (params) => generateErrorTooltip(params),
       cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.payrollNumber;
-        return errorMessage ? { border: '2px solid red' } : null;
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.hasError?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
       },
     },
     {
@@ -273,10 +370,23 @@ const BatchUploadMembers = () => {
       headerName: 'Surname',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
       cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.surname;
-        return errorMessage ? { border: '2px solid red' } : null;
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
       },
     },
     {
@@ -284,51 +394,73 @@ const BatchUploadMembers = () => {
       headerName: 'First Name',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
       cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.firstName;
-        return errorMessage ? { border: '2px solid red' } : null;
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
       },
     },
     {
-      field: 'nationalId',
-      headerName: 'National ID',
+      field: 'lastName',
+      headerName: 'Last Name',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
       cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.NationalId; // Error message from API
-        return errorMessage ? { border: '2px solid red' } : null; // Apply red outline for errors
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
       },
     },
-    {
-      field: 'kraPin',
-      headerName: 'KRA Pin',
-      headerClass: 'prefix-header',
-      width: 200,
-      filter: true,
-      cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.kraPin;
-        return errorMessage ? { border: '2px solid red' } : null;
-      },
-    },
-    {
-      field: 'pssfNumber',
-      headerName: 'PSSF Number',
-      headerClass: 'prefix-header',
-      width: 200,
-      filter: true,
-      cellStyle: (params) => {
-        const errorMessage = params.data.errorMessage?.pssfNumber;
-        return errorMessage ? { border: '2px solid red' } : null;
-      },
-    },
+
     {
       field: 'membershipStatus',
       headerName: 'Membership Status',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
 
       cellRenderer: (params) => {
         const status = membershipStatusMap[params.value];
@@ -357,35 +489,120 @@ const BatchUploadMembers = () => {
       headerName: 'KRA Pin',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
     {
       field: 'nationalId',
       headerName: 'National ID',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
     {
       field: 'pssfNumber',
       headerName: 'PSSF Number',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
     {
       field: 'gender',
       headerName: 'Gender',
       headerClass: 'prefix-header',
       width: 100,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
     {
       field: 'dateOfBirth',
       headerName: 'Date of Birth',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('en-GB');
       },
@@ -395,7 +612,24 @@ const BatchUploadMembers = () => {
       headerName: 'Sponsor ID',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => {
         return mdas.find((sponsor) => sponsor.id === params.value)?.name;
       },
@@ -406,7 +640,24 @@ const BatchUploadMembers = () => {
       headerName: 'Date of Joining Scheme',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => parseDate(params.value),
     },
     {
@@ -414,7 +665,24 @@ const BatchUploadMembers = () => {
       headerName: 'Date of Employment',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => parseDate(params.value),
     },
     {
@@ -422,7 +690,24 @@ const BatchUploadMembers = () => {
       headerName: 'Date of Leaving',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => parseDate(params.value),
     },
     {
@@ -430,14 +715,48 @@ const BatchUploadMembers = () => {
       headerName: 'Phone Number',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
     {
       field: 'emailAdress',
       headerName: 'Email Address',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
     },
 
     {
@@ -445,7 +764,24 @@ const BatchUploadMembers = () => {
       headerName: 'Marital Status',
       headerClass: 'prefix-header',
       width: 200,
-      filter: true,
+      cellRenderer: (params) => generateErrorTooltip(params),
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
       valueFormatter: (params) => {
         const options = [
           { id: 0, name: 'Single' },

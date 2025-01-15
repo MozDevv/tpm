@@ -754,6 +754,7 @@ function NewPreclaim({
         key !== 'pension_award_id' &&
         key !== 'pension_cap' &&
         key !== 'was_in_mixed_service' &&
+        key !== 'national_id' &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === '' ||
