@@ -1,6 +1,6 @@
 import 'dayjs/locale/en-au';
 import dayjs from 'dayjs';
-import { el } from '@faker-js/faker';
+
 export const validateField = (name, value, formData) => {
   let error = '';
   if (name === 'date_of_first_appointment' && value && formData.dob) {
@@ -39,7 +39,8 @@ export const validateField = (name, value, formData) => {
   if (
     name === 'tax_exempt_certificate_date' &&
     value &&
-    formData.retirement_date
+    formData.retirement_date &&
+    formData.disability_status === 0
   ) {
     const retirementDate = dayjs(formData.retirement_date);
     const taxExemptCertificateDate = dayjs(value);
@@ -53,7 +54,8 @@ export const validateField = (name, value, formData) => {
     name === 'date_of_injury_for_cap189' &&
     value &&
     formData.retirement_date &&
-    formData.date_of_confirmation
+    formData.date_of_confirmation &&
+    formData?.was_injured
   ) {
     const confirmationDate = dayjs(formData.date_of_confirmation);
     const retirementDate = dayjs(formData.retirement_date);
@@ -70,7 +72,8 @@ export const validateField = (name, value, formData) => {
     name === 'date_of_injury_for_cap199' &&
     value &&
     formData.retirement_date &&
-    formData.date_of_confirmation
+    formData.date_of_confirmation &&
+    formData?.was_injured
   ) {
     const confirmationDate = dayjs(formData.date_of_confirmation);
     const retirementDate = dayjs(formData.retirement_date);
@@ -83,12 +86,20 @@ export const validateField = (name, value, formData) => {
       error = 'Date of injury cannot be after retirement date';
     }
   }
-  if (name === 'salary_at_injury_for_cap199' && value) {
+  if (
+    name === 'salary_at_injury_for_cap199' &&
+    value &&
+    formData?.was_injured
+  ) {
     if (value.toString().length > 8) {
       error = 'Salary at the time of injury should not exceed 8 digits';
     }
   }
-  if (name === 'salary_at_injury_for_cap189' && value) {
+  if (
+    name === 'salary_at_injury_for_cap189' &&
+    value &&
+    formData?.was_injured
+  ) {
     if (value.toString().length > 8) {
       error = 'Salary at the time of injury should not exceed 8 digits';
     }
@@ -106,7 +117,11 @@ export const validateField = (name, value, formData) => {
     if (lastPayDate.isBefore(confirmationDate)) {
       error = 'Last pay date cannot be before date of confirmation';
     }
-  } else if (name === 'tax_exempt_certificate_number' && value) {
+  } else if (
+    name === 'tax_exempt_certificate_number' &&
+    value &&
+    formData.disability_status === 0
+  ) {
     const regex = /^NCPWD\/\d{1,8}$/; // Starts with 'NCPWD/', followed by up to 8 digits
 
     if (!regex.test(value)) {
@@ -133,7 +148,12 @@ export const validateField = (name, value, formData) => {
     } else if (year < 1900) {
       error = 'Birth Year cannot be earlier than 1900';
     }
-  } else if (name === 'national_id' && value && !/^\d+$/.test(value)) {
+  } else if (
+    name === 'national_id' &&
+    value &&
+    !/^\d+$/.test(value) &&
+    formData.identifier_type === 0
+  ) {
     error = 'Must be a valid National ID';
   } else if (name === 'kra_pin' && value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
     error = 'Must be a valid KRA PIN';
@@ -223,11 +243,11 @@ export const validateField = (name, value, formData) => {
     } else if (value.length < 7 || value.length > 9) {
       error = 'National ID is not valid';
     }
-  } else if (name === 'passport_number' && value) {
-    if (!/^[A-Za-z][K]\d+$/.test(value)) {
-      error = 'Passport number must be valid';
-    }
-  } else if (name === 'passport_no' && value) {
+  } else if (
+    name === 'passport_number' &&
+    value &&
+    formData.identifier_type === 1
+  ) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
       error = 'Passport number must be valid';
     }

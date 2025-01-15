@@ -197,6 +197,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
                   padding: 0, // Remove internal padding
                   margin: 0, // Remove internal margin
                   height: '100%', // Inherit the height of the row
+                  fontSize: '13px',
                 },
               }}
               InputProps={{
@@ -425,7 +426,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
   ];
 
   return (
-    <div className="overflow-hidden px-5 ">
+    <div className="overflow-hidden px-5 pt-2 ">
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
