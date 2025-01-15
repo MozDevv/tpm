@@ -40,10 +40,15 @@ function BaseApprovalCard({
       5: 'approverId',
     };
 
-    const fieldName = fieldMapping[openApprove] || 'userId';
+    const fieldName = fieldMapping[openApprove] || 'approverId';
 
     // Convert documentNo to an array if it's a string
     const documentNos = Array.isArray(documentNo) ? documentNo : [documentNo];
+
+    console.log('Field Name:', fieldName);
+    console.log('Document Numbers:', documentNos);
+    console.log('Comments:', comments);
+    console.log('User ID:', userId);
 
     // Loop through each documentNo and make API calls
     for (const docNo of documentNos) {
@@ -52,6 +57,8 @@ function BaseApprovalCard({
         comments,
         [fieldName]: userId,
       };
+
+      console.log('Data to be sent:', data);
 
       try {
         const response = await workflowsApiService.post(
@@ -66,6 +73,8 @@ function BaseApprovalCard({
             : workflowsEndpoints.delegate,
           data
         );
+
+        console.log('API Response:', response);
 
         if (response.status === 200) {
           if (response.data.succeeded) {
@@ -93,7 +102,7 @@ function BaseApprovalCard({
           message.error('An unexpected error occurred. Please try again.'); // General error message
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error during API call:', error);
         message.error('An error occurred while processing the request.');
       }
     }

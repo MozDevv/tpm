@@ -235,6 +235,12 @@ export const validateField = (name, value, formData) => {
     if (!/^[\d/]+$/.test(value)) {
       error = 'Death certificate must be valid.';
     }
+  } else if (name === 'personal_number' && value) {
+    if (!/^[a-zA-Z0-9/-]+$/.test(value)) {
+      error = 'Personal number is not valid';
+    } else if (value.length > 15) {
+      error = 'Personal number cannot exceed 15 characters';
+    }
   }
 
   return error;

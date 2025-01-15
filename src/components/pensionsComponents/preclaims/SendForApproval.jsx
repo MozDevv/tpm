@@ -103,7 +103,6 @@ function SendForApproval({
           />
         </div>
         <div className="mt-5">
-          {' '}
           <Button
             onClick={handleCreateClaim}
             variant="contained"

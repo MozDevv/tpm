@@ -620,7 +620,7 @@ function ChartsOfAccounts() {
       <div
         className="ag-theme-quartz font-segoe"
         style={{
-          height: gridHeight ? `${gridHeight}px` : '65vh',
+          height: gridHeight ? `${gridHeight}px` : '75vh',
           width: '100%',
           overflow: 'hidden',
           maxHeight: '600px',
