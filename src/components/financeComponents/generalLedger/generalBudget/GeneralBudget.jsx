@@ -12,6 +12,7 @@ import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import endpoints from '@/components/services/setupsApi';
 import GLAccounts from './GLAccounts';
 import * as XLSX from 'xlsx';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 
 const columnDefs = [
   {
@@ -267,7 +268,7 @@ const GeneralBudget = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <div className="flex flex-col gap-10 overflow-auto max-h-[80vh]">
+          <div className="flex flex-col  overflow-auto max-h-[80vh]">
             <BaseInputCard
               fields={fields}
               apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
@@ -276,7 +277,14 @@ const GeneralBudget = () => {
               useRequestBody={true}
               setOpenBaseCard={setOpenBaseCard}
             />
-            <GLAccounts clickedBudget={clickedItem} uploadExcel={uploadExcel} />
+            <div className="mt-[-20px]">
+              <BaseCollapse name="GL Accounts">
+                <GLAccounts
+                  clickedBudget={clickedItem}
+                  uploadExcel={uploadExcel}
+                />
+              </BaseCollapse>
+            </div>
           </div>
         ) : (
           <BaseInputCard

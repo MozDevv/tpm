@@ -242,3 +242,17 @@ a:hover {
 .transition {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+
+.table {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.table-body {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}

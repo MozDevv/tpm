@@ -63,7 +63,6 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
           headerName: `Financial Year (${startDateYear})`, // Set headerName to the year
           field: 'budgetAmount',
           editable: true,
-          width: 100,
         });
       }
     }
@@ -156,7 +155,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
         className="table-cell"
         style={{
           fontWeight: isAccountName && !isPostingType ? 'bold' : 'normal',
-          fontSize: isAccountName && !isPostingType ? '14px' : '13px',
+          fontSize: isAccountName && !isPostingType ? '13px' : '12px',
           paddingTop: 0,
           paddingBottom: 0,
           paddingLeft: editable && 0,
@@ -179,27 +178,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
                 }}
               />
             )}
-            {/* <input
-              type="text"
-              value={value || ""}
-              onChange={handleInputChange}
-              onBlur={() => {
-                if (value !== "" || value !== null) {
-                  saveOrUpdateBudgetAmount();
-                }
-              }} // Trigger save on blur
-              style={{
-                width: "100%",
-                padding: "5px",
 
-                outlineWidth: "3px",
-                marginTop: "-15px",
-                marginBottom: "-15px",
-                textAlign: "right",
-
-                //border: "1px solid #ddd",
-              }}
-            /> */}
             <TextField
               variant="outlined"
               size="small"
@@ -215,21 +194,25 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
               inputProps={{
                 style: {
                   textAlign: 'right',
-                  // padding: 0, // Remove internal padding
-                  // margin: 0, // Remove internal margin
+                  padding: 0, // Remove internal padding
+                  margin: 0, // Remove internal margin
+                  height: '100%', // Inherit the height of the row
                 },
               }}
               InputProps={{
                 inputComponent: BaseAmountInput,
               }}
               sx={{
+                fontSize: '12px',
+                height: '100%', // Inherit the height of the row
                 '& .MuiOutlinedInput-root': {
-                  padding: 0, // Remove padding in the root
-                  margin: 0, // Remove margin in the root
+                  paddingX: 2, // Remove padding in the root
+
+                  height: '100%', // Inherit the height of the row
                   '& .MuiOutlinedInput-notchedOutline': {
                     border: 'none', // Remove the border if needed
-                    padding: 0,
-                    margin: 0,
+
+                    marginY: -1,
                   },
                 },
                 '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
@@ -237,7 +220,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
                     border: 'none',
                   },
                 '& .MuiOutlinedInput-root.Mui-focused': {
-                  backgroundColor: '#f0f0f0', // Background color on focus
+                  backgroundColor: '', // Background color on focus
                   '& .MuiOutlinedInput-notchedOutline': {
                     border: '2px solid #006990', // Outline border on focus
                   },
@@ -277,8 +260,13 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
   const renderRow = (row) => (
     <TableRow
       key={row.id}
-      className="table-row cursor-pointer"
+      className=" cursor-pointer"
       onDoubleClick={() => handleRowClick(row)}
+      sx={{
+        '&:hover': {
+          backgroundColor: '#f5f5f5', // Light background on hover
+        },
+      }}
     >
       {colDefs.map((colDef) => renderTableCell(colDef, row))}
     </TableRow>
@@ -437,7 +425,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
   ];
 
   return (
-    <div className="mt-[-30px] overflow-auto mr-5 px-12">
+    <div className="overflow-hidden px-5 ">
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -477,18 +465,48 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
           />
         )}
       </BaseCard>
-      <TableContainer className="table-container">
-        <Table className="table pl-2">
-          <TableHead className="table-head">
+
+      <TableContainer
+        sx={{
+          maxHeight: 400,
+          paddingTop: 0,
+
+          border: '1px solid #e0e0e0', // Optional, for visual boundary
+          borderRadius: '8px', // Optional, for rounded corners
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // Optional, for shadow effect
+          overflow: 'auto', // Enables scroll behavior
+        }}
+      >
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead sx={{ backgroundColor: '#fff' }}>
             <TableRow>
               {colDefs.map((colDef) => (
-                <TableCell key={colDef.field} className="table-header py-2">
+                <TableCell
+                  key={colDef.field}
+                  sx={{
+                    fontWeight: 'bold',
+                    textAlign: 'left',
+                    borderBottom: '1px solid #e0e0e0',
+                    backgroundColor: '#f5f5f5', // Light background for header
+                    padding: '10px',
+                  }}
+                >
                   {colDef.headerName}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
-          <TableBody className="table-body">
+          <TableBody
+            sx={{
+              borderRight: '1px solid #ccc',
+              '& tr': {
+                borderBottom: '1px solid #e0e0e0',
+              },
+              '& td': {
+                padding: '10px', // Cell padding
+              },
+            }}
+          >
             {rowData.length > 0 ? (
               rowData.map((row) => renderRow(row))
             ) : (
