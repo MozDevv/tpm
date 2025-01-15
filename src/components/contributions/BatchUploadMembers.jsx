@@ -263,6 +263,10 @@ const BatchUploadMembers = () => {
       width: 200,
       filter: true,
       pinned: 'left',
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.payrollNumber;
+        return errorMessage ? { border: '2px solid red' } : null;
+      },
     },
     {
       field: 'surname',
@@ -270,6 +274,10 @@ const BatchUploadMembers = () => {
       headerClass: 'prefix-header',
       width: 200,
       filter: true,
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.surname;
+        return errorMessage ? { border: '2px solid red' } : null;
+      },
     },
     {
       field: 'firstName',
@@ -277,15 +285,44 @@ const BatchUploadMembers = () => {
       headerClass: 'prefix-header',
       width: 200,
       filter: true,
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.firstName;
+        return errorMessage ? { border: '2px solid red' } : null;
+      },
     },
     {
-      field: 'lastName',
-      headerName: 'Last Name',
+      field: 'nationalId',
+      headerName: 'National ID',
       headerClass: 'prefix-header',
       width: 200,
       filter: true,
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.NationalId; // Error message from API
+        return errorMessage ? { border: '2px solid red' } : null; // Apply red outline for errors
+      },
     },
-
+    {
+      field: 'kraPin',
+      headerName: 'KRA Pin',
+      headerClass: 'prefix-header',
+      width: 200,
+      filter: true,
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.kraPin;
+        return errorMessage ? { border: '2px solid red' } : null;
+      },
+    },
+    {
+      field: 'pssfNumber',
+      headerName: 'PSSF Number',
+      headerClass: 'prefix-header',
+      width: 200,
+      filter: true,
+      cellStyle: (params) => {
+        const errorMessage = params.data.errorMessage?.pssfNumber;
+        return errorMessage ? { border: '2px solid red' } : null;
+      },
+    },
     {
       field: 'membershipStatus',
       headerName: 'Membership Status',
