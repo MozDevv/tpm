@@ -187,7 +187,7 @@ function RecieptLines({ clickedItem }) {
     {
       value: 'amount',
       label: 'Amount',
-      type: 'number',
+      type: 'amount',
       required: true,
     },
     { value: 'narration', label: 'Narration', type: 'text', required: true },

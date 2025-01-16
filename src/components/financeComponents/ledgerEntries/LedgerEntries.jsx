@@ -245,6 +245,82 @@ const LedgerEntries = ({ type }) => {
   const getColumnDefsByType = (type) => {
     switch (type) {
       case 'Vendor Ledger Entries':
+        return [
+          {
+            field: 'documentNo',
+            headerName: 'Document No',
+            flex: 1,
+            filter: true,
+            pinned: 'left',
+            cellRenderer: (params) => {
+              return (
+                <p className="underline text-primary font-semibold">
+                  {params.value}
+                </p>
+              );
+            },
+          },
+          {
+            field: 'transactionDate',
+            headerName: 'Transaction Date',
+            flex: 1,
+            filter: true,
+            valueFormatter: (params) => parseDate(params.value),
+          },
+          {
+            field: 'amount',
+            headerName: 'Amount',
+            flex: 1,
+            filter: true,
+            valueFormatter: (params) => {
+              return formatNumber(params.value);
+            },
+            cellStyle: { textAlign: 'center' },
+            cellRenderer: (params) => {
+              return (
+                <p className="text-primary font-semibold">{params.value}</p>
+              );
+            },
+          },
+          {
+            field: 'accountId',
+            headerName: 'Vendor Account Code',
+            flex: 1,
+            filter: true,
+            valueGetter: (params) => {
+              const account = allOptions?.find(
+                (acc) => acc.id === params.data.accountId
+              );
+              return account?.name ?? 'N/A';
+            },
+          },
+          {
+            field: 'vendorName',
+            headerName: 'Vendor Name',
+            flex: 1,
+            filter: true,
+          },
+
+          {
+            field: 'description',
+            headerName: 'Description',
+            width: 250,
+            filter: true,
+          },
+          {
+            field: 'transactionNo',
+            headerName: 'Transaction No',
+            flex: 1,
+            filter: true,
+          },
+
+          {
+            field: 'externalDocumentNo',
+            headerName: 'External Document No',
+            flex: 1,
+            filter: true,
+          },
+        ];
       case 'Customer Ledger Entries':
         return [
           {
@@ -424,16 +500,14 @@ const LedgerEntries = ({ type }) => {
             headerName: 'Amount',
             flex: 1,
             filter: true,
-            valueFormatter: (params) => {
-              const number = params.value;
-              return new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }).format(number);
-            },
-            cellStyle: { textAlign: 'center' },
+
+            cellStyle: { textAlign: 'right' },
             cellRenderer: (params) => {
-              return <p className=" text-primary font-bold">{params.value}</p>;
+              return (
+                <p className=" text-primary font-semibold">
+                  {formatNumber(params.value)}
+                </p>
+              );
             },
           },
 
@@ -462,6 +536,18 @@ const LedgerEntries = ({ type }) => {
     return data.map((item, index) => {
       switch (type) {
         case 'Vendor Ledger Entries':
+          return {
+            no: index + 1,
+            id: item.id,
+            transactionNo: item.transactionNo,
+            documentNo: item.documentNo,
+            externalDocumentNo: item.externalDocumentNo,
+            accountId: item.accountId || item.accountNo,
+            transactionDate: item.transactionDate,
+            amount: item.amount,
+            description: transformString(item.description),
+            vendorName: item?.vendor.vendorName,
+          };
         case 'Customer Ledger Entries':
           return {
             no: index + 1,

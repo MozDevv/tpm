@@ -398,7 +398,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
 
     {
       name: 'Generate Budget Upload Template',
-      icon: FileDownload,
+      icon: Launch,
       action: 'generateBudgetUploadTemplate',
       requiredPermissions: [],
     },
@@ -464,6 +464,18 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       name: 'Submit Contributions for Approval',
       icon: Send,
       action: 'submitContributionsForApproval',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Submit Budget for Approval',
+      icon: Send,
+      action: 'submitBudgetForApproval',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Close Accounting Period',
+      icon: Cancel,
+      action: 'closePeriod',
       requiredPermissions: [],
     },
   ];

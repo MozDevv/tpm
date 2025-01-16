@@ -352,6 +352,11 @@ const financeEndpoints = {
     '/Posting/AddNewPaymentVouchersToExistingPaymentSchedule',
 
   deletePaymentSchedule: '/Posting/DeletePaymentSchedule',
+
+  submitBudgetForApproval: (id) =>
+    `/Posting/SubmitBudgetForApproval?BudgetId=${id}`,
+
+  closeAccountingPeriod: '/Posting/CloseIncomeStatement',
 };
 
 export const apiService = {

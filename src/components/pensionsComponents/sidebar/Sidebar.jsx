@@ -216,6 +216,14 @@ function Sidebar() {
             },
           ],
         },
+
+        /**   
+         Bgt_New,
+        Bgt_Pending_Approval,
+        Bgt_Approved,
+        Bgt_Closed,
+        Bgt_Rejected */
+
         {
           title: 'General Ledger',
           subChildren: [
@@ -233,6 +241,33 @@ function Sidebar() {
             },
           ],
         },
+        {
+          title: 'General Budget ',
+          subChildren: [
+            {
+              title: 'New Budget',
+              path: '/pensions/finance/general-ledger/general-budget/new',
+            },
+            {
+              title: 'Pending Approval',
+              path: '/pensions/finance/general-ledger/general-budget/pending-approval',
+            },
+
+            {
+              title: 'Approved Budget',
+              path: '/pensions/finance/general-ledger/general-budget/approved',
+            },
+            {
+              title: 'Closed Budget',
+              path: '/pensions/finance/general-ledger/general-budget/closed',
+            },
+            {
+              title: 'Rejected Budget',
+              path: '/pensions/finance/general-ledger/general-budget/rejected',
+            },
+          ],
+        },
+
         {
           title: 'Cash Management',
           subChildren: [

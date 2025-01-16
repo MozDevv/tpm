@@ -12,21 +12,23 @@ import BaseSecondaryTable from '@/components/baseComponents/BaseSecondaryTable';
 import BaseSecondaryCard from '@/components/baseComponents/BaseSecondaryCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { message } from 'antd';
 
 const columnDefs = [
   {
     field: 'no',
     headerName: 'No',
     headerClass: 'prefix-header',
-    width: 90,
+
     filter: true,
+    flex: 1,
   },
   {
     field: 'finYearName',
     headerName: 'Accounting Period Name',
     headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
     field: 'fromDate',
@@ -34,7 +36,7 @@ const columnDefs = [
     headerClass: 'prefix-header',
     valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
-    width: 250,
+    flex: 1,
   },
 
   {
@@ -43,14 +45,14 @@ const columnDefs = [
     headerClass: 'prefix-header',
     valueFormatter: (params) => dateFormatter(params.value),
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
     field: 'isClosed',
     headerName: 'Is Closed',
     headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
   },
 ];
 
@@ -69,6 +71,7 @@ const AccountingPeriod = () => {
       fromDate: item.fromDate,
       finYearName: item.finYearName,
       isClosed: item.isClosed,
+
       subGroups: item.accountingPeriodLines.map((subgroup) => ({
         id: subgroup.id,
         startDate: subgroup.startDate,
@@ -91,6 +94,17 @@ const AccountingPeriod = () => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
+    closePeriod: () => {
+      if (clickedItem) {
+        closeAccountingPeriod();
+      } else if (!clickedItem) {
+        message.error('Please select an accounting period to close');
+      } else if (clickedItem.isClosed) {
+        message.error('Accounting Period is already closed');
+      } else {
+        message.error('Error Closing Accounting Period');
+      }
+    },
   };
 
   const baseCardHandlers = {
@@ -106,6 +120,29 @@ const AccountingPeriod = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    closePeriod: (item) => closeAccountingPeriod(),
+  };
+
+  const closeAccountingPeriod = async () => {
+    try {
+      const res = await apiService.post(
+        financeEndpoints.closeAccountingPeriod,
+        {
+          accountingPeriodId: clickedItem.id,
+        }
+      );
+
+      if (res.status === 200 && res.data.succeeded) {
+        message.success('Accounting Period Closed Successfully');
+        setOpenBaseCard(false);
+      } else if (res.data.succeeded === false && res.data.messages[0]) {
+        message.error(res.data.messages[0]);
+      } else {
+        message.error('Error Closing Accounting Period');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -141,6 +178,7 @@ const AccountingPeriod = () => {
       name: 'isClosed',
       label: 'Is Closed',
       type: 'switch',
+      disabled: true,
     },
   ];
   const subGroupColumnDefs = [
@@ -274,7 +312,7 @@ const AccountingPeriod = () => {
           </div>
         ) : (
           <BaseAutoSaveInputCard
-            fields={fields}
+            fields={fields.filter((field) => field.name !== 'isClosed')}
             apiEndpoint={financeEndpoints.addAccountingPeriod}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateAccountingPeriod}

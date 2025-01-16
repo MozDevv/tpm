@@ -422,6 +422,7 @@ const BaseTable = ({
                 gridApiRef.current.api.showLoadingOverlay();
               }}
               rowSelection="multiple"
+              className=""
               onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
                 setClickedItem(e.data);

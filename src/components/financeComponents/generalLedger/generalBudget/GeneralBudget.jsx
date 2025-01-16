@@ -13,15 +13,25 @@ import endpoints from '@/components/services/setupsApi';
 import GLAccounts from './GLAccounts';
 import * as XLSX from 'xlsx';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import { message } from 'antd';
 
 const columnDefs = [
   {
-    field: 'no',
-    headerName: 'No',
+    field: 'documentNo',
+    headerName: 'Document No',
     headerClass: 'prefix-header',
     width: 90,
     filter: true,
     width: 150,
+    pinned: 'left',
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    multiple: false,
+    cellRenderer: (params) => {
+      return (
+        <p className="underline text-primary font-semibold">{params.value}</p>
+      );
+    },
   },
   {
     field: 'budgetName',
@@ -64,7 +74,7 @@ const columnDefs = [
   },
 ];
 
-const GeneralBudget = () => {
+const GeneralBudget = ({ status }) => {
   const [uploadExcel, setUploadExcel] = React.useState(false);
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -81,6 +91,7 @@ const GeneralBudget = () => {
       startDate: item.startDate,
       endDate: item.endDate,
       isBlocked: item.isBlocked,
+      documentNo: item.documentNo,
 
       // roles: item.roles,
     }));
@@ -99,6 +110,13 @@ const GeneralBudget = () => {
     notify: () => console.log('Notify clicked'),
     generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
     uploadGeneralBudget: () => setUploadExcel(true),
+    submitBudgetForApproval: () => {
+      if (clickedItem) {
+        submitBudgetForApproval();
+      } else if (!clickedItem) {
+        message.error('Please select a budget to submit for approval');
+      }
+    },
   };
 
   const baseCardHandlers = {
@@ -114,10 +132,27 @@ const GeneralBudget = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    submitBudgetForApproval: () => submitBudgetForApproval(),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+
+  const submitBudgetForApproval = async () => {
+    try {
+      const response = await apiService.post(
+        financeEndpoints.submitBudgetForApproval(clickedItem.id)
+      );
+      if (response.status === 200 && response.data.succeeded) {
+        message.success('Budget submitted for approval successfully');
+        if (openBaseCard) {
+          setOpenBaseCard(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting budget for approval:', error);
+    }
+  };
 
   const title = clickedItem ? clickedItem?.budgetName : 'Create a New Budget';
 

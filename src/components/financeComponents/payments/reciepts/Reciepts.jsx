@@ -381,7 +381,7 @@ const Reciepts = ({ status }) => {
               putApiFunction={apiService.post}
               updateApiEndpoint={financeEndpoints.updateTheReceipt}
               postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.getReceipts}
+              getApiEndpoint={financeEndpoints.getReceiptsById}
               getApiFunction={apiService.get}
               transformData={transformData}
               setOpenBaseCard={setOpenBaseCard}
@@ -394,12 +394,12 @@ const Reciepts = ({ status }) => {
           </div>
         ) : (
           <BaseAutoSaveInputCard
-            fields={fields}
+            fields={fields.filter((field) => field.name !== 'documentNo')}
             apiEndpoint={financeEndpoints.addReceipt}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateTheReceipt}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getReceipts}
+            getApiEndpoint={financeEndpoints.getReceiptsById}
             getApiFunction={apiService.get}
             transformData={transformData}
             setOpenBaseCard={setOpenBaseCard}

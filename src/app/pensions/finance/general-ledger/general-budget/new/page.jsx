@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <GeneralBudget />
+      <GeneralBudget staus={0} />
     </div>
   );
 }
