@@ -157,6 +157,22 @@ const LedgerEntries = ({ type }) => {
             type: 'text',
             required: true,
           },
+          {
+            field: 'bankAccountNo',
+            label: 'Bank Account No',
+            type: 'text',
+            required: true,
+          },
+          {
+            name: 'bankAccountCode',
+            label: 'Bank Account Code',
+            type: 'text',
+          },
+          {
+            name: 'bankAccountName',
+            label: 'Bank Account Name',
+            type: 'text',
+          },
         ];
 
       case 'General Ledger Entries':
@@ -296,6 +312,13 @@ const LedgerEntries = ({ type }) => {
             flex: 1,
             filter: true,
             pinned: 'left',
+            cellRenderer: (params) => {
+              return (
+                <p className="underline text-primary font-semibold">
+                  {params.value}
+                </p>
+              );
+            },
           },
 
           {
@@ -306,7 +329,33 @@ const LedgerEntries = ({ type }) => {
             valueFormatter: (params) => {
               return formatNumber(params.value);
             },
-            cellStyle: { textAlign: 'center' },
+            cellStyle: { textAlign: 'right' },
+          },
+          {
+            field: 'description',
+            headerName: 'Description',
+            flex: 1,
+            filter: true,
+          },
+          {
+            field: 'bankAccountNo',
+            headerName: 'Bank Account No',
+            flex: 1,
+            filter: true,
+            cellRenderer: (params) => {
+              return <p className=" text-primary">{params.value}</p>;
+            },
+          },
+          {
+            field: 'bankAccountCode',
+            headerName: 'Bank Account Code',
+            flex: 1,
+            filter: true,
+          },
+          {
+            field: 'bankAccountName',
+            field: 'Bank Account Name',
+            flex: 1,
           },
           {
             field: 'externalDocumentNo',
@@ -326,12 +375,6 @@ const LedgerEntries = ({ type }) => {
             flex: 1,
             filter: true,
           },
-          {
-            field: 'glBankCode',
-            headerName: 'GL Bank Code',
-            flex: 1,
-            filter: true,
-          },
 
           {
             field: 'transactionDate',
@@ -339,13 +382,6 @@ const LedgerEntries = ({ type }) => {
             flex: 1,
             filter: true,
             valueFormatter: (params) => parseDate(params.value),
-          },
-
-          {
-            field: 'description',
-            headerName: 'Description',
-            flex: 1,
-            filter: true,
           },
         ];
 
@@ -357,6 +393,13 @@ const LedgerEntries = ({ type }) => {
             flex: 1,
             filter: true,
             pinned: 'left',
+            cellRenderer: (params) => {
+              return (
+                <p className="underline text-primary font-semibold">
+                  {params.value}
+                </p>
+              );
+            },
           },
           {
             field: 'accountNo',
@@ -389,6 +432,9 @@ const LedgerEntries = ({ type }) => {
               }).format(number);
             },
             cellStyle: { textAlign: 'center' },
+            cellRenderer: (params) => {
+              return <p className=" text-primary font-bold">{params.value}</p>;
+            },
           },
 
           {
@@ -441,6 +487,10 @@ const LedgerEntries = ({ type }) => {
             amount: item.amount,
             description: transformString(item.description),
             glEntryNo: item.glEntryNo,
+            bankAccountName: item?.bankAccount.bankAccountName,
+            bankAccountNo: item?.bankAccount.bankAccountNo,
+            bankAccountCode: item?.bankAccount.bankAccountCode,
+            bankAccountNo: item?.bankAccount.bankAccountNo,
           };
 
         case 'General Ledger Entries':

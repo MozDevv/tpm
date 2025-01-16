@@ -197,6 +197,18 @@ const BankAccount = () => {
 
   const columnDefs = [
     {
+      field: 'bankAccountCode',
+      headerName: 'Bank Account Code',
+      headerClass: 'prefix-header',
+      pinned: 'left',
+      filter: true,
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
       field: 'bankAccountNo',
       headerName: 'Bank Account No',
       headerClass: 'prefix-header',
