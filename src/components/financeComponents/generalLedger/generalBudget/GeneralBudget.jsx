@@ -14,6 +14,22 @@ import GLAccounts from './GLAccounts';
 import * as XLSX from 'xlsx';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import { message } from 'antd';
+import {
+  AccessTime,
+  Cancel,
+  Check,
+  DoneAll,
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
+
+const statusIcons = {
+  0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
+  1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  3: { icon: DoneAll, name: 'Closed', color: '#2e7d32' }, // Green
+  4: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+};
 
 const columnDefs = [
   {
@@ -39,6 +55,43 @@ const columnDefs = [
     headerClass: 'prefix-header',
     filter: true,
     flex: 1,
+  },
+
+  {
+    field: 'stage',
+    headerName: 'Status',
+    headerClass: 'prefix-header',
+    filter: true,
+    flex: 1,
+    cellRenderer: (params) => {
+      const status = statusIcons[params.value];
+      if (!status) return null;
+
+      const IconComponent = status.icon;
+
+      return (
+        <div
+          style={{ display: 'flex', alignItems: 'center', marginLeft: '20px' }}
+        >
+          <IconComponent
+            style={{
+              color: status.color,
+              marginRight: '6px',
+              fontSize: '17px',
+            }}
+          />
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'semibold',
+              fontSize: '13px',
+            }}
+          >
+            {status.name}
+          </span>
+        </div>
+      );
+    },
   },
   {
     field: 'budgetDescription',
@@ -92,6 +145,7 @@ const GeneralBudget = ({ status }) => {
       endDate: item.endDate,
       isBlocked: item.isBlocked,
       documentNo: item.documentNo,
+      stage: item.stage,
 
       // roles: item.roles,
     }));
