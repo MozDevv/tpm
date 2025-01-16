@@ -21,17 +21,26 @@ import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
 
 const columnDefs = [
   {
+    field: 'bankAccountCode',
+    headerName: 'Bank Account Code',
+    headerClass: 'prefix-header',
+    pinned: 'left',
+    filter: true,
+    cellRenderer: (params) => {
+      return (
+        <p className="underline text-primary font-semibold">{params.value}</p>
+      );
+    },
+
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+  },
+  {
     field: 'bankAccountNo',
     headerName: 'Bank Account No',
     headerClass: 'prefix-header',
     filter: true,
-    pinned: 'left', // Pinning to the left ensures it's the first column
-    checkboxSelection: true,
-    headerCheckboxSelection: true,
-    headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer: (params) => {
-      return <p className=" text-primary font-semibold">{params.value}</p>;
-    },
   },
   {
     field: 'bankAccountName',
@@ -49,18 +58,20 @@ const columnDefs = [
   {
     field: 'amount',
     headerName: 'Amount',
-    width: 150,
+
     valueFormatter: (params) => {
       return formatNumber(params.value);
     },
     cellStyle: { textAlign: 'right' },
+    cellRenderer: (params) => {
+      return <p className=" text-primary ">{params.value}</p>;
+    },
   },
   {
     field: 'isBlocked',
     headerName: 'Is Blocked',
     headerClass: 'prefix-header',
     filter: true,
-    width: 100,
   },
 ];
 
@@ -103,6 +114,7 @@ const BankReconciliation = () => {
         bankPostingGroupId: item.bankPostingGroupId,
         amount: item.amount === null ? 0 : item.amount,
         bankStatementId: item.bankStatementId,
+        bankAccountCode: item.bankAccountCode,
 
         // roles: item.roles,
       };
@@ -112,34 +124,31 @@ const BankReconciliation = () => {
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
+
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+    // create: () => {
+    //   setOpenBaseCard(true);
+    //   setClickedItem(null);
+    // },
+    // edit: (item) => {
+    //   // setOpenBaseCard(true);
+    //   // setClickedItem(item);
+    // },
+    // delete: (item) => {
+    //   //  setOpenBaseCard(true);
+    //   //  setClickedItem(item);
+    // },
     match: () => console.log('Match clicked'),
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
     postReconciliation: () => reconcileBankDetails(),
+
     removeUploadedStatement: () => removeUploadedDocument(),
+
     removeMatch: () => removeMatch(),
     bankStatement: () => console.log('Bank Statement clicked'),
   };

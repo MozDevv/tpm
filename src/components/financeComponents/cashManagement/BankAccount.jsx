@@ -308,7 +308,7 @@ const BankAccount = () => {
           </>
         ) : (
           <BaseAutoSaveInputCard
-            fields={fields}
+            fields={fields.filter((field) => field.name !== 'amount')}
             apiEndpoint={financeEndpoints.addBankAccount}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateBankAccount}

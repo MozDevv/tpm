@@ -531,6 +531,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'importBankStatement',
       requiredPermissions: [],
       parent: 'bankStatement',
+      disabled: true,
     },
     {
       name: 'Remove Current Statement',
@@ -538,6 +539,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       action: 'removeUploadedStatement',
       requiredPermissions: [],
       parent: 'bankStatement',
+      disabled: true,
     },
 
     // Match Actions
