@@ -16,6 +16,23 @@ import { Button, Dialog } from '@mui/material';
 import PVActions from './PVActions';
 import PaymentVoucherReport from './reports/PaymentVoucherReport';
 import GratuityLetterReport from './reports/GratuityLetterReport';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import {
+  AccessTime,
+  Cancel,
+  Check,
+  DoneAll,
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
+
+const statusIcons = {
+  0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
+  1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  3: { icon: DoneAll, name: 'Closed', color: '#2e7d32' }, // Green
+  4: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+};
 
 const Payments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -117,6 +134,46 @@ const Payments = ({ status }) => {
         );
       },
     },
+    {
+      field: 'stage',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '20px',
+            }}
+          >
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
 
     {
       headerName: 'Payment Method',
@@ -205,12 +262,15 @@ const Payments = ({ status }) => {
       source: item.source,
       prospectivePensionerId: item.prospectivePensionerId,
       claimId: item?.claimId,
+      stage: item.stage,
     }));
   };
 
   const [openPostToGL, setOpenPostToGL] = React.useState(false);
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [isSchedule, setIsSchedule] = React.useState(false);
+
+  const [openApprove, setOpenApprove] = React.useState(0);
   const [openPV, setOpenPV] = React.useState(false);
   const [openTrialBalanceReport, setOpenTrialBalanceReport] =
     React.useState(false);
@@ -229,13 +289,13 @@ const Payments = ({ status }) => {
         console.log('Submit Payment For Approval');
       },
     }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
-        setOpenPV(true);
+    // ...(status === 1 && {
+    //   approvePaymentVoucher: () => {
+    //     setOpenPV(true);
 
-        console.log('Approve Payment');
-      },
-    }),
+    //     console.log('Approve Payment');
+    //   },
+    // }),
     ...(status === 2 && {
       postPaymentToLedger: () => {
         setOpenPV(true);
@@ -251,6 +311,17 @@ const Payments = ({ status }) => {
       postPaymentVoucher: () => {
         setOpenPV(true);
         console.log('Post Payment');
+      },
+    }),
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
       },
     }),
   };
@@ -308,6 +379,17 @@ const Payments = ({ status }) => {
       postPaymentVoucher: () => {
         setOpenPV(true);
         console.log('Post Payment');
+      },
+    }),
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
       },
     }),
   };
@@ -399,6 +481,17 @@ const Payments = ({ status }) => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         open={openPV && selectedRows.length > 0}
         onClose={() => {

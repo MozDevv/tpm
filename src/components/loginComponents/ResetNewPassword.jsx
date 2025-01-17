@@ -1,4 +1,4 @@
-import { ArrowForward, Visibility, VisibilityOff } from "@mui/icons-material";
+import { ArrowForward, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -8,38 +8,38 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from "@mui/material";
-import React, { useRef, useState } from "react";
-import authEndpoints, { AuthApiService } from "../services/authApi";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import OTPInput from "react-otp-input";
-import { useAuth } from "@/context/AuthContext";
+} from '@mui/material';
+import React, { useRef, useState } from 'react';
+import authEndpoints, { AuthApiService } from '../services/authApi';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import OTPInput from 'react-otp-input';
+import { useAuth } from '@/context/AuthContext';
 
 function ResetNewPassword() {
   const [errors, setErrors] = useState({
     status: false,
-    message: "",
+    message: '',
   });
   const searchParams = useSearchParams();
 
-  const username = searchParams.get("username");
+  const username = searchParams.get('username');
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
 
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const { login } = useAuth();
 
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const router = useRouter();
   const resetPassword = async () => {
     if (newPassword !== confirmNewPassword) {
       setErrors({
         status: true,
-        message: "Passwords do not match",
+        message: 'Passwords do not match',
       });
       return;
     }
@@ -48,7 +48,7 @@ function ResetNewPassword() {
     if (!/\d/.test(newPassword)) {
       setErrors({
         status: true,
-        message: "Password must contain at least one number",
+        message: 'Password must contain at least one number',
       });
       return;
     }
@@ -58,7 +58,7 @@ function ResetNewPassword() {
       setErrors({
         status: true,
         message:
-          "Password must contain at least one non-alphanumeric character",
+          'Password must contain at least one non-alphanumeric character',
       });
       return;
     }
@@ -67,7 +67,7 @@ function ResetNewPassword() {
     if (!/\d/.test(newPassword)) {
       setErrors({
         status: true,
-        message: "Password must contain at least one number",
+        message: 'Password must contain at least one number',
       });
       return;
     }
@@ -76,7 +76,7 @@ function ResetNewPassword() {
     if (newPassword.length < 8) {
       setErrors({
         status: true,
-        message: "Password must have at least 8 characters",
+        message: 'Password must have at least 8 characters',
       });
       return;
     }
@@ -95,31 +95,36 @@ function ResetNewPassword() {
       );
 
       if (response.data.isSuccess) {
-        router.push("/");
+        router.push('/');
         login(response?.data?.data?.token);
+      } else if (response.data.message) {
+        setErrors({
+          status: true,
+          message: response.data.message,
+        });
       }
     } catch (error) {
-      if (error.response.data.message === "OTP has expired") {
-        console.log("data", data);
+      if (error.response.data.message) {
+        console.log('data', data);
         setErrors({
           status: true,
-          message: "OTP has expired! Please contact support.",
+          message: error.response.data.message,
         });
       } else {
-        console.log("data", data);
+        console.log('data', data);
         setErrors({
           status: true,
-          message: "An unexpected error occured! Please try again.",
+          message: 'An unexpected error occured! Please try again.',
         });
       }
     }
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      {" "}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {' '}
       {errors.status && (
-        <Typography sx={{ color: "crimson", fontWeight: 500, mt: 2 }}>
+        <Typography sx={{ color: 'crimson', fontWeight: 500, mt: 2 }}>
           {errors.message}
         </Typography>
       )}
@@ -136,34 +141,34 @@ function ResetNewPassword() {
       </Typography>
       <FormControl>
         <FormLabel
-          sx={{ fontSize: "13px", ml: 1, fontWeight: "700", color: "gray" }}
+          sx={{ fontSize: '13px', ml: 1, fontWeight: '700', color: 'gray' }}
         >
           Enter OTP
         </FormLabel>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
           <OTPInput
             value={otp}
             onChange={(otp) => setOtp(otp)}
             numInputs={6}
-            separator={<span style={{ width: "8px" }}></span>}
+            separator={<span style={{ width: '8px' }}></span>}
             inputStyle={{
-              width: "70px",
-              height: "70px",
-              margin: "0 10px",
-              fontSize: "16px",
-              borderRadius: "4px",
-              border: "1px solid lightgray",
-              textAlign: "center",
+              width: '70px',
+              height: '70px',
+              margin: '0 10px',
+              fontSize: '16px',
+              borderRadius: '4px',
+              border: '1px solid lightgray',
+              textAlign: 'center',
             }}
             renderInput={(props) => <input styles={{}} {...props} />}
             focusStyle={{
-              border: "1px solid blue",
+              border: '1px solid blue',
             }}
           />
         </Box>
       </FormControl>
       <FormControl>
-        <FormLabel sx={{ fontSize: "13px", fontWeight: "700", color: "gray" }}>
+        <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
           New Password
         </FormLabel>
         <TextField
@@ -172,11 +177,11 @@ function ResetNewPassword() {
           placeholder="New Password"
           fullWidth
           sx={{
-            height: "48px",
-            width: "512px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: errors.status ? "crimson" : "grey",
+            height: '48px',
+            width: '512px',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: errors.status ? 'crimson' : 'grey',
               },
             },
           }}
@@ -193,13 +198,13 @@ function ResetNewPassword() {
               </InputAdornment>
             ),
           }}
-          type={!showPassword ? "password" : "text"}
-          inputProps={{ style: { height: "12px" } }}
+          type={!showPassword ? 'password' : 'text'}
+          inputProps={{ style: { height: '12px' } }}
           required
         />
       </FormControl>
       <FormControl>
-        <FormLabel sx={{ fontSize: "13px", fontWeight: "700", color: "gray" }}>
+        <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
           Confirm New Password
         </FormLabel>
         <TextField
@@ -207,15 +212,15 @@ function ResetNewPassword() {
           onChange={(e) => setConfirmNewPassword(e.target.value)}
           placeholder="Confirm New Password"
           sx={{
-            height: "48px",
-            width: "512px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: errors.status ? "crimson" : "grey",
+            height: '48px',
+            width: '512px',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: errors.status ? 'crimson' : 'grey',
               },
             },
           }}
-          inputProps={{ style: { height: "12px" } }}
+          inputProps={{ style: { height: '12px' } }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -229,23 +234,28 @@ function ResetNewPassword() {
               </InputAdornment>
             ),
           }}
-          type={!showPassword ? "password" : "text"}
+          type={!showPassword ? 'password' : 'text'}
           fullWidth
           required
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              resetPassword();
+            }
+          }}
         />
-      </FormControl>{" "}
+      </FormControl>{' '}
       <Button
         fullWidth
         onClick={resetPassword}
         sx={{
-          backgroundColor: "primary.main",
-          "&:hover": { backgroundColor: "#006990" },
-          pl: "20px",
-          display: "flex",
-          color: "white",
-          justifyContent: "space-between",
-          textTransform: "none",
-          mt: "10px",
+          backgroundColor: 'primary.main',
+          '&:hover': { backgroundColor: '#006990' },
+          pl: '20px',
+          display: 'flex',
+          color: 'white',
+          justifyContent: 'space-between',
+          textTransform: 'none',
+          mt: '10px',
         }}
       >
         Reset Password
