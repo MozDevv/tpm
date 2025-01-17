@@ -126,12 +126,14 @@ const AwardPostingGroups = () => {
       const awards = response.data.data.map((ac) => ({
         id: ac.id,
         name: ac.prefix,
+        accountNo: ac.name,
       }));
 
       const caps = response.data.data.map((ac) => ({
         id: ac.id,
         name: ac.pensionCap.name,
       }));
+
       setPensionCaps(caps);
       setPensionAwards(awards);
     } catch (error) {
@@ -230,9 +232,10 @@ const AwardPostingGroups = () => {
     {
       name: 'pensionAwardId',
       label: 'Pension Award',
-      type: 'autocomplete',
+      type: 'select',
       required: true,
       options: pensionAwards,
+      table: true,
     },
     {
       name: 'pensionCap',

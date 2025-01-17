@@ -18,6 +18,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
+import { message } from 'antd';
 
 function GLAccounts({ clickedBudget, uploadExcel }) {
   const [rowData, setRowData] = useState([]);
@@ -138,9 +139,21 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
 
       try {
         if (row.budgetLineId) {
-          await apiService.post(financeEndpoints.updateBudgetLine, data);
+          const res = await apiService.post(
+            financeEndpoints.updateBudgetLine,
+            data
+          );
+          if (res.data.succeeded === false && res.data.messages[0]) {
+            message.error(res.data.messages[0]);
+          }
         } else {
-          await apiService.post(financeEndpoints.addBudgetLines, data);
+          const res = await apiService.post(
+            financeEndpoints.addBudgetLines,
+            data
+          );
+          if (res.data.succeeded === false && res.data.messages[0]) {
+            message.error(res.data.messages[0]);
+          }
         }
         fetchGlAccounts();
       } catch (error) {
