@@ -339,8 +339,52 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [rowData, setRowData] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const [filterColumn, setFilterColumn] = useState(null);
+  const [filterValue, setFilterValue] = useState(null);
 
-  const fetchAllPreclaims = async () => {
+  const [filterType, setFilterType] = useState(null);
+  const [sortColumn, setSortColumn] = useState(null);
+
+  const handleFilters = async () => {
+    const filter =
+      filterColumn && filterValue && (status || status === 0)
+        ? {
+            ...(filterColumn && {
+              'filterCriterion.criterions[2].propertyName': filterColumn,
+            }),
+            ...(filterValue && {
+              'filterCriterion.criterions[2].propertyValue': filterValue,
+            }),
+            ...(filterType && {
+              'filterCriterion.criterions[2].criterionType': filterType,
+            }),
+          }
+        : filterColumn && filterValue
+        ? {
+            ...(filterColumn && {
+              'filterCriterion.criterions[1].propertyName': filterColumn,
+            }),
+            ...(filterValue && {
+              'filterCriterion.criterions[1].propertyValue': filterValue,
+            }),
+            ...(filterType && {
+              'filterCriterion.criterions[1].criterionType': filterType,
+            }),
+          }
+        : {};
+    const sort = {
+      ...(sortColumn && {
+        'sortProperties.propertyName': sortColumn,
+      }),
+      ...(sortCriteria !== 0 && {
+        'sortProperties.sortCriteria': sortCriteria,
+      }),
+    };
+
+    await fetchAllPreclaims(sort, filter);
+  };
+
+  const fetchAllPreclaims = async (sort, filter) => {
     let filters = {};
 
     if (status !== null && status !== undefined) {
@@ -367,6 +411,8 @@ const AssessmentTable = ({ status, statusArr }) => {
           'paging.pageNumber': pageNumber,
           'paging.pageSize': pageSize,
           ...filters,
+          ...sort,
+          ...filter,
           ...(statusArr && statusArr.length > 0
             ? { 'filterCriterion.compositionType': 1 }
             : {}),
@@ -898,6 +944,7 @@ const AssessmentTable = ({ status, statusArr }) => {
                       type="text"
                       className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
                       required
+                      onChange={(e) => setFilterValue(e.target.value)}
                     />
 
                     <IconButton onClick={handleClick}>
@@ -929,15 +976,13 @@ const AssessmentTable = ({ status, statusArr }) => {
                   </label>
                   <select
                     name="role"
-                    //value={selectedRole}
-                    //onChange={(e) => setSelectedRole(e.target.value)}
+                    onChange={(e) => setFilterColumn(e.target.value)}
                     className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
                     required
                   >
-                    <option value="Board Member">All</option>
-                    <option value="Admin">Id</option>
-                    <option value="Business Admin">Email Address</option>
-                    <option value="Support">Full Name</option>
+                    {colDefs.map((col) => (
+                      <option value={col.field}>{col.headerName}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex flex-col item-center p-4 mt-3">
@@ -953,10 +998,9 @@ const AssessmentTable = ({ status, statusArr }) => {
                       className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
                       required
                     >
-                      <option value="Board Member">All</option>
-                      <option value="id">Id</option>
-                      <option value="email_address">Email Address</option>
-                      <option value="fullName">Full Name</option>
+                      {colDefs.map((col) => (
+                        <option value={col.field}>{col.headerName}</option>
+                      ))}
                     </select>
                     <Tooltip
                       title={
@@ -981,6 +1025,7 @@ const AssessmentTable = ({ status, statusArr }) => {
               <Button
                 variant="contained"
                 sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
+                onClick={handleFilters}
               >
                 Apply Filters
               </Button>

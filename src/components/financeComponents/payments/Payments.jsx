@@ -25,6 +25,7 @@ import {
   Verified,
   Visibility,
 } from '@mui/icons-material';
+import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -280,7 +281,7 @@ const Payments = ({ status }) => {
       setClickedItem(null);
     },
     edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
+
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
     ...(status === 0 && {
@@ -353,16 +354,9 @@ const Payments = ({ status }) => {
     'Gratuity Notification Letter': () => setOpenGratuity(true),
     ...(status === 0 && {
       submitPaymentForApproval: () => {
-        console.log('Submit Payment For Approval');
-        setOpenPV(true);
-      },
-    }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
         setSelectedRows([clickedItem]);
-        console.log('selectedRows', selectedRows);
-        console.log('Approve Payment');
         setOpenPV(true);
+        console.log('Submit Payment For Approval');
       },
     }),
     ...(status === 2 && {

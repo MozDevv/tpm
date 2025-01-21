@@ -48,6 +48,7 @@ const BaseTable = ({
   onSelectionChange,
   openPostToGL,
   scrollable,
+  clickedItem,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -245,6 +246,7 @@ const BaseTable = ({
               handlers={!isSecondaryTable ? adjustedHandlers : handlers}
               selectedRows={selectedRows}
               reportItems={reportItems}
+              clickedItem={clickedItem}
             />
           </div>
         </Box>

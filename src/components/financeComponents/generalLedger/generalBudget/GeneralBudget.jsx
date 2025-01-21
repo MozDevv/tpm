@@ -267,14 +267,6 @@ const GeneralBudget = ({ status }) => {
         { hidden: false, width: 15, locked: false }, // Amount column (editable)
       ];
 
-      // Enable worksheet protection
-      worksheet['!protect'] = {
-        password: 'yourpassword', // Optional password to protect the sheet
-        lockFormatCells: true, // Prevent users from formatting locked cells
-        selectLockedCells: true, // Allow users to select locked cells
-        selectUnlockedCells: true, // Allow users to select unlocked cells
-      };
-
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Budget Template');
 

@@ -1135,12 +1135,14 @@ const BaseInputTable = ({
             <Button
               onClick={onAddRow}
               variant="text"
+              disabled={disableAll}
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
               New Line
             </Button>
             <Button
+              disabled={disableAll}
               onClick={handleDeleteSelectedRows}
               variant="text"
               startIcon={<Delete />}

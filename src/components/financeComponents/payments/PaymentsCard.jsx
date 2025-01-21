@@ -12,6 +12,7 @@ import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCa
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
 
 const { TabPane } = Tabs;
 
@@ -405,6 +406,14 @@ function PaymentsCard({
                 <div className="flex-grow">
                   {' '}
                   {/* Make this grow too */}
+                  {clickedItem?.prospectivePensionerId && (
+                    <div className="ml-[-13px]">
+                      <PensionerDetails
+                        clickedItem={clickedItem}
+                        retireeId={clickedItem?.prospectivePensionerId}
+                      />
+                    </div>
+                  )}
                   <BaseFinanceInputTable
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
