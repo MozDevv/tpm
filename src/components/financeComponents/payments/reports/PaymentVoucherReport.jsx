@@ -808,8 +808,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 {/* Data Row */}
                 <div className="col-span-1 border-t border-black border-r p-2 text-center"></div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">
-                  {report?.pensionExpenseAccountNo
-                    ? formatBankAccount(report?.pensionExpenseAccountNo, 4, '-')
+                  {report?.bankAccountNo
+                    ? formatBankAccount(report?.bankAccountNo, 4, '-')
                     : 'N/A'}
                 </div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">

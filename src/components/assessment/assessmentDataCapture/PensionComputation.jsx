@@ -237,12 +237,14 @@ function PensionComputation({
         isUserComponent={false}
         isSecondaryCard={true}
       >
-        <BaseInputCard
-          fields={inputFields}
-          clickedItem={summary}
-          useRequestBody={true}
-          setOpenBaseCard={setViewBreakDown}
-        />
+        <div className="h-[620px] overflow-auto">
+          <BaseInputCard
+            fields={inputFields}
+            clickedItem={summary}
+            useRequestBody={true}
+            setOpenBaseCard={setViewBreakDown}
+          />
+        </div>
       </BaseCard>
     </div>
   );
