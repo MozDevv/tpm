@@ -358,7 +358,9 @@ const financeEndpoints = {
 
   closeAccountingPeriod: '/Posting/CloseIncomeStatement',
   getPaymentSchedulesByStage: (stage) =>
-    `/Posting/GetPaymentSchedules?filterCriterion.criterions[0].propertyName=stage&filterCriterion.criterions[0].propertyValue=${stage}&filterCriterion.criterions[0].criterionType=0`,
+    `/Posting/GetPaymentSchedules?stage=${stage}`,
+  submitScheduleForApproval: (id) =>
+    `/Posting/SubmitPaymentScheduleForApproval?PaymentScheduleId=${id}`,
 };
 
 export const apiService = {

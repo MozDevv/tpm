@@ -24,7 +24,7 @@ import { truncateMessage } from '@/utils/handyFuncs';
 import claimsEndpoints from '@/components/services/claimsApi';
 import { apiService as apiServicecliam } from '@/components/services/claimsApi';
 
-function PVActions({
+function ScheduledPvActions({
   selectedRows,
   setSelectedRows,
   setOpenPostGL,
@@ -113,7 +113,7 @@ function PVActions({
         const res = await apiService.post(endpoint, requestData);
 
         if (res && res.data && res.data.succeeded && res.status === 200) {
-          // handleUpdateClaimStatus(); // Call the function to update claim status
+          //   handleUpdateClaimStatus(); // Call the function to update claim status
           setSelectedRows([]);
           setOpenPostGL(false);
           setOpenBaseCard && setOpenBaseCard(false);
@@ -215,7 +215,7 @@ function PVActions({
 
     switch (status) {
       case 0:
-        endpoint = financeEndpoints.submitPVforApproval(id);
+        endpoint = financeEndpoints.submitScheduleForApproval(id);
         successMessage = 'Payment Voucher submitted for approval successfully';
         errorMessage = 'Failed to submit Payment Voucher for approval';
         break;
@@ -385,4 +385,4 @@ function PVActions({
   );
 }
 
-export default PVActions;
+export default ScheduledPvActions;

@@ -5,7 +5,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <Payments status={3} />
+      <ScheduledPayments status={2} />
     </div>
   );
 }

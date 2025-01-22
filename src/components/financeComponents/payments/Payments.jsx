@@ -28,6 +28,14 @@ import {
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
 
 const statusIcons = {
+  /**  {
+        Pv_Created,
+        Pv_Pending_Approval,
+        Pv_Approved,
+        Pv_Scheduled,
+        Pv_Posted,
+        Pv_Rejected,
+    } */
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
   1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
   2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
@@ -305,12 +313,12 @@ const Payments = ({ status }) => {
         console.log('Schedule Payment');
       },
     }),
-    ...(status === 3 && {
-      postPaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-    }),
+    // ...(status === 3 && {
+    //   postPaymentVoucher: () => {
+    //     setOpenPV(true);
+    //     console.log('Post Payment');
+    //   },
+    // }),
     ...(status === 1 && {
       approvalRequest: () => console.log('Approval Request clicked'),
       sendApprovalRequest: () => setOpenApprove(1),
@@ -366,12 +374,12 @@ const Payments = ({ status }) => {
         console.log('Schedule Payment');
       },
     }),
-    ...(status === 3 && {
-      postPaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-    }),
+    // ...(status === 3 && {
+    //   postPaymentVoucher: () => {
+    //     setOpenPV(true);
+    //     console.log('Post Payment');
+    //   },
+    // }),
     ...(status === 1 && {
       approvalRequest: () => console.log('Approval Request clicked'),
       sendApprovalRequest: () => setOpenApprove(1),

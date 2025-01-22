@@ -26,6 +26,8 @@ import {
   Verified,
   Visibility,
 } from '@mui/icons-material';
+import ScheduledPvActions from '../ScheduledPvActions';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -213,6 +215,8 @@ const ScheduledPayments = ({ status }) => {
   const [selectedLines, setSelectedLines] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
+  const [openApprove, setOpenApprove] = React.useState(false);
+
   const handleRemovePayments = async () => {
     if (selectedLines.length === 0) {
       message.warning('Please select a payment to remove');
@@ -245,6 +249,17 @@ const ScheduledPayments = ({ status }) => {
   };
 
   const handlers = {
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
     // create: () => {
     //   setOpenBaseCard(true);
     //   setClickedItem(null);
@@ -259,21 +274,16 @@ const ScheduledPayments = ({ status }) => {
         console.log('Submit Payment For Approval');
       },
     }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Approve Payment');
-      },
-    }),
+    // ...(status === 1 && {
+    //   approvePaymentVoucher: () => {
+    //     setOpenPV(true);
+    //     console.log('Approve Payment');
+    //   },
+    // }),
     ...(status === 2 && {
       postPaymentToLedger: () => {
         setOpenPV(true);
         console.log('Post Payment');
-      },
-      schedulePaymentVoucher: () => {
-        setIsSchedule(true);
-        setOpenPV(true);
-        console.log('Schedule Payment');
       },
     }),
     ...(status === 3 && {
@@ -323,22 +333,7 @@ const ScheduledPayments = ({ status }) => {
         setOpenPV(true);
       },
     }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Approve Payment');
-      },
-    }),
-    ...(status === 2 && {
-      // postPaymentToLedger: () => {
-      //   setOpenPV(true);
-      //   console.log('Post Payment');
-      // },
-      schedulePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Schedule Payment');
-      },
-    }),
+
     ...(status === 3 && {
       postPaymentVoucher: () => {
         setOpenPV(true);
@@ -349,6 +344,17 @@ const ScheduledPayments = ({ status }) => {
     exportScheduleLines: () => {
       exportData();
     },
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
   };
 
   const title = clickedItem
@@ -403,14 +409,14 @@ const ScheduledPayments = ({ status }) => {
 
   const navTitle =
     status === 0
-      ? 'Payments'
+      ? 'New Scheduled Payments'
       : status === 1
-      ? 'Pending Payment Vouchers'
+      ? 'Pending Payment Schedules'
       : status === 2
-      ? 'Approved Payment Vouchers'
+      ? 'Approved Payment Schedules'
       : status === 3
-      ? 'Scheduled Payment Vouchers'
-      : 'Posted Payment Vouchers';
+      ? 'Paid Payment Schedules'
+      : 'Rejected Payment Schedules';
 
   const scheduleHandlers = {
     ...(status === 3 && {
@@ -444,6 +450,17 @@ const ScheduledPayments = ({ status }) => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <AddSchedules
         clickedItem={clickedItem}
         openDialog={openDialog}
@@ -462,7 +479,7 @@ const ScheduledPayments = ({ status }) => {
           maxHeight: '90vh',
         }}
       >
-        <PVActions
+        <ScheduledPvActions
           isSchedule={isSchedule}
           status={status}
           clickedItem={clickedItem}
@@ -531,7 +548,11 @@ const ScheduledPayments = ({ status }) => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getPaymentSchedules}
+        fetchApiEndpoint={
+          status === 0
+            ? financeEndpoints.getPaymentSchedulesByStage(status)
+            : financeEndpoints.getPaymentSchedulesByStage(status)
+        }
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

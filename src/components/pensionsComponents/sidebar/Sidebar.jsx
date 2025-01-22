@@ -371,23 +371,23 @@ function Sidebar() {
   */
             {
               title: 'New Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/new',
+              path: '/pensions/finance/scheduled-payments/payments/new',
             },
             {
               title: 'Pending Approval',
-              path: '/pensions/finance/scheduled-payments/pending-approval',
+              path: '/pensions/finance/scheduled-payments/payments/pending-approval',
             },
             {
               title: 'Approved Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/approved',
+              path: '/pensions/finance/scheduled-payments/payments/approved',
             },
             {
               title: 'Paid Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/paid',
+              path: '/pensions/finance/scheduled-payments/payments/paid',
             },
             {
               title: 'Rejected Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/rejected',
+              path: '/pensions/finance/scheduled-payments/payments/rejected',
             },
           ],
         },
