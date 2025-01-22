@@ -163,7 +163,7 @@ const columnDefs = [
   },
 ];
 
-const ParliamentContributions = (id) => {
+const ParliamentContributions = ({ id, clickedItem2 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -314,7 +314,7 @@ const ParliamentContributions = (id) => {
         {clickedItem ? (
           <Contributions
             parliamenterianTerms={parliamenterianTerms}
-            id={id.id}
+            id={id}
             apiEndpoint={endpoints.createParliamentContributions}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
@@ -326,6 +326,8 @@ const ParliamentContributions = (id) => {
         ) : (
           <BaseInputCard
             fields={fields}
+            id={id}
+            idLabel={'prospective_pensioner_id'}
             apiEndpoint={endpoints.createParliamentContributions}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
@@ -334,6 +336,7 @@ const ParliamentContributions = (id) => {
           />
         )}
       </BaseCard>
+      {JSON.stringify(clickedItem2)}
 
       <div className="flex justify-between w-full items-center">
         <div className="flex gap-6 items-center">

@@ -410,6 +410,16 @@ function ChartsOfAccounts() {
       })),
       required: true,
     },
+    {
+      name: 'incomeOrBalancesheet',
+      label: 'Income or Balance Sheet',
+      type: 'select',
+      options: [
+        { id: 0, name: 'None' },
+        { id: 1, name: 'Income' },
+        { id: 2, name: 'Balance Sheet' },
+      ],
+    },
 
     {
       name: 'isDirectPosting',

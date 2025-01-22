@@ -1199,7 +1199,6 @@ const BaseInputTable = ({
               loadingOverlayComponentParams={loadingOverlayComponentParams}
               domLayout={scrollable ? 'normal' : 'autoHeight'}
               rowSelection="multiple"
-              singleClickEdit={true}
             />
           </div>
         </div>
