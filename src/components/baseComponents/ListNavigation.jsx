@@ -242,7 +242,7 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
       icon: Launch,
       action: 'viewComputationBreakdown',
       requiredPermissions: [],
-      status: [4],
+      status: [4, 5, 6, 7, 8, 9, 10, 11],
     },
     {
       name: 'View Complete Summary',

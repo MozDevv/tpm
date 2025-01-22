@@ -256,7 +256,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 <p>
                   Pension Number:{' '}
                   <strong className="font-normal ml-3">
-                    {clickedItem?.claim_id}
+                    {clickedItem?.pensioner_number}
                   </strong>
                 </p>
                 <p>
@@ -265,17 +265,17 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                     {clickedItem?.mda_description}
                   </strong>
                 </p>
-
-                {clickedItem?.prospectivePensionerAwards.length > 0 &&
-                  clickedItem?.prospectivePensionerAwards?.map((award) => (
-                    <p key={award.id}>
-                      Claim Type:
-                      <strong className="font-normal ml-3">
-                        {' '}
-                        {award.pension_award?.prefix}
-                      </strong>
-                    </p>
-                  ))}
+                {clickedItem?.prospectivePensionerAwards[0] && (
+                  <p key={clickedItem.prospectivePensionerAwards[0].id}>
+                    Claim Type:
+                    <strong className="font-normal ml-3">
+                      {
+                        clickedItem.prospectivePensionerAwards[0].pension_award
+                          ?.prefix
+                      }
+                    </strong>
+                  </p>
+                )}
               </div>
               <div className="font-semibold">
                 <p>
@@ -452,7 +452,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <strong className="w-1/2">Undreduced Pension:</strong>
+                    <strong className="w-1/2">Unreduced Pension:</strong>
                     <span className="w-1/2 text-right">
                       {formatNumber(report?.unreduced_pension)}
                     </span>

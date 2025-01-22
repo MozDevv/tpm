@@ -589,8 +589,6 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [openGP178Report, setOpenGP178Report] = useState(false);
 
   const baseCardHandlers = {
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
 
     submit: () => setOpenAction(true),
