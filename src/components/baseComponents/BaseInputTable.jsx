@@ -37,6 +37,7 @@ const BaseInputTable = ({
   fields = [],
   validators = {},
   title,
+  cap,
 
   id,
   idLabel,
@@ -737,6 +738,16 @@ const BaseInputTable = ({
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
         // Validate the first row's date (rowIndex === 0) with dateOfFirstAppointment passed as props
+
+        if (data.was_pensionable) {
+          if (cap === 'CAP189') {
+            data.nature_of_salary_scale = 'P';
+            data.nature_of_service = 'ReckonableService';
+          } else if (cap === 'CAP199') {
+            data.nature_of_salary_scale = 'P';
+            data.nature_of_service = 'ReckonableService';
+          }
+        }
         if (
           dateOfFirstAppointment &&
           rowIndex === 0 &&

@@ -338,6 +338,7 @@ function PostAndNature({ id, clickedItem }) {
           clickedItem?.notification_status !== 0 &&
           clickedItem?.notification_status !== 3
         }
+        cap={cap}
         setSeconded={setSeconded}
         idLabel="prospective_pensioner_id"
         setCurrentRow={setCurrentRow}

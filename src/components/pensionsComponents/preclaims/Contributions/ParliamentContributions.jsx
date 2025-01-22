@@ -326,7 +326,8 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
         ) : (
           <BaseInputCard
             fields={fields}
-            id={id}
+            id={clickedItem2?.id}
+            isBranch={true}
             idLabel={'prospective_pensioner_id'}
             apiEndpoint={endpoints.createParliamentContributions}
             postApiFunction={apiService.post}
@@ -336,7 +337,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
           />
         )}
       </BaseCard>
-      {JSON.stringify(clickedItem2)}
 
       <div className="flex justify-between w-full items-center">
         <div className="flex gap-6 items-center">
