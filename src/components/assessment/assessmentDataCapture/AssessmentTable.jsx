@@ -90,12 +90,12 @@ const notificationStatusMap = {
   3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
   5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
-  6: { name: 'Controller of Budget', color: '#2ecc71' }, // Light Blue
-  7: { name: 'Finance', color: '#f39c12' }, // Bright Orange
-  8: { name: 'Voucher Preparation', color: '#2ecc71' }, // Light Blue
-  9: { name: 'Voucher Approval', color: '#f39c12' }, // Bright Orange
-  10: { name: 'Voucher Scheduled', color: '#2ecc71' }, // Light Blue
-  11: { name: 'Voucher Paid', color: '#f39c12' }, // Bright Orange
+  6: { name: 'Controller of Budget', color: '#f39c12' }, // Bright Orange
+  7: { name: 'Finance', color: '#2ecc71' }, // Light Blue
+  8: { name: 'Voucher Preparation', color: '#f39c12' }, // Bright Orange
+  9: { name: 'Voucher Approval', color: '#3498db' }, // Light Blue
+  10: { name: 'Voucher Scheduled', color: '#f39c12' }, // Bright Orange
+  11: { name: 'Voucher Paid', color: '#8b4513' }, // Light Blue
 };
 
 const colDefs = [
