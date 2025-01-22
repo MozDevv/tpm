@@ -31,8 +31,9 @@ const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
   1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
   2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
-  3: { icon: DoneAll, name: 'Closed', color: '#2e7d32' }, // Green
-  4: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  3: { icon: DoneAll, name: 'Scheduled', color: '#2e7d32' }, // Green
+  4: { icon: Check, name: 'Posted', color: '#2e7d32' }, // Green
+  5: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
 const Payments = ({ status }) => {

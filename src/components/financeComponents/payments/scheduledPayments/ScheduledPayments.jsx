@@ -12,12 +12,20 @@ import { formatDate, parseDate } from '@/utils/dateFormatter';
 
 import PaymentsCard from '../PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
-import { Dialog } from '@mui/material';
+import { Button, Dialog } from '@mui/material';
 import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
 import ScheduledPaymentsCard from './ScheduledPaymentsCard';
 import { message } from 'antd';
 import AddSchedules from './AddSchedules';
+import {
+  AccessTime,
+  Cancel,
+  Check,
+  DoneAll,
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -68,20 +76,83 @@ const ScheduledPayments = ({ status }) => {
     fetchBankAccounts();
   }, []);
 
+  /**Sch_New,
+        Sch_Pending_Approval,
+        Sch_Approved,
+        Sch_Paid,
+        Sch_Rejected, */
+  const statusIcons = {
+    0: { icon: Visibility, name: 'New Schedule', color: '#1976d2' }, // Blue
+    1: { icon: AccessTime, name: 'Pending Approval', color: '#fbc02d' }, // Yellow
+    2: { icon: Verified, name: 'Approved Schedule', color: '#2e7d32' }, // Green
+    3: { icon: DoneAll, name: 'Paid Schedule', color: '#2e7d32' }, // Green
+    4: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  };
+
   const columnDefs = [
     {
-      headerName: 'Schedule No',
-      field: 'scheduleNo',
+      headerName: 'Document No',
+      field: 'documentNo',
       type: 'string',
       checkboxSelection: true,
       headerCheckboxSelection: true,
       pinned: 'left',
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
+      headerName: 'Schedule No',
+      field: 'scheduleNo',
+      type: 'string',
     },
 
     {
       headerName: 'No of Selected Payments',
       field: 'noOfSelectedPayments',
       type: 'number',
+    },
+    {
+      field: 'stage',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '20px',
+            }}
+          >
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       headerName: 'Schedule Date',
@@ -128,7 +199,9 @@ const ScheduledPayments = ({ status }) => {
       noOfSelectedPayments: item.noOfSelectedPayments,
       payingBank: item.payingBank,
       totalAmount: item.totalAmount,
+      documentNo: item.documentNo,
       paymentScheduleLines: item.paymentScheduleLines,
+      stage: item.stage,
     }));
   };
 

@@ -357,6 +357,8 @@ const financeEndpoints = {
     `/Posting/SubmitBudgetForApproval?BudgetId=${id}`,
 
   closeAccountingPeriod: '/Posting/CloseIncomeStatement',
+  getPaymentSchedulesByStage: (stage) =>
+    `/Posting/GetPaymentSchedules?filterCriterion.criterions[0].propertyName=stage&filterCriterion.criterions[0].propertyValue=${stage}&filterCriterion.criterions[0].criterionType=0`,
 };
 
 export const apiService = {
