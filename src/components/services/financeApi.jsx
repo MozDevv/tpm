@@ -361,6 +361,12 @@ const financeEndpoints = {
     `/Posting/GetPaymentSchedules?stage=${stage}`,
   submitScheduleForApproval: (id) =>
     `/Posting/SubmitPaymentScheduleForApproval?PaymentScheduleId=${id}`,
+
+  addRecoveryBankDetails: '/PostingSetUp/AddRecoveryBankDetails',
+  deleteRecoveryBankDetails: (id) =>
+    `/PostingSetUp/DeleteRecoveryBankDetails?id=${id}`,
+  getRecoveryBankDetails: '/PostingSetUp/GetRecoveryBankDetailss',
+  updateRecoveryBankDetails: '/PostingSetUp/UpdateRecoveryBankDetails',
 };
 
 export const apiService = {

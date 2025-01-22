@@ -585,6 +585,10 @@ function Sidebar() {
               path: '/pensions/setups/recoveries-deductions',
             },
             {
+              title: 'Recoveries Bank Details',
+              path: '/pensions/setups/recovery-bank-details',
+            },
+            {
               title: 'Account Categories',
               path: '/pensions/setups/account-category',
             },
