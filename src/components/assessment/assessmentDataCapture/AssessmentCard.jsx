@@ -168,7 +168,10 @@ function AssessmentCard({
                       }
                       key="7"
                     >
-                      <Deductions id={clickedItem?.id} />
+                      <Deductions
+                        id={clickedItem?.id}
+                        clickedItem2={clickedItem}
+                      />
                     </TabPane>
                     {/* <TabPane
                       tab={

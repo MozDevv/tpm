@@ -454,6 +454,7 @@ const AssessmentTable = ({ status, statusArr }) => {
           item?.prospectivePensioner?.last_basic_salary_amount,
         mda_code: item?.prospectivePensioner?.mda?.code,
         mda_description: item?.prospectivePensioner?.mda?.description,
+        mda_id: item?.prospectivePensioner?.mda?.id,
         mda_pensionCap_code: item?.prospectivePensioner?.mda?.pensionCap?.code,
         mda_pensionCap_name: item?.prospectivePensioner?.mda?.pensionCap?.name,
         mda_pensionCap_description:

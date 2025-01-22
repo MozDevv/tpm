@@ -15,61 +15,6 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { useMda } from '@/context/MdaContext';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const getOptionNameById = (options, id) => {
-  const option = options.find((opt) => opt.id === id);
-  return option ? option.name : id; // Fallback to id if no match found
-};
-
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-    pinned: 'left',
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'amount',
-    headerName: 'Amount',
-    width: 150,
-    filter: true,
-  },
-  {
-    field: 'deduction_type',
-    headerName: 'Deduction Type',
-    width: 150,
-    filter: true,
-    cellRenderer: (params) => {
-      const options = [
-        { id: 0, name: 'Salary Overpayment' },
-        { id: 1, name: 'Work Deductions' },
-        { id: 2, name: 'Abetement' },
-      ];
-      return getOptionNameById(options, params.value);
-    },
-  },
-  {
-    field: 'deduction_payee',
-    headerName: 'Deduction Payee',
-    width: 150,
-    filter: true,
-    cellRenderer: (params) => {
-      const options = [
-        { id: 0, name: 'MDA' },
-        { id: 1, name: 'Treasury' },
-      ];
-      return getOptionNameById(options, params.value);
-    },
-  },
-];
-
 const Deductions = ({ id, clickedItem2 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -147,7 +92,7 @@ const Deductions = ({ id, clickedItem2 }) => {
       value: 'mda_id',
       type: 'select',
       options: mdas
-        .filter((mda) => mda.id === mdaId)
+        .filter((mda) => mda.id === clickedItem2?.mda_id)
         .map((mda) => ({
           id: mda.id,
           name: mda.name,
