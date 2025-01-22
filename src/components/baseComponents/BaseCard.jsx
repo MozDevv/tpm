@@ -114,7 +114,9 @@ function BaseCard({
   const updatedHandlers = {
     ...handlers,
     openDetails: () => setDetailsVisible(!isDetailsVisible),
-    delete: () => setIsDialogOpen(true),
+    ...(deleteApiEndpoint && deleteApiService
+      ? { delete: () => setIsDialogOpen(true) }
+      : {}),
   };
 
   const handleDeleteItem = async () => {

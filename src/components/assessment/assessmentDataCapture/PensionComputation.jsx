@@ -234,7 +234,6 @@ function PensionComputation({
         openBaseCard={viewCompleteSummary}
         setOpenBaseCard={setViewCompleteSummary}
         title={'Complete Summary Details'}
-        handlers={{}}
         deleteApiEndpoint={''}
         deleteApiService={''}
         clickedItem={summary}
