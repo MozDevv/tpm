@@ -646,11 +646,18 @@ const ClaimsTable = ({ status }) => {
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[
-            'Verification',
-            'Validation',
-            'Approval',
+            'Claims Verification',
+            'Claims Validation',
+            'Claims Approval',
             'Assessment Data Capture',
             'Assessment Approval',
+            'Directorate',
+            'Controller of Budget',
+            'Finance',
+            'Voucher Preparation',
+            'Voucher Approval',
+            'Voucher Scheduled',
+            'Voucher Paid',
           ]}
         >
           <CreateProspectivePensioner

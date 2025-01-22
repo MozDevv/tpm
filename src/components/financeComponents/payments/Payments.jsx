@@ -298,10 +298,6 @@ const Payments = ({ status }) => {
     //   },
     // }),
     ...(status === 2 && {
-      postPaymentToLedger: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
       schedulePaymentVoucher: () => {
         setIsSchedule(true);
         setOpenPV(true);
@@ -570,7 +566,8 @@ const Payments = ({ status }) => {
           useRequestBody={true}
           dialogType={dialogType}
           steps={[
-            'Payment Creation',
+            'Payment Preparation',
+            'Payment Request Approval',
             'Payment Approval',
             'Payment Scheduling',
             'Payment Posting',
@@ -593,7 +590,7 @@ const Payments = ({ status }) => {
             </>
           ) : (
             <BaseAutoSaveInputCard
-              fields={fields}
+              fields={fields.filter((field) => field.name !== 'documentNo')}
               apiEndpoint={financeEndpoints.addPayment}
               putApiFunction={apiService.post}
               updateApiEndpoint={financeEndpoints.updatePayment}

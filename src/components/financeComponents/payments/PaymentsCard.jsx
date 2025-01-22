@@ -406,14 +406,16 @@ function PaymentsCard({
                 <div className="flex-grow">
                   {' '}
                   {/* Make this grow too */}
-                  {clickedItem?.prospectivePensionerId && (
-                    <div className="ml-[-13px]">
-                      <PensionerDetails
-                        clickedItem={clickedItem}
-                        retireeId={clickedItem?.prospectivePensionerId}
-                      />
-                    </div>
-                  )}
+                  {clickedItem?.prospectivePensionerId &&
+                    clickedItem.source !== 0 && (
+                      <div className="ml-[-13px]">
+                        <PensionerDetails
+                          isPayment={true}
+                          clickedItem={clickedItem}
+                          retireeId={clickedItem?.prospectivePensionerId}
+                        />
+                      </div>
+                    )}
                   <BaseFinanceInputTable
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}

@@ -864,6 +864,13 @@ const AssessmentTable = ({ status, statusArr }) => {
             'Claims Approval',
             'Assessment Data Capture',
             'Assessment Approval',
+            'Directorate',
+            'Controller of Budget',
+            'Finance',
+            'Voucher Preparation',
+            'Voucher Approval',
+            'Voucher Scheduled',
+            'Voucher Paid',
           ]}
         >
           <AssessmentCard
