@@ -49,7 +49,13 @@ import { Divider, Menu, MenuItem } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { name } from 'dayjs/locale/en-au';
 
-const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
+const ListNavigation = ({
+  handlers,
+  status,
+  clickedItem,
+  reportItems,
+  selectedRows,
+}) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
 
@@ -112,6 +118,9 @@ const ListNavigation = ({ handlers, status, clickedItem, reportItems }) => {
   useEffect(() => {
     getApprovalActionsForUser();
   }, [clickedItem]);
+  useEffect(() => {
+    getApprovalActionsForUser();
+  }, [selectedRows]);
 
   // Define buttons with required permissions
   const buttons = [
