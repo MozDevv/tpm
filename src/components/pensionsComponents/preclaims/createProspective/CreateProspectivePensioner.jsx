@@ -126,6 +126,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                       key="4"
                     >
                       <AddDocuments
+                        clickedItem2={clickedItem}
                         status={clickedItem.notification_status}
                         id={activeRetireeId}
                         moveToNextTab={moveToNextTab}
