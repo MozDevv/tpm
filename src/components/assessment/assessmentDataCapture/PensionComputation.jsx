@@ -56,7 +56,11 @@ function PensionComputation({
     Object.keys(summary)
       .filter((key) => summary[key] !== undefined && summary[key] !== null) // Filter out undefined or null values
       .filter(
-        (key) => key !== 'breakdown' && key !== 'claim_id' && key !== 'id'
+        (key) =>
+          key !== 'breakdown' &&
+          key !== 'claim_id' &&
+          key !== 'id' &&
+          key !== 'created_by'
       ) // Filter out breakdown, claim_id and id
       .map((key) => {
         let value = summary[key];

@@ -32,6 +32,7 @@ import { useIsLoading } from '@/context/LoadingContext';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
+import { useRouter } from 'next/navigation';
 
 function Sidebar() {
   const [open, setOpen] = useState({});
@@ -46,6 +47,7 @@ function Sidebar() {
     }));
   };
 
+  const router = useRouter();
   useEffect(() => {
     const allItems = [...menuItems, ...adminItems];
 
@@ -75,8 +77,11 @@ function Sidebar() {
         [selectedChild.parent]: true,
         [selectedChild.childParent]: true, // Open child as well
       }));
+    } else if (selectedItem) {
+      // Redirect to 404 if the selected item is not found
+      router.push('/404');
     }
-  }, [selectedItem]);
+  }, [selectedItem, fetchedMenuItems, router]);
 
   const { auth } = useAuth();
 
@@ -108,6 +113,12 @@ function Sidebar() {
   useEffect(() => {
     getMenus(auth?.user?.roles);
   }, [auth?.user?.roles]);
+
+  const currentPath = router.pathname;
+
+  const normalizePath = (path) => {
+    return path && path.replace(/^\/+|\/+$/g, ''); // Remove leading and trailing slashes
+  };
 
   const menuItems = [
     {
@@ -705,6 +716,46 @@ function Sidebar() {
       ],
     },
   ];
+
+  useEffect(() => {
+    console.log('Current Path:', window.location.pathname); // Log the current path
+    console.log('Fetched Menu Items:', fetchedMenuItems); // Log the fetched menu items
+
+    const isRouteAllowed = (path, menuItems) => {
+      // Filter the menu items using the filter function
+      const filteredMenuItems = filterMenuItems(
+        [...menuItems, ...adminItems],
+        fetchedMenuItems
+      );
+
+      // Flatten all paths (including nested children and subchildren)
+      const allPaths = filteredMenuItems.flatMap((item) =>
+        item.children
+          ? item.children.flatMap((child) =>
+              child.subChildren
+                ? child.subChildren.map((sub) => sub.path)
+                : [child.path]
+            )
+          : [item.path]
+      );
+
+      console.log('All Paths:', allPaths); // Log all available paths
+
+      // Check if the current path is included in the allowed paths
+      return allPaths.includes(path);
+    };
+
+    // Proceed only when fetchedMenuItems are available
+    if (fetchedMenuItems.length > 0) {
+      const hasAccess = isRouteAllowed(router.pathname, fetchedMenuItems);
+
+      if (!hasAccess) {
+        // Redirect to 404 if route is not allowed#
+        console.log('Redirecting to 404');
+        // router.replace('/404');
+      }
+    }
+  }, [router.pathname, fetchedMenuItems, adminItems, router]);
 
   const filterMenuItems = (items, fetchedItems) => {
     return items

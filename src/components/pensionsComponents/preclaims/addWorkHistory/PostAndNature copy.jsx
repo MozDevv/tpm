@@ -241,8 +241,8 @@ function PostAndNature({ id, clickedItem }) {
             value: 'seconded',
             type: 'select',
             options: [
-              { id: true, name: 'Yes' },
               { id: false, name: 'No' },
+              { id: true, name: 'Yes' },
             ],
           },
         ]

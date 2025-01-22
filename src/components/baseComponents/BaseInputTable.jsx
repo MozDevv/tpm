@@ -1184,6 +1184,7 @@ const BaseInputTable = ({
               frameworkComponents={{
                 customSelectCellEditor: CustomSelectCellEditor, // Register your custom component
               }}
+              singleClickEdit={true}
               columnDefs={headers}
               defaultColDef={{
                 flex: 1,
