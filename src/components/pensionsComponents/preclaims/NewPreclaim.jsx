@@ -239,7 +239,7 @@ function NewPreclaim({
       retiree?.dob,
       retiree?.retirement_date
     );
-    // Fallback to retiree data if no valid saved form data is found
+
     return {
       personal_number: retiree?.personal_number ?? '',
       first_name: retiree?.first_name ?? '',

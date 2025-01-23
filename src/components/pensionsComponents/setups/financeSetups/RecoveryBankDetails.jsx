@@ -66,10 +66,16 @@ const RecoveryBankDetails = () => {
   }, []);
   const columnDefs = [
     {
+      headerCheckboxSelection: true,
+      checkboxSelection: true,
       field: 'deductionsAndRefundId',
       headerName: 'Deductions And Refund Id',
       headerClass: 'prefix-header',
       filter: true,
+      valueFormatter: (params) => {
+        const item = data.find((item) => item.id === params.value);
+        return item?.itemName;
+      },
     },
     {
       field: 'bankAccountName',
@@ -88,6 +94,10 @@ const RecoveryBankDetails = () => {
       headerName: 'Bank Branch Id',
       headerClass: 'prefix-header',
       filter: true,
+      valueFormatter: (params) => {
+        const branch = branches.find((branch) => branch.id === params.value);
+        return branch?.name;
+      },
     },
   ];
 
@@ -222,6 +232,10 @@ const RecoveryBankDetails = () => {
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
         fetchApiEndpoint={financeEndpoints.getRecoveryBankDetails}
+        deleteApiEndpoint={financeEndpoints.deleteRecoveryBankDetails(
+          clickedItem?.id
+        )}
+        deleteApiService={apiService.delete}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
