@@ -730,7 +730,9 @@ const BaseAutoSaveInputCard = ({
                 value={formData[field.name] || ''}
                 onChange={handleInputChange}
                 error={!!errors[field.name]}
-                // helperText={errors[field.name]}
+                helperText={
+                  field.name === 'bankAccountNo' ? errors[field.name] : ''
+                }
                 required={field.required}
                 disabled={field.disabled}
                 fullWidth
