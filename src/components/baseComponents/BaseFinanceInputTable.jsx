@@ -57,6 +57,7 @@ const BaseFinanceInputTable = ({
   allOptions,
   setTotalAmmounts,
   branches,
+  disableAll,
   fetchChildren,
 }) => {
   const [rowData, setRowData] = useState(() => {
@@ -427,7 +428,7 @@ const BaseFinanceInputTable = ({
       let columnDef = {
         headerName: col.label,
         field: col.value,
-        editable: !col.disabled,
+        editable: !disableAll && !col.disabled,
         sortable: true,
 
         filter: true,
@@ -1104,11 +1105,13 @@ const BaseFinanceInputTable = ({
               variant="text"
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
+              disabled={disableAll}
             >
               New Line
             </Button>
             <Button
               onClick={handleDeleteSelectedRows}
+              disabled={disableAll}
               variant="text"
               startIcon={<Delete />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
@@ -1146,6 +1149,7 @@ const BaseFinanceInputTable = ({
                 height: '400px',
                 minHehight: '100px',
               }}
+              className={disableAll ? 'custom-grid' : ''}
               onCellKeyDown={onCellKeyDown}
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}

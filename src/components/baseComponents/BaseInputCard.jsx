@@ -53,6 +53,7 @@ const BaseInputCard = ({
   banks,
   refreshData,
   setInputData,
+  disableAll,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -577,7 +578,7 @@ const BaseInputCard = ({
                   size="small"
                   fullWidth
                   name={field.name}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disableAll}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}
@@ -597,7 +598,7 @@ const BaseInputCard = ({
                   <Switch
                     checked={formData[field.name] === true}
                     onChange={handleInputChange}
-                    disabled={field.disabled}
+                    disabled={field.disabled || disableAll}
                     name={field.name}
                     color="primary"
                   />
@@ -655,7 +656,7 @@ const BaseInputCard = ({
                 value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
                 helperText={errors[field.name]}
                 onChange={handleInputChange}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 fullWidth
               />
             ) : // <CustomDatePicker
@@ -701,7 +702,7 @@ const BaseInputCard = ({
                 type="text"
                 value={formData[field.name]}
                 //value={formData[field.name]}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 onChange={handleAmountChange}
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}
@@ -829,7 +830,7 @@ const BaseInputCard = ({
                 error={!!errors[field.name]}
                 helperText={errors[field.name]}
                 required={field.required}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 fullWidth
               />
             )}

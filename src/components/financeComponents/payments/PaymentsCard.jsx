@@ -25,6 +25,7 @@ function PaymentsCard({
   useRequestBody,
   transformData,
   setClickedItem,
+  disableAll,
 }) {
   const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
 
@@ -399,6 +400,7 @@ function PaymentsCard({
                   setOpenBaseCard={setOpenBaseCard}
                   clickedItem={clickedItem}
                   useRequestBody={true}
+                  disableAll={disableAll}
                 />
               </div>
 
@@ -417,6 +419,7 @@ function PaymentsCard({
                       </div>
                     )}
                   <BaseFinanceInputTable
+                    disableAll={disableAll}
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
                     selectedAccountTypeId={selectedAccountTypeId}

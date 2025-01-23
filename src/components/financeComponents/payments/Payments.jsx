@@ -339,25 +339,25 @@ const Payments = ({ status }) => {
   const [openGratuity, setOpenGratuity] = React.useState(false);
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      setOpenBaseCard(true);
-      setClickedItem(item);
-    },
-    delete: (item) => {
-      setOpenBaseCard(true);
-      setClickedItem(item);
-    },
-    createConstituency: () => {
-      setDialogType('branch');
-      setOpenAction(true);
-    },
     'Payment Voucher Report': () => setOpenTrialBalanceReport(true),
     'Gratuity Notification Letter': () => setOpenGratuity(true),
     ...(status === 0 && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
+      edit: (item) => {
+        setOpenBaseCard(true);
+        setClickedItem(item);
+      },
+      delete: (item) => {
+        setOpenBaseCard(true);
+        setClickedItem(item);
+      },
+      createConstituency: () => {
+        setDialogType('branch');
+        setOpenAction(true);
+      },
       submitPaymentForApproval: () => {
         setSelectedRows([clickedItem]);
         setOpenPV(true);
@@ -595,6 +595,7 @@ const Payments = ({ status }) => {
                 useRequestBody={true}
                 setClickedItem={setClickedItem}
                 transformData={transformData}
+                disableAll={status !== 0 || clickedItem.source === 1}
               />{' '}
             </>
           ) : (
@@ -611,6 +612,7 @@ const Payments = ({ status }) => {
               useRequestBody={true}
               openBaseCard={openBaseCard}
               setClickedItem={setClickedItem}
+              disableAll={status !== 0}
             />
           )}
         </BaseCard>

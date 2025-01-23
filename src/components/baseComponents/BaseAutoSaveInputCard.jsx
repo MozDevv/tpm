@@ -53,7 +53,9 @@ const BaseAutoSaveInputCard = ({
   options,
   filterKey,
   setResultFunction,
+
   setOpenDrilldown,
+  disableAll,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -530,7 +532,7 @@ const BaseAutoSaveInputCard = ({
                   size="small"
                   fullWidth
                   name={field.name}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disableAll}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}
@@ -564,7 +566,7 @@ const BaseAutoSaveInputCard = ({
                 variant="outlined"
                 onBlur={handleAutoSave}
                 size="small"
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 error={!!errors[field.name]}
                 value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
                 // helperText={errors[field.name]}
@@ -609,7 +611,7 @@ const BaseAutoSaveInputCard = ({
                 type="text"
                 // value={formData[field.name]}
                 onBlur={handleAutoSave}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 onChange={handleAmountChange}
                 error={!!errors[field.name]}
                 required={field.required}
@@ -666,7 +668,7 @@ const BaseAutoSaveInputCard = ({
                 value={formData[field.name]}
                 onBlur={handleAutoSave}
                 //value={formData[field.name]}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 onChange={handleAmountChange}
                 error={!!errors[field.name]}
                 // helperText={errors[field.name]}
@@ -690,7 +692,7 @@ const BaseAutoSaveInputCard = ({
               <MuiPhoneNumber
                 defaultCountry="ke" // Kenya as the default country
                 name={field.name}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 value={formData[field.name]}
                 onChange={(value) =>
                   handleInputChange({
@@ -734,7 +736,7 @@ const BaseAutoSaveInputCard = ({
                   field.name === 'bankAccountNo' ? errors[field.name] : ''
                 }
                 required={field.required}
-                disabled={field.disabled}
+                disabled={field.disabled || disableAll}
                 fullWidth
               />
             )}

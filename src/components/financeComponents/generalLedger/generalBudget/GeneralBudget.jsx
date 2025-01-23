@@ -409,6 +409,7 @@ const GeneralBudget = ({ status }) => {
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
               useRequestBody={true}
+              disableAll={status !== 0}
               setOpenBaseCard={setOpenBaseCard}
             />
             <div className="mt-[-20px]">
