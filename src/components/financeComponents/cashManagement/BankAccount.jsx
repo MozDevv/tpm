@@ -202,6 +202,8 @@ const BankAccount = () => {
       headerClass: 'prefix-header',
       pinned: 'left',
       filter: true,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
       cellRenderer: (params) => {
         return (
           <p className="underline text-primary font-semibold">{params.value}</p>
@@ -320,6 +322,8 @@ const BankAccount = () => {
             useRequestBody={true}
             openBaseCard={openBaseCard}
             setClickedItem={setClickedItem}
+            banks={branches}
+            setSelectedBank={setSelectedBank}
           />
         )}
       </BaseCard>
@@ -336,6 +340,8 @@ const BankAccount = () => {
         handlers={handlers}
         breadcrumbTitle="Bank Account"
         currentTitle="Bank Account"
+        deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
+        deleteApiService={apiService.delete}
       />
     </div>
   );

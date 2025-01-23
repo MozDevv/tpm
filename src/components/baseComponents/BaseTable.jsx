@@ -23,7 +23,7 @@ import BaseCard from './BaseCard';
 import { useSearch } from '@/context/SearchContext';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
 import BaseEmptyComponent from './BaseEmptyComponent';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 
 const BaseTable = ({
   columnDefs,
@@ -50,6 +50,8 @@ const BaseTable = ({
   scrollable,
   clickedItem,
   openApproveDialog,
+  deleteApiEndpoint,
+  deleteApiService,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -71,10 +73,28 @@ const BaseTable = ({
     setAnchorEl(null);
   };
 
+  const handleDeleteItem = async () => {
+    try {
+      const res = await deleteApiService(deleteApiEndpoint);
+      console.log('Delete response:', res); // Log the response for debugging
+      if (res.status === 200 || res.status === 201 || res.data.succeeded) {
+        message.success(`${currentTitle} deleted successfully`);
+        fetchData();
+        setIsDialogOpen(false);
+        setOpenBaseCard(false);
+      } else {
+        console.error('Delete failed:', res);
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
   const adjustedHandlers = {
     ...handlers,
     filter: () => setOpenFilter(!openFilter),
     openInExcel: () => exportToExcel(),
+    ...(handlers.delete ? { delete: handleDeleteItem } : {}),
   };
 
   const router = useRouter();
@@ -171,6 +191,9 @@ const BaseTable = ({
 
     if (onSelectionChange) {
       onSelectionChange(selectedData);
+    }
+    if (!clickedItem) {
+      setClickedItem(selectedData[0]);
     }
   };
 
