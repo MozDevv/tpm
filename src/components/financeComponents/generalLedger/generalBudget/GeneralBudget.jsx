@@ -22,6 +22,7 @@ import {
   Verified,
   Visibility,
 } from '@mui/icons-material';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -135,6 +136,10 @@ const GeneralBudget = ({ status }) => {
     });
   };
 
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [workFlowChange, setWorkFlowChange] = React.useState(0);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
@@ -154,39 +159,76 @@ const GeneralBudget = ({ status }) => {
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
-    generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
-    uploadGeneralBudget: () => setUploadExcel(true),
-    submitBudgetForApproval: () => {
-      if (clickedItem) {
-        submitBudgetForApproval();
-      } else if (!clickedItem) {
-        message.error('Please select a budget to submit for approval');
-      }
-    },
+    ...(status === 0
+      ? {
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+          edit: () => console.log('Edit clicked'),
+          delete: () => console.log('Delete clicked'),
+          reports: () => console.log('Reports clicked'),
+          notify: () => console.log('Notify clicked'),
+          generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
+          uploadGeneralBudget: () => setUploadExcel(true),
+          submitBudgetForApproval: () => {
+            if (clickedItem) {
+              submitBudgetForApproval();
+            } else {
+              message.error('Please select a budget to submit for approval');
+            }
+          },
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
-
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
-    submitBudgetForApproval: () => submitBudgetForApproval(),
+    // filter: () => console.log("Filter clicked"),
+    // openInExcel: () => console.log("Export to Excel clicked"),
+    ...(status === 0
+      ? {
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+          edit: () => console.log('Edit clicked'),
+          delete: () => console.log('Delete clicked'),
+          reports: () => console.log('Reports clicked'),
+          notify: () => console.log('Notify clicked'),
+          generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
+          uploadGeneralBudget: () => setUploadExcel(true),
+          submitBudgetForApproval: () => {
+            if (clickedItem) {
+              submitBudgetForApproval();
+            } else {
+              message.error('Please select a budget to submit for approval');
+            }
+          },
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -319,6 +361,17 @@ const GeneralBudget = ({ status }) => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <BaseCard
         openBaseCard={uploadExcel}
         setOpenBaseCard={setUploadExcel}
@@ -385,7 +438,7 @@ const GeneralBudget = ({ status }) => {
           setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getBudget}
+          fetchApiEndpoint={financeEndpoints.getBudgetByStatus(status)}
           fetchApiService={apiService.get}
           transformData={transformData}
           uploadExcel={uploadExcel}
@@ -393,6 +446,9 @@ const GeneralBudget = ({ status }) => {
           handlers={handlers}
           breadcrumbTitle="General Budget"
           currentTitle="General Budget"
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          openApproveDialog={openApprove}
         />
       </div>
     </div>

@@ -559,6 +559,7 @@ const ScheduledPayments = ({ status }) => {
         handlers={handlers}
         breadcrumbTitle={navTitle}
         currentTitle={navTitle}
+        openApproveDialog={openApprove}
       />
     </div>
   );

@@ -402,8 +402,21 @@ function Sidebar() {
           title: 'Enrollments',
           subChildren: [
             {
-              title: 'Batch Member Upload',
+              title: 'New Batch Member',
               path: '/pensions/contributions/enrollments/batch-upload',
+            },
+            {
+              title: 'Pending Batch Members',
+              path: '/pensions/contributions/enrollments/pending',
+            },
+            {
+              title: 'Approved Batch Members',
+              path: '/pensions/contributions/enrollments/approved',
+            },
+
+            {
+              title: 'Rejected Batch Members',
+              path: '/pensions/contributions/enrollments/rejected',
             },
           ],
         },

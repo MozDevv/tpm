@@ -49,6 +49,7 @@ const BaseTable = ({
   openPostToGL,
   scrollable,
   clickedItem,
+  openApproveDialog,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -146,6 +147,11 @@ const BaseTable = ({
   useEffect(() => {
     fetchData();
   }, [uploadExcel]);
+  useEffect(() => {
+    if (!openApproveDialog) {
+      fetchData();
+    }
+  }, [openApproveDialog]);
 
   const resetFilters = () => {
     setFilterColumn('');

@@ -62,6 +62,7 @@ const financeEndpoints = {
 
   createBudget: '/Accounts/AddBudget',
   getBudget: '/Accounts/GetBudget',
+  getBudgetByStatus: (status) => `/Accounts/GetBudget?Stage=${status}`,
 
   addBudgetLines: '/Accounts/AddBudgetLines',
   updateBudgetLine: '/Accounts/UpdateBudgetLines',
@@ -236,7 +237,11 @@ const financeEndpoints = {
 
   submitPVforApproval: (id) =>
     `/Posting/SubmitPaymentForApproval?PaymentId=${id}`,
+  submitBatchForApproval: (id) =>
+    `/Posting/SubmitMemberUploadBatchForApproval?MemberUploadBatchId=${id}`,
   approvePv: (id) => `/Posting/ApprovePayment?PaymentId=${id}`,
+  submitBatchForApproval2: (id) =>
+    `/Posting/SubmitMemberUploadBatchForApproval?MemberUploadBatchId=${id}`,
   createPaymentSchedule: '/Posting/CreatePensionPaymentSchedule',
   postClaimPitoLegder: '/Posting/PostClaimPIToLedger',
 
@@ -301,6 +306,8 @@ const financeEndpoints = {
   deleteBatchUpload: (id) => `/Contribution/DeleteMemberUploadBatch?id=${id}`,
 
   uploadMembersExcel: '/Contribution/UploadMembers',
+  getUploadBatchByStatus: (status) =>
+    `/Contribution/GetMemberUploadBatches?MembershipStatus=${status}`,
 
   getMemberUploadTemplate: 'Contribution/GetMemberUploadTemplate',
 

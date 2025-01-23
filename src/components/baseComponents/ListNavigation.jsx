@@ -372,7 +372,7 @@ const ListNavigation = ({
     },
 
     {
-      name: 'Submit Payment for Approval',
+      name: 'Submit for Approval',
       icon: Send,
       action: 'submitPaymentForApproval',
       requiredPermissions: [],

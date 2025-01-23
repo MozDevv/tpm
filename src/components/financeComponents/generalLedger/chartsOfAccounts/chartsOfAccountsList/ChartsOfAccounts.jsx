@@ -198,6 +198,21 @@ function ChartsOfAccounts() {
       }),
     },
     {
+      headerName: 'Income or Balance Sheet',
+      field: 'incomeOrBalancesheet',
+      width: 150,
+      valueFormatter: (params) => {
+        const value = params.value;
+        if (value === 1) {
+          return 'Income';
+        } else if (value === 2) {
+          return 'Balance Sheet';
+        } else {
+          return 'None';
+        }
+      },
+    },
+    {
       headerName: 'Account Category',
       field: 'accountSubgroupId',
 

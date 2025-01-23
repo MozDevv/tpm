@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <BatchUploadMembers status={0} />
+      <BatchUploadMembers status={3} />
     </div>
   );
 }

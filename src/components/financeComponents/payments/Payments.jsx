@@ -634,6 +634,7 @@ const Payments = ({ status }) => {
           handlers={handlers}
           breadcrumbTitle={navTitle}
           currentTitle={navTitle}
+          openApproveDialog={openApprove}
         />
       </div>
     </div>

@@ -17,16 +17,25 @@ import { apiService as setupsApiService } from '../services/setupsApi';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { Button, Dialog, IconButton, Tooltip } from '@mui/material';
 import BaseTabs from '../baseComponents/BaseTabs';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
 import { generateErrorTooltip } from '../baseComponents/generateErrorTooltip';
-import { Close, HighlightOff } from '@mui/icons-material';
+import {
+  AccessTime,
+  Cancel,
+  Close,
+  HighlightOff,
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
 import { Alert, message } from 'antd';
+import BatchActions from './BatchActions';
+import BaseSubmitForApproval from './BatchActions';
 
-const BatchUploadMembers = () => {
+const BatchUploadMembers = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -41,6 +50,8 @@ const BatchUploadMembers = () => {
       description: item.description,
       numberOfMembers: item.numberOfMembers,
       uploadDate: item.uploadDate,
+      members: item.members,
+      batchUploadStatus: item.batchUploadStatus,
 
       // roles: item.roles,
     }));
@@ -75,6 +86,9 @@ const BatchUploadMembers = () => {
     }
   };
 
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [openPV, setOpenPV] = React.useState(false);
+
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -86,6 +100,13 @@ const BatchUploadMembers = () => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
+    ...(status === 0 && {
+      submitPaymentForApproval: () => {
+        setSelectedRows([clickedItem]);
+        setOpenPV(true);
+        console.log('Submit Payment For Approval');
+      },
+    }),
   };
 
   const baseCardHandlers = {
@@ -101,6 +122,13 @@ const BatchUploadMembers = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    ...(status === 0 && {
+      submitPaymentForApproval: () => {
+        setSelectedRows([clickedItem]);
+        setOpenPV(true);
+        console.log('Submit Payment For Approval');
+      },
+    }),
     generateMembersTemplate: () => {
       generateMembersTemplate();
     },
@@ -155,6 +183,20 @@ const BatchUploadMembers = () => {
           },
         ]),
   ];
+  const statusIcons = {
+    /**  {
+          {
+        Mem_New,
+        Mem_Pending,
+        Mem_Approved,
+        Mem_Rejected,
+    }
+      } */
+    0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
+    1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+    3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  };
 
   const columnDefs = [
     {
@@ -164,6 +206,13 @@ const BatchUploadMembers = () => {
       flex: 1,
 
       pinned: 'left',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
     },
 
     {
@@ -171,6 +220,46 @@ const BatchUploadMembers = () => {
       headerName: 'Description',
       headerClass: 'prefix-header',
       flex: 1,
+    },
+    {
+      field: 'batchUploadStatus',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '20px',
+            }}
+          >
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       field: 'numberOfMembers',
@@ -187,6 +276,13 @@ const BatchUploadMembers = () => {
         return params.value ? parseDate(params.value) : '';
       },
     },
+  ];
+
+  const selectedHeaders = [
+    // { label: 'ID', field: 'id', align: 'left' },
+    { label: 'Batch No', field: 'batchNo', align: 'left' },
+    { label: 'Description', field: 'description', align: 'left' },
+    { label: 'Upload Date', field: 'uploadDate', align: 'left' },
   ];
 
   useEffect(() => {
@@ -242,7 +338,11 @@ const BatchUploadMembers = () => {
       );
 
       if (res.data.succeeded) {
-        if (res.data.data.some((detail) => detail.errorMessage)) {
+        if (
+          res.data.data.some(
+            (detail) => Object.keys(detail.errorMessage).length > 0
+          )
+        ) {
           message.error('Some records have errors. Please upload a valid file');
           setPreviewDetails(res.data.data);
           console.log('Preview data:', res.data.data);
@@ -848,12 +948,11 @@ const BatchUploadMembers = () => {
           </Button>
           <AgGridReact
             columnDefs={previewColdefs}
-            rowData={previewDetails}
+            rowData={clickedItem?.members}
             pagination={false}
             domLayout="normal"
             alwaysShowHorizontalScroll={true}
             onGridReady={(params) => {
-              params.api.sizeColumnsToFit();
               // onGridReady(params);
             }}
             animateRows={true}
@@ -865,6 +964,10 @@ const BatchUploadMembers = () => {
     },
     //
   ];
+  const handleSelectionChange = (selectedRows) => {
+    console.log('Selected rows in ParentComponent:', selectedRows);
+    setSelectedRows(selectedRows);
+  };
   return (
     <div className="">
       {/* <BaseCard
@@ -885,6 +988,31 @@ const BatchUploadMembers = () => {
           refreshData={false}
         />
       </BaseCard> */}
+      <Dialog
+        open={openPV && selectedRows.length > 0}
+        onClose={() => {
+          setOpenPV(false);
+        }}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          padding: '20px',
+          maxHeight: '90vh',
+          zIndex: 999999999,
+        }}
+      >
+        <BaseSubmitForApproval
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          setOpenPostGL={setOpenPV}
+          setOpenBaseCard={setOpenBaseCard}
+          clickedItem={clickedItem}
+          status={status}
+          submitForApprovalEndpoint={financeEndpoints.submitBatchForApproval2}
+          selectedHeaders={selectedHeaders}
+          apiService={apiService}
+        />
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -900,7 +1028,7 @@ const BatchUploadMembers = () => {
           <>
             <BaseInputCard
               fields={fields}
-              apiEndpoint={financeEndpoints.addBatchUpload}
+              apiEndpoint={financeEndpoints.uploadMembersExcel}
               postApiFunction={apiService.post}
               setOpenBaseCard={setOpenBaseCard}
               useRequestBody={false}
@@ -915,7 +1043,9 @@ const BatchUploadMembers = () => {
         )}
         {!clickedItem && previewDetails && previewDetails.length > 0 && (
           <div className="">
-            {previewDetails.some((detail) => detail.errorMessage) && (
+            {previewDetails.some(
+              (detail) => Object.keys(detail.errorMessage).length > 0
+            ) && (
               <div className="pb-3">
                 <Alert
                   message="Some records have errors. Please upload a valid file"
@@ -945,12 +1075,14 @@ const BatchUploadMembers = () => {
       <BaseTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
+        onSelectionChange={handleSelectionChange}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getBatchUploads}
+        fetchApiEndpoint={financeEndpoints.getUploadBatchByStatus(status)}
         fetchApiService={apiService.get}
         transformData={transformData}
+        openApproveDialog={openPV}
         pageSize={30}
         handlers={handlers}
         breadcrumbTitle="Batch Member Upload"

@@ -195,7 +195,7 @@ const AwardPostingGroups = () => {
       setClickedItem(null);
     },
     edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
+
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
   };
@@ -205,14 +205,7 @@ const AwardPostingGroups = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+    edit: (item) => {},
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
