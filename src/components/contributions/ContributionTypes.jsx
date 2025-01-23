@@ -75,12 +75,13 @@ const ContributionTypes = () => {
       width: 250,
       valueGetter: (params) =>
         getValueById(
-          bankBranches.flatMap((bank) =>
-            bank.branches.map((branch) => ({
-              ...branch,
-              bankId: bank.id,
-            }))
-          ),
+          bankBranches &&
+            bankBranches.flatMap((bank) =>
+              bank.branches.map((branch) => ({
+                ...branch,
+                bankId: bank.id,
+              }))
+            ),
           'name',
           params
         ),
