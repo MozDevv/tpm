@@ -285,15 +285,15 @@ const Payments = ({ status }) => {
   const [openTrialBalanceReport, setOpenTrialBalanceReport] =
     React.useState(false);
   const handlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
     ...(status === 0 && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
+      edit: () => console.log('Edit clicked'),
+
+      reports: () => console.log('Reports clicked'),
+      notify: () => console.log('Notify clicked'),
       submitPaymentForApproval: () => {
         setOpenPV(true);
         console.log('Submit Payment For Approval');

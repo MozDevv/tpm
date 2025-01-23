@@ -286,12 +286,13 @@ const ScheduledPayments = ({ status }) => {
         console.log('Post Payment');
       },
     }),
-    ...(status === 3 && {
-      postPaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-    }),
+    ...(status === 3 &&
+      {
+        // postPaymentVoucher: () => {
+        //   setOpenPV(true);
+        //   console.log('Post Payment');
+        // },
+      }),
   };
 
   const [openAction, setOpenAction] = React.useState(false);

@@ -163,7 +163,7 @@ const BatchContributions = ({ status }) => {
   const [vendorPG, setVendorPG] = React.useState([]);
   const [contributionTypes, setContributionTypes] = React.useState([]);
   const [contributionBatch, setContributionBatch] = React.useState([]);
-  const [selectedRows, setSelectedRows] = React.useState(null);
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
   const fetchContributionBatches = async () => {
     try {
