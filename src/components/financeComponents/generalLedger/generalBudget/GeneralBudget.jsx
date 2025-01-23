@@ -405,7 +405,7 @@ const GeneralBudget = ({ status }) => {
           <div className="flex flex-col  overflow-auto max-h-[80vh]">
             <BaseInputCard
               fields={fields}
-              apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+              apiEndpoint={financeEndpoints.updateBudget}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
               useRequestBody={true}

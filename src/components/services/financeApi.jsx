@@ -61,6 +61,8 @@ const financeEndpoints = {
   deleteGlAccount: (id) => `/Accounts/DeleteGLAccount?id=${id}`,
 
   createBudget: '/Accounts/AddBudget',
+  updateBudget: '/Accounts/UpdateBudget',
+  deleteBudget: (id) => `/Accounts/DeleteBudget?id=${id}`,
   getBudget: '/Accounts/GetBudget',
   getBudgetByStatus: (status) => `/Accounts/GetBudget?Stage=${status}`,
 
@@ -256,6 +258,7 @@ const financeEndpoints = {
   generateBudgetUploadTemplate: '/Accounts/GenerateBudgetUploadTemplate',
   uploadBudget: '/Accounts/UploadBudget',
   matchBankDetails: '/Posting/MatchBankDetails',
+
   getReceipts: '/Posting/GetReceipts',
   getReceiptsById: (id) => `/Posting/GetReceipts?id=${id}`,
   addReceipt: '/Posting/AddReceipt',
