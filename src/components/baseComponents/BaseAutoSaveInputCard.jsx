@@ -189,6 +189,15 @@ const BaseAutoSaveInputCard = ({
       //   }
       // }
 
+      /** Add a validation at bank account no field that allows only numbers */
+
+      if (field.name === 'bankAccountNo' && value) {
+        if (!/^\d+$/.test(value)) {
+          newErrors[
+            field.name
+          ] = `${field.label} is not a valid account number`;
+        }
+      }
       if ((field.type === 'date' || field.name === 'dob') && value) {
         if (!dayjs(value, 'YYYY-MM-DD', true).isValid()) {
           newErrors[field.name] = `${field.label} is not a valid date`;
