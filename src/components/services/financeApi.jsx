@@ -344,7 +344,9 @@ const financeEndpoints = {
   updateContributionType: '/Contribution/UpdateContributionType',
   deleteContributionType: (id) => `/Contribution/DeleteContributionType/${id}`,
 
-  getContributionBatches: '/Contribution/GetContributionBatches',
+  getContributionBatches: `/Contribution/GetContributionBatches`,
+  getContributionBatchesByStatus: (status) =>
+    `/Contribution/GetContributionBatches?batchStatus=${status}`,
   uploadContributions: '/Contribution/UploadContributions',
 
   getContributions: '/Contribution/GetContributions',

@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <BatchContributions />
+      <BatchContributions status={0} />
     </div>
   );
 }

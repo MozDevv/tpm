@@ -24,6 +24,7 @@ import { Button, Dialog, Divider, IconButton } from '@mui/material';
 import { ArrowBack, Close, IosShare, Launch } from '@mui/icons-material';
 import ContirbutionsActions from './ContirbutionsActions';
 import { message } from 'antd';
+import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
 const BatchContributions = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -34,6 +35,10 @@ const BatchContributions = ({ status }) => {
   const [openContirbutionsActions, setOpenContirbutionsActions] =
     useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+
+  const [openApprove, setOpenApprove] = useState(0);
+  const [workFlowChange, setWorkFlowChange] = useState(0);
+
   const transformData = (data) => {
     return data.map((item, index) => ({
       id: item.id,
@@ -79,31 +84,66 @@ const BatchContributions = ({ status }) => {
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
+    ...(status === 0
+      ? {
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+          edit: () => console.log('Edit clicked'),
+          delete: () => console.log('Delete clicked'),
+          reports: () => console.log('Reports clicked'),
+          notify: () => console.log('Notify clicked'),
 
-    submitContributionsForApproval: () => setOpenContirbutionsActions(true),
+          submitContributionsForApproval: () =>
+            setOpenContirbutionsActions(true),
+          generateContributionUploadTemplate: () => {
+            generateMembersTemplate();
+          },
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+    ...(status === 0
+      ? {
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+          edit: () => console.log('Edit clicked'),
+          delete: () => console.log('Delete clicked'),
+          reports: () => console.log('Reports clicked'),
+          notify: () => console.log('Notify clicked'),
+
+          submitContributionsForApproval: () =>
+            setOpenContirbutionsActions(true),
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
     ...(!clickedItem && {
       generateContributionUploadTemplate: () => {
         generateMembersTemplate();
@@ -261,9 +301,9 @@ const BatchContributions = ({ status }) => {
   ];
 
   const notificationStatusMap = {
-    0: { name: 'Pending', color: '#f39c12' }, // Light Red
-    1: { name: 'Approved', color: '#49D907' }, // Bright Orange
-    2: { name: 'Posted', color: '#3498db' }, // Light Blue
+    0: { name: 'New', color: '#f39c12' }, // Light Red
+    1: { name: 'Pending Approval', color: '#49D907' }, // Bright Orange
+    2: { name: 'Approved', color: '#3498db' }, // Light Blue
     3: { name: 'Reversed', color: '#970FF2' }, // Amethyst
     4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
     5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
@@ -584,6 +624,17 @@ const BatchContributions = ({ status }) => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         sx={{
           '& .MuiDialog-paper': {
@@ -706,7 +757,9 @@ const BatchContributions = ({ status }) => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getContributionBatches}
+        fetchApiEndpoint={financeEndpoints.getContributionBatchesByStatus(
+          status
+        )}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
@@ -716,6 +769,7 @@ const BatchContributions = ({ status }) => {
         onSelectionChange={(selectedRows) => {
           setSelectedRows(selectedRows);
         }}
+        openApproveDialog={openApprove}
       />
     </div>
   );

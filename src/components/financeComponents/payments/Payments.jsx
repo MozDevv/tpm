@@ -365,10 +365,10 @@ const Payments = ({ status }) => {
       },
     }),
     ...(status === 2 && {
-      postPaymentToLedger: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
+      // postPaymentToLedger: () => {
+      //   setOpenPV(true);
+      //   console.log('Post Payment');
+      // },
       schedulePaymentVoucher: () => {
         setOpenPV(true);
         console.log('Schedule Payment');
