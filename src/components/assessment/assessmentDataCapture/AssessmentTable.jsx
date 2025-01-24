@@ -99,20 +99,6 @@ const notificationStatusMap = {
 };
 
 const colDefs = [
-  // {
-  //   headerName: 'Claim No.',
-  //   field: 'claim_id',
-  //   width: 150,
-  //   checkboxSelection: true,
-  //   headerCheckboxSelection: true,
-  //   pinned: 'left',
-  //   filter: true,
-  //   cellRenderer: (params) => {
-  //     return (
-  //       <p className="text-primary font-semibold underline ">{params.value}</p>
-  //     );
-  //   },
-  // },
   {
     headerName: 'Pensioner Number',
     field: 'pensioner_number',
@@ -125,6 +111,16 @@ const colDefs = [
       return (
         <p className="text-primary font-semibold underline ">{params.value}</p>
       );
+    },
+  },
+  {
+    headerName: 'Claim No.',
+    field: 'claim_id',
+    width: 150,
+
+    filter: true,
+    cellRenderer: (params) => {
+      return <p className="text-primary ">{params.value}</p>;
     },
   },
   {

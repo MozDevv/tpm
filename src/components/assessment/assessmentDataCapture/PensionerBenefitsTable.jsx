@@ -195,6 +195,13 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
       disabled: true,
     },
     {
+      name: 'pensioner_number',
+      label: 'Pensioner Number',
+      type: 'text',
+      required: true,
+      disabled: true,
+    },
+    {
       name: 'net_amount',
       label: 'Net Amount',
       type: 'amount',
