@@ -483,10 +483,12 @@ function BaseCard({
                         }
                         key="1"
                       >
-                        <PensionerDetailSummary
-                          clickedItem={clickedItem}
-                          retireeId={retireeId}
-                        />
+                        <div className="max-h-[65vh] overflow-y-auto">
+                          <PensionerDetailSummary
+                            clickedItem={clickedItem}
+                            retireeId={retireeId}
+                          />
+                        </div>
                       </TabPane>
                       <TabPane
                         tab={
@@ -496,11 +498,13 @@ function BaseCard({
                         }
                         key="2"
                       >
-                        <BaseWorkFlow
-                          steps={steps}
-                          activeStep={activeStep}
-                          clickedItem={clickedItem}
-                        />
+                        <div className="max-h-[65vh] overflow-y-auto">
+                          <BaseWorkFlow
+                            steps={steps}
+                            activeStep={activeStep}
+                            clickedItem={clickedItem}
+                          />
+                        </div>
                       </TabPane>
                     </Tabs>
                   </div>

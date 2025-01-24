@@ -59,7 +59,7 @@ import ListNavigation from '@/components/baseComponents/ListNavigation';
 import BaseCard from '@/components/baseComponents/BaseCard';
 import CreateProspectivePensioner from './createProspective/CreateProspectivePensioner';
 import { useSearch } from '@/context/SearchContext';
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { useStatus } from '@/context/StatusContext';
@@ -726,9 +726,17 @@ const Preclaims = ({ status }) => {
         setClickedItem(null);
       },
     }),
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
+
+    // submit: () => {
+    //   if (selectedRows.length === 0) {
+    //     message.error('Please select a record to submit');
+    //     return;
+    //   } else if (selectedRows.length > 0) {
+    //     setClickedItem(selectedRows[0]);
+    //     setOpenAction(true);
+    //   }
+    // },
+
     notify: () => setOpenNotification(true),
     ...((status === 1 || status === 5) && {
       approvalRequest: () => console.log('Approval Request clicked'),
@@ -749,10 +757,11 @@ const Preclaims = ({ status }) => {
         setOpenBaseCard(true);
         setClickedItem(null);
       },
+      edit: () => console.log('Edit clicked'),
+      delete: () => console.log('Delete clicked'),
+      reports: () => console.log('Reports clicked'),
     }),
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
+
     notify: () => {
       setOpenNotification(true);
     },

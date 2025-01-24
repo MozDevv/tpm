@@ -46,6 +46,7 @@ import AppendixReport from '../reports/AppendixReport';
 import GP178Report from '@/components/pensionsComponents/ClaimsManagementTable/reports/GP178Report';
 import DsoReport from '@/components/pensionsComponents/ClaimsManagementTable/reports/DsoReport';
 import Cap196Death from '@/components/pensionsComponents/ClaimsManagementTable/reports/Cap196Death';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -535,6 +536,8 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
 
   const [openPushToFinance, setOpenPushToFinance] = useState(false);
+  const [openApprove, setOpenApprove] = useState(0);
+  const [workFlowChange, setWorkFlowChange] = useState(null);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
@@ -574,6 +577,19 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenAction(1);
       setOpenMoveStatus(true);
     },
+    ...(status === 5
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
 
   const [openComputeClaim, setOpenComputeClaim] = useState(false);
@@ -638,6 +654,19 @@ const AssessmentTable = ({ status, statusArr }) => {
     'Detailed Report': () => {
       setOpenGP178Report(true);
     },
+    ...(status === 5
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
   };
 
   const [computing, setComputing] = useState(false);
@@ -695,6 +724,17 @@ const AssessmentTable = ({ status, statusArr }) => {
 
   return (
     <>
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         open={openGP178Report}
         onClose={() => setOpenGP178Report(false)}
@@ -834,7 +874,7 @@ const AssessmentTable = ({ status, statusArr }) => {
             setOpenCreateClaim={setOpenMoveStatus}
             setSelectedRows={setSelectedRows}
             fetchAllPreclaims={fetchAllPreclaims}
-            clickedItem={selectedRows}
+            clickedItem={selectedRows.length > 0 ? selectedRows : clickedItem}
             moveStatus={openAction}
           />
         </Dialog>

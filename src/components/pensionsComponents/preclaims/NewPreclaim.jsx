@@ -1019,25 +1019,6 @@ function NewPreclaim({
     }
   }, [formData.retirement_date]);
 
-  // useEffect(() => {
-  //   if (formData.commutation_option_selection === true) {
-  //     setFormData({
-  //       ...formData,
-  //       commutation_option_selection: "Yes",
-  //     });
-  //   } else if (formData.commutation_option_selection === false) {
-  //     setFormData({
-  //       ...formData,
-  //       commutation_option_selection: "No",
-  //     });
-  //   } else {
-  //     setFormData({
-  //       ...formData,
-  //       commutation_option_selection: "",
-  //     });
-  //   }
-  // }, [formData.commutation_option_selection]);
-
   useEffect(() => {
     if (formData.retirement_date && formData.dob) {
       const dob = dayjs(formData.dob);
@@ -1054,12 +1035,20 @@ function NewPreclaim({
 
   useEffect(() => {
     if (formData.date_of_death) {
-      setFormData({
-        ...formData,
+      setFormData((prevFormData) => ({
+        ...prevFormData,
         retirement_date: formData.date_of_death,
-      });
+        ...(activeCapName === 'CAP189' &&
+          formData.mortality_status === 1 && {
+            date_of_injury_for_cap189: formData.date_of_death,
+          }),
+        ...(activeCapName === 'CAP199' &&
+          formData.mortality_status === 1 && {
+            date_of_injury_for_cap199: formData.date_of_death,
+          }),
+      }));
     }
-  }, [formData.date_of_death]);
+  }, [formData.date_of_death, activeCapName]);
 
   const [countriesArr, setCountriesArr] = useState([]);
 

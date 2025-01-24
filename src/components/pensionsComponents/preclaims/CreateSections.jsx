@@ -899,7 +899,6 @@ export const createSections = (
         type: 'number',
         pensionCap: ['CAP199'],
       },
-
       {
         label: 'Last Basic Salary Amount in ksh',
         name: 'last_basic_salary_amount',

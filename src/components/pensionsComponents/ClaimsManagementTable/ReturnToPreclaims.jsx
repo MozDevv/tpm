@@ -107,14 +107,20 @@ function ReturnToPreclaims({
     const targetIndex = moveStatus === 1 ? currentIndex - 1 : currentIndex + 1;
 
     if (targetIndex < 0 || targetIndex >= stageOrder.length) {
+      console.log('Returning: Return Claim to MDA for clarification');
       return 'Return Claim to MDA for clarification';
     }
 
     const targetStageName = notificationStatusMap[stageOrder[targetIndex]].name;
+    console.log('Target Stage Name:', targetStageName);
 
-    return moveStatus === 1
-      ? `Return to ${targetStageName}`
-      : `Move to ${targetStageName}`;
+    const result =
+      moveStatus === 1
+        ? `Return to ${targetStageName}`
+        : `Move to ${targetStageName}`;
+
+    console.log('Result:', result);
+    return result;
   };
 
   const itemToCheck = Array.isArray(clickedItem) ? clickedItem[0] : clickedItem;
