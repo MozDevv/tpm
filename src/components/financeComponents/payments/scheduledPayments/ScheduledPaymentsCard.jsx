@@ -11,6 +11,9 @@ import { formatNumber } from '@/utils/numberFormatters';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import { Button } from '@mui/material';
 import { parseDate } from '@/utils/dateFormatter';
+import endpoints, {
+  apiService as setupsApiService,
+} from '@/components/services/setupsApi';
 import ListNavigation from '@/components/baseComponents/ListNavigation';
 
 const { TabPane } = Tabs;
@@ -66,6 +69,40 @@ function ScheduledPaymentsCard({
       return [];
     }
   };
+  const [banks, setBanks] = useState([]);
+  const [branches, setBranches] = useState([]);
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await setupsApiService.get(endpoints.getBanks, {
+        'paging.pageSize': 1000,
+      });
+      const rawData = res.data.data;
+
+      const banksData = rawData.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+        branches: bank.branches,
+      }));
+
+      const branchesData = rawData.flatMap((bank) =>
+        bank.branches.map((branch) => ({
+          ...branch,
+          bankId: bank.id,
+        }))
+      );
+      console.log('banksData', banksData);
+      console.log('branchesData', branchesData);
+
+      setBanks(banksData);
+      setBranches(branchesData);
+    } catch (error) {
+      console.log('Error fetching banks and branches:', error);
+    }
+  };
+  useEffect(() => {
+    fetchBanksAndBranches();
+  }, []);
 
   useEffect(() => {
     // fetchBanksAndBranches();
@@ -102,12 +139,19 @@ function ScheduledPaymentsCard({
       filter: true,
       checkboxSelection: true,
       headerCheckboxSelection: true,
+      width: 200,
     },
     {
       field: 'description',
       headerName: 'Description',
       type: 'text',
       required: true,
+      width: 200,
+    },
+    {
+      field: 'nationalIdNo',
+      headerName: 'National ID No',
+      width: 200,
     },
     {
       field: 'netAmount',
@@ -116,6 +160,7 @@ function ScheduledPaymentsCard({
         return formatNumber(params.value);
       },
       required: true,
+      width: 200,
     },
     {
       field: 'grossAmount',
@@ -124,6 +169,7 @@ function ScheduledPaymentsCard({
         return formatNumber(params.value);
       },
       required: true,
+      width: 200,
     },
     {
       field: 'refundAmount',
@@ -132,6 +178,7 @@ function ScheduledPaymentsCard({
         return formatNumber(params.value);
       },
       required: true,
+      width: 200,
     },
     {
       field: 'pensionAmount',
@@ -140,12 +187,14 @@ function ScheduledPaymentsCard({
         return formatNumber(params.value);
       },
       required: true,
+      width: 200,
     },
     {
       field: 'deductionsAndRefundId',
       headerName: 'Deductions And Refund',
       type: 'text',
       required: true,
+      width: 200,
       valueFormatter: (params) => {
         const deduction = deductionsAndRefunds.find(
           (deduction) => deduction.id === params.value
@@ -161,12 +210,65 @@ function ScheduledPaymentsCard({
         return formatNumber(params.value);
       },
       required: true,
+      width: 200,
     },
     {
       field: 'refundDescription',
       headerName: 'Refund Description',
       type: 'text',
       required: true,
+      width: 200,
+    },
+    /**{
+	"0": {
+		"id": "9033fb03-0ec6-4caa-b716-7a8b7deb3fd5",
+		"documentNo": "WCPS Recovery",
+		"description": "WCPS Recovery",
+		"netAmount": 250000,
+		"grossAmount": 0,
+		"refundAmount": 0,
+		"pensionAmount": 0,
+		"deductionsAndRefundId": "42d82a2b-b3c9-441a-bf82-fe78f7272ce3",
+		"paymentId": null,
+		"paymentScheduleId": "6abfa218-cef3-422d-a012-14c710d9c2d3",
+		"deductionAmount": 0,
+		"refundDescription": "",
+		"bankCode": null,
+		"bankBranchCode": null,
+		"bankAccountName": null,
+		"bankAccountNo": null,
+		"nationalIdNo": null
+	}
+} */
+
+    {
+      field: 'bankCode',
+      headerName: 'Bank Branch Code',
+      width: 200,
+    },
+    {
+      field: 'bankBranchId',
+      headerName: 'Bank Branch',
+      valueFormatter: (params) => {
+        const branch = branches.find((branch) => branch.id === params.value);
+        return branch?.name || '';
+      },
+      width: 200,
+    },
+    {
+      field: 'bankBranchCode',
+      headerName: 'Bank Branch Code',
+      width: 200,
+    },
+    {
+      field: 'bankAccountName',
+      headerName: 'Bank Account Name',
+      width: 200,
+    },
+    {
+      field: 'bankAccountNo',
+      headerName: 'Bank Account No',
+      width: 200,
     },
   ];
   const gridApiRef = useRef(null);

@@ -808,8 +808,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 {/* Data Row */}
                 <div className="col-span-1 border-t border-black border-r p-2 text-center"></div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">
-                  {report?.bankAccountNo
-                    ? formatBankAccount(report?.bankAccountNo, 4, '-')
+                  {report?.gratiutyExpenseAccountNo
+                    ? report?.gratiutyExpenseAccountNo
                     : 'N/A'}
                 </div>
                 <div className="col-span-2 border-t border-black border-r p-2 text-start">
@@ -826,7 +826,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 </div>
                 <div className="col-span-3 grid grid-cols-3 border-t border-black">
                   <div className="col-span-2 border-r border-black p-2 text-right">
-                    {formatNumber(report?.netAmount)}
+                    {formatNumber(report?.grossAmount)}
                   </div>
                   <div className="col-span-1 p-2 text-right"></div>
                 </div>

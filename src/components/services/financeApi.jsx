@@ -283,6 +283,8 @@ const financeEndpoints = {
   postPaymentToLedger: '/Posting/PostPaymentToLedger',
   postReceiptToLedger: '/Posting/PostReceiptToLedger',
 
+  postClaimPaymentToLedger: '/Posting/PostClaimPaymentToLedger',
+
   bankDrillDown: (val) =>
     `/Posting/GetBankSubLedger?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=bankAccountCode&filterCriterion.criterions[0].propertyValue=${val}`,
   vendorDrillDown: (val) => `/Posting/GetVendorSubLedger?VendorId=${val}`,

@@ -79,11 +79,13 @@ function ScheduledPvActions({
           }
         } else {
           // Case for posting to ledger
-          endpoint = financeEndpoints.postPaymentToLedger;
+          endpoint = financeEndpoints.postClaimPaymentToLedger;
           successMessage = 'Payment Voucher(s) Posted to Ledger successfully';
           errorMessage = 'Failed to post Payment Vouchers';
           requestData = {
-            paymentsList: selectedIds.map((item) => ({ paymentId: item.id })),
+            paymentSchedulesList: selectedIds.map((item) => ({
+              paymentScheduleId: item.id,
+            })),
           };
 
           // Make the API call for posting
