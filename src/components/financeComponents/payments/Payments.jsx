@@ -612,7 +612,6 @@ const Payments = ({ status }) => {
               useRequestBody={true}
               openBaseCard={openBaseCard}
               setClickedItem={setClickedItem}
-              disableAll={status !== 0 || clickedItem.source === 1}
             />
           )}
         </BaseCard>

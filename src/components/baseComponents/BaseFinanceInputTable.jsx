@@ -441,10 +441,6 @@ const BaseFinanceInputTable = ({
           const field = colDef.field;
           const rowId = data.id;
           const options = col.options || [];
-
-          // console.log("Params", params);
-          // console.log("COL", colDef);
-          // console.log("DATA", data);
           const isValidDateString = (dateString) => {
             const date = new Date(dateString);
             return !isNaN(date.getTime());
