@@ -86,6 +86,7 @@ export const validateField = (name, value, formData) => {
       error = 'Date of injury cannot be after retirement date';
     }
   }
+
   if (
     name === 'salary_at_injury_for_cap199' &&
     value &&
@@ -154,7 +155,7 @@ export const validateField = (name, value, formData) => {
     !/^\d+$/.test(value) &&
     formData.identifier_type === 0
   ) {
-    error = 'Must be a valid National ID';
+    error = 'National ID Must contain only numeric values';
   } else if (name === 'kra_pin' && value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
     error = 'Must be a valid KRA PIN';
   } else if (name === 'last_basic_salary_amount' && value && isNaN(value)) {

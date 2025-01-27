@@ -64,12 +64,10 @@ function Auth() {
       password: password.trim(),
     };
 
-    console.log('payload', payload);
     try {
       // Send login request to the server
       const res = await AuthApiService.post(authEndpoints.login, payload);
 
-      console.log('data', res.data);
       if (res.data.isSuccess) {
         login(res.data.data.token);
 
@@ -78,8 +76,6 @@ function Auth() {
         router.push('/pensions');
       }
     } catch (error) {
-      console.log(error?.response?.data?.message);
-
       // Handle login errors
       if (error?.response?.data?.message === 'Wrong username or password') {
         setErrors({
@@ -121,13 +117,11 @@ function Auth() {
       const response = await AuthApiService.post(
         `${BASE_CORE_API}api/Auth/ForgetPassword?email=${username}`
       );
-      console.log('response', response);
+
       if (response.data.isSuccess) {
         router.push(`/reset?username=${username}`);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (

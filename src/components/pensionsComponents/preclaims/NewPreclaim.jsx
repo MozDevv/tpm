@@ -1419,7 +1419,12 @@ function NewPreclaim({
                                     type={field.type}
                                     name={field.name}
                                     variant="outlined"
-                                    disabled={!canEdit || field.disabled}
+                                    disabled={
+                                      !canEdit ||
+                                      field.disabled ||
+                                      (field.name === 'retirement_date' &&
+                                        formData.mortality_status === 1)
+                                    }
                                     size="small"
                                     onBlur={handleSubmit}
                                     value={formData[field.name]}
