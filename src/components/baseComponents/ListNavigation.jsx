@@ -492,7 +492,7 @@ const ListNavigation = ({
       icon: Add,
       action: 'createPayrollRecord',
       requiredPermissions: [],
-      status: [4],
+      status: [7],
     },
   ];
 

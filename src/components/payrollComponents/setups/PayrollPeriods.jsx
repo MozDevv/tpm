@@ -155,6 +155,7 @@ const PayrollPeriods = () => {
         columnDefs={columnDefs}
         fetchApiEndpoint={payrollEndpoints.getPayrollPeriods}
         fetchApiService={payrollApiService.get}
+        a
         transformData={transformData}
         pageSize={30}
         handlers={handlers}

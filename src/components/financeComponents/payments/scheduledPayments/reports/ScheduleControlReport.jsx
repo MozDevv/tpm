@@ -1,13 +1,14 @@
 import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import React from 'react';
-import { Backdrop, Button } from '@mui/material';
-import { Cancel, GetApp } from '@mui/icons-material';
+import { Backdrop, Button, IconButton } from '@mui/material';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { useState } from 'react';
 import { Empty } from 'antd';
 import html2pdf from 'html2pdf.js';
 import { useEffect } from 'react';
 import { useRef } from 'react';
+import { parseDate } from '@/utils/dateFormatter';
 
 const ScheduleControlReport = ({ setOpenReport }) => {
   const { data } = useFetchAsync(
@@ -185,6 +186,9 @@ const ScheduleControlReport = ({ setOpenReport }) => {
           </p>
         </div>
         <div className="space-x-4">
+          <IconButton onClick={generatePdfBlob}>
+            <Refresh />
+          </IconButton>
           <Button
             onClick={handleDownload}
             variant="contained"
@@ -275,42 +279,86 @@ const ScheduleControlReport = ({ setOpenReport }) => {
               />
             </div>
           </div>
-          <table className="min-w-full mt-4">
-            <thead>
-              <tr>
-                <th className="px-2 py-1 text-xs underline">No</th>
-                <th className="px-2 py-1 text-xs underline">Name (Bank)</th>
-                <th className="px-2 py-1 text-xs underline">Payee (Bank)</th>
-                <th className="px-2 py-1 text-xs underline">EFT Status</th>
-                <th className="px-2 py-1 text-xs underline">EFT Date</th>
-                <th className="px-2 py-1 text-xs underline">EFT Number</th>
-                <th className="px-2 py-1 text-xs underline">Amount (Ksh.)</th>
-                <th className="px-2 py-1 text-xs underline">Purpose</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data &&
-                data.length > 0 &&
-                data.map((item, index) => (
-                  <tr key={item.id}>
-                    <td className="px-2 py-1 text-xs">{index + 1}</td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.payeeName || '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.payeeBank || '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">{item.eftStatus}</td>
-                    <td className="px-2 py-1 text-xs">{item.eftDate}</td>
-                    <td className="px-2 py-1 text-xs">{item.eftNo}</td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.amount ? item.amount.toFixed(2) : '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">{item.purpose}</td>
+          <div className="flex justify-between flex-col h-[95vh]">
+            <div className="">
+              <table className="min-w-full mt-4 ">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1 text-xs underline">No</th>
+                    <th className="px-2 py-1 text-xs underline">Name (Bank)</th>
+                    <th className="px-2 py-1 text-xs underline">
+                      Payee (Bank)
+                    </th>
+                    <th className="px-2 py-1 text-xs underline">EFT Status</th>
+                    <th className="px-2 py-1 text-xs underline">EFT Date</th>
+                    <th className="px-2 py-1 text-xs underline">EFT Number</th>
+                    <th className="px-2 py-1 text-xs underline">
+                      Amount (Ksh.)
+                    </th>
+                    <th className="px-2 py-1 text-xs underline">Purpose</th>
                   </tr>
-                ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {data &&
+                    data.length > 0 &&
+                    data.map((item, index) => (
+                      <tr key={item.id}>
+                        <td className="px-2 py-1 text-xs">{index + 1}</td>
+                        <td className="px-2 py-1 text-xs">
+                          {item.payeeName || '-'}
+                        </td>
+                        <td className="px-2 py-1 text-xs">
+                          {item.payeeBank || '-'}
+                        </td>
+                        <td className="px-2 py-1 text-xs">{item.eftStatus}</td>
+                        <td className="px-2 py-1 text-xs">
+                          {parseDate(item.eftDate)}
+                        </td>
+                        <td className="px-2 py-1 text-xs">{item.eftNo}</td>
+                        <td className="px-2 py-1 text-xs">
+                          {item.amount ? item.amount.toFixed(2) : '-'}
+                        </td>
+                        <td className="px-2 py-1 text-xs">{item.purpose}</td>
+                      </tr>
+                    ))}
+
+                  {/* Total Row */}
+                  <tr className="mt-4">
+                    <td className="px-2 py-1 text-xs font-bold" colSpan={6}>
+                      Total
+                    </td>
+                    <td className="px-2 py-1 text-xs font-bold">
+                      {data
+                        ? data
+                            .reduce(
+                              (total, item) => total + (item.amount || 0),
+                              0
+                            )
+                            .toFixed(2)
+                        : '0.00'}
+                    </td>
+                    <td className="px-2 py-1 text-xs"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="flex w-full justify-between">
+              <div className="text-xs">
+                <p className="font-semibold">
+                  Checked and Confirmed By Head/Deputy Head
+                </p>
+                <p>Name: _____________________________________</p>
+                <p>Signature: _________________________________</p>
+                <p>Date:_________________________________________</p>
+              </div>
+              <div className="text-xs">
+                <p className="font-semibold">Delivered By</p>
+                <p>Name: _____________________________________</p>
+                <p>Signature: _________________________________</p>
+                <p>Date:_________________________________________</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
