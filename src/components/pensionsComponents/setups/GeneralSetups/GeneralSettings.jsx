@@ -77,7 +77,8 @@ const GeneralSettings = () => {
 
       compassionate_annual_allowance_minimum_years_applicable_cap189:
         item.compassionate_annual_allowance_minimum_years_applicable_cap189,
-
+      parliamentary_term_span_years: item.parliamentary_term_span_years,
+      parliamentary_term_span_years_min: item.parliamentary_term_span_years_min,
       // roles: item.roles,
     }));
   };
@@ -294,6 +295,17 @@ const GeneralSettings = () => {
     {
       name: 'valid_child_age_payable_for_pension',
       label: 'Valid Child Age Payable For Pension',
+      type: 'number',
+    },
+    {
+      name: 'parliamentary_term_span_years_min',
+      label: 'Parliamentary Term Span Years Min',
+      type: 'number',
+    },
+
+    {
+      name: 'parliamentary_term_span_years',
+      label: 'Parliamentary Term Span Years',
       type: 'number',
     },
   ];

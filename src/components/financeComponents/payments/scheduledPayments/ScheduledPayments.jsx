@@ -28,6 +28,7 @@ import {
 } from '@mui/icons-material';
 import ScheduledPvActions from '../ScheduledPvActions';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import ScheduleControlReport from './reports/ScheduleControlReport';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -216,6 +217,7 @@ const ScheduledPayments = ({ status }) => {
   const [loading, setLoading] = React.useState(false);
 
   const [openApprove, setOpenApprove] = React.useState(false);
+  const [openReport, setOpenReport] = React.useState(false);
 
   const handleRemovePayments = async () => {
     if (selectedLines.length === 0) {
@@ -312,6 +314,9 @@ const ScheduledPayments = ({ status }) => {
   };
 
   const baseCardHandlers = {
+    'Schedule Control Report': () => {
+      setOpenReport(true);
+    },
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -448,9 +453,30 @@ const ScheduledPayments = ({ status }) => {
       console.error('Error deleting schedule:', error);
     }
   };
+  const reportItems = ['Schedule Control Report'];
 
   return (
     <div className="">
+      <Dialog
+        open={openReport && clickedItem}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <ScheduleControlReport
+            setOpenReport={setOpenReport}
+            data={clickedItem?.paymentScheduleLines}
+          />
+        </div>
+      </Dialog>
       <BaseApprovalCard
         openApprove={openApprove}
         setOpenApprove={setOpenApprove}
@@ -491,6 +517,7 @@ const ScheduledPayments = ({ status }) => {
         />
       </Dialog>
       <BaseCard
+        reportItems={reportItems}
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         handlers={baseCardHandlers}

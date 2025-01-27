@@ -229,6 +229,7 @@ const AwardPostingGroups = () => {
       required: true,
       options: pensionAwards,
       table: true,
+      searchByAccountNo: true,
     },
     {
       name: 'pensionCap',

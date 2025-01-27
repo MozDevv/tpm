@@ -480,7 +480,9 @@ const BaseInputCard = ({
               ) : field.table ? (
                 <Autocomplete
                   options={field.options}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) =>
+                    `${option.name} ${option.accountNo}`
+                  }
                   onChange={(event, newValue) => {
                     handleInputChange({
                       target: {
@@ -519,7 +521,6 @@ const BaseInputCard = ({
                           sx={{
                             width: '100%',
                             pr: '40px',
-
                             display: 'flex',
                             justifyContent: 'space-between',
                           }}
@@ -531,9 +532,8 @@ const BaseInputCard = ({
                               gap: 3,
                             }}
                           >
-                            {' '}
                             <p
-                              className=" text-primary font-normal text-[12px] items-start"
+                              className="text-primary font-normal text-[12px] items-start"
                               style={{ alignSelf: 'flex-start' }}
                             >
                               {option.name}
@@ -566,7 +566,6 @@ const BaseInputCard = ({
                         <p className="text-xs font-normal">No.</p>
                         <p className="text-xs font-normal">Name</p>
                       </li>
-
                       {props.children}
                     </Popper>
                   )}
