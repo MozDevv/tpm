@@ -9,11 +9,8 @@ import html2pdf from 'html2pdf.js';
 import { useEffect } from 'react';
 import { useRef } from 'react';
 
-const ScheduleControlReport = ({ setOpenReport }) => {
-  const { data } = useFetchAsync(
-    financeEndpoints.getScheduleControlReport,
-    apiService
-  );
+const TaxReport = ({ setOpenReport, isTaxReport }) => {
+  const { data } = useFetchAsync(financeEndpoints.getTaxReport, apiService);
 
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -42,7 +39,7 @@ const ScheduleControlReport = ({ setOpenReport }) => {
     // Define options for the PDF
     const options = {
       margin: 0.2, // Reduced margin
-      filename: 'ScheduleControlReport.pdf',
+      filename: 'TaxReport.pdf',
       html2canvas: { scale: 1.5 }, // Lower the canvas scale to reduce content size
       jsPDF: {
         unit: 'in',
@@ -102,7 +99,7 @@ const ScheduleControlReport = ({ setOpenReport }) => {
       // Define options for the PDF
       const options = {
         margin: 0.5, // Default margin (in inches)
-        filename: 'ScheduleControlReport.pdf',
+        filename: 'TaxReport.pdf',
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
       };
@@ -163,6 +160,7 @@ const ScheduleControlReport = ({ setOpenReport }) => {
       }, 100);
     }
   }, [data]);
+
   return (
     <div
       className="flex-grow"
@@ -177,9 +175,7 @@ const ScheduleControlReport = ({ setOpenReport }) => {
         style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
       >
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Schedule Control Report
-          </h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Tax Report</h2>
           <p className="text-sm text-gray-500">
             Detailed analysis and insights
           </p>
@@ -240,75 +236,59 @@ const ScheduleControlReport = ({ setOpenReport }) => {
           </div>
         </Backdrop>
       )}
-      <div className="hidden">
-        <div ref={contentRef} className="p-4 max-w-screen-lg mx-auto font-sans">
+      <div
+        className="hidden"
+        style={{
+          display: 'none',
+        }}
+      >
+        <div ref={contentRef} className="p-4 max-w-3xl  mx-auto font-sans">
+          <div className="text-center mx-auto flex flex-col items-center">
+            <h1 className="font-bold text-base">MINISTRY OF FINANCE</h1>
+            <img src="/kenya.png" alt="" height={40} width={60} className="" />
+            <h2 className="text-base font-bold">PENSIONS DEPARTMENT </h2>
+          </div>
+          <div className="flex justify-end mb-6"></div>
           <div className="text-center">
-            <h2 className="font-bold text-base">CENTRAL BANK OF KENYA</h2>
-            <p className="text-xs underline">Schedule Control Report for EFT</p>
-            <div className="flex w-full ">
-              <table className="mt-4 text-xs grid-cols-10">
-                <tbody>
-                  <tr>
-                    <td className="underline px-2 py-[2px]">
-                      Ministry/Department:
-                    </td>
-                    <td className="underline px-2 py-[2px]">Code:</td>
-                    <td className="underline px-2 py-[2px]">Ref No.</td>
-                    <td className="underline px-2 py-[2px]">Acc. Title</td>
-                    <td className="underline px-2 py-[2px]">Schedule No:</td>
-                  </tr>
-                  <tr>
-                    <td className="px-7">Ministry of Education</td>
-                    <td className="px-7">122128981</td>
-                    <td className="px-7">--</td>
-                    <td className="px-7">RECURRENT VOTE</td>
-                    <td className="px-7">475656</td>
-                  </tr>
-                </tbody>
-              </table>
-              <img
-                src="/kenya.png"
-                alt="Kenya Flag"
-                height={40}
-                width={70}
-                className="grid-cols-2"
-              />
+            <div className="font-bold text-base underline">
+              LISTING OF PENSIONERS WITH INCOME TAX WITH WITHOLDING TAX
+              DEDUCTIONS
             </div>
           </div>
           <table className="min-w-full mt-4">
             <thead>
               <tr>
                 <th className="px-2 py-1 text-xs underline">No</th>
-                <th className="px-2 py-1 text-xs underline">Name (Bank)</th>
-                <th className="px-2 py-1 text-xs underline">Payee (Bank)</th>
-                <th className="px-2 py-1 text-xs underline">EFT Status</th>
-                <th className="px-2 py-1 text-xs underline">EFT Date</th>
-                <th className="px-2 py-1 text-xs underline">EFT Number</th>
-                <th className="px-2 py-1 text-xs underline">Amount (Ksh.)</th>
-                <th className="px-2 py-1 text-xs underline">Purpose</th>
+                <th className="px-2 py-1 text-xs underline">
+                  Pensioner Number
+                </th>
+                <th className="px-2 py-1 text-xs underline">Name</th>
+                <th className="px-2 py-1 text-xs underline">Type of Tax</th>
+                <th className="px-2 py-1 text-xs underline">KRA PIN</th>
+                <th className="px-2 py-1 text-xs underline">Amount</th>
               </tr>
             </thead>
             <tbody>
               {data &&
                 data.length > 0 &&
-                data.map((item, index) => (
-                  <tr key={item.id}>
-                    <td className="px-2 py-1 text-xs">{index + 1}</td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.payeeName || '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.payeeBank || '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">{item.eftStatus}</td>
-                    <td className="px-2 py-1 text-xs">{item.eftDate}</td>
-                    <td className="px-2 py-1 text-xs">{item.eftNo}</td>
-                    <td className="px-2 py-1 text-xs">
-                      {item.amount ? item.amount.toFixed(2) : '-'}
-                    </td>
-                    <td className="px-2 py-1 text-xs">{item.purpose}</td>
-                  </tr>
-                ))}
+                data.map((item) =>
+                  item.pensionerDetails.map((pensioner, index) => (
+                    <tr key={index}>
+                      <td className="px-2 py-1 text-xs">{index + 1}</td>
+                      <td className="px-2 py-1 text-xs">
+                        {pensioner.pensionerNumber || '-'}
+                      </td>
+                      <td className="px-2 py-1 text-xs">
+                        {pensioner.pensionerName || '-'}
+                      </td>
+                      <td className="px-2 py-1 text-xs">{pensioner.taxType}</td>
+                      <td className="px-2 py-1 text-xs">{pensioner.pin}</td>
+                      <td className="px-2 py-1 text-xs">
+                        {pensioner.amount ? pensioner.amount.toFixed(2) : '-'}
+                      </td>
+                    </tr>
+                  ))
+                )}
             </tbody>
           </table>
         </div>
@@ -317,4 +297,4 @@ const ScheduleControlReport = ({ setOpenReport }) => {
   );
 };
 
-export default ScheduleControlReport;
+export default TaxReport;

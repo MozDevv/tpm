@@ -381,6 +381,8 @@ const financeEndpoints = {
     `/PostingSetUp/DeleteRecoveryBankDetails?id=${id}`,
   getRecoveryBankDetails: '/PostingSetUp/GetRecoveryBankDetailss',
   updateRecoveryBankDetails: '/PostingSetUp/UpdateRecoveryBankDetails',
+  getScheduleControlReport: '/Reports/GetScheduleControlReport',
+  getTaxReport: '/Reports/GetTaxReport',
 };
 
 export const apiService = {

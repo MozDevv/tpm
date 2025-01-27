@@ -29,6 +29,7 @@ import {
 import ScheduledPvActions from '../ScheduledPvActions';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import ScheduleControlReport from './reports/ScheduleControlReport';
+import TaxReport from './reports/TaxReport';
 
 const ScheduledPayments = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -317,6 +318,9 @@ const ScheduledPayments = ({ status }) => {
     'Schedule Control Report': () => {
       setOpenReport(true);
     },
+    'Tax Report': () => {
+      setOpenReport(1);
+    },
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -453,7 +457,7 @@ const ScheduledPayments = ({ status }) => {
       console.error('Error deleting schedule:', error);
     }
   };
-  const reportItems = ['Schedule Control Report'];
+  const reportItems = ['Schedule Control Report', 'Tax Report'];
 
   return (
     <div className="">
@@ -472,6 +476,26 @@ const ScheduledPayments = ({ status }) => {
       >
         <div className="flex-grow overflow-hidden">
           <ScheduleControlReport
+            setOpenReport={setOpenReport}
+            data={clickedItem?.paymentScheduleLines}
+          />
+        </div>
+      </Dialog>
+      <Dialog
+        open={openReport === 1 && clickedItem}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <TaxReport
             setOpenReport={setOpenReport}
             data={clickedItem?.paymentScheduleLines}
           />

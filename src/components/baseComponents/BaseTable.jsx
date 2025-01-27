@@ -24,6 +24,7 @@ import { useSearch } from '@/context/SearchContext';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
 import BaseEmptyComponent from './BaseEmptyComponent';
 import { Checkbox, message } from 'antd';
+import axios from 'axios';
 
 const BaseTable = ({
   columnDefs,
@@ -52,6 +53,7 @@ const BaseTable = ({
   openApproveDialog,
   deleteApiEndpoint,
   deleteApiService,
+  isPayroll,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -141,22 +143,28 @@ const BaseTable = ({
 
   const fetchData = async (filter) => {
     console.log('fetchData called', fetchApiEndpoint);
+    console.log('isPayroll', isPayroll);
     try {
       let res;
-      res = await fetchApiService(fetchApiEndpoint, {
-        'paging.pageNumber': pageNumber,
-        'paging.pageSize': 10,
-        ...filter,
-      });
-      const { data, totalCount, totalPages } = res.data;
+      if (isPayroll) {
+        res = await axios.get('http://192.168.3.68:9089/api/PayrollPeriods');
+        setRowData(res.data);
+      } else {
+        res = await fetchApiService(fetchApiEndpoint, {
+          'paging.pageNumber': pageNumber,
+          'paging.pageSize': 10,
+          ...filter,
+        });
+        const { data, totalCount, totalPages } = res.data;
 
-      const transformedData = transformData(data);
+        const transformedData = transformData(data);
 
-      setRowData(transformedData);
-      setTotalRecords(totalCount);
-      setTotalPages(totalPages);
+        setRowData(transformedData);
+        setTotalRecords(totalCount);
+        setTotalPages(totalPages);
 
-      console.log('Data fetched successfully:', transformedData);
+        console.log('Data fetched successfully:', transformedData);
+      }
     } catch (error) {
       console.log('', error);
 

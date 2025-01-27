@@ -21,6 +21,7 @@ import {
   PeopleAltOutlined,
   Person,
   QueryStats,
+  ReceiptLong,
   Wallet,
   Widgets,
 } from '@mui/icons-material';
@@ -395,6 +396,22 @@ function Sidebar() {
     },
 
     {
+      title: 'Payroll',
+      icon: <ReceiptLong />,
+      children: [
+        {
+          title: 'Main Payroll',
+          subChildren: [
+            {
+              title: 'Payroll Run',
+              path: '/pensions/payroll/main-payroll/payroll-run',
+            },
+          ],
+        },
+      ],
+    },
+
+    {
       title: 'PSSF Contributions',
       icon: <Addchart />,
       children: [
@@ -658,6 +675,16 @@ function Sidebar() {
             {
               title: 'General Product Posting Groups',
               path: '/pensions/setups/general-product-posting-groups',
+            },
+          ],
+        },
+
+        {
+          title: 'Payroll Setups',
+          subChildren: [
+            {
+              title: 'Payroll Periods',
+              path: '/pensions/setups/payroll-periods',
             },
           ],
         },
