@@ -136,7 +136,14 @@ function BaseCard({
     } else {
       try {
         const res = await deleteApiService(deleteApiEndpoint);
-        if (res.status === 200 || res.status === 201 || res.data.succeeded) {
+
+        if (res.data.succeeded === false && res.data.messages[0]) {
+          message.error(res.data.messages[0]);
+        } else if (
+          res.status === 200 ||
+          res.status === 201 ||
+          res.data.succeeded
+        ) {
           message.success(`${title} deleted successfully`);
           setIsDialogOpen(false);
           setOpenBaseCard(false);

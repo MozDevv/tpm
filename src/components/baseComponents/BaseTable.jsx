@@ -328,12 +328,31 @@ const BaseTable = ({
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
             >
-              <MenuItem value={0}>Equal</MenuItem>
-              <MenuItem value={1}>Contains</MenuItem>
-              <MenuItem value={2}>Not Equal</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setFilterType(0);
+                  setAnchorEl(null);
+                }}
+              >
+                Equal
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setFilterType(1);
+                  setAnchorEl(null);
+                }}
+              >
+                Contains
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setFilterType(2);
+                  setAnchorEl(null);
+                }}
+              >
+                Not Equal
+              </MenuItem>
             </Menu>
             <Divider />
             <div className="flex flex-col item-center p-4 mt-3">

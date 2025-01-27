@@ -737,7 +737,21 @@ const BaseInputTable = ({
         const field = colDef.field;
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
-        // Validate the first row's date (rowIndex === 0) with dateOfFirstAppointment passed as props
+        if (field === 'relationship_id' && newValue) {
+          const selectedField = fields.find(
+            (field) => field.value === 'relationship_id'
+          );
+          const selectedOption = selectedField.options.find(
+            (option) => option.id === newValue
+          );
+          if (selectedOption) {
+            data.gender = selectedOption.gender;
+            params.api.refreshCells({
+              rowNodes: [params.node],
+              columns: ['gender'],
+            });
+          }
+        }
 
         if (data.was_pensionable) {
           if (cap === 'CAP189') {
@@ -748,6 +762,7 @@ const BaseInputTable = ({
             data.nature_of_service = 'ReckonableService';
           }
         }
+
         if (
           dateOfFirstAppointment &&
           rowIndex === 0 &&
