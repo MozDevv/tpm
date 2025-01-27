@@ -481,7 +481,7 @@ const BaseInputCard = ({
                 <Autocomplete
                   options={field.options}
                   getOptionLabel={(option) =>
-                    `${option.name} ${option.accountNo}`
+                    field.searchByAccountNo ? option.accountNo : option.name
                   }
                   onChange={(event, newValue) => {
                     handleInputChange({

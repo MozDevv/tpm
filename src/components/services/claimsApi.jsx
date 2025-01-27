@@ -16,6 +16,7 @@ const claimsEndpoints = {
   moveClaimStatus: '/api/claims/MoveClaimStatus',
 
   mdas: '/api/Setups/Getmdas',
+  createPayrollRecord: '/api/Payroll/CreatePayrollRecord',
 };
 api.interceptors.request.use(
   (config) => {

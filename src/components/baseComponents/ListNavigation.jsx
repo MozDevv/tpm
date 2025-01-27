@@ -487,6 +487,13 @@ const ListNavigation = ({
       action: 'closePeriod',
       requiredPermissions: [],
     },
+    {
+      name: 'Create Payroll Record',
+      icon: Add,
+      action: 'createPayrollRecord',
+      requiredPermissions: [],
+      status: [4],
+    },
   ];
 
   const collapseParents = [

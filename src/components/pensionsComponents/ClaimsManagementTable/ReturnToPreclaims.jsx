@@ -31,40 +31,53 @@ function ReturnToPreclaims({
       return;
     }
 
-    // Function to process each item
     const processItem = async (item) => {
       const data = {
         claim_id: item.id_claim ? item.id_claim : item?.id,
-        action: moveStatus,
         comments,
+        ...(moveStatus !== 'payroll' && { action: moveStatus }),
       };
 
       try {
-        const response = await apiService.post(
-          claimsEndpoints.moveClaimStatus,
-          data
-        );
-        console.log('Response:', response);
-        if (response.status === 200 && response.data.succeeded === true) {
-          setAlert({
-            open: true,
-            message:
-              moveStatus === 1
-                ? 'Claim(s) has been returned Successfully'
-                : 'Claim(s) has been moved to the next stage',
-            severity: 'success',
-          });
-        } else if (
-          response.status === 200 &&
-          response.data.succeeded === false &&
-          response.data.messages[0]
-        ) {
-          message.error(response.data.messages[0]);
+        let response;
+        if (moveStatus === 'payroll') {
+          response = await apiService.post(
+            claimsEndpoints.createPayrollRecord,
+            data
+          );
+          if (response.status === 200) {
+            message.success('Payroll record created successfully');
+          } else {
+            message.error('An error occurred while creating payroll record');
+          }
         } else {
-          message.error('Failed to process claim(s)');
+          response = await apiService.post(
+            claimsEndpoints.moveClaimStatus,
+            data
+          );
+          console.log('Response:', response);
+          if (response.status === 200 && response.data.succeeded === true) {
+            setAlert({
+              open: true,
+              message:
+                moveStatus === 1
+                  ? 'Claim(s) has been returned Successfully'
+                  : 'Claim(s) has been moved to the next stage',
+              severity: 'success',
+            });
+          } else if (
+            response.status === 200 &&
+            response.data.succeeded === false &&
+            response.data.messages[0]
+          ) {
+            message.error(response.data.messages[0]);
+          } else {
+            message.error('Failed to process claim(s)');
+          }
         }
       } catch (error) {
-        console.error(error.response);
+        console.error('Error processing item:', error);
+        message.error('An unexpected error occurred');
       }
     };
 
@@ -117,6 +130,8 @@ function ReturnToPreclaims({
     const result =
       moveStatus === 1
         ? `Return to ${targetStageName}`
+        : moveStatus === 'payroll'
+        ? 'Create Payroll Record'
         : `Move to ${targetStageName}`;
 
     console.log('Result:', result);

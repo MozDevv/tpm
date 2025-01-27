@@ -667,6 +667,10 @@ const AssessmentTable = ({ status, statusArr }) => {
           },
         }
       : {}),
+    createPayrollRecord: () => {
+      setOpenAction('payroll');
+      setOpenMoveStatus(true);
+    },
   };
 
   const [computing, setComputing] = useState(false);
