@@ -22,6 +22,8 @@ import {
   Launch,
 } from '@mui/icons-material';
 import { formatNumber } from '@/utils/numberFormatters';
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const columnDefs = [
   {
@@ -164,11 +166,6 @@ const columnDefs = [
 ];
 
 const ParliamentContributions = ({ id, clickedItem2 }) => {
-  const [rowData, setRowData] = useState([]);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 10; // Number of records per page
-
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => {
       const monthMap = item.lines.reduce((acc, line) => {
@@ -198,24 +195,12 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const [selectedBank, setSelectedBank] = React.useState(null);
-  const [mdas, setMdas] = useState([]);
-  const fetchMdas = async () => {
-    try {
-      const res = await apiService.get(endpoints.mdas, {
-        paging: { pageNumber, pageSize: 200 },
-      });
-      const { data, totalCount } = res.data;
-      setMdas(data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
   const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
   const fetchTerms = async () => {
     try {
-      const res = await apiService.get(endpoints.getParliamentaryTermsSetups);
+      const res = await apiService.get(endpoints.getParliamentaryTermsSetups, {
+        'paging.pageSize': 1000,
+      });
 
       if (res.status === 200) {
         setParliamentarianTerms(res.data.data);
@@ -235,31 +220,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
 
   const fields = [
     {
-      id: 'year',
-      label: 'Year',
-      name: 'year',
-      type: 'number',
-    },
-    {
-      id: 'total_contributions',
-      label: 'Total Contributions',
-      name: 'total_contributions',
-      type: 'amount',
-    },
-    {
-      id: 'intrest',
-      label: 'Interest',
-      name: 'intrest',
-      type: 'amount',
-    },
-    {
-      id: 'total_contributions_with_intrest',
-      label: 'Total Contributions With Interest',
-      name: 'total_contributions_with_intrest',
-      type: 'amount',
-    },
-    {
-      id: 'parliamentary_term_setup_id',
       label: 'Parliamentary Terms',
       name: 'parliamentary_term_setup_id',
       type: 'select',
@@ -268,18 +228,21 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
         name: term.name,
       })),
     },
+    {
+      name: 'contributioFile',
+      label: 'Upload Parliamentary Term Excel',
+      type: 'file',
+
+      fileName: 'UploadParliamentary Term Excel',
+    },
   ];
 
   const [filteredData, setFilteredData] = useState([]);
 
-  const gridApiRef = React.useRef(null);
-
-  const [openFilter, setOpenFilter] = useState(false);
-
   const fetchMaintenance = async () => {
     try {
       const res = await apiService.get(
-        endpoints.getParliamentaryContributions(id.id)
+        endpoints.getParliamentaryContributions(id)
       );
       const data = res.data.data;
       setFilteredData(transformData(data));
@@ -295,9 +258,32 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     fetchMaintenance();
   }, [openBaseCard]);
 
-  useEffect(() => {
-    fetchMdas();
-  }, []);
+  const generateMembersTemplate = async () => {
+    try {
+      // Fetch the file as a blob
+      const response = await axios.get(
+        `${BASE_CORE_API}api/Contribution/DownloadParliamenterianTemplate
+`,
+        {
+          responseType: 'blob', // Specify that the response is a binary Blob
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Parliamentary Term Template.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove(); // Clean up
+      window.URL.revokeObjectURL(url); // Release memory
+    } catch (error) {
+      console.error('Error downloading te file:', error);
+    }
+  };
 
   return (
     <div className="relative">
@@ -328,11 +314,11 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
             fields={fields}
             id={clickedItem2?.id}
             isBranch={true}
-            idLabel={'prospective_pensioner_id'}
-            apiEndpoint={endpoints.createParliamentContributions}
+            idLabel={'prospectivePensionerId'}
+            apiEndpoint={endpoints.uploadParliamentaryContributions}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         )}
@@ -351,27 +337,19 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
               my: 2,
             }}
           >
-            Add Parliamentary Contributions
+            New Parliamentary Contributions
           </Button>
           <Button
             variant="text"
             startIcon={<Launch />}
-            onClick={() => {}}
+            onClick={() => {
+              generateMembersTemplate();
+            }}
             sx={{
               my: 2,
             }}
           >
             Generate Upload Template
-          </Button>
-          <Button
-            variant="text"
-            startIcon={<FileDownload />}
-            onClick={() => {}}
-            sx={{
-              my: 2,
-            }}
-          >
-            Import Parliamentary Contributions (xlsx)
           </Button>
         </div>
         <div className="">

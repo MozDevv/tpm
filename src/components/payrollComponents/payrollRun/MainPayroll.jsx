@@ -41,11 +41,6 @@ const MainPayroll = () => {
       flex: 1,
       cellStyle: {
         textAlign: 'left',
-        fontWeight: 'bold',
-        color: '#4CAF50', // Green color for positive amounts
-        fontSize: '14px',
-        padding: '10px',
-        borderBottom: '1px solid #ddd',
       },
       valueFormatter: (params) => formatNumber(params.value),
     },
@@ -55,6 +50,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalDeductions',
@@ -62,6 +61,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalTaxDeductions',
@@ -69,6 +72,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalStatutoryDeductions',
@@ -76,6 +83,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalIndividualDeductions',
@@ -83,6 +94,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalGrossArrears',
@@ -90,6 +105,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalNetArrears',
@@ -97,6 +116,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
     {
       field: 'totalArrearsDeductions',
@@ -104,6 +127,10 @@ const MainPayroll = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      cellStyle: {
+        textAlign: 'left',
+      },
+      valueFormatter: (params) => formatNumber(params.value),
     },
   ];
 

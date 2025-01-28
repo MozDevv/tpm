@@ -171,10 +171,10 @@ const BaseInputCard = ({
     }));
   };
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = (file, fieldName) => {
     setFormData({
       ...formData,
-      file: file,
+      [fieldName]: file,
     });
   };
 
@@ -384,6 +384,8 @@ const BaseInputCard = ({
       } catch (error) {
         console.error('Error saving data:', error);
       }
+    } else {
+      message.error('Please fill in all required fields');
     }
   };
 
@@ -608,7 +610,7 @@ const BaseInputCard = ({
               <div className="flex justify-between ">
                 <Upload
                   beforeUpload={(file) => {
-                    handleFileUpload(file); // Capture the file and store it
+                    handleFileUpload(file, field.name); // Capture the file and store it
                     handlePreview && handlePreview(file);
                     return false; // Prevent the auto-upload, we'll handle it manually
                   }}

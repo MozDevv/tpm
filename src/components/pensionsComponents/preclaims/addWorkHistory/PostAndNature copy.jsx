@@ -170,7 +170,9 @@ function PostAndNature({ id, clickedItem }) {
   const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
   const fetchTerms = async () => {
     try {
-      const res = await apiService.get(endpoints.getParliamentaryTermsSetups);
+      const res = await apiService.get(endpoints.getParliamentaryTermsSetups, {
+        'paging.pageSize': 1000,
+      });
 
       if (res.status === 200) {
         setParliamentarianTerms(res.data.data);
