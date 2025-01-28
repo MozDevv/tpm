@@ -43,5 +43,38 @@ const useFetchAsync = (endpoint, apiService) => {
 
   return { data };
 };
+export const useFetchAsyncV2 = (endpoint, apiService) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await apiService.get(endpoint, {
+          'paging.pageSize': 1000,
+        });
+        setData(response.data);
+      } catch (err) {
+        console.log(
+          `An error occurred in useFetchAsync while fetching data from ${endpoint}`,
+          err
+        );
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (endpoint && apiService) {
+      fetchData();
+    }
+  }, [endpoint, apiService]); // Re-fetch only if endpoint or apiService changes
+
+  return { data };
+};
 
 export default useFetchAsync;

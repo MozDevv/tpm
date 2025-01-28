@@ -38,8 +38,8 @@ api.interceptors.response.use(
       if (token && refreshToken) {
         // Refresh token
         return axios
-          .post(`${BASE_CORE_API}/api/Auth/RefreshToken`, {
-            token,
+          .post(`${BASE_CORE_API}api/Auth/RefreshToken`, {
+            jwtToken: token,
             refreshToken,
           })
           .then((response) => {

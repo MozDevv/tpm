@@ -40,6 +40,8 @@ import {
   AssuredWorkload,
   PlaylistAdd,
   EditNote,
+  Replay,
+  TrendingUp,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -493,6 +495,18 @@ const ListNavigation = ({
       action: 'createPayrollRecord',
       requiredPermissions: [],
       status: [7],
+    },
+    {
+      name: 'Trial Run',
+      icon: Replay,
+      action: 'trialRun',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Run Payroll Increment',
+      icon: TrendingUp,
+      action: 'runIncrement',
+      requiredPermissions: [],
     },
   ];
 

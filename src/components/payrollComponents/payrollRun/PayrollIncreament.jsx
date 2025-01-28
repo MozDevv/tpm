@@ -16,13 +16,11 @@ import { formatNumber } from '@/utils/numberFormatters';
 import PayrollPensionerDetails from './PayrollPensionerDetails';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import PayrollDeductionDetails from './PayrollDeductionDetails';
-import { Backdrop, Dialog, IconButton } from '@mui/material';
+import { Backdrop, Dialog } from '@mui/material';
 import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
 import RunIncrement from './RunIncrement';
-import { Launch } from '@mui/icons-material';
-import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 
-const MainPayroll = () => {
+const PayrollIncreament = () => {
   const columnDefs = [
     {
       field: 'period',
@@ -171,12 +169,19 @@ const MainPayroll = () => {
   const [computing, setComputing] = React.useState(false);
   const [openRunIncrement, setOpenRunIncrement] = React.useState(false);
 
-  const handlers = {};
+  const handlers = {
+    runIncrement: () => {
+      setOpenRunIncrement(true);
+    },
+  };
 
   const baseCardHandlers = {
     edit: () => {},
     trialRun: () => {
       trialRun();
+    },
+    runIncrement: () => {
+      setOpenRunIncrement(true);
     },
   };
 
@@ -295,8 +300,6 @@ const MainPayroll = () => {
     },
   ];
 
-  const [openViewAll, setOpenViewAll] = React.useState(false);
-
   return (
     <div className="">
       {computing && (
@@ -330,15 +333,6 @@ const MainPayroll = () => {
       >
         <RunIncrement incrementMaster={incrementMaster} />
       </Dialog>
-
-      <ViewAllEarningsDialog
-        openDrilldown={openViewAll}
-        setOpenDrilldown={setOpenViewAll}
-        title="Earnings"
-      >
-        <PayrollPensionerDetails payrollDetails={payrollDetails} />
-      </ViewAllEarningsDialog>
-
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -351,29 +345,20 @@ const MainPayroll = () => {
         {clickedItem ? (
           <div className="flex flex-col gap-2">
             <div className=" overflow-y-auto ">
-              <BaseCollapse name="Summary">
-                <BaseInputCard
-                  fields={fields}
-                  apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
-                  postApiFunction={payrollApiService.post}
-                  clickedItem={clickedItem}
-                  useRequestBody={true}
-                  setOpenBaseCard={setOpenBaseCard}
-                />
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
+                postApiFunction={payrollApiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+              <BaseCollapse name="Pensioner Details">
+                <PayrollPensionerDetails payrollDetails={payrollDetails} />
               </BaseCollapse>
-              <div className="relative">
-                <BaseCollapse name="Earnings">
-                  <IconButton
-                    onClick={() => setOpenViewAll(true)}
-                    sx={{ position: 'absolute', right: '40px', top: '20px' }}
-                  >
-                    <Launch />
-                  </IconButton>
-                  <div className="pt-2">
-                    <PayrollPensionerDetails payrollDetails={payrollDetails} />
-                  </div>
-                </BaseCollapse>
-              </div>
+              {/* <BaseCollapse name="Pensioner Details">
+                <PayrollDeductionDetails payrollDetails={payrollDetails} />
+              </BaseCollapse> */}
             </div>
           </div>
         ) : (
@@ -406,4 +391,4 @@ const MainPayroll = () => {
   );
 };
 
-export default MainPayroll;
+export default PayrollIncreament;

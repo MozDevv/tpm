@@ -221,7 +221,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
   const fields = [
     {
       label: 'Parliamentary Terms',
-      name: 'parliamentary_term_setup_id',
+      name: 'parliamentaryTermSetUpid',
       type: 'select',
       options: parliamenterianTerms.map((term) => ({
         id: term.id,

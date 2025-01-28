@@ -204,7 +204,7 @@ const BaseDrilldown = ({
           </div>
         </div>
         <div className="ag-theme-quartz w-full h-full" style={{}}>
-          <div className="w-[98%] flex flex-col mb-8 gap-4 mt-4 ml-2">
+          <div className="w-[98%] flex flex-col mt-[-20px] mb-4 gap-4 ml-2">
             <ListNavigation
               handlers={updatedHandlers}
               permissions={permissions}

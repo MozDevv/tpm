@@ -37,7 +37,7 @@ api.interceptors.response.use(
         // Refresh token
         try {
           const response = await axios.post(
-            `${BASE_CORE_API}/api/Auth/RefreshToken`,
+            `${BASE_CORE_API}api/Auth/RefreshToken`,
             {
               jwtToken: token,
               refreshToken: refreshToken,

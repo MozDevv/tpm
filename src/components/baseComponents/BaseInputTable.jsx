@@ -63,6 +63,8 @@ const BaseInputTable = ({
   deleteApiService,
   setSeconded,
   dateOfFirstAppointment,
+  isAddMoreFields,
+  setTableInputData,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -961,20 +963,24 @@ const BaseInputTable = ({
         }
 
         if (isRowComplete(data)) {
-          if (data.id) {
-            await handleSave(data);
+          if (isAddMoreFields) {
+            setTableInputData((prevData) => [...prevData, data]);
           } else {
-            await handleSave(data);
+            if (data.id) {
+              await handleSave(data);
+            } else {
+              await handleSave(data);
+            }
+            await refreshData();
+
+            message.success('Row saved successfully!');
+
+            setRowErrors((prevErrors) => {
+              const updatedErrors = { ...prevErrors };
+              delete updatedErrors[data.id];
+              return updatedErrors;
+            });
           }
-          await refreshData();
-
-          message.success('Row saved successfully!');
-
-          setRowErrors((prevErrors) => {
-            const updatedErrors = { ...prevErrors };
-            delete updatedErrors[data.id];
-            return updatedErrors;
-          });
         }
       };
 

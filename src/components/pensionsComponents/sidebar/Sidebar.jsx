@@ -401,7 +401,46 @@ function Sidebar() {
       children: [
         {
           title: 'Main Payroll',
-          path: '/pensions/payroll/main-payroll/payroll-run',
+          // path: '/pensions/payroll/main-payroll/payroll-run',
+          subChildren: [
+            {
+              title: 'Payroll Run',
+              path: '/pensions/payroll/main-payroll/payroll-run',
+            },
+            {
+              title: 'Pending Payroll Approval',
+              path: '/pensions/payroll/main-payroll/pending-approval',
+            },
+            {
+              title: 'Approved Payroll',
+              path: '/pensions/payroll/main-payroll/approved-payroll',
+            },
+            {
+              title: 'Rejected Payroll',
+              path: '/pensions/payroll/main-payroll/rejected-payroll',
+            },
+          ],
+        },
+        {
+          title: 'Payroll Increment',
+          subChildren: [
+            {
+              title: 'Payroll Increment',
+              path: '/pensions/payroll/payroll-increment',
+            },
+            {
+              title: 'Pending Increment Approval',
+              path: '/pensions/payroll/payroll-increment/pending-approval',
+            },
+            {
+              title: 'Approved Increment',
+              path: '/pensions/payroll/payroll-increment/approved-increment',
+            },
+            {
+              title: 'Rejected Increment',
+              path: '/pensions/payroll/payroll-increment/rejected-increment',
+            },
+          ],
         },
       ],
     },
@@ -688,6 +727,14 @@ function Sidebar() {
             {
               title: 'Payroll Periods',
               path: '/pensions/setups/payroll-periods',
+            },
+            {
+              title: 'Payroll Types',
+              path: '/pensions/setups/payroll-types',
+            },
+            {
+              title: 'Increment Master',
+              path: '/pensions/setups/increment-master',
             },
           ],
         },

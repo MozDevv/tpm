@@ -17,6 +17,20 @@ const payrollEndpoints = {
   getPensionerIndex: '/api/Pensioner/Index',
 
   getPayrollSummaries: '/api/Application/payroll-summaries',
+
+  getPeriodSchedule: (periodId) =>
+    `api/Application/Schedule?periodId=${periodId}`,
+
+  trialRun: '/api/Application/trial-run',
+
+  createIncreamentMaster: '/api/Setups/increment-masters',
+  getIncreamentMasters: '/api/Setups/increment-masters',
+  runPayrollIncrements: (id) => `/api/Application/run-increments/${id}`,
+
+  createPayrollTypes: '/api/Setups/payroll-types',
+  getPayrollTypes: '/api/Setups/payroll-types',
+  updatePayrollTypes: '/api/Setups/payroll-types',
+  deletePayrollTypes: '/api/Setups/payroll-types',
 };
 api.interceptors.request.use(
   (config) => {
