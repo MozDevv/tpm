@@ -383,6 +383,14 @@ const financeEndpoints = {
   updateRecoveryBankDetails: '/PostingSetUp/UpdateRecoveryBankDetails',
   getScheduleControlReport: '/Reports/GetScheduleControlReport',
   getTaxReport: '/Reports/GetTaxReport',
+  createTaxTypes: '/Setups/CreateTaxTypes',
+  getTaxTypes: '/Setups/GetTaxTypes',
+  updateTaxTypes: '/Setups/UpdateTaxTypes',
+  deleteTaxTypes: (id) => `/Setups/DeleteTaxTypes?id=${id}`,
+  createTaxBands: '/Setups/CreateTaxBands',
+  getTaxBands: '/Setups/GetTaxBands',
+  updateTaxBands: '/Setups/UpdateTaxBands',
+  deleteTaxBands: (id) => `/Setups/DeleteTaxBands?id=${id}`,
 };
 
 export const apiService = {

@@ -12,8 +12,11 @@ const payrollEndpoints = {
   createPayrollRecord: '/api/Payroll/CreatePayrollRecord',
 
   /////// Payroll Periods
-  getPayrollPeriods: '/api/PayrollPeriods',
+  getPayrollPeriods: '/api/Application/payroll-periods',
   createPayrollPeriod: '/api/PayrollPeriods',
+  getPensionerIndex: '/api/Pensioner/Index',
+
+  getPayrollSummaries: '/api/Application/payroll-summaries',
 };
 api.interceptors.request.use(
   (config) => {

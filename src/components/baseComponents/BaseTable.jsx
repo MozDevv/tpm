@@ -147,8 +147,13 @@ const BaseTable = ({
     try {
       let res;
       if (isPayroll) {
-        res = await axios.get('http://192.168.3.68:9089/api/PayrollPeriods');
-        setRowData(res.data);
+        const res = await fetchApiService(fetchApiEndpoint);
+        if (res && res.data) {
+          setRowData(res.data);
+        } else {
+          console.error('Data is undefined or null:', res);
+          setRowData([]); // Set an empty array if data is undefined or null
+        }
       } else {
         res = await fetchApiService(fetchApiEndpoint, {
           'paging.pageNumber': pageNumber,

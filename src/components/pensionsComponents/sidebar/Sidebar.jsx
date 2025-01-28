@@ -401,12 +401,7 @@ function Sidebar() {
       children: [
         {
           title: 'Main Payroll',
-          subChildren: [
-            {
-              title: 'Payroll Run',
-              path: '/pensions/payroll/main-payroll/payroll-run',
-            },
-          ],
+          path: '/pensions/payroll/main-payroll/payroll-run',
         },
       ],
     },
@@ -599,6 +594,14 @@ function Sidebar() {
             {
               title: 'Pension Factor Setups',
               path: '/pensions/setups/pension-factor-assesment-setups',
+            },
+            {
+              title: 'Tax Types',
+              path: '/pensions/setups/tax-types',
+            },
+            {
+              title: 'Tax Bands',
+              path: '/pensions/setups/tax-bands',
             },
           ],
         },

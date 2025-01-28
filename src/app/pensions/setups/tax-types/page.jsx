@@ -1,10 +1,10 @@
-import MainPayroll from '@/components/payrollComponents/payrollRun/MainPayroll';
+import TaxTypes from '@/components/assessment/setups/TaxTypes';
 import React from 'react';
 
 function page() {
   return (
     <div>
-      <MainPayroll />
+      <TaxTypes />
     </div>
   );
 }
