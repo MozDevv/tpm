@@ -58,7 +58,7 @@ const BaseDrilldown = ({
 
   useEffect(() => {
     if (!openPostToGL) {
-      fetchData();z
+      fetchData();
     }
   }, [openPostToGL]);
 
