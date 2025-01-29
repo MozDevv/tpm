@@ -240,10 +240,7 @@ function Sidebar() {
               title: 'Chart of Accounts',
               path: '/pensions/finance/general-ledger/charts-of-accounts',
             },
-            {
-              title: 'General Budget',
-              path: '/pensions/finance/general-ledger/general-budget',
-            },
+
             {
               title: 'General Ledger Entries',
               path: '/pensions/finance/general-ledger/ledger-entries',

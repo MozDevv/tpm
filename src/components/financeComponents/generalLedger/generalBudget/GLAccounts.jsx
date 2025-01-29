@@ -268,7 +268,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
   const handleRowClick = (row) => {
     console.log('Row clicked:', row);
     setClickedItem(row);
-    setOpenBaseCard(true);
+    // setOpenBaseCard(true);
   };
 
   const renderRow = (row) => (

@@ -90,8 +90,8 @@ const PayrollSuspensionReasons = () => {
       ],
     },
     {
-      name: 'name',
-      label: 'Name',
+      name: 'description',
+      label: 'Description',
       type: 'text',
       required: true,
     },
@@ -117,7 +117,7 @@ const PayrollSuspensionReasons = () => {
             apiEndpoint={payrollEndpoints.updateSuspensionReasons(
               clickedItem?.id
             )}
-            postApiFunction={payrollApiService.post}
+            postApiFunction={payrollApiService.put}
             clickedItem={clickedItem}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
@@ -126,7 +126,7 @@ const PayrollSuspensionReasons = () => {
           <BaseInputCard
             fields={fields}
             apiEndpoint={payrollEndpoints.createSuspensionReasonsL}
-            postApiFunction={payrollApiService.put}
+            postApiFunction={payrollApiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
