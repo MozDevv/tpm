@@ -736,6 +736,10 @@ function Sidebar() {
               title: 'Increment Master',
               path: '/pensions/setups/increment-master',
             },
+            {
+              title: 'Suspension Reasons',
+              path: '/pensions/setups/suspension-reasons',
+            },
           ],
         },
         {

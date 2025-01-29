@@ -11,7 +11,7 @@ import payrollEndpoints, {
   payrollApiService,
 } from '@/components/services/payrollApi';
 
-const PayrollTypes = () => {
+const PayrollSuspensionReasons = () => {
   const columnDefs = [
     {
       field: 'name',
@@ -21,23 +21,8 @@ const PayrollTypes = () => {
       flex: 1,
     },
     {
-      field: 'code',
-      headerName: 'Code',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-
-    {
-      field: 'maximumPayableAmount',
-      headerName: 'Maximum Payable Amount',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: 'isTaxable',
-      headerName: 'Is Taxable',
+      field: 'description',
+      headerName: 'Description',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
@@ -53,17 +38,14 @@ const PayrollTypes = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-
+      id: item.reasonId,
+      reason: item.name,
       name: item.name,
-      code: item.code,
-      maximumPayableAmount: item.maximumPayableAmount,
-      isTaxable: item.isTaxable,
+      description: item.description,
     }));
   };
 
   const handlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -92,42 +74,25 @@ const PayrollTypes = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Payroll Types"' : 'Create New Payroll Types"';
+  const title = clickedItem
+    ? clickedItem?.name
+    : 'Create New Suspension Reason';
 
   const fields = [
+    {
+      name: 'reason',
+      label: 'Reason',
+      type: 'select',
+      required: true,
+      options: [
+        { id: 1, name: 'SUSPENSION' },
+        { id: 2, name: 'REACTIVATION' },
+      ],
+    },
     {
       name: 'name',
       label: 'Name',
       type: 'text',
-      required: true,
-    },
-    {
-      name: 'code',
-      label: 'Code',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: [
-        { value: 0, label: 'Main' },
-        { value: 1, label: 'Injury' },
-        { value: 2, label: 'Dependent' },
-        { value: 3, label: 'Agency' },
-      ],
-    },
-    {
-      name: 'maximumPayableAmount',
-      label: 'Maximum Payable Amount',
-      type: 'number',
-      required: true,
-    },
-    {
-      name: 'isTaxable',
-      label: 'Is Taxable',
-      type: 'switch',
       required: true,
     },
   ];
@@ -141,13 +106,17 @@ const PayrollTypes = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        // // deleteApiEndpoint={payrollEndpoints.deletePayrollTypes(clickedItem?.id)}
-        // deleteApiService={payrollApiService.get}
+        deleteApiEndpoint={payrollEndpoints.deleteSuspensionReasons(
+          clickedItem?.id
+        )}
+        deleteApiService={payrollApiService.delete}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={payrollEndpoints.updatePayrollTypes}
+            apiEndpoint={payrollEndpoints.updateSuspensionReasons(
+              clickedItem?.id
+            )}
             postApiFunction={payrollApiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -156,8 +125,8 @@ const PayrollTypes = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={payrollEndpoints.createPayrollTypes}
-            postApiFunction={payrollApiService.post}
+            apiEndpoint={payrollEndpoints.createSuspensionReasonsL}
+            postApiFunction={payrollApiService.put}
             clickedItem={clickedItem}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
@@ -170,17 +139,17 @@ const PayrollTypes = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={payrollEndpoints.getPayrollTypes}
+        fetchApiEndpoint={payrollEndpoints.getSuspensionReasons}
         fetchApiService={payrollApiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Payroll Types"
-        currentTitle="Payroll Types"
+        breadcrumbTitle="Suspension Reasons"
+        currentTitle="Suspension Reasons"
         isPayroll={true}
       />
     </div>
   );
 };
 
-export default PayrollTypes;
+export default PayrollSuspensionReasons;

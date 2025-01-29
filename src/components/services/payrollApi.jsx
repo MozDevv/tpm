@@ -31,6 +31,11 @@ const payrollEndpoints = {
   getPayrollTypes: '/api/Setups/payroll-types',
   updatePayrollTypes: '/api/Setups/payroll-types',
   deletePayrollTypes: '/api/Setups/payroll-types',
+
+  getSuspensionReasons: '/api/Setups/read',
+  createSuspensionReasonsL: '/api/Setups/create',
+  updateSuspensionReasons: (id) => '/api/Setups/update/' + id,
+  deleteSuspensionReasons: (id) => '/api/Setups/delete/' + id,
 };
 api.interceptors.request.use(
   (config) => {

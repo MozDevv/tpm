@@ -256,6 +256,7 @@ const PayrollIncreament = () => {
       type: 'amount',
       disabled: true,
     },
+
     {
       name: 'totalDeductions',
       label: 'Total Deductions',

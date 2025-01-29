@@ -7,7 +7,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 import payrollEndpoints, {
   payrollApiService,
 } from '@/components/services/payrollApi';
@@ -36,7 +36,7 @@ const columnDefs = [
     headerClass: 'prefix-header',
     filter: true,
     flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => parseDate(params.value),
   },
   {
     field: 'effectiveEndDate',
@@ -44,7 +44,7 @@ const columnDefs = [
     headerClass: 'prefix-header',
     filter: true,
     flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
+    valueFormatter: (params) => parseDate(params.value),
   },
   {
     field: 'isClosed',
@@ -98,17 +98,10 @@ const IncreamentMaster = () => {
 
   const { data } = useFetchAsyncV2(
     payrollEndpoints.getPayrollTypes,
-    payrollApiService.get
+    payrollApiService
   );
 
   const fields = [
-    {
-      name: 'financialYear',
-      label: 'Financial Year',
-      type: 'text',
-      required: true,
-    },
-
     {
       name: 'payrollTypeId',
       label: 'Payroll Type',
@@ -121,6 +114,13 @@ const IncreamentMaster = () => {
           name: item.name,
         })),
     },
+    {
+      name: 'financialYear',
+      label: 'Financial Year',
+      type: 'text',
+      required: true,
+    },
+
     {
       name: 'effectiveStartDate',
       label: 'Effective Start Date',
@@ -156,19 +156,19 @@ const IncreamentMaster = () => {
     {
       value: 'incrementAmount',
       label: 'Increment Amount',
-      type: 'amount',
+      type: 'number',
       required: true,
     },
     {
       value: 'minimumPensionAmount',
       label: 'Minimum Pension Amount',
-      type: 'amount',
+      type: 'number',
       required: true,
     },
     {
       value: 'maximumPensionAmount',
       label: 'Maximum Pension Amount',
-      type: 'amount',
+      type: 'number',
       required: true,
     },
   ];
@@ -237,8 +237,8 @@ const IncreamentMaster = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Payroll Periods"
-        currentTitle="Payroll Periods"
+        breadcrumbTitle="Increment Master Setup"
+        currentTitle="Increment Master Setup"
       />
     </div>
   );

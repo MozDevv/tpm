@@ -149,7 +149,8 @@ const BaseTable = ({
       if (isPayroll) {
         const res = await fetchApiService(fetchApiEndpoint);
         if (res && res.data) {
-          setRowData(res.data);
+          const transformedData = transformData(res.data);
+          setRowData(transformedData);
         } else {
           console.error('Data is undefined or null:', res);
           setRowData([]); // Set an empty array if data is undefined or null
