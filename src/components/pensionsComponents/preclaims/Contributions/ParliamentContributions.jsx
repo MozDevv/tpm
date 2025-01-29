@@ -285,6 +285,25 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     }
   };
 
+  const handlePreview = async (file) => {
+    const formData = new FormData();
+    formData.append('prospectivePensionerId', id);
+    formData.append('contributioFile', file);
+
+    try {
+      const res = await apiService.post(
+        endpoints.previewParliamentaryContributions,
+        formData
+      );
+
+      if (res.data.succeeded) {
+        setFilteredData(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="relative">
       <BaseCard
@@ -310,17 +329,39 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
             isBranch={false}
           />
         ) : (
-          <BaseInputCard
-            fields={fields}
-            id={clickedItem2?.id}
-            isBranch={true}
-            idLabel={'prospectivePensionerId'}
-            apiEndpoint={endpoints.uploadParliamentaryContributions}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={false}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <>
+            {JSON.stringify(id)}
+            <BaseInputCard
+              fields={fields}
+              id={clickedItem2?.id}
+              isBranch={true}
+              handlePreview={handlePreview}
+              idLabel={'prospectivePensionerId'}
+              apiEndpoint={endpoints.uploadParliamentaryContributions}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={false}
+              setOpenBaseCard={setOpenBaseCard}
+            />
+            {filteredData && filteredData.length > 0 && (
+              <AgGridReact
+                columnDefs={columnDefs.map((col) => ({
+                  ...col,
+                  headerTooltip: col.headerName,
+                }))}
+                rowData={filteredData}
+                pagination={false}
+                domLayout="autoHeight"
+                className="custom-grid"
+                alwaysShowHorizontalScroll={true}
+                onGridReady={(params) => {}}
+                onRowClicked={(e) => {
+                  setOpenBaseCard(true);
+                  setClickedItem(e.data);
+                }}
+              />
+            )}
+          </>
         )}
       </BaseCard>
 
@@ -385,7 +426,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
           domLayout="autoHeight"
           className="custom-grid"
           alwaysShowHorizontalScroll={true}
-          // paginationPageSize={pageSize}
           onGridReady={(params) => {}}
           onRowClicked={(e) => {
             setOpenBaseCard(true);

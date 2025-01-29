@@ -14,6 +14,7 @@ import WcpsCard from '../wcps/WcpsCard';
 import { useMda } from '@/context/MdaContext';
 import Liabilities from '../liabilities/Liabilities';
 import GovernmentSalary from '../governmentSalary/GovernmentSalary';
+import NextOfKin from '../NextOfKin';
 
 const { TabPane } = Tabs;
 
@@ -39,6 +40,38 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
   };
 
   const { activeCapName } = useMda();
+
+  /** {
+            "surname": "Kui",
+            "first_name": "Maijui",
+            "other_name": "Huyion",
+            "identifier": "9873883",
+            "identifier_type": 1,
+            "national_id": null,
+            "relationship_id": "28314bdf-4f81-411d-9da4-a36504aa8435",
+            "mobile_number": "+254799893883",
+            "address": "67",
+            "email_address": "jui@mail.com",
+            "city": "Nairobi",
+            "status": 0,
+            "percentage": null,
+            "relationship": {
+                "name": "Husband",
+                "description": "Husband",
+                "is_spouse": true,
+                "gender": 0,
+                "id": "28314bdf-4f81-411d-9da4-a36504aa8435",
+                "created_by": null,
+                "created_date": "2024-09-30T12:07:59.157627Z",
+                "updated_by": null,
+                "updated_date": null
+            },
+            "id": "e01f8d5b-68fd-4e7d-bd6d-7bb3fb1eef8e",
+            "created_by": null,
+            "created_date": "2025-01-29T12:35:21.55743Z",
+            "updated_by": null,
+            "updated_date": null
+        } */
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto   ">
       <div>
@@ -143,6 +176,16 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     >
                       <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Next Of Kin Details
+                        </span>
+                      }
+                      key="6"
+                    >
+                      <NextOfKin clickedItem={clickedItem} />
+                    </TabPane>
                     {clickedItem?.maintenance_case === 0 && (
                       <TabPane
                         tab={
@@ -150,7 +193,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                             Maintenance Case
                           </span>
                         }
-                        key="6"
+                        key="7"
                       >
                         <div className="z-10">
                           <MaintenanceCase
@@ -166,7 +209,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                           Deductions
                         </span>
                       }
-                      key="7"
+                      key="8"
                     >
                       <Deductions
                         id={clickedItem?.id}
@@ -181,7 +224,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                             Women & Children Contributions Scheme
                           </span>
                         }
-                        key="8"
+                        key="9"
                       >
                         <WcpsCard
                           id={clickedItem?.id}
