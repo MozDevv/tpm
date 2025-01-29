@@ -162,63 +162,64 @@ function ScheduledPaymentsCard({
       required: true,
       width: 200,
     },
-    {
-      field: 'grossAmount',
-      headerName: 'Gross Amount',
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
-      required: true,
-      width: 200,
-    },
-    {
-      field: 'refundAmount',
-      headerName: 'Refund Amount',
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
-      required: true,
-      width: 200,
-    },
-    {
-      field: 'pensionAmount',
-      headerName: 'Pension Amount',
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
-      required: true,
-      width: 200,
-    },
-    {
-      field: 'deductionsAndRefundId',
-      headerName: 'Deductions And Refund',
-      type: 'text',
-      required: true,
-      width: 200,
-      valueFormatter: (params) => {
-        const deduction = deductionsAndRefunds.find(
-          (deduction) => deduction.id === params.value
-        );
-        return deduction?.description;
-      },
-    },
+    // },
+    // // {
+    // //   field: 'grossAmount',
+    // //   headerName: 'Gross Amount',
+    // //   valueFormatter: (params) => {
+    // //     return formatNumber(params.value);
+    // //   },
+    // //   required: true,
+    // //   width: 200,
+    // // },
+    // {
+    //   field: 'refundAmount',
+    //   headerName: 'Refund Amount',
+    //   valueFormatter: (params) => {
+    //     return formatNumber(params.value);
+    //   },
+    //   required: true,
+    //   width: 200,
+    // },
+    // {
+    //   field: 'pensionAmount',
+    //   headerName: 'Pension Amount',
+    //   valueFormatter: (params) => {
+    //     return formatNumber(params.value);
+    //   },
+    //   required: true,
+    //   width: 200,
+    // },
+    // {
+    //   field: 'deductionsAndRefundId',
+    //   headerName: 'Deductions And Refund',
+    //   type: 'text',
+    //   required: true,
+    //   width: 200,
+    //   valueFormatter: (params) => {
+    //     const deduction = deductionsAndRefunds.find(
+    //       (deduction) => deduction.id === params.value
+    //     );
+    //     return deduction?.description;
+    //   },
+    // },
 
-    {
-      field: 'deductionAmount',
-      headerName: 'Deduction Amount',
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
-      required: true,
-      width: 200,
-    },
-    {
-      field: 'refundDescription',
-      headerName: 'Refund Description',
-      type: 'text',
-      required: true,
-      width: 200,
-    },
+    // {
+    //   field: 'deductionAmount',
+    //   headerName: 'Deduction Amount',
+    //   valueFormatter: (params) => {
+    //     return formatNumber(params.value);
+    //   },
+    //   required: true,
+    //   width: 200,
+    // },
+    // {
+    //   field: 'refundDescription',
+    //   headerName: 'Refund Description',
+    //   type: 'text',
+    //   required: true,
+    //   width: 200,
+    // },
     /**{
 	"0": {
 		"id": "9033fb03-0ec6-4caa-b716-7a8b7deb3fd5",

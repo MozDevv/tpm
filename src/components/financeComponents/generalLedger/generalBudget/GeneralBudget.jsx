@@ -32,6 +32,14 @@ const statusIcons = {
   4: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
+/**
+ * Gross Amount
+Refund Amount
+Pension Amount 
+Deduction and Refund
+Deduction Amount
+Deduction Description.
+ */
 const columnDefs = [
   {
     field: 'documentNo',

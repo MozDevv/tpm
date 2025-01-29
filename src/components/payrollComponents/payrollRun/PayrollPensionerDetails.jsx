@@ -16,9 +16,15 @@ import { apiService } from '@/components/services/api';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import PayrollDeductionDetails from './PayrollDeductionDetails';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
+import { Dialog } from '@mui/material';
+import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
+import payrollEndpoints, {
+  payrollApiService,
+} from '@/components/services/payrollApi';
 
 function PayrollPensionerDetails({ payrollDetails }) {
   const [qualifyingService, setQualifyingService] = useState([]);
+  const [openRunIncrement, setOpenRunIncrement] = useState(false);
   const columnDefs = [
     {
       field: 'pensionerNo',
@@ -199,7 +205,43 @@ function PayrollPensionerDetails({ payrollDetails }) {
 
   const handlers = {
     edit: () => console.log('Edit clicked'),
+    resumePayroll: () => console.log('Resume Payroll clicked'),
+    approvePayrollStop: () => console.log('Approve Payroll Stop clicked'),
+    stopPayroll: () => setOpenRunIncrement(true),
   };
+
+  const stopPayroll = () => {
+    console.log('Stop Payroll clicked');
+  };
+
+  const { data } = useFetchAsyncV2(
+    payrollEndpoints.getSuspensionReasons,
+    payrollApiService
+  );
+  const stopPayrollFields = [
+    {
+      name: 'reasonId',
+      label: 'Reason',
+      type: 'select',
+      options:
+        data &&
+        data?.map((item) => ({
+          id: item.reasonId,
+          name: item.description,
+        })),
+    },
+    {
+      name: 'suspensionDate',
+      label: 'Suspension Date',
+      type: 'date',
+    },
+    {
+      name: 'suspensionPeriod',
+      label: 'Suspension Period',
+      type: 'date',
+    },
+  ];
+
   const tabPanes = [
     {
       key: '1',
@@ -236,42 +278,69 @@ function PayrollPensionerDetails({ payrollDetails }) {
     },
   ];
   return (
-    <div className="ag-theme-quartz mt-5 px-9 h-[150px]">
+    <>
       <BaseCard
-        openBaseCard={openBaseCard}
-        isSecondaryCard={true}
-        setOpenBaseCard={setOpenBaseCard}
+        openBaseCard={openRunIncrement}
+        isSecondaryCard2={true}
+        setOpenBaseCard={setOpenRunIncrement}
         //handlers={baseCardHandlers}
-        title={'Pensioner Details'}
+        title={
+          clickedRow && clickedRow.awardPrefix
+            ? clickedRow.awardPrefix + clickedRow.pensionerNo
+            : ''
+        }
         clickedItem={clickedRow}
-        status={4}
         isUserComponent={false}
-        handlers={handlers}
       >
-        <BaseTabs tabPanes={tabPanes} />
-      </BaseCard>
-
-      <div className="min-h-[600px] max-h-[600px] h-[200px]">
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={
-            payrollDetails &&
-            payrollDetails.map((detail) => detail.pensionerDetail)
-          }
-          pagination={false}
-          domLayout="normal"
-          alwaysShowHorizontalScroll={true}
-          className="custom-grid ag-theme-quartz"
-          rowSelection="multiple"
-          // onSelectionChanged={onSelectionChanged}
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            console.log('e.data', e.data);
-            setClickedRow(e.data);
-          }}
+        <BaseInputCard
+          id={clickedRow?.payrollId}
+          idLabel="payrollId"
+          isBranch={true}
+          fields={stopPayrollFields}
+          apiEndpoint={payrollEndpoints.stopPayroll}
+          postApiFunction={payrollApiService.post}
+          // clickedItem={clickedRow}
+          useRequestBody={true}
+          setOpenBaseCard={setOpenRunIncrement}
         />
+      </BaseCard>
+      <div className="ag-theme-quartz mt-5 px-9 h-[150px]">
+        <BaseCard
+          openBaseCard={openBaseCard}
+          isSecondaryCard={true}
+          setOpenBaseCard={setOpenBaseCard}
+          //handlers={baseCardHandlers}
+          title={'Pensioner Details'}
+          clickedItem={clickedRow}
+          status={4}
+          isUserComponent={false}
+          handlers={handlers}
+        >
+          <BaseTabs tabPanes={tabPanes} />
+        </BaseCard>
+
+        <div className="min-h-[600px] max-h-[600px] h-[200px]">
+          <AgGridReact
+            columnDefs={columnDefs}
+            rowData={
+              payrollDetails &&
+              payrollDetails.map((detail) => detail.pensionerDetail)
+            }
+            pagination={false}
+            domLayout="normal"
+            alwaysShowHorizontalScroll={true}
+            className="custom-grid ag-theme-quartz"
+            rowSelection="multiple"
+            // onSelectionChanged={onSelectionChanged}
+            onRowClicked={(e) => {
+              setOpenBaseCard(true);
+              console.log('e.data', e.data);
+              setClickedRow(e.data);
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

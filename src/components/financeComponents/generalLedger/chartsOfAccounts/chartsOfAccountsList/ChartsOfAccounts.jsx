@@ -329,7 +329,7 @@ function ChartsOfAccounts() {
         )?.groupId,
         glAccountName: account.accountName,
         glAccountNo: account.accountNo,
-        budgetBalance: (account.budgetAmount || 0) - (account.amount || 0),
+        budgetBalance: account.budgetBalance,
       }));
       setRowData(accounts);
     } catch (error) {

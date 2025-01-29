@@ -53,7 +53,8 @@ api.interceptors.response.use(
 );
 const financeEndpoints = {
   fetchGlAccounts: '/Accounts/GetGLAccounts',
-  fetchGlAccountsById: (id) => `/Accounts/GetGLAccounts?budgetId=${id}`,
+  fetchGlAccountsById: (id, group) =>
+    `/Accounts/GetGLAccounts?budgetId=${id}&Group=${group}`,
   fetchGlAccountTypes: '/AccountsSetup/GetGLAccountTypes',
   createGlAccount: '/Accounts/AddGLAccount',
   getAccountGroupTypes: '/AccountsSetup/GetAccountGroups',

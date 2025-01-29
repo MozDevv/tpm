@@ -31,7 +31,7 @@ function GLAccounts({ clickedBudget, uploadExcel }) {
   const fetchGlAccounts = async () => {
     try {
       const response = await apiService.get(
-        financeEndpoints.fetchGlAccountsById(clickedBudget.id),
+        financeEndpoints.fetchGlAccountsById(clickedBudget.id, 4),
         {
           'paging.pageSize': 1000,
         }

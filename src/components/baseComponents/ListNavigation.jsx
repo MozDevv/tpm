@@ -508,6 +508,24 @@ const ListNavigation = ({
       action: 'runIncrement',
       requiredPermissions: [],
     },
+    {
+      name: 'Stop Payroll',
+      icon: Cancel,
+      action: 'stopPayroll',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Approve Payroll Stop',
+      icon: TaskAlt,
+      action: 'approvePayrollStop',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Resume Payroll',
+      icon: Replay,
+      action: 'resumePayroll',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

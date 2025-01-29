@@ -36,6 +36,8 @@ const payrollEndpoints = {
   createSuspensionReasonsL: '/api/Setups/create',
   updateSuspensionReasons: (id) => '/api/Setups/update/' + id,
   deleteSuspensionReasons: (id) => '/api/Setups/delete/' + id,
+
+  stopPayroll: 'api/Pensioner/CreateSuspension/srr-stop',
 };
 api.interceptors.request.use(
   (config) => {
