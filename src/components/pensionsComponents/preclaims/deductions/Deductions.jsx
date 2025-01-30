@@ -25,8 +25,11 @@ const Deductions = ({ id, clickedItem2 }) => {
 
   const fetchRecoveryDeductions = async () => {
     try {
-      const res = await apiService.get(endpoints.getRecoveryDeductions);
-      const data = res.data.data;
+      const res = await apiService.get(endpoints.getRecoveryDeductions, {
+        'paging.pageSize': 1000,
+      });
+      //filter not isPensioner
+      const data = res.data.data.filter((item) => item.isPensioner);
       setRecoveryDeductions(data);
     } catch (error) {
       console.error('Error fetching data:', error);
