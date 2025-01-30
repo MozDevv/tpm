@@ -16,7 +16,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const AddBeneficiaries = ({ id }) => {
+const AddBeneficiaries = ({ id, status }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
   const [departments, setDepartments] = useState([]); // [1]
@@ -174,6 +174,7 @@ const AddBeneficiaries = ({ id }) => {
           title="Beneficiaries"
           fields={fields2}
           id={id}
+          disableAll={status !== 0}
           setSeconded={setOpen}
           idLabel="prospective_pensioner_id"
           getApiService={apiService.get}

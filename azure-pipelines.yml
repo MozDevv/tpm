@@ -1,26 +1,43 @@
 trigger:
-  - main
+  - main # The pipeline will run on changes to the 'main' branch
 
-steps:
-  # Step 1: Build and push Docker image to Docker Hub
-  - task: Docker@2
-    displayName: 'Building and pushing Docker image with build arguments'
-    inputs:
-      command: buildAndPush
-      repository: agilesam/pmis # Replace with your Docker Hub repository
-      dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-      containerRegistry: 'SammyDockerHubSvcConnection' # Your Docker Hub service connection
-      tags: latest
-    pool:
-      vmImage: 'ubuntu-latest' # Using Ubuntu image for the Docker task
+# Define the self-hosted agent pool for the entire pipeline
+pool:
+  vmImage: 'ubuntu-latest' # This will be used for Docker build task
 
-  # Step 2: SSH into remote server and run start_core_app.sh
-  - task: SSH@0
-    displayName: 'SSH into remote server and run start_core_app.sh'
-    inputs:
-      sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
-      runOptions: 'inline' # Running inline commands
-      inline: |
-        echo "9T@2024g!l#D3V" | sudo -S cd configs && ./start_core_app.sh
-    pool:
-      name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
+stages:
+  - stage: BuildAndPush
+    displayName: 'Build and Push Docker Image'
+    jobs:
+      - job: BuildAndPush
+        displayName: 'Build and Push Docker Image'
+        pool:
+          vmImage: 'ubuntu-latest' # Using Ubuntu VM image for the build task
+        steps:
+          # Step 1: Build and push Docker image to Docker Hub
+          - task: Docker@2
+            displayName: 'Building and pushing Docker image with build arguments'
+            inputs:
+              command: buildAndPush
+              repository: agilesam/pmis # Replace with your Docker Hub repository
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'SammyDockerHubSvcConnection' # Your Docker Hub service connection
+              tags: latest
+
+  - stage: DeployToTest
+    displayName: 'Deploy to Test Environment'
+    jobs:
+      - job: DeployToTest
+        displayName: 'Deploy to Test Environment'
+        pool:
+          name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
+        steps:
+          # Step 2: SSH into remote server and run start_core_app.sh
+          - task: SSH@0
+            displayName: 'SSH into remote server and run start_core_app.sh'
+            inputs:
+              sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
+              runOptions: 'inline' # Running inline commands
+              inline: |
+                cd configs
+                ./start_core_app.sh
