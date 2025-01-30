@@ -6,7 +6,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 import { Button } from '@mui/material';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -25,147 +25,190 @@ import { formatNumber } from '@/utils/numberFormatters';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
 
-const columnDefs = [
-  {
-    headerName: 'Year',
-    field: 'year',
-    sortable: true,
-    filter: true,
-    width: 150,
-    pinned: 'left',
-    checkBoxSelection: true,
-  },
-  // {
-  //   headerName: 'Interest',
-  //   field: 'intrest',
-  //   sortable: true,
-  //   filter: true,
-  //   valueFormatter: (params) => formatNumber(params.value),
-  //   pinned: 'left',
-  //   width: 150,
-  // },
-
-  // {
-  //   headerName: 'Parliamentary Terms',
-  //   field: 'parliamentary_term_setup_id',
-  //   sortable: true,
-  //   filter: true,
-  //   pinned: 'left',
-  // },
-
-  {
-    headerName: 'January',
-    field: 'january',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'February',
-    field: 'february',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'March',
-    field: 'march',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'April',
-    field: 'april',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  { headerName: 'May', field: 'may', sortable: true, filter: true, width: 100 },
-  {
-    headerName: 'June',
-    field: 'june',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'July',
-    field: 'july',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'August',
-    field: 'august',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'September',
-    field: 'september',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'October',
-    field: 'october',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'November',
-    field: 'november',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  {
-    headerName: 'December',
-    field: 'december',
-    sortable: true,
-    filter: true,
-    width: 100,
-    valueFormatter: (params) =>
-      params.value ? formatNumber(params.value) : '-',
-  },
-  // {
-  //   headerName: 'Total Annual Salary',
-  //   field: 'total_contributions_with_intrest',
-  //   sortable: true,
-  //   filter: true,
-  //   pinned: 'right',
-  //   width: 150,
-
-  //   valueFormatter: (params) => formatNumber(params.value),
-  // },
-];
-
 const ParliamentContributions = ({ id, clickedItem2 }) => {
+  const columnDefs = [
+    {
+      headerName: 'Year',
+      field: 'year',
+      sortable: true,
+      filter: true,
+      width: 150,
+      pinned: 'left',
+      checkBoxSelection: true,
+    },
+    // {
+    //   headerName: 'Interest',
+    //   field: 'intrest',
+    //   sortable: true,
+    //   filter: true,
+    //   valueFormatter: (params) => formatNumber(params.value),
+    //   pinned: 'left',
+    //   width: 150,
+    // },
+
+    // {
+    //   headerName: 'Parliamentary Terms',
+    //   field: 'parliamentary_term_setup_id',
+    //   sortable: true,
+    //   filter: true,
+    //   pinned: 'left',
+    // },
+
+    {
+      headerName: 'January',
+      field: 'january',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'February',
+      field: 'february',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'March',
+      field: 'march',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'April',
+      field: 'april',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'May',
+      field: 'may',
+      sortable: true,
+      filter: true,
+      width: 100,
+    },
+    {
+      headerName: 'June',
+      field: 'june',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'July',
+      field: 'july',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'August',
+      field: 'august',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'September',
+      field: 'september',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'October',
+      field: 'october',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'November',
+      field: 'november',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    {
+      headerName: 'December',
+      field: 'december',
+      sortable: true,
+      filter: true,
+      width: 100,
+      valueFormatter: (params) =>
+        params.value ? formatNumber(params.value) : '-',
+    },
+    // {
+    //   headerName: 'Total Annual Salary',
+    //   field: 'total_contributions_with_intrest',
+    //   sortable: true,
+    //   filter: true,
+    //   pinned: 'right',
+    //   width: 150,
+
+    //   valueFormatter: (params) => formatNumber(params.value),
+    // },
+  ];
+  const allTermsColDefs = [
+    {
+      headerName: 'Start Date',
+      field: 'startDate',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+      flex: 1,
+    },
+    {
+      headerName: 'End Date',
+      field: 'endDate',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+      flex: 1,
+    },
+    {
+      headerName: 'Interest',
+      field: 'intrest',
+      sortable: true,
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+
+      flex: 1,
+    },
+
+    {
+      headerName: 'Total Annual Salary',
+      field: 'total_anual_salary',
+      sortable: true,
+      filter: true,
+      pinned: 'right',
+      flex: 1,
+
+      valueFormatter: (params) => formatNumber(params.value),
+    },
+  ];
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => {
       const monthMap = item.lines.reduce((acc, line) => {
@@ -418,7 +461,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
         }}
       >
         <AgGridReact
-          columnDefs={columnDefs.map((col) => ({
+          columnDefs={allTermsColDefs.map((col) => ({
             ...col,
             headerTooltip: col.headerName,
           }))}

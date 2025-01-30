@@ -639,6 +639,10 @@ const BaseInputCard = ({
                         handlePreviewInBaseInputCard(formData[field.name])
                       }
                       type="primary"
+                      style={{
+                        backgroundColor: '#006990',
+                        borderColor: '#006990',
+                      }}
                       icon={
                         <Launch
                           sx={{

@@ -14,20 +14,5 @@ steps:
       dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
       containerRegistry: 'SammyDockerHubSvcConnection' # Your Docker Hub service connection
       tags: latest
-      buildArguments: |
-        NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/
-
-  # Install dependencies (this is important for modules to be installed before build)
-  - script: |
-      npm install --legacy-peer-deps
-    displayName: 'Install dependencies'
-
-  # Then trigger Docker build process
-  - task: Docker@2
-    displayName: 'Build Docker image'
-    inputs:
-      command: build
-      repository: agilesam/pmis
-      dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-      containerRegistry: 'SammyDockerHubSvcConnection'
-      tags: latest
+      # buildArguments: |
+      #   NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/
