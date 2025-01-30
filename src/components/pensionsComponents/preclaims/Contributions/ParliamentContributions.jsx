@@ -153,16 +153,16 @@ const columnDefs = [
     valueFormatter: (params) =>
       params.value ? formatNumber(params.value) : '-',
   },
-  {
-    headerName: 'Total Annual Salary',
-    field: 'total_contributions_with_intrest',
-    sortable: true,
-    filter: true,
-    pinned: 'right',
-    width: 150,
+  // {
+  //   headerName: 'Total Annual Salary',
+  //   field: 'total_contributions_with_intrest',
+  //   sortable: true,
+  //   filter: true,
+  //   pinned: 'right',
+  //   width: 150,
 
-    valueFormatter: (params) => formatNumber(params.value),
-  },
+  //   valueFormatter: (params) => formatNumber(params.value),
+  // },
 ];
 
 const ParliamentContributions = ({ id, clickedItem2 }) => {
@@ -330,7 +330,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
           />
         ) : (
           <>
-            {JSON.stringify(id)}
             <BaseInputCard
               fields={fields}
               id={clickedItem2?.id}
@@ -344,22 +343,24 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
               setOpenBaseCard={setOpenBaseCard}
             />
             {filteredData && filteredData.length > 0 && (
-              <AgGridReact
-                columnDefs={columnDefs.map((col) => ({
-                  ...col,
-                  headerTooltip: col.headerName,
-                }))}
-                rowData={filteredData}
-                pagination={false}
-                domLayout="autoHeight"
-                className="custom-grid"
-                alwaysShowHorizontalScroll={true}
-                onGridReady={(params) => {}}
-                onRowClicked={(e) => {
-                  setOpenBaseCard(true);
-                  setClickedItem(e.data);
-                }}
-              />
+              <div className="px-6 bg-gray-100 min-h-[300px] max-h-[600px] h-[200px]">
+                <AgGridReact
+                  columnDefs={columnDefs.map((col) => ({
+                    ...col,
+                    headerTooltip: col.headerName,
+                  }))}
+                  rowData={filteredData}
+                  pagination={false}
+                  domLayout="autoHeight"
+                  className="custom-grid ag-theme-quartz"
+                  alwaysShowHorizontalScroll={true}
+                  onGridReady={(params) => {}}
+                  onRowClicked={(e) => {
+                    setOpenBaseCard(true);
+                    setClickedItem(e.data);
+                  }}
+                />
+              </div>
             )}
           </>
         )}

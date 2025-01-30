@@ -5,8 +5,7 @@ import { Cancel, Close, GetApp } from '@mui/icons-material';
 import './paymenVoucher.css';
 import { useAuth } from '@/context/AuthContext';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
 import {
   amountToWords,
   formatBankAccount,
@@ -21,8 +20,6 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
   const { auth } = useAuth();
 
   const [pdfBlob, setPdfBlob] = useState(null);
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const handleDownload = () => {
     setLoading(true);
