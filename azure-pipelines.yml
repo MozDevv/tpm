@@ -39,5 +39,8 @@ stages:
               sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
               runOptions: 'inline' # Running inline commands
               inline: |
+                echo "Starting Deployment..."
                 cd configs
                 ./start_core_app.sh
+                echo "Script execution finished.👌🟢🟢"
+                exit 0
