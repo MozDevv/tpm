@@ -35,11 +35,11 @@ WORKDIR /app
 # Copy the build output and required files from the builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package.json ./package.json
 
 # Install only production dependencies
 #--production
-RUN npm install --legacy-peer-deps
+RUN npm install --only=production --legacy-peer-deps
 
 # Expose the port the app runs on
 EXPOSE 3000

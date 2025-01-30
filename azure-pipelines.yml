@@ -5,60 +5,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - task: DownloadSecureFile@1
-    name: sshKey
+  # Build and push Docker image to Docker Hub
+  - task: Docker@2
+    displayName: 'Building and pushing Docker image with build arguments'
     inputs:
-      secureFile: 'sammymathenge-web.pem'
-
-  - script: |
-      # Set correct permissions for the private key
-      chmod 600 $(Agent.TempDirectory)/sammymathenge-web.pem
-
-      # Start SSH agent
-      eval $(ssh-agent -s)
-
-      # Add SSH private key to the agent
-      ssh-add $(Agent.TempDirectory)/sammymathenge-web.pem
-
-      # SSH into the server
-      ssh -o StrictHostKeyChecking=no -p $(SSH_PORT) $(SSH_USERNAME)@$(SSH_HOST) << 'EOF'
-        echo "SSH connection successful"
-
-        # Navigate to the project directory
-        cd pmis
-
-        # Clean up unused Docker images
-        sudo docker image prune -af
-
-        # Pull the latest code from the repository
-        git reset --hard origin/main
-        git pull
-
-        # Build the Docker image with no cache
-        sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/ -t agilesam/pmis:latest .
-
-        # sudo docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://tntapi.agilebiz.co.ke/ -t pmis .
-
-        # Log in to Docker Hub
-        echo "$DOCKER_HUB_PASSWORD" | sudo docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-
-        # Push the Docker image to Docker Hub
-        sudo docker push agilesam/pmis:latest
-
-        # Stop and remove the existing container if it exists
-        sudo docker stop pmis-core || true
-        sudo docker rm pmis-core || true
-
-        # Run the new Docker container
-        sudo docker run --name pmis-core -p 4000:3000 -d pmis
-
-        # Clean up Docker images and builder
-        sudo docker image prune -af
-        sudo docker builder prune -f
-
-        # Restart Nginx to apply any changes
-        sudo systemctl restart nginx
-
-        echo "Deployment completed successfully"
-      EOF
-    displayName: 'Deploying to server...'
+      command: buildAndPush
+      repository: agilesam/pmis # Replace with your Docker Hub repository
+      dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+      containerRegistry: 'SammyDockerHubSvcConnection' # Your Docker Hub service connection
+      tags: latest
+      buildArguments: |
+        NEXT_PUBLIC_API_BASE_URL=http://192.168.3.68:9090/
