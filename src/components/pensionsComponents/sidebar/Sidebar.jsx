@@ -416,6 +416,10 @@ function Sidebar() {
               title: 'Rejected Payroll',
               path: '/pensions/payroll/main-payroll/rejected-payroll',
             },
+            {
+              title: 'Suspended Payroll',
+              path: '/pensions/payroll/main-payroll/suspended-payroll',
+            },
           ],
         },
         {

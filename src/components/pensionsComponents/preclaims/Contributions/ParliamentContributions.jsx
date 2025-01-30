@@ -36,23 +36,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       pinned: 'left',
       checkBoxSelection: true,
     },
-    // {
-    //   headerName: 'Interest',
-    //   field: 'intrest',
-    //   sortable: true,
-    //   filter: true,
-    //   valueFormatter: (params) => formatNumber(params.value),
-    //   pinned: 'left',
-    //   width: 150,
-    // },
-
-    // {
-    //   headerName: 'Parliamentary Terms',
-    //   field: 'parliamentary_term_setup_id',
-    //   sortable: true,
-    //   filter: true,
-    //   pinned: 'left',
-    // },
 
     {
       headerName: 'January',
@@ -197,7 +180,6 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
 
       flex: 1,
     },
-
     {
       headerName: 'Total Annual Salary',
       field: 'total_anual_salary',
