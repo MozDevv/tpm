@@ -123,7 +123,7 @@ const AddBeneficiaries = ({ id }) => {
       value: 'gender',
       label: 'Gender',
       type: 'select',
-      disabled: true,
+      //  disabled: true,
       options: [
         { id: 0, name: 'Male' },
         { id: 1, name: 'Female' },

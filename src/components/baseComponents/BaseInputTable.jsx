@@ -739,21 +739,21 @@ const BaseInputTable = ({
         const field = colDef.field;
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
-        if (field === 'relationship_id' && newValue) {
-          const selectedField = fields.find(
-            (field) => field.value === 'relationship_id'
-          );
-          const selectedOption = selectedField.options.find(
-            (option) => option.id === newValue
-          );
-          if (selectedOption) {
-            data.gender = selectedOption.gender;
-            params.api.refreshCells({
-              rowNodes: [params.node],
-              columns: ['gender'],
-            });
-          }
-        }
+        // if (field === 'relationship_id' && newValue) {
+        //   const selectedField = fields.find(
+        //     (field) => field.value === 'relationship_id'
+        //   );
+        //   const selectedOption = selectedField.options.find(
+        //     (option) => option.id === newValue
+        //   );
+        //   if (selectedOption) {
+        //     data.gender = selectedOption.gender;
+        //     params.api.refreshCells({
+        //       rowNodes: [params.node],
+        //       columns: ['gender'],
+        //     });
+        //   }
+        // }
 
         if (data.was_pensionable) {
           if (cap === 'CAP189') {
