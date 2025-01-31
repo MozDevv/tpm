@@ -56,3 +56,11 @@ export const parseDate2 = (date) => {
   }
   return '';
 };
+
+export const formatDateToDayMonthYear = (dateS) => {
+  const date = new Date(dateS);
+  const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+  const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase(); // Get short month name and convert to uppercase
+  const year = String(date.getFullYear()).slice(-2); // Get last two digits of year
+  return `${day}-${month}-${year}`;
+};

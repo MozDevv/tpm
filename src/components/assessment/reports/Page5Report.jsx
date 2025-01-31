@@ -5,10 +5,11 @@ import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
-import { formatNumber } from '@/utils/numberFormatters';
+import { formatNumber, numberToWords } from '@/utils/numberFormatters';
 import dayjs from 'dayjs';
 import { Cancel, GetApp } from '@mui/icons-material';
 import { Empty } from 'antd';
+import { formatDateToDayMonthYear } from '@/utils/dateFormatter';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
@@ -19,6 +20,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   const { auth } = useAuth();
 
   const [pensionableService, setPensionableService] = useState([]);
+  const [pensionerBenefits, setPensionerBenefits] = useState([]);
 
   const handleDownload = async () => {
     setLoading(true);
@@ -66,14 +68,18 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   const fetchPVReport = async () => {
     setLoading(true);
     try {
-      const [calculationSummaryRes, pensionableServiceRes] = await Promise.all([
-        assessApiService.get(
-          assessEndpoints.getCalculationSummary(clickedItem.id_claim)
-        ),
-        assessApiService.get(
-          assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
-        ),
-      ]);
+      const [calculationSummaryRes, pensionableServiceRes, pensionerBenefits2] =
+        await Promise.all([
+          assessApiService.get(
+            assessEndpoints.getCalculationSummary(clickedItem.id_claim)
+          ),
+          assessApiService.get(
+            assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
+          ),
+          assessApiService.get(
+            assessEndpoints.getPensionerBenefits(clickedItem.id_claim)
+          ),
+        ]);
 
       if (calculationSummaryRes.data.succeeded) {
         console.log('Report:', calculationSummaryRes.data.data);
@@ -83,6 +89,10 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       if (pensionableServiceRes.data.succeeded) {
         console.log('Pensionable Service:', pensionableServiceRes.data.data);
         setPensionableService(pensionableServiceRes.data.data);
+      }
+      if (pensionerBenefits2.data.succeeded) {
+        console.log('Pensioner Benefits:', pensionerBenefits2.data.data);
+        setPensionerBenefits(pensionerBenefits2.data.data[0]);
       }
     } catch (error) {
       console.log('Error fetching data:', error);
@@ -96,6 +106,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   }, []);
 
   const generatePdfBlob = async () => {
+    setLoading(true);
     setTimeout(async () => {
       const element = contentRef.current;
 
@@ -241,21 +252,35 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 pensions Act, as amended and the Pensions Regulations now in
                 force amounts to Ksh.
                 <span className="inline gap-1">
-                  <span className="font-bold mr-1">349,288.00</span>
+                  <span className="font-bold mr-1">
+                    {' '}
+                    {formatNumber(report?.lumpsum_amount || 0, 2)}
+                  </span>
                   per year commencing from
-                  <span className="font-bold ml-1">01-JUL-22</span>
+                  <span className="font-bold ml-1">
+                    {formatDateToDayMonthYear(
+                      clickedItem?.date_from_which_pension_will_commence
+                    )}
+                  </span>
                 </span>
               </p>
               <p className="mb-2">
                 As he exercised the option for Reduced Pension and Gratuity, the
                 reduced pension Amounts to Ksh.{' '}
-                <span className="font-bold">261,966.00</span> <br />
+                <span className="font-bold">
+                  {formatNumber(report?.reduced_pension || 0, 2)}
+                </span>
                 per year with a gratuity of Ksh.{' '}
-                <span className="font-bold">300,038.74</span>
+                <span className="font-bold">
+                  {formatNumber(report?.lumpsum_amount || 0, 2)}
+                </span>
               </p>
               <div className="py-3 flex w-full justify-between relative">
                 <p className="absolute bottom-4">
-                  Date: <span className="font-bold ">24-MAY-24</span>
+                  Date:{' '}
+                  <span className="font-bold ">
+                    {formatDateToDayMonthYear(new Date())}
+                  </span>
                 </p>
                 <div className=""></div>
                 <div className="flex flex-col gap-1">
@@ -275,7 +300,10 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p>Forwarded for favour of verification and return.</p>
               <div className="py-1 flex w-full justify-between relative">
                 <p className="absolute bottom-2">
-                  Date: <span className="font-bold ">24-MAY-24</span>
+                  Date:{' '}
+                  <span className="font-bold ">
+                    {formatDateToDayMonthYear(new Date())}
+                  </span>
                 </p>
                 <div className=""></div>
                 <div className="flex flex-col gap-1">
@@ -293,11 +321,17 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p>Computation Agreed.</p>
 
               <p>
-                Ref No: <span className="font-bold">APN/PC0386062M</span>
+                Ref No:{' '}
+                <span className="font-bold">
+                  {pensionerBenefits?.pensioner_award_code}
+                </span>
               </p>
               <div className="py-1 flex w-full justify-between relative">
                 <p className="absolute bottom-2">
-                  Date: <span className="font-bold ">24-MAY-24</span>
+                  Date:{' '}
+                  <span className="font-bold ">
+                    {formatDateToDayMonthYear(new Date())}
+                  </span>
                 </p>
                 <div className=""></div>
                 <div className="flex flex-col gap-1">
@@ -314,24 +348,24 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p className="font-semibold">CHIEF ACCOUNT (PENSIONS)</p>
               <p>
                 A reduced pension{' '}
-                <span className="font-bold">
-                  TWO HUNDRED SIXTY-ONE THOUSAND NINE HUNDRED SIXTY-SIX
-                  SHILLINGS
+                <span className="font-bold uppercase">
+                  {numberToWords(report?.reduced_pension || 0, 2)}
                 </span>{' '}
               </p>
               <p className="my-2">
                 W.E.F. <span className="font-bold">01-JUL-22</span>
               </p>
               <p>
-                Together with a{' '}
-                <span className="font-bold capitalize">
-                  THREE HUNDRED THOUSAND THIRTY-EIGHT Shilling AND SEVENTY-FOUR
-                  Cents
+                Together with a Gratuity{' '}
+                <span className="font-bold uppercase">
+                  {numberToWords(report?.lumpsum_amount || 0)}
                 </span>{' '}
               </p>
               <p className="mt-4 gap-2  flex">
                 <span className="underline">Income Tax</span>
-                <span className="font-bold">ZERO Shillings</span>
+                <span className="font-bold uppercase">
+                  {numberToWords(pensionerBenefits?.lumpsum_tax_amount || 0)}
+                </span>
               </p>
               <p className="mt-1 gap-2 flex ">
                 <span className="underline">Refund</span>
@@ -339,7 +373,10 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               </p>
               <div className="py-1 flex w-full justify-between relative">
                 <p className="absolute bottom-2">
-                  Date: <span className="font-bold ">24-MAY-24</span>
+                  Date:{' '}
+                  <span className="font-bold ">
+                    {formatDateToDayMonthYear(new Date())}
+                  </span>
                 </p>
                 <div className=""></div>
                 <div className="flex flex-col gap-1">
@@ -386,23 +423,6 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
           </div>
         </div>
       </div>
-      {/* <div
-        className="bg-white h-[80px] mb-[-30px] flex justify-between items-center  px-4 w-full"
-        style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
-      >
-        <button
-          onClick={handleDownload}
-          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-        >
-          Download PDF
-        </button>
-        <button
-          onClick={() => setOpenGratuity(false)} // Assuming this is the cancel action
-          className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition duration-300"
-        >
-          Cancel
-        </button>
-      </div> */}
     </div>
   );
 };
