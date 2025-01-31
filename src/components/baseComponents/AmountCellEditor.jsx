@@ -53,6 +53,7 @@ const AmountCellEditor = (props) => {
       type="text"
       value={value}
       inputRef={inputRef}
+      autoFocus
       onChange={handleAmountChange}
       onBlur={stopEditing} // Trigger when the input loses focus
       onKeyPress={(e) => e.key === 'Enter' && stopEditing()} // Trigger when the Enter key is pressed

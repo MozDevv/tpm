@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Popper from "@mui/material/Popper";
-import Box from "@mui/material/Box";
+import React, { useState, useEffect } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Popper from '@mui/material/Popper';
+import Box from '@mui/material/Box';
 
 const CustomPopper = (props) => {
-  const isAccountId = props.colDef.field === "accountId";
+  const isAccountId = props.colDef.field === 'accountId';
   return (
     <Popper
       {...props}
       placement="bottom-start"
       sx={{
-        width: isAccountId ? "400px !important" : "inherit", // Extend width only for 'accountId'
+        width: isAccountId ? '400px !important' : 'inherit', // Extend width only for 'accountId'
         zIndex: 1300,
       }}
     >
@@ -27,16 +27,16 @@ const CustomPopper = (props) => {
 };
 
 const CustomSelectCellEditor = (props) => {
-  const [selectedValue, setSelectedValue] = useState(props.value || ""); // Allow falsy values
+  const [selectedValue, setSelectedValue] = useState(props.value || ''); // Allow falsy values
   const options = props.options || [];
-  const isAccountId = props.colDef.field === "accountId"; // Check if the field is 'accountId'
+  const isAccountId = props.colDef.field === 'accountId'; // Check if the field is 'accountId'
 
   useEffect(() => {
-    setSelectedValue(props.value !== undefined ? props.value : ""); // Accept falsy values
+    setSelectedValue(props.value !== undefined ? props.value : ''); // Accept falsy values
   }, [props.value]);
 
   const handleChange = (event, newValue) => {
-    const newSelectedValue = newValue ? newValue.id : "";
+    const newSelectedValue = newValue ? newValue.id : '';
 
     if (newSelectedValue !== undefined) {
       props.data[props.colDef.field] = newSelectedValue;
@@ -44,7 +44,7 @@ const CustomSelectCellEditor = (props) => {
       const rowNode = props.node;
       if (rowNode) {
         props.api.dispatchEvent({
-          type: "cellValueChanged",
+          type: 'cellValueChanged',
           node: rowNode,
           data: props.data,
           colDef: props.colDef,
@@ -62,20 +62,20 @@ const CustomSelectCellEditor = (props) => {
       <li
         {...props}
         style={{
-          border: "none",
-          boxShadow: "none",
-          backgroundColor: selected ? "#B2E9ED" : "white",
+          border: 'none',
+          boxShadow: 'none',
+          backgroundColor: selected ? '#B2E9ED' : 'white',
         }}
       >
         <Box
           sx={{
-            width: "100%",
-            pr: "40px",
-            display: "flex",
-            justifyContent: "space-between",
+            width: '100%',
+            pr: '40px',
+            display: 'flex',
+            justifyContent: 'space-between',
           }}
         >
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
             <p className="text-primary font-normal text-[12px]">
               {option.name}
             </p>
@@ -89,10 +89,10 @@ const CustomSelectCellEditor = (props) => {
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        marginTop: "3px",
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: '3px',
         zIndex: 1000,
       }}
     >
@@ -106,13 +106,14 @@ const CustomSelectCellEditor = (props) => {
             {...params}
             variant="outlined"
             size="small"
-            style={{ height: "56px" }}
+            autoFocus
+            style={{ height: '56px' }}
             InputProps={{
               ...params.InputProps,
-              style: { padding: "4px 8px", height: "100%" },
+              style: { padding: '4px 8px', height: '100%' },
             }}
             InputLabelProps={{
-              style: { margin: "0px", padding: "0px" },
+              style: { margin: '0px', padding: '0px' },
             }}
           />
         )}
@@ -134,7 +135,7 @@ const CustomSelectCellEditor = (props) => {
         ListboxProps={{
           sx: {
             padding: 0,
-            "& ul": {
+            '& ul': {
               padding: 0,
               margin: 0,
             },

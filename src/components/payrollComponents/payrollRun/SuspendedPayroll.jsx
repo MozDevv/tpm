@@ -52,7 +52,7 @@ const SuspendedPayroll = () => {
 
     {
       headerName: 'Pensioner Name',
-      field: 'firstName',
+      field: 'fullName',
       sortable: true,
       filter: true,
     },
@@ -137,6 +137,12 @@ const SuspendedPayroll = () => {
       lastPayNetAmount: item.pensionerDetail?.lastPayNetAmount || 0,
       reasonDescription: item.reason?.description || '',
       reasonType: item.reason?.reasonType || '',
+      fullName:
+        item.pensionerDetail?.firstName +
+        ' ' +
+        item.pensionerDetail?.surname +
+        ' ' +
+        item.pensionerDetail?.otherName,
 
       ...item,
     }));
@@ -174,11 +180,11 @@ const SuspendedPayroll = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? 'Payroll - ' + clickedItem.period
+    ? 'Payroll - ' + clickedItem?.awardPrefix + clickedItem?.pensionerNo
     : 'Create New Main Payroll';
 
   const { data: incrementMaster } = useFetchAsyncV2(
-    payrollEndpoints.getIncreamentMasters,
+    payrollEndpoints.getSuspensionReasons,
     payrollApiService
   );
 
@@ -190,7 +196,7 @@ const SuspendedPayroll = () => {
       disabled: true,
     },
     {
-      name: 'firstName',
+      name: 'fullName',
       label: 'Pensioner Name',
       type: 'text',
       disabled: true,
@@ -250,15 +256,18 @@ const SuspendedPayroll = () => {
       disabled: true,
     },
     {
-      name: 'reason.description',
+      name: 'reasonId',
       label: 'Reason',
       type: 'select',
       disabled: true,
-      options: [
-        { value: 'Misbehaving in Public', label: 'Misbehaving in Public' },
-        { value: 'Absenteeism', label: 'Absenteeism' },
-        { value: 'Others', label: 'Others' },
-      ],
+      options:
+        incrementMaster &&
+        incrementMaster.map((item) => {
+          return {
+            id: item.reasonId,
+            name: item.description,
+          };
+        }),
     },
   ];
   return (
