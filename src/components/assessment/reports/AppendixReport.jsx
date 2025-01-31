@@ -95,6 +95,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
   }, []);
 
   const generatePdfBlob = async () => {
+    setLoading(true);
     setTimeout(async () => {
       const element = contentRef.current;
 
@@ -289,7 +290,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
             {/* Qualifying Service */}
             <div className="mt-4">
-              <h2 className="font-semibold   ">Qualifying Service</h2>
+              <h2 className="font-bold   ">Qualifying Service</h2>
 
               <div className="flex flex-row justify-between mt-2">
                 <div className="text-center">
@@ -363,18 +364,19 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 <tbody className="text-[13px]">
                   {pensionableService?.map((service) => (
                     <tr key={service.id}>
-                      <td className="py-1 text-gray-700">
-                        {new Date(service.from_date).toLocaleDateString(
-                          'en-GB',
-                          {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          }
-                        )}
+                      <td className="py-1 text-gray-700 px-1">
+                        {new Date(
+                          clickedItem?.date_of_confirmation
+                        ).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </td>
                       <td className="py-1 text-gray-700">
-                        {new Date(service.to_date).toLocaleDateString('en-GB', {
+                        {new Date(
+                          clickedItem?.retirement_date
+                        ).toLocaleDateString('en-GB', {
                           day: '2-digit',
                           month: 'short',
                           year: 'numeric',
