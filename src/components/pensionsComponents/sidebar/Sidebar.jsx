@@ -255,7 +255,7 @@ function Sidebar() {
               path: '/pensions/finance/general-ledger/general-budget/new',
             },
             {
-              title: 'Pending Approval',
+              title: 'Budget Pending Approval',
               path: '/pensions/finance/general-ledger/general-budget/pending-approval',
             },
 
