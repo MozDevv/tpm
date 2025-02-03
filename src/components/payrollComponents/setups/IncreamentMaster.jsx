@@ -207,6 +207,7 @@ const IncreamentMaster = () => {
               tableInputData={tableInputData}
               tableInputObjectKey="ranges"
               setOpenBaseCard={setOpenBaseCard}
+              isAddMoreFields={true}
             />
             <BaseInputTable
               title="Increament Range"

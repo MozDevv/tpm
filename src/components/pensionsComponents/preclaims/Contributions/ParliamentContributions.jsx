@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -24,6 +24,7 @@ import {
 import { formatNumber } from '@/utils/numberFormatters';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const ParliamentContributions = ({ id, clickedItem2 }) => {
   const columnDefs = [
@@ -42,7 +43,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'january',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -51,7 +52,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'february',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -60,7 +61,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'march',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -69,7 +70,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'april',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -78,14 +79,14 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'may',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
     },
     {
       headerName: 'June',
       field: 'june',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -94,7 +95,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'july',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -103,7 +104,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'august',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -112,7 +113,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'september',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -121,7 +122,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'october',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -130,7 +131,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'november',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -139,7 +140,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       field: 'december',
       sortable: true,
       filter: true,
-      width: 100,
+      width: 150,
       valueFormatter: (params) =>
         params.value ? formatNumber(params.value) : '-',
     },
@@ -195,7 +196,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     return data.map((item, index) => {
       return {
         ...item,
-        id: index + 1,
+        no: index + 1,
       };
     });
   };
@@ -204,6 +205,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [tableInputData, setTableInputData] = useState([]);
 
   const [parliamenterianTerms, setParliamentarianTerms] = useState([]);
   const fetchTerms = async () => {
@@ -225,7 +227,10 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
   }, []);
 
   const title = clickedItem
-    ? 'Parliamentary Contributions'
+    ? //add start and end date
+      `${parseDate(clickedItem.startDate)} to ${parseDate(
+        clickedItem.endDate
+      )} Contributions`
     : 'Add a New Parliamentary Contribution';
 
   const fields = [
@@ -265,6 +270,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     fetchMaintenance();
   }, []);
   useEffect(() => {
+    setTableInputData([]);
     fetchMaintenance();
   }, [openBaseCard]);
 
@@ -295,6 +301,8 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     }
   };
 
+  const [previewData, setPreviewData] = useState([]);
+
   const handlePreview = async (file) => {
     const formData = new FormData();
     formData.append('prospectivePensionerId', id);
@@ -307,7 +315,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       );
 
       if (res.data.succeeded) {
-        setFilteredData(res.data.data);
+        setPreviewData(res.data.data);
       }
     } catch (error) {
       console.log(error);
@@ -327,16 +335,110 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
     {
       name: 'total_anual_salary',
       label: 'Total Annual Salary',
-      type: 'number',
+      type: 'amount',
+      disabled: true,
     },
     {
       name: 'intrest',
       label: 'Interest',
-      type: 'number',
+      type: 'amount',
+      disabled: true,
     },
 
     // Add other fields as needed
   ];
+
+  const tableFields = [
+    {
+      value: 'year',
+      label: 'Year',
+      type: 'select',
+      required: true,
+      options: Array.from(
+        { length: new Date().getFullYear() - 1900 + 1 },
+        (_, i) => {
+          const year = 1900 + i;
+          return {
+            id: year,
+            name: year.toString(),
+          };
+        }
+      ),
+    },
+    {
+      value: 'january',
+      label: 'January',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'february',
+      label: 'February',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'march',
+      label: 'March',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'april',
+      label: 'April',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'may',
+      label: 'May',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'june',
+      label: 'June',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'july',
+      label: 'July',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'august',
+      label: 'August',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'september',
+      label: 'September',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'october',
+      label: 'October',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'november',
+      label: 'November',
+      type: 'amount',
+      required: true,
+    },
+    {
+      value: 'december',
+      label: 'December',
+      type: 'amount',
+      required: true,
+    },
+  ];
+
   return (
     <div className="relative">
       <BaseCard
@@ -350,6 +452,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
         )}
         deleteApiService={apiService.delete}
         isSecondaryCard={true}
+        setClickedItem={setClickedItem}
       >
         {clickedItem ? (
           <>
@@ -358,30 +461,39 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
               fields={fields2}
               id={clickedItem2?.id}
               isBranch={true}
-              idLabel={'prospectivePensionerId'}
+              idLabel={'prospective_pensioner_id'}
               apiEndpoint={endpoints.updateParliamentContributions}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
               useRequestBody={true}
               setOpenBaseCard={setOpenBaseCard}
+              setClickedItem={setClickedItem}
+              tableInputData={tableInputData}
+              isAddMoreFields={true}
             />
 
-            <div className="px-6 bg-gray-100 min-h-[300px] max-h-[600px] h-[200px]">
-              <AgGridReact
-                columnDefs={columnDefs.map((col) => ({
-                  ...col,
-                  headerTooltip: col.headerName,
-                }))}
-                rowData={clickedItem && [clickedItem]}
-                pagination={false}
-                domLayout="autoHeight"
-                className="custom-grid ag-theme-quartz"
-                alwaysShowHorizontalScroll={true}
-                onGridReady={(params) => {}}
-                onRowClicked={(e) => {
-                  setOpenBaseCard(true);
-                  setClickedItem(e.data);
-                }}
+            <div className="px-2">
+              <BaseInputTable
+                title="Contibution Lines"
+                fields={tableFields}
+                getApiService={apiService.get}
+                postApiService={apiService.post}
+                putApiService={apiService.put}
+                getEndpoint={endpoints.getParliamentContributionsById(
+                  clickedItem2?.id,
+                  clickedItem?.id
+                )}
+                disableAll={
+                  clickedItem2?.notification_status !== 2 &&
+                  clickedItem2?.notification_status !== null &&
+                  clickedItem2?.notification_status !== 0 &&
+                  clickedItem2?.notification_status !== 3
+                }
+                postEndpoint={endpoints.createDeductions}
+                putEndpoint={endpoints.updateGovernmentSalary}
+                passProspectivePensionerId={true}
+                isAddMoreFields={true}
+                setTableInputData={setTableInputData}
               />
             </div>
           </>
@@ -392,21 +504,22 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
               id={clickedItem2?.id}
               isBranch={true}
               handlePreview={handlePreview}
-              idLabel={'prospectivePensionerId'}
+              idLabel={'prospective_pensioner_id'}
               apiEndpoint={endpoints.uploadParliamentaryContributions}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
               useRequestBody={false}
               setOpenBaseCard={setOpenBaseCard}
+              setClickedItem={setClickedItem}
             />
-            {filteredData && filteredData.length > 0 && (
+            {previewData && previewData.length > 0 && (
               <div className="px-6 bg-gray-100 min-h-[300px] max-h-[600px] h-[200px]">
                 <AgGridReact
                   columnDefs={columnDefs.map((col) => ({
                     ...col,
                     headerTooltip: col.headerName,
                   }))}
-                  rowData={filteredData}
+                  rowData={previewData}
                   pagination={false}
                   domLayout="autoHeight"
                   className="custom-grid ag-theme-quartz"
@@ -435,6 +548,12 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
             sx={{
               my: 2,
             }}
+            disabled={
+              clickedItem2?.notification_status !== 2 &&
+              clickedItem2?.notification_status !== null &&
+              clickedItem2?.notification_status !== 0 &&
+              clickedItem2?.notification_status !== 3
+            }
           >
             New Parliamentary Contributions
           </Button>
@@ -447,6 +566,12 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
             sx={{
               my: 2,
             }}
+            disabled={
+              clickedItem2?.notification_status !== 2 &&
+              clickedItem2?.notification_status !== null &&
+              clickedItem2?.notification_status !== 0 &&
+              clickedItem2?.notification_status !== 3
+            }
           >
             Generate Upload Template
           </Button>

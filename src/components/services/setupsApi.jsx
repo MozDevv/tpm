@@ -315,6 +315,9 @@ const endpoints = {
   deleteParliamentContributions: (id) =>
     `/api/ProspectivePensioners/DeleteParliamentaryContributions?id=${id}`,
 
+  getParliamentContributionsById: (id, contId) =>
+    `/api/ProspectivePensioners/GetParliamentaryContributions?filterCriterion.criterions[0].propertyName=id&filterCriterion.criterions[0].propertyValue=${contId}&prospective_pensioner_id=${id}`,
+
   uploadParliamentaryContributions:
     '/api/ProspectivePensioners/UploadParliamentaryContributions',
 

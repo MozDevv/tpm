@@ -56,6 +56,7 @@ const BaseInputCard = ({
   disableAll,
   tableInputData,
   tableInputObjectKey,
+  isAddMoreFields,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -304,8 +305,18 @@ const BaseInputCard = ({
             dataToSend[key] = formData[key];
           }
         });
-        if (tableInputData && tableInputObjectKey) {
-          dataToSend[tableInputObjectKey] = tableInputData;
+        if (isAddMoreFields) {
+          if (tableInputData && tableInputObjectKey) {
+            dataToSend[tableInputObjectKey] = tableInputData;
+          } else if (
+            tableInputData &&
+            tableInputData.length > 0 &&
+            !tableInputObjectKey
+          ) {
+            dataToSend = { ...dataToSend, ...tableInputData[0] };
+          } else {
+            dataToSend = { ...dataToSend };
+          }
         }
 
         const formattedFormData = { ...dataToSend };
