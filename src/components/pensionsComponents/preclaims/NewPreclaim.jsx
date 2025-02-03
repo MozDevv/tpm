@@ -56,6 +56,7 @@ function NewPreclaim({
   retireeId,
   setRetireeId,
   setOpenBaseCard,
+  clickedItem,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -1242,9 +1243,15 @@ function NewPreclaim({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
                             .filter((field) => {
+                              const capName =
+                                activeCapName ||
+                                (clickedItem &&
+                                  clickedItem.mda_pensionCap_name) ||
+                                '';
+
+                              console.log('capName from filter', capName);
                               return (
-                                !activeCapName ||
-                                field.pensionCap.includes(activeCapName)
+                                !capName || field.pensionCap.includes(capName)
                               );
                             })
                             .filter((field) => {

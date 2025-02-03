@@ -324,7 +324,7 @@ function ScheduledPaymentsCard({
               </div>
 
               <BaseCollapse name="Schedule Lines" titleFontSize="24">
-                <div className="flex-grow h-[350px] ag-theme-quartz mt-3 ">
+                <div className="flex-grow h-[350px] ag-theme-quartz ">
                   {/* <div className="flex flex-row gap-2 my-2 ml-5">
                     <Button
                       startIcon={
