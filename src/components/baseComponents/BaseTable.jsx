@@ -180,7 +180,7 @@ const BaseTable = ({
 
   useEffect(() => {
     fetchData();
-  }, [uploadExcel]);
+  }, [uploadExcel, refreshData]);
   useEffect(() => {
     if (!openApproveDialog) {
       fetchData();

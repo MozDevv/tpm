@@ -189,7 +189,11 @@ function BaseCard({
         itemName={clickedItem?.name}
       />
       <Dialog
-        open={openAction && (status === 3 || status === 7 || status === 5)}
+        open={
+          openAction &&
+          !isClaimManagement &&
+          (status === 3 || status === 7 || status === 5)
+        }
         onClose={() => setOpenAction(false)}
         sx={{
           '& .MuiDialog-paper': {

@@ -39,6 +39,7 @@ const payrollEndpoints = {
   getSuspensions: '/api/Pensioner/Suspensions',
 
   stopPayroll: 'api/Pensioner/CreateSuspension/srr-stop',
+  resumePayroll: '/api/Pensioner/ResumePensioner/srr-resume',
 };
 api.interceptors.request.use(
   (config) => {

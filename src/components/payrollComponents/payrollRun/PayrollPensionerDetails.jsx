@@ -205,7 +205,7 @@ function PayrollPensionerDetails({ payrollDetails }) {
 
   const handlers = {
     edit: () => console.log('Edit clicked'),
-    resumePayroll: () => console.log('Resume Payroll clicked'),
+    //  resumePayroll: () => console.log('Resume Payroll clicked'),
     approvePayrollStop: () => console.log('Approve Payroll Stop clicked'),
     stopPayroll: () => setOpenRunIncrement(true),
   };

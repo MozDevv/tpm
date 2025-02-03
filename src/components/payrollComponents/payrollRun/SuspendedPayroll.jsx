@@ -21,8 +21,12 @@ import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
 import RunIncrement from './RunIncrement';
 import { Launch } from '@mui/icons-material';
 import ViewAllEarningsDialog from './ViewAllEarningsDialog';
+import { message } from 'antd';
+import axios from 'axios';
+import { PAYROLL_BASE_URL } from '@/utils/constants';
 
 const SuspendedPayroll = () => {
+  const [refreshData, setRefreshData] = React.useState(false);
   const columnDefs = [
     {
       headerName: 'Pensioner No',
@@ -149,30 +153,54 @@ const SuspendedPayroll = () => {
   };
 
   const [computing, setComputing] = React.useState(false);
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
   const handlers = {
     edit: () => {},
 
-    resumePayroll: () => {},
-    approvePayrollStop: () => {},
+    resumePayroll: () => {
+      selectedRows.forEach(async (item) => {
+        try {
+          await resumePayroll(item);
+        } catch (error) {
+          console.log('Error resuming payroll', error);
+        }
+      });
+    },
+    // approvePayrollStop: () => {},
   };
 
   const baseCardHandlers = {
     edit: () => {},
 
-    resumePayroll: () => {},
-    approvePayrollStop: () => {},
+    resumePayroll: () => {
+      resumePayroll(clickedItem);
+    },
   };
-
-  const trialRun = async (id) => {
+  const resumePayroll = async (clickedItem) => {
     setComputing(true);
     try {
-      const res = await payrollApiService.post(payrollEndpoints.trialRun, {});
-      if (res.status === 200) {
-        setComputing(false);
+      const response = await axios.post(
+        `${PAYROLL_BASE_URL}/api/Pensioner/ResumePensioner/srr-resume`,
+        JSON.stringify(clickedItem.suspensionId),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        message.success('Payroll resumed successfully');
+        setRefreshData(!refreshData);
       }
+      setComputing(false);
+      return response;
     } catch (error) {
-      console.log('Error computing payroll >>>>>>>>>>>:', error);
+      setComputing(false);
+      message.error('Failed to resume payroll');
+      console.error('Error resuming payroll:', error);
+      throw error;
     }
   };
 
@@ -321,6 +349,8 @@ const SuspendedPayroll = () => {
         breadcrumbTitle="Suspended Payroll"
         currentTitle="Suspended Payroll"
         isPayroll={true}
+        refreshData={refreshData}
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
       />
     </div>
   );
