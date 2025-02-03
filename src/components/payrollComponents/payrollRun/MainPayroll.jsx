@@ -242,14 +242,19 @@ const MainPayroll = ({ stage, status }) => {
 
   const getTitle = (stage, status) => {
     const stageTitles = ['Main', 'Injury', 'Dependent', 'Agency'];
-    const statusTitles = ['Open', 'Pending Approval', 'Review', 'Closed'];
+    const statusTitles = [
+      'Open Payroll',
+      'Pending Approval',
+      'Payroll Review',
+      'Closed Payroll',
+    ];
 
     const stageTitle = stageTitles[stage] || 'Unknown Stage';
     const statusTitle = statusTitles[status] || 'Unknown Status';
 
     return {
-      breadcrumbTitle: `${stageTitle} Payroll`,
-      currentTitle: `${stageTitle} Payroll - ${statusTitle}`,
+      breadcrumbTitle: statusTitle,
+      currentTitle: statusTitle,
     };
   };
 

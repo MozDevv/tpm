@@ -202,6 +202,136 @@ export const menuItems = [
     path: '/pensions/directorate',
   },
   {
+    title: 'Payroll',
+    children: [
+      {
+        title: 'Main Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Injury Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/injury/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/injury/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/injury/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/injury/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/injury/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Dependent Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Agency Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Payroll Increment',
+        subChildren: [
+          {
+            title: 'Payroll Increment',
+            path: '/pensions/payroll/payroll-increment',
+          },
+          {
+            title: 'Pending Increment Approval',
+            path: '/pensions/payroll/payroll-increment/pending-approval',
+          },
+          {
+            title: 'Approved Increment',
+            path: '/pensions/payroll/payroll-increment/approved-increment',
+          },
+          {
+            title: 'Rejected Increment',
+            path: '/pensions/payroll/payroll-increment/rejected-increment',
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: 'PSSF Contributions',
 
     children: [
