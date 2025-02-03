@@ -342,7 +342,7 @@ const MainPayroll = ({ stage, status }) => {
         >
           {/* <span class="loader"></span> */}
           <div className="ml-3 font-semibold text-xl flex items-center">
-            Computing
+            Running Test Simulation
             <div className="ellipsis ml-1 mb-4">
               <span>.</span>
               <span>.</span>
