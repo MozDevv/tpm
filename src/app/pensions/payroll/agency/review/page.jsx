@@ -18,7 +18,7 @@ function page() {
  */
   return (
     <div>
-      <MainPayroll stage={0} status={0} />
+      <MainPayroll stage={3} status={2} />
     </div>
   );
 }

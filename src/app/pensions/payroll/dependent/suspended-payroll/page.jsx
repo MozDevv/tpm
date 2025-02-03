@@ -1,24 +1,11 @@
 import MainPayroll from '@/components/payrollComponents/payrollRun/MainPayroll';
+import SuspendedPayroll from '@/components/payrollComponents/payrollRun/SuspendedPayroll';
 import React from 'react';
 
 function page() {
-  /**{
-    Main,
-    Injury,
-    Dependent,
-    Agency
-} */
-  /**
- * {
-    OPEN,
-    PENDING_APPROVAL,
-    REVIEW,
-    CLOSED
-}
- */
   return (
     <div>
-      <MainPayroll stage={0} status={0} />
+      <SuspendedPayroll />
     </div>
   );
 }

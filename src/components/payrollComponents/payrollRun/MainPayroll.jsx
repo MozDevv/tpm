@@ -22,7 +22,7 @@ import RunIncrement from './RunIncrement';
 import { Launch } from '@mui/icons-material';
 import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 
-const MainPayroll = () => {
+const MainPayroll = ({ stage, status }) => {
   const columnDefs = [
     {
       field: 'period',
@@ -393,7 +393,10 @@ const MainPayroll = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={payrollEndpoints.getPayrollSummaries}
+        fetchApiEndpoint={payrollEndpoints.getPayrollSummaryByStage(
+          stage,
+          status
+        )}
         fetchApiService={payrollApiService.get}
         transformData={transformData}
         pageSize={30}

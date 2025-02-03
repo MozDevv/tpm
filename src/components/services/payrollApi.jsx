@@ -18,6 +18,9 @@ const payrollEndpoints = {
 
   getPayrollSummaries: '/api/Application/payroll-summaries',
 
+  getPayrollSummaryByStage: (type, stage) =>
+    `/api/Application/payroll-summaries?type=${type}&Stage=${stage}`,
+
   getPeriodSchedule: (periodId) =>
     `api/Application/Schedule?periodId=${periodId}`,
 
