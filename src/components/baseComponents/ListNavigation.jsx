@@ -526,6 +526,12 @@ const ListNavigation = ({
       action: 'resumePayroll',
       requiredPermissions: [],
     },
+    {
+      name: 'Send Payroll for Approval',
+      icon: Send,
+      action: 'sendPayrollForApproval',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

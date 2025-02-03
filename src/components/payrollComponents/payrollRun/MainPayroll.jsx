@@ -171,7 +171,22 @@ const MainPayroll = ({ stage, status }) => {
   const [computing, setComputing] = React.useState(false);
   const [openRunIncrement, setOpenRunIncrement] = React.useState(false);
 
-  const handlers = {};
+  const handlers = {
+    ...(status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
+    ...(status === 2 ? { sendPayrollForApproval: () => {} } : {}),
+  };
 
   const baseCardHandlers = {
     edit: () => {},
