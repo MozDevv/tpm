@@ -141,16 +141,32 @@ function ScheduledPaymentsCard({
       headerCheckboxSelection: true,
       width: 200,
     },
+
+    //pensionerName
+    {
+      field: 'pensionerNo',
+      headerName: 'Pensioner No',
+      width: 200,
+      cellRenderer: (params) => {
+        return <p className=" text-primary">{params.value}</p>;
+      },
+    },
+    {
+      field: 'pensionerName',
+      headerName: 'Pensioner Name',
+      width: 200,
+    },
+
+    {
+      field: 'nationalIdNo',
+      headerName: 'National ID No',
+      width: 200,
+    },
     {
       field: 'description',
       headerName: 'Description',
       type: 'text',
       required: true,
-      width: 200,
-    },
-    {
-      field: 'nationalIdNo',
-      headerName: 'National ID No',
       width: 200,
     },
     {
