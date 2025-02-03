@@ -477,6 +477,7 @@ const BaseInputTable = ({
         field: col.value,
         editable: !disableAll && !col.disabled,
         sortable: true,
+        tooltipField: col.label,
 
         filter: true,
         headerClass: (params) => {

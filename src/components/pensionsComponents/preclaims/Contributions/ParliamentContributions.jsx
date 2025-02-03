@@ -353,6 +353,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       value: 'year',
       label: 'Year',
       type: 'select',
+      pinned: 'left',
       required: true,
       options: Array.from(
         { length: new Date().getFullYear() - 1900 + 1 },
@@ -504,7 +505,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
               id={clickedItem2?.id}
               isBranch={true}
               handlePreview={handlePreview}
-              idLabel={'prospective_pensioner_id'}
+              idLabel={'prospectivePensionerId'}
               apiEndpoint={endpoints.uploadParliamentaryContributions}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
