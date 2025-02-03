@@ -193,24 +193,9 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
   ];
   const transformData = (data, pageNumber = 1, pageSize = 10) => {
     return data.map((item, index) => {
-      const monthMap = item.lines.reduce((acc, line) => {
-        const monthName = new Date(0, line.month - 1)
-          .toLocaleString('default', { month: 'long' })
-          .toLowerCase();
-        acc[monthName] = line.contribution;
-        return acc;
-      }, {});
-
       return {
-        id: item.id,
-        no: index + 1 + pageSize * (pageNumber - 1),
-        year: item.year,
-        total_contributions: item.total_contributions,
-        intrest: item.intrest,
-        total_contributions_with_intrest: item.total_contributions_with_intrest,
-        intrest_amount: item.intrest_amount,
-        parliamentary_term_setup_id: item.parliamentary_term_setup_id,
-        ...monthMap,
+        ...item,
+        id: index + 1,
       };
     });
   };
@@ -254,7 +239,7 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       })),
     },
     {
-      name: 'contributioFile',
+      name: 'contributionFile',
       label: 'Upload Parliamentary Term Excel',
       type: 'file',
 
@@ -328,7 +313,30 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
       console.log(error);
     }
   };
+  const fields2 = [
+    {
+      name: 'startDate',
+      label: 'Start Date',
+      type: 'date',
+    },
+    {
+      name: 'endDate',
+      label: 'End Date',
+      type: 'date',
+    },
+    {
+      name: 'total_anual_salary',
+      label: 'Total Annual Salary',
+      type: 'number',
+    },
+    {
+      name: 'intrest',
+      label: 'Interest',
+      type: 'number',
+    },
 
+    // Add other fields as needed
+  ];
   return (
     <div className="relative">
       <BaseCard
@@ -337,22 +345,46 @@ const ParliamentContributions = ({ id, clickedItem2 }) => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteContributions(clickedItem?.id)}
+        deleteApiEndpoint={endpoints.deleteParliamentContributions(
+          clickedItem?.id
+        )}
         deleteApiService={apiService.delete}
         isSecondaryCard={true}
       >
         {clickedItem ? (
-          <Contributions
-            parliamenterianTerms={parliamenterianTerms}
-            id={id}
-            apiEndpoint={endpoints.createParliamentContributions}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setClickedItem={setClickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            isBranch={false}
-          />
+          <>
+            <BaseInputCard
+              //** add these 4 fields   "total_anual_salary": 1240529, "intrest": 186079.35, "startDate": "2013-01-31T00:00:00Z",   "endDate": "2013-12-31T00:00:00Z"   */
+              fields={fields2}
+              id={clickedItem2?.id}
+              isBranch={true}
+              idLabel={'prospectivePensionerId'}
+              apiEndpoint={endpoints.updateParliamentContributions}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />
+
+            <div className="px-6 bg-gray-100 min-h-[300px] max-h-[600px] h-[200px]">
+              <AgGridReact
+                columnDefs={columnDefs.map((col) => ({
+                  ...col,
+                  headerTooltip: col.headerName,
+                }))}
+                rowData={clickedItem && [clickedItem]}
+                pagination={false}
+                domLayout="autoHeight"
+                className="custom-grid ag-theme-quartz"
+                alwaysShowHorizontalScroll={true}
+                onGridReady={(params) => {}}
+                onRowClicked={(e) => {
+                  setOpenBaseCard(true);
+                  setClickedItem(e.data);
+                }}
+              />
+            </div>
+          </>
         ) : (
           <>
             <BaseInputCard

@@ -310,6 +310,10 @@ const endpoints = {
 
   createParliamentContributions:
     '/api/ProspectivePensioners/CreateParliamentaryContributions',
+  updateParliamentContributions:
+    '/api/ProspectivePensioners/UpdateParliamentaryContributions',
+  deleteParliamentContributions: (id) =>
+    `/api/ProspectivePensioners/DeleteParliamentaryContributions?id=${id}`,
 
   uploadParliamentaryContributions:
     '/api/ProspectivePensioners/UploadParliamentaryContributions',
