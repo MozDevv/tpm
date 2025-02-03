@@ -477,8 +477,7 @@ const BaseInputTable = ({
         field: col.value,
         editable: !disableAll && !col.disabled,
         sortable: true,
-        tooltipField: col.label,
-
+        headerTooltip: col.label,
         filter: true,
         headerClass: (params) => {
           const isError = rowErrors[params.column.getColId()];
