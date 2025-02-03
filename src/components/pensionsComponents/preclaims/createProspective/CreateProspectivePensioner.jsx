@@ -186,23 +186,23 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     >
                       <NextOfKin clickedItem={clickedItem} />
                     </TabPane>
-                    {clickedItem?.maintenance_case === 0 && (
-                      <TabPane
-                        tab={
-                          <span className="text-primary font-montserrat">
-                            Maintenance Case
-                          </span>
-                        }
-                        key="7"
-                      >
-                        <div className="z-10">
-                          <MaintenanceCase
-                            id={clickedItem.id}
-                            clickedItem2={clickedItem}
-                          />
-                        </div>
-                      </TabPane>
-                    )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Maintenance Case
+                        </span>
+                      }
+                      key="7"
+                    >
+                      <div className="z-10">
+                        <MaintenanceCase
+                          id={clickedItem.id}
+                          clickedItem2={clickedItem}
+                        />
+                      </div>
+                    </TabPane>
+
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
@@ -216,22 +216,6 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         clickedItem2={clickedItem}
                       />
                     </TabPane>
-
-                    {clickedItem?.is_wcps === 0 && (
-                      <TabPane
-                        tab={
-                          <span className="text-primary font-montserrat">
-                            Women & Children Contributions Scheme
-                          </span>
-                        }
-                        key="9"
-                      >
-                        <WcpsCard
-                          id={clickedItem?.id}
-                          clickedItem2={clickedItem}
-                        />
-                      </TabPane>
-                    )}
 
                     {(activeCapName === 'CAP196' ||
                       clickedItem?.mda_pensionCap_name === 'CAP196') && (
@@ -261,6 +245,19 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                         <Liabilities id={clickedItem?.id} />
                       </TabPane>
                     )}
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Women & Children Contributions Scheme
+                        </span>
+                      }
+                      key="12"
+                    >
+                      <WcpsCard
+                        id={clickedItem?.id}
+                        clickedItem2={clickedItem}
+                      />
+                    </TabPane>
                   </>
                 )}
             </Tabs>

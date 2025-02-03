@@ -225,6 +225,21 @@ const MainPayroll = ({ stage, status }) => {
     payrollApiService
   );
 
+  const getTitle = (stage, status) => {
+    const stageTitles = ['Main', 'Injury', 'Dependent', 'Agency'];
+    const statusTitles = ['Open', 'Pending Approval', 'Review', 'Closed'];
+
+    const stageTitle = stageTitles[stage] || 'Unknown Stage';
+    const statusTitle = statusTitles[status] || 'Unknown Status';
+
+    return {
+      breadcrumbTitle: `${stageTitle} Payroll`,
+      currentTitle: `${stageTitle} Payroll - ${statusTitle}`,
+    };
+  };
+
+  const { breadcrumbTitle, currentTitle } = getTitle(stage, status);
+
   const fields = [
     {
       name: 'payrollType',
@@ -401,8 +416,8 @@ const MainPayroll = ({ stage, status }) => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Main Payroll"
-        currentTitle="Main Payroll"
+        breadcrumbTitle={breadcrumbTitle}
+        currentTitle={currentTitle}
         isPayroll={true}
       />
     </div>
