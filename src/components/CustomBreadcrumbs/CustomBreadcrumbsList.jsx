@@ -69,13 +69,14 @@ const CustomBreadcrumbsList = () => {
         >
           <ArrowForwardIos
             sx={{
-              fontSize: '12px',
+              fontSize: '10px',
               color: '#6D6D6D',
+              mb: '4px',
             }}
           />
         </Typography>
       }
-      sx={{ marginTop: 4, marginLeft: 2 }}
+      sx={{ marginTop: 4, marginLeft: 2, paddingBottom: '2px' }}
     >
       {breadcrumbSteps.map((step, index) => (
         <Link
@@ -83,11 +84,12 @@ const CustomBreadcrumbsList = () => {
           color={pathname === step.path ? 'primary' : '#6D6D6D'}
           style={{
             fontWeight: pathname === step.path ? 'bold' : '600',
-            padding: pathname === step.path ? '5px 10px' : '0',
+            // padding: pathname === step.path ? '5px 10px' : '0',
             fontSize: '15px',
             borderRadius: '5px',
             textDecoration: 'none',
             cursor: step.path ? 'pointer' : 'default',
+            marginRight: 4,
           }}
           onClick={() => handleNavigation(step.path)}
         >
