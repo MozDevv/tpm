@@ -30,7 +30,7 @@ function PayrollDeductionDetails({ payrollDetails }) {
   ];
 
   return (
-    <div className="ag-theme-quartz h-[150px] mt-5 px-9">
+    <div className="ag-theme-quartz min-h-[600px] max-h-[600px] h-[200px] mt-5 px-9">
       <AgGridReact
         columnDefs={columnDefs}
         rowData={payrollDetails.flatMap((item) =>

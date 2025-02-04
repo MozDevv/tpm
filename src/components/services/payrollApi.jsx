@@ -45,6 +45,8 @@ const payrollEndpoints = {
   resumePayroll: '/api/Pensioner/ResumePensioner/srr-resume',
 
   approvePayroll: (id) => `/api/Application/approve-payroll/${id}`,
+  sendPeriodForApproval: (id) =>
+    `/api/Application/SendForApproval?periodId=${id}`,
 };
 api.interceptors.request.use(
   (config) => {

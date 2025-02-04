@@ -21,6 +21,7 @@ import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
 import RunIncrement from './RunIncrement';
 import { Launch } from '@mui/icons-material';
 import ViewAllEarningsDialog from './ViewAllEarningsDialog';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const MainPayroll = ({ stage, status }) => {
   const columnDefs = [
@@ -65,7 +66,11 @@ const MainPayroll = ({ stage, status }) => {
         textAlign: 'left',
       },
       cellRenderer: (params) => {
-        return <p className="text-right">{formatNumber(params.value)}</p>;
+        return (
+          <p className="text-right text-primary font-semibold">
+            {formatNumber(params.value)}
+          </p>
+        );
       },
     },
     {
@@ -94,19 +99,7 @@ const MainPayroll = ({ stage, status }) => {
         return <p className="text-right">{formatNumber(params.value)}</p>;
       },
     },
-    {
-      field: 'totalStatutoryDeductions',
-      headerName: 'Total Statutory Deductions',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-      cellStyle: {
-        textAlign: 'left',
-      },
-      cellRenderer: (params) => {
-        return <p className="text-right">{formatNumber(params.value)}</p>;
-      },
-    },
+
     {
       field: 'totalIndividualDeductions',
       headerName: 'Total Individual Deductions',
@@ -170,22 +163,27 @@ const MainPayroll = ({ stage, status }) => {
 
   const [computing, setComputing] = React.useState(false);
   const [openRunIncrement, setOpenRunIncrement] = React.useState(false);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [openApprove, setOpenApprove] = React.useState(0);
 
-  const handlers = {
-    ...(status === 1
+  const baseCardHandlers = {
+    edit: () => {},
+
+    ...(status !== 3
       ? {
-          approvalRequest: () => console.log('Approval Request clicked'),
-          sendApprovalRequest: () => setOpenApprove(1),
-          cancelApprovalRequest: () => setOpenApprove(2),
-          approveDocument: () => setOpenApprove(3),
-          rejectDocumentApproval: () => setOpenApprove(4),
-          delegateApproval: () => {
-            setOpenApprove(5);
-            setWorkFlowChange(Date.now());
+          trialRun: () => {
+            trialRun();
           },
         }
       : {}),
-    ...(status === 2 || status === 0
+    ...(status === 0
+      ? {
+          sendPayrollForApproval: () => {
+            sendPayrollForApproval(clickedItem);
+          },
+        }
+      : {}),
+    ...(status === 2 || status === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),
@@ -200,11 +198,44 @@ const MainPayroll = ({ stage, status }) => {
       : {}),
   };
 
-  const baseCardHandlers = {
-    edit: () => {},
-    trialRun: () => {
-      trialRun();
-    },
+  const handlers = {
+    ...(status === 0
+      ? {
+          sendPayrollForApproval: () => {
+            if (selectedRows.length > 0) {
+              selectedRows.forEach(async (item) => {
+                await sendPayrollForApproval(item);
+              });
+            }
+          },
+        }
+      : {}),
+    ...(status === 2 || status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
+  };
+
+  const sendPayrollForApproval = async (clickedItem) => {
+    try {
+      const res = await payrollApiService.post(
+        payrollEndpoints.sendPeriodForApproval(clickedItem?.periodId)
+      );
+      if (res.status === 200) {
+        console.log('Payroll sent for approval');
+      }
+    } catch (error) {
+      console.log('Error sending payroll for approval', error);
+    }
   };
 
   const trialRun = async (id) => {
@@ -274,13 +305,6 @@ const MainPayroll = ({ stage, status }) => {
 
   const fields = [
     {
-      name: 'payrollType',
-      label: 'Payroll Type',
-      type: 'text',
-      disabled: true,
-    },
-
-    {
       name: 'period',
       label: 'Period',
       type: 'text',
@@ -310,12 +334,7 @@ const MainPayroll = ({ stage, status }) => {
       type: 'amount',
       disabled: true,
     },
-    {
-      name: 'totalStatutoryDeductions',
-      label: 'Total Statutory Deductions',
-      type: 'amount',
-      disabled: true,
-    },
+
     {
       name: 'totalIndividualDeductions',
       label: 'Total Individual Deductions',
@@ -363,6 +382,18 @@ const MainPayroll = ({ stage, status }) => {
           </div>
         </Backdrop>
       )}
+
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
 
       <Dialog
         open={openRunIncrement}
@@ -451,6 +482,7 @@ const MainPayroll = ({ stage, status }) => {
         breadcrumbTitle={breadcrumbTitle}
         currentTitle={currentTitle}
         isPayroll={true}
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
       />
     </div>
   );

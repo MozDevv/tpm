@@ -304,7 +304,7 @@ function PayrollPensionerDetails({ payrollDetails }) {
           setOpenBaseCard={setOpenRunIncrement}
         />
       </BaseCard>
-      <div className="ag-theme-quartz mt-5 px-9 h-[150px]">
+      <div className="ag-theme-quartz mt-5 px-5 h-[150px]">
         <BaseCard
           openBaseCard={openBaseCard}
           isSecondaryCard={true}
