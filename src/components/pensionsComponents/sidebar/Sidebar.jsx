@@ -33,13 +33,14 @@ import { useIsLoading } from '@/context/LoadingContext';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 function Sidebar() {
   const [open, setOpen] = useState({});
   const { selectedItem, setSelectedItem } = useSelectedItem();
   const { isLoading, setIsLoading } = useIsLoading();
   const [fetchedMenuItems, setFetchedMenuItems] = useState([]);
+  const pathname = usePathname();
 
   const handleToggle = (title) => {
     setOpen((prevOpen) => ({
@@ -47,8 +48,15 @@ function Sidebar() {
       [title]: !prevOpen[title],
     }));
   };
-
   const router = useRouter();
+  const [currentPath, setCurrentPath] = useState('');
+
+  useEffect(() => {
+    if (pathname) {
+      setCurrentPath(pathname);
+    }
+  }, [pathname]);
+
   useEffect(() => {
     const allItems = [...menuItems, ...adminItems];
 
@@ -64,12 +72,12 @@ function Sidebar() {
                 }))
               : [{ ...child, parent: item.title }]
           )
-        : []
+        : [{ ...item, parent: null, childParent: null }]
     );
 
-    // Find the selected item in subchildren
+    // Find the selected item in subchildren based on the current path and title
     const selectedChild = allChildren.find(
-      (child) => child.title === selectedItem
+      (child) => child.path === currentPath && child.title === selectedItem
     );
 
     if (selectedChild) {
@@ -79,7 +87,7 @@ function Sidebar() {
         [selectedChild.childParent]: true, // Open child as well
       }));
     }
-  }, [selectedItem, fetchedMenuItems, router]);
+  }, [currentPath, selectedItem, fetchedMenuItems]);
 
   const { auth } = useAuth();
 
@@ -111,8 +119,6 @@ function Sidebar() {
   useEffect(() => {
     getMenus(auth?.user?.roles);
   }, [auth?.user?.roles]);
-
-  const currentPath = router.pathname;
 
   const normalizePath = (path) => {
     return path && path.replace(/^\/+|\/+$/g, ''); // Remove leading and trailing slashes
@@ -1009,7 +1015,11 @@ function Sidebar() {
           >
             <ListItemText
               sx={{
-                color: selectedItem === subChild.title ? '#006990' : 'gray',
+                color:
+                  selectedItem === subChild.title &&
+                  currentPath === subChild.path
+                    ? '#006990'
+                    : 'gray',
                 fontWeight: 600,
               }}
             >
