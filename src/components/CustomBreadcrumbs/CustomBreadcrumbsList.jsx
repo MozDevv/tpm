@@ -12,7 +12,6 @@ const CustomBreadcrumbsList = () => {
   const pathname = usePathname();
 
   const findBreadcrumbSteps = (items, pathname) => {
-    console.log('current path: ', pathname);
     for (const item of items) {
       // Compare the path, not title
       if (item.path === pathname) {

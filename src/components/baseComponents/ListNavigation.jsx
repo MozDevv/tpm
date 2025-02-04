@@ -773,7 +773,13 @@ const ListNavigation = ({
   const renderApprovalButtons = () => {
     return (
       <div className="flex flex-col gap-2 w-full">
-        <Divider sx={{ borderColor: '#ededed' }} />
+        <Divider
+          sx={{
+            ml: '-9px',
+            borderColor: '#ededed',
+          }}
+        />
+
         <div className="flex flex-row pt-1">
           {collapseChildren
             .filter((button) => button.parent === parentAction)

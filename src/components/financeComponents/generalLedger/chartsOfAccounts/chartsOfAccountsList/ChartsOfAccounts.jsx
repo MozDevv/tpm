@@ -16,7 +16,7 @@ import {
   getColumnDefsByType2,
 } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 import TrialBalance from '../reports/TrialBalance';
-import { Dialog } from '@mui/material';
+import { Dialog, Divider } from '@mui/material';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
@@ -563,9 +563,11 @@ function ChartsOfAccounts() {
           <TrialBalance setOpenTrialBalanceReport={setOpenTrialBalanceReport} />
         </div>
       </Dialog>
-      <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
+      <div className="mt-[-20px]">
+        <CustomBreadcrumbsList currentTitle="Chart of Accounts" />
+      </div>
       <div
-        className=" mt-[15px] mr-5"
+        className=" mt-[10px] mr-5"
         style={{ width: '100%', overflowY: 'hidden' }}
       >
         <BaseDrilldown
@@ -640,6 +642,7 @@ function ChartsOfAccounts() {
           handlers={handlers}
           reportItems={['Trial Balance', 'Balance Sheet']}
         />
+        <Divider sx={{ mt: 2, mb: '-5px' }} />
         <div className="mt-6 overflow-hidden"></div>
       </div>
       <div

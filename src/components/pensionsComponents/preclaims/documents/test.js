@@ -1,116 +1,188 @@
-/**{
-      "year": 2013,
-      "january": 12000,
-      "february": 14000,
-      "march": 144100,
-      "april": 128480,
-      "may": 126000,
-      "june": 323670,
-      "july": 323779,
-      "august": 33700,
-      "september": 33700,
-      "october": 33700,
-      "november": 33700,
-      "december": 33700,
-      "total_anual_salary": 1240529,
-      "intrest": 186079.35,
-      "startDate": "2013-01-31T00:00:00Z",
-      "endDate": "2013-12-31T00:00:00Z"
-    }, */
-'use client';
-import React from 'react';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import { useRouter } from 'next/navigation';
-import { ArrowForwardIos } from '@mui/icons-material';
-import { menuItems } from '../baseComponents/data';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import {
+  Collapse,
+  Divider,
+  Menu,
+  MenuItem,
+  Button,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Checkbox,
+  FormControlLabel,
+} from '@mui/material';
+import { Search, Add, FilterList, SortByAlpha } from '@mui/icons-material';
 
-const CustomBreadcrumbsList = () => {
-  const router = useRouter();
-  const pathname = usePathname();
+const FilterComponent = ({ columnDefs, filteredData }) => {
+  const [openFilter, setOpenFilter] = useState(false);
+  const [filters, setFilters] = useState([]); // To store an array of filter objects
+  const [filterType, setFilterType] = useState(2); // Default to 'Includes'
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortCriteria, setSortCriteria] = useState(1); // Default to Ascending
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedColumns, setSelectedColumns] = useState([
+    columnDefs[0]?.field,
+  ]);
+  const [openDialog, setOpenDialog] = useState(false);
 
-  // Helper function to find breadcrumb steps based on the path
-  const findBreadcrumbSteps = (items, path) => {
-    for (const item of items) {
-      if (item.path === path) {
-        return [{ label: item.title, path: item.path }];
-      }
-      if (item.children) {
-        for (const child of item.children) {
-          if (child.path === path) {
-            return [
-              { label: item.title, path: item.path },
-              { label: child.title, path: child.path },
-            ];
-          }
-          if (child.subChildren) {
-            for (const subChild of child.subChildren) {
-              if (subChild.path === path) {
-                return [
-                  { label: item.title, path: item.path },
-                  { label: child.title, path: child.path },
-                  { label: subChild.title, path: subChild.path },
-                ];
-              }
-            }
-          }
-        }
-      }
-    }
-    return [];
+  const handleDialogClose = () => setOpenDialog(false);
+  const handleDialogOpen = () => setOpenDialog(true);
+
+  const handleColumnSelect = (col) => {
+    setSelectedColumns((prevSelected) =>
+      prevSelected.includes(col)
+        ? prevSelected.filter((item) => item !== col)
+        : [...prevSelected, col]
+    );
   };
 
-  const breadcrumbSteps = findBreadcrumbSteps(menuItems, pathname);
+  const handleApplyFilter = () => {
+    setOpenFilter(true);
+    setOpenDialog(false);
+  };
 
-  const handleNavigation = (path) => {
-    if (path) {
-      router.push(path);
-    }
+  const resetFilters = () => {
+    setFilters([]); // Reset all filters
+    setSortColumn('');
+    setSortCriteria(1);
+    setSelectedColumns([columnDefs[0]?.field]);
+  };
+
+  const handleAddFilter = (column, value, type) => {
+    setFilters((prevFilters) => [
+      ...prevFilters,
+      {
+        propertyName: column,
+        propertyValue: value,
+        criterionType: type,
+      },
+    ]);
+  };
+
+  const handleFilters = async () => {
+    const filterParams = filters.reduce((acc, filter, index) => {
+      acc[`filterCriterion.criterions[${index}].propertyName`] =
+        filter.propertyName;
+      acc[`filterCriterion.criterions[${index}].propertyValue`] =
+        filter.propertyValue;
+      acc[`filterCriterion.criterions[${index}].criterionType`] =
+        filter.criterionType || 2; // Default to 'Includes'
+      return acc;
+    }, {});
+
+    console.log('Filter Parameters:', filterParams);
   };
 
   return (
-    <Breadcrumbs
-      aria-label="breadcrumb"
-      separator={
-        <Typography
-          variant="body2"
-          style={{
-            color: '#6D6D6D',
-            fontSize: '13px',
-          }}
-        >
-          <ArrowForwardIos
-            sx={{
-              fontSize: '12px',
-              color: '#6D6D6D',
-            }}
-          />
-        </Typography>
-      }
-      sx={{ marginTop: 4, marginLeft: 2 }}
-    >
-      {breadcrumbSteps.map((step, index) => (
-        <Link
-          key={index}
-          color="inherit"
-          href={step.path}
-          onClick={(e) => {
-            e.preventDefault();
-            handleNavigation(step.path);
-          }}
-        >
-          {step.label}
-        </Link>
-      ))}
-      {breadcrumbSteps.length > 0 && (
-        <Typography color="textPrimary">
-          {breadcrumbSteps[breadcrumbSteps.length - 1].label}
-        </Typography>
-      )}
-    </Breadcrumbs>
+    <div>
+      {/* Column Selection Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        sx={{
+          '& .MuiDialog-paper': {
+            width: '400px',
+            borderRadius: '8px',
+          },
+        }}
+      >
+        <DialogTitle>Select Columns for Filtering</DialogTitle>
+        <DialogContent>
+          {columnDefs.map((col) => (
+            <FormControlLabel
+              key={col.field}
+              control={
+                <Checkbox
+                  checked={selectedColumns.includes(col.field)}
+                  onChange={() => handleColumnSelect(col.field)}
+                />
+              }
+              label={col.headerName}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleApplyFilter} color="primary">
+            Add Filter(s)
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <div className="h-[100%] bg-white w-[300px] rounded-md p-3">
+        <div className="flex w-full justify-between items-center">
+          <p className="text-md font-medium text-primary p-3">Filter By:</p>
+        </div>
+        <Divider sx={{ px: 2 }} />
+
+        {/* Loop over filters */}
+        {filters.map((filter, index) => (
+          <div className="flex flex-col item-center p-4 mt-3" key={index}>
+            <label className="text-xs font-semibold text-gray-600">
+              {filter.propertyName}:
+            </label>
+            <div className="flex">
+              <input
+                type="text"
+                className="border p-2 pl-10 bg-gray-100 border-gray-300 rounded-md text-sm w-[100%]"
+                value={filter.propertyValue}
+                onChange={(e) => {
+                  const newFilters = [...filters];
+                  newFilters[index].propertyValue = e.target.value;
+                  setFilters(newFilters);
+                }}
+                placeholder={`Search ${filter.propertyName}`}
+              />
+            </div>
+          </div>
+        ))}
+
+        <Button onClick={handleDialogOpen} startIcon={<Add />}>
+          Add Filter(s)
+        </Button>
+
+        <Divider sx={{ px: 2 }} />
+
+        {/* Sorting section */}
+        <div className="flex flex-col item-center p-4 mt-3">
+          <label className="text-xs font-semibold text-gray-600 w-[100%]">
+            Sort By:
+          </label>
+          <div className="flex items-center">
+            <select
+              name="role"
+              value={sortColumn}
+              onChange={(e) => setSortColumn(e.target.value)}
+              className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%] text-sm"
+            >
+              {columnDefs.map((col) => (
+                <option key={col.field} value={col.field}>
+                  {col.headerName}
+                </option>
+              ))}
+            </select>
+            <Tooltip
+              title={
+                sortCriteria === 1 ? 'Ascending Order' : 'Descending Order'
+              }
+              placement="top"
+            >
+              <IconButton
+                onClick={() => setSortCriteria(sortCriteria === 1 ? 2 : 1)}
+              >
+                <SortByAlpha />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default CustomBreadcrumbsList;
+export default FilterComponent;

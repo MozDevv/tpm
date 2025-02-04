@@ -18,13 +18,20 @@ import Link from 'next/link';
 import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
 import ListNavigation from '@/components/baseComponents/ListNavigation';
 import { useRouter } from 'next/navigation';
-import { FilterList, SortByAlpha } from '@mui/icons-material';
+import {
+  Add,
+  FilterList,
+  Launch,
+  Search,
+  SortByAlpha,
+} from '@mui/icons-material';
 import BaseCard from './BaseCard';
 import { useSearch } from '@/context/SearchContext';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
 import BaseEmptyComponent from './BaseEmptyComponent';
 import { Checkbox, message } from 'antd';
 import axios from 'axios';
+import FilterComponent from './FilterComponent';
 
 const BaseTable = ({
   columnDefs,
@@ -113,32 +120,8 @@ const BaseTable = ({
     }
   }, [openPostToGL]);
 
-  const handleFilters = async () => {
-    const filter = {
-      ...(filterColumn && {
-        'filterCriterion.criterions[0].propertyName': filterColumn,
-      }),
-      ...(filterValue && {
-        'filterCriterion.criterions[0].propertyValue': filterValue,
-      }),
-      ...(filterType
-        ? {
-            'filterCriterion.criterions[0].criterionType': filterType,
-          }
-        : {
-            'filterCriterion.criterions[0].criterionType': 2,
-          }),
-    };
-    const sort = {
-      ...(sortColumn && {
-        'sortProperties.propertyName': sortColumn,
-      }),
-      ...(sortCriteria !== 0 && {
-        'sortProperties.sortCriteria': sortCriteria,
-      }),
-    };
-
-    await fetchData(filter);
+  const handleApplyFilters = async (filterParams) => {
+    await fetchData(filterParams);
   };
 
   const fetchData = async (filter) => {
@@ -310,21 +293,46 @@ const BaseTable = ({
           timeout="auto"
           unmountOnExit
         >
-          <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-            <p className="text-md font-medium text-primary p-3">Filter By:</p>
+          {/* <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
+            <div className="flex w-full justify-between items-center">
+              <p className="text-md font-medium text-primary p-3">Filter By:</p>
+            </div>
             <Divider sx={{ px: 2 }} />
+            <div className="flex flex-col item-center p-4 mt-3">
+              <label className="text-xs font-semibold text-gray-600">
+                Choose Column for Filtering:
+              </label>
+              <select
+                name="role"
+                value={filterColumn}
+                onChange={(e) => setFilterColumn(e.target.value)}
+                className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
+                required
+              >
+                {columnDefs.map((col) => (
+                  <option value={col.field}>{col.headerName}</option>
+                ))}
+              </select>
+            </div>
             <div className="p-3">
               <label className="text-xs font-semibold text-gray-600">
-                Keyword
+                Enter Keyword
               </label>
               <div className="flex">
-                <input
-                  type="text"
-                  className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                  required
-                  value={filterValue}
-                  onChange={(e) => setFilterValue(e.target.value)}
-                />
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    className="border p-2 pl-10 bg-gray-100 border-gray-300 rounded-md text-sm w-[98%]"
+                    required
+                    onChange={(e) => setFilterValue(e.target.value)}
+                    placeholder={`Search ${
+                      filteredData.length > 0
+                        ? `"${filteredData[0][columnDefs[0].field]}"`
+                        : ''
+                    }`}
+                  />
+                </div>
 
                 <IconButton onClick={handleClick}>
                   <FilterList />
@@ -346,46 +354,34 @@ const BaseTable = ({
             >
               <MenuItem
                 onClick={() => {
+                  setFilterType(2);
+                  setAnchorEl(null);
+                }}
+              >
+                Includes
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
                   setFilterType(0);
                   setAnchorEl(null);
                 }}
               >
-                Equal
+                Matches Exactly
               </MenuItem>
+
               <MenuItem
                 onClick={() => {
                   setFilterType(1);
                   setAnchorEl(null);
                 }}
               >
-                Contains
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setFilterType(2);
-                  setAnchorEl(null);
-                }}
-              >
-                Not Equal
+                Does Not Match
               </MenuItem>
             </Menu>
+
+            <Button startIcon={<Add />}>Add Filter(s)</Button>
             <Divider />
-            <div className="flex flex-col item-center p-4 mt-3">
-              <label className="text-xs font-semibold text-gray-600">
-                Select Column
-              </label>
-              <select
-                name="role"
-                value={filterColumn}
-                onChange={(e) => setFilterColumn(e.target.value)}
-                className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                required
-              >
-                {columnDefs.map((col) => (
-                  <option value={col.field}>{col.headerName}</option>
-                ))}
-              </select>
-            </div>
             <div className="flex flex-col item-center p-4 mt-3">
               <label className="text-xs font-semibold text-gray-600 w-[100%]">
                 Sort By:
@@ -420,21 +416,13 @@ const BaseTable = ({
                 </Tooltip>
               </div>
             </div>
-          </div>
-          <Button
-            variant="contained"
-            sx={{ ml: 2, width: '80%', mr: 2, mt: '-24px' }}
-            onClick={handleFilters}
-          >
-            Apply Filters
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{ ml: 2, width: '80%', mr: 2, mt: 2 }}
-            onClick={resetFilters}
-          >
-            Reset Filters
-          </Button>
+          </div> */}
+          <FilterComponent
+            columnDefs={columnDefs}
+            filteredData={filteredData}
+            onApplyFilters={handleApplyFilters}
+            fetchData={fetchData}
+          />
         </Collapse>
         <div className="flex justify-around flex-col">
           <div
