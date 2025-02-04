@@ -49,3 +49,16 @@ next.config.mjs
 
 /src/utils/constants.js
 certificates
+
+# MNIST data and model files
+/data/MNIST/raw/t10k-images-idx3-ubyte
+/data/MNIST/raw/t10k-images-idx3-ubyte.gz
+/data/MNIST/raw/t10k-labels-idx1-ubyte
+/data/MNIST/raw/t10k-labels-idx1-ubyte.gz
+/data/MNIST/raw/train-images-idx3-ubyte
+/data/MNIST/raw/train-images-idx3-ubyte.gz
+/data/MNIST/raw/train-labels-idx1-ubyte
+/data/MNIST/raw/train-labels-idx1-ubyte.gz
+/mnist_model.pth
+/mnist_predict.py
+/mnist_training.py
