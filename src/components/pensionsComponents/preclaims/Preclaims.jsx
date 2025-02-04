@@ -64,6 +64,7 @@ import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { useStatus } from '@/context/StatusContext';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
+import FilterComponent from '@/components/baseComponents/FilterComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -457,43 +458,42 @@ const Preclaims = ({ status }) => {
 
   const { auth } = useAuth();
 
-  const handleFilters = async () => {
-    const filter =
-      filterColumn && filterValue && (status || status === 0)
-        ? {
-            ...(filterColumn && {
-              'filterCriterion.criterions[2].propertyName': filterColumn,
-            }),
-            ...(filterValue && {
-              'filterCriterion.criterions[2].propertyValue': filterValue,
-            }),
-            ...(filterType && {
-              'filterCriterion.criterions[2].criterionType': filterType,
-            }),
-          }
-        : filterColumn && filterValue
-        ? {
-            ...(filterColumn && {
-              'filterCriterion.criterions[1].propertyName': filterColumn,
-            }),
-            ...(filterValue && {
-              'filterCriterion.criterions[1].propertyValue': filterValue,
-            }),
-            ...(filterType && {
-              'filterCriterion.criterions[1].criterionType': filterType,
-            }),
-          }
-        : {};
-    const sort = {
-      ...(sortColumn && {
-        'sortProperties.propertyName': sortColumn,
-      }),
-      ...(sortCriteria !== 0 && {
-        'sortProperties.sortCriteria': sortCriteria,
-      }),
-    };
-
-    await fetchAllPreclaims(sort, filter);
+  const handleFilters = async (filter) => {
+    // const filter =
+    //   filterColumn && filterValue && (status || status === 0)
+    //     ? {
+    //         ...(filterColumn && {
+    //           'filterCriterion.criterions[2].propertyName': filterColumn,
+    //         }),
+    //         ...(filterValue && {
+    //           'filterCriterion.criterions[2].propertyValue': filterValue,
+    //         }),
+    //         ...(filterType && {
+    //           'filterCriterion.criterions[2].criterionType': filterType,
+    //         }),
+    //       }
+    //     : filterColumn && filterValue
+    //     ? {
+    //         ...(filterColumn && {
+    //           'filterCriterion.criterions[1].propertyName': filterColumn,
+    //         }),
+    //         ...(filterValue && {
+    //           'filterCriterion.criterions[1].propertyValue': filterValue,
+    //         }),
+    //         ...(filterType && {
+    //           'filterCriterion.criterions[1].criterionType': filterType,
+    //         }),
+    //       }
+    //     : {};
+    // const sort = {
+    //   ...(sortColumn && {
+    //     'sortProperties.propertyName': sortColumn,
+    //   }),
+    //   ...(sortCriteria !== 0 && {
+    //     'sortProperties.sortCriteria': sortCriteria,
+    //   }),
+    // };
+    await fetchAllPreclaims(filter);
   };
 
   const [items, setItems] = useState([]);
@@ -550,8 +550,8 @@ const Preclaims = ({ status }) => {
         'paging.pageSize': pageSize,
 
         ...sort,
-        ...adjustedFilter,
         ...filter,
+        ...adjustedFilter,
       });
 
       // console.log("mdaId***********", mdaId);
@@ -931,147 +931,19 @@ const Preclaims = ({ status }) => {
                 timeout="auto"
                 unmountOnExit
               >
-                <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-                  <p className="text-md font-medium text-primary p-3">
-                    Filter By:
-                  </p>
-                  <Divider sx={{ px: 2 }} />
-                  <div className="flex flex-col item-center p-4 mt-3">
-                    <label className="text-xs font-semibold text-gray-600">
-                      Select Column
-                    </label>
-                    <select
-                      name="role"
-                      value={filterColumn}
-                      onChange={(e) => setFilterColumn(e.target.value)}
-                      className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                      required
-                    >
-                      {colDefs.map((col) => (
-                        <option value={col.field}>{col.headerName}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="p-3 flex">
-                    <div className="flex flex-col">
-                      <label className="text-xs font-semibold text-gray-600">
-                        Keyword
-                      </label>
-                      {filterColumn === 'notification_status' ? (
-                        <>
-                          <select
-                            className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
-                            value={filterValue}
-                            onChange={(e) => setFilterValue(e.target.value)}
-                          >
-                            <option value={0}>UNNOTIFIED</option>
-                            <option value={1}>SCHEDULED</option>
-                            <option value={2}>NOTIFIED</option>
-                            <option value={3}>SUBMITTED</option>
-                            <option value={4}>IN REVIEW</option>
-                            <option value={5}>PENDING APPROVAL</option>
-                            <option value={6}>CLAIM CREATED</option>
-                          </select>
-                        </>
-                      ) : filterColumn === 'gender' ? (
-                        <>
-                          <select
-                            className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm w-full"
-                            value={filterValue}
-                            onChange={(e) => setFilterValue(e.target.value)}
-                          >
-                            <option value={0}>Male</option>
-                            <option value={1}>Female</option>
-                          </select>
-                        </>
-                      ) : (
-                        <input
-                          type="text"
-                          className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                          required
-                          value={filterValue}
-                          onChange={(e) => setFilterValue(e.target.value)}
-                        />
-                      )}
-                    </div>
-                    <div className="flex">
-                      <IconButton onClick={handleClick}>
-                        <FilterList />
-                      </IconButton>
-                    </div>
-                  </div>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                  >
-                    <MenuItem value={'EQUAL'}>Equal</MenuItem>
-                    <MenuItem value={'NOT_EQUAL'}>Contains</MenuItem>
-                    <MenuItem value={'CONTAINS'}>Not Equal</MenuItem>
-                  </Menu>
-                  <Divider />
-
-                  <div className="flex flex-col item-center p-4 mt-3">
-                    <label className="text-xs font-semibold text-gray-600 w-[100%]">
-                      Sort By:
-                    </label>
-                    <div className="flex items-center ">
-                      {' '}
-                      <select
-                        name="role"
-                        value={sortColumn}
-                        onChange={(e) => setSortColumn(e.target.value)}
-                        className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
-                        required
-                      >
-                        {colDefs.map((col) => (
-                          <option value={col.field}>{col.headerName}</option>
-                        ))}
-                      </select>
-                      <Tooltip
-                        title={
-                          sortCriteria === 1
-                            ? 'Ascending Order'
-                            : 'Desceding Order'
-                        }
-                        placement="top"
-                      >
-                        <IconButton
-                          sx={{ mr: '-10px', ml: '-4px' }}
-                          onClick={() => {
-                            setSortCriteria(sortCriteria === 1 ? 2 : 1);
-                          }}
-                        >
-                          <SortByAlpha />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                  </div>
-                </div>
-                <Button
-                  variant="contained"
-                  sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
-                  onClick={handleFilters}
-                >
-                  Apply Filters
-                </Button>
-                <Button
-                  variant="outlined"
-                  sx={{ ml: 2, width: '80%', mr: 2, mt: 2 }}
-                  onClick={resetFilters}
-                >
-                  Reset Filters
-                </Button>
+                <FilterComponent
+                  columnDefs={colDefs}
+                  filteredData={filteredData}
+                  onApplyFilters={handleFilters}
+                  fetchData={fetchAllPreclaims}
+                  startIndex={
+                    !mdaId && (status !== 0 || !status)
+                      ? 0
+                      : mdaId && !status && status !== 0
+                      ? 1
+                      : 2
+                  }
+                />
               </Collapse>
               <div
                 className="ag-theme-quartz flex flex-col"

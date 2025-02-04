@@ -27,6 +27,7 @@ const FilterComponent = ({
   filteredData,
   onApplyFilters,
   fetchData,
+  startIndex = 0, // Accept startIndex prop, defaulting to 0 if not provided
 }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [filterColumn, setFilterColumn] = useState(columnDefs[0]?.field || ''); // Default to the first column
@@ -90,9 +91,12 @@ const FilterComponent = ({
     const filterParams = selectedColumns.reduce((acc, col, index) => {
       const filterValue = filterValues[col]; // Get the filter value for the column
       if (filterValue) {
-        acc[`filterCriterion.criterions[${index}].propertyName`] = col; // Using the column name as propertyName
-        acc[`filterCriterion.criterions[${index}].propertyValue`] = filterValue; // Using the value entered by the user
-        acc[`filterCriterion.criterions[${index}].criterionType`] =
+        // Start the index from startIndex instead of 0
+        const criterionIndex = index + startIndex;
+        acc[`filterCriterion.criterions[${criterionIndex}].propertyName`] = col; // Using the column name as propertyName
+        acc[`filterCriterion.criterions[${criterionIndex}].propertyValue`] =
+          filterValue; // Using the value entered by the user
+        acc[`filterCriterion.criterions[${criterionIndex}].criterionType`] =
           filterType || 2; // Default to 'Includes' (2)
       }
       return acc;
@@ -160,7 +164,7 @@ const FilterComponent = ({
 
         {/* Filter Section for the Selected Columns */}
         {selectedColumns.map((col) => (
-          <div className="flex flex-col item-center p-4 mt-3" key={col}>
+          <div className="flex flex-col item-center px-4 py-2 mt-1" key={col}>
             <label className="text-xs font-semibold text-gray-600 flex items-center justify-between mr-10">
               {columnDefs.find((c) => c.field === col)?.headerName}:
               <Tooltip title="Remove Filter">
@@ -233,7 +237,13 @@ const FilterComponent = ({
           </MenuItem>
         </Menu>
 
-        <Button onClick={handleDialogOpen} startIcon={<Add />}>
+        <Button
+          onClick={handleDialogOpen}
+          startIcon={<Add />}
+          sx={{
+            mt: 2,
+          }}
+        >
           Add Filter(s)
         </Button>
         <Divider sx={{ px: 2 }} />
