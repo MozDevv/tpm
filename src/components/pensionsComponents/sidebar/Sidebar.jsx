@@ -35,6 +35,811 @@ import axios from 'axios';
 import { BASE_CORE_API } from '@/utils/constants';
 import { usePathname, useRouter } from 'next/navigation';
 
+export const menuItems = [
+  {
+    title: 'Dashboard',
+    path: '/pensions',
+    icon: <DashboardOutlinedIcon />,
+  },
+  {
+    title: 'Preclaims',
+    icon: <ArticleOutlinedIcon />,
+    children: [
+      {
+        title: 'Retirees',
+        subChildren: [
+          {
+            title: 'Retirees List',
+            path: '/pensions/preclaims/listing',
+          },
+          {
+            title: 'Unnotified Retirees',
+            path: '/pensions/preclaims/listing/unnotified',
+          },
+          {
+            title: 'Scheduled Preclaims',
+            path: '/pensions/preclaims/listing/scheduled',
+          },
+          {
+            title: 'Notified Retirees',
+            path: '/pensions/preclaims/listing/notified',
+          },
+          {
+            title: 'Submissions',
+            path: '/pensions/preclaims/listing/submissions',
+          },
+          {
+            title: 'Pending Approvals',
+            path: '/pensions/preclaims/approvals',
+          },
+        ],
+      },
+      {
+        title: 'Returned Claims',
+        path: '/pensions/preclaims/returned-claims',
+      },
+    ],
+  },
+  {
+    title: 'Claims',
+    icon: <ArticleOutlinedIcon />,
+    children: [
+      {
+        title: 'Claims Management',
+        path: '/pensions/claims/claims-management',
+      },
+      {
+        title: 'Claims Verification',
+        path: '/pensions/claims/claims-verification',
+      },
+      {
+        title: 'Claims Validation',
+        path: '/pensions/claims/claims-validation',
+      },
+      {
+        title: 'Claims Approval',
+        path: '/pensions/claims/claims-approval',
+      },
+    ],
+  },
+  {
+    title: 'Assessment',
+
+    icon: <BarChart />,
+    children: [
+      {
+        title: 'Assessment Data Capture',
+        path: '/pensions/assessment/data-capture',
+      },
+      {
+        title: 'Assessment Approval',
+        path: '/pensions/assessment/approval',
+      },
+    ],
+  },
+
+  {
+    title: 'Directorate',
+    path: '/pensions/directorate',
+    icon: <ArticleOutlinedIcon />,
+  },
+  {
+    title: 'Controller of Budget',
+    path: '/pensions/cob',
+    icon: <Payments />,
+  },
+
+  {
+    title: 'Finance',
+    icon: <AssuredWorkload />,
+    children: [
+      {
+        title: 'Claim Records',
+        subChildren: [
+          {
+            title: 'Claim Records List',
+            path: '/pensions/claim-records',
+          },
+        ],
+      },
+
+      /**   
+       Bgt_New,
+      Bgt_Pending_Approval,
+      Bgt_Approved,
+      Bgt_Closed,
+      Bgt_Rejected */
+
+      {
+        title: 'General Ledger',
+        subChildren: [
+          {
+            title: 'Chart of Accounts',
+            path: '/pensions/finance/general-ledger/charts-of-accounts',
+          },
+
+          {
+            title: 'General Ledger Entries',
+            path: '/pensions/finance/general-ledger/ledger-entries',
+          },
+        ],
+      },
+      {
+        title: 'General Budget ',
+        subChildren: [
+          {
+            title: 'New Budget',
+            path: '/pensions/finance/general-ledger/general-budget/new',
+          },
+          {
+            title: 'Budget Pending Approval',
+            path: '/pensions/finance/general-ledger/general-budget/pending-approval',
+          },
+
+          {
+            title: 'Approved Budget',
+            path: '/pensions/finance/general-ledger/general-budget/approved',
+          },
+          {
+            title: 'Closed Budget',
+            path: '/pensions/finance/general-ledger/general-budget/closed',
+          },
+          {
+            title: 'Rejected Budget',
+            path: '/pensions/finance/general-ledger/general-budget/rejected',
+          },
+        ],
+      },
+
+      {
+        title: 'Cash Management',
+        subChildren: [
+          {
+            title: 'Bank Account',
+            path: '/pensions/finance/cash-management/bank-account',
+          },
+          {
+            title: 'Bank Account Ledger Entries',
+            path: '/pensions/finance/cash-management/ledger-entries',
+          },
+          {
+            title: 'Bank Reconciliation',
+            path: '/pensions/finance/cash-management/bank-reconciliation',
+          },
+        ],
+      },
+      {
+        title: 'Recievables',
+        subChildren: [
+          {
+            title: 'Customers',
+            path: '/pensions/finance/customers',
+          },
+          {
+            title: 'Receipts',
+            path: '/pensions/finance/recievables/receipts',
+          },
+          {
+            title: 'Customer Ledger Entries',
+            path: '/pensions/finance/recievables/ledger-entries',
+          },
+        ],
+      },
+      {
+        title: 'Payables',
+        subChildren: [
+          {
+            title: 'Vendors',
+            path: '/pensions/finance/vendor',
+          },
+          {
+            title: 'Vendor Ledger Entries',
+            path: '/pensions/finance/payables/ledger-entries',
+          },
+        ],
+      },
+      {
+        title: 'General Journals',
+        path: '/pensions/finance/general-journals',
+      },
+      {
+        title: 'Payments',
+        subChildren: [
+          {
+            title: 'Payment Vouchers',
+            path: '/pensions/finance/payments',
+          },
+          {
+            title: 'Pending Payment Vouchers',
+            path: '/pensions/finance/payments/pending',
+          },
+
+          {
+            title: 'Approved Payment Vouchers',
+            path: '/pensions/finance/payments/approved',
+          },
+
+          {
+            title: 'Scheduled Payment Vouchers',
+            path: '/pensions/finance/payments/scheduled',
+          },
+          {
+            title: 'Posted Payment Vouchers',
+            path: '/pensions/finance/payments/posted',
+          },
+          {
+            title: 'Rejected Payment Vouchers',
+            path: '/pensions/finance/payments/rejected',
+          },
+        ],
+      },
+      {
+        title: 'Scheduled Payments',
+        subChildren: [
+          /**    {
+      Sch_New,
+      Sch_Pending_Approval,
+      Sch_Approved,
+      Sch_Paid,
+      Sch_Rejected,
+  }
+*/
+          {
+            title: 'New Scheduled Payments',
+            path: '/pensions/finance/scheduled-payments/payments/new',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/finance/scheduled-payments/payments/pending-approval',
+          },
+          {
+            title: 'Approved Scheduled Payments',
+            path: '/pensions/finance/scheduled-payments/payments/approved',
+          },
+          {
+            title: 'Paid Scheduled Payments',
+            path: '/pensions/finance/scheduled-payments/payments/paid',
+          },
+          {
+            title: 'Rejected Scheduled Payments',
+            path: '/pensions/finance/scheduled-payments/payments/rejected',
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    title: 'Payroll',
+    icon: <ReceiptLong />,
+    children: [
+      {
+        title: 'Main Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Injury Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/injury/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/injury/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/injury/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/injury/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/injury/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Dependent Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Agency Payroll',
+        // path: '/pensions/payroll/main-payroll/payroll-run',
+        subChildren: [
+          {
+            title: 'Open Payroll',
+            path: '/pensions/payroll/main-payroll/payroll-run',
+          },
+          {
+            title: 'Pending Approval',
+            path: '/pensions/payroll/main-payroll/pending-approval',
+          },
+          {
+            title: 'Closed Payroll',
+            path: '/pensions/payroll/main-payroll/closed',
+          },
+          {
+            title: 'Payroll Review',
+            path: '/pensions/payroll/main-payroll/review',
+          },
+          {
+            title: 'Suspended Payroll',
+            path: '/pensions/payroll/main-payroll/suspended-payroll',
+          },
+        ],
+      },
+      {
+        title: 'Payroll Increment',
+        subChildren: [
+          {
+            title: 'Payroll Increment',
+            path: '/pensions/payroll/payroll-increment',
+          },
+          {
+            title: 'Pending Increment Approval',
+            path: '/pensions/payroll/payroll-increment/pending-approval',
+          },
+          {
+            title: 'Approved Increment',
+            path: '/pensions/payroll/payroll-increment/approved-increment',
+          },
+          {
+            title: 'Rejected Increment',
+            path: '/pensions/payroll/payroll-increment/rejected-increment',
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    title: 'PSSF Contributions',
+    icon: <Addchart />,
+    children: [
+      {
+        title: 'Enrollments',
+        subChildren: [
+          {
+            title: 'New Batch Member',
+            path: '/pensions/contributions/enrollments/batch-upload',
+          },
+          {
+            title: 'Pending Batch Members',
+            path: '/pensions/contributions/enrollments/pending',
+          },
+          {
+            title: 'Approved Batch Members',
+            path: '/pensions/contributions/enrollments/approved',
+          },
+
+          {
+            title: 'Rejected Batch Members',
+            path: '/pensions/contributions/enrollments/rejected',
+          },
+        ],
+      },
+
+      /**  {
+      Active,
+      Deferred,
+      Died,
+      Retired,
+      Leave_of_absence,
+      Secondment,
+      Fully_paid
+  } */
+      {
+        title: 'Members',
+        subChildren: [
+          {
+            title: 'Member List',
+            path: '/pensions/contributions/members',
+          },
+          {
+            title: 'Active Members',
+            path: '/pensions/contributions/members/active',
+          },
+          {
+            title: 'Deferred Members',
+            path: '/pensions/contributions/members/deferred',
+          },
+          {
+            title: 'Dead Members',
+            path: '/pensions/contributions/members/dead',
+          },
+          {
+            title: 'Retired Members',
+            path: '/pensions/contributions/members/retired',
+          },
+          {
+            title: 'Leave of Absence Members',
+            path: '/pensions/contributions/members/leave-of-absence',
+          },
+          {
+            title: 'Secondment Members',
+            path: '/pensions/contributions/members/secondment',
+          },
+          {
+            title: 'Fully Paid Members',
+            path: '/pensions/contributions/members/fully-paid',
+          },
+        ],
+      },
+      {
+        title: 'Change Requests',
+        subChildren: [
+          {
+            title: 'Member Change Requests',
+            path: '/pensions/contributions/change-requests',
+          },
+          {
+            title: 'Next of Kin Change Requests',
+            path: '/pensions/contributions/change-requests/next-of-kin',
+          },
+        ],
+      },
+      /**Under Contribution Menu 1 Contribution Processing 2 Contribution Approval 3 Contribution Posting 4 Contribution Reverse */
+      {
+        title: 'Contributions',
+        subChildren: [
+          {
+            title: 'Contribution Processing',
+            path: '/pensions/contributions/contribution-processing',
+          },
+          {
+            title: 'Contribution Approval',
+            path: '/pensions/contributions/contribution-approval',
+          },
+          {
+            title: 'Contribution Posting',
+            path: '/pensions/contributions/contribution-posting',
+          },
+          {
+            title: 'Contribution Reverse',
+            path: '/pensions/contributions/contribution-reverse',
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    title: 'Customer Relations',
+    path: '/pensions',
+    icon: <SupportAgent />,
+  },
+];
+
+export const adminItems = [
+  {
+    title: 'Users & Teams',
+    icon: <PeopleAltOutlined />,
+    children: [
+      {
+        title: 'Manage Users',
+        path: '/pensions/users',
+      },
+      {
+        title: 'Departments Setups',
+        path: '/pensions/users/setups/departments-setups',
+      },
+      {
+        title: 'Roles Setups',
+        path: '/pensions/users/setups/roles-setups',
+      },
+      // {
+      //   title: "Permissions Setups",
+      //   path: "/pensions/users/setups/permissions-setups",
+      // },
+      {
+        title: 'Menu Setups',
+        path: '/pensions/setups/menus',
+      },
+      // {
+      //   title: "Tables Setups",
+      //   path: "/pensions/users/setups/tables-setups",
+      // },
+      {
+        title: 'Roles & Permissions',
+        path: '/pensions/users/roles-permissions',
+      },
+      {
+        title: 'Password Rules',
+        path: '/pensions/users/password-rules',
+      },
+      {
+        title: 'Counties',
+        path: '/pensions/setups/counties',
+      },
+      // {
+      //   title: "Constituencies",
+      //   path: "/pensions/setups/constituencies",
+      // },
+      {
+        title: 'Leave Management',
+        path: '/pensions/users/leave-management',
+      },
+    ],
+  },
+  {
+    title: 'Setups',
+    icon: <Widgets />,
+    children: [
+      {
+        title: 'General Setups',
+        subChildren: [
+          {
+            title: 'General Settings',
+            path: '/pensions/setups/general-settings',
+          },
+        ],
+      },
+      {
+        title: 'Assessment Setups',
+        subChildren: [
+          {
+            title: 'Pension Factor Setups',
+            path: '/pensions/setups/pension-factor-assesment-setups',
+          },
+          {
+            title: 'Tax Types',
+            path: '/pensions/setups/tax-types',
+          },
+          {
+            title: 'Tax Bands',
+            path: '/pensions/setups/tax-bands',
+          },
+        ],
+      },
+
+      {
+        title: 'Finance Setup',
+        subChildren: [
+          {
+            title: 'Operation Setups',
+            path: '/pensions/setups/operation-setups',
+          },
+          {
+            title: 'Recoveries & Deductions',
+            path: '/pensions/setups/recoveries-deductions',
+          },
+          {
+            title: 'Recoveries Bank Details',
+            path: '/pensions/setups/recovery-bank-details',
+          },
+          {
+            title: 'Account Categories',
+            path: '/pensions/setups/account-category',
+          },
+          {
+            title: 'Accounting Period',
+            path: '/pensions/setups/accounting-period',
+          },
+          {
+            title: 'Sponsors Setups',
+            path: '/pensions/setups/sponsor-setups',
+          },
+          {
+            title: 'Payment Methods',
+            path: '/pensions/setups/payment-methods',
+          },
+          {
+            title: 'Award Posting Groups',
+            path: '/pensions/setups/award-posting-groups',
+          },
+          {
+            title: 'Bank Posting Groups',
+            path: '/pensions/setups/bank-posting-groups',
+          },
+          {
+            title: 'Business Posting Groups',
+            path: '/pensions/setups/business-posting-groups',
+          },
+          {
+            title: 'Customer Posting Groups',
+            path: '/pensions/setups/customer-posting-groups',
+          },
+
+          {
+            title: 'Vendor Posting Group',
+            path: '/pensions/setups/vendor-posting-groups',
+          },
+          {
+            title: 'VAT Postings',
+            path: '/pensions/setups/vat-postings',
+          },
+
+          {
+            title: 'Product Posting Groups',
+            path: '/pensions/setups/product-posting-groups',
+          },
+          {
+            title: 'General Posting Groups',
+            path: '/pensions/setups/general-posting-groups',
+          },
+          {
+            title: 'General Business Posting Groups',
+            path: '/pensions/setups/general-business-posting-groups',
+          },
+          {
+            title: 'General Product Posting Groups',
+            path: '/pensions/setups/general-product-posting-groups',
+          },
+        ],
+      },
+
+      {
+        title: 'Payroll Setups',
+        subChildren: [
+          {
+            title: 'Payroll Periods',
+            path: '/pensions/setups/payroll-periods',
+          },
+          {
+            title: 'Payroll Types',
+            path: '/pensions/setups/payroll-types',
+          },
+          {
+            title: 'Increment Master',
+            path: '/pensions/setups/increment-master',
+          },
+          {
+            title: 'Suspension Reasons',
+            path: '/pensions/setups/suspension-reasons',
+          },
+        ],
+      },
+      {
+        title: 'Contributions Setups',
+        subChildren: [
+          {
+            title: 'Contribution Types',
+            path: '/pensions/setups/contribution-types',
+          },
+        ],
+      },
+
+      {
+        title: 'Workflows Setups',
+        subChildren: [
+          {
+            title: 'Approvers',
+            path: '/pensions/workflows/setups/approvers',
+          },
+          {
+            title: 'Approval Types',
+            path: '/pensions/workflows/setups/approval-types',
+          },
+          {
+            title: 'Approval Stages',
+            path: '/pensions/workflows/setups/approval-stages',
+          },
+        ],
+      },
+
+      {
+        title: 'Preclaims Setups',
+        subChildren: [
+          {
+            title: 'Parliamentary Terms',
+            path: '/pensions/setups/parliamentary-terms',
+          },
+        ],
+      },
+
+      {
+        title: 'No. Series',
+        path: '/pensions/setups/no-series',
+      },
+
+      {
+        title: 'Vendor Posting Groups',
+        path: '/pensions/setups/vendor-posting-groups',
+      },
+      {
+        title: 'Cities',
+        path: '/pensions/setups/cities',
+      },
+      {
+        title: 'Document Types',
+        path: '/pensions/setups/document-types',
+      },
+      {
+        title: 'Pension Caps',
+        path: '/pensions/setups/pension-caps',
+      },
+      {
+        title: 'Designation & Grades',
+        path: '/pensions/setups/designation-grades',
+      },
+      {
+        title: 'Exit Grounds',
+        path: '/pensions/setups/exit-grounds',
+      },
+      {
+        title: 'Postal Codes',
+        path: '/pensions/setups/postal-codes',
+      },
+      {
+        title: 'Terms of Service',
+        path: '/pensions/setups/termsofservice',
+      },
+      {
+        title: 'Beneficiary Relationships',
+        path: '/pensions/setups/beneficiary-relationships',
+      },
+      {
+        title: 'MDAs',
+        path: '/pensions/setups/mdas',
+      },
+      {
+        title: 'Pension Awards',
+        path: '/pensions/setups/pension-awards',
+      },
+      {
+        title: 'Banks',
+        path: '/pensions/setups/banks',
+      },
+      {
+        title: 'Counties',
+        path: '/pensions/setups/banks',
+      },
+      {
+        title: 'Constituencies',
+        path: '/pensions/setups/banks',
+      },
+    ],
+  },
+];
 function Sidebar() {
   const [open, setOpen] = useState({});
   const { selectedItem, setSelectedItem } = useSelectedItem();
@@ -123,812 +928,6 @@ function Sidebar() {
   const normalizePath = (path) => {
     return path && path.replace(/^\/+|\/+$/g, ''); // Remove leading and trailing slashes
   };
-
-  const menuItems = [
-    {
-      title: 'Dashboard',
-      path: '/pensions',
-      icon: <DashboardOutlinedIcon />,
-    },
-    {
-      title: 'Preclaims',
-      icon: <ArticleOutlinedIcon />,
-      children: [
-        {
-          title: 'Retirees',
-          subChildren: [
-            {
-              title: 'Retirees List',
-              path: '/pensions/preclaims/listing',
-            },
-            {
-              title: 'Unnotified Retirees',
-              path: '/pensions/preclaims/listing/unnotified',
-            },
-            {
-              title: 'Scheduled Preclaims',
-              path: '/pensions/preclaims/listing/scheduled',
-            },
-            {
-              title: 'Notified Retirees',
-              path: '/pensions/preclaims/listing/notified',
-            },
-            {
-              title: 'Submissions',
-              path: '/pensions/preclaims/listing/submissions',
-            },
-            {
-              title: 'Pending Approvals',
-              path: '/pensions/preclaims/approvals',
-            },
-          ],
-        },
-        {
-          title: 'Returned Claims',
-          path: '/pensions/preclaims/returned-claims',
-        },
-      ],
-    },
-    {
-      title: 'Claims',
-      icon: <ArticleOutlinedIcon />,
-      children: [
-        {
-          title: 'Claims Management',
-          path: '/pensions/claims/claims-management',
-        },
-        {
-          title: 'Claims Verification',
-          path: '/pensions/claims/claims-verification',
-        },
-        {
-          title: 'Claims Validation',
-          path: '/pensions/claims/claims-validation',
-        },
-        {
-          title: 'Claims Approval',
-          path: '/pensions/claims/claims-approval',
-        },
-      ],
-    },
-    {
-      title: 'Assessment',
-
-      icon: <BarChart />,
-      children: [
-        {
-          title: 'Assessment Data Capture',
-          path: '/pensions/assessment/data-capture',
-        },
-        {
-          title: 'Assessment Approval',
-          path: '/pensions/assessment/approval',
-        },
-      ],
-    },
-
-    {
-      title: 'Directorate',
-      path: '/pensions/directorate',
-      icon: <ArticleOutlinedIcon />,
-    },
-    {
-      title: 'Controller of Budget',
-      path: '/pensions/cob',
-      icon: <Payments />,
-    },
-
-    {
-      title: 'Finance',
-      icon: <AssuredWorkload />,
-      children: [
-        {
-          title: 'Claim Records',
-          subChildren: [
-            {
-              title: 'Claim Records List',
-              path: '/pensions/claim-records',
-            },
-          ],
-        },
-
-        /**   
-         Bgt_New,
-        Bgt_Pending_Approval,
-        Bgt_Approved,
-        Bgt_Closed,
-        Bgt_Rejected */
-
-        {
-          title: 'General Ledger',
-          subChildren: [
-            {
-              title: 'Chart of Accounts',
-              path: '/pensions/finance/general-ledger/charts-of-accounts',
-            },
-
-            {
-              title: 'General Ledger Entries',
-              path: '/pensions/finance/general-ledger/ledger-entries',
-            },
-          ],
-        },
-        {
-          title: 'General Budget ',
-          subChildren: [
-            {
-              title: 'New Budget',
-              path: '/pensions/finance/general-ledger/general-budget/new',
-            },
-            {
-              title: 'Budget Pending Approval',
-              path: '/pensions/finance/general-ledger/general-budget/pending-approval',
-            },
-
-            {
-              title: 'Approved Budget',
-              path: '/pensions/finance/general-ledger/general-budget/approved',
-            },
-            {
-              title: 'Closed Budget',
-              path: '/pensions/finance/general-ledger/general-budget/closed',
-            },
-            {
-              title: 'Rejected Budget',
-              path: '/pensions/finance/general-ledger/general-budget/rejected',
-            },
-          ],
-        },
-
-        {
-          title: 'Cash Management',
-          subChildren: [
-            {
-              title: 'Bank Account',
-              path: '/pensions/finance/cash-management/bank-account',
-            },
-            {
-              title: 'Bank Account Ledger Entries',
-              path: '/pensions/finance/cash-management/ledger-entries',
-            },
-            {
-              title: 'Bank Reconciliation',
-              path: '/pensions/finance/cash-management/bank-reconciliation',
-            },
-          ],
-        },
-        {
-          title: 'Recievables',
-          subChildren: [
-            {
-              title: 'Customers',
-              path: '/pensions/finance/customers',
-            },
-            {
-              title: 'Receipts',
-              path: '/pensions/finance/recievables/receipts',
-            },
-            {
-              title: 'Customer Ledger Entries',
-              path: '/pensions/finance/recievables/ledger-entries',
-            },
-          ],
-        },
-        {
-          title: 'Payables',
-          subChildren: [
-            {
-              title: 'Vendors',
-              path: '/pensions/finance/vendor',
-            },
-            {
-              title: 'Vendor Ledger Entries',
-              path: '/pensions/finance/payables/ledger-entries',
-            },
-          ],
-        },
-        {
-          title: 'General Journals',
-          path: '/pensions/finance/general-journals',
-        },
-        {
-          title: 'Payments',
-          subChildren: [
-            {
-              title: 'Payment Vouchers',
-              path: '/pensions/finance/payments',
-            },
-            {
-              title: 'Pending Payment Vouchers',
-              path: '/pensions/finance/payments/pending',
-            },
-
-            {
-              title: 'Approved Payment Vouchers',
-              path: '/pensions/finance/payments/approved',
-            },
-
-            {
-              title: 'Scheduled Payment Vouchers',
-              path: '/pensions/finance/payments/scheduled',
-            },
-            {
-              title: 'Posted Payment Vouchers',
-              path: '/pensions/finance/payments/posted',
-            },
-            {
-              title: 'Rejected Payment Vouchers',
-              path: '/pensions/finance/payments/rejected',
-            },
-          ],
-        },
-        {
-          title: 'Scheduled Payments',
-          subChildren: [
-            /**    {
-        Sch_New,
-        Sch_Pending_Approval,
-        Sch_Approved,
-        Sch_Paid,
-        Sch_Rejected,
-    }
-  */
-            {
-              title: 'New Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/payments/new',
-            },
-            {
-              title: 'Pending Approval',
-              path: '/pensions/finance/scheduled-payments/payments/pending-approval',
-            },
-            {
-              title: 'Approved Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/payments/approved',
-            },
-            {
-              title: 'Paid Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/payments/paid',
-            },
-            {
-              title: 'Rejected Scheduled Payments',
-              path: '/pensions/finance/scheduled-payments/payments/rejected',
-            },
-          ],
-        },
-      ],
-    },
-
-    {
-      title: 'Payroll',
-      icon: <ReceiptLong />,
-      children: [
-        {
-          title: 'Main Payroll',
-          // path: '/pensions/payroll/main-payroll/payroll-run',
-          subChildren: [
-            {
-              title: 'Open Payroll',
-              path: '/pensions/payroll/main-payroll/payroll-run',
-            },
-            {
-              title: 'Pending Approval',
-              path: '/pensions/payroll/main-payroll/pending-approval',
-            },
-            {
-              title: 'Closed Payroll',
-              path: '/pensions/payroll/main-payroll/closed',
-            },
-            {
-              title: 'Payroll Review',
-              path: '/pensions/payroll/main-payroll/review',
-            },
-            {
-              title: 'Suspended Payroll',
-              path: '/pensions/payroll/main-payroll/suspended-payroll',
-            },
-          ],
-        },
-        {
-          title: 'Injury Payroll',
-          // path: '/pensions/payroll/main-payroll/payroll-run',
-          subChildren: [
-            {
-              title: 'Open Payroll',
-              path: '/pensions/payroll/injury/payroll-run',
-            },
-            {
-              title: 'Pending Approval',
-              path: '/pensions/payroll/injury/pending-approval',
-            },
-            {
-              title: 'Closed Payroll',
-              path: '/pensions/payroll/injury/closed',
-            },
-            {
-              title: 'Payroll Review',
-              path: '/pensions/payroll/injury/review',
-            },
-            {
-              title: 'Suspended Payroll',
-              path: '/pensions/payroll/injury/suspended-payroll',
-            },
-          ],
-        },
-        {
-          title: 'Dependent Payroll',
-          // path: '/pensions/payroll/main-payroll/payroll-run',
-          subChildren: [
-            {
-              title: 'Open Payroll',
-              path: '/pensions/payroll/main-payroll/payroll-run',
-            },
-            {
-              title: 'Pending Approval',
-              path: '/pensions/payroll/main-payroll/pending-approval',
-            },
-            {
-              title: 'Closed Payroll',
-              path: '/pensions/payroll/main-payroll/closed',
-            },
-            {
-              title: 'Payroll Review',
-              path: '/pensions/payroll/main-payroll/review',
-            },
-            {
-              title: 'Suspended Payroll',
-              path: '/pensions/payroll/main-payroll/suspended-payroll',
-            },
-          ],
-        },
-        {
-          title: 'Agency Payroll',
-          // path: '/pensions/payroll/main-payroll/payroll-run',
-          subChildren: [
-            {
-              title: 'Open Payroll',
-              path: '/pensions/payroll/main-payroll/payroll-run',
-            },
-            {
-              title: 'Pending Approval',
-              path: '/pensions/payroll/main-payroll/pending-approval',
-            },
-            {
-              title: 'Closed Payroll',
-              path: '/pensions/payroll/main-payroll/closed',
-            },
-            {
-              title: 'Payroll Review',
-              path: '/pensions/payroll/main-payroll/review',
-            },
-            {
-              title: 'Suspended Payroll',
-              path: '/pensions/payroll/main-payroll/suspended-payroll',
-            },
-          ],
-        },
-        {
-          title: 'Payroll Increment',
-          subChildren: [
-            {
-              title: 'Payroll Increment',
-              path: '/pensions/payroll/payroll-increment',
-            },
-            {
-              title: 'Pending Increment Approval',
-              path: '/pensions/payroll/payroll-increment/pending-approval',
-            },
-            {
-              title: 'Approved Increment',
-              path: '/pensions/payroll/payroll-increment/approved-increment',
-            },
-            {
-              title: 'Rejected Increment',
-              path: '/pensions/payroll/payroll-increment/rejected-increment',
-            },
-          ],
-        },
-      ],
-    },
-
-    {
-      title: 'PSSF Contributions',
-      icon: <Addchart />,
-      children: [
-        {
-          title: 'Enrollments',
-          subChildren: [
-            {
-              title: 'New Batch Member',
-              path: '/pensions/contributions/enrollments/batch-upload',
-            },
-            {
-              title: 'Pending Batch Members',
-              path: '/pensions/contributions/enrollments/pending',
-            },
-            {
-              title: 'Approved Batch Members',
-              path: '/pensions/contributions/enrollments/approved',
-            },
-
-            {
-              title: 'Rejected Batch Members',
-              path: '/pensions/contributions/enrollments/rejected',
-            },
-          ],
-        },
-
-        /**  {
-        Active,
-        Deferred,
-        Died,
-        Retired,
-        Leave_of_absence,
-        Secondment,
-        Fully_paid
-    } */
-        {
-          title: 'Members',
-          subChildren: [
-            {
-              title: 'Member List',
-              path: '/pensions/contributions/members',
-            },
-            {
-              title: 'Active Members',
-              path: '/pensions/contributions/members/active',
-            },
-            {
-              title: 'Deferred Members',
-              path: '/pensions/contributions/members/deferred',
-            },
-            {
-              title: 'Dead Members',
-              path: '/pensions/contributions/members/dead',
-            },
-            {
-              title: 'Retired Members',
-              path: '/pensions/contributions/members/retired',
-            },
-            {
-              title: 'Leave of Absence Members',
-              path: '/pensions/contributions/members/leave-of-absence',
-            },
-            {
-              title: 'Secondment Members',
-              path: '/pensions/contributions/members/secondment',
-            },
-            {
-              title: 'Fully Paid Members',
-              path: '/pensions/contributions/members/fully-paid',
-            },
-          ],
-        },
-        {
-          title: 'Change Requests',
-          subChildren: [
-            {
-              title: 'Member Change Requests',
-              path: '/pensions/contributions/change-requests',
-            },
-            {
-              title: 'Next of Kin Change Requests',
-              path: '/pensions/contributions/change-requests/next-of-kin',
-            },
-          ],
-        },
-        /**Under Contribution Menu 1 Contribution Processing 2 Contribution Approval 3 Contribution Posting 4 Contribution Reverse */
-        {
-          title: 'Contributions',
-          subChildren: [
-            {
-              title: 'Contribution Processing',
-              path: '/pensions/contributions/contribution-processing',
-            },
-            {
-              title: 'Contribution Approval',
-              path: '/pensions/contributions/contribution-approval',
-            },
-            {
-              title: 'Contribution Posting',
-              path: '/pensions/contributions/contribution-posting',
-            },
-            {
-              title: 'Contribution Reverse',
-              path: '/pensions/contributions/contribution-reverse',
-            },
-          ],
-        },
-      ],
-    },
-
-    {
-      title: 'Customer Relations',
-      path: '/pensions',
-      icon: <SupportAgent />,
-    },
-  ];
-
-  const adminItems = [
-    {
-      title: 'Users & Teams',
-      icon: <PeopleAltOutlined />,
-      children: [
-        {
-          title: 'Manage Users',
-          path: '/pensions/users',
-        },
-        {
-          title: 'Departments Setups',
-          path: '/pensions/users/setups/departments-setups',
-        },
-        {
-          title: 'Roles Setups',
-          path: '/pensions/users/setups/roles-setups',
-        },
-        // {
-        //   title: "Permissions Setups",
-        //   path: "/pensions/users/setups/permissions-setups",
-        // },
-        {
-          title: 'Menu Setups',
-          path: '/pensions/setups/menus',
-        },
-        // {
-        //   title: "Tables Setups",
-        //   path: "/pensions/users/setups/tables-setups",
-        // },
-        {
-          title: 'Roles & Permissions',
-          path: '/pensions/users/roles-permissions',
-        },
-        {
-          title: 'Password Rules',
-          path: '/pensions/users/password-rules',
-        },
-        {
-          title: 'Counties',
-          path: '/pensions/setups/counties',
-        },
-        // {
-        //   title: "Constituencies",
-        //   path: "/pensions/setups/constituencies",
-        // },
-        {
-          title: 'Leave Management',
-          path: '/pensions/users/leave-management',
-        },
-      ],
-    },
-    {
-      title: 'Setups',
-      icon: <Widgets />,
-      children: [
-        {
-          title: 'General Setups',
-          subChildren: [
-            {
-              title: 'General Settings',
-              path: '/pensions/setups/general-settings',
-            },
-          ],
-        },
-        {
-          title: 'Assessment Setups',
-          subChildren: [
-            {
-              title: 'Pension Factor Setups',
-              path: '/pensions/setups/pension-factor-assesment-setups',
-            },
-            {
-              title: 'Tax Types',
-              path: '/pensions/setups/tax-types',
-            },
-            {
-              title: 'Tax Bands',
-              path: '/pensions/setups/tax-bands',
-            },
-          ],
-        },
-
-        {
-          title: 'Finance Setup',
-          subChildren: [
-            {
-              title: 'Operation Setups',
-              path: '/pensions/setups/operation-setups',
-            },
-            {
-              title: 'Recoveries & Deductions',
-              path: '/pensions/setups/recoveries-deductions',
-            },
-            {
-              title: 'Recoveries Bank Details',
-              path: '/pensions/setups/recovery-bank-details',
-            },
-            {
-              title: 'Account Categories',
-              path: '/pensions/setups/account-category',
-            },
-            {
-              title: 'Accounting Period',
-              path: '/pensions/setups/accounting-period',
-            },
-            {
-              title: 'Sponsors Setups',
-              path: '/pensions/setups/sponsor-setups',
-            },
-            {
-              title: 'Payment Methods',
-              path: '/pensions/setups/payment-methods',
-            },
-            {
-              title: 'Award Posting Groups',
-              path: '/pensions/setups/award-posting-groups',
-            },
-            {
-              title: 'Bank Posting Groups',
-              path: '/pensions/setups/bank-posting-groups',
-            },
-            {
-              title: 'Business Posting Groups',
-              path: '/pensions/setups/business-posting-groups',
-            },
-            {
-              title: 'Customer Posting Groups',
-              path: '/pensions/setups/customer-posting-groups',
-            },
-
-            {
-              title: 'Vendor Posting Group',
-              path: '/pensions/setups/vendor-posting-groups',
-            },
-            {
-              title: 'VAT Postings',
-              path: '/pensions/setups/vat-postings',
-            },
-
-            {
-              title: 'Product Posting Groups',
-              path: '/pensions/setups/product-posting-groups',
-            },
-            {
-              title: 'General Posting Groups',
-              path: '/pensions/setups/general-posting-groups',
-            },
-            {
-              title: 'General Business Posting Groups',
-              path: '/pensions/setups/general-business-posting-groups',
-            },
-            {
-              title: 'General Product Posting Groups',
-              path: '/pensions/setups/general-product-posting-groups',
-            },
-          ],
-        },
-
-        {
-          title: 'Payroll Setups',
-          subChildren: [
-            {
-              title: 'Payroll Periods',
-              path: '/pensions/setups/payroll-periods',
-            },
-            {
-              title: 'Payroll Types',
-              path: '/pensions/setups/payroll-types',
-            },
-            {
-              title: 'Increment Master',
-              path: '/pensions/setups/increment-master',
-            },
-            {
-              title: 'Suspension Reasons',
-              path: '/pensions/setups/suspension-reasons',
-            },
-          ],
-        },
-        {
-          title: 'Contributions Setups',
-          subChildren: [
-            {
-              title: 'Contribution Types',
-              path: '/pensions/setups/contribution-types',
-            },
-          ],
-        },
-
-        {
-          title: 'Workflows Setups',
-          subChildren: [
-            {
-              title: 'Approvers',
-              path: '/pensions/workflows/setups/approvers',
-            },
-            {
-              title: 'Approval Types',
-              path: '/pensions/workflows/setups/approval-types',
-            },
-            {
-              title: 'Approval Stages',
-              path: '/pensions/workflows/setups/approval-stages',
-            },
-          ],
-        },
-
-        {
-          title: 'Preclaims Setups',
-          subChildren: [
-            {
-              title: 'Parliamentary Terms',
-              path: '/pensions/setups/parliamentary-terms',
-            },
-          ],
-        },
-
-        {
-          title: 'No. Series',
-          path: '/pensions/setups/no-series',
-        },
-
-        {
-          title: 'Vendor Posting Groups',
-          path: '/pensions/setups/vendor-posting-groups',
-        },
-        {
-          title: 'Cities',
-          path: '/pensions/setups/cities',
-        },
-        {
-          title: 'Document Types',
-          path: '/pensions/setups/document-types',
-        },
-        {
-          title: 'Pension Caps',
-          path: '/pensions/setups/pension-caps',
-        },
-        {
-          title: 'Designation & Grades',
-          path: '/pensions/setups/designation-grades',
-        },
-        {
-          title: 'Exit Grounds',
-          path: '/pensions/setups/exit-grounds',
-        },
-        {
-          title: 'Postal Codes',
-          path: '/pensions/setups/postal-codes',
-        },
-        {
-          title: 'Terms of Service',
-          path: '/pensions/setups/termsofservice',
-        },
-        {
-          title: 'Beneficiary Relationships',
-          path: '/pensions/setups/beneficiary-relationships',
-        },
-        {
-          title: 'MDAs',
-          path: '/pensions/setups/mdas',
-        },
-        {
-          title: 'Pension Awards',
-          path: '/pensions/setups/pension-awards',
-        },
-        {
-          title: 'Banks',
-          path: '/pensions/setups/banks',
-        },
-        {
-          title: 'Counties',
-          path: '/pensions/setups/banks',
-        },
-        {
-          title: 'Constituencies',
-          path: '/pensions/setups/banks',
-        },
-      ],
-    },
-  ];
 
   // useEffect(() => {
   //   console.log('Current Path:', window.location.pathname); // Log the current path
