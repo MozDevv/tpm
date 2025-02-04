@@ -590,7 +590,14 @@ const ListNavigation = ({
     },
 
     // Bank Statement Actions
-
+    {
+      name: 'Generate Bank Statement Template',
+      icon: Launch,
+      action: 'generateBankStatementTemplate',
+      requiredPermissions: [],
+      parent: 'bankStatement',
+      disabled: true,
+    },
     {
       name: 'Upload Bank Statement',
       icon: PostAdd,

@@ -61,8 +61,11 @@ function BaseCard({
   documentNo,
   retireeId,
   customDeleteFunction,
+  largeCard,
 }) {
-  const [isExpanded, setIsExpanded] = useState(isClaim ? true : false);
+  const [isExpanded, setIsExpanded] = useState(
+    isClaim || largeCard ? true : false
+  );
   const [isDetailsVisible, setDetailsVisible] = useState(true);
 
   const expandSizes = {

@@ -18,6 +18,8 @@ import { Dialog, Divider, TextField } from '@mui/material';
 import BaseUploadDialog from '@/components/baseComponents/BaseUploadDialog';
 import { message } from 'antd';
 import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
+import axios from 'axios';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const columnDefs = [
   {
@@ -130,24 +132,16 @@ const BankReconciliation = () => {
   };
 
   const baseCardHandlers = {
-    // create: () => {
-    //   setOpenBaseCard(true);
-    //   setClickedItem(null);
-    // },
-    // edit: (item) => {
-    //   // setOpenBaseCard(true);
-    //   // setClickedItem(item);
-    // },
-    // delete: (item) => {
-    //   //  setOpenBaseCard(true);
-    //   //  setClickedItem(item);
-    // },
     match: () => console.log('Match clicked'),
     importBankStatement: () => handleOpenUploadDialog(),
     matchManually: () => submitReconciliation(true),
     postReconciliation: () => reconcileBankDetails(),
 
     removeUploadedStatement: () => removeUploadedDocument(),
+
+    generateBankStatementTemplate: () => {
+      generateBankStatementTemplate();
+    },
 
     removeMatch: () => removeMatch(),
     bankStatement: () => console.log('Bank Statement clicked'),
@@ -158,6 +152,32 @@ const BankReconciliation = () => {
 
   const [selectedBankStatements, setSelectedBankStatements] = useState([]);
   const [selectedBankSubledgers, setSelectedBankSubledgers] = useState([]);
+
+  const generateBankStatementTemplate = async () => {
+    try {
+      // Fetch the file as a blob
+      const response = await axios.get(
+        `${BASE_CORE_API}api/Posting/GetBankStatementUploadTemplate`,
+        {
+          responseType: 'blob', // Specify that the response is a binary Blob
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Bank Statement Template.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove(); // Clean up
+      window.URL.revokeObjectURL(url); // Release memory
+    } catch (error) {
+      console.error('Error downloading te file:', error);
+    }
+  };
 
   const fetchBanksAndBranches = async () => {
     try {
@@ -529,6 +549,7 @@ const BankReconciliation = () => {
         isUserComponent={false}
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
         deleteApiService={apiService.delete}
+        largeCard={true}
       >
         <div className="flex flex-col gap-5">
           <BaseAutoSaveInputCard
