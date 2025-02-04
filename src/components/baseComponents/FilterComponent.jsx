@@ -126,25 +126,30 @@ const FilterComponent = ({
         onClose={handleDialogClose}
         sx={{
           '& .MuiDialog-paper': {
-            width: '400px',
-            borderRadius: '8px',
+            width: '450px',
+            //  borderRadius: '8px',
+            //add a max height to the dialog
+            maxHeight: '500px',
           },
         }}
       >
         <DialogTitle>Select Columns for Filtering</DialogTitle>
         <DialogContent>
-          {columnDefs.map((col) => (
-            <FormControlLabel
-              key={col.field}
-              control={
-                <Checkbox
-                  checked={selectedColumns.includes(col.field)}
-                  onChange={() => handleColumnSelect(col.field)}
+          <div className="flex flex-wrap justify-between">
+            {columnDefs.map((col, index) => (
+              <div key={col.field} className="w-[48%] mb-2">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedColumns.includes(col.field)}
+                      onChange={() => handleColumnSelect(col.field)}
+                    />
+                  }
+                  label={col.headerName}
                 />
-              }
-              label={col.headerName}
-            />
-          ))}
+              </div>
+            ))}
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
