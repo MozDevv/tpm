@@ -284,13 +284,14 @@ const BaseTable = ({
             {breadcrumbTitle}
           </h6>
           <CustomBreadcrumbsList currentTitle={currentTitle} />
-          <div className="w-[80vw]">
+          <div className="w-[80vw] ml-3 mt-2">
             <ListNavigation
               handlers={!isSecondaryTable ? adjustedHandlers : handlers}
               selectedRows={selectedRows}
               reportItems={reportItems}
               clickedItem={clickedItem}
             />
+            <Divider sx={{ mt: 2, mb: '-8px' }} />
           </div>
         </Box>
       </Box>
