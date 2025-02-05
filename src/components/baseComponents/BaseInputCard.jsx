@@ -674,7 +674,12 @@ const BaseInputCard = ({
                 variant="outlined"
                 size="small"
                 error={!!errors[field.name]}
-                value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
+                value={
+                  formData[field.name]
+                    ? dayjs(formData[field.name]).format('YYYY-MM-DD')
+                    : ''
+                }
+                defaultValue={''}
                 helperText={errors[field.name]}
                 onChange={handleInputChange}
                 disabled={field.disabled || disableAll}

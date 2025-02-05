@@ -74,7 +74,7 @@ const BaseWarningDialog = ({ open, onClose, onConfirm, message }) => {
           Cancel
         </Button>
         <Button onClick={handleConfirm} color="primary" variant="contained">
-          Proceed
+          Proceed Anyway
         </Button>
       </DialogActions>
     </Dialog>

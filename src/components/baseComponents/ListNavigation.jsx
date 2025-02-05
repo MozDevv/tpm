@@ -532,6 +532,13 @@ const ListNavigation = ({
       action: 'sendPayrollForApproval',
       requiredPermissions: [],
     },
+    {
+      name: 'Export to Excel',
+      icon: OpenInNew,
+      image: '/excel.png',
+      action: 'exportDataToExcel',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

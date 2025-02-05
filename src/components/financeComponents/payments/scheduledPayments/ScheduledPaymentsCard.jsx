@@ -260,7 +260,7 @@ function ScheduledPaymentsCard({
 
     {
       field: 'bankCode',
-      headerName: 'Bank Branch Code',
+      headerName: 'Bank Code',
       width: 200,
     },
     {
