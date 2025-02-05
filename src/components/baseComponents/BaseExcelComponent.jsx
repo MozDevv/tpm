@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, MenuItem, Select, Divider, IconButton } from '@mui/material';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { Close } from '@mui/icons-material';
 import { generateExcelTemplateWithApiService } from '@/utils/excelHelper';
 
@@ -10,8 +10,10 @@ const BaseExcelComponent = ({
   fetchApiEndpoint,
   transformData,
   fileName,
+  setOpenExcel,
 }) => {
-  const [selectedColumns, setSelectedColumns] = useState([]);
+  // Initialize selectedColumns with all columns by default
+  const [selectedColumns, setSelectedColumns] = useState(columns);
   const [pageSize, setPageSize] = useState(10);
   const [skipBlankEntries, setSkipBlankEntries] = useState(false);
 
@@ -33,6 +35,11 @@ const BaseExcelComponent = ({
   };
 
   const exportToExcel = () => {
+    if (selectedColumns.length === 0) {
+      message.error('Please select at least one column to export.');
+      return;
+    }
+
     generateExcelTemplateWithApiService(
       fetchApiEndpoint,
       fetchApiService,
@@ -49,12 +56,10 @@ const BaseExcelComponent = ({
     <div className="p-8">
       <div className="absolute top-2 right-2">
         <IconButton>
-          <Close />
+          <Close onClick={() => setOpenExcel(false)} />
         </IconButton>
       </div>
-      <h2 className="text-xl font-semibold mb-4 text-center w-full">
-        Excel Export
-      </h2>
+      .
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">
           Select Page Size:
@@ -87,7 +92,6 @@ const BaseExcelComponent = ({
           </label>
         </div>
       </div>
-
       {/* Column Selection */}
       <div className="mb-4 pt-4">
         <label className="block text-sm font-medium mb-2">
@@ -107,7 +111,6 @@ const BaseExcelComponent = ({
           ))}
         </div>
       </div>
-
       {/* Generate Button */}
       <div className="mt-10">
         <Button

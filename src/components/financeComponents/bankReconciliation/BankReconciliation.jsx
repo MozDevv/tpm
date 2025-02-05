@@ -445,7 +445,7 @@ const BankReconciliation = () => {
   const removeUploadedDocument = async () => {
     try {
       const response = await apiService.delete(
-        financeEndpoints.deleteUploadedStatement(clickedItem?.bankStatementId)
+        financeEndpoints.deleteUploadedStatement(clickedItem?.reconciliationId)
       );
 
       if (response.data.succeeded) {
@@ -492,7 +492,7 @@ const BankReconciliation = () => {
         response.data.messages[0] &&
         response.data.succeeded === false
       ) {
-        message.error(response.data.messages[0].message);
+        message.error(response.data.messages[0]);
       } else {
         console.warn('Reconciliation Failed:', response.data);
 

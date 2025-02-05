@@ -104,7 +104,8 @@ export const generateExcelTemplateWithApiService = async (
   sheetName,
   pageSize = 10000,
   selectedColumns = [],
-  skipBlankEntries = false
+  skipBlankEntries = false,
+  setOpenExcel
 ) => {
   try {
     console.log('Calling API with endpoint:', fetchApiEndpoint);
@@ -137,25 +138,25 @@ export const generateExcelTemplateWithApiService = async (
     // Map worksheet data based on selected columns
     const mapworksheet = (data, selectedColumns) => {
       // Extract headers from selectedColumns
-      const headers = selectedColumns.map((col) => col);
+      const headers = selectedColumns.map((col) => col.headerName);
 
       // Map data to arrays based on selectedColumns
       const rows = data.map((item, index) => {
         console.log('Mapping item:', item); // Log the item being mapped
         console.log('slcted columns', selectedColumns);
         return selectedColumns.map((col) => {
-          console.log('Mapping column:', col); // Log the column field being mapped
+          console.log('Mapping column:', col.field); // Log the column field being mapped
           console.log('slcted columns', selectedColumns);
 
-          if (!col) {
+          if (!col.field) {
             return;
           }
-          if (col === 'no') {
+          if (col.field === 'no') {
             return index + 1;
           }
-          const value = item[col];
+          const value = item[col.field];
           if (value === undefined) {
-            console.warn(`Field ${col} is undefined for item:`, item);
+            console.warn(`Field ${col.field} is undefined for item:`, item);
             return null; // or any default value you prefer
           }
           return value === null ? 0 : value;
@@ -239,7 +240,6 @@ export const generateExcelTemplateWithApiService = async (
     });
     console.log('Worksheet data added');
 
-    // Adjust column widths based on data length or content
     const columnWidths = selectedColumns.map((col, idx) => {
       const maxLength = Math.max(
         ...worksheetData.map((row) => (row[idx] ? String(row[idx]).length : 10))

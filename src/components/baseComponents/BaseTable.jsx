@@ -101,10 +101,12 @@ const BaseTable = ({
     }
   };
 
+  const [openExcel, setOpenExcel] = useState(false);
+
   const adjustedHandlers = {
     ...handlers,
     filter: () => setOpenFilter(!openFilter),
-    openInExcel: () => exportToExcel(),
+    openInExcel: () => setOpenExcel(true),
     ...(handlers.delete ? { delete: handleDeleteItem } : {}),
   };
 
@@ -255,8 +257,8 @@ const BaseTable = ({
   return (
     <div>
       <Dialog
-        // open={true}
-        // onClose={() => setOpenClaimVerification(false)}
+        open={openExcel}
+        onClose={() => setOpenExcel(false)}
         sx={{
           '& .MuiPaper-root': {
             minHeight: '55vh',
@@ -267,6 +269,7 @@ const BaseTable = ({
         }}
       >
         <BaseExcelComponent
+          setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}
           columns={columnDefs}
