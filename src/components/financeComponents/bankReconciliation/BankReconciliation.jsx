@@ -346,6 +346,7 @@ const BankReconciliation = () => {
   ];
 
   const [refreshBankStatements, setRefreshBankStatements] = useState(false);
+  const [totalDifference, setTotalDifference] = useState(0);
 
   const submitReconciliation = async () => {
     if (
@@ -466,20 +467,27 @@ const BankReconciliation = () => {
     }
   };
 
+  const [reconciliationId, setReconciliationId] = useState(null);
+
   const reconcileBankDetails = async () => {
+    //  console.log('selectedBankStatements', selectedBankStatements);
     try {
       const response = await apiService.post(
         financeEndpoints.reconcileBankDetails,
         {
-          bankReconciliationId: clickedItem?.id,
-          totalDifference: clickedItem?.totalDifference,
+          bankReconciliationId: clickedItem?.reconciliationId,
+          totalDifference: totalDifference,
           currentStatementBalance: clickedItem?.currentStatementBalance,
         }
       );
 
-      if (response.status === 200 && response.data.succeeded) {
+      if (
+        response.status === 200 &&
+        response.data.succeeded &&
+        response.data.messages[0]
+      ) {
         setRefreshBankStatements((prev) => !prev);
-        message.success('Bank details reconciled successfully');
+        message.success(response.data.messages[0]);
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false
@@ -499,7 +507,6 @@ const BankReconciliation = () => {
   const [balance, setBalance] = useState(0);
   const [totalBalance, setTotalBalance] = useState(0);
   const [undebitedAmount, setUndebitedAmount] = useState(0);
-  const [totalDifference, setTotalDifference] = useState(0);
 
   const totalAmounts1 = [
     { name: 'Total Balance', value: '0.00' },
@@ -571,12 +578,15 @@ const BankReconciliation = () => {
           />
 
           <BankReconciliationCard
+            reconciliationId={reconciliationId}
+            setReconciliationId={setReconciliationId}
             refreshBankStatements={refreshBankStatements}
             setSelectedBankStatements={setSelectedBankStatements}
             setSelectedBankSubledgers={setSelectedBankSubledgers}
             clickedItem={clickedItem}
             setClickedItem={setClickedItem}
             uploadExcel={uploadExcel}
+            setTotalDifference={setTotalDifference}
           />
         </div>
       </BaseCard>

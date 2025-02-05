@@ -255,18 +255,24 @@ const BaseTable = ({
   return (
     <div>
       <Dialog
-        //open={true}
+        // open={true}
         // onClose={() => setOpenClaimVerification(false)}
         sx={{
           '& .MuiPaper-root': {
-            minHeight: '75vh',
-            maxHeight: '85vh',
+            minHeight: '55vh',
+            maxHeight: '55vh',
             minWidth: '30vw',
-            maxWidth: '35vw',
+            maxWidth: '30vw',
           },
         }}
       >
-        <BaseExcelComponent columns={columnDefs} handleGenerate={() => {}} />
+        <BaseExcelComponent
+          fetchApiService={fetchApiService}
+          fetchApiEndpoint={fetchApiEndpoint}
+          columns={columnDefs}
+          transformData={transformData}
+          fileName={currentTitle}
+        />
       </Dialog>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: '1px', flexDirection: 'column' }}>

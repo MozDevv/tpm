@@ -16,6 +16,8 @@ function BankReconciliationCard({
   setSelectedBankSubledgers,
   setSelectedBankStatements,
   refreshBankStatements,
+  setReconciliationId,
+  setTotalDifference,
 }) {
   const [bankStatement, setBankStatement] = useState([]);
   const [bankSubledger, setBankSubledger] = useState([]);
@@ -71,6 +73,7 @@ function BankReconciliationCard({
       { name: 'Balance', value: formatNumber(balance) },
       { name: 'Total Balance', value: formatNumber(totalBalance) },
     ]);
+    setTotalDifference(totalDifference);
     return { totalDifference, balance, totalBalance };
   };
 
@@ -93,7 +96,8 @@ function BankReconciliationCard({
             statementEndDate: bankStatement?.statementEndDate,
             lastStatementBalance: bankStatement?.lastStatementBalance,
             currentStatementBalance: bankStatement?.currentStatementBalance,
-            bankStatementId: bankStatement?.id,
+            // bankStatementId: bankStatement?.bankStatements.id,
+            reconciliationId: bankStatement?.id,
           }));
         }
 
