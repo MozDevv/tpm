@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Collapse,
+  Dialog,
   Divider,
   IconButton,
   Menu,
@@ -32,6 +33,7 @@ import BaseEmptyComponent from './BaseEmptyComponent';
 import { Checkbox, message } from 'antd';
 import axios from 'axios';
 import FilterComponent from './FilterComponent';
+import BaseExcelComponent from './BaseExcelComponent';
 
 const BaseTable = ({
   columnDefs,
@@ -252,6 +254,20 @@ const BaseTable = ({
 
   return (
     <div>
+      <Dialog
+        //open={true}
+        // onClose={() => setOpenClaimVerification(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <BaseExcelComponent columns={columnDefs} handleGenerate={() => {}} />
+      </Dialog>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: '1px', flexDirection: 'column' }}>
           <h6
@@ -293,130 +309,6 @@ const BaseTable = ({
           timeout="auto"
           unmountOnExit
         >
-          {/* <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-            <div className="flex w-full justify-between items-center">
-              <p className="text-md font-medium text-primary p-3">Filter By:</p>
-            </div>
-            <Divider sx={{ px: 2 }} />
-            <div className="flex flex-col item-center p-4 mt-3">
-              <label className="text-xs font-semibold text-gray-600">
-                Choose Column for Filtering:
-              </label>
-              <select
-                name="role"
-                value={filterColumn}
-                onChange={(e) => setFilterColumn(e.target.value)}
-                className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                required
-              >
-                {columnDefs.map((col) => (
-                  <option value={col.field}>{col.headerName}</option>
-                ))}
-              </select>
-            </div>
-            <div className="p-3">
-              <label className="text-xs font-semibold text-gray-600">
-                Enter Keyword
-              </label>
-              <div className="flex">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    className="border p-2 pl-10 bg-gray-100 border-gray-300 rounded-md text-sm w-[98%]"
-                    required
-                    onChange={(e) => setFilterValue(e.target.value)}
-                    placeholder={`Search ${
-                      filteredData.length > 0
-                        ? `"${filteredData[0][columnDefs[0].field]}"`
-                        : ''
-                    }`}
-                  />
-                </div>
-
-                <IconButton onClick={handleClick}>
-                  <FilterList />
-                </IconButton>
-              </div>
-            </div>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <MenuItem
-                onClick={() => {
-                  setFilterType(2);
-                  setAnchorEl(null);
-                }}
-              >
-                Includes
-              </MenuItem>
-
-              <MenuItem
-                onClick={() => {
-                  setFilterType(0);
-                  setAnchorEl(null);
-                }}
-              >
-                Matches Exactly
-              </MenuItem>
-
-              <MenuItem
-                onClick={() => {
-                  setFilterType(1);
-                  setAnchorEl(null);
-                }}
-              >
-                Does Not Match
-              </MenuItem>
-            </Menu>
-
-            <Button startIcon={<Add />}>Add Filter(s)</Button>
-            <Divider />
-            <div className="flex flex-col item-center p-4 mt-3">
-              <label className="text-xs font-semibold text-gray-600 w-[100%]">
-                Sort By:
-              </label>
-              <div className="flex items-center ">
-                {' '}
-                <select
-                  name="role"
-                  value={sortColumn}
-                  onChange={(e) => setSortColumn(e.target.value)}
-                  className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
-                  required
-                >
-                  {columnDefs.map((col) => (
-                    <option value={col.field}>{col.headerName}</option>
-                  ))}
-                </select>
-                <Tooltip
-                  title={
-                    sortCriteria === 1 ? 'Ascending Order' : 'Desceding Order'
-                  }
-                  placement="top"
-                >
-                  <IconButton
-                    sx={{ mr: '-10px', ml: '-4px' }}
-                    onClick={() => {
-                      setSortCriteria(sortCriteria === 1 ? 2 : 1);
-                    }}
-                  >
-                    <SortByAlpha />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
-          </div> */}
           <FilterComponent
             columnDefs={columnDefs}
             filteredData={filteredData}

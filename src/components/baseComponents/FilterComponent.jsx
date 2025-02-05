@@ -11,7 +11,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Checkbox,
   FormControlLabel,
 } from '@mui/material';
 import {
@@ -21,6 +20,7 @@ import {
   SortByAlpha,
   DoNotDisturbOn,
 } from '@mui/icons-material';
+import { Checkbox } from 'antd';
 
 const FilterComponent = ({
   columnDefs,
@@ -138,15 +138,12 @@ const FilterComponent = ({
           <div className="flex flex-wrap justify-between">
             {columnDefs.map((col, index) => (
               <div key={col.field} className="w-[48%] mb-2">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedColumns.includes(col.field)}
-                      onChange={() => handleColumnSelect(col.field)}
-                    />
-                  }
-                  label={col.headerName}
-                />
+                <Checkbox
+                  checked={selectedColumns.includes(col.field)}
+                  onChange={() => handleColumnSelect(col.field)}
+                >
+                  {col.headerName}
+                </Checkbox>
               </div>
             ))}
           </div>

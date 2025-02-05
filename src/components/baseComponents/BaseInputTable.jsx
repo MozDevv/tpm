@@ -137,7 +137,7 @@ const BaseInputTable = ({
 
             const sortedData = sortData(res.data.data);
 
-            setOnCloseWarnings(false);
+            setOnCloseWarnings && setOnCloseWarnings(false);
 
             let lastEndDate = null;
             let lastStartDate = null;
@@ -244,7 +244,7 @@ const BaseInputTable = ({
               }, {})
             );
 
-            setOnCloseWarnings(false);
+            setOnCloseWarnings && setOnCloseWarnings(false);
             const sortedData = sortData(res.data.data);
 
             // Determine if we should fetch and append children
