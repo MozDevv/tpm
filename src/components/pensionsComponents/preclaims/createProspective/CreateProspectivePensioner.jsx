@@ -18,7 +18,11 @@ import NextOfKin from '../NextOfKin';
 
 const { TabPane } = Tabs;
 
-function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
+function CreateProspectivePensioner({
+  clickedItem,
+  setOpenBaseCard,
+  setOnCloseWarnings,
+}) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
 
@@ -100,6 +104,7 @@ function CreateProspectivePensioner({ clickedItem, setOpenBaseCard }) {
                     moveToNextTab={moveToNextTab}
                     moveToPreviousTab={moveToPreviousTab}
                     clickedItem={clickedItem}
+                    setOnCloseWarnings={setOnCloseWarnings}
                   />
                 </div>
               </TabPane>

@@ -827,6 +827,8 @@ const Preclaims = ({ status }) => {
       return 0;
     }
   };
+
+  const [onCloseWarnings, setOnCloseWarnings] = useState(null);
   return (
     <>
       {loading ? (
@@ -853,6 +855,8 @@ const Preclaims = ({ status }) => {
             fetchAllPreclaims={fetchAllPreclaims}
             isClaim={true}
             activeStep={clickedItem?.notification_status}
+            onCloseWarnings={onCloseWarnings}
+            setOnCloseWarnings={setOnCloseWarnings}
             steps={[
               'Data Capture',
               'Notification Scheduling',
@@ -864,6 +868,7 @@ const Preclaims = ({ status }) => {
             ]}
           >
             <CreateProspectivePensioner
+              setOnCloseWarnings={setOnCloseWarnings}
               setOpenBaseCard={setOpenBaseCard}
               openBaseCard={openBaseCard}
               clickedItem={clickedItem}

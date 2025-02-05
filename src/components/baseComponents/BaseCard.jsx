@@ -21,6 +21,7 @@ import BaseWorkFlow from './BaseWorkFlow';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
+import BaseWarningDialog from './BaseWarningDialog';
 
 function BaseCard({
   openBaseCard,
@@ -62,6 +63,8 @@ function BaseCard({
   retireeId,
   customDeleteFunction,
   largeCard,
+  onCloseWarnings,
+  setOnCloseWarnings,
 }) {
   const [isExpanded, setIsExpanded] = useState(
     isClaim || largeCard ? true : false
@@ -165,12 +168,22 @@ function BaseCard({
 
   const userId = auth.user ? auth.user.userId : null;
 
+  const [openWarning, setOpenWarning] = useState(false);
+
+  const handleOnClose = () => {
+    if (!onCloseWarnings) {
+      setOpenBaseCard(false);
+      setClickedItem && setClickedItem(null);
+    } else {
+      setOpenWarning(true);
+    }
+  };
+
   return (
     <Dialog
       open={openBaseCard}
       onClose={() => {
-        setOpenBaseCard(false);
-        setClickedItem && setClickedItem(null);
+        handleOnClose();
       }}
       fullWidth
       maxWidth="xl"
@@ -185,6 +198,19 @@ function BaseCard({
         },
       }}
     >
+      <BaseWarningDialog
+        open={openWarning}
+        onConfirm={() => {
+          setOpenBaseCard(false);
+          setClickedItem && setClickedItem(null);
+          setOpenWarning(false);
+          setOnCloseWarnings(null);
+        }}
+        onClose={() => {
+          setOpenWarning(false);
+        }}
+        message={onCloseWarnings}
+      />
       <BaseDeleteDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -409,7 +435,7 @@ function BaseCard({
                 marginRight: '10px',
                 color: '#006990',
               }}
-              onClick={() => setOpenBaseCard(false)}
+              onClick={() => handleOnClose()}
             >
               <ArrowBack sx={{ color: '#006990' }} />
             </IconButton>

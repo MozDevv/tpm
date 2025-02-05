@@ -48,15 +48,10 @@ import { validateField } from './PreclaimsValidator';
 dayjs.extend(isSameOrBefore);
 
 function NewPreclaim({
-  openCreate,
-  setOpenCreate,
-  moveToNextTab,
-  fetchAllPreclaims,
-  permissions,
   retireeId,
   setRetireeId,
-  setOpenBaseCard,
   clickedItem,
+  setOnCloseWarnings,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -333,7 +328,6 @@ function NewPreclaim({
 
   // State for form data
   const [formData, setFormData] = useState(getInitialFormData());
-  const router = useRouter();
 
   const handleInputChange = (e) => {
     if (retireeId) {
@@ -413,7 +407,7 @@ function NewPreclaim({
   const [countries, setCountries] = useState([]);
 
   const [constituencies, setConstituencies] = useState([]);
-  const { alert, setAlert } = useAlert();
+  const { setAlert } = useAlert();
   const [designations, setDesignations] = useState([]);
   const [postalAddress, setPostalAddress] = useState([]);
   const [exitGrounds, setExitGrounds] = useState([]);
@@ -660,31 +654,6 @@ function NewPreclaim({
 
   const token = localStorage.getItem('token');
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    const fields = sections.flatmap((section) => section.fields);
-    fields.forEach((field) => {
-      const value = formData[field.name];
-
-      // Required field validation
-
-      if (field.name === 'accountCode' && value) {
-      }
-      if (field.name === 'accountName' && value) {
-      }
-      if (
-        field.required &&
-        (value === undefined || value === null || value === '')
-      ) {
-        newErrors[field.name] = `${field.label} is required`;
-      }
-    });
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
   const [saving, setSaving] = useState(-1);
   const [fillBeneficiariesWarning, setFillBeneficiariesWarning] = useState({
     open: false,
@@ -896,6 +865,7 @@ function NewPreclaim({
               message:
                 'Prospective pensioner Information & Contact Details updated successfully',
             });
+            setOnCloseWarnings(false);
             fetchRetiree();
             setEditMode(false);
             return;
@@ -936,12 +906,16 @@ function NewPreclaim({
             'Prospective pensioner updated successfully, please proceed to the add Beneficiary Details'
           );
         setRetireeId(res.data.data);
+
         setAlert({
           open: true,
           message:
             'Please fill in the Beneficiaries Details for the deceased retiree',
           severity: 'warning',
         });
+        setOnCloseWarnings(
+          'Please fill in the Beneficiaries Details for the deceased retiree'
+        );
 
         localStorage.removeItem('retireeFormData');
 
@@ -1074,13 +1048,6 @@ function NewPreclaim({
   }, []);
 
   const [selectedCountryCode, setSelectedCountryCode] = useState('+254');
-  const handleCountryChange = (event) => {
-    setSelectedCountryCode(event.target.value);
-    setFormData({
-      ...formData,
-      phone_number: event.target.value + formData.phone_number,
-    });
-  };
 
   useEffect(() => {
     validateRetirementDate();
@@ -1104,6 +1071,7 @@ function NewPreclaim({
       [section]: !prevOpen[section],
     }));
   };
+
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -1470,6 +1438,7 @@ function NewPreclaim({
               <div className="h-[100px]">
                 <div className="gap-3 my-3">
                   <AddBeneficiaries
+                    setOnCloseWarnings={setOnCloseWarnings}
                     id={retireeId}
                     status={formData?.notification_status}
                   />

@@ -20,10 +20,10 @@ const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
   justifyContent: 'space-between',
 }));
 
-const BaseDeleteDialog = ({ open, onClose, onDelete, itemName }) => {
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete();
+const BaseWarningDialog = ({ open, onClose, onConfirm, message }) => {
+  const handleConfirm = () => {
+    if (onConfirm) {
+      onConfirm();
     }
     onClose();
   };
@@ -32,21 +32,21 @@ const BaseDeleteDialog = ({ open, onClose, onDelete, itemName }) => {
     <Dialog
       open={open}
       onClose={onClose}
-      aria-labelledby="delete-dialog-title"
-      aria-describedby="delete-dialog-description"
+      aria-labelledby="warning-dialog-title"
+      aria-describedby="warning-dialog-description"
       maxWidth="sm"
       fullWidth
     >
-      <CustomDialogTitle id="delete-dialog-title">
+      <CustomDialogTitle id="warning-dialog-title">
         <Box display="flex" alignItems="center">
-          <Warning color="error" fontSize="large" sx={{ fontSize: '32px' }} />
+          <Warning color="warning" fontSize="large" sx={{ fontSize: '32px' }} />
           <Typography
             variant="h6"
             component="span"
             sx={{ fontSize: '18px' }}
             marginLeft={1}
           >
-            Confirm Deletion
+            Warning
           </Typography>
         </Box>
         <IconButton edge="end" color="inherit" onClick={onClose}>
@@ -56,12 +56,9 @@ const BaseDeleteDialog = ({ open, onClose, onDelete, itemName }) => {
       <DialogContent>
         <p
           className="text-gray-800 mb-4 text-base"
-          id="delete-dialog-description"
+          id="warning-dialog-description"
         >
-          Are you sure you want to delete <strong>{itemName}</strong>?
-        </p>
-        <p className="text-gray-600 mt-5 text-sm">
-          This action cannot be undone.
+          {message}
         </p>
       </DialogContent>
       <DialogActions
@@ -76,12 +73,19 @@ const BaseDeleteDialog = ({ open, onClose, onDelete, itemName }) => {
         <Button color="primary" onClick={onClose} variant="outlined">
           Cancel
         </Button>
-        <Button onClick={handleDelete} color="primary" variant="contained">
-          Delete
+        <Button onClick={handleConfirm} color="primary" variant="contained">
+          Proceed
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default BaseDeleteDialog;
+BaseWarningDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func,
+  message: PropTypes.string.isRequired,
+};
+
+export default BaseWarningDialog;

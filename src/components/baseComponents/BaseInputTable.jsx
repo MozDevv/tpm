@@ -65,6 +65,7 @@ const BaseInputTable = ({
   dateOfFirstAppointment,
   isAddMoreFields,
   setTableInputData,
+  setOnCloseWarnings,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -135,6 +136,8 @@ const BaseInputTable = ({
             );
 
             const sortedData = sortData(res.data.data);
+
+            setOnCloseWarnings(false);
 
             let lastEndDate = null;
             let lastStartDate = null;
@@ -241,6 +244,7 @@ const BaseInputTable = ({
               }, {})
             );
 
+            setOnCloseWarnings(false);
             const sortedData = sortData(res.data.data);
 
             // Determine if we should fetch and append children
