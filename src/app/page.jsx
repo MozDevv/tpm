@@ -1,9 +1,9 @@
-"use client";
-import React, { useState } from "react";
-import { Typography } from "@mui/material";
-import dynamic from "next/dynamic";
+'use client';
+import React, { useState } from 'react';
+import { Typography } from '@mui/material';
+import dynamic from 'next/dynamic';
 
-const Auth = dynamic(() => import("@/components/authentication/Auth"));
+const Auth = dynamic(() => import('@/components/authentication/Auth'));
 
 function Login() {
   return (
@@ -22,7 +22,7 @@ function Login() {
           <div className="my-[50px]">
             <div className="mt-10 w-[100px] mb-10 h-[12px] rounded-full bg-primary"></div>
             <p className="text-[31px] leading-12 font-bold pr-[30px] w-[512px] text-primary">
-              Welcome to Treasury Pension Management Information System
+              The National Treasury Pension Management Information System
             </p>
           </div>
         </div>

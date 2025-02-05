@@ -31,7 +31,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/context/AlertContext';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { message, notification, Select } from 'antd';
+import { Alert, message, notification, Select } from 'antd';
 import { useMda } from '@/context/MdaContext';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -686,6 +686,10 @@ function NewPreclaim({
     return Object.keys(newErrors).length === 0;
   };
   const [saving, setSaving] = useState(-1);
+  const [fillBeneficiariesWarning, setFillBeneficiariesWarning] = useState({
+    open: false,
+    message: '',
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -891,7 +895,6 @@ function NewPreclaim({
               open: true,
               message:
                 'Prospective pensioner Information & Contact Details updated successfully',
-              severity: 'success',
             });
             fetchRetiree();
             setEditMode(false);
@@ -929,20 +932,19 @@ function NewPreclaim({
       if (res.data.succeeded && res.status === 200) {
         setSaving(2);
         formData.mortality_status == 1 &&
-          message.success(
+          message.warning(
             'Prospective pensioner updated successfully, please proceed to the add Beneficiary Details'
           );
-
         setRetireeId(res.data.data);
         setAlert({
           open: true,
-          message: 'Prospective pensioner created successfully',
-          severity: 'success',
+          message:
+            'Please fill in the Beneficiaries Details for the deceased retiree',
+          severity: 'warning',
         });
 
         localStorage.removeItem('retireeFormData');
-        //  clickedItem && moveToNextTab();
-        setRetireeId(res.data.data);
+
         return;
       }
 
@@ -1197,6 +1199,21 @@ function NewPreclaim({
                 </div> */}
               </div>
             </div>
+            {/* {true && (
+              <div
+                className="py-2 mt-2 absolute top-[-70px] left-40 w-[90%]"
+                style={{ fontFamily: 'Montserrat' }}
+              >
+                <Alert
+                  // message={fillBeneficiariesWarning.message}
+                  message="Please fill in the Beneficiaries' Details for the deceased retiree."
+                  type="warning"
+                  closable
+                  showIcon
+                  //onClose={onClose}
+                />
+              </div>
+            )} */}
 
             <div className="p-2 mt-[-15px]">
               {sections

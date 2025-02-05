@@ -459,40 +459,6 @@ const Preclaims = ({ status }) => {
   const { auth } = useAuth();
 
   const handleFilters = async (filter) => {
-    // const filter =
-    //   filterColumn && filterValue && (status || status === 0)
-    //     ? {
-    //         ...(filterColumn && {
-    //           'filterCriterion.criterions[2].propertyName': filterColumn,
-    //         }),
-    //         ...(filterValue && {
-    //           'filterCriterion.criterions[2].propertyValue': filterValue,
-    //         }),
-    //         ...(filterType && {
-    //           'filterCriterion.criterions[2].criterionType': filterType,
-    //         }),
-    //       }
-    //     : filterColumn && filterValue
-    //     ? {
-    //         ...(filterColumn && {
-    //           'filterCriterion.criterions[1].propertyName': filterColumn,
-    //         }),
-    //         ...(filterValue && {
-    //           'filterCriterion.criterions[1].propertyValue': filterValue,
-    //         }),
-    //         ...(filterType && {
-    //           'filterCriterion.criterions[1].criterionType': filterType,
-    //         }),
-    //       }
-    //     : {};
-    // const sort = {
-    //   ...(sortColumn && {
-    //     'sortProperties.propertyName': sortColumn,
-    //   }),
-    //   ...(sortCriteria !== 0 && {
-    //     'sortProperties.sortCriteria': sortCriteria,
-    //   }),
-    // };
     await fetchAllPreclaims(filter);
   };
 

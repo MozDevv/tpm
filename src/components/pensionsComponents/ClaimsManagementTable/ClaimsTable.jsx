@@ -46,6 +46,7 @@ import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import ClaimVerification from './reports/ClaimVerification';
 import GP178Report from './reports/GP178Report';
+import FilterComponent from '@/components/baseComponents/FilterComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -320,7 +321,11 @@ const ClaimsTable = ({ status }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const fetchAllPreclaims = async () => {
+  const handleFilters = async (filter) => {
+    await fetchAllPreclaims(filter);
+  };
+
+  const fetchAllPreclaims = async (filter) => {
     const filters =
       status !== null && status !== undefined
         ? {
@@ -335,6 +340,7 @@ const ClaimsTable = ({ status }) => {
         'paging.pageNumber': pageNumber,
         'paging.pageSize': pageSize,
         ...filters,
+        ...filter,
       });
       const rawData = res.data.data;
 
@@ -688,106 +694,13 @@ const ClaimsTable = ({ status }) => {
               timeout="auto"
               unmountOnExit
             >
-              <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-                <p className="text-md font-medium text-primary p-3">
-                  Filter By:
-                </p>
-                <Divider sx={{ px: 2 }} />
-                <div className="p-3">
-                  <label className="text-xs font-semibold text-gray-600">
-                    Keyword
-                  </label>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                      required
-                    />
-
-                    <IconButton onClick={handleClick}>
-                      <FilterList />
-                    </IconButton>
-                  </div>
-                </div>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                >
-                  <MenuItem>Equal</MenuItem>
-                  <MenuItem>Contains</MenuItem>
-                  <MenuItem>Not Equal</MenuItem>
-                </Menu>
-                <Divider />
-                <div className="flex flex-col item-center p-4 mt-3">
-                  <label className="text-xs font-semibold text-gray-600">
-                    Select Column
-                  </label>
-                  <select
-                    name="role"
-                    //value={selectedRole}
-                    //onChange={(e) => setSelectedRole(e.target.value)}
-                    className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                    required
-                  >
-                    <option value="Board Member">All</option>
-                    <option value="Admin">Id</option>
-                    <option value="Business Admin">Email Address</option>
-                    <option value="Support">Full Name</option>
-                  </select>
-                </div>
-                <div className="flex flex-col item-center p-4 mt-3">
-                  <label className="text-xs font-semibold text-gray-600 w-[100%]">
-                    Sort By:
-                  </label>
-                  <div className="flex items-center ">
-                    {' '}
-                    <select
-                      name="role"
-                      //value={selectedRole}
-                      //onChange={(e) => setSelectedRole(e.target.value)}
-                      className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
-                      required
-                    >
-                      <option value="Board Member">All</option>
-                      <option value="id">Id</option>
-                      <option value="email_address">Email Address</option>
-                      <option value="fullName">Full Name</option>
-                    </select>
-                    <Tooltip
-                      title={
-                        sortCriteria === 1
-                          ? 'Ascending Order'
-                          : 'Desceding Order'
-                      }
-                      placement="top"
-                    >
-                      <IconButton
-                        sx={{ mr: '-10px', ml: '-4px' }}
-                        onClick={() => {
-                          setSortCriteria(sortCriteria === 1 ? 2 : 1);
-                        }}
-                      >
-                        <SortByAlpha />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
-                </div>
-              </div>
-              <Button
-                variant="contained"
-                sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
-              >
-                Apply Filters
-              </Button>
+              <FilterComponent
+                columnDefs={colDefs}
+                filteredData={rowData}
+                onApplyFilters={handleFilters}
+                fetchData={fetchAllPreclaims}
+                startIndex={status === 0 || status ? 1 : 0}
+              />
             </Collapse>
             <div
               className="ag-theme-quartz flex flex-col"
