@@ -842,6 +842,25 @@ const Preclaims = ({ status }) => {
       fetchAllPreclaims();
     }
   }, [openApprove]);
+
+  const getStatus = (mdaId, status) => {
+    if (!mdaId) {
+      if (status === 0 || status) {
+        return 1;
+      } else {
+        return 0;
+      }
+    } else if (mdaId) {
+      if (status === 0 || status) {
+        return 2;
+      } else {
+        return 1;
+      }
+      return 1;
+    } else {
+      return 0;
+    }
+  };
   return (
     <>
       {loading ? (
@@ -936,13 +955,7 @@ const Preclaims = ({ status }) => {
                   filteredData={filteredData}
                   onApplyFilters={handleFilters}
                   fetchData={fetchAllPreclaims}
-                  startIndex={
-                    !mdaId && (status !== 0 || !status)
-                      ? 0
-                      : mdaId && !status && status !== 0
-                      ? 1
-                      : 2
-                  }
+                  startIndex={getStatus(mdaId, status)}
                 />
               </Collapse>
               <div

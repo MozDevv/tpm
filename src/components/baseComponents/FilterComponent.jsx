@@ -102,7 +102,7 @@ const FilterComponent = ({
       return acc;
     }, {});
 
-    //console.log('Filter Parameters:', filterParams);
+    console.log('Filter Parameters:', filterParams);
     onApplyFilters(filterParams); // Pass filterParams to the parent component
   };
 
