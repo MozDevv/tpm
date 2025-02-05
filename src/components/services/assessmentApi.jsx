@@ -59,6 +59,8 @@ api.interceptors.response.use(
 );
 const assessEndpoints = {
   getAssessmentClaims: '/api/Assessment/getclaims',
+  getAssessmentClaimById: (id) =>
+    `/api/Assessment/getclaims?filterCriterion.criterions[0].propertyName=stage&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].criterionType=0`,
   calculateAndAward: (id) => `/api/Assessment/CalculateAndAward?claim_id=${id}`,
   getClaimQualyfyingService: (id) =>
     `/api/Assessment/GetClaimQualifyingService?claim_id=${id}`,

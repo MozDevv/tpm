@@ -143,10 +143,9 @@ export const generateExcelTemplateWithApiService = async (
       // Map data to arrays based on selectedColumns
       const rows = data.map((item, index) => {
         console.log('Mapping item:', item); // Log the item being mapped
-        console.log('slcted columns', selectedColumns);
+        console.log('Selected columns:', selectedColumns);
         return selectedColumns.map((col) => {
           console.log('Mapping column:', col.field); // Log the column field being mapped
-          console.log('slcted columns', selectedColumns);
 
           if (!col.field) {
             return;
@@ -158,6 +157,9 @@ export const generateExcelTemplateWithApiService = async (
           if (value === undefined) {
             console.warn(`Field ${col.field} is undefined for item:`, item);
             return null; // or any default value you prefer
+          }
+          if (col.type === 'date' && value) {
+            return new Date(value); // Convert to Date object for date columns
           }
           return value === null ? 0 : value;
         });
@@ -239,6 +241,23 @@ export const generateExcelTemplateWithApiService = async (
       origin: 'A2',
     });
     console.log('Worksheet data added');
+
+    // Format date columns
+    selectedColumns.forEach((col, idx) => {
+      if (col.type === 'date') {
+        worksheetData.slice(1).forEach((row, rowIndex) => {
+          const cellAddress = XLSX.utils.encode_cell({
+            r: rowIndex + 1,
+            c: idx,
+          });
+          const cell = worksheet[cellAddress];
+          if (cell && cell.v) {
+            cell.t = 'd'; // Set cell type to date
+            cell.z = XLSX.SSF._table[14]; // Apply date format (e.g., 'm/d/yy')
+          }
+        });
+      }
+    });
 
     const columnWidths = selectedColumns.map((col, idx) => {
       const maxLength = Math.max(

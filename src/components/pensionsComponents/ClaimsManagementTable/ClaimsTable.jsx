@@ -47,6 +47,7 @@ import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import ClaimVerification from './reports/ClaimVerification';
 import GP178Report from './reports/GP178Report';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
+import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -83,6 +84,84 @@ export const statusIcons = {
   2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
   3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
+
+export const mapRowData = (items) =>
+  items.map((item) => ({
+    retiree: item?.prospectivePensioner?.id,
+    //  id: item?.claim_id,
+    claim_id: item?.claim_id,
+
+    id_claim: item?.id,
+
+    stage: item?.stage,
+    comments: item?.comments,
+    maintenance_case: item?.prospectivePensioner?.maintenance_case,
+    is_wcps: item?.prospectivePensioner?.is_wcps,
+    email_address: item?.prospectivePensioner?.email_address,
+    notification_status: item?.prospectivePensioner?.notification_status,
+    gender: item?.prospectivePensioner?.gender,
+    phone_number: item?.prospectivePensioner?.phone_number,
+    personal_number: item?.prospectivePensioner?.personal_number,
+    surname: item?.prospectivePensioner?.surname,
+    first_name: item?.prospectivePensioner?.first_name,
+    other_name: item?.prospectivePensioner?.other_name,
+    pension_award: item?.prospectivePensioner?.mda?.name,
+    name: item?.prospectivePensioner?.pension_award?.name,
+    national_id: item?.prospectivePensioner?.national_id,
+    kra_pin: item?.prospectivePensioner?.kra_pin,
+    retirement_date: item?.prospectivePensioner?.retirement_date,
+    dob: item?.prospectivePensioner?.dob,
+    date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
+    last_basic_salary_amount:
+      item?.prospectivePensioner?.last_basic_salary_amount,
+    mda_code: item?.prospectivePensioner?.mda?.code,
+    mda_description: item?.prospectivePensioner?.mda?.description,
+    mda_pensionCap_code: item?.prospectivePensioner?.mda?.pensionCap?.code,
+    mda_pensionCap_name: item?.prospectivePensioner?.mda?.pensionCap?.name,
+    mda_pensionCap_description:
+      item?.prospectivePensioner?.mda?.pensionCap?.description,
+    workHistories_length: item?.prospectivePensioner?.workHistories?.length,
+    bankDetails_length: item?.prospectivePensioner?.bankDetails?.length,
+    pensionAward_prefix: item?.prospectivePensioner?.pensionAward?.prefix,
+    pensionAward_code: item?.prospectivePensioner?.pensionAward?.code,
+    pensionAward_description:
+      item?.prospectivePensioner?.pensionAward?.description,
+    pensionAward_start_date:
+      item?.prospectivePensioner?.pensionAward?.start_date,
+    pensionAward_end_date: item?.prospectivePensioner?.pensionAward?.end_date,
+    pensionAward_pensionCap_code:
+      item?.prospectivePensioner?.pensionAward?.pensionCap?.code,
+    pensionAward_pensionCap_name:
+      item?.prospectivePensioner?.pensionAward?.pensionCap?.name,
+    pensionAward_pensionCap_description:
+      item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
+    pensionAward_pensionCap_id:
+      item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
+    approval_status: item?.document_status,
+
+    //////
+
+    retirement_date: item?.prospectivePensioner?.retirement_date,
+    date_from_which_pension_will_commence:
+      item?.prospectivePensioner?.date_from_which_pension_will_commence,
+    authority_for_retirement_dated:
+      item?.prospectivePensioner?.authority_for_retirement_dated,
+    authority_for_retirement_reference:
+      item?.prospectivePensioner?.authority_for_retirement_reference,
+    date_of_first_appointment:
+      item?.prospectivePensioner?.date_of_first_appointment,
+    date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
+    country: item?.prospectivePensioner?.country,
+    city_town: item?.prospectivePensioner?.city_town,
+    pension_commencement_date:
+      item?.prospectivePensioner?.pension_commencement_date,
+    postal_address: item?.prospectivePensioner?.postal_address,
+    id: item.prospectivePensioner?.id,
+    exit_grounds: item?.prospectivePensioner?.exitGround.name,
+
+    prospectivePensionerAwards:
+      item?.prospectivePensioner?.prospectivePensionerAwards,
+  }));
 
 const colDefs = [
   {
@@ -461,9 +540,10 @@ const ClaimsTable = ({ status }) => {
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
   const [openClaimVerification, setOpenClaimVerification] = useState(false);
+  const [openExcel, setOpenExcel] = useState(false);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
-    openInExcel: () => exportData(),
+    openInExcel: () => setOpenExcel(true),
 
     reports: () => console.log('Reports clicked'),
 
@@ -556,6 +636,24 @@ const ClaimsTable = ({ status }) => {
 
   return (
     <>
+      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+        <BaseExcelComponent
+          setOpenExcel={setOpenExcel}
+          fetchApiService={apiService.get}
+          fetchApiEndpoint={
+            status
+              ? claimsEndpoints.getClaimsByStatus(status)
+              : claimsEndpoints.getClaims
+          }
+          columns={colDefs}
+          transformData={mapRowData}
+          fileName={
+            status
+              ? `Claims_${notificationStatusMap[status].name}`
+              : 'Claims Listing'
+          }
+        />
+      </Dialog>
       <Dialog
         open={openClaimVerification}
         onClose={() => setOpenClaimVerification(false)}

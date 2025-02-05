@@ -256,18 +256,7 @@ const BaseTable = ({
 
   return (
     <div>
-      <Dialog
-        open={openExcel}
-        onClose={() => setOpenExcel(false)}
-        sx={{
-          '& .MuiPaper-root': {
-            minHeight: '55vh',
-            maxHeight: '55vh',
-            minWidth: '30vw',
-            maxWidth: '30vw',
-          },
-        }}
-      >
+      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}

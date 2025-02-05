@@ -15,6 +15,7 @@ import {
   MenuItem,
   Tooltip,
   Pagination,
+  Dialog,
 } from '@mui/material';
 import {
   AccessTime,
@@ -65,6 +66,7 @@ import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { useStatus } from '@/context/StatusContext';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
+import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -681,10 +683,11 @@ const Preclaims = ({ status }) => {
   const [openApprove, setOpenApprove] = useState(false);
 
   const { workFlowChange, setWorkFlowChange } = useStatus();
+  const [openExcel, setOpenExcel] = useState(false);
 
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
-    openInExcel: () => exportData(),
+    openInExcel: () => setOpenExcel(true),
     // create: () => router.push("/pensions/preclaims/listing/new"),
     ...((status === 0 || !status) && {
       create: () => {
@@ -837,6 +840,20 @@ const Preclaims = ({ status }) => {
         </p>
       ) : (
         <div className=" relative h-full w-full overflow-hidden">
+          <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+            <BaseExcelComponent
+              setOpenExcel={setOpenExcel}
+              fetchApiService={apiService.get}
+              fetchApiEndpoint={preClaimsEndpoints.getPreclaims}
+              columns={colDefs}
+              transformData={mapRowData}
+              fileName={
+                status
+                  ? `Preclaims_${notificationStatusMap[status].name}`
+                  : 'Preclaims Listing'
+              }
+            />
+          </Dialog>
           <BaseApprovalCard
             openApprove={openApprove}
             setOpenApprove={setOpenApprove}

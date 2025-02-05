@@ -39,7 +39,10 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import ReturnToPreclaims from '@/components/pensionsComponents/ClaimsManagementTable/ReturnToPreclaims';
 import AssessmentCard from './AssessmentCard';
-import { statusIcons } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
+import {
+  mapRowData,
+  statusIcons,
+} from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
 import PushToFinance from './PushToFinance';
 import Page5Report from '../reports/Page5Report';
 import AppendixReport from '../reports/AppendixReport';
@@ -47,6 +50,7 @@ import GP178Report from '@/components/pensionsComponents/ClaimsManagementTable/r
 import DsoReport from '@/components/pensionsComponents/ClaimsManagementTable/reports/DsoReport';
 import Cap196Death from '@/components/pensionsComponents/ClaimsManagementTable/reports/Cap196Death';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -538,9 +542,10 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [openPushToFinance, setOpenPushToFinance] = useState(false);
   const [openApprove, setOpenApprove] = useState(0);
   const [workFlowChange, setWorkFlowChange] = useState(null);
+  const [openExcel, setOpenExcel] = useState(false);
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
-    openInExcel: () => exportData(),
+    openInExcel: () => setOpenExcel(true),
 
     moveToAssessmentApproval: () => {
       setOpenAction(0);
@@ -728,6 +733,22 @@ const AssessmentTable = ({ status, statusArr }) => {
 
   return (
     <>
+      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+        <BaseExcelComponent
+          setOpenExcel={setOpenExcel}
+          fetchApiService={assessApiService.get}
+          fetchApiEndpoint={
+            status
+              ? assessEndpoints.getAssessmentClaimById(status)
+              : assessEndpoints.getClaims
+          }
+          columns={colDefs}
+          transformData={mapRowData}
+          fileName={
+            status ? `Claims_${notificationStatusMap[status].name}` : 'Listing'
+          }
+        />
+      </Dialog>
       <BaseApprovalCard
         openApprove={openApprove}
         setOpenApprove={setOpenApprove}

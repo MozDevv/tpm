@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, MenuItem, Select, Divider, IconButton } from '@mui/material';
+import { Button, Divider, IconButton } from '@mui/material';
 import { Checkbox, message } from 'antd';
 import { Close } from '@mui/icons-material';
 import { generateExcelTemplateWithApiService } from '@/utils/excelHelper';
@@ -31,7 +31,12 @@ const BaseExcelComponent = ({
   }, [selectedColumns]);
 
   const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
+    const value = parseInt(event.target.value, 10);
+    if (value >= 1 && value <= 1000000) {
+      setPageSize(value);
+    } else {
+      message.error('Page size must be between 1 and 1,000,000.');
+    }
   };
 
   const exportToExcel = () => {
@@ -59,24 +64,27 @@ const BaseExcelComponent = ({
           <Close onClick={() => setOpenExcel(false)} />
         </IconButton>
       </div>
-      .
+      <div className="mb-4 pb-5">
+        <h2 className="text-xl text-primary font-semibold mb-2 text-center w-full">
+          Generate Excel Report
+        </h2>
+        <h3 className="text-sm text-primary font-medium  text-center w-full">
+          Select columns and options to generate your Excel file
+        </h3>
+      </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">
           Select Page Size:
         </label>
-        <Select
+        <input
+          type="number"
           value={pageSize}
           onChange={handlePageSizeChange}
-          variant="outlined"
-          size="small"
-          fullWidth
-        >
-          {[10, 20, 50, 100].map((size) => (
-            <MenuItem key={size} value={size}>
-              {size}
-            </MenuItem>
-          ))}
-        </Select>
+          min="1"
+          max="1000000"
+          className="w-full p-2 border rounded"
+        />
         <Divider sx={{ py: 1 }} />
         <div className="mb-5 mt-4 py-2">
           <label className="inline-flex items-center">
@@ -92,18 +100,19 @@ const BaseExcelComponent = ({
           </label>
         </div>
       </div>
+
       {/* Column Selection */}
       <div className="mb-4 pt-4">
         <label className="block text-sm font-medium mb-2">
           Select Columns to Display:
         </label>
-        <div className="grid grid-cols-3 gap-2 mt-3">
+        <div className="grid grid-cols-3 gap-2 mt-3 max-h-[400px] overflow-y-auto">
           {columns.map((column, index) => (
             <div key={column.field} className="w-full mb-2">
               <Checkbox
                 checked={selectedColumns.includes(column)}
                 onChange={() => handleColumnChange(column)}
-                style={{ whiteSpace: 'nowrap' }} // Prevent line breaks
+                //  style={{ whiteSpace: 'nowrap' }} // Prevent line breaks
               >
                 {column.headerName}
               </Checkbox>
@@ -111,6 +120,7 @@ const BaseExcelComponent = ({
           ))}
         </div>
       </div>
+
       {/* Generate Button */}
       <div className="mt-10">
         <Button

@@ -15,6 +15,9 @@ const claimsEndpoints = {
   getClaims: '/api/Claims/getClaims',
   moveClaimStatus: '/api/claims/MoveClaimStatus',
 
+  getClaimsByStatus: (status) =>
+    `/api/Claims/getClaims?filterCriterion.criterions[0].propertyName=stage&filterCriterion.criterions[0].propertyValue=${status}&filterCriterion.criterions[0].criterionType=0`,
+
   mdas: '/api/Setups/Getmdas',
   createPayrollRecord: '/api/Payroll/CreatePayrollRecord',
 };
