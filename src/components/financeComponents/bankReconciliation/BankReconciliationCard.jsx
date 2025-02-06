@@ -134,7 +134,7 @@ function BankReconciliationCard({
   const getBankSubledger = async () => {
     try {
       const response = await apiService.get(
-        financeEndpoints.bankSubLedgerPayments
+        financeEndpoints.getBankSubledgerIsReconciliationFalse
       );
       if (response.status === 200 && response.data.succeeded) {
         setBankSubledger(

@@ -99,6 +99,7 @@ const headerStyle = {
 import { saveAs } from 'file-saver';
 import dayjs from 'dayjs';
 import ExcelJS from 'exceljs';
+import { message } from 'antd';
 
 export const generateExcelTemplateWithApiService = async (
   fetchApiEndpoint,
@@ -266,6 +267,7 @@ export const generateExcelTemplateWithApiService = async (
     setLoading(false); // Turn off loading when the download starts
   } catch (error) {
     console.error('Error generating Excel template:', error);
+    message.error('Error generating Excel template. Please try again.');
     setLoading(false); // Turn off loading if there's an error
   }
 };

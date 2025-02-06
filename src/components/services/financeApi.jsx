@@ -196,6 +196,9 @@ const financeEndpoints = {
   bankSubLedger: '/api/Posting/GetBankSubLedger',
   glSubLedger: '/api/Posting/GetGeneralLedgerDetail',
 
+  getBankSubledgerIsReconciliationFalse:
+    '/Posting/GetBankSubLedger?isReconciliation=false',
+
   bankSubLedgerPayments: '/Posting/GetBankSubLedger',
 
   addPaymentMethod: '/AccountsSetup/AddPaymentMethod',

@@ -394,6 +394,8 @@ const BankReconciliation = () => {
     } catch (error) {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
+    } finally {
+      setRefreshBankStatements((prev) => !prev);
     }
   };
   const removeMatch = async () => {
@@ -439,6 +441,8 @@ const BankReconciliation = () => {
     } catch (error) {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
+    } finally {
+      setRefreshBankStatements((prev) => !prev);
     }
   };
 
@@ -464,6 +468,8 @@ const BankReconciliation = () => {
     } catch (error) {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
+    } finally {
+      setRefreshBankStatements((prev) => !prev);
     }
   };
 
@@ -501,6 +507,8 @@ const BankReconciliation = () => {
     } catch (error) {
       console.error('Error reconciling bank details:', error);
       message.error('An error occurred while reconciling bank details.');
+    } finally {
+      setRefreshBankStatements((prev) => !prev);
     }
   };
 

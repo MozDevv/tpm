@@ -231,8 +231,7 @@ const BaseInputForPensionableSalary = ({
                 return acc;
               }, {})
             );
-
-            const mappedData = res.data.data.map((row) => {
+            const mappedData = res.data.data.map((row, index, array) => {
               const updatedRow = { ...row };
 
               if (row.salaryReviews && row.salaryReviews.length > 0) {
@@ -243,16 +242,28 @@ const BaseInputForPensionableSalary = ({
                     .split('T')[0]
                     .replaceAll('-', '_')}`;
 
-                  // updatedRow[reviewDateKey] = parseFloat(
-                  //   salaryReview.new_salary
-                  // );
-                  Object.assign(row, {
+                  Object.assign(updatedRow, {
                     [reviewDateKey]: parseFloat(salaryReview.new_salary),
                   });
+
+                  // Check previous rows and assign the new salary if they are before the review date
+                  for (let i = index - 1; i >= 0; i--) {
+                    const previousRow = array[i];
+                    const previousReviewDateKey = `new_salary_${reviewDate
+                      .split('T')[0]
+                      .replaceAll('-', '_')}`;
+                    if (!previousRow[previousReviewDateKey]) {
+                      Object.assign(previousRow, {
+                        [previousReviewDateKey]: parseFloat(
+                          salaryReview.new_salary
+                        ),
+                      });
+                    }
+                  }
                 });
               }
 
-              return row;
+              return updatedRow;
             });
 
             // const updatedRows = res.data.data.map((row) => {

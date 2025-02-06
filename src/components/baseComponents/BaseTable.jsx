@@ -278,14 +278,13 @@ const BaseTable = ({
       )}
       <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
-          loading={excelLoading}
-          setLoading={setExcelLoading}
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}
           columns={columnDefs}
           transformData={transformData}
           fileName={currentTitle}
+          setLoading={setExcelLoading}
         />
       </Dialog>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
