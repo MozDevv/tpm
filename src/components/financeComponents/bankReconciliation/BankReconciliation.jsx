@@ -345,7 +345,7 @@ const BankReconciliation = () => {
     },
   ];
 
-  const [refreshBankStatements, setRefreshBankStatements] = useState(false);
+  const [refreshBankStatements, setRefreshBankStatements] = useState(1);
   const [totalDifference, setTotalDifference] = useState(0);
 
   const submitReconciliation = async () => {
@@ -424,10 +424,10 @@ const BankReconciliation = () => {
       });
 
       if (response.status === 200 && response.data.succeeded) {
-        setRefreshBankStatements((prev) => !prev);
         message.success(
           'Statement matched successful Entry created successfully'
         );
+        setRefreshBankStatements(2);
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false
@@ -442,7 +442,7 @@ const BankReconciliation = () => {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
     } finally {
-      setRefreshBankStatements((prev) => !prev);
+      setRefreshBankStatements(3);
     }
   };
 
@@ -453,8 +453,8 @@ const BankReconciliation = () => {
       );
 
       if (response.data.succeeded) {
-        setRefreshBankStatements((prev) => !prev);
         message.success('Uploaded document removed successfully');
+        setRefreshBankStatements(4);
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false
@@ -469,7 +469,7 @@ const BankReconciliation = () => {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
     } finally {
-      setRefreshBankStatements((prev) => !prev);
+      setRefreshBankStatements(12);
     }
   };
 
@@ -492,8 +492,8 @@ const BankReconciliation = () => {
         response.data.succeeded &&
         response.data.messages[0]
       ) {
-        setRefreshBankStatements((prev) => !prev);
         message.success(response.data.messages[0]);
+        setRefreshBankStatements(23);
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false
@@ -508,7 +508,7 @@ const BankReconciliation = () => {
       console.error('Error reconciling bank details:', error);
       message.error('An error occurred while reconciling bank details.');
     } finally {
-      setRefreshBankStatements((prev) => !prev);
+      setRefreshBankStatements(43);
     }
   };
 
