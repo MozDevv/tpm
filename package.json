@@ -22,6 +22,7 @@
     "apexcharts": "^3.49.1",
     "axios": "^1.7.2",
     "dayjs": "^1.11.12",
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.11.10",
     "html2pdf.js": "^0.10.2",

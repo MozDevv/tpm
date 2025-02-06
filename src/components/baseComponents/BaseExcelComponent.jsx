@@ -11,6 +11,7 @@ const BaseExcelComponent = ({
   transformData,
   fileName,
   setOpenExcel,
+  setLoading,
 }) => {
   // Initialize selectedColumns with all columns by default
   const [selectedColumns, setSelectedColumns] = useState(columns);
@@ -26,6 +27,14 @@ const BaseExcelComponent = ({
     console.log('Selected Columns:', selectedColumns);
   };
 
+  const handleSelectAllChange = () => {
+    if (selectedColumns.length === columns.length) {
+      setSelectedColumns([]);
+    } else {
+      setSelectedColumns(columns);
+    }
+  };
+
   useEffect(() => {
     console.log('columns', columns);
   }, [selectedColumns]);
@@ -35,7 +44,7 @@ const BaseExcelComponent = ({
     if (value >= 1 && value <= 1000000) {
       setPageSize(value);
     } else {
-      message.error('Page size must be between 1 and 1,000,000.');
+      // message.error('Page size must be between 1 and 1,000,000.');
     }
   };
 
@@ -53,7 +62,8 @@ const BaseExcelComponent = ({
       'Sheet1',
       pageSize,
       selectedColumns,
-      skipBlankEntries
+      skipBlankEntries,
+      setLoading
     );
   };
 
@@ -68,13 +78,13 @@ const BaseExcelComponent = ({
         <h2 className="text-xl text-primary font-semibold mb-2 text-center w-full">
           Generate Excel Report
         </h2>
-        <h3 className="text-sm text-primary font-medium  text-center w-full">
+        <h3 className="text-sm text-primary font-medium text-center w-full">
           Select columns and options to generate your Excel file
         </h3>
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">
+        <label className="block text-sm font-medium mb-2 text-primary">
           Select Page Size:
         </label>
         <input
@@ -94,7 +104,7 @@ const BaseExcelComponent = ({
               onChange={() => setSkipBlankEntries(!skipBlankEntries)}
               className="mr-2"
             />
-            <label className="block text-sm font-medium">
+            <label className="block text-sm font-medium text-primary">
               Skip Blank Entries
             </label>
           </label>
@@ -103,9 +113,21 @@ const BaseExcelComponent = ({
 
       {/* Column Selection */}
       <div className="mb-4 pt-4">
-        <label className="block text-sm font-medium mb-2">
+        <label className="block text-sm font-medium mb-4 text-primary">
           Select Columns to Display:
         </label>
+        <div className="mb-2">
+          <Checkbox
+            checked={selectedColumns.length === columns.length}
+            indeterminate={
+              selectedColumns.length > 0 &&
+              selectedColumns.length < columns.length
+            }
+            onChange={handleSelectAllChange}
+          >
+            Select All / Unselect All
+          </Checkbox>
+        </div>
         <div className="grid grid-cols-3 gap-2 mt-3 max-h-[400px] overflow-y-auto">
           {columns.map((column, index) => (
             <div key={column.field} className="w-full mb-2">

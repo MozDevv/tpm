@@ -96,6 +96,10 @@ const headerStyle = {
   alignment: { horizontal: 'center' },
 };
 
+import { saveAs } from 'file-saver';
+import dayjs from 'dayjs';
+import ExcelJS from 'exceljs';
+
 export const generateExcelTemplateWithApiService = async (
   fetchApiEndpoint,
   fetchApiService,
@@ -105,191 +109,164 @@ export const generateExcelTemplateWithApiService = async (
   pageSize = 10000,
   selectedColumns = [],
   skipBlankEntries = false,
-  setOpenExcel
+  setLoading, // Added to control loading state
+  loading // Added to track loading state
 ) => {
   try {
-    console.log('Calling API with endpoint:', fetchApiEndpoint);
-    console.log('Selected Columns:', selectedColumns);
-
-    // Ensure selectedColumns is an array
     if (!Array.isArray(selectedColumns) || selectedColumns.length === 0) {
       console.error('Selected columns must be a non-empty array');
       return;
     }
 
+    setLoading(true); // Turn on loading before starting the process
+
     const response = await fetchApiService(fetchApiEndpoint, {
       'paging.pageSize': pageSize,
     });
-
-    console.log('API response:', response);
     const { data } = response.data;
-    console.log('Data received from API:', data);
 
-    // Ensure mapDataFunction is a function
     if (typeof mapDataFunction !== 'function') {
       console.error('Invalid mapDataFunction. It must be a function');
+      setLoading(false); // Turn off loading if mapDataFunction is invalid
       return;
     }
 
-    // Transform data using mapDataFunction
-    const transformedData = mapDataFunction(data);
-    console.log('Transformed data:', transformedData);
+    const startTime = performance.now();
+    const dataWithFormattedDates = await Promise.all(
+      data.map(async (item) => {
+        const formattedItem = await Object.keys(item).reduce(
+          async (accPromise, key) => {
+            const acc = await accPromise;
+            const column = selectedColumns.find((col) => col.field === key);
+            if (column) {
+              const value = item[key];
+              if (column.valueFormatter) {
+                // Use the valueFormatter function if defined
+                acc[key] = column.valueFormatter({ value });
+              } else if (
+                typeof value === 'string' &&
+                dayjs(value, dayjs.ISO_8601, true).isValid() &&
+                column.headerName.toLowerCase().includes('date')
+              ) {
+                const date = dayjs(value);
+                acc[key] = `${date.date().toString().padStart(2, '0')}/${(
+                  date.month() + 1
+                )
+                  .toString()
+                  .padStart(2, '0')}/${date.year()}`;
+              } else {
+                acc[key] = value;
+              }
+            } else {
+              acc[key] = item[key];
+            }
+            return acc;
+          },
+          Promise.resolve({})
+        );
 
-    // Map worksheet data based on selected columns
-    const mapworksheet = (data, selectedColumns) => {
-      // Extract headers from selectedColumns
+        return formattedItem;
+      })
+    );
+
+    console.log('Data with formatted dates:', dataWithFormattedDates);
+    const endTime = performance.now();
+    console.log(`Processing time: ${endTime - startTime} milliseconds`);
+
+    //return;
+    const transformedData = mapDataFunction(dataWithFormattedDates);
+
+    const mapWorksheetData = (data, selectedColumns) => {
       const headers = selectedColumns.map((col) => col.headerName);
-
-      // Map data to arrays based on selectedColumns
       const rows = data.map((item, index) => {
-        console.log('Mapping item:', item); // Log the item being mapped
-        console.log('Selected columns:', selectedColumns);
         return selectedColumns.map((col) => {
-          console.log('Mapping column:', col.field); // Log the column field being mapped
+          if (!col.field) return;
+          if (col.field === 'no') return index + 1;
 
-          if (!col.field) {
-            return;
+          let value = item[col.field];
+
+          if (col.type === 'date' && typeof value === 'string') {
+            const parsedDate = new Date(value);
+            return isNaN(parsedDate.getTime()) ? '' : parsedDate;
           }
-          if (col.field === 'no') {
-            return index + 1;
-          }
-          const value = item[col.field];
-          if (value === undefined) {
-            console.warn(`Field ${col.field} is undefined for item:`, item);
-            return null; // or any default value you prefer
-          }
-          if (col.type === 'date' && value) {
-            return new Date(value); // Convert to Date object for date columns
-          }
-          return value === null ? 0 : value;
+
+          return value === undefined || value === null ? '' : value;
         });
       });
-
-      console.log('rows', rows);
-      console.log('mapped data', [headers, ...rows]);
 
       return [headers, ...rows];
     };
 
-    let worksheetData = mapworksheet(transformedData, selectedColumns);
-    console.log('Mapped worksheet data:', worksheetData);
+    let worksheetData = mapWorksheetData(transformedData, selectedColumns);
 
-    // Ensure worksheetData is valid
-    if (!Array.isArray(worksheetData) || worksheetData.length === 0) {
-      console.error('Mapped data is not valid or empty:', worksheetData);
-      return;
-    }
-
-    if (!Array.isArray(worksheetData[0])) {
-      console.error(
-        'The first row of worksheet data is not an array:',
-        worksheetData[0]
-      );
-      return;
-    }
-
-    // Optionally skip blank entries
     if (skipBlankEntries) {
       worksheetData = worksheetData.filter((row) =>
         row.some((cell) => cell !== null && cell !== undefined && cell !== '')
       );
-      console.log(
-        'Worksheet data after removing blank entries:',
-        worksheetData
-      );
     }
 
-    // Check if worksheetData has entries after filtering
     if (worksheetData.length === 0) {
       console.error('No data to generate Excel. Worksheet is empty.');
+      setLoading(false); // Turn off loading if no data to process
       return;
     }
 
-    // Define header styles
-    const headerStyle = {
-      font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 14 },
-      fill: { fgColor: { rgb: '4F81BD' } },
-      alignment: { horizontal: 'center', vertical: 'center' },
-      border: {
-        top: { style: 'thin', color: { rgb: '000000' } },
-        bottom: { style: 'thin', color: { rgb: '000000' } },
-        left: { style: 'thin', color: { rgb: '000000' } },
-        right: { style: 'thin', color: { rgb: '000000' } },
-      },
-    };
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(sheetName);
 
-    // Create an Excel worksheet and workbook
-    console.log('Creating Excel workbook and worksheet');
-    const worksheet = XLSX.utils.aoa_to_sheet([]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    // Add headers and apply styles
-    XLSX.utils.sheet_add_aoa(worksheet, [worksheetData[0]], { origin: 'A1' });
-    worksheet['!rows'] = [{ hpx: 25 }]; // Set row height for headers
-
-    // Apply styles to header cells
-    worksheetData[0].forEach((header, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: index });
-      worksheet[cellAddress] = { t: 's', v: header };
-      worksheet[cellAddress].s = headerStyle;
+    // Add headers and styles
+    const headerRow = worksheet.addRow(worksheetData[0]);
+    headerRow.eachCell((cell) => {
+      cell.style = {
+        font: { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '006990' },
+        },
+        alignment: { horizontal: 'center', vertical: 'middle' },
+        border: {
+          top: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
+        },
+      };
     });
-    console.log('Header styles applied');
 
-    // Add the remaining data
-    XLSX.utils.sheet_add_aoa(worksheet, worksheetData.slice(1), {
-      origin: 'A2',
-    });
-    console.log('Worksheet data added');
-
-    // Format date columns
-    selectedColumns.forEach((col, idx) => {
-      if (col.type === 'date') {
-        worksheetData.slice(1).forEach((row, rowIndex) => {
-          const cellAddress = XLSX.utils.encode_cell({
-            r: rowIndex + 1,
-            c: idx,
-          });
-          const cell = worksheet[cellAddress];
-          if (cell && cell.v) {
-            cell.t = 'd'; // Set cell type to date
-            cell.z = XLSX.SSF._table[14]; // Apply date format (e.g., 'm/d/yy')
+    // Add rows
+    worksheetData.slice(1).forEach((row) => {
+      const newRow = worksheet.addRow(row);
+      row.forEach((cellValue, idx) => {
+        const col = selectedColumns[idx];
+        if (col?.type === 'date' && typeof cellValue === 'string') {
+          const parsedDate = new Date(cellValue);
+          if (!isNaN(parsedDate.getTime())) {
+            newRow.getCell(idx + 1).value = parsedDate;
+            newRow.getCell(idx + 1).numFmt = 'dd/mm/yyyy';
           }
-        });
-      }
+        }
+      });
     });
 
-    const columnWidths = selectedColumns.map((col, idx) => {
-      const maxLength = Math.max(
+    worksheet.columns = selectedColumns.map((col, idx) => ({
+      key: col.field,
+      width: Math.max(
+        10,
         ...worksheetData.map((row) => (row[idx] ? String(row[idx]).length : 10))
-      );
-      return { width: Math.max(maxLength, 10) };
+      ),
+    }));
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    worksheet['!cols'] = columnWidths;
-    console.log('Column widths set:', columnWidths);
+    saveAs(blob, fileName);
 
-    // Create the Excel file and trigger download
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    const url = window.URL.createObjectURL(blob);
-
-    // Create and click a temporary download link
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    console.log('File download triggered');
-
-    // Clean up
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url); // Avoid memory leak by revoking object URL
-    console.log('Download link removed and object URL revoked');
+    setLoading(false); // Turn off loading when the download starts
   } catch (error) {
     console.error('Error generating Excel template:', error);
+    setLoading(false); // Turn off loading if there's an error
   }
 };
 

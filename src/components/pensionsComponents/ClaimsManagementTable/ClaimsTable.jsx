@@ -16,6 +16,7 @@ import {
   Tooltip,
   Pagination,
   Dialog,
+  Backdrop,
 } from '@mui/material';
 import {
   AccessTime,
@@ -634,8 +635,26 @@ const ClaimsTable = ({ status }) => {
     return { loadingMessage: 'Loading NOT...' };
   }, []);
 
+  const [excelLoading, setExcelLoading] = useState(false);
   return (
     <>
+      {excelLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 999999 }}
+          open={excelLoading}
+          onClick={() => setExcelLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating Excel File
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
           setOpenExcel={setOpenExcel}
@@ -648,10 +667,11 @@ const ClaimsTable = ({ status }) => {
           columns={colDefs}
           transformData={mapRowData}
           fileName={
-            status
+            status || status === 0
               ? `Claims_${notificationStatusMap[status].name}`
               : 'Claims Listing'
           }
+          setLoading={setExcelLoading}
         />
       </Dialog>
       <Dialog

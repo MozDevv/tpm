@@ -4,6 +4,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import {
+  Backdrop,
   Box,
   Button,
   Collapse,
@@ -254,10 +255,31 @@ const BaseTable = ({
     return { loadingMessage: 'Loading...' };
   }, []);
 
+  const [excelLoading, setExcelLoading] = useState(false);
+
   return (
     <div>
+      {excelLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 999999 }}
+          open={excelLoading}
+          onClick={() => setExcelLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating Excel File
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
+          loading={excelLoading}
+          setLoading={setExcelLoading}
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}

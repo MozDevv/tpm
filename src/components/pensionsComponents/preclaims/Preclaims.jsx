@@ -16,6 +16,7 @@ import {
   Tooltip,
   Pagination,
   Dialog,
+  Backdrop,
 } from '@mui/material';
 import {
   AccessTime,
@@ -832,8 +833,27 @@ const Preclaims = ({ status }) => {
   };
 
   const [onCloseWarnings, setOnCloseWarnings] = useState(null);
+
+  const [excelLoading, setExcelLoading] = useState(false);
   return (
     <>
+      {excelLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 999999 }}
+          open={excelLoading}
+          onClick={() => setExcelLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating Excel File
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       {loading ? (
         <p>
           <Spinner />
@@ -852,6 +872,7 @@ const Preclaims = ({ status }) => {
                   ? `Preclaims_${notificationStatusMap[status].name}`
                   : 'Preclaims Listing'
               }
+              setLoading={setExcelLoading}
             />
           </Dialog>
           <BaseApprovalCard
