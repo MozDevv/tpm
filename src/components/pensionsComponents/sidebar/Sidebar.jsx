@@ -314,6 +314,10 @@ export const menuItems = [
     icon: <ReceiptLong />,
     children: [
       {
+        title: 'Pensioners Listing',
+        path: '/pensions/payroll/pensioners-listing',
+      },
+      {
         title: 'Main Payroll',
         // path: '/pensions/payroll/main-payroll/payroll-run',
         subChildren: [
