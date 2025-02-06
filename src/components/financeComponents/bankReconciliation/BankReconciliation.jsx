@@ -454,11 +454,12 @@ const BankReconciliation = () => {
 
       if (response.data.succeeded) {
         message.success('Uploaded document removed successfully');
-        setRefreshBankStatements(4);
+        setRefreshBankStatements(14);
       } else if (
         response.data.messages[0] &&
         response.data.succeeded === false
       ) {
+        setRefreshBankStatements(812);
         message.error(response.data.messages[0].message);
       } else {
         console.warn('Matching Failed:', response.data);
