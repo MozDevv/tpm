@@ -635,7 +635,10 @@ const Preclaims = ({ status }) => {
     );
     setIsSendNotificationEnabled(allUnnotified);
 
-    // console.log("Selected Rows:", selectedData);
+    console.log(
+      `This is the retireee Id for ${selectedData[0].first_name}🟢🟢🟢🟢 =>`,
+      selectedData[0].retiree
+    );
   };
 
   const [openNotification, setOpenNotification] = useState(false);

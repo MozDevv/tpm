@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -16,6 +16,8 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const contentRef = useRef();
 
   const getTrialBalance = async () => {
     try {
@@ -459,6 +461,69 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       .replace(/^./, (str) => str.toUpperCase());
   };
 
+  const handleDownload = () => {
+    setLoading(true);
+    const element = contentRef.current;
+
+    const fixedWidth = 750; // Reduced width in pixels
+    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
+
+    // Define options for the PDF
+    const options = {
+      margin: 0.5, // Default margin (in inches)
+      filename: 'Payment_Voucher.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+    };
+
+    // Create a wrapper to hold the cloned content
+    const wrapper = document.createElement('div');
+    wrapper.style.width = `${fixedWidth}px`;
+    wrapper.style.height = `${fixedHeight}px`;
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.overflow = 'hidden';
+
+    // Create the watermark element
+    const watermark = document.createElement('div');
+    watermark.textContent = 'MOF - Pensions';
+    watermark.style.position = 'absolute';
+    watermark.style.left = '50%';
+    watermark.style.top = '50%';
+    watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+    watermark.style.fontSize = '5rem'; // Adjust the font size as needed
+    watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
+    watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
+    watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+    watermark.style.whiteSpace = 'nowrap';
+    watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
+    watermark.style.zIndex = '10'; // Ensure watermark is below content
+
+    wrapper.appendChild(watermark);
+
+    const clonedElement = element.cloneNode(true);
+    const scale = 0.86; // Scale factor to reduce the size
+    clonedElement.style.transform = `scale(${scale})`;
+    clonedElement.style.transformOrigin = 'top left';
+    clonedElement.style.width = `${fixedWidth}px`;
+    clonedElement.style.height = `${fixedHeight}px`;
+
+    wrapper.appendChild(clonedElement);
+
+    html2pdf()
+      .set(options)
+      .from(wrapper)
+      .save()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
@@ -578,77 +643,104 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
         </div>
       </div> */}
 
-      <div className="font-sans mx-auto p-4">
-        <h2 className="text-center font-bold text-lg">COMPANY NAME</h2>
-        <h3 className="text-center font-semibold">Balance Sheet</h3>
-        <p className="text-center text-gray-600">
-          For Year Ended December 31, 2023
-        </p>
+      <div className="hidden">
+        <div className="font-sans mx-auto p-4" ref={contentRef}>
+          <h2 className="text-center font-bold text-lg">COMPANY NAME</h2>
+          <h3 className="text-center font-semibold">Balance Sheet</h3>
+          <p className="text-center text-gray-600">
+            For Year Ended December 31, 2025
+          </p>
 
-        <div className="bg-primary text-white font-bold text-center p-2 mt-4">
-          <div className="flex flex-row justify-between items-center">
-            <div>Balance Sheet</div>
-            {/* use current year */}
-            <div className="">{dayjs().format('MMMM DD, YYYY')}</div>
+          <div className="bg-primary text-white font-bold text-center p-2 mt-4">
+            <div className="flex flex-row justify-between items-center">
+              <div>Balance Sheet</div>
+              {/* use current year */}
+              <div className="">{dayjs().format('MMMM DD, YYYY')}</div>
+            </div>
           </div>
-        </div>
 
-        <div className="mt-4">
-          {Object.entries(filteredData).map(([category, groups]) => {
-            // Calculate the total for the current category
-            const categoryTotal = groups.reduce((total, group) => {
+          <div className="mt-4">
+            {Object.entries(filteredData).map(([category, groups]) => {
+              // Calculate the total for the current category
+              const categoryTotal = groups.reduce((total, group) => {
+                return (
+                  total +
+                  group.details.reduce((groupTotal, detail) => {
+                    return groupTotal + detail.amount;
+                  }, 0)
+                );
+              }, 0);
+
               return (
-                total +
-                group.details.reduce((groupTotal, detail) => {
-                  return groupTotal + detail.amount;
-                }, 0)
-              );
-            }, 0);
+                <div key={category} className="mt-6">
+                  <h4 className="font-bold text-lg">
+                    {category.toUpperCase()}
+                  </h4>
 
-            return (
-              <div key={category} className="mt-6">
-                <h4 className="font-bold text-lg">{category.toUpperCase()}</h4>
+                  {groups.map((group, index) => (
+                    <div key={index} className="mt-2">
+                      <h5 className="font-semibold  pl-3">
+                        {group.subgroupName}
+                      </h5>
+                      <table className="w-full text-left border-collapse">
+                        <tbody>
+                          {group.details.map((detail, i) => (
+                            <tr key={i} className="">
+                              <td className="py-1 pl-6">
+                                {detail.accountName}
+                              </td>
+                              <td className="py-1 text-right">
+                                {detail.amount.toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ))}
 
-                {groups.map((group, index) => (
-                  <div key={index} className="mt-2">
-                    <h5 className="font-semibold  pl-3">
-                      {group.subgroupName}
-                    </h5>
+                  {/* Add total row for the category */}
+                  <div className=" font-bold">
                     <table className="w-full text-left border-collapse">
                       <tbody>
-                        {group.details.map((detail, i) => (
-                          <tr key={i} className="">
-                            <td className="py-1 pl-6">{detail.accountName}</td>
-                            <td className="py-1 text-right">
-                              {detail.amount.toLocaleString()}
-                            </td>
-                          </tr>
-                        ))}
+                        <tr className="border-t border-b-[3px] border-gray-600">
+                          <td className="">
+                            Total{' '}
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </td>
+                          <td className=" text-right">
+                            {categoryTotal.toLocaleString()}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
-                ))}
-
-                {/* Add total row for the category */}
-                <div className=" font-bold">
-                  <table className="w-full text-left border-collapse">
-                    <tbody>
-                      <tr className="border-t border-b-[3px] border-gray-600">
-                        <td className="">
-                          Total{' '}
-                          {category.charAt(0).toUpperCase() + category.slice(1)}
-                        </td>
-                        <td className=" text-right">
-                          {categoryTotal.toLocaleString()}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
+      </div>
+      <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
+        <button
+          onClick={handleExportExcel}
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+        >
+          Export to Excel
+        </button>
+        <button
+          onClick={handleDownload}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
+        >
+          Dowload PDF
+        </button>
+        <button
+          onClick={handlePreviewPDF}
+          className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
+        >
+          Preview PDF
+        </button>
       </div>
     </div>
   );
