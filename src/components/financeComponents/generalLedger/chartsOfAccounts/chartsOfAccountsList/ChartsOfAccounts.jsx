@@ -571,8 +571,8 @@ function ChartsOfAccounts() {
           '& .MuiPaper-root': {
             minHeight: '75vh',
             maxHeight: '85vh',
-            minWidth: '60vw',
-            maxWidth: '65vw',
+            minWidth: '30vw',
+            maxWidth: '35vw',
           },
         }}
       >

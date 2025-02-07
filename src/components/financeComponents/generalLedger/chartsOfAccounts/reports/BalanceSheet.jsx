@@ -7,6 +7,7 @@ import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { Button, Divider, IconButton, TextField } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
 import { Close } from '@mui/icons-material';
+import html2pdf from 'html2pdf.js';
 
 const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
@@ -543,8 +544,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {/* <div className="">
-       
+      <div className="">
         <div className="mb-4 grid grid-cols-2 gap-4">
           <TextField
             label="Start Date"
@@ -587,7 +587,6 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
           </Button>
         </div>
 
-        
         <div className="mb-10 mt-10">
           <label className="inline-flex items-center">
             <input
@@ -600,7 +599,6 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
           </label>
         </div>
 
-        
         <div className="text-lg font-semibold text-gray-700 mb-3 border-b">
           Select Columns
         </div>
@@ -629,23 +627,25 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
             Export to Excel
           </button>
           <button
-            onClick={handleExportPDF}
+            onClick={handleDownload}
             className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
           >
             Export to PDF
           </button>
-          <button
+          {/* <button
             onClick={() => handlePreviewPDF(filteredData)}
             className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
           >
             Preview PDF
-          </button>
+          </button> */}
         </div>
-      </div> */}
+      </div>
 
       <div className="hidden">
         <div className="font-sans mx-auto p-4" ref={contentRef}>
-          <h2 className="text-center font-bold text-lg">COMPANY NAME</h2>
+          <h2 className="text-center font-bold text-lg">
+            Ministry of Finance - Pensions Department
+          </h2>
           <h3 className="text-center font-semibold">Balance Sheet</h3>
           <p className="text-center text-gray-600">
             For Year Ended December 31, 2025
@@ -703,7 +703,8 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
                   <div className=" font-bold">
                     <table className="w-full text-left border-collapse">
                       <tbody>
-                        <tr className="border-t border-b-[3px] border-gray-600">
+                        <tr className="relative border-t border-black pt-1">
+                          <div className=" border-b-[2px] border-black absolute bottom-[-10px] w-full"></div>
                           <td className="">
                             Total{' '}
                             {category.charAt(0).toUpperCase() +
@@ -721,26 +722,6 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
             })}
           </div>
         </div>
-      </div>
-      <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
-        <button
-          onClick={handleExportExcel}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
-        >
-          Export to Excel
-        </button>
-        <button
-          onClick={handleDownload}
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
-        >
-          Dowload PDF
-        </button>
-        <button
-          onClick={handlePreviewPDF}
-          className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
-        >
-          Preview PDF
-        </button>
       </div>
     </div>
   );
