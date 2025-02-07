@@ -96,7 +96,8 @@ function PeriodsOfAbsence({ id, status, clickedItem }) {
             clickedItem?.notification_status !== 2 &&
             clickedItem?.notification_status !== null &&
             clickedItem?.notification_status !== 0 &&
-            clickedItem?.notification_status !== 3
+            clickedItem?.notification_status !== 3 &&
+            clickedItem?.notification_status !== 7
           }
           idLabel="prospective_pensioner_id"
           deleteApiService={true}
