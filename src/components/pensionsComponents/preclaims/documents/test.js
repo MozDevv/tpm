@@ -1,4 +1,9 @@
-// "prospectivePensionerAwards": [
+import React from 'react'
+
+function test() {
+  return (
+    <div>
+        // "prospectivePensionerAwards": [
 //   {
 //     "prospective_pensioner_id": "fc3beb7c-f22b-4f48-b91d-d19428fd978c",
 //     "pension_award_id": "c85ffa52-1519-464b-9fad-a2b3362cfb2b",
@@ -42,3 +47,106 @@
 //     "updated_date": null
 //   }
 // ],
+<div className="">
+
+  <div className="mb-4 grid grid-cols-2 gap-4">
+    <TextField
+      label="Start Date"
+      type="date"
+      value={startDate}
+      onChange={(e) => setStartDate(e.target.value)}
+      InputLabelProps={{ shrink: true }}
+      className="w-full"
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px',
+        },
+        '& .MuiInputLabel-root': {
+          color: '#006990',
+        },
+      }}
+    />
+    <TextField
+      label="End Date"
+      type="date"
+      value={endDate}
+      onChange={(e) => setEndDate(e.target.value)}
+      InputLabelProps={{ shrink: true }}
+      className="w-full"
+      sx={{
+        '& .MuiInputBase-root': {
+          height: '40px',
+        },
+        '& .MuiInputLabel-root': {
+          color: '#006990',
+        },
+      }}
+    />
+    <Button
+      variant="contained"
+      onClick={handleDateFilter}
+      className="col-span-2 mt-2"
+    >
+      Apply Date Filter
+    </Button>
+  </div>
+
+  {/* Skip Blank Entries */}
+  <div className="mb-10 mt-10">
+    <label className="inline-flex items-center">
+      <input
+        type="checkbox"
+        checked={skipBlankEntries}
+        onChange={() => setSkipBlankEntries(!skipBlankEntries)}
+        className="mr-2"
+      />
+      Skip blank entries
+    </label>
+  </div>
+
+  {/* Column Selection */}
+  <div className="text-lg font-semibold text-gray-700 mb-3 border-b">
+    Select Columns
+  </div>
+  <div className="grid grid-cols-2 gap-4 mb-6 mt-2">
+    {['groupName', 'subGroupName', 'accountName', 'amount'].map((column) => (
+      <label key={column} className="flex items-center text-gray-600">
+        <input
+          type="checkbox"
+          disabled={true}
+          checked={selectedColumns.includes(column)}
+          onChange={() => handleColumnChange(column)}
+          className="mr-2"
+        />
+        {formatColumnName(column)}
+      </label>
+    ))}
+  </div>
+
+  <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
+    <button
+      onClick={handleExportExcel}
+      className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+    >
+      Export to Excel
+    </button>
+    <button
+      onClick={handleExportPDF}
+      className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
+    >
+      Export to PDF
+    </button>
+    <button
+      onClick={() => handlePreviewPDF(filteredData)}
+      className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
+    >
+      Preview PDF
+    </button>
+  </div>
+</div>;
+
+    </div>
+  )
+}
+
+export default test

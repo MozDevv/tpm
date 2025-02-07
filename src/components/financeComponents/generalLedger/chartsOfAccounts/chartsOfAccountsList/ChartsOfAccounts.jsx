@@ -19,6 +19,7 @@ import TrialBalance from '../reports/TrialBalance';
 import { Dialog, Divider } from '@mui/material';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
+import BalanceSheet from '../reports/BalanceSheet';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -355,8 +356,8 @@ function ChartsOfAccounts() {
 
     reports: () => console.log('Reports clicked'),
     notify: () => setOpenNotification(true),
-    'Trial Balance': () => setOpenTrialBalanceReport(true),
-    'Balance Sheet': () => setOpenTrialBalanceReport(true),
+    'Trial Balance': () => setOpenTrialBalanceReport(1),
+    'Balance Sheet': () => setOpenTrialBalanceReport(2),
   };
 
   const handleRowClick = (row) => {
@@ -548,7 +549,7 @@ function ChartsOfAccounts() {
   return (
     <div className="flex flex-col">
       <Dialog
-        open={openTrialBalanceReport}
+        open={openTrialBalanceReport === 1}
         onClose={() => setOpenTrialBalanceReport(false)}
         sx={{
           '& .MuiPaper-root': {
@@ -561,6 +562,22 @@ function ChartsOfAccounts() {
       >
         <div className="px-6">
           <TrialBalance setOpenTrialBalanceReport={setOpenTrialBalanceReport} />
+        </div>
+      </Dialog>
+      <Dialog
+        open={openTrialBalanceReport === 2}
+        onClose={() => setOpenTrialBalanceReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '60vw',
+            maxWidth: '65vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <BalanceSheet setOpenTrialBalanceReport={setOpenTrialBalanceReport} />
         </div>
       </Dialog>
       <div className="mt-[-20px]">

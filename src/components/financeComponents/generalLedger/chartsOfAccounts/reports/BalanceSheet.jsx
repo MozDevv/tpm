@@ -19,18 +19,18 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
 
   const getTrialBalance = async () => {
     try {
-      const response = await apiService.get(financeEndpoints.getTrialBalance, {
+      const response = await apiService.get(financeEndpoints.getBalanceSheet, {
         'paging.pageSize': 12000,
       });
-      const data1 = response.data.data;
+      const data1 = response.data;
       setData(data1);
       setFilteredData(data1);
-      setSelectedColumns([
-        'groupName',
-        'subGroupName',
-        'accountName',
-        'amount',
-      ]);
+      // setSelectedColumns([
+      //   'groupName',
+      //   'subGroupName',
+      //   'accountName',
+      //   'amount',
+      // ]);
     } catch (error) {
       setError('Failed to fetch trial balance data. Please try again.');
       console.error(error);
@@ -329,15 +329,15 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
 
     doc.save(`Trial Balance - ${new Date().toLocaleString()}.pdf`);
   };
-  const handlePreviewPDF = () => {
+  function handlePreviewPDF(data) {
     const doc = new jsPDF();
     const body = [];
-    let totalDebit = 0;
-    let totalCredit = 0;
+    let totalAssets = 0;
+    let totalLiabilities = 0;
 
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Trial Balance Report', 10, 10);
+    doc.setFont('sans-serif', 'bold');
+    doc.text('Balance Sheet', 10, 10);
 
     // Add date to the top right
     const date = new Date().toLocaleDateString('en-US', {
@@ -346,7 +346,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       day: 'numeric',
     });
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('sans-serif', 'normal');
     doc.text(
       date,
       doc.internal.pageSize.getWidth() - 10 - doc.getTextWidth(date),
@@ -354,75 +354,94 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     );
 
     // Add logo to the middle
-    const imgWidth = 70; // Adjust the width of the logo
-    const imgHeight = 20; // Adjust the height of the logo
+    const imgWidth = 70;
+    const imgHeight = 20;
     const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
     doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
 
     // Add margin bottom to separate the header from the table
     const headerBottomMargin = 30;
 
-    filteredData.forEach((group) => {
-      if (group.groupName) {
+    Object.keys(data).forEach((category) => {
+      let categoryTotal = 0;
+
+      if (data[category].length > 0) {
         body.push([
           {
-            content: group.groupName,
-            styles: { fontStyle: 'bold' }, // No paddingLeft here
+            content: category.charAt(0).toUpperCase() + category.slice(1),
+            styles: { fontStyle: 'bold' },
           },
-          '',
           '',
         ]);
       }
 
-      group.subGroups.forEach((subGroup) => {
-        if (subGroup.subGroupName) {
+      data[category].forEach((subgroup) => {
+        if (subgroup.subgroupName) {
           body.push([
             {
-              content: '    ' + subGroup.subGroupName, // Indentation for subgroups
+              content: '    ' + subgroup.subgroupName,
               styles: { fontStyle: 'bold' },
             },
-            '',
             '',
           ]);
         }
 
-        subGroup.accounts.forEach((account) => {
-          const debit = account.amount >= 0 ? account.amount : 0;
-          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
-          totalDebit += debit;
-          totalCredit += credit;
+        subgroup.details.forEach((detail) => {
+          const amount = detail.amount;
+          categoryTotal += amount;
 
           body.push([
             {
-              content: '        ' + account.accountName, // Indentation for accounts
+              content: '        ' + detail.accountName,
               styles: { fontStyle: 'normal' },
             },
-            formatNumber(debit),
-            formatNumber(credit),
+            formatNumber(amount),
           ]);
         });
       });
+
+      // Add subtotal row for category
+      body.push([
+        {
+          content: `Total ${
+            category.charAt(0).toUpperCase() + category.slice(1)
+          }`,
+          styles: {
+            fontStyle: 'bold',
+          },
+        },
+        {
+          content: formatNumber(categoryTotal),
+          styles: {
+            fontStyle: 'bold',
+            border: { top: 0.5, right: 0, bottom: 0, left: 0 },
+          },
+        },
+      ]);
+
+      if (category === 'assets') {
+        totalAssets = categoryTotal;
+      } else if (category === 'liabilities') {
+        totalLiabilities = categoryTotal;
+      }
     });
 
-    // Add totals row
-    body.push([
-      {
-        content: 'Total',
-        styles: { fontStyle: 'bold', halign: 'right' },
-      },
-      formatNumber(totalDebit),
-      formatNumber(totalCredit),
-    ]);
-
     doc.autoTable({
-      head: [['Name', 'Debit', 'Credit']],
+      head: [['Name', 'Ksh']],
       body: body,
-      startY: headerBottomMargin, // Start the table after the header margin
+      startY: headerBottomMargin,
+      headStyles: {
+        fillColor: [0, 105, 144], // Set the header color to #006990
+      },
       columnStyles: {
-        0: { cellWidth: 'auto' }, // Adjust column width if necessary
+        0: { cellWidth: 'auto' },
       },
       styles: {
-        font: 'helvetica',
+        font: 'sans-serif',
+        fillColor: [255, 255, 255], // Set the fill color to white for all rows
+      },
+      alternateRowStyles: {
+        fillColor: [255, 255, 255], // Ensure alternate rows are also white
       },
     });
 
@@ -432,7 +451,8 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     pdfWindow.document.write(
       `<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`
     );
-  };
+  }
+
   const formatColumnName = (columnName) => {
     return columnName
       .replace(/([A-Z])/g, ' $1')
@@ -442,7 +462,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
-        Trial Balance Report
+        Balance Sheet Report
       </h1>
       <IconButton
         onClick={() => setOpenTrialBalanceReport(false)}
@@ -458,124 +478,178 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {/* Date Filters */}
-      <div className="mb-4 grid grid-cols-2 gap-4">
-        <TextField
-          label="Start Date"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          className="w-full"
-          sx={{
-            '& .MuiInputBase-root': {
-              height: '40px',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#006990',
-            },
-          }}
-        />
-        <TextField
-          label="End Date"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          className="w-full"
-          sx={{
-            '& .MuiInputBase-root': {
-              height: '40px',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#006990',
-            },
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={handleDateFilter}
-          className="col-span-2 mt-2"
-        >
-          Apply Date Filter
-        </Button>
-      </div>
-
-      {/* Skip Blank Entries */}
-      <div className="mb-10 mt-10">
-        <label className="inline-flex items-center">
-          <input
-            type="checkbox"
-            checked={skipBlankEntries}
-            onChange={() => setSkipBlankEntries(!skipBlankEntries)}
-            className="mr-2"
+      {/* <div className="">
+       
+        <div className="mb-4 grid grid-cols-2 gap-4">
+          <TextField
+            label="Start Date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            className="w-full"
+            sx={{
+              '& .MuiInputBase-root': {
+                height: '40px',
+              },
+              '& .MuiInputLabel-root': {
+                color: '#006990',
+              },
+            }}
           />
-          Skip blank entries
-        </label>
-      </div>
+          <TextField
+            label="End Date"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            className="w-full"
+            sx={{
+              '& .MuiInputBase-root': {
+                height: '40px',
+              },
+              '& .MuiInputLabel-root': {
+                color: '#006990',
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleDateFilter}
+            className="col-span-2 mt-2"
+          >
+            Apply Date Filter
+          </Button>
+        </div>
 
-      {/* Column Selection */}
-      <div className="text-lg font-semibold text-gray-700 mb-3 border-b">
-        Select Columns
-      </div>
-      <div className="grid grid-cols-2 gap-4 mb-6 mt-2">
-        {['groupName', 'subGroupName', 'accountName', 'amount'].map(
-          (column) => (
-            <label key={column} className="flex items-center text-gray-600">
-              <input
-                type="checkbox"
-                disabled={true}
-                checked={selectedColumns.includes(column)}
-                onChange={() => handleColumnChange(column)}
-                className="mr-2"
-              />
-              {formatColumnName(column)}
-            </label>
-          )
-        )}
-      </div>
+        
+        <div className="mb-10 mt-10">
+          <label className="inline-flex items-center">
+            <input
+              type="checkbox"
+              checked={skipBlankEntries}
+              onChange={() => setSkipBlankEntries(!skipBlankEntries)}
+              className="mr-2"
+            />
+            Skip blank entries
+          </label>
+        </div>
 
-      <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
-        <button
-          onClick={handleExportExcel}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
-        >
-          Export to Excel
-        </button>
-        <button
-          onClick={handleExportPDF}
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
-        >
-          Export to PDF
-        </button>
-        <button
-          onClick={handlePreviewPDF}
-          className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
-        >
-          Preview PDF
-        </button>
-      </div>
+        
+        <div className="text-lg font-semibold text-gray-700 mb-3 border-b">
+          Select Columns
+        </div>
+        <div className="grid grid-cols-2 gap-4 mb-6 mt-2">
+          {['groupName', 'subGroupName', 'accountName', 'amount'].map(
+            (column) => (
+              <label key={column} className="flex items-center text-gray-600">
+                <input
+                  type="checkbox"
+                  disabled={true}
+                  checked={selectedColumns.includes(column)}
+                  onChange={() => handleColumnChange(column)}
+                  className="mr-2"
+                />
+                {formatColumnName(column)}
+              </label>
+            )
+          )}
+        </div>
 
-      {/* Render Data
-      <div className="mt-10">
-        {filteredData.map((group, groupIndex) => (
-          <div key={groupIndex} className="mb-4">
-            <div className="font-bold">{group.groupName}</div>
-            {group.subGroups.map((subGroup, subGroupIndex) => (
-              <div key={subGroupIndex} className="ml-4">
-                <div className="font-semibold">{subGroup.subGroupName}</div>
-                {subGroup.accounts.map((account, accountIndex) => (
-                  <div key={accountIndex} className="ml-8">
-                    <div>
-                      {account.accountName}: {account.amount}
-                    </div>
+        <div className=" bg-white py-4  border-t flex justify-between mt-[180px]  ">
+          <button
+            onClick={handleExportExcel}
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+          >
+            Export to Excel
+          </button>
+          <button
+            onClick={handleExportPDF}
+            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"
+          >
+            Export to PDF
+          </button>
+          <button
+            onClick={() => handlePreviewPDF(filteredData)}
+            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
+          >
+            Preview PDF
+          </button>
+        </div>
+      </div> */}
+
+      <div className="font-sans mx-auto p-4">
+        <h2 className="text-center font-bold text-lg">COMPANY NAME</h2>
+        <h3 className="text-center font-semibold">Balance Sheet</h3>
+        <p className="text-center text-gray-600">
+          For Year Ended December 31, 2023
+        </p>
+
+        <div className="bg-primary text-white font-bold text-center p-2 mt-4">
+          <div className="flex flex-row justify-between items-center">
+            <div>Balance Sheet</div>
+            {/* use current year */}
+            <div className="">{dayjs().format('MMMM DD, YYYY')}</div>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          {Object.entries(filteredData).map(([category, groups]) => {
+            // Calculate the total for the current category
+            const categoryTotal = groups.reduce((total, group) => {
+              return (
+                total +
+                group.details.reduce((groupTotal, detail) => {
+                  return groupTotal + detail.amount;
+                }, 0)
+              );
+            }, 0);
+
+            return (
+              <div key={category} className="mt-6">
+                <h4 className="font-bold text-lg">{category.toUpperCase()}</h4>
+
+                {groups.map((group, index) => (
+                  <div key={index} className="mt-2">
+                    <h5 className="font-semibold  pl-3">
+                      {group.subgroupName}
+                    </h5>
+                    <table className="w-full text-left border-collapse">
+                      <tbody>
+                        {group.details.map((detail, i) => (
+                          <tr key={i} className="">
+                            <td className="py-1 pl-6">{detail.accountName}</td>
+                            <td className="py-1 text-right">
+                              {detail.amount.toLocaleString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 ))}
+
+                {/* Add total row for the category */}
+                <div className=" font-bold">
+                  <table className="w-full text-left border-collapse">
+                    <tbody>
+                      <tr className="border-t border-b-[3px] border-gray-600">
+                        <td className="">
+                          Total{' '}
+                          {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </td>
+                        <td className=" text-right">
+                          {categoryTotal.toLocaleString()}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            ))}
-          </div>
-        ))}
-      </div> */}
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

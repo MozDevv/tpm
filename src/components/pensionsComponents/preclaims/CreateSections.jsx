@@ -383,7 +383,7 @@ export const createSections = (
         pensionCap: ['CAP199'],
       },
       {
-        label: 'Deaceased',
+        label: 'Deceased',
         name: 'mortality_status',
         type: 'select',
         children: [
