@@ -901,21 +901,26 @@ function NewPreclaim({
 
       if (res.data.succeeded && res.status === 200) {
         setSaving(2);
-        formData.mortality_status == 1 &&
+        if (formData.mortality_status == 1) {
           message.warning(
             'Prospective pensioner updated successfully, please proceed to the add Beneficiary Details'
           );
-        setRetireeId(res.data.data);
 
-        setAlert({
-          open: true,
-          message:
-            'Please fill in the Beneficiaries Details for the deceased retiree',
-          severity: 'warning',
-        });
-        setOnCloseWarnings(
-          'Please fill in the Beneficiaries Details for the deceased retiree'
-        );
+          setAlert({
+            open: true,
+            message:
+              'Please fill in the Beneficiaries Details for the deceased retiree',
+            severity: 'warning',
+          });
+        } else {
+          setAlert({
+            open: true,
+            message:
+              'Prospective pensioner Information & Contact Details saved successfully',
+          });
+        }
+
+        setRetireeId(res.data.data);
 
         localStorage.removeItem('retireeFormData');
 
