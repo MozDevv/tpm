@@ -135,14 +135,14 @@ export const baseValidatorFn = {
     return null;
   },
 
-  post: (value) => {
-    {
-      if (!/^[a-zA-Z'-\s]+$/.test(value)) {
-        return 'Post is not valid. Please enter a valid post';
-      }
-    }
-    return null;
-  },
+  // post: (value) => {
+  //   {
+  //     if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+  //       return 'Post is not valid. Please enter a valid post';
+  //     }
+  //   }
+  //   return null;
+  // },
   // account_number: (value) => {
   //   const accountNumberRegex = /^[0-9]{10}$/;
   //   if (!accountNumberRegex.test(value))
