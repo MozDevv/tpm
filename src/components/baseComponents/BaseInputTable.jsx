@@ -759,15 +759,15 @@ const BaseInputTable = ({
         //   }
         // }
 
-        if (data.was_pensionable) {
-          if (cap === 'CAP189') {
-            data.nature_of_salary_scale = 'P';
-            data.nature_of_service = 'Permanent';
-          } else if (cap === 'CAP199') {
-            data.nature_of_salary_scale = 'P';
-            data.nature_of_service = 'ReckonableService';
-          }
-        }
+        // if (data.was_pensionable) {
+        //   if (cap === 'CAP189') {
+        //     data.nature_of_salary_scale = 'P';
+        //     data.nature_of_service = 'Permanent';
+        //   } else if (cap === 'CAP199') {
+        //     data.nature_of_salary_scale = 'P';
+        //     data.nature_of_service = 'ReckonableService';
+        //   }
+        // }
 
         if (
           dateOfFirstAppointment &&

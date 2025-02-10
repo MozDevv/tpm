@@ -174,6 +174,7 @@ export const validateField = (name, value, formData) => {
     name !== 'date_of_death' &&
     name !== 'date_of_injury_for_cap199' &&
     name !== 'date_of_injury_for_cap189' &&
+    name !== 'tax_exempt_certificate_date' &&
     value
   ) {
     const inputDate = dayjs(value);
