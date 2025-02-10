@@ -8,6 +8,7 @@ import { Button, Divider, IconButton, TextField } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
 import { Close } from '@mui/icons-material';
 import html2pdf from 'html2pdf.js';
+import ExcelJS from 'exceljs';
 
 const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
   const [data, setData] = useState([]);
@@ -44,94 +45,52 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     getTrialBalance();
   }, []);
 
-  const handleColumnChange = (column) => {
-    setSelectedColumns((prev) =>
-      prev.includes(column)
-        ? prev.filter((col) => col !== column)
-        : [...prev, column]
-    );
-  };
+  const handleExportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Trial Balance');
 
-  const handleDateFilter = () => {
-    const filtered = data.filter((group) => {
-      return group.subGroups.some((subGroup) => {
-        return subGroup.accounts.some((account) => {
-          const rowStartDate = dayjs(account.startDate);
-          const rowEndDate = dayjs(account.endDate);
-          const start = startDate ? dayjs(startDate) : null;
-          const end = endDate ? dayjs(endDate) : null;
+    // Add headers with styling
+    worksheet.columns = [
+      { header: 'Name', key: 'name', width: 40 },
+      { header: 'Debit', key: 'debit', width: 15 },
+      { header: 'Credit', key: 'credit', width: 15 },
+    ];
 
-          return (
-            (!start || rowStartDate.isSameOrAfter(start)) &&
-            (!end || rowEndDate.isSameOrBefore(end))
-          );
-        });
-      });
-    });
-    setFilteredData(filtered);
-  };
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { horizontal: 'center' };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'D9EAD3' },
+    };
 
-  const handleExportExcel = () => {
-    const wb = XLSX.utils.book_new();
-    const wsData = [];
     let totalDebit = 0;
     let totalCredit = 0;
 
-    // Add headers with styling
-    wsData.push([
-      {
-        v: 'Name',
-        s: {
-          font: { bold: true },
-          fill: { fgColor: { rgb: 'D9EAD3' } },
-          alignment: { horizontal: 'center' },
-        },
-      },
-      {
-        v: 'Debit',
-        s: {
-          font: { bold: true },
-          fill: { fgColor: { rgb: 'D9EAD3' } },
-          alignment: { horizontal: 'center' },
-        },
-      },
-      {
-        v: 'Credit',
-        s: {
-          font: { bold: true },
-          fill: { fgColor: { rgb: 'D9EAD3' } },
-          alignment: { horizontal: 'center' },
-        },
-      },
-    ]);
-
     filteredData.forEach((group) => {
       if (group.groupName) {
-        // Bold and larger font for group name
-        wsData.push([
-          {
-            v: group.groupName,
-            s: {
-              font: { bold: true, sz: 12 },
-              fill: { fgColor: { rgb: 'EAD1DC' } },
-            },
-          },
-          '',
-          '',
-        ]);
+        const row = worksheet.addRow([group.groupName, '', '']);
+        row.font = { bold: true, size: 12 };
+        row.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'EAD1DC' },
+        };
       }
 
       group.subGroups.forEach((subGroup) => {
         if (subGroup.subGroupName) {
-          // Subgroup names with bold and indent
-          wsData.push([
-            {
-              v: '    ' + subGroup.subGroupName,
-              s: { font: { bold: true }, fill: { fgColor: { rgb: 'FCE5CD' } } },
-            },
+          const row = worksheet.addRow([
+            '    ' + subGroup.subGroupName,
             '',
             '',
           ]);
+          row.font = { bold: true };
+          row.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FCE5CD' },
+          };
         }
 
         subGroup.accounts.forEach((account) => {
@@ -140,65 +99,43 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
           totalDebit += debit;
           totalCredit += credit;
 
-          // Account names with slight indentation
-          wsData.push([
-            {
-              v: '        ' + account.accountName,
-              s: { alignment: { indent: 1 } },
-            },
+          const row = worksheet.addRow([
+            '        ' + account.accountName,
             debit,
             credit,
           ]);
+          row.getCell(1).alignment = { indent: 1 };
         });
       });
     });
 
     // Add totals row with bold and background color
-    wsData.push([
-      {
-        v: 'Total',
-        s: { font: { bold: true }, fill: { fgColor: { rgb: 'D9EAD3' } } },
-      },
-      formatNumber(totalDebit),
-      formatNumber(totalCredit),
-    ]);
-
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Set column widths for better appearance
-    ws['!cols'] = [
-      { wch: 40 }, // Width of the "Name" column
-      { wch: 15 }, // Width of the "Debit" column
-      { wch: 15 }, // Width of the "Credit" column
-    ];
-
-    // Set row heights, with different heights for headers and content
-    ws['!rows'] = wsData.map((row, index) => {
-      if (index === 0) {
-        return { hpx: 25 }; // Header row height
-      } else if (row[0].v.trim().length === 0) {
-        return { hpx: 20 }; // Group/Subgroup row height
-      } else {
-        return { hpx: 18 }; // Account rows height
-      }
-    });
+    const totalRow = worksheet.addRow(['Total', totalDebit, totalCredit]);
+    totalRow.font = { bold: true };
+    totalRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'D9EAD3' },
+    };
 
     // Add borders to each cell for clear separation
-    Object.keys(ws).forEach((cell) => {
-      if (cell[0] !== '!') {
-        // Ignore metadata keys like '!cols' and '!rows'
-        ws[cell].s = ws[cell].s || {};
-        ws[cell].s.border = {
-          top: { style: 'thin', color: { rgb: '000000' } },
-          bottom: { style: 'thin', color: { rgb: '000000' } },
-          left: { style: 'thin', color: { rgb: '000000' } },
-          right: { style: 'thin', color: { rgb: '000000' } },
+    worksheet.eachRow({ includeEmpty: true }, (row) => {
+      row.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
         };
-      }
+      });
     });
 
-    XLSX.utils.book_append_sheet(wb, ws, 'Trial Balance');
-    XLSX.writeFile(wb, 'TrialBalance.xlsx');
+    // Save the workbook
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, 'TrialBalance.xlsx');
   };
 
   const formatNumber = (value) => {
@@ -207,259 +144,6 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(number);
-  };
-
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-
-    // Add title to the top left
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Trial Balance Report', 10, 10);
-
-    // Add date to the top right
-    const date = new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(
-      date,
-      doc.internal.pageSize.getWidth() - 10 - doc.getTextWidth(date),
-      10
-    );
-
-    // Add logo to the middle
-    const imgWidth = 70; // Adjust the width of the logo
-    const imgHeight = 20; // Adjust the height of the logo
-    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-    doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
-
-    // Add margin bottom to separate the header from the table
-    const headerBottomMargin = 30;
-
-    let body = [];
-    let lastGroupName = ''; // Initialize lastGroupName
-    let lastSubGroupName = '';
-    let totalDebit = 0;
-    let totalCredit = 0;
-
-    filteredData.forEach((group) => {
-      if (group.groupName !== lastGroupName) {
-        body.push([
-          {
-            content: group.groupName,
-            styles: { fontStyle: 'bold' },
-          },
-          '',
-          '',
-        ]);
-        lastGroupName = group.groupName;
-      } else {
-        body.push([
-          {
-            content: '',
-            styles: { fontStyle: 'bold' },
-          },
-          '',
-          '',
-        ]);
-      }
-
-      group.subGroups.forEach((subGroup) => {
-        if (subGroup.subGroupName !== lastSubGroupName) {
-          body.push([
-            {
-              content: '    ' + subGroup.subGroupName, // Indentation for subgroups
-              styles: { fontStyle: 'bold' },
-            },
-            '',
-            '',
-          ]);
-          lastSubGroupName = subGroup.subGroupName;
-        } else {
-          body.push([
-            {
-              content: '',
-              styles: { fontStyle: 'bold' },
-            },
-            '',
-            '',
-          ]);
-        }
-
-        subGroup.accounts.forEach((account) => {
-          const debit = account.amount >= 0 ? account.amount : 0;
-          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
-          totalDebit += debit;
-          totalCredit += credit;
-
-          body.push([
-            {
-              content: '        ' + account.accountName, // Indentation for accounts
-              styles: { fontStyle: 'normal' },
-            },
-            formatNumber(debit),
-            formatNumber(credit),
-          ]);
-        });
-      });
-    });
-
-    // Add totals row
-    body.push([
-      {
-        content: 'Total',
-        styles: { fontStyle: 'bold', halign: 'right' },
-      },
-      formatNumber(totalDebit),
-      formatNumber(totalCredit),
-    ]);
-
-    doc.autoTable({
-      head: [['Name', 'Debit', 'Credit']],
-      body: body,
-      startY: headerBottomMargin, // Start the table after the header margin
-      columnStyles: {
-        0: { cellWidth: 'auto' }, // Adjust column width if necessary
-      },
-      styles: {
-        font: 'helvetica',
-      },
-    });
-
-    doc.save(`Trial Balance - ${new Date().toLocaleString()}.pdf`);
-  };
-  function handlePreviewPDF(data) {
-    const doc = new jsPDF();
-    const body = [];
-    let totalAssets = 0;
-    let totalLiabilities = 0;
-
-    doc.setFontSize(12);
-    doc.setFont('sans-serif', 'bold');
-    doc.text('Balance Sheet', 10, 10);
-
-    // Add date to the top right
-    const date = new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-    doc.setFontSize(10);
-    doc.setFont('sans-serif', 'normal');
-    doc.text(
-      date,
-      doc.internal.pageSize.getWidth() - 10 - doc.getTextWidth(date),
-      10
-    );
-
-    // Add logo to the middle
-    const imgWidth = 70;
-    const imgHeight = 20;
-    const x = (doc.internal.pageSize.getWidth() - imgWidth) / 2;
-    doc.addImage('/logo.png', 'PNG', x, 5, imgWidth, imgHeight);
-
-    // Add margin bottom to separate the header from the table
-    const headerBottomMargin = 30;
-
-    Object.keys(data).forEach((category) => {
-      let categoryTotal = 0;
-
-      if (data[category].length > 0) {
-        body.push([
-          {
-            content: category.charAt(0).toUpperCase() + category.slice(1),
-            styles: { fontStyle: 'bold' },
-          },
-          '',
-        ]);
-      }
-
-      data[category].forEach((subgroup) => {
-        if (subgroup.subgroupName) {
-          body.push([
-            {
-              content: '    ' + subgroup.subgroupName,
-              styles: { fontStyle: 'bold' },
-            },
-            '',
-          ]);
-        }
-
-        subgroup.details.forEach((detail) => {
-          const amount = detail.amount;
-          categoryTotal += amount;
-
-          body.push([
-            {
-              content: '        ' + detail.accountName,
-              styles: { fontStyle: 'normal' },
-            },
-            formatNumber(amount),
-          ]);
-        });
-      });
-
-      // Add subtotal row for category
-      body.push([
-        {
-          content: `Total ${
-            category.charAt(0).toUpperCase() + category.slice(1)
-          }`,
-          styles: {
-            fontStyle: 'bold',
-          },
-        },
-        {
-          content: formatNumber(categoryTotal),
-          styles: {
-            fontStyle: 'bold',
-            border: { top: 0.5, right: 0, bottom: 0, left: 0 },
-          },
-        },
-      ]);
-
-      if (category === 'assets') {
-        totalAssets = categoryTotal;
-      } else if (category === 'liabilities') {
-        totalLiabilities = categoryTotal;
-      }
-    });
-
-    doc.autoTable({
-      head: [['Name', 'Ksh']],
-      body: body,
-      startY: headerBottomMargin,
-      headStyles: {
-        fillColor: [0, 105, 144], // Set the header color to #006990
-      },
-      columnStyles: {
-        0: { cellWidth: 'auto' },
-      },
-      styles: {
-        font: 'sans-serif',
-        fillColor: [255, 255, 255], // Set the fill color to white for all rows
-      },
-      alternateRowStyles: {
-        fillColor: [255, 255, 255], // Ensure alternate rows are also white
-      },
-    });
-
-    // Open the PDF in a new window/tab
-    const pdfDataUri = doc.output('datauristring');
-    const pdfWindow = window.open();
-    pdfWindow.document.write(
-      `<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`
-    );
-  }
-
-  const formatColumnName = (columnName) => {
-    return columnName
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str) => str.toUpperCase());
   };
 
   const handleDownload = () => {
@@ -525,6 +209,21 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       });
   };
 
+  const formatColumnName = (column) => {
+    switch (column) {
+      case 'groupName':
+        return 'Group Name';
+      case 'subGroupName':
+        return 'Subgroup Name';
+      case 'accountName':
+        return 'Account Name';
+      case 'amount':
+        return 'Amount';
+      default:
+        return column;
+    }
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
@@ -580,7 +279,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
           />
           <Button
             variant="contained"
-            onClick={handleDateFilter}
+            //  onClick={handleDateFilter}
             className="col-span-2 mt-2"
           >
             Apply Date Filter
@@ -609,7 +308,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
                 <input
                   type="checkbox"
                   disabled={true}
-                  checked={selectedColumns.includes(column)}
+                  checked={true}
                   onChange={() => handleColumnChange(column)}
                   className="mr-2"
                 />
