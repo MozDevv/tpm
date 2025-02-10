@@ -47,87 +47,113 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
 
   const handleExportExcel = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Trial Balance');
+    const worksheet = workbook.addWorksheet('Balance Sheet');
 
-    // Add headers with styling
+    // Set column widths
     worksheet.columns = [
-      { header: 'Name', key: 'name', width: 40 },
-      { header: 'Debit', key: 'debit', width: 15 },
-      { header: 'Credit', key: 'credit', width: 15 },
+      { header: 'Description', key: 'description', width: 50 },
+      { header: 'Amount', key: 'amount', width: 20 },
     ];
 
-    worksheet.getRow(1).font = { bold: true };
-    worksheet.getRow(1).alignment = { horizontal: 'center' };
-    worksheet.getRow(1).fill = {
+    // Merge and style Title Row
+    worksheet.mergeCells('A1:B1');
+    const titleRow = worksheet.getCell('A1');
+    titleRow.value = 'Ministry of Finance - Pensions Department';
+    titleRow.font = { bold: true, size: 14, color: { argb: 'FFFFFF' } }; // White text
+    titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    titleRow.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'D9EAD3' },
+      fgColor: { argb: '006990' }, // Background color
     };
 
-    let totalDebit = 0;
-    let totalCredit = 0;
+    // Merge and style Subtitle Row
+    worksheet.mergeCells('A2:B2');
+    const subtitleRow = worksheet.getCell('A2');
+    subtitleRow.value = 'Balance Sheet';
+    subtitleRow.font = { bold: true, size: 12, color: { argb: 'FFFFFF' } }; // White text
+    subtitleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    subtitleRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '006990' }, // Background color
+    };
+    // Merge and style Date Row
+    worksheet.mergeCells('A3:B3');
+    const dateRow = worksheet.getCell('A3');
+    dateRow.value = `For Year Ended December 31, 2025`;
+    dateRow.font = { italic: true, size: 11 };
+    dateRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    subtitleRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '006990' }, // Background color
+    };
 
-    filteredData.forEach((group) => {
-      if (group.groupName) {
-        const row = worksheet.addRow([group.groupName, '', '']);
-        row.font = { bold: true, size: 12 };
-        row.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'EAD1DC' },
-        };
-      }
+    // Remove the border between the two header rows
+    worksheet.getRow(1).border = {};
+    worksheet.getRow(2).border = {};
+    worksheet.getRow(3).border = {};
 
-      group.subGroups.forEach((subGroup) => {
-        if (subGroup.subGroupName) {
-          const row = worksheet.addRow([
-            '    ' + subGroup.subGroupName,
-            '',
-            '',
-          ]);
-          row.font = { bold: true };
-          row.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FCE5CD' },
-          };
-        }
+    // Process data
+    Object.entries(filteredData).forEach(([category, groups]) => {
+      let categoryTotal = 0;
 
-        subGroup.accounts.forEach((account) => {
-          const debit = account.amount >= 0 ? account.amount : 0;
-          const credit = account.amount < 0 ? Math.abs(account.amount) : 0;
-          totalDebit += debit;
-          totalCredit += credit;
+      // Add category row (LEVEL 1)
+      const categoryRow = worksheet.addRow([category.toUpperCase(), '']);
+      categoryRow.font = { bold: true, size: 12 };
 
-          const row = worksheet.addRow([
-            '        ' + account.accountName,
-            debit,
-            credit,
-          ]);
-          row.getCell(1).alignment = { indent: 1 };
+      groups.forEach((group) => {
+        let subgroupTotal = 0;
+
+        // Add subgroup row (LEVEL 2)
+        const subgroupRow = worksheet.addRow([`    ${group.subgroupName}`, '']);
+        subgroupRow.font = { bold: true };
+
+        group.details.forEach((detail) => {
+          // Add account row (LEVEL 3)
+          worksheet.addRow([`        ${detail.accountName}`, detail.amount]);
+
+          // Accumulate totals
+          subgroupTotal += detail.amount;
         });
+
+        // Add subgroup total row
+        const subgroupTotalRow = worksheet.addRow([
+          `    ${group.subgroupName} Total`,
+          subgroupTotal,
+        ]);
+        subgroupTotalRow.font = { bold: true };
+
+        categoryTotal += subgroupTotal;
       });
+
+      // Add category total row
+      const categoryTotalRow = worksheet.addRow([
+        `Total ${category.charAt(0).toUpperCase() + category.slice(1)}`,
+        categoryTotal,
+      ]);
+      categoryTotalRow.font = { bold: true, size: 12 };
+      categoryTotalRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'EAD1DC' },
+      };
     });
 
-    // Add totals row with bold and background color
-    const totalRow = worksheet.addRow(['Total', totalDebit, totalCredit]);
-    totalRow.font = { bold: true };
-    totalRow.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'D9EAD3' },
-    };
-
-    // Add borders to each cell for clear separation
-    worksheet.eachRow({ includeEmpty: true }, (row) => {
-      row.eachCell({ includeEmpty: true }, (cell) => {
-        cell.border = {
-          top: { style: 'thin', color: { argb: '000000' } },
-          bottom: { style: 'thin', color: { argb: '000000' } },
-          left: { style: 'thin', color: { argb: '000000' } },
-          right: { style: 'thin', color: { argb: '000000' } },
-        };
-      });
+    // Apply borders only to data cells
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 4) {
+        // Avoid adding borders to title, subtitle, and date rows
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: '000000' } },
+            bottom: { style: 'thin', color: { argb: '000000' } },
+            left: { style: 'thin', color: { argb: '000000' } },
+            right: { style: 'thin', color: { argb: '000000' } },
+          };
+        });
+      }
     });
 
     // Save the workbook
@@ -135,15 +161,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    saveAs(blob, 'TrialBalance.xlsx');
-  };
-
-  const formatNumber = (value) => {
-    const number = value || '0.00';
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(number);
+    saveAs(blob, 'BalanceSheet.xlsx');
   };
 
   const handleDownload = () => {
@@ -222,7 +240,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       default:
         return column;
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
