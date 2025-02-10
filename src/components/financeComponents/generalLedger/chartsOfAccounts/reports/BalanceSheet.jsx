@@ -78,13 +78,14 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
       pattern: 'solid',
       fgColor: { argb: '006990' }, // Background color
     };
+
     // Merge and style Date Row
     worksheet.mergeCells('A3:B3');
     const dateRow = worksheet.getCell('A3');
     dateRow.value = `For Year Ended December 31, 2025`;
-    dateRow.font = { italic: true, size: 11 };
+    dateRow.font = { italic: true, size: 11, color: { argb: 'FFFFFF' } };
     dateRow.alignment = { horizontal: 'center', vertical: 'middle' };
-    subtitleRow.fill = {
+    dateRow.fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: '006990' }, // Background color
