@@ -51,6 +51,7 @@ import DsoReport from '@/components/pensionsComponents/ClaimsManagementTable/rep
 import Cap196Death from '@/components/pensionsComponents/ClaimsManagementTable/reports/Cap196Death';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
+import FilterComponent from '@/components/baseComponents/FilterComponent';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -1016,105 +1017,13 @@ const AssessmentTable = ({ status, statusArr }) => {
               timeout="auto"
               unmountOnExit
             >
-              <div className="h-[100%] bg-white w-[300px] rounded-md p-3 ">
-                <p className="text-md font-medium text-primary p-3">
-                  Filter By:
-                </p>
-                <Divider sx={{ px: 2 }} />
-                <div className="p-3">
-                  <label className="text-xs font-semibold text-gray-600">
-                    Keyword
-                  </label>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      className="border p-2 bg-gray-100 border-gray-300 rounded-md  text-sm"
-                      required
-                      onChange={(e) => setFilterValue(e.target.value)}
-                    />
-
-                    <IconButton onClick={handleClick}>
-                      <FilterList />
-                    </IconButton>
-                  </div>
-                </div>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                >
-                  <MenuItem>Equal</MenuItem>
-                  <MenuItem>Contains</MenuItem>
-                  <MenuItem>Not Equal</MenuItem>
-                </Menu>
-                <Divider />
-                <div className="flex flex-col item-center p-4 mt-3">
-                  <label className="text-xs font-semibold text-gray-600">
-                    Select Column
-                  </label>
-                  <select
-                    name="role"
-                    onChange={(e) => setFilterColumn(e.target.value)}
-                    className="border p-3 bg-gray-100 border-gray-300 rounded-md  text-sm mr-7"
-                    required
-                  >
-                    {colDefs.map((col) => (
-                      <option value={col.field}>{col.headerName}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col item-center p-4 mt-3">
-                  <label className="text-xs font-semibold text-gray-600 w-[100%]">
-                    Sort By:
-                  </label>
-                  <div className="flex items-center ">
-                    {' '}
-                    <select
-                      name="role"
-                      //value={selectedRole}
-                      //onChange={(e) => setSelectedRole(e.target.value)}
-                      className="border p-3 bg-gray-100 border-gray-300 rounded-md w-[100%]  text-sm "
-                      required
-                    >
-                      {colDefs.map((col) => (
-                        <option value={col.field}>{col.headerName}</option>
-                      ))}
-                    </select>
-                    <Tooltip
-                      title={
-                        sortCriteria === 1
-                          ? 'Ascending Order'
-                          : 'Desceding Order'
-                      }
-                      placement="top"
-                    >
-                      <IconButton
-                        sx={{ mr: '-10px', ml: '-4px' }}
-                        onClick={() => {
-                          setSortCriteria(sortCriteria === 1 ? 2 : 1);
-                        }}
-                      >
-                        <SortByAlpha />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
-                </div>
-              </div>
-              <Button
-                variant="contained"
-                sx={{ ml: 2, width: '80%', mr: 2, mt: '-4' }}
-                onClick={handleFilters}
-              >
-                Apply Filters
-              </Button>
+              <FilterComponent
+                columnDefs={colDefs}
+                filteredData={rowData}
+                onApplyFilters={handleFilters}
+                fetchData={fetchAllPreclaims}
+                startIndex={status === 0 || status ? 1 : 0}
+              />
             </Collapse>
             <div
               className="ag-theme-quartz flex flex-col"
