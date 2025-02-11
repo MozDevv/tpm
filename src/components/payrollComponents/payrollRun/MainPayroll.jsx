@@ -22,6 +22,7 @@ import RunIncrement from './RunIncrement';
 import { Launch } from '@mui/icons-material';
 import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import { message } from 'antd';
 
 const MainPayroll = ({ stage, status }) => {
   const columnDefs = [
@@ -225,15 +226,19 @@ const MainPayroll = ({ stage, status }) => {
       : {}),
   };
 
+  const [refreshData, setRefreshData] = React.useState(false);
   const sendPayrollForApproval = async (clickedItem) => {
     try {
-      const res = await payrollApiService.post(
+      const res = await payrollApiService.get(
         payrollEndpoints.sendPeriodForApproval(clickedItem?.periodId)
       );
       if (res.status === 200) {
+        setRefreshData((prev) => !prev);
+        message.success('Payroll sent for approval');
         console.log('Payroll sent for approval');
       }
     } catch (error) {
+      message.error(error.response.data);
       console.log('Error sending payroll for approval', error);
     }
   };
@@ -482,6 +487,7 @@ const MainPayroll = ({ stage, status }) => {
         breadcrumbTitle={breadcrumbTitle}
         currentTitle={currentTitle}
         isPayroll={true}
+        refreshData={refreshData}
         onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
       />
     </div>

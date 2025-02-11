@@ -156,7 +156,7 @@ export const validateField = (name, value, formData) => {
     formData.identifier_type === 0
   ) {
     error = 'National ID Must contain only numeric values';
-  } else if (name === 'kra_pin' && value && !/^[A-Z]\d{9}[A-Z]$/.test(value)) {
+  } else if (name === 'kra_pin' && value && !/^A\d{9}[A-Z]$/.test(value)) {
     error = 'Must be a valid KRA PIN';
   } else if (name === 'last_basic_salary_amount' && value && isNaN(value)) {
     error = 'Must be a valid number';
