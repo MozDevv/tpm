@@ -110,8 +110,8 @@ export const generateExcelTemplateWithApiService = async (
   pageSize = 10000,
   selectedColumns = [],
   skipBlankEntries = false,
-  setLoading, // Added to control loading state
-  loading // Added to track loading state
+  setLoading,
+  filters = {}
 ) => {
   try {
     if (!Array.isArray(selectedColumns) || selectedColumns.length === 0) {
@@ -123,6 +123,7 @@ export const generateExcelTemplateWithApiService = async (
 
     const response = await fetchApiService(fetchApiEndpoint, {
       'paging.pageSize': pageSize,
+      ...filters,
     });
     const { data } = response.data;
 

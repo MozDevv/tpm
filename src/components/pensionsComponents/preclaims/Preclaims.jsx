@@ -868,6 +868,41 @@ const Preclaims = ({ status }) => {
               setOpenExcel={setOpenExcel}
               fetchApiService={apiService.get}
               fetchApiEndpoint={preClaimsEndpoints.getPreclaims}
+              filters={
+                (status || status === 0) && status !== 5 && mdaId
+                  ? {
+                      'filterCriterion.criterions[0].propertyName':
+                        'notification_status',
+                      'filterCriterion.criterions[0].propertyValue': status,
+                      'filterCriterion.criterions[0].criterionType': 0,
+                      'filterCriterion.criterions[1].propertyName': 'mda_id',
+                      'filterCriterion.criterions[1].propertyValue': mdaId,
+                      'filterCriterion.criterions[1].criterionType': 0,
+                    }
+                  : status === 5
+                  ? {
+                      'filterCriterion.criterions[0].propertyName':
+                        'notification_status',
+                      'filterCriterion.criterions[0].propertyValue': status,
+                      'filterCriterion.criterions[0].criterionType': 0,
+                    }
+                  : !status && status !== 0 && mdaId
+                  ? {
+                      'filterCriterion.criterions[0].propertyName': 'mda_id',
+                      'filterCriterion.criterions[0].propertyValue': mdaId,
+                      'filterCriterion.criterions[0].criterionType': 0,
+                    }
+                  : !mdaId && status
+                  ? {
+                      'filterCriterion.criterions[0].propertyName':
+                        'notification_status',
+                      'filterCriterion.criterions[0].propertyValue': status,
+                      'filterCriterion.criterions[0].criterionType': 0,
+                    }
+                  : !mdaId && !status
+                  ? {}
+                  : {}
+              }
               columns={colDefs}
               transformData={mapRowData}
               fileName={

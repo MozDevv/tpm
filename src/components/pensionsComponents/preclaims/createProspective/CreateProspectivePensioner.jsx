@@ -109,7 +109,8 @@ function CreateProspectivePensioner({
                 </div>
               </TabPane>
               {clickedItem?.notification_status &&
-                clickedItem.notification_status !== 2 && (
+                clickedItem.notification_status !== 1 &&
+                clickedItem?.notification_status !== 2 && (
                   <>
                     <TabPane
                       tab={

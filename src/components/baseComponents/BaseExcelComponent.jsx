@@ -11,6 +11,7 @@ const BaseExcelComponent = ({
   transformData,
   fileName,
   setOpenExcel,
+  filters,
   setLoading,
 }) => {
   // Initialize selectedColumns with all columns by default
@@ -58,12 +59,14 @@ const BaseExcelComponent = ({
       fetchApiEndpoint,
       fetchApiService,
       transformData,
+
       `${fileName}.xlsx`,
       'Sheet1',
       pageSize,
       selectedColumns,
       skipBlankEntries,
-      setLoading
+      setLoading,
+      filters
     );
   };
 

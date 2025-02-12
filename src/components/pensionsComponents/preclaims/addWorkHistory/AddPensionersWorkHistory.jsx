@@ -41,6 +41,8 @@ function AddPensionersWorkHistory({
 
   const { activePensionCap, activeCapName } = useMda('');
 
+  const [retirementDate, setRetirementDate] = useState('');
+
   const fetchRetiree = async () => {
     try {
       const res = await apiService.get(
@@ -51,6 +53,7 @@ function AddPensionersWorkHistory({
 
       console.log('pensionAward', pensionAward);
       setDateOfFirstAppointment(data.date_of_first_appointment);
+      setRetirementDate(data.retirement_date);
 
       setRetiree(data);
     } catch (error) {
@@ -95,6 +98,7 @@ function AddPensionersWorkHistory({
             id={id}
             status={status}
             clickedItem={clickedItem}
+            retirementDate={retirementDate}
           />
         </Suspense>
         <div className="pb-15">

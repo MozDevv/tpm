@@ -207,7 +207,7 @@ function PreclaimsNotifications({
 
         {Object.keys(awardDocuments).length > 0 && (
           <div className="py-3 mx-5">
-            <div className="text-primary mt-5 text-[15px] font-normal mb-4">
+            <div className="text-primary mt-3 text-[15px] font-normal mb-4">
               List of documents to be uploaded by the retiree(s)
             </div>
             {Object.entries(awardDocuments).map(([retireeKey, retiree]) => (
@@ -253,7 +253,7 @@ function PreclaimsNotifications({
                             )
                           }
                         />
-                        <p className="font-montserrat flex gap-2 cursor-pointer">
+                        <p className="font-sans flex gap-2 cursor-pointer">
                           {doc.name}{' '}
                           {doc.has_two_sides && doc.side && (
                             <Chip
@@ -285,7 +285,7 @@ function PreclaimsNotifications({
           <div>
             <label
               htmlFor="comments"
-              className=" text-xs font-medium text-gray-700"
+              className=" text-xs font-medium text-gray-70mo0"
             >
               Comments
             </label>

@@ -255,4 +255,12 @@ a:hover {
   margin-bottom: 0;
   padding-top: 0;
   padding-bottom: 0;
+} /* PreclaimsNotifications.css */
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #006990;
+  border-color: #006990;
+}
+
+.ant-checkbox-checked::after {
+  border-color: #006990;
 }

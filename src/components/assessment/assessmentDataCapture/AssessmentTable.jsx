@@ -654,6 +654,7 @@ const AssessmentTable = ({ status, statusArr }) => {
     Appendix: () => {
       setOpenReport(1);
     },
+
     'Page 5 Report': () => {
       setOpenReport(2);
     },
@@ -763,6 +764,25 @@ const AssessmentTable = ({ status, statusArr }) => {
           }
           columns={colDefs}
           transformData={mapRowData}
+          filters={
+            status !== null && status !== undefined
+              ? {
+                  // When a single status value is provided
+                  'filterCriterion.criterions[0].propertyName': 'stage',
+                  'filterCriterion.criterions[0].propertyValue': status,
+                  'filterCriterion.criterions[0].criterionType': 0,
+                }
+              : statusArr && statusArr.length > 0
+              ? statusArr.reduce((acc, status, index) => {
+                  acc[`filterCriterion.criterions[${index}].propertyName`] =
+                    'stage';
+                  acc[`filterCriterion.criterions[${index}].propertyValue`] =
+                    status;
+                  acc[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+                  return acc;
+                }, {})
+              : {}
+          }
           fileName={
             status ? `Claims_${notificationStatusMap[status].name}` : 'Listing'
           }

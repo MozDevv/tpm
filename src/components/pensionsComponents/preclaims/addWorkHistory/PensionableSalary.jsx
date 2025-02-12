@@ -305,6 +305,7 @@ function PensionableSalary({ id, clickedItem }) {
         passProspectivePensionerId={true}
         addAditionalCols={addAditionalCols}
         setAddAditionalCols={setAddAditionalCols}
+        retirementDate={clickedItem?.retirement_date}
       />
     </div>
   );

@@ -61,6 +61,7 @@ const BaseInputForPensionableSalary = ({
   setAddAditionalCols,
   deleteApiService,
   setRefreshColumns,
+  retirementDate,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -107,6 +108,8 @@ const BaseInputForPensionableSalary = ({
   };
 
   const [dataAdded, setDataAdded] = useState(false);
+
+  const [retirementDateCaptured, setRetirementDateCaptured] = useState(false);
   const fetchData = async () => {
     const getSalaryRevisions = async () => {
       try {
@@ -207,6 +210,21 @@ const BaseInputForPensionableSalary = ({
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
 
+            // Check if any end_date exceeds the retirementDate or is same as
+            const exceedsRetirementDate = sortedData.some((row) =>
+              datePairs.some(
+                ({ end }) =>
+                  (row[end] &&
+                    dayjs(row[end]).isAfter(dayjs(retirementDate))) ||
+                  row[end] === retirementDate
+              )
+            );
+
+            if (exceedsRetirementDate) {
+              setRetirementDateCaptured(true);
+              return sortedData;
+            }
+
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
@@ -282,6 +300,31 @@ const BaseInputForPensionableSalary = ({
 
             const sortedData = sortData(mappedData);
             console.log('This is sorted data ', mappedData);
+
+            const datePairs = [
+              { start: 'startDate', end: 'endDate' },
+              { start: 'from_date', end: 'to_date' },
+              { start: 'fromDate', end: 'toDate' },
+              { start: 'date', end: 'endDate' },
+              { start: 'date', end: 'enddate' },
+              { start: 'start_date', end: 'end_date' },
+            ];
+
+            // Check if any end_date exceeds the retirementDate or is same as
+            const exceedsRetirementDate = sortedData.some((row) =>
+              datePairs.some(
+                ({ end }) =>
+                  (row[end] &&
+                    dayjs(row[end]).isAfter(dayjs(retirementDate))) ||
+                  row[end] === retirementDate
+              )
+            );
+
+            if (exceedsRetirementDate) {
+              setRetirementDateCaptured(true);
+              return sortedData;
+            }
+            retirementDateCaptured && setRetirementDateCaptured(false);
 
             if (fetchChildren) {
               const childrenData = res.data.data
@@ -1186,7 +1229,7 @@ const BaseInputForPensionableSalary = ({
               variant="text"
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
-              disabled={disableAll}
+              disabled={disableAll || retirementDateCaptured}
             >
               New Line
             </Button>

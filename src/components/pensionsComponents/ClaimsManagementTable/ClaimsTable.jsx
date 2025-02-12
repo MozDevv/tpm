@@ -671,6 +671,15 @@ const ClaimsTable = ({ status }) => {
               ? `Claims_${notificationStatusMap[status].name}`
               : 'Claims Listing'
           }
+          filters={
+            status !== null && status !== undefined
+              ? {
+                  'filterCriterion.criterions[0].propertyName': 'stage',
+                  'filterCriterion.criterions[0].propertyValue': status,
+                  'filterCriterion.criterions[0].criterionType': 0,
+                }
+              : {}
+          }
           setLoading={setExcelLoading}
         />
       </Dialog>

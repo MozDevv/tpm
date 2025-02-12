@@ -66,6 +66,7 @@ const BaseInputTable = ({
   isAddMoreFields,
   setTableInputData,
   setOnCloseWarnings,
+  retirementDate,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -81,6 +82,7 @@ const BaseInputTable = ({
   const [rowErrors, setRowErrors] = useState({});
   const [openSections, setOpenSections] = useState({});
   const [sectionKey, setSectionKey] = useState(title);
+  const [retirementDateCaptured, setRetirementDateCaptured] = useState(false);
 
   const handleToggleSection = (key) => {
     setOpenSections((prevOpenSections) => {
@@ -182,6 +184,24 @@ const BaseInputTable = ({
               }
             }
 
+            // Check if any end_date exceeds the retirementDate or is same as
+            if (retirementDate) {
+              const exceedsRetirementDate = sortedData.some((row) =>
+                datePairs.some(
+                  ({ end }) =>
+                    (row[end] &&
+                      dayjs(row[end]).isAfter(dayjs(retirementDate))) ||
+                    row[end] === retirementDate
+                )
+              );
+
+              if (exceedsRetirementDate) {
+                setRetirementDateCaptured(true);
+                return sortedData;
+              }
+              retirementDateCaptured && setRetirementDateCaptured(false);
+            }
+
             // Determine if we should fetch and append children
             if (fetchChildren) {
               const childrenData = res.data.data
@@ -247,6 +267,32 @@ const BaseInputTable = ({
             setOnCloseWarnings && setOnCloseWarnings(false);
             const sortedData = sortData(res.data.data);
 
+            const datePairs = [
+              { start: 'date', end: 'end_date' },
+              { start: 'startDate', end: 'endDate' },
+              { start: 'from_date', end: 'to_date' },
+              { start: 'fromDate', end: 'toDate' },
+              { start: 'date', end: 'endDate' },
+              { start: 'date', end: 'enddate' },
+              { start: 'start_date', end: 'end_date' },
+            ];
+
+            if (retirementDate) {
+              const exceedsRetirementDate = sortedData.some((row) =>
+                datePairs.some(
+                  ({ end }) =>
+                    (row[end] &&
+                      dayjs(row[end]).isAfter(dayjs(retirementDate))) ||
+                    row[end] === retirementDate
+                )
+              );
+
+              if (exceedsRetirementDate) {
+                setRetirementDateCaptured(true);
+                return sortedData;
+              }
+              retirementDateCaptured && setRetirementDateCaptured(false);
+            }
             // Determine if we should fetch and append children
             if (fetchChildren) {
               const childrenData = res.data.data
@@ -1171,7 +1217,7 @@ const BaseInputTable = ({
             <Button
               onClick={onAddRow}
               variant="text"
-              disabled={disableAll}
+              disabled={disableAll || retirementDateCaptured}
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
