@@ -20,6 +20,7 @@ import {
   ExpandLess,
   KeyboardArrowRight,
   MoreVert,
+  Refresh,
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
@@ -58,6 +59,7 @@ const BaseInputForPensionableSalary = ({
   disableAll,
   addAditionalCols,
   setAddAditionalCols,
+  deleteApiService,
   setRefreshColumns,
 }) => {
   const [rowData, setRowData] = useState(() => {
@@ -117,11 +119,14 @@ const BaseInputForPensionableSalary = ({
         return []; // Return an empty array on error
       }
     };
+
     if (dataAdded) {
       try {
         const res = await getApiService(getEndpoint);
         if (res.status === 200) {
           const salaryRevisions = await getSalaryRevisions();
+
+          console.log('salary revisions', salaryRevisions);
           setRowData((prevRowData) => {
             const datePairs = [
               { start: 'startDate', end: 'endDate' },
@@ -142,26 +147,43 @@ const BaseInputForPensionableSalary = ({
             const mappedData = res.data.data.map((row) => {
               const updatedRow = { ...row };
 
-              if (row.salaryReviews && row.salaryReviews.length > 0) {
-                row.salaryReviews.forEach((salaryReview) => {
-                  const reviewDate =
-                    salaryReview.prospectivePensionerReviewPeriod.review_date;
+              if (salaryRevisions.length > 0) {
+                salaryRevisions.forEach((revision) => {
+                  const reviewDate = revision.review_date;
                   const reviewDateKey = `new_salary_${reviewDate
                     .split('T')[0]
                     .replaceAll('-', '_')}`;
 
-                  // updatedRow[reviewDateKey] = parseFloat(
-                  //   salaryReview.new_salary
-                  // );
-                  Object.assign(row, {
-                    [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                  const review_period_id_key = `review_period_id_${reviewDate
+                    .split('T')[0]
+                    .replaceAll('-', '_')}`;
+
+                  const review_period_id = revision.id;
+
+                  Object.assign(updatedRow, {
+                    [review_period_id_key]: review_period_id,
                   });
+
+                  if (revision.salaryReviews.length > 0) {
+                    revision.salaryReviews.forEach((salaryReview) => {
+                      if (row.id === salaryReview.pensionable_salary_id) {
+                        console.log(
+                          `Mapping new salary for row ID ${row.id}: ${salaryReview.new_salary} on ${reviewDateKey}`
+                        );
+                        Object.assign(updatedRow, {
+                          [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                        });
+                      }
+                    });
+                  }
                 });
               }
 
-              return row;
+              return updatedRow;
             });
             const sortedData = sortData(mappedData);
+
+            console.log('This is sorted data ', sortedData);
 
             let lastEndDate = null;
             let matchingStartField = null;
@@ -184,21 +206,6 @@ const BaseInputForPensionableSalary = ({
 
               defaultRows[0][matchingStartField] = formattedEndDate;
             }
-            // const updatedRows = res.data.data.map((row) => {
-            //   salaryRevisions.forEach((review) => {
-            //     review.salaryReviews.forEach((salaryReview) => {
-            //       if (row.id === salaryReview.pensionable_salary_id) {
-            //         const reviewDateKey = `new_salary_${review.review_date}`;
-
-            //         const newSalary = parseFloat(salaryReview.new_salary);
-
-            //         // Use Object.assign() to add the new key-value pair
-            //         Object.assign(row, { [reviewDateKey]: newSalary });
-            //       }
-            //     });
-            //   });
-            //   return row;
-            // });
 
             if (fetchChildren) {
               const childrenData = res.data.data
@@ -206,16 +213,17 @@ const BaseInputForPensionableSalary = ({
                 .flat();
               return [...childrenData, ...defaultRows];
             } else {
-              //  console.log('Updated Rows with Salary Revisions:', updatedRows);
-
               return [...sortedData, ...defaultRows];
             }
           });
+          console.log('PensionableSalary rowData:', rowData);
 
-          setRefreshColumns((prev) => !prev);
+          setRefreshColumns(Math.random().toString(36).substring(7));
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setRefreshColumns(Math.random().toString(36).substring(7));
       }
     } else {
       try {
@@ -223,6 +231,8 @@ const BaseInputForPensionableSalary = ({
 
         if (res.status === 200) {
           const salaryRevisions = await getSalaryRevisions();
+
+          console.log('salaryRevisions', salaryRevisions);
 
           setRowData((prevRowData) => {
             const defaultRows = Array.from({ length: 1 }, () =>
@@ -235,57 +245,60 @@ const BaseInputForPensionableSalary = ({
             const mappedData = res.data.data.map((row) => {
               const updatedRow = { ...row };
 
-              if (row.salaryReviews && row.salaryReviews.length > 0) {
-                row.salaryReviews.forEach((salaryReview) => {
-                  const reviewDate =
-                    salaryReview.prospectivePensionerReviewPeriod.review_date;
+              if (salaryRevisions.length > 0) {
+                salaryRevisions.forEach((revision) => {
+                  const reviewDate = revision.review_date;
                   const reviewDateKey = `new_salary_${reviewDate
                     .split('T')[0]
                     .replaceAll('-', '_')}`;
 
-                  // updatedRow[reviewDateKey] = parseFloat(
-                  //   salaryReview.new_salary
-                  // );
-                  Object.assign(row, {
-                    [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                  const review_period_id_key = `review_period_id_${reviewDate
+                    .split('T')[0]
+                    .replaceAll('-', '_')}`;
+
+                  const review_period_id = revision.id;
+
+                  Object.assign(updatedRow, {
+                    [review_period_id_key]: review_period_id,
                   });
+
+                  if (revision.salaryReviews.length > 0) {
+                    revision.salaryReviews.forEach((salaryReview) => {
+                      if (row.id === salaryReview.pensionable_salary_id) {
+                        console.log(
+                          `Mapping new salary for row ID ${row.id}: ${salaryReview.new_salary} on ${reviewDateKey}`
+                        );
+                        Object.assign(updatedRow, {
+                          [reviewDateKey]: parseFloat(salaryReview.new_salary),
+                        });
+                      }
+                    });
+                  }
                 });
               }
 
-              return row;
+              return updatedRow;
             });
 
-            // const updatedRows = res.data.data.map((row) => {
-            //   salaryRevisions.forEach((review) => {
-            //     review.salaryReviews.forEach((salaryReview) => {
-            //       if (row.id === salaryReview.pensionable_salary_id) {
-            //         const reviewDateKey = `new_salary_${review.review_date}`;
-
-            //         const newSalary = parseFloat(salaryReview.new_salary);
-
-            //         Object.assign(row, { [reviewDateKey]: newSalary });
-            //       }
-            //     });
-            //   });
-            //   return row;
-            // });
-
             const sortedData = sortData(mappedData);
+            console.log('This is sorted data ', mappedData);
 
             if (fetchChildren) {
               const childrenData = res.data.data
                 .map((item) => item[fetchChildren])
                 .flat();
-              return [...childrenData, ...updatedRows, ...defaultRows];
+              return [...childrenData, ...sortedData, ...defaultRows];
             } else {
-              // console.log("Updated Rows with Salary Revisions:", mappedData);
               return [...sortedData, ...defaultRows];
             }
           });
-          setRefreshColumns((prev) => !prev);
+          console.log('PensionableSalary rowData:', rowData);
+          setRefreshColumns(Math.random().toString(36).substring(7));
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setRefreshColumns(Math.random().toString(36).substring(7));
       }
     }
   };
@@ -319,7 +332,9 @@ const BaseInputForPensionableSalary = ({
 
   const deleteRow = async (rowId) => {
     try {
-      const res = await apiService.delete(deleteEndpoint(rowId));
+      const res = deleteApiService
+        ? await apiService.post(deleteEndpoint(rowId))
+        : await apiService.delete(deleteEndpoint(rowId));
       if (
         res.status === 200 ||
         res.status === 204 ||
@@ -759,6 +774,48 @@ const BaseInputForPensionableSalary = ({
         const { colDef, data, newValue } = params;
         const field = colDef.field;
 
+        if (field.includes('new_salary_')) {
+          // Extract the date from the field (e.g., new_salary_2022_07_08)
+          const datePart = field.split('new_salary_')[1];
+          const reviewPeriodIdField = `review_period_id_${datePart}`;
+
+          // Check if the review period ID exists in the data
+          const reviewPeriodId = data[reviewPeriodIdField];
+          if (reviewPeriodId) {
+            console.log('Review Period ID:', reviewPeriodId);
+
+            const updateSalaryReview = async () => {
+              try {
+                const res = await preclaimsApiService.post(
+                  preClaimsEndpoints.updateSalaryReview,
+                  {
+                    pensionable_salary_id: data.id,
+                    review_period_id: reviewPeriodId,
+                    reviewedAmount: newValue,
+                  }
+                );
+
+                if (res.status === 200 && res.data.succeeded) {
+                  message.success('Reviewed Salary updated successfully');
+                } else {
+                  message.error('An error occurred while updating the salary.');
+                }
+              } catch (error) {
+                console.log(error);
+                message.error('An error occurred while updating the salary.');
+              }
+            };
+
+            // Call and await the updateSalaryReview function
+            await updateSalaryReview();
+          } else {
+            console.log(
+              'No matching review period ID found for the date:',
+              datePart
+            );
+          }
+        }
+
         const isReview = data.mode_of_salary_increment === 3;
 
         if (data.start_date && isReview) {
@@ -1134,6 +1191,15 @@ const BaseInputForPensionableSalary = ({
               New Line
             </Button>
             <Button
+              onClick={fetchData}
+              variant="text"
+              startIcon={<Refresh />}
+              style={{ marginLeft: '10px', marginBottom: '10px' }}
+              disabled={disableAll}
+            >
+              Refresh
+            </Button>
+            <Button
               onClick={handleDeleteSelectedRows}
               variant="text"
               startIcon={<Delete />}
@@ -1161,7 +1227,7 @@ const BaseInputForPensionableSalary = ({
               </Button>
             )}
           </div>
-
+          {/* {JSON.stringify(fields)} */}
           <div className="" style={{ maxHeight: '500px', width: '100%' }}>
             <AgGridReact
               ref={gridApiRef}

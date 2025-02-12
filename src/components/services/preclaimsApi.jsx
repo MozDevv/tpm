@@ -128,6 +128,8 @@ const preClaimsEndpoints = {
     `api/ProspectivePensioners/GetProspectivePensionerReviewPeriods?prospective_pensioner_id=${id}`,
   getNextOfKin: (id) =>
     `/api/Claims/getNextOfkin?prospective_pensioner_id=${id}`,
+
+  updateSalaryReview: '/api/ProspectivePensioners/UpdateSalaryReview',
 };
 
 export const apiService = {

@@ -1239,7 +1239,6 @@ function NewPreclaim({
                                   clickedItem.mda_pensionCap_name) ||
                                 '';
 
-                              console.log('capName from filter', capName);
                               return (
                                 !capName || field.pensionCap.includes(capName)
                               );

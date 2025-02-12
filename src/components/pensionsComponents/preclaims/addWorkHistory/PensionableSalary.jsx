@@ -271,7 +271,7 @@ function PensionableSalary({ id, clickedItem }) {
       .replaceAll('-', '_')}`,
     notRequired: true,
     type: 'amount',
-    disabled: true,
+    disabled: false,
   }));
   const finalFields = [...fields, ...dynamicReviewFields];
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
@@ -297,10 +297,11 @@ function PensionableSalary({ id, clickedItem }) {
         getApiService={apiService.get}
         postApiService={apiService.post}
         putApiService={apiService.post}
+        deleteApiService={apiService.post}
         getEndpoint={preClaimsEndpoints.getPensionableSalary(id)}
         postEndpoint={preClaimsEndpoints.createPensionableSalary}
         putEndpoint={preClaimsEndpoints.updatePensionableSalary}
-        deleteEndpoint={endpoints.deletePensionableSalary(id)}
+        deleteEndpoint={endpoints.deletePensionableSalary}
         passProspectivePensionerId={true}
         addAditionalCols={addAditionalCols}
         setAddAditionalCols={setAddAditionalCols}
