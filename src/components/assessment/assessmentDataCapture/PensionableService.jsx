@@ -10,9 +10,30 @@ import assessEndpoints, {
 import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
+import { parseDate } from '@/utils/dateFormatter';
 
 function PensionableService({ clickedItem, computed }) {
   const columnDefs = [
+    {
+      field: 'start_date',
+      headerName: 'Start Date',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return parseDate(params.value);
+      },
+    },
+    {
+      field: 'end_date',
+      headerName: 'End Date',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => {
+        return parseDate(params.value);
+      },
+    },
     {
       field: 'pensionable_service_years',
       headerName: 'Years',
@@ -82,6 +103,20 @@ function PensionableService({ clickedItem, computed }) {
   const [clickedRow, setClickedRow] = useState(null);
 
   const fields = [
+    {
+      name: 'start_date',
+      label: 'Start Date',
+      type: 'date',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'end_date',
+      label: 'End Date',
+      type: 'date',
+      required: true,
+      disabled: true,
+    },
     {
       name: 'pensionable_service_years',
       label: 'Years',
