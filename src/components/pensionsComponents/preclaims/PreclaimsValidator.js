@@ -34,6 +34,19 @@ export const validateField = (name, value, formData) => {
       error = 'Retirement date cannot be before date of confirmation';
     }
   }
+  if (
+    name === 'date_of_confirmation' &&
+    value &&
+    formData.date_of_first_appointment
+  ) {
+    const appointmentDate = dayjs(formData.date_of_first_appointment);
+    const confirmationDate = dayjs(value);
+
+    if (confirmationDate.isBefore(appointmentDate)) {
+      error = 'Date of confirmation cannot be before date of first appointment';
+    }
+  }
+
   /**change tax exempt certificate date to tax exempt certificate expiry date */
 
   if (

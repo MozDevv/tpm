@@ -1,101 +1,50 @@
-import React, { useEffect, useState } from 'react';
-
-// Assume this is your transformation function
-import BaseTable from '@/components/baseComponents/BaseTable';
-import BaseCard from '@/components/baseComponents/BaseCard';
-
-import BaseInputCard from '@/components/baseComponents/BaseInputCard';
-import endpoints, { apiService } from '@/components/services/setupsApi';
-import { formatDate } from '@/utils/dateFormatter';
-import { Button } from '@mui/material';
-import { AgGridReact } from 'ag-grid-react';
-
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-
-import EditableTable from '@/components/baseComponents/EditableTable';
+import React, { useEffect, useState, useMemo } from 'react';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import endpoints, { apiService } from '@/components/services/setupsApi';
 
 const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
-  const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 10; // Number of records per page
-  const [departments, setDepartments] = useState([]); // [1]
-
   const [relationships, setRelationships] = useState([]);
+  const [postalAddress, setPostalAddress] = useState([]);
 
-  const fetchRelationships = async () => {
-    try {
-      const res = await apiService.get(endpoints.getBeneficiariesRelationShips);
-      setRelationships(res.data.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
+  // Fetch relationships
   useEffect(() => {
+    const fetchRelationships = async () => {
+      try {
+        const res = await apiService.get(
+          endpoints.getBeneficiariesRelationShips
+        );
+        setRelationships(res.data.data);
+      } catch (error) {
+        console.error('Error fetching relationships:', error);
+      }
+    };
+
     fetchRelationships();
   }, []);
 
-  const transformData = (data, pageNumber = 1, pageSize = 10) => {
-    return data.map((item, index) => ({
-      id: item.id,
-
-      is_spouse: item.is_spouse,
-      is_guardian: item.is_guardian,
-      prospective_pensioner_id: item.prospective_pensioner_id,
-      surname: item.surname,
-      first_name: item.first_name,
-      other_name: item.other_name,
-      identifier: item.identifier,
-      identifier_type: item.identifier_type,
-      relationship_id: item.relationship_id,
-      mobile_number: item.mobile_number,
-      address: item.address,
-      email_address: item.email_address,
-      city: item.city,
-      status: item.status,
-      guardian_id: item.guardian_id,
-      parent_id: item.parent_id,
-      dob: item.dob,
-      gender: item.gender,
-      date_of_death: item.date_of_death,
-    }));
-  };
-
-  //
-
-  const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
-
-  const [selectedBank, setSelectedBank] = React.useState(null);
-  const [postalAddress, setPostalAddress] = useState([]);
-
-  const fetchPostalAddress = async () => {
-    try {
-      const res = await apiService.get(endpoints.getPostalCodes, {
-        'paging.pageSize': 1000,
-      });
-      setPostalAddress(res.data.data);
-    } catch (error) {
-      console.error('Error fetching Postal Address:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPostalAddress();
-  }, []);
-
-  const title = clickedItem ? 'Beneficiary' : 'Create a  Beneficiary';
+  // **Optimized filtering using useMemo (prevents infinite loop)**
+  const filteredRelationships = useMemo(() => {
+    return relationships.filter((relationship) => {
+      if (formData.marital_status === 0) {
+        return (
+          !relationship.name.toLowerCase().includes('husband') &&
+          !relationship.name.toLowerCase().includes('wife')
+        );
+      } else if (formData.gender === 0) {
+        return !relationship.name.toLowerCase().includes('husband');
+      } else if (formData.gender === 1) {
+        return !relationship.name.toLowerCase().includes('wife');
+      }
+      return true;
+    });
+  }, [formData.marital_status, formData.gender, relationships]);
 
   const fields2 = [
     {
       value: 'relationship_id',
       label: 'Relationship',
       type: 'select',
-      options: relationships.map((relationship) => ({
-        id: relationship.id,
-        name: relationship.name,
-      })),
+      options: filteredRelationships,
     },
     {
       value: 'surname',
@@ -122,13 +71,11 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
       value: 'gender',
       label: 'Gender',
       type: 'select',
-      //  disabled: true,
       options: [
         { id: 0, name: 'Male' },
         { id: 1, name: 'Female' },
       ],
     },
-
     {
       label: 'Type Of Identification',
       value: 'identifier_type',
@@ -155,17 +102,13 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
     },
   ];
 
-  const [open, setOpen] = React.useState(false);
-
   return (
     <div className="relative">
       <div
         className="ag-theme-quartz"
         style={{
           height: '60vh',
-
           mt: '20px',
-
           overflowY: 'auto',
         }}
       >
@@ -174,7 +117,6 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
           fields={fields2}
           id={id}
           disableAll={status !== 0}
-          setSeconded={setOpen}
           idLabel="prospective_pensioner_id"
           getApiService={apiService.get}
           postApiService={apiService.post}
