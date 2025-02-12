@@ -604,6 +604,24 @@ function NewPreclaim({
         }
         return true;
       })
+      .filter((exitGround) => {
+        // FOR CAP189 FILTER OUT RETIREMENT ON AGE GROUNDS IF AGE IS LESS THAN 50
+        if (formData.retirement_date && formData.dob) {
+          const dob = dayjs(formData.dob);
+          const retirementDate = dayjs(formData.retirement_date);
+
+          const ageOfDischarge = retirementDate.diff(dob, 'year');
+
+          if (activeCapName === 'CAP189') {
+            if (ageOfDischarge < 50) {
+              return !exitGround.name
+                .toLowerCase()
+                .includes('retirement on age grounds');
+            }
+          }
+        }
+        return true; // Ensure other exit grounds are not filtered out
+      })
       .map((exitGround) => ({
         id: exitGround.id,
         name: exitGround.name,
@@ -616,6 +634,8 @@ function NewPreclaim({
     exitGrounds,
     activePensionCap,
     formData.gender, // Add formData.gender to the dependency array
+    formData.dob,
+    formData.retirement_date,
   ]);
 
   const pensionAwardOptions =
@@ -1442,6 +1462,7 @@ function NewPreclaim({
               <div className="h-[100px]">
                 <div className="gap-3 my-3">
                   <AddBeneficiaries
+                    formData={formData}
                     setOnCloseWarnings={setOnCloseWarnings}
                     id={retireeId}
                     status={formData?.notification_status}

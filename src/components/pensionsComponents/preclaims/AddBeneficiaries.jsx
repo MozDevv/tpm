@@ -16,7 +16,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const AddBeneficiaries = ({ id, status, setOnCloseWarnings }) => {
+const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
   const [departments, setDepartments] = useState([]); // [1]
@@ -95,7 +95,6 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings }) => {
       options: relationships.map((relationship) => ({
         id: relationship.id,
         name: relationship.name,
-        gender: relationship.gender,
       })),
     },
     {

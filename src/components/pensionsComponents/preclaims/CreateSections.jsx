@@ -639,7 +639,7 @@ export const createSections = (
       {
         label: 'Exit Ground',
         name: 'exit_grounds',
-        type: 'select',
+        type: 'autocomplete',
         children: exitGroundOptions,
         pensionCap: [
           'CAP189',

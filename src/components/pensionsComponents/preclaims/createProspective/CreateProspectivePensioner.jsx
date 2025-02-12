@@ -45,37 +45,6 @@ function CreateProspectivePensioner({
 
   const { activeCapName } = useMda();
 
-  /** {
-            "surname": "Kui",
-            "first_name": "Maijui",
-            "other_name": "Huyion",
-            "identifier": "9873883",
-            "identifier_type": 1,
-            "national_id": null,
-            "relationship_id": "28314bdf-4f81-411d-9da4-a36504aa8435",
-            "mobile_number": "+254799893883",
-            "address": "67",
-            "email_address": "jui@mail.com",
-            "city": "Nairobi",
-            "status": 0,
-            "percentage": null,
-            "relationship": {
-                "name": "Husband",
-                "description": "Husband",
-                "is_spouse": true,
-                "gender": 0,
-                "id": "28314bdf-4f81-411d-9da4-a36504aa8435",
-                "created_by": null,
-                "created_date": "2024-09-30T12:07:59.157627Z",
-                "updated_by": null,
-                "updated_date": null
-            },
-            "id": "e01f8d5b-68fd-4e7d-bd6d-7bb3fb1eef8e",
-            "created_by": null,
-            "created_date": "2025-01-29T12:35:21.55743Z",
-            "updated_by": null,
-            "updated_date": null
-        } */
   return (
     <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto   ">
       <div>
