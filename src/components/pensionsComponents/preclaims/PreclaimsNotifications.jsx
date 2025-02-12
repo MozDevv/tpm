@@ -4,6 +4,7 @@ import {
   Button,
   Chip,
   Dialog,
+  IconButton,
   MenuItem,
   TextField,
   TextareaAutosize,
@@ -14,8 +15,9 @@ import preClaimsEndpoints, {
 import endpoints from '@/components/services/setupsApi';
 import { useAlert } from '@/context/AlertContext';
 import { useMda } from '@/context/MdaContext';
-import { List, message } from 'antd';
+import { Checkbox, List, message } from 'antd';
 import { useAuth } from '@/context/AuthContext';
+import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -120,34 +122,42 @@ function PreclaimsNotifications({
 
   const fetchAwardDocuments = async (ids) => {
     try {
-      const allDocuments = [];
+      const documentsByRetiree = {};
 
       for (const id of ids.map((row) => row.id)) {
         const res = await apiService.get(
           preClaimsEndpoints.getAwardDocuments(id)
         );
-        const documents =
-          res.data?.data[0]?.prospectivePensionerDocumentSelections
-            ?.map((selection) => ({
-              id: selection.id,
-              name: selection.documentType.name,
-              description: selection.documentType.description,
-              required: selection.required,
-              pensioner_upload: selection.pensioner_upload,
-              side: selection.side,
-              has_two_sides: selection.documentType.has_two_sides,
-            }))
-            .filter((doc) => doc.pensioner_upload) || [];
+        const retireeDetails = res.data?.data[0];
 
-        allDocuments.push(...documents);
+        if (retireeDetails) {
+          const retireeKey = retireeDetails?.personal_number; // Using personal number as the unique key
+
+          const documents =
+            retireeDetails?.prospectivePensionerDocumentSelections?.map(
+              (selection) => ({
+                id: selection.id,
+                name: selection.documentType.name,
+                description: selection.documentType.description,
+                required: selection.required,
+                pensioner_upload: selection.pensioner_upload,
+                side: selection.side,
+                has_two_sides: selection.documentType.has_two_sides,
+              })
+            ) || [];
+
+          documentsByRetiree[retireeKey] = {
+            retireeName:
+              retireeDetails?.first_name + ' ' + retireeDetails?.surname,
+            retireePersonalNumber: retireeDetails?.personal_number,
+            documents,
+          };
+        }
       }
 
-      // console.log("allDocuments", allDocuments);
-      setAwardDocuments(allDocuments);
+      setAwardDocuments(documentsByRetiree);
     } catch (error) {
       console.error('Error fetching award documents:', error);
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -161,6 +171,18 @@ function PreclaimsNotifications({
     }
   }, [selectedRows]);
 
+  const [selectedDocuments, setSelectedDocuments] = useState({});
+
+  const handleCheckboxChange = (retireeKey, docId, checked) => {
+    setSelectedDocuments((prev) => ({
+      ...prev,
+      [retireeKey]: {
+        ...prev[retireeKey],
+        [docId]: checked,
+      },
+    }));
+  };
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <Dialog
       open={
@@ -183,44 +205,82 @@ function PreclaimsNotifications({
           </div>
         </div>
 
-        {awardDocuments.length > 0 && (
+        {Object.keys(awardDocuments).length > 0 && (
           <div className="py-3 mx-5">
             <div className="text-primary mt-5 text-[15px] font-normal mb-4">
               List of documents to be uploaded by the retiree(s)
             </div>
-            <List
-              size="small"
-              bordered
-              style={{
-                maxHeight: '250px',
-                overflowY: 'auto',
-                mx: '20px',
-              }}
-              dataSource={awardDocuments}
-              renderItem={(doc) => (
-                <List.Item>
-                  <p className="font-montserrat flex gap-2 cursor-pointer">
-                    {doc.name}{' '}
-                    {doc.has_two_sides && doc.side && (
-                      <Chip
-                        label={doc.side}
-                        size="small"
-                        variant="contained"
-                        sx={{
-                          maxHeight: '20px',
-                          fontSize: '9px',
-                          mb: '10px',
-                          borderWidth: '2px',
-                        }}
-                        color={doc.side === 'Front' ? 'primary' : 'secondary'}
+            {Object.entries(awardDocuments).map(([retireeKey, retiree]) => (
+              <div key={retireeKey} className="mb-4">
+                <h6 className="text-[16px] font-semibold text-primary flex items-center ">
+                  {retiree.retireeName}
+                  <IconButton
+                    sx={{ zIndex: 1 }}
+                    onClick={() => setIsOpen((prevState) => !prevState)}
+                  >
+                    {isOpen ? (
+                      <ExpandLess
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
+                      />
+                    ) : (
+                      <KeyboardArrowRight
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
                       />
                     )}
-                  </p>
-                </List.Item>
-              )}
-            />
+                  </IconButton>
+                </h6>
+                <List
+                  size="small"
+                  bordered
+                  style={{
+                    maxHeight: '250px',
+                    overflowY: 'auto',
+                    mx: '20px',
+                  }}
+                  dataSource={retiree.documents}
+                  renderItem={(doc) => (
+                    <List.Item>
+                      <div className="flex gap-2 items-center">
+                        <Checkbox
+                          checked={
+                            selectedDocuments[retireeKey]?.[doc.id] ?? true
+                          }
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              retireeKey,
+                              doc.id,
+                              e.target.checked
+                            )
+                          }
+                        />
+                        <p className="font-montserrat flex gap-2 cursor-pointer">
+                          {doc.name}{' '}
+                          {doc.has_two_sides && doc.side && (
+                            <Chip
+                              label={doc.side}
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                maxHeight: '20px',
+                                fontSize: '9px',
+                                mb: '10px',
+                                borderWidth: '2px',
+                              }}
+                              color={
+                                doc.side === 'Front' ? 'primary' : 'secondary'
+                              }
+                            />
+                          )}
+                        </p>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            ))}
           </div>
         )}
+
         {/* <div className="p-6">
           <div>
             <label
@@ -243,7 +303,10 @@ function PreclaimsNotifications({
             />
           </div>
         </div> */}
-        <div className="flex gap-8 w-full justify-between px-5 mt-7">
+        <div
+          style={{ boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.1)' }}
+          className="flex gap-8 w-full justify-between  sticky bottom-0 pb-6  bg-white pt-6 z-30"
+        >
           <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
