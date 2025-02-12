@@ -929,7 +929,7 @@ const Preclaims = ({ status }) => {
             openAction={openAction}
             setOpenAction={setOpenAction}
             fetchAllPreclaims={fetchAllPreclaims}
-            isClaim={true}
+            isClaim={clickedItem}
             activeStep={clickedItem?.notification_status}
             onCloseWarnings={onCloseWarnings}
             setOnCloseWarnings={setOnCloseWarnings}

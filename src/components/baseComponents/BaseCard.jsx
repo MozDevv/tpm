@@ -119,7 +119,9 @@ function BaseCard({
 
   const updatedHandlers = {
     ...handlers,
-    openDetails: () => setDetailsVisible(!isDetailsVisible),
+    ...(isUserComponent || isClaim
+      ? { openDetails: () => setDetailsVisible(!isDetailsVisible) }
+      : {}),
     ...((deleteApiEndpoint && deleteApiService) || customDeleteFunction
       ? {
           delete: () => {
