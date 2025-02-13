@@ -93,7 +93,7 @@ function PushToFinance({
     }
   };
 
-  const navTitle = 'Move to Finance';
+  const navTitle = 'Create Payment Voucher';
 
   return (
     <div className="p-5">
@@ -129,7 +129,7 @@ function PushToFinance({
                   <TableRow>
                     <TableCell>Claim No</TableCell>
                     <TableCell>Name</TableCell>
-                    <TableCell align="right">Personal Number</TableCell>
+                    <TableCell align="right">Pensioner Number</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -152,7 +152,11 @@ function PushToFinance({
                       </TableCell>
 
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                        {doc.personal_number}
+                        {
+                          doc?.prospectivePensionerAwards[0]?.pension_award
+                            ?.prefix
+                        }
+                        {doc?.pensioner_number}
                       </TableCell>
                     </TableRow>
                   ))}
