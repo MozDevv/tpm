@@ -49,6 +49,8 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    //
+    console.log(name, value);
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
     const error = validateField(name, value, formData);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
@@ -116,7 +118,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
       isMDA: selectedAdminType === 'MDA' ? true : false,
       ...(identificationType === 1
         ? {
-            id_number: formData.get('id_number'),
+            idNumber: formData.get('id_number') * 1,
           }
         : {
             passportNumber: formData.get('passportNumber'),
@@ -152,16 +154,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     } catch (error) {
       console.log(error.response);
 
-      if (error.status === 400 && error.response.data.message) {
-        message.error(error.response.data.message);
-      }
+      if (error.response) {
+        console.log('Error Response:', error.response);
 
-      if (error.response && error.response.data) {
-        const errorData = error.response.data;
-
-        // Extracting and displaying the error message
-        if (errorData.errors) {
-          const validationErrors = errorData.errors;
+        if (error.response.status === 400 && error.response.data.message) {
+          message.error(error.response.data.message);
+        } else if (error.response.data.errors) {
+          const validationErrors = error.response.data.errors;
           const errorMessages = [];
 
           for (const field in validationErrors) {
@@ -174,9 +173,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
 
           // Display all validation errors as a single message
           message.error(errorMessages.join(' | '));
-        } else if (errorData.title) {
+        } else if (error.response.data.title) {
           // Display the general error message
-          message.error(errorData.title);
+          message.error(error.response.data.title);
+        } else {
+          message.error('An error occurred. Please try again.');
         }
       } else {
         message.error('An error occurred. Please try again.');
@@ -504,12 +505,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           <div className="text-red-600 text-base mt-[3px]"></div>
                         </label>
                         <input
-                          type="number"
+                          onChange={handleInputChange}
+                          type="text"
                           name="employeeNumber"
                           className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
                             errors.employeeNumber ? 'input-error' : ''
                           }`}
-                          onChange={handleInputChange}
+                          required
                         />
                         {errors.employeeNumber && (
                           <div className="text-red-600 text-sm mt-[1px]">
@@ -527,7 +529,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="firstName"
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                            errors.firstName ? 'input-error' : ''
+                          }`}
                           required
                           onChange={handleInputChange}
                         />
@@ -548,7 +552,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="lastName"
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                            errors.lastName ? 'input-error' : ''
+                          }`}
                           required
                           onChange={handleInputChange}
                         />
@@ -566,7 +572,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="text"
                           name="middleName"
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                            errors.middleName ? 'input-error' : ''
+                          }`}
                           onChange={handleInputChange}
                         />
                         {errors.middleName && (
@@ -602,9 +610,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             <div className="text-red-600 text-base ">*</div>
                           </label>
                           <input
-                            type="number"
+                            type="text"
                             name="id_number"
-                            className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                            className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                              errors.id_number ? 'input-error' : ''
+                            }`}
                             required
                             onChange={handleInputChange}
                           />
@@ -625,7 +635,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           <input
                             type="text"
                             name="passportNumber"
-                            className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                            className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                              errors.passportNumber ? 'input-error' : ''
+                            }`}
                             required
                             onChange={handleInputChange}
                           />
@@ -714,7 +726,9 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="email"
                           name="email"
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                            errors.email ? 'input-error' : ''
+                          }`}
                           required
                           onChange={handleInputChange}
                         />
@@ -738,11 +752,11 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <MuiPhoneNumber
                           defaultCountry="ke" // Kenya as the default country
                           name="phoneNumber"
-                          // onChange={(value) =>
-                          //   handleInputChange({
-                          //     target: { name: "phone_number", value },
-                          //   })
-                          // }
+                          onChange={(value) =>
+                            handleInputChange({
+                              target: { name: 'phoneNumber', value },
+                            })
+                          }
                           error={errors.phoneNumber}
                           helperText={errors.phoneNumber}
                           variant="outlined"

@@ -151,8 +151,12 @@ export const validateField = (name, value, formData) => {
     error = 'Employee Number must contain only numeric values';
   }
 
-  if (name === 'id_number' && value && !/^\d+$/.test(value)) {
-    error = 'National ID Must contain only numeric values';
+  if (
+    name === 'id_number' &&
+    value &&
+    (!/^\d+$/.test(value) || value.length < 7 || value.length > 10)
+  ) {
+    error = 'National ID is not valid';
   }
 
   if (
@@ -261,6 +265,12 @@ export const validateField = (name, value, formData) => {
     } else if (value.startsWith('+254') && value.length !== 13) {
       error = 'Enter a valid Kenyan phone number';
     }
+  } else if (name === 'phoneNumber' && value) {
+    if (value.length < 13 || value.length > 17) {
+      error = 'Enter a valid phone number';
+    } else if (value.startsWith('+254') && value.length !== 13) {
+      error = 'Enter a valid Kenyan phone number';
+    }
   } else if (
     name === 'date_of_death' &&
     value &&
@@ -277,7 +287,7 @@ export const validateField = (name, value, formData) => {
   } else if (name === 'national_id' && value) {
     if (!/^\d+$/.test(value)) {
       error = 'National ID must contain only numeric values';
-    } else if (value.length < 7 || value.length > 9) {
+    } else if (value.length < 7 || value.length > 10) {
       error = 'National ID is not valid';
     }
   } else if (
@@ -288,11 +298,7 @@ export const validateField = (name, value, formData) => {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
       error = 'Passport number must be valid';
     }
-  } else if (
-    name === 'passportNumber' &&
-    value &&
-    formData.identifier_type === 1
-  ) {
+  } else if (name === 'passportNumber' && value) {
     if (!/^[A-Za-z][K]\d+$/.test(value)) {
       error = 'Passport number must be valid';
     }
