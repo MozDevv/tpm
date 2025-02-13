@@ -489,13 +489,13 @@ const ListNavigation = ({
       action: 'closePeriod',
       requiredPermissions: [],
     },
-    {
-      name: 'Create Payroll Record',
-      icon: Add,
-      action: 'createPayrollRecord',
-      requiredPermissions: [],
-      status: [7],
-    },
+    // {
+    //   name: 'Create Payroll Record',
+    //   icon: Add,
+    //   action: 'createPayrollRecord',
+    //   requiredPermissions: [],
+    //   status: [7],
+    // },
     {
       name: 'Trial Run',
       icon: Replay,

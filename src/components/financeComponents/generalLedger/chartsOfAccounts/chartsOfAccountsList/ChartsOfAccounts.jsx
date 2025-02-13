@@ -679,11 +679,7 @@ function ChartsOfAccounts() {
             setClickedItem(e.data);
           }}
           noRowsOverlayComponent={BaseEmptyComponent}
-          // onRowClicked={(e) => {
-          //   // setOpenBaseCard(true);
-          //   setClickedItem(e.data);
-          // }}
-          className="font-segoe"
+          className="font-sans"
           onGridReady={onGridReady}
           animateRows={true}
           rowHeight={rowHeight}

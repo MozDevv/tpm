@@ -7,7 +7,7 @@ import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { Button, Divider, IconButton, TextField } from '@mui/material';
 import dayjs from 'dayjs'; // Make sure to install dayjs for date handling
 import { Close } from '@mui/icons-material';
-import html2pdf from 'html2pdf.js';
+
 import ExcelJS from 'exceljs';
 
 const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
@@ -165,9 +165,11 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     saveAs(blob, 'BalanceSheet.xlsx');
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setLoading(true);
     const element = contentRef.current;
+
+    const html2pdf = (await import('html2pdf.js')).default;
 
     const fixedWidth = 750; // Reduced width in pixels
     const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)

@@ -142,6 +142,18 @@ export const validateField = (name, value, formData) => {
       error = 'Tax Exempt Certificate Number is not valid';
     }
   }
+  if (name === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    error = 'Invalid email format';
+    // } else if (name === "phone_number" && value && !/^\d+$/.test(value)) {
+    //   error = "Must be a valid phone number";
+  }
+  if (name === 'employeeNumber' && value && !/^\d+$/.test(value)) {
+    error = 'Employee Number must contain only numeric values';
+  }
+
+  if (name === 'id_number' && value && !/^\d+$/.test(value)) {
+    error = 'National ID Must contain only numeric values';
+  }
 
   if (
     name === 'email_address' &&
@@ -170,15 +182,10 @@ export const validateField = (name, value, formData) => {
   ) {
     error = 'National ID Must contain only numeric values';
   } else if (name === 'kra_pin' && value && !/^A\d{9}[A-Z]$/.test(value)) {
+  } else if (name === 'kra_pin' && value && !/^A\d{9}[A-Z]$/.test(value)) {
     error = 'Must be a valid KRA PIN';
   } else if (name === 'last_basic_salary_amount' && value && isNaN(value)) {
     error = 'Must be a valid number';
-    // } else if (
-    //   name === "phone_number" &&
-    //   value &&
-    //   !/^(?:\+254|0)([17][0-9]|1[0-1])[0-9]{7}$/.test(value)
-    // ) {
-    //   error = "Must be a valid phone number";
   } else if (
     name.includes('date') &&
     name !== 'date_from_which_pension_will_commence' &&
@@ -234,7 +241,15 @@ export const validateField = (name, value, formData) => {
       error = 'Tax Exempt Certificate Date is required';
     }
   } else if (
-    ['surname', 'first_name', 'middle_name', 'other_name'].includes(name) &&
+    [
+      'surname',
+      'first_name',
+      'firstName',
+      'middleName',
+      'lastName',
+      'middle_name',
+      'other_name',
+    ].includes(name) &&
     value &&
     !/^[a-zA-Z'-\s]+$/.test(value)
   ) {
@@ -267,6 +282,14 @@ export const validateField = (name, value, formData) => {
     }
   } else if (
     name === 'passport_no' &&
+    value &&
+    formData.identifier_type === 1
+  ) {
+    if (!/^[A-Za-z][K]\d+$/.test(value)) {
+      error = 'Passport number must be valid';
+    }
+  } else if (
+    name === 'passportNumber' &&
     value &&
     formData.identifier_type === 1
   ) {

@@ -21,6 +21,7 @@ import { message } from 'antd';
 import MuiPhoneNumber from 'mui-phone-number';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { validateField } from '../preclaims/PreclaimsValidator';
 
 function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const { alert, setAlert } = useAlert();
@@ -34,6 +35,24 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
   const [designationId, setDesignationId] = useState('');
   const [gradeId, setGradeId] = useState('');
   const { isLoading, setIsLoading } = useIsLoading();
+
+  const [formData, setFormData] = useState({
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    employeeNumber: '',
+    phoneNumber: '',
+    email: '',
+    id_number: '',
+    passportNumber: '',
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    const error = validateField(name, value, formData);
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
 
   const validateForm = (userData) => {
     let formErrors = {};
@@ -88,13 +107,20 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
         department: selectedDepartment,
         role: selectedRole,
       }),
+
       employeeNumber: formData.get('employeeNumber'),
       phoneNumber: formData.get('phoneNumber'),
       email: formData.get('email'),
       mdaid: selectedMDA, // Include the MDA ID in the user data
       //adminType: selectedAdminType, // Include the admin type in the user data
       isMDA: selectedAdminType === 'MDA' ? true : false,
-      idNumber: Number(formData.get('id_number')),
+      ...(identificationType === 1
+        ? {
+            id_number: formData.get('id_number'),
+          }
+        : {
+            passportNumber: formData.get('passportNumber'),
+          }),
     };
     console.log(userData);
 
@@ -480,7 +506,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                         <input
                           type="number"
                           name="employeeNumber"
-                          className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          className={`border bg-white border-gray-300 rounded-md p-2 text-sm w-full ${
+                            errors.employeeNumber ? 'input-error' : ''
+                          }`}
+                          onChange={handleInputChange}
                         />
                         {errors.employeeNumber && (
                           <div className="text-red-600 text-sm mt-[1px]">
@@ -500,7 +529,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="firstName"
                           className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
+                          onChange={handleInputChange}
                         />
+                        {errors.firstName && (
+                          <div className="text-red-600 text-[12px] mt-[1px]">
+                            {errors.firstName}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col">
@@ -515,7 +550,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="lastName"
                           className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
+                          onChange={handleInputChange}
                         />
+                        {errors.lastName && (
+                          <div className="text-red-600 text-[12px] mt-[1px]">
+                            {errors.lastName}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col mb-2 ">
@@ -526,7 +567,13 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           type="text"
                           name="middleName"
                           className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
+                          onChange={handleInputChange}
                         />
+                        {errors.middleName && (
+                          <div className="text-red-600 text-[12px] mt-[1px]">
+                            {errors.middleName}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col mb-2">
@@ -559,9 +606,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                             name="id_number"
                             className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                             required
+                            onChange={handleInputChange}
                           />
                           {errors.id_number && (
-                            <div className="text-red-600 text-sm mt-[1px]">
+                            <div className="text-red-600 text-[12px] mt-[1px]">
                               {errors.id_number}
                             </div>
                           )}
@@ -576,10 +624,16 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           </label>
                           <input
                             type="text"
-                            name="passport_number"
+                            name="passportNumber"
                             className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                             required
+                            onChange={handleInputChange}
                           />
+                          {errors.passportNumber && (
+                            <div className="text-red-600 text-[12px] mt-[1px]">
+                              {errors.passportNumber}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <></>
@@ -662,9 +716,10 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                           name="email"
                           className="border bg-white border-gray-300 rounded-md p-2 text-sm w-full"
                           required
+                          onChange={handleInputChange}
                         />
                         {errors.email && (
-                          <div className="text-red-600 text-sm mt-[1px]">
+                          <div className="text-red-600 text-[12px] mt-[1px]">
                             {errors.email}
                           </div>
                         )}
