@@ -397,6 +397,9 @@ const financeEndpoints = {
   getTaxBands: '/Setups/GetTaxBands',
   updateTaxBands: '/Setups/UpdateTaxBands',
   deleteTaxBands: (id) => `/Setups/DeleteTaxBands?id=${id}`,
+
+  getScheduleControlReportById: (id) =>
+    `/Reports/GetScheduleControlReport?ScheduleId=${id}`,
 };
 
 export const apiService = {

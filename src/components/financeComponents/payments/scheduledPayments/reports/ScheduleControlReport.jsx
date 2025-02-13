@@ -10,9 +10,9 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 import { parseDate } from '@/utils/dateFormatter';
 
-const ScheduleControlReport = ({ setOpenReport }) => {
+const ScheduleControlReport = ({ setOpenReport, id }) => {
   const { data } = useFetchAsync(
-    financeEndpoints.getScheduleControlReport,
+    financeEndpoints.getScheduleControlReportById(id),
     apiService
   );
 
@@ -21,65 +21,38 @@ const ScheduleControlReport = ({ setOpenReport }) => {
   const [report, setReport] = useState(null);
   const [pdfBlob, setPdfBlob] = useState(null);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setLoading(true);
+
     const element = contentRef.current;
 
-    // A4 page dimensions in inches (Width x Height)
-    const pageWidth = 8.27; // A4 width in inches
-    const pageHeight = 11.69; // A4 height in inches
+    // Load html2pdf.js dynamically, only in the browser
+    const html2pdf = (await import('html2pdf.js')).default;
 
-    // Convert content dimensions from pixels to inches (assuming 96 DPI)
-    const contentWidth = element.scrollWidth / 96; // in inches
-    const contentHeight = element.scrollHeight / 96; // in inches
+    const fixedWidth = 750; // Reduced width in pixels
+    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
 
-    // Calculate scaling factor to fit the content within the A4 page
-    const scaleX = pageWidth / contentWidth;
-    const scaleY = pageHeight / contentHeight;
-
-    // Use the minimum scale factor to ensure both width and height fit on the page
-    const scale = Math.min(scaleX, scaleY) * 0.9; // Reduce the scale factor by 10%
-
-    // Define options for the PDF
     const options = {
-      margin: 0.2, // Reduced margin
-      filename: 'ScheduleControlReport.pdf',
-      html2canvas: { scale: 1.5 }, // Lower the canvas scale to reduce content size
-      jsPDF: {
-        unit: 'in',
-        format: 'a4',
-        orientation: 'portrait',
-        compressPDF: true,
-      }, // Enable compression
+      margin: 0.5, // Default margin (in inches)
+      filename: 'Schedule Control Report.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
 
-    // Create a wrapper to hold the cloned content
     const wrapper = document.createElement('div');
-    wrapper.style.width = `${pageWidth * 96}px`; // Set to A4 width (in pixels)
-    wrapper.style.height = `${pageHeight * 96}px`; // Set to A4 height (in pixels)
+
     wrapper.style.position = 'relative';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
-    wrapper.style.justifyContent = 'center'; // Center content horizontally
+    wrapper.style.justifyContent = 'center';
     wrapper.style.overflow = 'hidden';
 
-    // Clone the content element
     const clonedElement = element.cloneNode(true);
+    clonedElement.style.transform = 'scale(1)';
+    clonedElement.style.transformOrigin = 'top left';
 
-    // Scale the cloned element
-    clonedElement.style.transform = `scale(${scale})`;
-    clonedElement.style.transformOrigin = 'center'; // Center the scaling
-    clonedElement.style.width = `${contentWidth * 96}px`; // Revert to pixel values
-    clonedElement.style.height = `${contentHeight * 96}px`;
-
-    // Optionally, reduce font size and line height for more compact content
-    clonedElement.style.fontSize = '0.9rem'; // Reduce font size slightly
-    clonedElement.style.lineHeight = '1.2'; // Reduce line height to fit more text
-
-    // Append the scaled and centered content to the wrapper
     wrapper.appendChild(clonedElement);
 
-    // Generate the PDF
     html2pdf()
       .set(options)
       .from(wrapper)
@@ -164,6 +137,7 @@ const ScheduleControlReport = ({ setOpenReport }) => {
       }, 100);
     }
   }, [data]);
+
   return (
     <div
       className="flex-grow"
@@ -246,20 +220,46 @@ const ScheduleControlReport = ({ setOpenReport }) => {
       )}
       <div className="hidden">
         <div ref={contentRef} className="p-4 max-w-screen-lg mx-auto font-sans">
-          <div className="text-center">
-            <h2 className="font-bold text-base">CENTRAL BANK OF KENYA</h2>
-            <p className="text-xs underline">Schedule Control Report for EFT</p>
+          <div className="text-center flex flex-col items-center">
+            <h2 className="font-bold text-base pb-3">CENTRAL BANK OF KENYA</h2>
+            <img src="/kenya.png" alt="Kenya Flag" height={40} width={70} />
+            <p className="text-[14px] pb-[5px] font-bold border-b border-black inline-block">
+              Schedule Control Report for EFT
+            </p>
             <div className="flex w-full ">
               <table className="mt-4 text-xs grid-cols-10">
                 <tbody>
                   <tr>
-                    <td className="underline px-2 py-[2px]">
-                      Ministry/Department:
+                    <td className="relative pb-[5px] py-[2px]">
+                      <span className="relative inline-block">
+                        Ministry/Department:
+                        <span className="absolute left-0 right-0 bottom-[-6px] h-[1px] bg-black"></span>
+                      </span>
                     </td>
-                    <td className="underline px-2 py-[2px]">Code:</td>
-                    <td className="underline px-2 py-[2px]">Ref No.</td>
-                    <td className="underline px-2 py-[2px]">Acc. Title</td>
-                    <td className="underline px-2 py-[2px]">Schedule No:</td>
+                    <td className="relative pb-[5px] py-[2px]">
+                      <span className="relative inline-block">
+                        Code:
+                        <span className="absolute left-0 right-0 bottom-[-6px] h-[1px] bg-black"></span>
+                      </span>
+                    </td>
+                    <td className="relative pb-[5px] py-[2px]">
+                      <span className="relative inline-block">
+                        Ref No.
+                        <span className="absolute left-0 right-0 bottom-[-6px] h-[1px] bg-black"></span>
+                      </span>
+                    </td>
+                    <td className="relative pb-[5px] py-[2px]">
+                      <span className="relative inline-block">
+                        Acc. Title
+                        <span className="absolute left-0 right-0 bottom-[-6px] h-[1px] bg-black"></span>
+                      </span>
+                    </td>
+                    <td className="relative pb-[5px] py-[2px]">
+                      <span className="relative inline-block">
+                        Schedule No:
+                        <span className="absolute left-0 right-0 bottom-[-6px] h-[1px] bg-black"></span>
+                      </span>
+                    </td>
                   </tr>
                   <tr>
                     <td className="px-7">Ministry of Education</td>
@@ -270,13 +270,6 @@ const ScheduleControlReport = ({ setOpenReport }) => {
                   </tr>
                 </tbody>
               </table>
-              <img
-                src="/kenya.png"
-                alt="Kenya Flag"
-                height={40}
-                width={70}
-                className="grid-cols-2"
-              />
             </div>
           </div>
           <div className="flex justify-between flex-col h-[95vh]">
@@ -284,18 +277,54 @@ const ScheduleControlReport = ({ setOpenReport }) => {
               <table className="min-w-full mt-4 ">
                 <thead>
                   <tr>
-                    <th className="px-2 py-1 text-xs underline">No</th>
-                    <th className="px-2 py-1 text-xs underline">Name (Bank)</th>
-                    <th className="px-2 py-1 text-xs underline">
-                      Payee (Bank)
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        No
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
                     </th>
-                    <th className="px-2 py-1 text-xs underline">EFT Status</th>
-                    <th className="px-2 py-1 text-xs underline">EFT Date</th>
-                    <th className="px-2 py-1 text-xs underline">EFT Number</th>
-                    <th className="px-2 py-1 text-xs underline">
-                      Amount (Ksh.)
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        Name (Bank)
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
                     </th>
-                    <th className="px-2 py-1 text-xs underline">Purpose</th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        Payee (Bank)
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        EFT Status
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        EFT Date
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        EFT Number
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        Amount (Ksh.)
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
+                    <th className="relative py-1 text-xs">
+                      <span className="relative inline-block pb-[5px]">
+                        Purpose
+                        <span className="absolute left-0 right-0 bottom-[-2px] h-[1px] bg-black"></span>
+                      </span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -303,22 +332,30 @@ const ScheduleControlReport = ({ setOpenReport }) => {
                     data.length > 0 &&
                     data.map((item, index) => (
                       <tr key={item.id}>
-                        <td className="px-2 py-1 text-xs">{index + 1}</td>
-                        <td className="px-2 py-1 text-xs">
+                        <td className="text-center py-1 text-xs">
+                          {index + 1}
+                        </td>
+                        <td className="text-center py-1 text-xs">
                           {item.payeeName || '-'}
                         </td>
-                        <td className="px-2 py-1 text-xs">
+                        <td className="text-center py-1 text-xs">
                           {item.payeeBank || '-'}
                         </td>
-                        <td className="px-2 py-1 text-xs">{item.eftStatus}</td>
-                        <td className="px-2 py-1 text-xs">
+                        <td className="text-center py-1 text-xs">
+                          {item.eftStatus}
+                        </td>
+                        <td className="text-center py-1 text-xs">
                           {parseDate(item.eftDate)}
                         </td>
-                        <td className="px-2 py-1 text-xs">{item.eftNo}</td>
-                        <td className="px-2 py-1 text-xs">
+                        <td className="text-center py-1 text-xs">
+                          {item.eftNo}
+                        </td>
+                        <td className="text-center py-1 text-xs">
                           {item.amount ? item.amount.toFixed(2) : '-'}
                         </td>
-                        <td className="px-2 py-1 text-xs">{item.purpose}</td>
+                        <td className="text-center py-1 text-xs">
+                          {item.purpose}
+                        </td>
                       </tr>
                     ))}
 

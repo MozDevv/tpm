@@ -4,4 +4,4 @@ export const BASE_CORE_API = 'http://192.168.3.68:9090/';
 export const PAYROLL_BASE_URL = 'http://192.168.3.68:9089';
 //export const BASE_CORE_API = "https://pmistest-api.treasury.go.ke/";
 // export const BASE_CORE_API = "https://tntportalapi.agilebiz.co.ke/";
-export const PORTAL_BASE_URL = 'http://192.168.3.68:4343';
+export const PORTAL_BASE_URL = 'http://192.168.3.68:8080';

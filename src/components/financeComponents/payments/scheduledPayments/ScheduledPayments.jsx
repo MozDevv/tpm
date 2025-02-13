@@ -477,6 +477,7 @@ const ScheduledPayments = ({ status }) => {
         <div className="flex-grow overflow-hidden">
           <ScheduleControlReport
             setOpenReport={setOpenReport}
+            id={clickedItem?.id}
             data={clickedItem?.paymentScheduleLines}
           />
         </div>
