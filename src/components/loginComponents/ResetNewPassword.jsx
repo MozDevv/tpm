@@ -183,12 +183,21 @@ function ResetNewPassword() {
   };
   const maskEmail = (email) => {
     if (!email) return '';
+
     const [name, domain] = email.split('@');
     if (!domain) return email;
-    const maskedName =
-      name.charAt(0) +
-      '*'.repeat(name.length - 2) +
-      name.charAt(name.length - 1);
+
+    let maskedName;
+    if (name.length <= 2) {
+      // If the name is too short, show only the first character and mask the rest
+      maskedName = name.charAt(0) + '*'.repeat(name.length - 1);
+    } else {
+      maskedName =
+        name.charAt(0) +
+        '*'.repeat(name.length - 2) +
+        name.charAt(name.length - 1);
+    }
+
     return `${maskedName}@${domain}`;
   };
 
@@ -234,7 +243,7 @@ function ResetNewPassword() {
       )}
       <Typography
         sx={{ fontSize: 22, textAlign: 'center' }}
-        fontWeight={700}
+        fontWeight={600}
         mb={1}
         color="primary"
       >
@@ -254,7 +263,7 @@ function ResetNewPassword() {
         </strong>
       </Typography>
       <FormControl>
-        <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
+        <FormLabel sx={{ fontSize: '12px', fontWeight: '600', color: 'gray' }}>
           Enter OTP
         </FormLabel>
         <Box
@@ -289,9 +298,9 @@ function ResetNewPassword() {
           </div>
         </Box>
       </FormControl>
-      <div className="mt-1 text-xs">
+      <div className="mt-1 text-xs font-sans text-gray-700">
         Valid Password rules
-        <ul className="pl-2">
+        <ul className="pl-2 ">
           <li
             style={{
               color: validations.rules.minLength ? 'green' : 'red',
@@ -355,11 +364,12 @@ function ResetNewPassword() {
           </li>
         </ul>
         <p className="mt-2">
-          Special characters include; <strong>! @ $ & # ( ) %</strong> etc.
+          Special characters include;{' '}
+          <strong className="text-primary">! @ $ & # ( ) %</strong> etc.
         </p>
       </div>
       <FormControl sx={{}}>
-        <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
+        <FormLabel sx={{ fontSize: '12px', fontWeight: '600', color: 'gray' }}>
           New Password
         </FormLabel>
         <TextField
@@ -395,7 +405,7 @@ function ResetNewPassword() {
         />
       </FormControl>
       <FormControl>
-        <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
+        <FormLabel sx={{ fontSize: '12px', fontWeight: '600', color: 'gray' }}>
           Confirm New Password
         </FormLabel>
         <TextField
