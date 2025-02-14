@@ -44,7 +44,11 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
       value: 'relationship_id',
       label: 'Relationship',
       type: 'select',
-      options: filteredRelationships,
+      options: filteredRelationships.map((relationship) => ({
+        id: relationship.id,
+        name: relationship.name,
+        gender: relationship.gender,
+      })),
     },
     {
       value: 'surname',
@@ -71,6 +75,7 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
       value: 'gender',
       label: 'Gender',
       type: 'select',
+      hide: true,
       options: [
         { id: 0, name: 'Male' },
         { id: 1, name: 'Female' },

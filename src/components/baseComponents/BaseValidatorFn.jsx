@@ -134,6 +134,24 @@ export const baseValidatorFn = {
     }
     return null;
   },
+  surname: (value) => {
+    if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+      return 'Name is not valid. Please enter a valid name';
+    }
+    return null;
+  },
+  first_name: (value) => {
+    if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+      return 'Name is not valid. Please enter a valid name';
+    }
+    return null;
+  },
+  other_name: (value) => {
+    if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+      return 'Name is not valid. Please enter a valid name';
+    }
+    return null;
+  },
 
   // post: (value) => {
   //   {
