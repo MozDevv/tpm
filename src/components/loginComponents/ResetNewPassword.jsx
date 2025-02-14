@@ -16,6 +16,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import OTPInput from 'react-otp-input';
 import { useAuth } from '@/context/AuthContext';
+import { Alert, message } from 'antd';
 
 function ResetNewPassword() {
   const [errors, setErrors] = useState({
@@ -32,11 +33,52 @@ function ResetNewPassword() {
 
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  // Example usage in a form component
+  const [password, setPassword] = useState('');
+  const [validations, setValidations] = useState({
+    isValid: false,
+    rules: {
+      minLength: false,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumber: false,
+      hasSpecialChar: false,
+    },
+  });
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setNewPassword(newPassword);
+    setValidations(validatePassword(newPassword));
+  };
+
+  const validatePassword = (password) => {
+    const rules = {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    };
+
+    return {
+      isValid: Object.values(rules).every(Boolean),
+      rules,
+    };
+  };
+
   const { login } = useAuth();
 
   const [otp, setOtp] = useState('');
   const router = useRouter();
   const resetPassword = async () => {
+    if (validations.isValid === false) {
+      setErrors({
+        status: true,
+        message: 'Password does not meet requirements, please check the rules',
+      });
+      return;
+    }
     if (newPassword !== confirmNewPassword) {
       setErrors({
         status: true,
@@ -120,6 +162,25 @@ function ResetNewPassword() {
       }
     }
   };
+
+  const resendOtp = async () => {
+    try {
+      const response = await AuthApiService.post(authEndpoints.resendOtp, {
+        email: username,
+      });
+
+      if (response.data.isSuccess) {
+        console.log('OTP Resent Successfully');
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      setErrors({
+        status: true,
+        message: error.response?.data?.message || 'Failed to resend OTP.',
+      });
+    }
+  };
   const maskEmail = (email) => {
     if (!email) return '';
     const [name, domain] = email.split('@');
@@ -145,7 +206,6 @@ function ResetNewPassword() {
 
   const handleResendOTP = async () => {
     setIsResendDisabled(true);
-    setTimeLeft(240); // Reset to 4 minutes
 
     try {
       const response = await AuthApiService.post(authEndpoints.resendOtp, {
@@ -153,7 +213,8 @@ function ResetNewPassword() {
       });
 
       if (response.data.isSuccess) {
-        console.log('OTP Resent Successfully');
+        message.success('OTP Resent Successfully');
+        setTimeLeft(240); // Reset to 4 minutes
       } else {
         setErrors({ status: true, message: response.data.message });
       }
@@ -169,9 +230,7 @@ function ResetNewPassword() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {' '}
       {errors.status && (
-        <Typography sx={{ color: 'crimson', fontWeight: 500, mt: 2 }}>
-          {errors.message}
-        </Typography>
+        <Alert message={errors.message} type="error" showIcon closable />
       )}
       <Typography
         sx={{ fontSize: 22, textAlign: 'center' }}
@@ -230,17 +289,82 @@ function ResetNewPassword() {
           </div>
         </Box>
       </FormControl>
-      <FormControl
-        sx={{
-          mt: 3,
-        }}
-      >
+      <div className="mt-1 text-xs">
+        Valid Password rules
+        <ul className="pl-2">
+          <li
+            style={{
+              color: validations.rules.minLength ? 'green' : 'red',
+              flexDirection: 'row',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div className="pr-1">
+              {validations.rules.minLength ? '✓' : '✗'}
+            </div>
+            At least 8 characters
+          </li>
+          <li
+            style={{
+              color: validations.rules.hasUpperCase ? 'green' : 'red',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div className="pr-1">
+              {validations.rules.hasUpperCase ? '✓' : '✗'}
+            </div>
+            Contains an uppercase letter
+          </li>
+          <li
+            style={{
+              color: validations.rules.hasLowerCase ? 'green' : 'red',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div className="pr-1">
+              {validations.rules.hasLowerCase ? '✓' : '✗'}
+            </div>
+            Contains a lowercase letter
+          </li>
+          <li
+            style={{
+              color: validations.rules.hasNumber ? 'green' : 'red',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div className="pr-1">
+              {validations.rules.hasNumber ? '✓' : '✗'}
+            </div>
+            Contains a digit
+          </li>
+          <li
+            style={{
+              color: validations.rules.hasSpecialChar ? 'green' : 'red',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div className="pr-1">
+              {validations.rules.hasSpecialChar ? '✓' : '✗'}
+            </div>
+            Contains a special character
+          </li>
+        </ul>
+        <p className="mt-2">
+          Special characters include; <strong>! @ $ & # ( ) %</strong> etc.
+        </p>
+      </div>
+      <FormControl sx={{}}>
         <FormLabel sx={{ fontSize: '13px', fontWeight: '700', color: 'gray' }}>
           New Password
         </FormLabel>
         <TextField
           value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
+          onChange={(e) => handlePasswordChange(e)}
           placeholder="New Password"
           fullWidth
           sx={{
@@ -330,7 +454,12 @@ function ResetNewPassword() {
       </Button>
       <div className="text-start text-gray-600 text-xs mt-1">
         Didn't get the code?{' '}
-        <strong className="text-primary cursor-pointer">Resend OTP</strong>
+        <strong
+          className="text-primary cursor-pointer"
+          onClick={handleResendOTP}
+        >
+          Resend OTP
+        </strong>
       </div>
       {/* Render error message if there are errors */}
     </Box>

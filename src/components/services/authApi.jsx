@@ -24,6 +24,7 @@ const authEndpoints = {
   register: '/Auth/Register',
   resetPassword: '/Auth/ResetPassword',
   forgetPassword: '/Auth/ForgetPassword',
+  resendOtp: '/Auth/ResendOTP',
 
   //users
 
