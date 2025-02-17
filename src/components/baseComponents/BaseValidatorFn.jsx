@@ -128,12 +128,12 @@ export const baseValidatorFn = {
 
   /**national id more than 7 less than 10 */
 
-  identifier: (value) => {
-    if (value.length < 7 || value.length > 10) {
-      return 'National ID must be between 7 and 10 digits';
-    }
-    return null;
-  },
+  // identifier: (value) => {
+  //   if (value.length < 7 || value.length > 10) {
+  //     return 'National ID must be between 7 and 10 digits';
+  //   }
+  //   return null;
+  // },
   surname: (value) => {
     if (!/^[a-zA-Z'-\s]+$/.test(value)) {
       return 'Name is not valid. Please enter a valid name';

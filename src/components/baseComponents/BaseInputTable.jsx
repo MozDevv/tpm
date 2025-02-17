@@ -791,10 +791,6 @@ const BaseInputTable = ({
         const field = colDef.field;
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
-        // if (gridApiRef.current) {
-        //   gridApiRef.current.ensureIndexVisible(rowIndex, 'bottom');
-        // }
-
         if (field === 'dob' && parentDob && data.dob) {
           const relationshipField = fields.find(
             (f) => f.value === 'relationship_id'
@@ -828,6 +824,29 @@ const BaseInputTable = ({
                 handleClearError(data, 'dob');
               }
             }
+          }
+        }
+
+        if (field === 'identifier' && data.identifier_type === 1) {
+          //!/^[A-Za-z][K]\d+$/.test
+          if (!/^[A-Za-z][K]\d+$/.test(newValue)) {
+            message.error('Invalid Passport Number');
+            setCellError(data.id, 'identifier', 'Invalid Passport Number');
+            return;
+          } else {
+            handleClearError(data, 'identifier');
+          }
+        } else if (field === 'identifier' && data.identifier_type === 0) {
+          if (
+            newValue.length < 7 ||
+            newValue.length > 10 ||
+            !/^\d+$/.test(newValue)
+          ) {
+            message.error('Invalid National ID');
+            setCellError(data.id, 'identifier', 'Invalid National ID');
+            return;
+          } else {
+            handleClearError(data, 'identifier');
           }
         }
 

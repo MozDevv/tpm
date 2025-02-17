@@ -46,15 +46,15 @@ function CreateProspectivePensioner({
   const { activeCapName } = useMda();
 
   return (
-    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto   ">
+    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto  z-10 ">
       <div>
         <div>
-          <div className="px-5 mt-[-10px]">
+          <div className="px-5 mt-[-10px] z-50">
             <Tabs
               activeKey={activeKey}
               onChange={handleTabChange}
               className="!bg-transparent z-50"
-              style={{ zIndex: 999999999 }}
+              style={{ zIndex: 1 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
               <TabPane
@@ -64,6 +64,7 @@ function CreateProspectivePensioner({
                   </span>
                 }
                 key="1"
+                style={{ zIndex: 1 }}
               >
                 <div className="">
                   <NewPreclaim
@@ -88,6 +89,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="2"
+                      style={{ zIndex: 1 }}
                     >
                       <AddBankDetails
                         id={activeRetireeId}
@@ -102,6 +104,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="3"
+                      style={{ zIndex: 1 }}
                     >
                       <AddPensionersWorkHistory
                         status={clickedItem?.notification_status}
@@ -119,6 +122,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="9"
+                      style={{ zIndex: 1 }}
                     >
                       <GovernmentSalary
                         id={clickedItem?.id}
@@ -132,6 +136,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="4"
+                      style={{ zIndex: 1 }}
                     >
                       <AddDocuments
                         clickedItem2={clickedItem}
@@ -148,6 +153,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="5"
+                      style={{ zIndex: 1 }}
                     >
                       <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>
@@ -158,6 +164,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="6"
+                      style={{ zIndex: 1 }}
                     >
                       <NextOfKin clickedItem={clickedItem} />
                     </TabPane>
@@ -169,8 +176,9 @@ function CreateProspectivePensioner({
                           </span>
                         }
                         key="7"
+                        style={{ zIndex: 1 }}
                       >
-                        <div className="z-10">
+                        <div style={{ zIndex: 1 }}>
                           <MaintenanceCase
                             id={clickedItem.id}
                             clickedItem2={clickedItem}
@@ -185,6 +193,7 @@ function CreateProspectivePensioner({
                         </span>
                       }
                       key="8"
+                      style={{ zIndex: 1 }}
                     >
                       <Deductions
                         id={clickedItem?.id}
@@ -200,6 +209,7 @@ function CreateProspectivePensioner({
                           </span>
                         }
                         key="9"
+                        style={{ zIndex: 1 }}
                       >
                         <WcpsCard
                           id={clickedItem?.id}
@@ -217,6 +227,7 @@ function CreateProspectivePensioner({
                           </span>
                         }
                         key="10"
+                        style={{ zIndex: 1 }}
                       >
                         <ParliamentContributions
                           id={clickedItem?.id}
@@ -232,6 +243,7 @@ function CreateProspectivePensioner({
                           </span>
                         }
                         key="11"
+                        style={{ zIndex: 1 }}
                       >
                         <Liabilities id={clickedItem?.id} />
                       </TabPane>
@@ -246,8 +258,9 @@ function CreateProspectivePensioner({
                     </span>
                   }
                   key="12"
+                  style={{ zIndex: 1 }}
                 >
-                  <div className="z-10">
+                  <div style={{ zIndex: 1 }}>
                     <MaintenanceCase
                       id={clickedItem.id}
                       clickedItem2={clickedItem}
