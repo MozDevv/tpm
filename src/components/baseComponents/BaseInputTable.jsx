@@ -850,7 +850,6 @@ const BaseInputTable = ({
           }
         }
 
-        // validate that children born 10 months after pensioners death cannot be declared as his/her daughters/sons
         // validate that children born at least 10 months before pensioners death cannot be declared as his/her daughters/sons
         if (field === 'dob' && retirementDate && data.dob) {
           const relationshipField = fields.find(

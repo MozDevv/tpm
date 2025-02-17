@@ -254,7 +254,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 <span className="inline gap-1">
                   <span className="font-bold mr-1">
                     {' '}
-                    {formatNumber(report?.lumpsum_amount || 0, 2)}
+                    {formatNumber(report?.unreduced_pension || 0, 2)}
                   </span>
                   per year commencing from
                   <span className="font-bold ml-1">
@@ -272,7 +272,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 </span>
                 per year with a gratuity of Ksh.{' '}
                 <span className="font-bold">
-                  {formatNumber(report?.lumpsum_amount || 0, 2)}
+                  {formatNumber(report?.unreduced_pension || 0, 2)}
                 </span>
               </p>
               <div className="py-3 flex w-full justify-between relative">
