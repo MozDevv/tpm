@@ -108,14 +108,14 @@ export const baseValidatorFn = {
     }
     return null;
   },
-  dob: (value) => {
-    const dobDate = dayjs(value);
-    const age = dayjs().diff(dobDate, 'year');
-    if (age < 18) {
-      return 'User must be at least 18 years old';
-    }
-    return null;
-  },
+  // dob: (value) => {
+  //   const dobDate = dayjs(value);
+  //   const age = dayjs().diff(dobDate, 'year');
+  //   if (age < 18) {
+  //     return 'User must be at least 18 years old';
+  //   }
+  //   return null;
+  // },
   mobile_number: (value) => {
     if (value.length < 13 || value.length > 17) {
       return 'Mobile number must be between 13 and 17 digits';

@@ -134,6 +134,7 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
           putEndpoint={endpoints.updateMaintenance}
           passProspectivePensionerId={true}
           setOnCloseWarnings={setOnCloseWarnings}
+          retirementDate={formData.retirement_date}
         />
       </div>
     </div>

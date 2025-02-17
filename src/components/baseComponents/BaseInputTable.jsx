@@ -830,6 +830,82 @@ const BaseInputTable = ({
             }
           }
         }
+
+        // validate that children born 10 months after pensioners death cannot be declared as his/her daughters/sons
+        // validate that children born at least 10 months before pensioners death cannot be declared as his/her daughters/sons
+        if (field === 'dob' && retirementDate && data.dob) {
+          const relationshipField = fields.find(
+            (f) => f.value === 'relationship_id'
+          );
+          if (relationshipField) {
+            const selectedRelationship = relationshipField.options.find(
+              (option) => option.id === data.relationship_id
+            );
+
+            if (
+              selectedRelationship &&
+              /son|daughter/i.test(selectedRelationship.name.toLowerCase())
+            ) {
+              const retirementDateDate = dayjs(retirementDate);
+              const dobDate = dayjs(data.dob);
+              const monthsDifference = retirementDateDate.diff(
+                dobDate,
+                'months'
+              );
+              if (monthsDifference < 10) {
+                message.error(
+                  `Date of Birth must be at least 10 months before the Pensioner's Date of Death ${retirementDateDate.format(
+                    'DD/MM/YYYY'
+                  )}.`
+                );
+                setCellError(
+                  data.id,
+                  'dob',
+                  `Date of Birth must be at least 10 months before the Pensioner's Date of Death <strong>${retirementDateDate.format(
+                    'DD/MM/YYYY'
+                  )}</strong>.`
+                );
+                return;
+              } else {
+                handleClearError(data, 'dob');
+              }
+            }
+          }
+        }
+
+        //validate date of birth of Uncle/Wife/Husnand cannot be less than 18 years
+        if (field === 'dob' && data.dob) {
+          const relationshipField = fields.find(
+            (f) => f.value === 'relationship_id'
+          );
+          if (relationshipField) {
+            const selectedRelationship = relationshipField.options.find(
+              (option) => option.id === data.relationship_id
+            );
+
+            if (
+              selectedRelationship &&
+              /husband|wife|uncle|aunt/i.test(
+                selectedRelationship.name.toLowerCase()
+              )
+            ) {
+              const dobDate = dayjs(data.dob);
+              const today = dayjs();
+              const age = today.diff(dobDate, 'years');
+              if (age < 18) {
+                message.error(`Date of Birth must be at least 18 years old.`);
+                setCellError(
+                  data.id,
+                  'dob',
+                  `Date of Birth must be at least 18 years old.`
+                );
+                return;
+              } else {
+                handleClearError(data, 'dob');
+              }
+            }
+          }
+        }
         if (field === 'relationship_id' && newValue) {
           const selectedField = fields.find(
             (field) => field.value === 'relationship_id'
