@@ -153,6 +153,8 @@ export const baseValidatorFn = {
     return null;
   },
 
+  //check if dob is earlier than parent dob
+
   // post: (value) => {
   //   {
   //     if (!/^[a-zA-Z'-\s]+$/.test(value)) {

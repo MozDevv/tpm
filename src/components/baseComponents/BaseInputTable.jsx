@@ -67,6 +67,7 @@ const BaseInputTable = ({
   setTableInputData,
   setOnCloseWarnings,
   retirementDate,
+  parentDob,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -790,6 +791,45 @@ const BaseInputTable = ({
         const field = colDef.field;
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
 
+        // if (gridApiRef.current) {
+        //   gridApiRef.current.ensureIndexVisible(rowIndex, 'bottom');
+        // }
+
+        if (field === 'dob' && parentDob && data.dob) {
+          const relationshipField = fields.find(
+            (f) => f.value === 'relationship_id'
+          );
+          if (relationshipField) {
+            const selectedRelationship = relationshipField.options.find(
+              (option) => option.id === data.relationship_id
+            );
+
+            if (
+              selectedRelationship &&
+              /son|daughter/i.test(selectedRelationship.name.toLowerCase())
+            ) {
+              const parentDobDate = dayjs(parentDob);
+              const dobDate = dayjs(data.dob);
+              if (parentDobDate.isAfter(dobDate)) {
+                message.error(
+                  `Date of Birth must be after the Parent's Date of Birth ${parentDobDate.format(
+                    'DD/MM/YYYY'
+                  )}.`
+                );
+                setCellError(
+                  data.id,
+                  'dob',
+                  `Date of Birth must be after the Parent's Date of Birth <strong>${parentDobDate.format(
+                    'DD/MM/YYYY'
+                  )}</strong>.`
+                );
+                return;
+              } else {
+                handleClearError(data, 'dob');
+              }
+            }
+          }
+        }
         if (field === 'relationship_id' && newValue) {
           const selectedField = fields.find(
             (field) => field.value === 'relationship_id'
@@ -886,6 +926,7 @@ const BaseInputTable = ({
           }
         } else {
           const validator = baseValidatorFn[field];
+
           if (validator) {
             const error = validator(newValue);
             if (error) {

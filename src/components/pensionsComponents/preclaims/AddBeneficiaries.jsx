@@ -118,6 +118,7 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
         }}
       >
         <BaseInputTable
+          parentDob={formData.dob}
           title="Beneficiaries"
           fields={fields2}
           id={id}
