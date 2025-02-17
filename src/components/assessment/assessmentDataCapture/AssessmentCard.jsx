@@ -10,6 +10,8 @@ import AssessmentDetails from './AssessmentDetails';
 import Liabilities from '@/components/pensionsComponents/preclaims/liabilities/Liabilities';
 import AddBankDetails from '@/components/pensionsComponents/preclaims/AddBankDetails';
 import Deductions from '@/components/pensionsComponents/preclaims/deductions/Deductions';
+import WcpsCard from '@/components/pensionsComponents/preclaims/wcps/WcpsCard';
+import ParliamentContributions from '@/components/pensionsComponents/preclaims/Contributions/ParliamentContributions';
 
 const { TabPane } = Tabs;
 
@@ -185,6 +187,7 @@ function AssessmentCard({
                       <Deductions id={clickedItem?.id} />
                     </TabPane>
 
+                    */}
                     {clickedItem?.is_wcps === 0 && (
                       <TabPane
                         tab={
@@ -198,8 +201,7 @@ function AssessmentCard({
                       </TabPane>
                     )}
 
-                    {(activeCapName === "CAP196" ||
-                      clickedItem?.mda_pensionCap_name === "CAP196") && (
+                    {clickedItem?.mda_pensionCap_name === 'CAP196' && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
@@ -210,7 +212,7 @@ function AssessmentCard({
                       >
                         <ParliamentContributions id={clickedItem?.id} />
                       </TabPane>
-                    )} */}
+                    )}
 
                     <TabPane
                       tab={
