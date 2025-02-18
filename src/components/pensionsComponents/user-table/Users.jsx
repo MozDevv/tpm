@@ -221,6 +221,25 @@ const Users = () => {
       type: 'datetime-local',
       // required: true,
     },
+
+    {
+      name: 'emailConfirmed',
+      label: 'Email Confirmed',
+      type: 'switch',
+      // required: true,
+    },
+    {
+      name: 'phoneNumberConfirmed',
+      label: 'Phone Number Confirmed',
+      type: 'switch',
+      // required: true,
+    },
+    {
+      name: 'twoFactorEnabled',
+      label: 'Two Factor Enabled',
+      type: 'switch',
+      // required: true,
+    },
   ];
 
   const fetchDepartments = async () => {

@@ -408,41 +408,47 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                   </tr>
                 </thead>
                 <tbody className="text-[13px]">
-                  {pensionableService?.map((service) => (
-                    <tr key={service.id}>
-                      <td className="py-1 text-gray-700 text-[12px] px-1 whitespace-nowrap">
-                        {new Date(
-                          clickedItem?.date_of_confirmation
-                        ).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </td>
-                      <td className="py-1 text-gray-700 text-[12px] whitespace-nowrap">
-                        {new Date(
-                          clickedItem?.retirement_date
-                        ).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </td>
-                      <td className="py-1 text-gray-700">(full)</td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_years}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_months}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_days}
-                      </td>
-                      <td className="py-1 text-gray-700">
-                        {service.pensionable_service_cumulative_months}
-                      </td>
-                    </tr>
-                  ))}
+                  {pensionableService
+                    .sort(
+                      (a, b) => new Date(a.start_date) - new Date(b.start_date)
+                    )
+                    ?.map((service) => (
+                      <tr key={service.id}>
+                        <td className="py-1 text-gray-700 text-[12px] px-1 whitespace-nowrap">
+                          {new Date(service.start_date).toLocaleDateString(
+                            'en-GB',
+                            {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            }
+                          )}
+                        </td>
+                        <td className="py-1 text-gray-700 text-[12px] whitespace-nowrap">
+                          {new Date(service?.end_date).toLocaleDateString(
+                            'en-GB',
+                            {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            }
+                          )}
+                        </td>
+                        <td className="py-1 text-gray-700">(full)</td>
+                        <td className="py-1 text-gray-700">
+                          {service.pensionable_service_years}
+                        </td>
+                        <td className="py-1 text-gray-700">
+                          {service.pensionable_service_months}
+                        </td>
+                        <td className="py-1 text-gray-700">
+                          {service.pensionable_service_days}
+                        </td>
+                        <td className="py-1 text-gray-700">
+                          {service.pensionable_service_cumulative_months}
+                        </td>
+                      </tr>
+                    ))}
                   <tr className="font-bold">
                     <td className="py-1">Total</td>
                     <td colSpan="2" className="py-1"></td>

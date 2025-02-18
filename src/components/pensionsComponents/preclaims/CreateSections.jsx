@@ -297,7 +297,7 @@ export const createSections = (
               type: 'text',
               pensionCap: [
                 'CAP189',
-
+                'CAP199',
                 'CAP196',
                 'APN/PK',
                 'CAP190',
@@ -307,7 +307,8 @@ export const createSections = (
               ],
             },
           ]
-        : [
+        : formData.identifier_type === 1
+        ? [
             {
               label: 'Passport No.',
               name: 'passport_no',
@@ -320,15 +321,21 @@ export const createSections = (
                 'CAP195',
                 'DSO/RK',
                 'CAP195',
+                'CAP199',
               ],
             },
-          ]),
-      {
-        label: 'Military ID',
-        name: 'national_id',
-        type: 'text',
-        pensionCap: ['CAP199'],
-      },
+          ]
+        : formData.identifier_type === 2
+        ? [
+            {
+              label: 'Military ID',
+              name: 'military_id',
+              type: 'text',
+              pensionCap: ['CAP199'],
+            },
+          ]
+        : []),
+
       {
         label: 'KRA PIN',
         name: 'kra_pin',

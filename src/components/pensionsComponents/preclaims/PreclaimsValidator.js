@@ -186,7 +186,6 @@ export const validateField = (name, value, formData) => {
   ) {
     error = 'National ID Must contain only numeric values';
   } else if (name === 'kra_pin' && value && !/^A\d{9}[A-Z]$/.test(value)) {
-  } else if (name === 'kra_pin' && value && !/^A\d{9}[A-Z]$/.test(value)) {
     error = 'Must be a valid KRA PIN';
   } else if (name === 'last_basic_salary_amount' && value && isNaN(value)) {
     error = 'Must be a valid number';
@@ -307,8 +306,8 @@ export const validateField = (name, value, formData) => {
     value &&
     formData.mortality_status === 1
   ) {
-    if (!/^[\d/]+$/.test(value)) {
-      error = 'Death certificate must be valid.';
+    if (!/^[\d/]+$/.test(value) || value.length < 15) {
+      error = 'Death certificate must be valid';
     }
   } else if (name === 'personal_number' && value) {
     if (!/^[a-zA-Z0-9/-]+$/.test(value)) {
