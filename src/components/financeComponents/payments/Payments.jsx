@@ -524,7 +524,7 @@ const Payments = ({ status }) => {
               '& .MuiPaper-root': {
                 minHeight: '90vh',
                 maxHeight: '90vh',
-                minWidth: '45vw',
+                minWidth: '55vw',
                 maxWidth: '55vw',
               },
               zIndex: 99999,

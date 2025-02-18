@@ -95,7 +95,7 @@ function PreclaimsNotifications({
       if (res.data.succeeded === true) {
         await fetchAllPreclaims();
         setAlert({
-          message: 'Notification sent successfully',
+          message: 'Record(s) scheduled for notification',
           severity: 'success',
           open: true,
         });

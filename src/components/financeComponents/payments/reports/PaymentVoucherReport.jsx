@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 import { Backdrop, Button, CircularProgress, IconButton } from '@mui/material';
-import { Cancel, Close, GetApp } from '@mui/icons-material';
+import { Cancel, Close, GetApp, Refresh } from '@mui/icons-material';
 import './paymenVoucher.css';
 import { useAuth } from '@/context/AuthContext';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
@@ -201,6 +201,14 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
           >
             Download PDF
           </Button>
+          <IconButton
+            onClick={() => {
+              // fetchPVReport();
+              generatePdfBlob();
+            }}
+          >
+            <Refresh />
+          </IconButton>
           <Button
             onClick={() => setOpenTrialBalanceReport(false)}
             variant="outlined"
@@ -282,7 +290,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
               {/* Payee Details */}
               <div className="border-black mb-2">
-                <div className="grid grid-cols-2 gap-2 pl-1">
+                <div className="grid grid-cols-3 gap-2 pl-1">
                   <div>
                     <p className="text-start flex flex-row">
                       <strong>Bank Name: </strong>
@@ -292,7 +300,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                       <strong>Pensioner Name:</strong> {report?.pensionerName}
                     </p>
                     <p className="text-start flex flex-row gap-2">
-                      <strong>Claim Type:</strong> Retirement On Age Ground
+                      <strong>Claim Type:</strong> {report?.claimType}
                     </p>
                   </div>
                   <div className="pr-1 items-start">
@@ -304,6 +312,16 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                     </p>
                     <p className="text-start flex flex-row gap-2">
                       <strong>ID:</strong> {report?.idNumber}
+                    </p>
+                  </div>
+                  <div className="pr-1 items-start">
+                    <p className="text-start flex flex-row gap-2">
+                      <strong> Monthly Pension:</strong>{' '}
+                      {report?.totalMonthlyPensionAmount
+                        ? Math.floor(
+                            report.totalMonthlyPensionAmount
+                          ).toLocaleString('en-US')
+                        : '0'}
                     </p>
                   </div>
                 </div>
@@ -402,6 +420,39 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                         : '00'}
                     </p>
                   </div>
+                  {report?.deductionsAndOtherPayments?.map(
+                    (deduction, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-8 border-black"
+                      >
+                        <p className="p-1 col-span-3 border-r border-black text-start">
+                          {deduction.description}
+                        </p>
+                        <p className="p-1 col-span-1 border-r border-black">
+                          -
+                        </p>
+                        <p className="p-1 col-span-1 border-r border-black">
+                          -
+                        </p>
+                        <p className="p-1 col-span-2 text-right border-r border-black">
+                          {deduction.liabilityAmt
+                            ? Math.floor(deduction.liabilityAmt).toLocaleString(
+                                'en-US'
+                              )
+                            : '0'}
+                        </p>
+                        <p className="p-1 col-span-1 text-right">
+                          {deduction.liabilityAmt
+                            ? deduction.liabilityAmt
+                                .toString()
+                                .split('.')[1]
+                                ?.slice(0, 2) || '00'
+                            : '00'}
+                        </p>
+                      </div>
+                    )
+                  )}
 
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
@@ -425,28 +476,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                         : '00'}
                     </p>
                   </div>
-                  <div className="grid grid-cols-8 border-black">
-                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
-                      Total Monthly Pension Amount
-                    </p>
-                    <p className="p-1 col-span-1 border-r border-black">-</p>
-                    <p className="p-1 col-span-1 border-r border-black">-</p>
-                    <p className="p-1 col-span-2 text-right border-r border-black">
-                      {report?.totalMonthlyPensionAmount
-                        ? Math.floor(
-                            report.totalMonthlyPensionAmount
-                          ).toLocaleString('en-US')
-                        : '0'}
-                    </p>
-                    <p className="p-1 col-span-1 text-right">
-                      {report?.totalMonthlyPensionAmount
-                        ? report.totalMonthlyPensionAmount
-                            .toString()
-                            .split('.')[1]
-                            ?.slice(0, 2) || '00'
-                        : '00'}
-                    </p>
-                  </div>
+
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
                       Total Refund Amount
@@ -561,7 +591,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                   <p className="font-bold uppercase text-center">
                     VBC Certificate
                   </p>
-                  <p className="text-start pl-3">
+                  <p className="text-start pl-3 font-semibold">
                     I certify that the expenditure has been entered in the Vote
                     Book and that adequate funds to cover it are available
                     against the chargeable item as shown below.
@@ -569,7 +599,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                   {/* Approved Estimates/Allocation */}
                   <div className="flex flex-col pl-2">
-                    <p className="text-start mt-2 mb-2">
+                    <p className="text-start mt-2 mb-2 font-semibold">
                       Approved Estimates/Allocation -
                     </p>
                     <div className="flex flex-row justify-between items-center gap-4 px-4">
@@ -585,7 +615,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                       {/* Ksh section */}
                       <div className="flex items-center w-full">
                         <p className="mr-2">Ksh.</p>
-                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <div className="border-b border-gray-400 flex-grow h-7">
+                          {formatNumber(report?.budgetAmount)}
+                        </div>{' '}
                         {/* Input area */}
                       </div>
                     </div>
@@ -593,7 +625,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                   {/* Less: Total Expenditure plus */}
                   <div className="flex flex-col pl-2">
-                    <p className="text-start mt-2 mb-2">
+                    <p className="text-start mt-2 mb-2 font-semibold">
                       Less: Total Expenditure plus -
                     </p>
                     <div className="flex flex-row justify-between items-center gap-4 px-4">
@@ -607,7 +639,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                       <div className="flex items-center w-full">
                         <p className="mr-2">Ksh.</p>
-                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <div className="border-b border-gray-400 flex-grow h-7">
+                          {formatNumber(report?.spentAmount)}
+                        </div>{' '}
                         {/* Input area */}
                       </div>
                     </div>
@@ -624,7 +658,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                       <div className="flex items-center w-full">
                         <p className="mr-2">Ksh.</p>
-                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <div className="border-b border-gray-400 flex-grow h-7">
+                          {formatNumber(report?.budgetBalanceBefore)}
+                        </div>{' '}
                         {/* Input area */}
                       </div>
                     </div>
@@ -632,7 +668,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                   {/* Less: This ENTRY ---Vch */}
                   <div className="flex flex-col pl-2">
-                    <p className="text-start mt-2 mb-2">
+                    <p className="text-start mt-2 mb-2 font-semibold">
                       Less: This ENTRY ---Vch. -
                     </p>
                     <div className="flex flex-row justify-between items-center gap-4 px-4">
@@ -646,7 +682,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                       <div className="flex items-center w-full">
                         <p className="mr-2">Ksh.</p>
-                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <div className="border-b border-gray-400 flex-grow h-7">
+                          {formatNumber(report?.grossAmount)}
+                        </div>{' '}
                         {/* Input area */}
                       </div>
                     </div>
@@ -663,7 +701,9 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
                       <div className="flex items-center w-full">
                         <p className="mr-2">Ksh.</p>
-                        <div className="border-b border-gray-400 flex-grow h-7"></div>{' '}
+                        <div className="border-b border-gray-400 flex-grow h-7">
+                          {formatNumber(report?.budgetBalanceAfter)}
+                        </div>{' '}
                         {/* Input area */}
                       </div>
                     </div>
@@ -689,11 +729,11 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 {/* AIE Holder Certificate */}
                 <div className="pl-1">
                   <div className="flex flex-col border-b border-black pb-3 gap-5">
-                    <div className="">
+                    <div className="font-semibold">
                       <p className="font-bold uppercase text-center">
                         AIE Holder Certificate
                       </p>
-                      <p className="text-start">
+                      <p className="text-start font-">
                         I certify that the expenditure detailed above has been
                         incurred for the authorized purpose and should be
                         charged to the item shown here below.
@@ -714,7 +754,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                         </div>
                       </div>
                     </div>
-                    <div className="border-t border-black pt-2">
+                    <div className="border-t border-black pt-2 font-semibold">
                       <p className="font-bold uppercase text-center">
                         Authorization
                       </p>
@@ -754,7 +794,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
 
               {/* Payment Details */}
 
-              <div className="grid grid-cols-4 border-b border-black">
+              <div className="grid grid-cols-4 border-b border-black ">
                 <div className="border-r border-black h-[45px]">
                   <p className="text-center pt-1 font-semibold">Vote</p>
                 </div>
@@ -769,7 +809,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-0 border-black text-sm">
+              <div className="grid grid-cols-12 gap-0 border-black text-sm font-semibold">
                 {/* Header Row */}
                 <div className="col-span-1 border-r border-black p-2 text-center">
                   A.I.E. No.

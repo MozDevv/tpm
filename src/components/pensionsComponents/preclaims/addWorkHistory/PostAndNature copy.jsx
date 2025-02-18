@@ -236,7 +236,7 @@ function PostAndNature({ id, clickedItem }) {
           },
         ]
       : []),
-    ...(cap === 'CAP189'
+    ...(cap === 'CAP189' && !clickedItem?.was_in_mixed_service
       ? [
           {
             label: 'Seconded(Yes/No)',
@@ -268,13 +268,13 @@ function PostAndNature({ id, clickedItem }) {
       ? [
           {
             label: 'Salary',
-            value: 'amount',
+            value: 'salary',
             type: 'amount',
             notRequired: true,
           },
         ]
       : []),
-    ...(seconded || isSeconded
+    ...((seconded || isSeconded) && !clickedItem?.was_in_mixed_service
       ? [
           {
             label: 'Salary',
