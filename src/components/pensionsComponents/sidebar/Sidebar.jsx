@@ -130,7 +130,7 @@ export const menuItems = [
   },
 
   {
-    title: 'Finance',
+    title: 'Accounts',
     icon: <AssuredWorkload />,
     children: [
       {
