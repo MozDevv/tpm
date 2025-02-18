@@ -882,8 +882,7 @@ function NewPreclaim({
             setSaving(2);
             setAlert({
               open: true,
-              message:
-                'Prospective pensioner Information & Contact Details updated successfully',
+              message: 'Prospective pensioner Information updated successfully',
             });
             setOnCloseWarnings(false);
             fetchRetiree();
@@ -935,8 +934,7 @@ function NewPreclaim({
         } else {
           setAlert({
             open: true,
-            message:
-              'Prospective pensioner Information & Contact Details saved successfully',
+            message: 'Prospective pensioner Information saved successfully',
           });
         }
 
@@ -1035,22 +1033,22 @@ function NewPreclaim({
     }
   }, [formData.retirement_date, formData.dob]);
 
-  useEffect(() => {
-    if (formData.date_of_death) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        retirement_date: formData.date_of_death,
-        ...(activeCapName === 'CAP189' &&
-          formData.mortality_status === 1 && {
-            date_of_injury_for_cap189: formData.date_of_death,
-          }),
-        ...(activeCapName === 'CAP199' &&
-          formData.mortality_status === 1 && {
-            date_of_injury_for_cap199: formData.date_of_death,
-          }),
-      }));
-    }
-  }, [formData.date_of_death, activeCapName]);
+  // useEffect(() => {
+  //   if (formData.date_of_death) {
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       retirement_date: formData.date_of_death,
+  //       ...(activeCapName === 'CAP189' &&
+  //         formData.mortality_status === 1 && {
+  //           date_of_injury_for_cap189: formData.date_of_death,
+  //         }),
+  //       ...(activeCapName === 'CAP199' &&
+  //         formData.mortality_status === 1 && {
+  //           date_of_injury_for_cap199: formData.date_of_death,
+  //         }),
+  //     }));
+  //   }
+  // }, [formData.date_of_death, activeCapName]);
 
   const [countriesArr, setCountriesArr] = useState([]);
 

@@ -735,9 +735,9 @@ const Preclaims = ({ status }) => {
       reports: () => console.log('Reports clicked'),
     }),
 
-    notify: () => {
-      setOpenNotification(true);
-    },
+    // notify: () => {
+    //   setOpenNotification(true);
+    // },
     submit: () => setOpenAction(true),
     createClaim: () => setOpenAction(true),
     ...(status === 1 || status === 5

@@ -158,7 +158,7 @@ const ListNavigation = ({
       requiredPermissions: [],
     },
     {
-      name: 'Notify',
+      name: 'Schedule for Notification',
       icon: ForwardToInbox,
       action: 'notify',
       requiredPermissions: [

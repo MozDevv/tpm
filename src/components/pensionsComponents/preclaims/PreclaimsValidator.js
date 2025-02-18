@@ -119,6 +119,12 @@ export const validateField = (name, value, formData) => {
     }
   }
 
+  if (name === 'monthly_salary_in_ksh' && value) {
+    if (value.toString().length > 8) {
+      error = 'Monthly salary should not exceed 8 digits';
+    }
+  }
+
   if (name === 'last_basic_salary_amount' && value) {
     if (value.toString().length > 8) {
       error = 'Last salary amount should not exceed 8 digits';
@@ -317,7 +323,7 @@ export const validateField = (name, value, formData) => {
     value &&
     formData.mortality_status === 1
   ) {
-    if (!/^[\d/]+$/.test(value) || value.length < 15) {
+    if (!/^[\d/]+$/.test(value) || value.length < 5 || value.length > 15) {
       error = 'Death certificate must be valid';
     }
   } else if (name === 'personal_number' && value) {
