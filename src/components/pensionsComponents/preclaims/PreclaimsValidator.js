@@ -52,14 +52,14 @@ export const validateField = (name, value, formData) => {
   if (
     name === 'tax_exempt_certificate_date' &&
     value &&
-    formData.retirement_date &&
     formData.disability_status === 0
   ) {
-    const retirementDate = dayjs(formData.retirement_date);
-    const taxExemptCertificateDate = dayjs(value);
+    const taxExemptExpiryDate = dayjs(value);
+    const maxExpiryDate = dayjs().add(5, 'years');
 
-    if (taxExemptCertificateDate.isAfter(retirementDate)) {
-      error = 'Tax Exempt Certificate Date cannot be after retirement date';
+    if (taxExemptExpiryDate.isAfter(maxExpiryDate)) {
+      error =
+        'Tax Exempt Certificate Expiry Date cannot exceed 5 years from today';
     }
   }
 
@@ -140,6 +140,17 @@ export const validateField = (name, value, formData) => {
 
     if (!regex.test(value)) {
       error = 'Tax Exempt Certificate Number is not valid';
+    }
+  } else if (name === 'tax_exempt_certificate_expiry_date' && value) {
+    const taxExemptExpiryDate = dayjs(value);
+    const maxExpiryDate = dayjs().add(5, 'years');
+
+    if (taxExemptExpiryDate.isAfter(maxExpiryDate)) {
+      error =
+        'Tax Exempt Certificate Expiry Date cannot exceed 5 years from today';
+    } else if (retirementDate && taxExemptExpiryDate.isAfter(retirementDate)) {
+      error =
+        'Tax Exempt Certificate Expiry Date cannot be after retirement date';
     }
   }
   if (name === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
