@@ -1460,6 +1460,7 @@ function NewPreclaim({
               <div className="h-[100px]">
                 <div className="gap-3 my-3">
                   <AddBeneficiaries
+                    activeCapName={activeCapName}
                     formData={formData}
                     setOnCloseWarnings={setOnCloseWarnings}
                     id={retireeId}

@@ -2,7 +2,13 @@ import React, { useEffect, useState, useMemo } from 'react';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 
-const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
+const AddBeneficiaries = ({
+  id,
+  status,
+  setOnCloseWarnings,
+  formData,
+  activeCapName,
+}) => {
   const [relationships, setRelationships] = useState([]);
   const [postalAddress, setPostalAddress] = useState([]);
 
@@ -25,19 +31,56 @@ const AddBeneficiaries = ({ id, status, setOnCloseWarnings, formData }) => {
   // **Optimized filtering using useMemo (prevents infinite loop)**
   const filteredRelationships = useMemo(() => {
     return relationships.filter((relationship) => {
-      if (formData.marital_status === 0) {
-        return (
-          !relationship.name.toLowerCase().includes('husband') &&
-          !relationship.name.toLowerCase().includes('wife')
-        );
-      } else if (formData.gender === 0) {
-        return !relationship.name.toLowerCase().includes('husband');
-      } else if (formData.gender === 1) {
-        return !relationship.name.toLowerCase().includes('wife');
+      const relationshipName = relationship.name.toLowerCase();
+
+      // CAP Type Filtering (First Priority)
+      if (activeCapName === 'CAP189') {
+        if (
+          !relationshipName.includes('wife') &&
+          !relationshipName.includes('guardian')
+        ) {
+          return false;
+        }
+      } else if (activeCapName === 'CAP199') {
+        if (
+          !relationshipName.includes('wife') &&
+          !relationshipName.includes('husband') &&
+          !relationshipName.includes('guardian') &&
+          !relationshipName.includes('mother') &&
+          !relationshipName.includes('father')
+        ) {
+          return false;
+        }
+      } else if (['CAP196', 'DSO/RK', 'APN/PK'].includes(activeCapName)) {
+        if (
+          !relationshipName.includes('wife') &&
+          !relationshipName.includes('husband') &&
+          !relationshipName.includes('guardian')
+        ) {
+          return false;
+        }
       }
+
+      // Marital Status & Gender Filtering (Second Priority)
+      if (formData.marital_status === 0) {
+        if (
+          relationshipName.includes('husband') ||
+          relationshipName.includes('wife')
+        ) {
+          return false;
+        }
+      } else if (
+        formData.gender === 0 &&
+        relationshipName.includes('husband')
+      ) {
+        return false;
+      } else if (formData.gender === 1 && relationshipName.includes('wife')) {
+        return false;
+      }
+
       return true;
     });
-  }, [formData.marital_status, formData.gender, relationships]);
+  }, [relationships, formData.marital_status, formData.gender, activeCapName]);
 
   const fields2 = [
     {
