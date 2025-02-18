@@ -231,7 +231,7 @@ function PostAndNature({ id, clickedItem }) {
       ? [
           {
             label: 'End Date',
-            value: 'end_date',
+            value: 'enddate',
             type: 'date',
           },
         ]
