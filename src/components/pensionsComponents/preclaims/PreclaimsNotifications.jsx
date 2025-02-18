@@ -237,7 +237,9 @@ function PreclaimsNotifications({
                     overflowY: 'auto',
                     mx: '20px',
                   }}
-                  dataSource={retiree.documents}
+                  dataSource={retiree.documents.filter(
+                    (doc) => doc.pensioner_upload
+                  )}
                   renderItem={(doc) => (
                     <List.Item>
                       <div className="flex gap-2 items-center">

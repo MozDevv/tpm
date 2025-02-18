@@ -870,6 +870,16 @@ export const createSections = (
               type: 'number',
               pensionCap: ['CAP199'],
             },
+            {
+              name: 'assistedAllowance',
+              label: 'Assisted Allowance(Yes/No)',
+              type: 'select',
+              children: [
+                { id: true, name: 'Yes' },
+                { id: false, name: 'No' },
+              ],
+              pensionCap: ['CAP199'],
+            },
           ]
         : []),
 
