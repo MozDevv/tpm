@@ -84,7 +84,7 @@ const CashBook = () => {
   }, []);
 
   const title = clickedItem
-    ? `${clickedItem?.bankAccountName}`
+    ? `${clickedItem?.documentNo}`
     : 'Create New Bank Account';
 
   const [vendorPG, setVendorPG] = React.useState([]);
@@ -116,31 +116,31 @@ const CashBook = () => {
       name: 'transactionDate',
       label: 'Transaction Date',
       type: 'date',
-      disable: true,
+      disabled: true,
     },
     {
       name: 'documentNo',
       label: 'Document No',
       type: 'text',
-      disable: true,
+      disabled: true,
     },
     {
       name: 'narration',
       label: 'Narration',
       type: 'text',
-      disable: true,
+      disabled: true,
     },
     {
       name: 'amount',
       label: 'Amount',
       type: 'amount',
-      disable: true,
+      disabled: true,
     },
     {
       name: 'totalBalance',
       label: 'Balance',
       type: 'amount',
-      disable: true,
+      disabled: true,
     },
   ];
 
@@ -231,46 +231,15 @@ const CashBook = () => {
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
         deleteApiService={apiService.delete}
       >
-        {' '}
-        {clickedItem ? (
-          <>
-            <BaseAutoSaveInputCard
-              fields={fields}
-              apiEndpoint={financeEndpoints.addBankAccount}
-              putApiFunction={apiService.post}
-              updateApiEndpoint={financeEndpoints.updateBankAccount}
-              postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.getBankAccounts}
-              getApiFunction={apiService.get}
-              transformData={transformData}
-              setOpenBaseCard={setOpenBaseCard}
-              useRequestBody={true}
-              openBaseCard={openBaseCard}
-              setClickedItem={setClickedItem}
-              clickedItem={clickedItem}
-              banks={branches}
-              setOpenDrilldown={setOpenDrilldown}
-              setSelectedBank={setSelectedBank}
-            />
-          </>
-        ) : (
-          <BaseAutoSaveInputCard
-            fields={fields.filter((field) => field.name !== 'amount')}
-            apiEndpoint={financeEndpoints.addBankAccount}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateBankAccount}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getBankAccounts}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            openBaseCard={openBaseCard}
-            setClickedItem={setClickedItem}
-            banks={branches}
-            setSelectedBank={setSelectedBank}
-          />
-        )}
+        <BaseInputCard
+          fields={fields}
+          apiEndpoint={endpoints.createDepartment}
+          postApiFunction={apiService.post}
+          clickedItem={clickedItem}
+          useRequestBody={true}
+          disableAll={true}
+          setOpenBaseCard={setOpenBaseCard}
+        />
       </BaseCard>
       <BaseTable
         openBaseCard={openBaseCard}

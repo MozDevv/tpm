@@ -7,6 +7,7 @@ import DeductionsDetails from './DeductionsDetails';
 import PensionComputation from './PensionComputation';
 
 import PensionerBenefitsTable from './PensionerBenefitsTable';
+import BudgetBalance from './BudgetBalance';
 
 function AssessmentDetails({
   clickedItem,
@@ -25,6 +26,12 @@ function AssessmentDetails({
       <div className="max-h-[500px] overflow-y-auto ">
         <BaseCollapse name="Pensioner Benefits">
           <PensionerBenefitsTable
+            clickedItem={clickedItem}
+            setViewBreakDown={setViewBreakDown}
+          />
+        </BaseCollapse>
+        <BaseCollapse name="Budget Balance">
+          <BudgetBalance
             clickedItem={clickedItem}
             setViewBreakDown={setViewBreakDown}
           />
