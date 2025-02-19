@@ -30,12 +30,14 @@ function AssessmentDetails({
             setViewBreakDown={setViewBreakDown}
           />
         </BaseCollapse>
-        <BaseCollapse name="Budget Balance">
-          <BudgetBalance
-            clickedItem={clickedItem}
-            setViewBreakDown={setViewBreakDown}
-          />
-        </BaseCollapse>
+        {clickedItem?.stage === 6 && (
+          <BaseCollapse name="Budget Balance">
+            <BudgetBalance
+              clickedItem={clickedItem}
+              setViewBreakDown={setViewBreakDown}
+            />
+          </BaseCollapse>
+        )}
         <PensionerDetails
           clickedItem={clickedItem}
           retireeId={clickedItem?.retiree}

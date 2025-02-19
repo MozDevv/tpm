@@ -25,13 +25,13 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Account Name',
       headerClass: 'prefix-header',
       filter: true,
-      width: 250,
+      flex: 1,
       pinned: 'left',
     },
     {
       headerName: 'Budget Amount',
       field: 'budgetAmount',
-      width: 200,
+      flex: 1,
       filter: true,
       cellRenderer: (params) => {
         return <p className="text-primary font-semibold ">{params.value}</p>;
@@ -42,7 +42,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Spent Amount',
       headerClass: 'prefix-header',
       filter: true,
-      width: 200,
+      flex: 1,
       valueFormatter: (params) => {
         return formatNumber(params.value);
       },
@@ -52,7 +52,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Budget Balance',
       headerClass: 'prefix-header',
       filter: true,
-      width: 150,
+      flex: 1,
       valueFormatter: (params) => {
         return formatNumber(params.value);
       },
@@ -62,7 +62,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Is Blocked',
       headerClass: 'prefix-header',
       filter: true,
-      width: 150,
+      flex: 1,
       valueFormatter: (params) => {
         return params.value ? 'Yes' : 'No';
       },
@@ -72,7 +72,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Stage',
       headerClass: 'prefix-header',
       filter: true,
-      width: 150,
+      flex: 1,
       valueFormatter: (params) => {
         return params.value === 1 ? 'Pending' : 'Approved';
       },
