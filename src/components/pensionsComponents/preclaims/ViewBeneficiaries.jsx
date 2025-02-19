@@ -49,15 +49,15 @@ function ViewBeneficiaries({
   }, [clickedItem]);
 
   const columnDefs = [
-    { headerName: 'Relationship', field: 'relationship' },
+    { headerName: 'Relationship', field: 'relationshipName' },
     { headerName: 'Surname', field: 'surname' },
-    { headerName: 'First Name', field: 'first_name' },
-    { headerName: 'Other Name', field: 'other_name' },
+    { headerName: 'First Name', field: 'firstName' },
+    { headerName: 'Other Name', field: 'middleName' },
 
     // { headerName: "Age", field: "age" },
     {
       headerName: 'Date of Birth',
-      field: 'date_of_birth',
+      field: 'dateOfBirth',
       valueFormatter: (params) =>
         params.value ? new Date(params.value).toLocaleDateString() : 'N/A',
     },

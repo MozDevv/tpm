@@ -1,48 +1,48 @@
-"use client";
-import React, { use, useEffect } from "react";
+'use client';
+import React, { use, useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
   {
-    field: "code",
-    headerName: "Postal Code",
-    headerClass: "prefix-header",
+    field: 'code',
+    headerName: 'Postal Code',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "county_name",
-    headerName: "County Name",
-    headerClass: "prefix-header",
+    field: 'county_name',
+    headerName: 'County Name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
   },
   {
-    field: "county_code",
-    headerName: "County Code",
-    headerClass: "prefix-header",
+    field: 'county_code',
+    headerName: 'County Code',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 100,
+    flex: 1,
     hide: true,
   },
 ];
@@ -73,10 +73,10 @@ const PostalCodes = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -98,16 +98,16 @@ const PostalCodes = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
   const [counties, setCounties] = React.useState([]);
 
-  const title = clickedItem ? "Postal Code" : "Create New Postal Address";
+  const title = clickedItem ? 'Postal Code' : 'Create New Postal Address';
 
   const fetchCounties = async () => {
     try {
       const response = await apiService.get(endpoints.getCounties, {
-        "paging.pageSize": 1000,
+        'paging.pageSize': 1000,
       });
       setCounties(response.data.data);
     } catch (error) {
-      console.log("Error fetching counties", error);
+      console.log('Error fetching counties', error);
     }
   };
   useEffect(() => {
@@ -115,12 +115,12 @@ const PostalCodes = () => {
   }, []);
 
   const fields = [
-    { name: "name", label: "Name", type: "text", required: true },
-    { name: "code", label: "Postal Code", type: "text", required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'code', label: 'Postal Code', type: 'text', required: true },
     {
-      name: "countyId",
-      label: "County",
-      type: "select",
+      name: 'countyId',
+      label: 'County',
+      type: 'autocomplete',
       required: true,
       options: counties.map((county) => ({
         id: county.id,

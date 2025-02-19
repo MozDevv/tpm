@@ -138,14 +138,14 @@ function WcpsCard({
     {
       value: 'salary_amount',
       label: 'Salary Amount',
-      type: 'number',
+      type: 'amount',
       required: true,
       disabled: false,
     },
     {
       value: 'total_emoluments',
       label: 'Total Emoluments',
-      type: 'number',
+      type: 'amount',
       required: true,
       disabled: true,
     },
@@ -153,7 +153,7 @@ function WcpsCard({
       value: 'contribution_amount',
       label: 'Contribution Amount(2%)',
       disabled: true,
-      type: 'number',
+      type: 'amount',
       required: true,
       disabled: true,
     },
@@ -175,11 +175,11 @@ function WcpsCard({
   ];
 
   return (
-    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto mt-2">
+    <div className="p-2 mt-2">
       <div>
         <div>
           <div className="px-5 mt-[20px]">
-            <div className="ag-theme-quartz max-h-[90vh]">
+            <div className="ag-theme-quartz min-h-[100vh] overflow-auto">
               <div className="">
                 <div className="text-primary font-montserrat text-base font-semibold mb-2">
                   WCPS Contribution Reference
@@ -201,7 +201,7 @@ function WcpsCard({
                 </div>
               </div>
               {
-                <div className="p-4 bg-white rounded-lg  border border-gray-200 mb-10">
+                <div className="p-4 bg-white rounded-lg  border border-gray-200 mb-10 ">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
                     <div className="flex flex-row items-center gap-2">
                       <div className="text-gray-600 text-sm ">
@@ -249,27 +249,31 @@ function WcpsCard({
               </BaseCard>
 
               {referenceId && (
-                <BaseInputTable
-                  disableAll={
-                    clickedItem2?.notification_status !== 2 &&
-                    clickedItem2?.notification_status !== null &&
-                    clickedItem2?.notification_status !== 0 &&
-                    clickedItem2?.notification_status !== 3
-                  }
-                  title="WCPS Contributions Lines"
-                  fields={inputFields}
-                  id={referenceId}
-                  idLabel="wCPS_contribution_id"
-                  getApiService={apiService.get}
-                  postApiService={apiService.post}
-                  putApiService={apiService.put}
-                  apiService={apiService}
-                  deleteEndpoint={endpoints.deleteWcpsLine}
-                  getEndpoint={endpoints.getWcpsLine(id)}
-                  postEndpoint={endpoints.createWcpsLine}
-                  putEndpoint={endpoints.updateWcpsLine}
-                  passProspectivePensionerId={true}
-                />
+                <div className="">
+                  <BaseInputTable
+                    disableAll={
+                      clickedItem2?.notification_status !== 2 &&
+                      clickedItem2?.notification_status !== null &&
+                      clickedItem2?.notification_status !== 0 &&
+                      clickedItem2?.notification_status !== 3
+                    }
+                    title="WCPS Contributions Lines"
+                    fields={inputFields}
+                    id={referenceId}
+                    idLabel="wCPS_contribution_id"
+                    getApiService={apiService.get}
+                    postApiService={apiService.post}
+                    putApiService={apiService.put}
+                    apiService={apiService}
+                    deleteEndpoint={endpoints.deleteWcpsLine}
+                    getEndpoint={endpoints.getWcpsLine(id)}
+                    postEndpoint={endpoints.createWcpsLine}
+                    putEndpoint={endpoints.updateWcpsLine}
+                    passProspectivePensionerId={true}
+                    domLayout="normal"
+                    scrollable={true}
+                  />
+                </div>
               )}
             </div>
           </div>

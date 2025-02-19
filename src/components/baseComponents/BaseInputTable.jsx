@@ -57,7 +57,7 @@ const BaseInputTable = ({
   filterBy,
   filterCol,
   disableAll,
-  scrollable,
+
   scrollableHeight,
   setCurrentRow,
   deleteApiService,
@@ -68,6 +68,7 @@ const BaseInputTable = ({
   setOnCloseWarnings,
   retirementDate,
   parentDob,
+  scrollable,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
