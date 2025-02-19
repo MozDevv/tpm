@@ -64,6 +64,7 @@ const BaseTable = ({
   deleteApiEndpoint,
   deleteApiService,
   isPayroll,
+  excelTitle,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -285,6 +286,7 @@ const BaseTable = ({
           transformData={transformData}
           fileName={currentTitle}
           setLoading={setExcelLoading}
+          excelTitle={excelTitle}
         />
       </Dialog>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>

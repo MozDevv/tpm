@@ -111,7 +111,8 @@ export const generateExcelTemplateWithApiService = async (
   selectedColumns = [],
   skipBlankEntries = false,
   setLoading,
-  filters = {}
+  filters = {},
+  excelTitle
 ) => {
   try {
     if (!Array.isArray(selectedColumns) || selectedColumns.length === 0) {
@@ -215,7 +216,26 @@ export const generateExcelTemplateWithApiService = async (
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
-
+    if (excelTitle && Array.isArray(excelTitle)) {
+      excelTitle.forEach((title, index) => {
+        const titleRow = worksheet.addRow([title]);
+        titleRow.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
+        titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.mergeCells(
+          `A${index + 1}:${String.fromCharCode(
+            65 + selectedColumns.length - 1
+          )}${index + 1}`
+        );
+        worksheet.getRow(index + 1).height = 30; // Set row height for title
+        titleRow.eachCell((cell) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '006990' },
+          };
+        });
+      });
+    }
     // Add headers and styles
     const headerRow = worksheet.addRow(worksheetData[0]);
     headerRow.eachCell((cell) => {
@@ -228,13 +248,14 @@ export const generateExcelTemplateWithApiService = async (
         },
         alignment: { horizontal: 'center', vertical: 'middle' },
         border: {
-          top: { style: 'thin', color: { argb: '000000' } },
-          bottom: { style: 'thin', color: { argb: '000000' } },
-          left: { style: 'thin', color: { argb: '000000' } },
-          right: { style: 'thin', color: { argb: '000000' } },
+          top: { style: 'thin', color: { argb: '006990' } },
+          bottom: { style: 'thin', color: { argb: '006990' } },
+          left: { style: 'thin', color: { argb: '006990' } },
+          right: { style: 'thin', color: { argb: '006990' } },
         },
       };
     });
+    worksheet.getRow(headerRow.number).height = 25; // Set row height for headers
 
     // Add rows
     worksheetData.slice(1).forEach((row) => {

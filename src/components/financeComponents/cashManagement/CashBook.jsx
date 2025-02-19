@@ -8,7 +8,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import { apiService } from '@/components/services/financeApi';
 import { apiService as setupsApiService } from '@/components/services/setupsApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 import financeEndpoints from '@/components/services/financeApi';
 import endpoints from '@/components/services/setupsApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
@@ -19,7 +19,7 @@ import {
   transformDataByType,
 } from '../baseSubledgerData/BaseSubledgerData';
 
-const CashBookapi = () => {
+const CashBook = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -30,53 +30,22 @@ const CashBookapi = () => {
   const [selectedBank, setSelectedBank] = React.useState(null);
 
   const transformData = (data) => {
+    let cumulativeBalance = 0;
+
     return data.map((item, index) => {
-      const branch = branches.find((branch) => branch.id === item.bankBranchId);
+      cumulativeBalance += item.amount;
+
       return {
         no: index + 1,
-        id: item.id,
-        bankAccountName: item.bankAccountName,
-        bankAccountDescription: item.bankAccountDescription,
-        bankAccountNo: item.bankAccountNo,
-        bankAccountCode: item.bankAccountCode,
-        isBlocked: item.isBlocked,
-        bankBranchId: item.bankBranchId,
-        branchName: branch ? branch.name : '',
-        bank_id: branch ? branch.bankId : '',
-        bankPostingGroupId: item.bankPostingGroupId,
-        amount: item.amount === null ? 0 : item.amount,
-
-        // roles: item.roles,
+        transactionDate: item.transactionDate,
+        documentNo: item.documentNo,
+        narration: item.narration,
+        balance: formatNumber(Math.abs(item.balance)),
+        credit: item.amount < 0 ? formatNumber(Math.abs(item.amount)) : '',
+        debit: item.amount > 0 ? formatNumber(Math.abs(item.amount)) : '',
+        totalBalance: formatNumber(Math.abs(cumulativeBalance)),
       };
     });
-  };
-
-  const handlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
-  };
-
-  const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -144,61 +113,43 @@ const CashBookapi = () => {
 
   const fields = [
     {
-      name: 'bankAccountName',
-      label: 'Bank Account Name',
-      type: 'text',
-      required: true,
+      name: 'transactionDate',
+      label: 'Transaction Date',
+      type: 'date',
+      disable: true,
     },
     {
-      name: 'bankAccountDescription',
-      label: 'Bank Account Description',
+      name: 'documentNo',
+      label: 'Document No',
       type: 'text',
-      required: true,
+      disable: true,
     },
     {
-      name: 'bankAccountNo',
-      label: 'Bank Account No',
+      name: 'narration',
+      label: 'Narration',
       type: 'text',
-      required: true,
-    },
-
-    {
-      name: 'bankPostingGroupId',
-      label: 'Bank Posting Group',
-      type: 'select',
-      required: true,
-      options: vendorPG,
+      disable: true,
     },
     {
       name: 'amount',
       label: 'Amount',
-      type: 'drillDown',
-      required: false,
-      disabled: true,
+      type: 'amount',
+      disable: true,
     },
     {
-      name: 'bank_id',
-      label: 'Bank',
-      type: 'autocomplete',
-      options: banks,
+      name: 'totalBalance',
+      label: 'Balance',
+      type: 'amount',
+      disable: true,
     },
-
-    {
-      name: 'bankBranchId',
-      label: 'Bank Branch Name',
-      options:
-        selectedBank && selectedBank.length > 0 ? selectedBank : branches,
-      type: 'autocomplete',
-    },
-    { name: 'isBlocked', label: 'Is Blocked', type: 'switch', required: true },
   ];
 
   const [openDrilldown, setOpenDrilldown] = React.useState(false);
 
   const columnDefs = [
     {
-      field: 'bankAccountCode',
-      headerName: 'Bank Account Code',
+      field: 'transactionDate',
+      headerName: 'Transaction Date',
       headerClass: 'prefix-header',
       pinned: 'left',
       filter: true,
@@ -206,80 +157,74 @@ const CashBookapi = () => {
       headerCheckboxSelection: true,
       cellRenderer: (params) => {
         return (
-          <p className="underline text-primary font-semibold">{params.value}</p>
+          <p className="underline text-primary font-semibold">
+            {parseDate(params.value)}
+          </p>
         );
       },
     },
     {
-      field: 'bankAccountNo',
-      headerName: 'Bank Account No',
+      field: 'narration',
+      headerName: 'Narration',
       headerClass: 'prefix-header',
+      width: 300,
       filter: true,
     },
     {
-      field: 'bankAccountName',
-      headerName: 'Bank Account Name',
+      field: 'documentNo',
+      headerName: 'Document No',
       headerClass: 'prefix-header',
 
       filter: true,
     },
+
     {
-      field: 'amount',
-      headerName: 'Amount',
-      width: 150,
-      valueFormatter: (params) => {
-        return formatNumber(params.value);
-      },
+      field: 'debit',
+      headerName: 'Debit (Inflow)',
+      headerClass: 'prefix-header',
+      flex: 1,
       cellRenderer: (params) => {
         return (
-          <p
-            className="cursor-pointer underline text-primary font-bold text-[14px]"
-            onClick={() => {
-              setOpenDrilldown(true);
-              setClickedItem(params.data);
-            }}
-          >
-            {formatNumber(params.value)}
+          <p className="text-primary font-semibold text-right ">
+            {params.value || '-'}
           </p>
         );
       },
     },
 
     {
-      field: 'bankAccountDescription',
-      headerName: 'Bank Account Description',
+      field: 'credit',
+      headerName: 'Credit (Outflow)',
+      flex: 1,
       headerClass: 'prefix-header',
-      filter: true,
+      cellRenderer: (params) => {
+        return (
+          <p className="text-primary font-semibold text-right">
+            {params.value || '-'}
+          </p>
+        );
+      },
     },
-
     {
-      field: 'isBlocked',
-      headerName: 'Is Blocked',
+      field: 'totalBalance',
+      flex: 1,
+      headerName: 'Total Balance',
       headerClass: 'prefix-header',
-      filter: true,
-      width: 100,
+      cellRenderer: (params) => {
+        return (
+          <p className="text-green-600 font-semibold text-right">
+            {params.value}
+          </p>
+        );
+      },
     },
   ];
 
   return (
     <div className="">
-      {' '}
-      <BaseDrilldown
-        setOpenDrilldown={setOpenDrilldown}
-        openDrilldown={openDrilldown}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        columnDefs={getColumnDefsByType('Bank Account Ledger Entries')}
-        fetchApiEndpoint={financeEndpoints.bankDrillDown(
-          clickedItem?.bankAccountCode
-        )}
-        fetchApiService={apiService.get}
-        title={clickedItem?.bankAccountName}
-      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
@@ -333,18 +278,22 @@ const CashBookapi = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getBankAccounts}
+        fetchApiEndpoint={financeEndpoints.getCashBook}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="Bank Account"
-        currentTitle="Bank Account"
+        breadcrumbTitle="Cash Book"
+        handlers={{}}
+        currentTitle="Cash Book"
         deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
         deleteApiService={apiService.delete}
+        excelTitle={[
+          'PENSIONS DEPARTMENT - FINANCE',
+          'Cash Book Statement  ' + ' ' + parseDate(new Date()),
+        ]}
       />
     </div>
   );
 };
 
-export default CashBookapi;
+export default CashBook;

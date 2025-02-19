@@ -13,6 +13,7 @@ const BaseExcelComponent = ({
   setOpenExcel,
   filters,
   setLoading,
+  excelTitle,
 }) => {
   // Initialize selectedColumns with all columns by default
   const [selectedColumns, setSelectedColumns] = useState(columns);
@@ -66,7 +67,8 @@ const BaseExcelComponent = ({
       selectedColumns,
       skipBlankEntries,
       setLoading,
-      filters
+      filters,
+      excelTitle
     );
   };
 
