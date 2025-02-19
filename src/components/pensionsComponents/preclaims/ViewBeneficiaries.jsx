@@ -49,20 +49,33 @@ function ViewBeneficiaries({
   }, [clickedItem]);
 
   const columnDefs = [
-    { headerName: 'Relationship', field: 'relationshipName' },
+    {
+      headerName: 'Relationship',
+      field: 'relationshipName',
+      valueGetter: (params) =>
+        params.data.relationshipName || params.data.relationship,
+    },
     { headerName: 'Surname', field: 'surname' },
-    { headerName: 'First Name', field: 'firstName' },
-    { headerName: 'Other Name', field: 'middleName' },
-
-    // { headerName: "Age", field: "age" },
+    {
+      headerName: 'First Name',
+      field: 'firstName',
+      valueGetter: (params) => params.data.firstName || params.data.first_name,
+    },
+    {
+      headerName: 'Other Name',
+      field: 'middleName',
+      valueGetter: (params) => params.data.middleName || params.data.other_name,
+    },
     {
       headerName: 'Date of Birth',
       field: 'dateOfBirth',
+      valueGetter: (params) =>
+        params.data.dateOfBirth || params.data.dob || params.data.date_of_birth,
       valueFormatter: (params) =>
         params.value ? new Date(params.value).toLocaleDateString() : 'N/A',
     },
     {
-      headerName: 'Is Deaceased',
+      headerName: 'Is Deceased',
       field: 'deceased',
       cellRenderer: (params) => {
         if (params.value === null || params.value === false) {
