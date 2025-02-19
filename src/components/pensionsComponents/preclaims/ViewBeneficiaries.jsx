@@ -64,7 +64,11 @@ function ViewBeneficiaries({
     {
       headerName: 'Other Name',
       field: 'middleName',
-      valueGetter: (params) => params.data.middleName || params.data.other_name,
+      valueGetter: (params) =>
+        params.data.middleName ||
+        params.data.other_name ||
+        params.data.otherName ||
+        params.data.middle_name,
     },
     {
       headerName: 'Date of Birth',
