@@ -267,7 +267,7 @@ function PostAndNature({ id, clickedItem }) {
     ...(clickedItem?.was_in_mixed_service
       ? [
           {
-            label: 'Salary',
+            label: 'Salary in Kshs',
             value: 'salary',
             type: 'amount',
             notRequired: true,
@@ -277,7 +277,7 @@ function PostAndNature({ id, clickedItem }) {
     ...((seconded || isSeconded) && !clickedItem?.was_in_mixed_service
       ? [
           {
-            label: 'Salary',
+            label: 'Salary in Kshs',
             value: 'salary',
             type: 'amount',
           },
@@ -355,6 +355,7 @@ function PostAndNature({ id, clickedItem }) {
         putEndpoint={preClaimsEndpoints.updatePostAndNature}
         deleteEndpoint={preClaimsEndpoints.deletePostAndNature}
         passProspectivePensionerId={true}
+        retirementDate={clickedItem?.retirement_date}
       />{' '}
     </div>
   );

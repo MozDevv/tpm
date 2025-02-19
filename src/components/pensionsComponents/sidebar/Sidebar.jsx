@@ -195,6 +195,10 @@ export const menuItems = [
         title: 'Cash Management',
         subChildren: [
           {
+            title: 'Cash Book',
+            path: '/pensions/finance/cash-management/cash-book',
+          },
+          {
             title: 'Bank Account',
             path: '/pensions/finance/cash-management/bank-account',
           },

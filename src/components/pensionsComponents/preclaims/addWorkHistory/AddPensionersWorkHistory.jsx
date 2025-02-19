@@ -72,26 +72,15 @@ function AddPensionersWorkHistory({
       </div>
 
       <div className=" overflow-y-auto h-[70vh]">
-        {pensionAward ? (
-          <MixedServicePost
-            status={status}
-            id={id}
-            loading={loading}
-            setLoading={setLoading}
-            dateOfFirstAppointment={dateOfFirstAppointment}
-            mixedService={true}
-          />
-        ) : (
-          <PostAndNature
-            id={id}
-            status={status}
-            clickedItem={clickedItem}
-            loading={loading}
-            setLoading={setLoading}
-            dateOfFirstAppointment={dateOfFirstAppointment}
-            activeCapName={activeCapName}
-          />
-        )}
+        <PostAndNature
+          id={id}
+          status={status}
+          clickedItem={clickedItem}
+          loading={loading}
+          setLoading={setLoading}
+          dateOfFirstAppointment={dateOfFirstAppointment}
+          activeCapName={activeCapName}
+        />
 
         <Suspense fallback={<Spinner />}>
           <PensionableSalary

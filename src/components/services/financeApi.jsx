@@ -400,6 +400,7 @@ const financeEndpoints = {
 
   getScheduleControlReportById: (id) =>
     `/Reports/GetScheduleControlReport?ScheduleId=${id}`,
+  getCashBook: '/Reports/GetCashbookReport',
 };
 
 export const apiService = {
