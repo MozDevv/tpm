@@ -121,7 +121,7 @@ function CreateProspectivePensioner({
                           Government Salary
                         </span>
                       }
-                      key="9"
+                      key="13"
                       style={{ zIndex: 1 }}
                     >
                       <GovernmentSalary

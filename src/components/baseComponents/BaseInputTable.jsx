@@ -129,6 +129,7 @@ const BaseInputTable = ({
               { start: 'date', end: 'endDate' },
               { start: 'date', end: 'enddate' },
               { start: 'start_date', end: 'end_date' },
+              { start: 'date', end: 'date' },
             ];
 
             const defaultRows = Array.from({ length: 1 }, () =>

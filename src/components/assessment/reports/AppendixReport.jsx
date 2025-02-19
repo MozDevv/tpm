@@ -305,7 +305,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 <p>
                   Pension Number:{' '}
                   <strong className="font-normal ml-3">
-                    {clickedItem?.prospectivePensionerAwards[0].pension_award
+                    {clickedItem?.prospectivePensionerAwards?.[0]?.pension_award
                       ?.prefix + clickedItem?.pensioner_number}
                   </strong>
                 </p>
@@ -315,8 +315,8 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                     {clickedItem?.mda_description}
                   </strong>
                 </p>
-                {clickedItem?.prospectivePensionerAwards.map((item) => (
-                  <p key={clickedItem.prospectivePensionerAwards[0].id}>
+                {clickedItem?.prospectivePensionerAwards?.map((item, index) => (
+                  <p key={index}>
                     Claim Type:
                     <strong className="font-normal ml-3">
                       {item.pension_award?.name}
