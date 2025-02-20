@@ -23,7 +23,7 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Pension Award',
       headerClass: 'prefix-header',
       filter: true,
-      width: 250,
+
       pinned: 'left',
     },
     {

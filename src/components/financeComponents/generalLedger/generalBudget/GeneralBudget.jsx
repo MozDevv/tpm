@@ -24,6 +24,8 @@ import {
 } from '@mui/icons-material';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import generateExcelTemplate from '@/utils/excelHelper';
+import { BASE_CORE_API } from '@/utils/constants';
+import axios from 'axios';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -298,65 +300,27 @@ const GeneralBudget = ({ status }) => {
 
   const generateBudgetUploadTemplate = async () => {
     try {
-      const response = await apiService.get(
-        financeEndpoints.generateBudgetUploadTemplate,
+      // Fetch the file as a blob
+      const response = await axios.get(
+        `${BASE_CORE_API}api/Accounts/GenerateBudgetUploadTemplate`,
         {
-          'paging.pageSize': 10000,
+          responseType: 'blob', // Specify that the response is a binary Blob
         }
       );
 
-      const { data } = response.data; // Extract the data array
-
-      // Prepare the data as an array of arrays (with headers included)
-      const worksheetData = [
-        ['GL Account ID', 'Account No', 'Account Name', 'Amount'], // Headers
-        ...data.map((item) => [
-          item.glAccountId, // GL Account ID
-          item.accountNo, // Account No
-          item.accountName, // Account Name
-          item.amount, // Amount
-        ]),
-      ];
-
-      // Create a worksheet and a workbook
-      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-
-      // Format columns for protection (disable editing for GL Account ID and Account No)
-      const protection = {
-        hidden: false, // Show formulas if any
-        locked: true, // Lock this cell (non-editable)
-      };
-
-      // Mark the first and second columns (GL Account ID, Account No) as locked
-      worksheet['!cols'] = [
-        { hidden: false, width: 20, locked: true }, // GL Account ID column (locked)
-        { hidden: false, width: 20, locked: true }, // Account No column (locked)
-        { hidden: false, width: 30, locked: false }, // Account Name column (editable)
-        { hidden: false, width: 15, locked: false }, // Amount column (editable)
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Budget Template');
-
-      // Create the Excel file and trigger the download
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      const blob = new Blob([excelBuffer], {
-        type: 'application/octet-stream',
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
       });
       const url = window.URL.createObjectURL(blob);
-
-      // Create a link element to download the file
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'budget_upload_template.xlsx');
+      link.setAttribute('download', 'Budget Template.xlsx');
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      link.remove(); // Clean up
+      window.URL.revokeObjectURL(url); // Release memory
     } catch (error) {
-      console.error('Error generating Excel template:', error);
+      console.error('Error downloading te file:', error);
     }
   };
 

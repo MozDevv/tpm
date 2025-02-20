@@ -29,19 +29,16 @@ function BankReconciliationReportCard({
     const selectedRows = params.api.getSelectedRows();
     const selectedRowId = selectedRows.length > 0 ? selectedRows[0].id : null;
 
-    // Find the index of the selected row in the original statements array
     const selectedIndex = bankStatement.findIndex(
       (statement) => statement.id === selectedRowId
     );
 
-    setSelectedStatementIndex(selectedIndex); // Update the selected index
-    setSelectedBankStatements(selectedRows); // Store selected rows
+    setSelectedStatementIndex(selectedIndex);
+    setSelectedBankStatements(selectedRows);
 
-    // Calculate totals based on the selected index
     const totals = calculateTotals(bankStatement, selectedIndex);
-    console.log('Calculated Totals:', totals); // Log or use totals as needed
+    console.log('Calculated Totals:', totals);
   };
-
   const onBankSubledgerSelectionChanged = (params) => {
     const selectedRows = params.api.getSelectedRows();
     setSelectedBankSubledgers(selectedRows);
