@@ -25,7 +25,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       headerName: 'Account Name',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
+      width: 250,
       pinned: 'left',
     },
     {
@@ -34,7 +34,11 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
       flex: 1,
       filter: true,
       cellRenderer: (params) => {
-        return <p className="text-primary font-semibold ">{params.value}</p>;
+        return (
+          <p className="text-primary font-semibold ">
+            {formatNumber(params.value)}
+          </p>
+        );
       },
     },
     {
@@ -67,16 +71,16 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
         return params.value ? 'Yes' : 'No';
       },
     },
-    {
-      field: 'stage',
-      headerName: 'Stage',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-      valueFormatter: (params) => {
-        return params.value === 1 ? 'Pending' : 'Approved';
-      },
-    },
+    // {
+    //   field: 'stage',
+    //   headerName: 'Stage',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   flex: 1,
+    //   valueFormatter: (params) => {
+    //     return params.value === 1 ? 'Pending' : 'Approved';
+    //   },
+    // },
   ];
 
   const getClaimQualifyingService = async () => {
@@ -93,7 +97,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
         };
       });
 
-      await getCOBBudgetBalance(data?.id);
+      await getCOBBudgetBalance(data[0]?.pension_award_id);
     } catch (error) {
       console.log('Error getting pensioner Benefits >>>>>>>>>>>:', error);
     }
@@ -101,9 +105,7 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
 
   const getCOBBudgetBalance = async (id) => {
     try {
-      const res = await apiService.get(
-        financeEndpoints.getCOBBudget(clickedItem?.id)
-      );
+      const res = await apiService.get(financeEndpoints.getCOBBudget(id));
       const data = res.data.data;
 
       if (res.status === 200 && res.data.data && res.data.succeeded) {
@@ -173,13 +175,6 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
     {
       name: 'isBlocked',
       label: 'Is Blocked',
-      type: 'text',
-      required: true,
-      disabled: true,
-    },
-    {
-      name: 'stage',
-      label: 'Stage',
       type: 'text',
       required: true,
       disabled: true,

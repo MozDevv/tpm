@@ -194,10 +194,14 @@ const financeEndpoints = {
   vendorSubLedger: '/api/Posting/GetVendorSubLedger',
   customerSubLedger: '/api/Posting/GetCustomerSubLedger',
   bankSubLedger: '/api/Posting/GetBankSubLedger',
+  getBankSubledgerByBankReconciliationId: (id) =>
+    `/Posting/GetBankSubLedger?BankReconciliationId=${id}`,
   glSubLedger: '/api/Posting/GetGeneralLedgerDetail',
 
   getBankSubledgerIsReconciliationFalse:
     '/Posting/GetBankSubLedger?isReconciliation=true',
+
+  getBankReconciliatinReport: '/Posting/GetBankReconciliation',
 
   bankSubLedgerPayments: '/Posting/GetBankSubLedger',
 

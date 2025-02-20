@@ -1,0 +1,532 @@
+import React, { use, useEffect, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import { formatNumber } from '@/utils/numberFormatters';
+import { parseDate } from '@/utils/dateFormatter';
+import { Divider, IconButton, TextField } from '@mui/material';
+import BaseAmountInput from '@/components/baseComponents/BaseAmountInput';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+
+function BankReconciliationReportCard({
+  clickedItem,
+  setClickedItem,
+  uploadExcel,
+  setSelectedBankSubledgers,
+  setSelectedBankStatements,
+  refreshBankStatements,
+  setReconciliationId,
+  setTotalDifference,
+}) {
+  const [bankStatement, setBankStatement] = useState(
+    clickedItem?.bankStatements || []
+  );
+  const [bankSubledger, setBankSubledger] = useState([]);
+  const [selectedStatementIndex, setSelectedStatementIndex] = useState(-1);
+
+  const onBankStatementSelectionChanged = (params) => {
+    const selectedRows = params.api.getSelectedRows();
+    const selectedRowId = selectedRows.length > 0 ? selectedRows[0].id : null;
+
+    // Find the index of the selected row in the original statements array
+    const selectedIndex = bankStatement.findIndex(
+      (statement) => statement.id === selectedRowId
+    );
+
+    setSelectedStatementIndex(selectedIndex); // Update the selected index
+    setSelectedBankStatements(selectedRows); // Store selected rows
+
+    // Calculate totals based on the selected index
+    const totals = calculateTotals(bankStatement, selectedIndex);
+    console.log('Calculated Totals:', totals); // Log or use totals as needed
+  };
+
+  const onBankSubledgerSelectionChanged = (params) => {
+    const selectedRows = params.api.getSelectedRows();
+    setSelectedBankSubledgers(selectedRows);
+  };
+
+  const [totalAmounts1, setTotalAmounts1] = useState([
+    { name: 'Total Difference', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+    { name: 'Total Balance', value: '0.00' },
+  ]);
+
+  const calculateTotals = (statements, selectedIndex) => {
+    const totalDifference = statements.reduce(
+      (sum, item) => sum + (item.difference || 0),
+      0
+    );
+
+    const totalBalance = statements.reduce(
+      (sum, item) => sum + (item.statementAmount || 0),
+      0
+    );
+
+    const balance =
+      statements
+        .slice(0, selectedIndex + 1)
+        .reduce((sum, item) => sum + (item.statementAmount || 0), 0) +
+      clickedItem?.lastStatementBalance;
+
+    setTotalAmounts1([
+      { name: 'Total Difference', value: formatNumber(totalDifference) },
+      { name: 'Balance', value: formatNumber(balance) },
+      { name: 'Total Balance', value: formatNumber(totalBalance) },
+    ]);
+    setTotalDifference(totalDifference);
+    return { totalDifference, balance, totalBalance };
+  };
+
+  // const getBankStatement = async () => {
+  //   try {
+  //     const response = await apiService.get(
+  //       financeEndpoints.getBankStatement(clickedItem?.id)
+  //     );
+  //     if (response.status === 200 && response.data.succeeded) {
+  //       if (response.data.data[0].bankStatements.length > 0) {
+  //         const bankStatement = response.data.data[
+  //           response.data.data.length - 1
+  //         ]
+  //           ? response.data.data[response.data.data.length - 1]
+  //           : {};
+  //         setClickedItem((prev) => ({
+  //           ...prev,
+  //           totalDifference: bankStatement?.totalDifference,
+  //           statementStartDate: bankStatement?.statementStartDate,
+  //           statementEndDate: bankStatement?.statementEndDate,
+  //           lastStatementBalance: bankStatement?.lastStatementBalance,
+  //           currentStatementBalance: bankStatement?.currentStatementBalance,
+  //           // bankStatementId: bankStatement?.bankStatements.id,
+  //           reconciliationId: bankStatement?.id,
+  //         }));
+  //       }
+
+  //       const formattedStatements = response.data.data[
+  //         response.data.data.length - 1
+  //       ].bankStatements.map((item) => ({
+  //         id: item.id,
+  //         transactionDate: item.transactionDate,
+  //         description: item.description,
+  //         debitAmount: item.debitAmount,
+  //         appliedAmount: item.appliedAmount,
+  //         difference: item.difference,
+  //         statementAmount: item.statementAmount,
+  //         appliedEntries: item.appliedEntries,
+  //         creditAmount: item.creditAmount,
+  //         balance: item.balance,
+  //         appliedEntries: item.appliedEntries,
+  //         bankReconciliationId: item.bankReconciliationId,
+  //         bankReconciliationStatus: item.bankReconciliationStatus,
+  //         totalSubLedgerCount: item.totalSubLedgerCount,
+  //       }));
+
+  //      // setBankStatement(formattedStatements);
+  //       calculateTotals(formattedStatements, 0);
+  //     } else {
+  //       console.warn('Failed to fetch bank statement: ', response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching bank statement', error);
+  //     // Optionally handle the error for the UI
+  //   }
+  // };
+
+  const getBankSubledger = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getBankSubledgerByBankReconciliationId(clickedItem?.id)
+      );
+      if (response.status === 200 && response.data.succeeded) {
+        setBankSubledger(
+          response.data.data.map((item) => ({
+            id: item.id,
+            transactionNo: item.transactionNo,
+            documentNo: item.documentNo,
+            externalDocumentNo: item.externalDocumentNo,
+            glBankCode: item.glBankCode,
+            transactionDate: item.transactionDate,
+            amount: item.amount,
+            description: item.description,
+            glEntryNo: item.glEntryNo,
+            bankReconciliationStatus: item.bankReconciliationStatus,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching bank subledger', error);
+    }
+  };
+
+  useEffect(() => {
+    // getBankStatement();
+    getBankSubledger();
+  }, [refreshBankStatements]);
+
+  useEffect(() => {
+    // getBankStatement();
+    getBankSubledger();
+  }, []);
+
+  // useEffect(() => {
+  //   getBankStatement();
+  // }, [refreshBankStatements]);
+
+  const bankStatementColDefs = [
+    {
+      field: 'transactionDate',
+      headerName: 'Transaction Date',
+
+      filter: true,
+
+      pinned: 'left',
+      // checkboxSelection: true,
+      // headerCheckboxSelection: true,
+      // headerCheckboxSelectionFilteredOnly: true,
+      width: 150,
+      valueFormatter: (params) => parseDate(params.value),
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      width: 200,
+      filter: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+
+    {
+      field: 'statementAmount',
+      headerName: 'Statement Ammount',
+
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'appliedAmount',
+      headerName: 'Applied Ammount',
+
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'difference',
+      headerName: 'Difference',
+
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'appliedEntries',
+      headerName: 'Applied Entries',
+      filter: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'bankReconciliationStatus',
+      headerName: 'Bank Reconciliation Status',
+      filter: true,
+      cellStyle: (params) => {
+        if (params.value === 1) {
+          return {
+            color: 'green',
+            fontWeight: 'bold',
+          };
+        }
+        return null; // Default style if the value is not 1
+      },
+      valueFormatter: (params) =>
+        params.value === 0
+          ? 'None'
+          : params.value === 1
+          ? 'Matched'
+          : params.value === 2
+          ? 'Reconciled'
+          : 'Unknown',
+    },
+    {
+      field: 'totalSubLedgerCount',
+      headerName: 'Total Sub Ledger Count',
+      filter: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+  ];
+
+  const bankAccountColDefs = [
+    {
+      field: 'documentNo',
+      headerName: 'Document No',
+
+      filter: true,
+      pinned: 'left',
+      // checkboxSelection: true,
+      // headerCheckboxSelection: true,
+      // headerCheckboxSelectionFilteredOnly: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'transactionDate',
+      headerName: 'Transaction Date',
+      width: 150,
+      filter: true,
+      valueFormatter: (params) => parseDate(params.value),
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+
+      filter: true,
+      valueFormatter: (params) => formatNumber(params.value),
+
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      filter: true,
+      width: 250,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+
+    {
+      field: 'transactionNo',
+      headerName: 'Transaction No',
+      width: 150,
+      filter: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'glEntryNo',
+      headerName: 'GL Entry No',
+      filter: true,
+      cellStyle: ({ data }) => ({
+        fontWeight: data.bankReconciliationStatus === 1 ? 'bold' : 'normal',
+        color: data.bankReconciliationStatus === 1 ? 'green' : 'black',
+        fontFamily: 'Montserrat',
+      }),
+    },
+    {
+      field: 'bankReconciliationStatus',
+      headerName: 'Bank Reconciliation Status',
+      filter: true,
+      cellStyle: (params) => {
+        if (params.value === 1) {
+          return {
+            color: 'green',
+            fontWeight: 'bold',
+          };
+        }
+        return null; // Default style if the value is not 1
+      },
+      valueFormatter: (params) =>
+        params.value === 0
+          ? 'None'
+          : params.value === 1
+          ? 'Matched'
+          : params.value === 2
+          ? 'Reconciled'
+          : 'Unknown',
+    },
+  ];
+
+  const totalAmounts2 = [
+    { name: 'Balance to Reconcile', value: '0.00' },
+    { name: 'Balance', value: '0.00' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', gap: '20px', marginTop: '-40px' }}>
+      {/* Left Side: Bank Statement Lines */}
+      <div
+        style={{
+          overflow: 'auto',
+          padding: '0 20px',
+          width: '100%',
+        }}
+      >
+        <div className="flex gap-1 items-center">
+          <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
+            Bank Statement Lines
+          </h3>
+
+          <ExpandMore sx={{ color: '#006990K', fontSize: '18px', mb: '2px' }} />
+        </div>
+        <div className="h-[250px] ag-theme-quartz">
+          <AgGridReact
+            rowData={clickedItem?.bankStatements || []}
+            columnDefs={bankStatementColDefs}
+            rowSelection="multiple"
+            defaultColDef={{ resizable: true, sortable: true }}
+            domLayout="normal"
+            onSelectionChanged={onBankStatementSelectionChanged}
+            className="custom-grid"
+          />
+        </div>
+
+        <div className="mt-8">
+          {totalAmounts1.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-row gap-4 justify-between mb-3"
+            >
+              <span className="text-sm font-semibold text-gray-600 mt-1">
+                {item.name}
+              </span>
+              <span className="items-end text-right">
+                <TextField
+                  value={item.value}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  disabled={true}
+                  fullWidth
+                  inputProps={{ style: { textAlign: 'right' } }}
+                  InputProps={{
+                    inputComponent: BaseAmountInput,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        border: 'none',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      },
+                  }}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Vertical Dashed Divider */}
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{
+          borderStyle: 'dashed',
+          borderWidth: '2px',
+          borderColor: 'rgba(0, 0, 0, 0.06)', // Adjust color as needed
+          marginLeft: '-15px',
+        }}
+      />
+
+      {/* Right Side: Bank Account Ledger Entries */}
+      <div
+        style={{
+          overflow: 'auto',
+          width: '100%',
+          maxHeight: '600px',
+        }}
+      >
+        <div className="flex gap-1 items-center">
+          <h3 className="font-semibold text-[16px] text-primary font-montserrat mb-2">
+            Bank Account Ledger Entries
+          </h3>
+
+          <ExpandMore sx={{ color: '#006990', fontSize: '18px', mb: '2px' }} />
+        </div>
+        <div className="h-[250px] ag-theme-quartz">
+          <AgGridReact
+            rowData={bankSubledger}
+            columnDefs={bankAccountColDefs}
+            onSelectionChanged={onBankSubledgerSelectionChanged}
+            rowSelection="multiple"
+            defaultColDef={{ resizable: true, sortable: true }}
+            domLayout="normal"
+            className="custom-grid"
+          />
+        </div>
+
+        <div className="mt-8">
+          {totalAmounts2.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-row gap-4 justify-between mb-3"
+            >
+              <span className="text-sm font-semibold text-gray-600">
+                {item.name}
+              </span>
+              <span className="items-end text-right">
+                <TextField
+                  value={item.value}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  disabled={true}
+                  fullWidth
+                  inputProps={{ style: { textAlign: 'right' } }}
+                  InputProps={{
+                    inputComponent: BaseAmountInput,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        border: 'none',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      },
+                  }}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BankReconciliationReportCard;

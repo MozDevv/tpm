@@ -482,7 +482,7 @@ const Preclaims = ({ status }) => {
     }
 
     const adjustedFilter =
-      (status || status === 0) && status !== 5 && mdaId
+      (status || status === 0) && mdaId
         ? {
             'filterCriterion.criterions[0].propertyName': 'notification_status',
             'filterCriterion.criterions[0].propertyValue': status,
@@ -491,13 +491,13 @@ const Preclaims = ({ status }) => {
             'filterCriterion.criterions[1].propertyValue': mdaId,
             'filterCriterion.criterions[1].criterionType': 0,
           }
-        : status === 5
-        ? {
-            'filterCriterion.criterions[0].propertyName': 'notification_status',
-            'filterCriterion.criterions[0].propertyValue': status,
-            'filterCriterion.criterions[0].criterionType': 0,
-          }
-        : !status && status !== 0 && mdaId
+        : // : status === 5
+        // ? {
+        //     'filterCriterion.criterions[0].propertyName': 'notification_status',
+        //     'filterCriterion.criterions[0].propertyValue': status,
+        //     'filterCriterion.criterions[0].criterionType': 0,
+        //   }
+        !status && status !== 0 && mdaId
         ? {
             'filterCriterion.criterions[0].propertyName': 'mda_id',
             'filterCriterion.criterions[0].propertyValue': mdaId,

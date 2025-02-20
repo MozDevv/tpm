@@ -210,6 +210,10 @@ export const menuItems = [
             title: 'Bank Reconciliation',
             path: '/pensions/finance/cash-management/bank-reconciliation',
           },
+          {
+            title: 'Bank Reconciliation Report',
+            path: '/pensions/finance/cash-management/bank-reconciliation-report',
+          },
         ],
       },
       {
