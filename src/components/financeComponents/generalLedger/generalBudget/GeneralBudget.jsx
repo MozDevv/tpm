@@ -26,6 +26,8 @@ import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import generateExcelTemplate from '@/utils/excelHelper';
 import { BASE_CORE_API } from '@/utils/constants';
 import axios from 'axios';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import { name } from 'dayjs/locale/en-au';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -164,6 +166,7 @@ const GeneralBudget = ({ status }) => {
       isBlocked: item.isBlocked,
       documentNo: item.documentNo,
       stage: item.stage,
+      accountingPeriodId: item.accountingPeriodId,
 
       // roles: item.roles,
     }));
@@ -279,6 +282,10 @@ const GeneralBudget = ({ status }) => {
   };
 
   const title = clickedItem ? clickedItem?.budgetName : 'Create a New Budget';
+  const { data: accountingPeriod } = useFetchAsync(
+    financeEndpoints.getAccountingPeriods,
+    apiService
+  );
 
   const fields = [
     { name: 'budgetName', label: 'Budget Name', type: 'text', required: true },
@@ -288,8 +295,37 @@ const GeneralBudget = ({ status }) => {
       type: 'text',
       required: true,
     },
-    { name: 'startDate', label: 'Start Date', type: 'date', required: true },
-    { name: 'endDate', label: 'End Date', type: 'date', required: true },
+    // {name: }
+    {
+      name: 'accountingPeriodId',
+      label: 'Accounting Period',
+      type: 'autocomplete',
+      required: true,
+      options:
+        accountingPeriod &&
+        Array.isArray(accountingPeriod) &&
+        accountingPeriod.map((item) => ({
+          id: item.id,
+          name: item.finYearName,
+          startDate: item.fromDate,
+          endDate: item.toDate,
+        })),
+    },
+
+    {
+      name: 'startDate',
+      label: 'Start Date',
+      type: 'date',
+      required: true,
+      disabled: true,
+    },
+    {
+      name: 'endDate',
+      label: 'End Date',
+      type: 'date',
+      required: true,
+      disabled: true,
+    },
     {
       name: 'isBlocked',
       label: 'Is Blocked',

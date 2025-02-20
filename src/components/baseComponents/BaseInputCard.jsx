@@ -119,6 +119,23 @@ const BaseInputCard = ({
         }));
       }
     }
+
+    ///if AccountingPeriodId is selected, set the accounting period start and end date
+
+    if (name === 'accountingPeriodId' && value) {
+      const selectedAccountingPeriod = fields
+        .find((field) => field.name === 'accountingPeriodId')
+        .options.find((option) => option.id === value);
+
+      if (selectedAccountingPeriod) {
+        setFormData((prev) => ({
+          ...prev,
+          startDate: selectedAccountingPeriod.startDate,
+          endDate: selectedAccountingPeriod.endDate,
+        }));
+      }
+    }
+
     // Assuming 'banks' is your data array and 'branch_id' is the id of the branch you're filtering by
     if (name === 'bank_id' && banks && value) {
       // Find the bank that has a branch matching the given branch_id
