@@ -383,7 +383,6 @@ const GeneralBudget = ({ status }) => {
           endDate: item.toDate,
         })),
     },
-
     { name: 'startDate', label: 'Start Date', type: 'date', required: true },
     { name: 'endDate', label: 'End Date', type: 'date', required: true },
 

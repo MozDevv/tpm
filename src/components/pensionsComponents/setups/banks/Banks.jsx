@@ -1,35 +1,35 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import BankCard from "./BankCard";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import BankCard from './BankCard';
 
 const columnDefs = [
   {
-    field: "code",
-    headerName: "Branch Code",
-    headerClass: "prefix-header",
-    width: 90,
+    field: 'code',
+    headerName: 'Branch Code',
+    headerClass: 'prefix-header',
+    flex: 1,
     filter: true,
   },
   {
-    field: "name",
-    headerName: "name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'name',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
   {
-    field: "bank_type_name",
-    headerName: "Bank Type",
-    headerClass: "prefix-header",
+    field: 'bank_type_name',
+    headerName: 'Bank Type',
+    headerClass: 'prefix-header',
     filter: true,
-    width: 250,
+    flex: 1,
   },
 ];
 
@@ -63,10 +63,10 @@ const Banks = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -86,11 +86,11 @@ const Banks = () => {
       //  setClickedItem(item);
     },
     createBranch: () => {
-      setDialogType("branch");
+      setDialogType('branch');
       setOpenAction(true);
     },
     createBankType: () => {
-      setDialogType("bankType");
+      setDialogType('bankType');
       setOpenAction(true);
     },
   };
@@ -100,7 +100,7 @@ const Banks = () => {
 
   const title = clickedItem
     ? `${clickedItem?.code} - ${clickedItem?.name}`
-    : "Create New Bank";
+    : 'Create New Bank';
 
   const [bankTypes, setBankTypes] = React.useState([]);
 
@@ -109,7 +109,7 @@ const Banks = () => {
       const response = await apiService.get(endpoints.getBankTypes);
       setBankTypes(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch bank types", error);
+      console.error('Failed to fetch bank types', error);
     }
   };
 
@@ -118,37 +118,37 @@ const Banks = () => {
   }, [openBaseCard]);
 
   const fields = [
-    { name: "code", label: "Bank Code", type: "text", required: true },
+    { name: 'code', label: 'Bank Code', type: 'text', required: true },
     {
-      name: "name",
-      label: "Name",
-      type: "text",
+      name: 'name',
+      label: 'Name',
+      type: 'text',
       required: true,
     },
-    { name: "swift_code", label: "Swift Code", type: "text", required: true },
+    { name: 'swift_code', label: 'Swift Code', type: 'text', required: true },
     {
-      name: "bank_type_id",
-      label: "Bank Type",
-      type: "select",
+      name: 'bank_type_id',
+      label: 'Bank Type',
+      type: 'select',
       options: bankTypes.map((type) => ({ id: type.id, name: type.type })),
     },
   ];
 
   const branchFields = [
-    { name: "branch_code", label: "Branch Code", type: "text", required: true },
+    { name: 'branch_code', label: 'Branch Code', type: 'text', required: true },
     {
-      name: "name",
-      label: "Name",
-      type: "text",
+      name: 'name',
+      label: 'Name',
+      type: 'text',
       required: true,
     },
-    { name: "address", label: "Address", type: "text", required: true },
-    { name: "city", label: "City", type: "text", required: true },
+    { name: 'address', label: 'Address', type: 'text', required: true },
+    { name: 'city', label: 'City', type: 'text', required: true },
   ];
 
   const bankTypeFields = [
-    { name: "type", label: "Bank Type", type: "text", required: true },
-    { name: "description", label: "Description", type: "text", required: true },
+    { name: 'type', label: 'Bank Type', type: 'text', required: true },
+    { name: 'description', label: 'Description', type: 'text', required: true },
   ];
 
   return (
@@ -160,7 +160,7 @@ const Banks = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        status={"createBranch"}
+        status={'createBranch'}
         setOpenAction={setOpenAction}
         openAction={openAction}
         fields={branchFields}

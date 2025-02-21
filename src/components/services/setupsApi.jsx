@@ -445,6 +445,11 @@ const endpoints = {
   updateContributionType: '/api/Contribution/UpdateContributionType',
   deleteContributionType: (id) =>
     `/api/Contribution/DeleteContributionType/${id}`,
+
+  /////// CUSTOMER SERVICE MANAGEMENT
+
+  confirmPrincipalPensioner:
+    '/api/IGCClaimInitiation/ConfirmPrincipalPensionerDetailsBeforeIGCInitiation',
 };
 
 export const apiService = {

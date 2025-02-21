@@ -566,8 +566,15 @@ export const menuItems = [
 
   {
     title: 'Customer Relations',
-    path: '/pensions',
+
     icon: <SupportAgent />,
+    children: [
+      {
+        title: 'Dependants Enrollment',
+
+        path: '/pensions/customer-relations/dependants-enrollment',
+      },
+    ],
   },
 ];
 
