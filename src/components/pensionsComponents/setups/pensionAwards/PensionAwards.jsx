@@ -1,59 +1,63 @@
-"use client";
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { Button } from "@mui/material";
-import PensionAwardCard from "./PensionAwardCard";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { Button } from '@mui/material';
+import PensionAwardCard from './PensionAwardCard';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
   {
-    field: "prefix",
-    headerName: "Prefix",
-    headerClass: "prefix-header",
+    field: 'prefix',
+    headerName: 'Prefix',
+    headerClass: 'prefix-header',
     filter: true,
   },
   {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
     width: 250,
   },
   {
-    field: "pensionCap",
-    headerName: "Pension Cap",
-    headerClass: "prefix-header",
+    field: 'pensionCap',
+    headerName: 'Pension Cap',
+    headerClass: 'prefix-header',
     filter: true,
     hide: true,
   },
   {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
     filter: true,
     width: 250,
   },
   {
-    field: "has_commutation",
-    headerName: "Commutable",
-    headerClass: "prefix-header",
+    field: 'has_commutation',
+    headerName: 'Commutable',
+    headerClass: 'prefix-header',
     filter: true,
     width: 250,
   },
-
-  {},
+  {
+    field: 'is_lumpsum',
+    headerName: 'Lumpsum',
+    headerClass: 'prefix-header',
+    filter: true,
+  },
 ];
 
 const PensionAwards = () => {
@@ -80,6 +84,7 @@ const PensionAwards = () => {
       start_date: item.start_date,
       end_date: item.end_date,
       has_commutation: item.has_commutation,
+      is_lumpsum: item.is_lumpsum,
     }));
   };
 
@@ -90,10 +95,10 @@ const PensionAwards = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -114,7 +119,7 @@ const PensionAwards = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Pension Award" : "Create New Pension Award";
+  const title = clickedItem ? 'Pension Award' : 'Create New Pension Award';
 
   const [pensionCaps, setPensionCaps] = React.useState([]);
 
@@ -126,7 +131,7 @@ const PensionAwards = () => {
         console.log(res.data.data);
       }
     } catch (e) {
-      console.error("Error fetching data:", e);
+      console.error('Error fetching data:', e);
     }
   };
 
@@ -134,8 +139,8 @@ const PensionAwards = () => {
     fetchPensionCaps();
   }, []);
   const fields = [
-    { name: "prefix", label: "Prefix", type: "text", required: true },
-    { name: "name", label: "Name", type: "text", required: true },
+    { name: 'prefix', label: 'Prefix', type: 'text', required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true },
     // {
     //   name: "pensionCap",
     //   label: "Pension Cap",
@@ -147,15 +152,15 @@ const PensionAwards = () => {
     //   })),
     // },
     {
-      name: "pensionCap",
-      label: "Pension Cap",
-      type: "text",
+      name: 'pensionCap',
+      label: 'Pension Cap',
+      type: 'text',
       required: true,
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     // {
@@ -171,9 +176,15 @@ const PensionAwards = () => {
     //   // required: true,
     // },
     {
-      name: "has_commutation",
-      label: "Commutable",
-      type: "switch",
+      name: 'has_commutation',
+      label: 'Commutable',
+      type: 'switch',
+      required: true,
+    },
+    {
+      name: 'is_lumpsum',
+      label: 'Lumpsum',
+      type: 'switch',
       required: true,
     },
   ];

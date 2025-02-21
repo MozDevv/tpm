@@ -368,8 +368,25 @@ const GeneralBudget = ({ status }) => {
       type: 'text',
       required: true,
     },
+    {
+      name: 'accountingPeriodId',
+      label: 'Accounting Period',
+      type: 'autocomplete',
+      required: true,
+      options:
+        accountingPeriod &&
+        Array.isArray(accountingPeriod) &&
+        accountingPeriod.map((item) => ({
+          id: item.id,
+          name: item.finYearName,
+          startDate: item.fromDate,
+          endDate: item.toDate,
+        })),
+    },
+
     { name: 'startDate', label: 'Start Date', type: 'date', required: true },
-    { name: 'EndDate', label: 'End Date', type: 'date', required: true },
+    { name: 'endDate', label: 'End Date', type: 'date', required: true },
+
     {
       name: 'isBlocked',
       label: 'Is Blocked',
