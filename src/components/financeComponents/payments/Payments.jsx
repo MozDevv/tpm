@@ -124,17 +124,17 @@ const Payments = ({ status }) => {
       width: 180,
       filter: true,
       cellRenderer: (params) => {
-        const status = sourceStatus[params.value];
+        const status = sourceStatus[params.value] || 'black';
 
         return (
           <Button
             variant="text"
             sx={{
               ml: 3,
+              color: status.color,
 
               maxHeight: '22px',
               cursor: 'pointer',
-              color: status.color,
               fontSize: '10px',
               fontWeight: 'bold',
             }}
@@ -257,6 +257,8 @@ const Payments = ({ status }) => {
     7: { name: 'Normal Sales Invoice', color: '#9b59b6' }, // Amethyst
     8: { name: 'General Journals', color: '#f1c40f' }, // Bright Yellow
     9: { name: 'Closing Income', color: '#e67e22' }, // Carrot Orange
+    10: { name: 'PSSS_Contribution', color: '#3498db' }, // Light Blue
+    11: { name: 'Payroll', color: '#1abc9c' }, // Light Blue
   };
   const transformData = (data) => {
     return data.map((item, index) => ({

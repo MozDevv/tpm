@@ -463,6 +463,7 @@ const endpoints = {
 
   getExitGroundbyId: (id) =>
     `api/Setups/GetExitGround?paging.pageNumber=1&paging.pageSize=1000&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=id&filterCriterion.criterions[0].propertyValue=${id}`,
+  verifyPensionerDocument: '/api/ProspectivePensioners/VerifyPensionerDocument',
 };
 
 export const apiService = {

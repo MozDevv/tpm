@@ -4,9 +4,13 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { useIsLoading } from '@/context/LoadingContext';
 import { BASE_CORE_API } from '@/utils/constants';
 import {
+  AddLink,
+  AttachFile,
+  Attachment,
   Close,
   Done,
   ExpandLess,
+  InsertLink,
   KeyboardArrowRight,
   OpenInFull,
 } from '@mui/icons-material';
@@ -23,6 +27,7 @@ import {
   Paper,
   FormControl,
   InputLabel,
+  Link,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -44,6 +49,7 @@ import MuiPhoneNumber from 'mui-phone-number';
 import { toProperCase } from '@/utils/numberFormatters';
 import AddBeneficiaries from './AddBeneficiaries';
 import { validateField } from './PreclaimsValidator';
+import { FieldDocuments } from '../FieldDocuments';
 
 dayjs.extend(isSameOrBefore);
 
@@ -60,6 +66,10 @@ function NewPreclaim({
 
   const [retiree, setRetiree] = useState({});
   const [editMode, setEditMode] = useState(false);
+  const [fieldsWithDocs, setFieldsWithDocs] = useState([]);
+
+  const [selectedField, setSelectedField] = useState(null);
+
   //const [hasId, setHasId] = useState(false);
 
   useEffect(() => {
@@ -76,6 +86,35 @@ function NewPreclaim({
     }
     return 0;
   };
+  function mapFieldsToDocs(data) {
+    const transformed = { fields: [] };
+
+    data.prospectivePensionerDocumentSelections.forEach((selection) => {
+      selection.documentType.documentTypeFields.forEach((field) => {
+        let fieldEntry = transformed.fields.find(
+          (f) => f.name === field.field_name
+        );
+
+        if (!fieldEntry) {
+          fieldEntry = { name: field.field_name, documents: [] };
+          transformed.fields.push(fieldEntry);
+        }
+
+        fieldEntry.documents.push({
+          name: selection.documentType.name,
+          description: selection.documentType.description,
+          extenstions: selection.documentType.extenstions,
+          fileUrl: selection.fileUrl,
+          selectionId: selection.id,
+          documentSelectionVerifications:
+            selection.documentSelectionVerifications,
+        });
+      });
+    });
+
+    console.log('transformed', transformed);
+    return transformed;
+  }
 
   const fetchRetiree = async () => {
     try {
@@ -91,6 +130,10 @@ function NewPreclaim({
         }
         return '';
       };
+
+      const fieldsWithDocs = mapFieldsToDocs(retiree);
+
+      setFieldsWithDocs(fieldsWithDocs);
       const ageOnDischarge = computeAgeOfDischarge(
         retiree?.dob,
         retiree?.retirement_date
@@ -1095,6 +1138,8 @@ function NewPreclaim({
     }));
   };
 
+  const [openFieldDocs, setOpenFieldDocs] = useState(false);
+
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -1112,6 +1157,20 @@ function NewPreclaim({
             <OpenInFull sx={{ color: 'primary.main', fontSize: '18px' }} />
           </Tooltip>{' '}
         </IconButton>
+        <Dialog
+          open={openFieldDocs}
+          onClose={() => setOpenFieldDocs(false)}
+          fullWidth
+          maxWidth="lg" // Change maxWidth to "lg" for larger width
+          sx={{
+            '& .MuiDialog-paper': {
+              width: '60vw', // Adjust the width as needed
+              maxWidth: 'none', // Disable the maxWidth constraint
+            },
+          }}
+        >
+          <FieldDocuments fieldData={selectedField} />
+        </Dialog>
         <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
           <form className="">
             <div className="pt-2 sticky top-0 bg-inherit  pb-2 bg-white z-50">
@@ -1297,14 +1356,42 @@ function NewPreclaim({
                                   flexDirection: 'column',
                                 }}
                               >
-                                <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
-                                  {field.label}
-                                  {field.name !== 'other_name' &&
-                                    field.name !== 'service_increments' &&
-                                    field.name !== 'middle_name' && (
-                                      <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-                                        *
-                                      </div>
+                                <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
+                                  <div className="flex items-center">
+                                    {field.label}
+                                    {field.name !== 'other_name' &&
+                                      field.name !== 'service_increments' &&
+                                      field.name !== 'middle_name' && (
+                                        <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                                          *
+                                        </div>
+                                      )}
+                                  </div>
+                                  {Array(fieldsWithDocs) &&
+                                    fieldsWithDocs &&
+                                    fieldsWithDocs?.fields?.some(
+                                      (f) => f.name === field.name
+                                    ) && (
+                                      <IconButton
+                                        sx={{
+                                          py: 0,
+                                        }}
+                                        onClick={() => {
+                                          setOpenFieldDocs(true);
+                                          setSelectedField(
+                                            fieldsWithDocs.fields.find(
+                                              (f) => f.name === field.name
+                                            )
+                                          );
+                                        }}
+                                      >
+                                        <Attachment
+                                          sx={{
+                                            fontSize: '24px ',
+                                            color: '#006990',
+                                          }}
+                                        />
+                                      </IconButton>
                                     )}
                                 </label>
                                 {field.name === 'phone_number' ? (

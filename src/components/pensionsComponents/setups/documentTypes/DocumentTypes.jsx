@@ -168,15 +168,6 @@ const DocumentTypes = () => {
         </div>
       ),
     },
-    {
-      key: '2',
-      title: 'Fields Mapping',
-      content: (
-        <div>
-          <MapFields clickedItem={clickedItem} />
-        </div>
-      ),
-    },
   ];
 
   return (
