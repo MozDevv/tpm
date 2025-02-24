@@ -43,7 +43,10 @@ export const FieldDocuments = ({ fieldData }) => {
       comments,
     };
     try {
-      const response = await apiService.post(endpoints.verifyPensionerDocument);
+      const response = await apiService.post(
+        endpoints.verifyPensionerDocument,
+        data
+      );
       if (response.data.succeeded) {
         message.success('Document approved successfully');
       } else if (

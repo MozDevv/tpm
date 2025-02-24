@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Tabs } from "antd";
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
+import React, { useEffect, useState } from 'react';
+import { Tabs } from 'antd';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 
-import { AgGridReact } from "ag-grid-react";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import BaseInputTable from "@/components/baseComponents/BaseInputTable";
+import { AgGridReact } from 'ag-grid-react';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
 const { TabPane } = Tabs;
 
@@ -18,7 +18,7 @@ function BankCard({
   openAction,
 }) {
   const [retireeId, setRetireeId] = useState(null);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState('1');
 
   const activeRetireeId = [];
   const handleTabChange = (key) => {
@@ -27,7 +27,7 @@ function BankCard({
 
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
-    console.log("Moving to next tab:", nextTab); // Debug line
+    console.log('Moving to next tab:', nextTab); // Debug line
     setActiveKey(nextTab);
   };
 
@@ -37,14 +37,14 @@ function BankCard({
   };
 
   const columnDefs = [
-    { headerName: "Branch Code", field: "branch_code" },
-    { headerName: "Branch Name", field: "name" },
+    { headerName: 'Branch Code', field: 'branch_code' },
+    { headerName: 'Branch Name', field: 'name' },
   ];
 
   const [branches, setBranches] = useState([]);
 
   const fetchBanksAndBranches = async () => {
-    console.log("bank Id", clickedItem?.id);
+    console.log('bank Id', clickedItem?.id);
     try {
       const res = await apiService.get(endpoints.getBankById(clickedItem?.id));
       const rawData = res.data.data;
@@ -57,8 +57,8 @@ function BankCard({
         }))
       );
 
-      console.log("first branch", branches);
-      console.log("res.data.data", res.data.data);
+      console.log('first branch', branches);
+      console.log('res.data.data', res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -70,19 +70,19 @@ function BankCard({
 
   const branchFields = [
     {
-      value: "branch_code",
-      label: "Branch Code",
-      type: "text",
+      value: 'branch_code',
+      label: 'Branch Code',
+      type: 'text',
       required: true,
     },
     {
-      value: "name",
-      label: "Name",
-      type: "text",
+      value: 'name',
+      label: 'Name',
+      type: 'text',
       required: true,
     },
-    { value: "address", label: "Address", type: "text", required: true },
-    { value: "city", label: "City", type: "text", required: true },
+    { value: 'address', label: 'Address', type: 'text', required: true },
+    { value: 'city', label: 'City', type: 'text', required: true },
   ];
 
   return (
@@ -122,7 +122,7 @@ function BankCard({
                 key="2"
               >
                 <div className="ag-theme-quartz max-h-[90vh]">
-                  {" "}
+                  {' '}
                   <BaseInputTable
                     title="Branches"
                     fields={branchFields}
@@ -139,6 +139,7 @@ function BankCard({
                     postEndpoint={endpoints.createBankBranch}
                     //putEndpoint={endpoints.}
                     passProspectivePensionerId={true}
+                    scrollable={true}
                   />
                 </div>
               </TabPane>
