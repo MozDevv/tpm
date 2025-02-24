@@ -450,6 +450,19 @@ const endpoints = {
 
   confirmPrincipalPensioner:
     '/api/IGCClaimInitiation/ConfirmPrincipalPensionerDetailsBeforeIGCInitiation',
+
+  getDocumentFieldsNames: '/api/Setups/GetDocumentFieldLocationNames',
+  getDocumentsMappedToField: '/api/Setups/GetDocumentFieldLocations',
+  toggleDocumentFieldMapping: '/api/setups/ToggleDocumentTypeFieldLocation',
+
+  getMappedStagesPerExitGround:
+    '/api/Setups/ExitGroundDocumentVerificationSections',
+
+  toggleDocumentVerificationSection:
+    '/api/setups/ToggleDocumentVerificationSection',
+
+  getExitGroundbyId: (id) =>
+    `api/Setups/GetExitGround?paging.pageNumber=1&paging.pageSize=1000&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=id&filterCriterion.criterions[0].propertyValue=${id}`,
 };
 
 export const apiService = {

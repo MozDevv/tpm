@@ -1,51 +1,53 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import BaseTabs from '@/components/baseComponents/BaseTabs';
+import MapFields from './MapFields copy';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     filter: true,
     width: 90,
   },
 
   {
-    field: "name",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'name',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
   },
   {
-    field: "description",
-    headerName: "Description",
-    headerClass: "prefix-header",
+    field: 'description',
+    headerName: 'Description',
+    headerClass: 'prefix-header',
     filter: true,
   },
   {
-    field: "extenstions",
-    headerName: "Extensions",
-    headerClass: "prefix-header",
+    field: 'extenstions',
+    headerName: 'Extensions',
+    headerClass: 'prefix-header',
     filter: true,
   },
   {
-    field: "has_two_sides",
-    headerName: "Has Two Sides",
-    headerClass: "prefix-header",
+    field: 'has_two_sides',
+    headerName: 'Has Two Sides',
+    headerClass: 'prefix-header',
     filter: true,
   },
   {
-    field: "max_file_size_in_mb",
-    headerName: "Max File Size (MB)",
-    headerClass: "prefix-header",
+    field: 'max_file_size_in_mb',
+    headerName: 'Max File Size (MB)',
+    headerClass: 'prefix-header',
     filter: true,
   },
 ];
@@ -82,10 +84,10 @@ const DocumentTypes = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -106,28 +108,28 @@ const DocumentTypes = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? "Document" : "Create a New Document";
+  const title = clickedItem ? clickedItem?.name : 'Create a New Document';
   const documentExtensions = [
-    { value: ".pdf", label: "PDF" },
-    { value: ".doc", label: "DOC" },
-    { value: ".docx", label: "DOCX" },
-    { value: ".xls", label: "XLS" },
-    { value: ".xlsx", label: "XLSX" },
-    { value: ".ppt", label: "PPT" },
-    { value: ".pptx", label: "PPTX" },
+    { value: '.pdf', label: 'PDF' },
+    { value: '.doc', label: 'DOC' },
+    { value: '.docx', label: 'DOCX' },
+    { value: '.xls', label: 'XLS' },
+    { value: '.xlsx', label: 'XLSX' },
+    { value: '.ppt', label: 'PPT' },
+    { value: '.pptx', label: 'PPTX' },
   ];
   const fields = [
-    { name: "name", label: "Name", type: "text", required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     {
-      name: "extenstions",
-      label: "Extension",
-      type: "select",
+      name: 'extenstions',
+      label: 'Extension',
+      type: 'select',
       multiple: false,
       required: true,
       options: documentExtensions.map((d) => ({
@@ -136,16 +138,44 @@ const DocumentTypes = () => {
       })),
     },
     {
-      name: "has_two_sides",
-      label: "Has Two Sides",
-      type: "switch",
+      name: 'has_two_sides',
+      label: 'Has Two Sides',
+      type: 'switch',
       required: true,
     },
     {
-      name: "max_file_size_in_mb",
-      label: "Max File Size (MB)",
-      type: "number",
+      name: 'max_file_size_in_mb',
+      label: 'Max File Size (MB)',
+      type: 'number',
       required: true,
+    },
+  ];
+
+  const tabPanes = [
+    {
+      key: '1',
+      title: 'Document Information',
+      content: (
+        <div>
+          <BaseInputCard
+            fields={fields}
+            //apiEndpoint={endpoints.updateRole(clickedItem.id)}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            useRequestBody={true}
+          />
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Fields Mapping',
+      content: (
+        <div>
+          <MapFields clickedItem={clickedItem} />
+        </div>
+      ),
     },
   ];
 
@@ -162,14 +192,7 @@ const DocumentTypes = () => {
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateRole(clickedItem.id)}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
+          <BaseTabs tabPanes={tabPanes} />
         ) : (
           <BaseInputCard
             fields={fields}
