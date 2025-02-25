@@ -144,7 +144,15 @@ export const FieldDocuments = ({
 
   return (
     <Box sx={{ padding: 3, width: '100%' }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          //  justifyContent: 'space-between',
+        }}
+      >
         <IconButton
           sx={{
             border: '1px solid #006990',
@@ -158,6 +166,65 @@ export const FieldDocuments = ({
           <ArrowBack sx={{ color: '#006990' }} />
         </IconButton>
         Documents for: {fieldData.name}
+        <div className="ml-3">
+          {fieldData.documents[
+            selectedIndex
+          ].documentSelectionVerifications.some((verification) => {
+            const statusMatch = isPreclaim
+              ? verification.prospective_pensioner_notification_status ===
+                status
+              : verification.claim_stage === status;
+            return statusMatch && verification.verified_by_id !== null;
+          }) ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Verified
+                style={{
+                  color: '#2e7d32',
+                  marginRight: '3px',
+                  fontSize: '22px',
+                }}
+              />
+              <span
+                style={{
+                  color: '#2e7d32',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                }}
+              >
+                Verified
+              </span>
+            </div>
+          ) : fieldData.documents[
+              selectedIndex
+            ].documentSelectionVerifications.some((verification) => {
+              const statusMatch = isPreclaim
+                ? verification.prospective_pensioner_notification_status ===
+                  status
+                : verification.claim_stage === status;
+              return statusMatch && verification.verified_by_id === null;
+            }) ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Cancel
+                style={{
+                  color: '#d32f2f',
+                  marginRight: '3px',
+                  fontSize: '22px',
+                }}
+              />
+              <span
+                style={{
+                  color: '#d32f2f',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                }}
+              >
+                Not Verified
+              </span>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </Typography>
 
       {/* Tab Navigation for Multiple Documents */}
@@ -398,7 +465,14 @@ export const FieldDocuments = ({
             <div className="">
               <div className="">
                 <CardContent>
-                  <Typography variant="h6" gutterBottom color="primary.main">
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    color="primary.main"
+                    sx={{
+                      mb: 2,
+                    }}
+                  >
                     Document Details
                   </Typography>
                   <Typography
@@ -407,7 +481,7 @@ export const FieldDocuments = ({
                       mt: 1,
                     }}
                   >
-                    <strong>Name:</strong>{' '}
+                    <strong className="text-primary pr-1">Name:</strong>{' '}
                     {fieldData.documents[selectedIndex].name}
                   </Typography>
                   <Typography
@@ -416,7 +490,7 @@ export const FieldDocuments = ({
                       mt: 1,
                     }}
                   >
-                    <strong>Description:</strong>{' '}
+                    <strong className="text-primary pr-1">Description:</strong>{' '}
                     {fieldData.documents[selectedIndex].description}
                   </Typography>
                   <Typography
@@ -425,7 +499,7 @@ export const FieldDocuments = ({
                       mt: 1,
                     }}
                   >
-                    <strong>File Type:</strong>{' '}
+                    <strong className="text-primary pr-1">File Type:</strong>{' '}
                     {fieldData.documents[selectedIndex].extenstions}
                   </Typography>
                 </CardContent>

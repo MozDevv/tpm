@@ -9,7 +9,16 @@ import React, {
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { Button, Collapse, Divider, IconButton, Tooltip } from '@mui/material';
+import {
+  Button,
+  Collapse,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  Switch,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { message } from 'antd';
 import {
   Add,
@@ -19,6 +28,7 @@ import {
   Delete,
   ExpandLess,
   KeyboardArrowRight,
+  Launch,
   MoreVert,
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
@@ -32,6 +42,9 @@ import CustomSelectCellEditor from './CustomSelectCellEditor';
 import AmountCellEditor from './AmountCellEditor';
 import { formatNumber } from '@/utils/numberFormatters';
 import CustomPhoneNumberCellEditor from './CustomPhoneNumberCellEditor';
+import preClaimsEndpoints, {
+  apiService as preclaimApiService,
+} from '@/components/services/preclaimsApi';
 
 const BaseInputTable = ({
   fields = [],
@@ -116,6 +129,29 @@ const BaseInputTable = ({
   };
 
   const [dataAdded, setDataAdded] = useState(false);
+
+  const [fiscalRecords, setFiscalRecords] = useState([]);
+
+  const getPostAndNatureFiscalRecords = async () => {
+    try {
+      const res = await preclaimApiService.get(
+        preClaimsEndpoints.getPostFiscalRecords(id)
+      );
+      if (res.status === 200) {
+        const fiscalRecords = res.data.data.flatMap((item) => item.records); // Corrected from item.record to item.records
+        console.log('Fiscal Records', fiscalRecords);
+
+        // Optional: Sort by date
+        const sortedFiscalRecords = fiscalRecords.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setFiscalRecords(sortedFiscalRecords);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchData = async () => {
     if (dataAdded) {
       try {
@@ -312,6 +348,10 @@ const BaseInputTable = ({
       } catch (error) {
         console.log(error);
       }
+    }
+
+    if (title === 'Post and Nature of Service') {
+      getPostAndNatureFiscalRecords();
     }
   };
 
@@ -1344,6 +1384,11 @@ const BaseInputTable = ({
     };
     reader.readAsArrayBuffer(file);
   };
+  const [isFiscalYear, setIsFiscalYear] = useState(false);
+
+  const handleToggle = () => {
+    setIsFiscalYear(!isFiscalYear);
+  };
 
   return (
     <>
@@ -1371,7 +1416,7 @@ const BaseInputTable = ({
             <Button
               onClick={onAddRow}
               variant="text"
-              disabled={disableAll || retirementDateCaptured}
+              // disabled={disableAll || retirementDateCaptured}
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
@@ -1404,6 +1449,52 @@ const BaseInputTable = ({
                 />
               </Button>
             )}
+            {rowData.length > 1 && title === 'Post and Nature of Service' && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginTop: '-12px',
+                }}
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isFiscalYear}
+                      onChange={handleToggle}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: '#006990',
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                          {
+                            backgroundColor: '#006990',
+                          },
+                        '& .MuiSwitch-switchBase': {
+                          color: '#006990',
+                        },
+                        '& .MuiSwitch-track': {
+                          backgroundColor: '#006990',
+                        },
+                      }}
+                    />
+                  }
+                  label=""
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '14px',
+                    color: '#006990',
+                    ml: -2,
+                  }}
+                >
+                  {isFiscalYear
+                    ? 'View by Fiscal Year'
+                    : 'View by Service Years'}
+                </Typography>
+              </div>
+            )}
           </div>
 
           <div
@@ -1411,15 +1502,16 @@ const BaseInputTable = ({
             style={{
               maxHeight: '500px',
               width: '100%',
-              height: scrollable ? '50vh' : 'auto',
+              height: scrollable || isFiscalYear ? '50vh' : 'auto',
             }}
           >
             <AgGridReact
               ref={gridApiRef}
-              rowData={rowData}
+              rowData={!isFiscalYear ? rowData : fiscalRecords}
               frameworkComponents={{
                 customSelectCellEditor: CustomSelectCellEditor, // Register your custom component
               }}
+              animateRows={true}
               singleClickEdit={true}
               columnDefs={headers}
               defaultColDef={{
@@ -1433,7 +1525,7 @@ const BaseInputTable = ({
               onGridReady={onGridReady}
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
-              domLayout={scrollable ? 'normal' : 'autoHeight'}
+              domLayout={scrollable || isFiscalYear ? 'normal' : 'autoHeight'}
               rowSelection="multiple"
             />
           </div>

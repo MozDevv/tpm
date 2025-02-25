@@ -130,6 +130,9 @@ const preClaimsEndpoints = {
     `/api/Claims/getNextOfkin?prospective_pensioner_id=${id}`,
 
   updateSalaryReview: '/api/ProspectivePensioners/UpdateSalaryReview',
+
+  getPostFiscalRecords: (id) =>
+    `api/ProspectivePensioners/GetPostAndNatureInFiscal?id=${id}&paging.pageNumber=1&paging.pageSize=100`,
 };
 
 export const apiService = {
