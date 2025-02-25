@@ -148,7 +148,7 @@ function AssessmentCard({
                       />
                     </TabPane>
 
-                    {clickedItem?.maintenance_case !== 0 && (
+                    {clickedItem?.maintenance_case === 0 && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">

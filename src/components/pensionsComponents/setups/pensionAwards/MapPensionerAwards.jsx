@@ -294,6 +294,32 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
     }
   };
 
+  const preclaimsStatus = {
+    0: { name: 'UNNOTIFIED', color: '#e74c3c' }, // Light Red
+    1: { name: 'SCHEDULED', color: '#f39c12' }, // Bright Orange
+    2: { name: 'NOTIFIED', color: '#3498db' }, // Light Blue
+    3: { name: 'SUBMITTED', color: '#970FF2' }, // Amethyst
+    4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
+    5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
+    6: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
+    7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
+  };
+
+  const claimsStatus = {
+    0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
+    1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
+    2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
+    3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
+    4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+    5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+    6: { name: 'Controller of Budget', color: '#f39c12' }, // Bright Orange
+    7: { name: 'Finance', color: '#2ecc71' }, // Light Blue
+    8: { name: 'Voucher Preparation', color: '#f39c12' }, // Bright Orange
+    9: { name: 'Voucher Approval', color: '#3498db' }, // Light Blue
+    10: { name: 'Voucher Scheduled', color: '#f39c12' }, // Bright Orange
+    11: { name: 'Voucher Paid', color: '#8b4513' }, // Light Blue
+  };
+
   return (
     <div className="mt-4 px-4 ">
       <div className="flex flex-col gap-3">

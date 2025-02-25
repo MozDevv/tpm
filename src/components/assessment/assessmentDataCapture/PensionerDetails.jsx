@@ -4,6 +4,7 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { useIsLoading } from '@/context/LoadingContext';
 import { BASE_CORE_API } from '@/utils/constants';
 import {
+  Attachment,
   ExpandLess,
   KeyboardArrowRight,
   OpenInFull,
@@ -40,6 +41,7 @@ import PhoneInput from 'react-phone-input-2';
 import './ag-theme.css';
 import MuiPhoneNumber from 'mui-phone-number';
 import { toProperCase } from '@/utils/numberFormatters';
+import { FieldDocuments } from '@/components/pensionsComponents/FieldDocuments';
 
 dayjs.extend(isSameOrBefore);
 
@@ -53,6 +55,7 @@ function PensionerDetails({
   setRetireeId,
   setOpenBaseCard,
   isPayment,
+  clickedItem,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -78,6 +81,41 @@ function PensionerDetails({
     return 0;
   };
 
+  function mapFieldsToDocs(data) {
+    const transformed = { fields: [] };
+
+    data.prospectivePensionerDocumentSelections.forEach((selection) => {
+      selection.documentType.documentTypeFields.forEach((field) => {
+        let fieldEntry = transformed.fields.find(
+          (f) => f.name === field.field_name
+        );
+
+        if (!fieldEntry) {
+          fieldEntry = { name: field.field_name, documents: [] };
+          transformed.fields.push(fieldEntry);
+        }
+
+        fieldEntry.documents.push({
+          name: selection.documentType.name,
+          description: selection.documentType.description,
+          extenstions: selection.documentType.extenstions,
+          fileUrl: selection.fileUrl,
+          selectionId: selection.id,
+          documentSelectionVerifications:
+            selection.documentSelectionVerifications,
+        });
+      });
+    });
+
+    console.log('transformed', transformed);
+    return transformed;
+  }
+
+  const [fieldsWithDocs, setFieldsWithDocs] = useState([]);
+  const [selectedField, setSelectedField] = useState(null);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [openFieldDocs, setOpenFieldDocs] = useState(false);
+
   const fetchRetiree = async () => {
     try {
       const res = await apiService.get(
@@ -92,6 +130,10 @@ function PensionerDetails({
         }
         return '';
       };
+
+      const fieldsWithDocs = mapFieldsToDocs(retiree);
+
+      setFieldsWithDocs(fieldsWithDocs);
       const ageOnDischarge = computeAgeOfDischarge(
         retiree?.dob,
         retiree?.retirement_date
@@ -1127,6 +1169,25 @@ function PensionerDetails({
             <OpenInFull sx={{ color: 'primary.main', fontSize: '18px' }} />
           </Tooltip>{' '}
         </IconButton>
+        <Dialog
+          open={openFieldDocs}
+          onClose={() => setOpenFieldDocs(false)}
+          fullWidth
+          maxWidth="lg" // Change maxWidth to "lg" for larger width
+          sx={{
+            '& .MuiDialog-paper': {
+              width: '70vw', // Adjust the width as needed
+              maxWidth: 'none', // Disable the maxWidth constraint
+            },
+          }}
+        >
+          <FieldDocuments
+            fieldData={selectedField}
+            clickedItem={formData}
+            status={clickedItem?.stage}
+            handleOnClose={() => setOpenFieldDocs(false)}
+          />
+        </Dialog>
         <div className="col-span-12     bg-white shadow-sm rounded-2xl pb-4">
           <form onSubmit={handleSubmit} className="">
             <div className="pt-2 sticky top-0 bg-inherit  pb-2 bg-white z-50">
@@ -1244,14 +1305,42 @@ function PensionerDetails({
                                   flexDirection: 'column',
                                 }}
                               >
-                                <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
-                                  {field.label}
-                                  {field.name !== 'other_name' &&
-                                    field.name !== 'service_increments' &&
-                                    field.name !== 'middle_name' && (
-                                      <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-                                        *
-                                      </div>
+                                <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
+                                  <div className="flex items-center">
+                                    {field.label}
+                                    {field.name !== 'other_name' &&
+                                      field.name !== 'service_increments' &&
+                                      field.name !== 'middle_name' && (
+                                        <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                                          *
+                                        </div>
+                                      )}
+                                  </div>
+                                  {Array(fieldsWithDocs) &&
+                                    fieldsWithDocs &&
+                                    fieldsWithDocs?.fields?.some(
+                                      (f) => f.name === field.name
+                                    ) && (
+                                      <IconButton
+                                        sx={{
+                                          py: 0,
+                                        }}
+                                        onClick={() => {
+                                          setOpenFieldDocs(true);
+                                          setSelectedField(
+                                            fieldsWithDocs.fields.find(
+                                              (f) => f.name === field.name
+                                            )
+                                          );
+                                        }}
+                                      >
+                                        <Attachment
+                                          sx={{
+                                            fontSize: '24px ',
+                                            color: '#006990',
+                                          }}
+                                        />
+                                      </IconButton>
                                     )}
                                 </label>
                                 {field.name === 'phone_number' ? (
