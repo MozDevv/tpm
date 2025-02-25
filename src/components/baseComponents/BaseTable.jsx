@@ -188,10 +188,11 @@ const BaseTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
 
   const onSelectionChanged = (event) => {
+    const selectedData = event.api.getSelectedRows();
     if (onSelectionChange) {
       onSelectionChange(selectedData);
     }
-    if (!clickedItem) {
+    if (!clickedItem && selectedData.length > 0) {
       setClickedItem(selectedData[0]);
     }
   };

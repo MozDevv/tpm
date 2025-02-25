@@ -140,6 +140,10 @@ export const menuItems = [
             title: 'Claim Records List',
             path: '/pensions/claim-records',
           },
+          {
+            title: 'Payroll Records',
+            path: '/pensions/payroll-records',
+          },
         ],
       },
 

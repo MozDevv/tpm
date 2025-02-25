@@ -121,6 +121,32 @@ function PVActions({
         } else {
           handleErrorResponse(res, errorMessage);
         }
+      } else if (status === 7) {
+        endpoint = financeEndpoints.createPayrollPv;
+        successMessage = 'Payroll Payment Voucher created successfully';
+        errorMessage = 'Failed to create Payroll Payment Voucher';
+
+        for (const item of selectedIds) {
+          const requestData = {
+            payrollSummaryId: item.id,
+          };
+
+          try {
+            const res = await apiService.post(endpoint, requestData);
+
+            if (res && res.data && res.data.succeeded && res.status === 200) {
+              // handleUpdateClaimStatus(); // Call the function to update claim status
+              setSelectedRows([]);
+              setOpenPostGL(false);
+              setOpenBaseCard && setOpenBaseCard(false);
+              message.success(successMessage);
+            } else {
+              handleErrorResponse(res, errorMessage);
+            }
+          } catch (error) {
+            handleErrorResponse(error, errorMessage);
+          }
+        }
       } else {
         // Case for other statuses
         const processRequests = selectedIds.map(async ({ id }) => {
@@ -253,6 +279,8 @@ function PVActions({
         : 'Post to Ledger'
       : status === 3
       ? 'Post'
+      : status === 7
+      ? 'Create'
       : 'Post';
 
   return (
@@ -308,6 +336,39 @@ function PVActions({
 
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                           {parseDate(doc.scheduleDate)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : status === 7 ? (
+                <Table size="small" stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Payroll Period</TableCell>
+                      <TableCell align="center">Total Gross</TableCell>
+                      <TableCell align="right">Total Deductions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedRows.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          sx={{
+                            fontWeight: 'bold',
+                            color: '#006990',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          {doc.period}
+                        </TableCell>
+
+                        <TableCell align="center">{doc.totalGross}</TableCell>
+
+                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                          {doc.totalNet}
                         </TableCell>
                       </TableRow>
                     ))}

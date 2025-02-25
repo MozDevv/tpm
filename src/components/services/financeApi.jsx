@@ -407,6 +407,8 @@ const financeEndpoints = {
   getCashBook: '/Reports/GetCashbookReport',
 
   getCOBBudget: (id) => `/Posting/GetCOBClaimBudgetReport?PensionAwardId=${id}`,
+  getPayrollSummaries: '/Posting/GetPayrollSummary',
+  createPayrollPv: '/Posting/PostPayrollLiabilityToLedger',
 };
 
 export const apiService = {
