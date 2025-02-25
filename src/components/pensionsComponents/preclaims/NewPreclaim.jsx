@@ -794,6 +794,8 @@ function NewPreclaim({
         key !== 'pension_cap' &&
         key !== 'was_in_mixed_service' &&
         key !== 'national_id' &&
+        key !== 'assisted_living' &&
+        key !== 'killed_on_duty' &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === '' ||
