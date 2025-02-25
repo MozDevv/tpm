@@ -948,6 +948,8 @@ const Preclaims = ({ status }) => {
               setOpenBaseCard={setOpenBaseCard}
               openBaseCard={openBaseCard}
               clickedItem={clickedItem}
+              status={clickedItem?.notification_status}
+              isPreclaim={true}
             />
           </BaseCard>
           <CreatePreclaim

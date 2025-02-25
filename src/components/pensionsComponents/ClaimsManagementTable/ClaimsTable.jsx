@@ -797,6 +797,8 @@ const ClaimsTable = ({ status }) => {
             setOpenBaseCard={setOpenPreclaimDialog}
             openBaseCard={openPreclaimDialog}
             clickedItem={clickedItem}
+            status={clickedItem?.stage}
+            isPreclaim={false}
           />
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2">

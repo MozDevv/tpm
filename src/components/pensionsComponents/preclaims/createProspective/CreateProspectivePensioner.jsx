@@ -22,6 +22,8 @@ function CreateProspectivePensioner({
   clickedItem,
   setOpenBaseCard,
   setOnCloseWarnings,
+  status,
+  isPreclaim,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -68,6 +70,8 @@ function CreateProspectivePensioner({
               >
                 <div className="">
                   <NewPreclaim
+                    status={status}
+                    isPreclaim={isPreclaim}
                     setOpenBaseCard={setOpenBaseCard}
                     setRetireeId={setRetireeId}
                     retireeId={activeRetireeId}

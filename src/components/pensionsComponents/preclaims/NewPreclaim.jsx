@@ -58,6 +58,8 @@ function NewPreclaim({
   setRetireeId,
   clickedItem,
   setOnCloseWarnings,
+  status,
+  isPreclaim,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
   const [errors, setErrors] = useState({});
@@ -1164,12 +1166,18 @@ function NewPreclaim({
           maxWidth="lg" // Change maxWidth to "lg" for larger width
           sx={{
             '& .MuiDialog-paper': {
-              width: '60vw', // Adjust the width as needed
+              width: '70vw', // Adjust the width as needed
               maxWidth: 'none', // Disable the maxWidth constraint
             },
           }}
         >
-          <FieldDocuments fieldData={selectedField} clickedItem={formData} />
+          <FieldDocuments
+            fieldData={selectedField}
+            clickedItem={formData}
+            status={status}
+            isPreclaim={isPreclaim}
+            handleOnClose={() => setOpenFieldDocs(false)}
+          />
         </Dialog>
         <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
           <form className="">
