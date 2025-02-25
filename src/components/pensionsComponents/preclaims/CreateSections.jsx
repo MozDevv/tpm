@@ -819,26 +819,28 @@ export const createSections = (
           'CAP195',
         ],
       },
-      ...(formData.mortality_status === 1 && [
-        {
-          label: 'Was Killed on Duty(Yes/No)',
-          name: 'killed_on_duty',
-          type: 'select',
-          children: [
-            { id: true, name: 'Yes' },
-            { id: false, name: 'No' },
-          ],
-          pensionCap: [
-            'CAP189',
-            'CAP199',
-            'CAP196',
-            'APN/PK',
-            'CAP190',
-            'CAP195',
-            'CAP195',
-          ],
-        },
-      ]),
+      ...(formData.mortality_status === 1
+        ? [
+            {
+              label: 'Was Killed on Duty(Yes/No)',
+              name: 'killed_on_duty',
+              type: 'select',
+              children: [
+                { id: true, name: 'Yes' },
+                { id: false, name: 'No' },
+              ],
+              pensionCap: [
+                'CAP189',
+                'CAP199',
+                'CAP196',
+                'APN/PK',
+                'CAP190',
+                'CAP195',
+                'CAP195',
+              ],
+            },
+          ]
+        : []),
       {
         name: 'was_injured',
         label: 'Was Injured On Duty',
