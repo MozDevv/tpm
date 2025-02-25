@@ -1449,7 +1449,7 @@ const BaseInputTable = ({
                 />
               </Button>
             )}
-            {rowData.length > 1 && title === 'Post and Nature of Service' && (
+            {rowData.length > 0 && title === 'Post and Nature of Service' && (
               <div
                 style={{
                   display: 'flex',

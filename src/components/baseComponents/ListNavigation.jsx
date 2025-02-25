@@ -350,7 +350,7 @@ const ListNavigation = ({
     {
       name: 'Create Payment Voucher',
       icon: PostAdd,
-      action: 'PayrollcreatePaymentVoucher',
+      action: 'createPaymentVoucher',
       requiredPermissions: [],
       status: [7],
     },

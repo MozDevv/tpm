@@ -134,7 +134,7 @@ export const menuItems = [
     icon: <AssuredWorkload />,
     children: [
       {
-        title: 'Claim Records',
+        title: 'Voucher Preparation',
         subChildren: [
           {
             title: 'Claim Records List',
