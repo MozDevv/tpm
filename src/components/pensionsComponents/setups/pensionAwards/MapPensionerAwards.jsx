@@ -376,10 +376,7 @@ const MapPensionerAwards = ({ rowClicked, setOpenAward }) => {
         <DialogContent>
           <div className="flex flex-wrap justify-between">
             {allFields.map((col, index) => {
-              const isSelected =
-                clickedDocumentTypeDetails?.document?.documentTypeFields?.some(
-                  (field) => field.field_name === col.name
-                ) || selectedFields.includes(col.name);
+              const isSelected = selectedFields.includes(col.name);
 
               return (
                 <div key={index} className="w-[48%] mb-2">

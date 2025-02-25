@@ -1169,7 +1169,7 @@ function NewPreclaim({
             },
           }}
         >
-          <FieldDocuments fieldData={selectedField} />
+          <FieldDocuments fieldData={selectedField} clickedItem={formData} />
         </Dialog>
         <div className="col-span-12    bg-white shadow-sm rounded-2xl pb-4">
           <form className="">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Grid,
@@ -14,11 +14,36 @@ import {
 import endpoints, { apiService } from '../services/setupsApi';
 import { message } from 'antd';
 
-export const FieldDocuments = ({ fieldData }) => {
+export const FieldDocuments = ({ fieldData, clickedItem }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-
   const [comments, setComments] = useState('');
   const [approved, setApproved] = useState(false);
+
+  const fetchCurrentExitGround = async () => {
+    try {
+      const res = await apiService.get(
+        endpoints.getExitGroundbyId(clickedItem?.exit_grounds)
+      );
+      if (res.data.succeeded) {
+        const documents = res.data.data[0].awardDocuments.map((doc) => ({
+          ...doc,
+          document: doc.document,
+          required: doc.required,
+          pensionerUpload: doc.pensioner_upload,
+          has_two_sides: doc.has_two_sides,
+          front: doc.front,
+          back: doc.back,
+
+          verificationSections: doc.verificationSections,
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchCurrentExitGround();
+  }, []);
   const [errors, setErrors] = useState({
     status: false,
     message: '',
@@ -34,11 +59,6 @@ export const FieldDocuments = ({ fieldData }) => {
 
   const handleApprove = async () => {
     const data = {
-      // {
-      //     "selectionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      //     "comments": "string"
-      //   }
-
       selectionId: fieldData.documents[selectedIndex].selectionId,
       comments,
     };
