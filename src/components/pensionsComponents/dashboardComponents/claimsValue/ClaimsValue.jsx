@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
-import Chart from 'react-apexcharts';
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RetirementTrends = () => {
   const [allRetirees, setAllRetirees] = useState([]);
