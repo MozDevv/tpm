@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
-import Chart from 'react-apexcharts';
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RetirementTrends = () => {
   const [allRetirees, setAllRetirees] = useState([]);
@@ -39,20 +39,11 @@ const RetirementTrends = () => {
     }
   };
 
-  const years = Array.from({ length: 2030 - 1949 + 1 }, (_, i) => 1949 + i);
+  const years = Array.from({ length: 2100 - 1900 + 1 }, (_, i) => 1900 + i);
   const fields = [
     { label: 'Retirement Date', value: 'retirement_date' },
     { label: 'Date of First Appointment', value: 'date_of_first_appointment' },
     { label: 'Date of Last Pay', value: 'date_of_last_pay' },
-    { label: 'Date of Birth', value: 'date_of_birth' },
-    {
-      label: 'Authority of Retirement',
-      value: 'authority_for_retirement_dated',
-    },
-    {
-      name: 'date_from_which_pension_will_commence',
-      label: 'Pension Commencement Date',
-    },
   ];
 
   const filteredData = allRetirees.filter((retiree) => {
@@ -109,15 +100,8 @@ const RetirementTrends = () => {
         </Typography>
         <Box display="flex" gap={2}>
           <FormControl>
-            <InputLabel
-              sx={{
-                color: '#006990',
-              }}
-            >
-              Year
-            </InputLabel>
+            <InputLabel>Year</InputLabel>
             <Select
-              size="small"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
             >
@@ -129,15 +113,8 @@ const RetirementTrends = () => {
             </Select>
           </FormControl>
           <FormControl>
-            <InputLabel
-              sx={{
-                color: '#006990',
-              }}
-            >
-              Field
-            </InputLabel>
+            <InputLabel>Field</InputLabel>
             <Select
-              size="small"
               value={selectedField}
               onChange={(e) => setSelectedField(e.target.value)}
             >

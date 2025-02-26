@@ -1449,52 +1449,55 @@ const BaseInputTable = ({
                 />
               </Button>
             )}
-            {rowData.length > 0 && title === 'Post and Nature of Service' && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginTop: '-12px',
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isFiscalYear}
-                      onChange={handleToggle}
-                      sx={{
-                        '& .MuiSwitch-switchBase.Mui-checked': {
-                          color: '#006990',
-                        },
-                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
-                          {
-                            backgroundColor: '#006990',
-                          },
-                        '& .MuiSwitch-switchBase': {
-                          color: '#006990',
-                        },
-                        '& .MuiSwitch-track': {
-                          backgroundColor: '#006990',
-                        },
-                      }}
-                    />
-                  }
-                  label=""
-                />
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: '14px',
-                    color: '#006990',
-                    ml: -2,
+            {rowData.some((row) =>
+              Object.values(row).some((value) => value !== '')
+            ) &&
+              title === 'Post and Nature of Service' && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: '-12px',
                   }}
                 >
-                  {isFiscalYear
-                    ? 'View by Fiscal Year'
-                    : 'View by Service Years'}
-                </Typography>
-              </div>
-            )}
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={isFiscalYear}
+                        onChange={handleToggle}
+                        sx={{
+                          '& .MuiSwitch-switchBase.Mui-checked': {
+                            color: '#006990',
+                          },
+                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                            {
+                              backgroundColor: '#006990',
+                            },
+                          '& .MuiSwitch-switchBase': {
+                            color: '#006990',
+                          },
+                          '& .MuiSwitch-track': {
+                            backgroundColor: '#006990',
+                          },
+                        }}
+                      />
+                    }
+                    label=""
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: '14px',
+                      color: '#006990',
+                      ml: -2,
+                    }}
+                  >
+                    {isFiscalYear
+                      ? 'View by Fiscal Year'
+                      : 'View by Service Years'}
+                  </Typography>
+                </div>
+              )}
           </div>
 
           <div

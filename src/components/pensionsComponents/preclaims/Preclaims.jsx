@@ -421,7 +421,7 @@ export const mapRowData = (items) =>
       was_in_mixed_service: item?.was_in_mixed_service,
     }));
 
-const Preclaims = ({ status }) => {
+const Preclaims = ({ status, isDashboard }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -975,15 +975,19 @@ const Preclaims = ({ status }) => {
             setOpenNotification={setOpenNotification}
           /> */}
           <div className="h-full w-full">
-            <ListNavigation
-              handlers={handlers}
-              // permissions={permissions}
-              status={status}
-              clickedItem={selectedRows[0]}
-            />
-
-            <div className="flex justify-between flex-row mt-2"></div>
-            <Divider sx={{ mt: 1, mb: 1 }} />
+            {!isDashboard && (
+              <>
+                {' '}
+                <ListNavigation
+                  handlers={handlers}
+                  // permissions={permissions}
+                  status={status}
+                  clickedItem={selectedRows[0]}
+                />
+                <div className="flex justify-between flex-row mt-2"></div>
+                <Divider sx={{ mt: 1, mb: 1 }} />
+              </>
+            )}
 
             <div className="flex">
               {/* Custom Drawer */}
@@ -1029,6 +1033,7 @@ const Preclaims = ({ status }) => {
                   noRowsOverlayComponent={BaseEmptyComponent}
                   onSelectionChanged={onSelectionChanged}
                   domLayout="autoHeight"
+                  className={isDashboard ? 'custom-grid1' : 'ag-theme-quartz'}
                   onGridReady={onGridReady}
                   totalRecords={totalRecords}
                   rowHeight={36}

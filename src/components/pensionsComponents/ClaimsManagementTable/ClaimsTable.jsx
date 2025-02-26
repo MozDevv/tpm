@@ -365,7 +365,7 @@ const colDefs = [
   },
 ];
 
-const ClaimsTable = ({ status }) => {
+const ClaimsTable = ({ status, isDashboard }) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
