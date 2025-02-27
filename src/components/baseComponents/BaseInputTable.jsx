@@ -70,7 +70,6 @@ const BaseInputTable = ({
   filterBy,
   filterCol,
   disableAll,
-
   scrollableHeight,
   setCurrentRow,
   deleteApiService,

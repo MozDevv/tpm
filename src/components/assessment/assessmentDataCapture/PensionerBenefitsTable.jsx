@@ -15,7 +15,12 @@ import endpoints from '@/components/services/setupsApi';
 import { apiService } from '@/components/services/api';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 
-function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
+function PensionerBenefitsTable({
+  clickedItem,
+  computed,
+  setViewBreakDown,
+  isExpanded,
+}) {
   const [qualifyingService, setQualifyingService] = useState([]);
   const columnDefs = [
     {
@@ -288,7 +293,12 @@ function PensionerBenefitsTable({ clickedItem, computed, setViewBreakDown }) {
   };
 
   return (
-    <div className="ag-theme-quartz h-[150px] mt-5 px-9">
+    <div
+      style={{
+        height: isExpanded ? '60vh' : '150px',
+      }}
+      className="ag-theme-quartz mt-5 px-9"
+    >
       <BaseCard
         openBaseCard={openBaseCard}
         isSecondaryCard2={true}

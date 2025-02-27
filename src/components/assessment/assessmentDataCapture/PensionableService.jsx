@@ -12,7 +12,7 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import { parseDate } from '@/utils/dateFormatter';
 
-function PensionableService({ clickedItem, computed }) {
+function PensionableService({ clickedItem, computed, isExpanded }) {
   const columnDefs = [
     {
       field: 'start_date',
@@ -148,7 +148,12 @@ function PensionableService({ clickedItem, computed }) {
   ];
 
   return (
-    <div className="ag-theme-quartz h-[150px] mt-5 px-9">
+    <div
+      style={{
+        height: isExpanded ? '60vh' : '150px',
+      }}
+      className="ag-theme-quartz mt-5 px-9"
+    >
       <BaseCard
         openBaseCard={openBaseCard}
         isSecondaryCard2={true}

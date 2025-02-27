@@ -160,9 +160,10 @@ const BaseInputCard = ({
       console.log('formData', formData);
     }
 
-    if (name === 'bank_id') {
+    if (name === 'bank_id' || name === 'bankId') {
       setSelectedBank(value);
     }
+
     if (multiple) {
       const values = Array.from(
         e.target.selectedOptions,

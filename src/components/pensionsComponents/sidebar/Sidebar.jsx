@@ -318,6 +318,15 @@ export const menuItems = [
           },
         ],
       },
+      {
+        title: 'Revenue',
+        subChildren: [
+          {
+            title: 'Returns',
+            path: '/pensions/finance/revenue',
+          },
+        ],
+      },
     ],
   },
 

@@ -545,6 +545,19 @@ const ListNavigation = ({
       action: 'createPayrollPaymentVoucher',
       requiredPermissions: [],
     },
+
+    {
+      name: 'Generate Return Template',
+      icon: Launch,
+      action: 'generateReturnTemplate',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Create Return',
+      icon: PostAdd,
+      action: 'uploadReturn',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

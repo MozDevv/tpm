@@ -21,6 +21,7 @@ function PensionComputation({
   viewBreakDown,
   setViewCompleteSummary,
   viewCompleteSummary,
+  isExpanded,
 }) {
   const [summary, setSummary] = useState(null); // Initialize as null to handle empty state
 
@@ -138,16 +139,28 @@ function PensionComputation({
     );
 
   // Show only 6 items initially if not expanded
-  const fieldsToShow = showAll ? filteredFields : filteredFields.slice(0, 12);
+  const fieldsToShow =
+    showAll || isExpanded ? filteredFields : filteredFields.slice(0, 12);
 
   return (
     <div className="flex flex-col">
       <hr />
-      <div className="flex flex-col max-h-[200px] overflow-y-auto">
+      <div
+        style={{
+          height: isExpanded ? '60vh' : '200px',
+        }}
+        className="flex flex-col  overflow-y-auto"
+      >
         <hr />
-        <div className="grid grid-cols-3 gap-2 pl-5 pt-4">
+        <div className="grid grid-cols-3 gap-2 pl-5 pt-4 pr-4">
           {fieldsToShow.map(({ label, key }) => (
-            <div key={key} className="flex flex-row w-[90%] justify-between">
+            <div
+              key={key}
+              style={{
+                marginBottom: isExpanded ? '10px' : '0px',
+              }}
+              className="flex flex-row w-[90%] justify-between"
+            >
               <span className="font-semibold text-gray-700 capitalize font-montserrat">
                 {label}
               </span>
@@ -177,7 +190,7 @@ function PensionComputation({
             </div>
           ))}
         </div>
-        {filteredFields.length > 9 && (
+        {filteredFields.length > 9 && !isExpanded && (
           <div className="pl-5 pt-4">
             <button
               className="text-primary font-semibold underline cursor-pointer"

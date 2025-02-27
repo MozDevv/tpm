@@ -556,8 +556,8 @@ const BankReconciliation = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
-        deleteApiService={apiService.delete}
+        // deleteApiEndpoint={financeEndpoints.deleteBankAccount(clickedItem?.id)}
+        // deleteApiService={apiService.delete}
         largeCard={true}
       >
         <div className="flex flex-col gap-5">

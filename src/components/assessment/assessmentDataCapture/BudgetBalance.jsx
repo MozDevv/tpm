@@ -17,7 +17,12 @@ import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { message } from 'antd';
 
-function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
+function BudgetBalance({
+  clickedItem,
+  computed,
+  setViewBreakDown,
+  isExpanded,
+}) {
   const [qualifyingService, setQualifyingService] = useState([]);
   const columnDefs = [
     {
@@ -189,7 +194,12 @@ function BudgetBalance({ clickedItem, computed, setViewBreakDown }) {
   };
 
   return (
-    <div className="ag-theme-quartz h-[150px] mt-5 px-9">
+    <div
+      style={{
+        height: isExpanded ? '60vh' : '150px',
+      }}
+      className="ag-theme-quartz mt-5 px-9"
+    >
       <BaseCard
         openBaseCard={openBaseCard}
         isSecondaryCard2={true}

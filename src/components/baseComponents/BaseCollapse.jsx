@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Collapse, IconButton } from '@mui/material';
-import { KeyboardArrowRight, ExpandLess } from '@mui/icons-material';
+import { Collapse, IconButton, Tooltip } from '@mui/material';
+import { KeyboardArrowRight, ExpandLess, Launch } from '@mui/icons-material';
 
-const BaseCollapse = ({ name, children, titleFontSize }) => {
+const BaseCollapse = ({ name, children, titleFontSize, expandHandler }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleToggleSection = () => {
@@ -29,6 +29,23 @@ const BaseCollapse = ({ name, children, titleFontSize }) => {
           )}
         </IconButton>
         <hr className="flex-grow border-blue-500 border-opacity-20 mt-1" />
+        {expandHandler && (
+          <Tooltip title="Click to Expand" arrow placement="top">
+            <IconButton
+              sx={{
+                mr: 4,
+              }}
+              onClick={expandHandler}
+            >
+              <Launch
+                sx={{
+                  color: 'primary.main',
+                  fontSize: '22px',
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
       <Collapse in={isOpen} timeout="auto" unmountOnExit>
         {children}
