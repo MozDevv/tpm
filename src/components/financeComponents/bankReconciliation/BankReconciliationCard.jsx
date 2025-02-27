@@ -82,13 +82,18 @@ function BankReconciliationCard({
       const response = await apiService.get(
         financeEndpoints.getBankStatement(clickedItem?.id)
       );
+
       if (response.status === 200 && response.data.succeeded) {
-        if (response.data.data[0].bankStatements.length > 0) {
-          const bankStatement = response.data.data[
-            response.data.data.length - 1
-          ]
-            ? response.data.data[response.data.data.length - 1]
-            : {};
+        const responseData = response.data.data;
+
+        if (!responseData || responseData.length === 0) {
+          setBankStatement([]); // 🔥 If data is empty, set to an empty array
+          return;
+        }
+
+        if (responseData[0].bankStatements.length > 0) {
+          const bankStatement = responseData[responseData.length - 1] || {};
+
           setClickedItem((prev) => ({
             ...prev,
             totalDifference: bankStatement?.totalDifference,
@@ -96,13 +101,12 @@ function BankReconciliationCard({
             statementEndDate: bankStatement?.statementEndDate,
             lastStatementBalance: bankStatement?.lastStatementBalance,
             currentStatementBalance: bankStatement?.currentStatementBalance,
-            // bankStatementId: bankStatement?.bankStatements.id,
             reconciliationId: bankStatement?.id,
           }));
         }
 
-        const formattedStatements = response.data.data[
-          response.data.data.length - 1
+        const formattedStatements = responseData[
+          responseData.length - 1
         ].bankStatements.map((item) => ({
           id: item.id,
           transactionDate: item.transactionDate,
@@ -114,7 +118,6 @@ function BankReconciliationCard({
           appliedEntries: item.appliedEntries,
           creditAmount: item.creditAmount,
           balance: item.balance,
-          appliedEntries: item.appliedEntries,
           bankReconciliationId: item.bankReconciliationId,
           bankReconciliationStatus: item.bankReconciliationStatus,
           totalSubLedgerCount: item.totalSubLedgerCount,
@@ -127,7 +130,6 @@ function BankReconciliationCard({
       }
     } catch (error) {
       console.error('Error fetching bank statement', error);
-      // Optionally handle the error for the UI
     }
   };
 

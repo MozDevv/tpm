@@ -313,19 +313,19 @@ const BankReconciliation = () => {
       type: 'date',
       required: true,
     },
-    {
-      name: 'balanceLastStatement',
-      label: 'Last Statement Balance',
-      type: 'amount',
-      required: false,
-    },
-    {
-      name: 'currentStatementBalance',
-      label: 'Current Statement Balance',
-      type: 'amount',
-      required: false,
-      disabled: true,
-    },
+    // {
+    //   name: 'balanceLastStatement',
+    //   label: 'Last Statement Balance',
+    //   type: 'amount',
+    //   required: false,
+    // },
+    // {
+    //   name: 'currentStatementBalance',
+    //   label: 'Current Statement Balance',
+    //   type: 'amount',
+    //   required: false,
+    //   disabled: true,
+    // },
     {
       name: 'file',
       label: 'Upload Bank Statement (xlsx, xls, csv)',
@@ -333,11 +333,11 @@ const BankReconciliation = () => {
       required: true,
       fileName: 'Upload Bank Statement (xlsx, xls, csv)',
     },
-    {
-      name: 'isClosed',
-      label: 'Is Closed',
-      type: 'switch',
-    },
+    // {
+    //   name: 'isClosed',
+    //   label: 'Is Closed',
+    //   type: 'switch',
+    // },
     {
       name: 'isReversed',
       label: 'Is Reversed',
@@ -359,12 +359,10 @@ const BankReconciliation = () => {
       return;
     }
 
-    const bankDetails = selectedBankSubledgers.map((bankSubledger) => {
-      return {
-        bankSubledgerId: bankSubledger?.id,
-        bankStatementId: selectedBankStatements[0]?.id, // Always take the first (or selected) bank statement
-      };
-    });
+    const bankDetails = selectedBankSubledgers.map((bankSubledger) => ({
+      bankSubledgerId: bankSubledger?.id,
+      bankStatementId: selectedBankStatements[0]?.id, // Always take the first (or selected) bank statement
+    }));
 
     console.log('bankDetails:', bankDetails);
 
@@ -377,27 +375,27 @@ const BankReconciliation = () => {
       );
 
       if (response.status === 200 && response.data.succeeded) {
-        setRefreshBankStatements((prev) => !prev);
         message.success(
-          'Statement matched successful Entry created successfully'
+          'Statement matched successfully. Entry created successfully.'
         );
+        setRefreshBankStatements((prev) => prev + 1); // 🔥 Ensure state changes
       } else if (
-        response.data.messages[0] &&
+        response.data.messages?.[0] &&
         response.data.succeeded === false
       ) {
         message.error(response.data.messages[0].message);
       } else {
         console.warn('Matching Failed:', response.data);
-
         message.error('Matching Failed. Please try again.');
       }
     } catch (error) {
       console.error('Error submitting reconciliation:', error);
       message.error('An error occurred while submitting the reconciliation.');
     } finally {
-      setRefreshBankStatements((prev) => !prev);
+      setRefreshBankStatements((prev) => prev + 1); // 🔥 Ensure refresh even if the request fails
     }
   };
+
   const removeMatch = async () => {
     if (
       selectedBankStatements.length === 0 ||
@@ -409,12 +407,10 @@ const BankReconciliation = () => {
       return;
     }
 
-    const bankDetails = selectedBankSubledgers.map((bankSubledger) => {
-      return {
-        bankSubledgerId: bankSubledger?.id,
-        bankStatementId: selectedBankStatements[0]?.id, // Always take the first (or selected) bank statement
-      };
-    });
+    const bankDetails = selectedBankSubledgers.map((bankSubledger) => ({
+      bankSubledgerId: bankSubledger?.id,
+      bankStatementId: selectedBankStatements[0]?.id,
+    }));
 
     console.log('bankDetails:', bankDetails);
 
@@ -424,25 +420,22 @@ const BankReconciliation = () => {
       });
 
       if (response.status === 200 && response.data.succeeded) {
-        message.success(
-          'Statement matched successful Entry created successfully'
-        );
-        setRefreshBankStatements(2);
+        message.success('Statement match removed successfully.');
+        setRefreshBankStatements((prev) => prev + 1);
       } else if (
-        response.data.messages[0] &&
+        response.data.messages?.[0] &&
         response.data.succeeded === false
       ) {
         message.error(response.data.messages[0].message);
       } else {
-        console.warn('Matching Failed:', response.data);
-
-        message.error('Matching Failed. Please try again.');
+        console.warn('Removing match failed:', response.data);
+        message.error('Removing match failed. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting reconciliation:', error);
-      message.error('An error occurred while submitting the reconciliation.');
+      console.error('Error removing match:', error);
+      message.error('An error occurred while removing the match.');
     } finally {
-      setRefreshBankStatements(3);
+      setRefreshBankStatements((prev) => prev + 1);
     }
   };
 
