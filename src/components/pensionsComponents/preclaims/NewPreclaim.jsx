@@ -796,12 +796,14 @@ function NewPreclaim({
         key !== 'national_id' &&
         key !== 'assisted_living' &&
         key !== 'killed_on_duty' &&
+        //   key !== 'last_basic_salary_amount' &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === '' ||
           formData[key] === false)
       ) {
-        // newErrors[key] = "This field is required";
+        // console.log('Keys not filled', key);
+        // newErrors[key] = 'This field is required';
         // message.error(`This field is required: ${key}`);
         return; // Exit the function or block to stop further processing
       }
