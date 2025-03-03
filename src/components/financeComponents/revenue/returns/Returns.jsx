@@ -28,6 +28,8 @@ import axios from 'axios';
 import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import { name } from 'dayjs/locale/en-au';
 import { apiService as setupsApiService } from '@/components/services/setupsApi';
+import BaseTabs from '@/components/baseComponents/BaseTabs';
+import ReturnsLines from './ReturnsLines';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -45,101 +47,6 @@ Deduction and Refund
 Deduction Amount
 Deduction Description.
  */
-const columnDefs = [
-  {
-    field: 'documentNo',
-    headerName: 'Document No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-    width: 150,
-    pinned: 'left',
-    checkboxSelection: true,
-    headerCheckboxSelection: true,
-    multiple: false,
-    cellRenderer: (params) => {
-      return (
-        <p className="underline text-primary font-semibold">{params.value}</p>
-      );
-    },
-  },
-  {
-    field: 'budgetName',
-    headerName: 'Budget Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-
-  {
-    field: 'stage',
-    headerName: 'Status',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    cellRenderer: (params) => {
-      const status = statusIcons[params.value];
-      if (!status) return null;
-
-      const IconComponent = status.icon;
-
-      return (
-        <div
-          style={{ display: 'flex', alignItems: 'center', marginLeft: '20px' }}
-        >
-          <IconComponent
-            style={{
-              color: status.color,
-              marginRight: '6px',
-              fontSize: '17px',
-            }}
-          />
-          <span
-            style={{
-              color: status.color,
-              fontWeight: 'semibold',
-              fontSize: '13px',
-            }}
-          >
-            {status.name}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    field: 'budgetDescription',
-    headerName: 'Budget Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'startDate',
-    headerName: 'Start Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-
-    valueFormatter: (params) => parseDate(params.value),
-  },
-  {
-    field: 'endDate',
-    headerName: 'End Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-
-    valueFormatter: (params) => parseDate(params.value),
-  },
-  {
-    field: 'isBlocked',
-    headerName: 'Is Blocked',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
 
 const Returns = ({ status }) => {
   const [uploadExcel, setUploadExcel] = React.useState(false);
@@ -159,15 +66,7 @@ const Returns = ({ status }) => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      id: item.id,
-      budgetName: item.budgetName,
-      budgetDescription: transformString(item.budgetDescription),
-      startDate: item.startDate,
-      endDate: item.endDate,
-      isBlocked: item.isBlocked,
-      documentNo: item.documentNo,
-      stage: item.stage,
-      accountingPeriodId: item.accountingPeriodId,
+      ...item,
 
       // roles: item.roles,
     }));
@@ -333,6 +232,128 @@ const Returns = ({ status }) => {
 
   const [banks, setBanks] = React.useState([]);
   const [branches, setBranches] = React.useState([]);
+
+  const { data: paymentMeth } = useFetchAsync(
+    financeEndpoints.getPaymentMethods,
+    apiService
+  );
+
+  const columnDefs = [
+    {
+      field: 'documentNo',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      width: 90,
+      filter: true,
+      width: 150,
+      pinned: 'left',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      multiple: false,
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
+      field: 'chequeNo',
+      headerName: 'Cheque No',
+      headerClass: 'prefix-header',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className=" text-primary font-semibold">{params.value}</p>;
+      },
+    },
+    {
+      field: 'chequeDate',
+      headerName: 'Cheque Date',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+
+    /**[
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "documentNo": "string",
+        "chequeDate": "2025-03-03T05:56:26.450Z",
+        "chequeNo": "string",
+        "returnDate": "2025-03-03T05:56:26.450Z",
+        "totalAmount": 0,
+        "eftNo": 0,
+        "returnType": 0,
+        "bankBranchId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "bankId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "paymentMethodId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "returnDetails": [
+          {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "pensionerName": "string",
+            "pensionerNo": "string",
+            "returnReason": "string",
+            "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "amount": 0
+          }
+        ]
+      }
+    ], */
+    {
+      field: 'returnDate',
+      headerName: 'Return Date',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'eftNo',
+      headerName: 'EFT No',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'returnType',
+      headerName: 'Return Type',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'bankBranchId',
+      headerName: 'Branch',
+      headerClass: 'prefix-header',
+      flex: 1,
+      valueGetter: (params) => {
+        const branch = branches.find((branch) => branch.id === params.value);
+        return branch?.name;
+      },
+    },
+    {
+      field: 'bankId',
+      headerName: 'Bank',
+      headerClass: 'prefix-header',
+      flex: 1,
+      valueGetter: (params) => {
+        const bank = banks.find((bank) => bank.id === params.value);
+        return bank?.name;
+      },
+    },
+    {
+      field: 'paymentMethodId',
+      headerName: 'Payment Method',
+      headerClass: 'prefix-header',
+      flex: 1,
+      valueGetter: (params) => {
+        const paymentMethod = paymentMeth.find(
+          (method) => method.id === params.value
+        );
+        return paymentMethod?.name;
+      },
+    },
+  ];
   const fetchBanksAndBranches = async () => {
     try {
       const res = await setupsApiService.get(endpoints.getBanks, {
@@ -441,6 +462,31 @@ string($uuid)
     },
   ];
 
+  const tabPanes = [
+    {
+      key: '1',
+      title: "Return's Information",
+      content: (
+        <div>
+          <BaseInputCard
+            fields={fields}
+            apiEndpoint={financeEndpoints.updateBudget}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            disableAll={true}
+            setOpenBaseCard={setOpenBaseCard}
+          />
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Return Details',
+      content: <ReturnsLines payrollLines={clickedItem?.returnDetails} />,
+    },
+  ];
+
   return (
     <div className="">
       <BaseApprovalCard
@@ -467,7 +513,7 @@ string($uuid)
         {' '}
         <BaseInputCard
           fields={uploadFields}
-          apiEndpoint={financeEndpoints.uploadBudget}
+          apiEndpoint={financeEndpoints.uploadReturn}
           postApiFunction={apiService.post}
           //  clickedItem={clickedItem}
           useRequestBody={false}
@@ -488,21 +534,13 @@ string($uuid)
         deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <div className="flex flex-col  overflow-auto max-h-[80vh]">
-            <BaseInputCard
-              fields={fields}
-              apiEndpoint={financeEndpoints.updateBudget}
-              postApiFunction={apiService.post}
-              clickedItem={clickedItem}
-              useRequestBody={true}
-              disableAll={status !== 0}
-              setOpenBaseCard={setOpenBaseCard}
-            />
-          </div>
+          <>
+            <BaseTabs tabPanes={tabPanes} />
+          </>
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.createBudget}
+            apiEndpoint={financeEndpoints.uploadBudget}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -517,14 +555,14 @@ string($uuid)
           setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getBudgetByStatus(status)}
+          fetchApiEndpoint={financeEndpoints.getReturns}
           fetchApiService={apiService.get}
           transformData={transformData}
           uploadExcel={uploadExcel}
           pageSize={30}
           handlers={handlers}
-          breadcrumbTitle="General Budget"
-          currentTitle="General Budget"
+          breadcrumbTitle="Returns"
+          currentTitle="Returns"
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
           openApproveDialog={openApprove}

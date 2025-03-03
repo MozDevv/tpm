@@ -553,7 +553,7 @@ const ListNavigation = ({
       requiredPermissions: [],
     },
     {
-      name: 'Create Return',
+      name: 'Upload Return',
       icon: PostAdd,
       action: 'uploadReturn',
       requiredPermissions: [],
