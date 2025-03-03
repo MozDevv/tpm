@@ -387,21 +387,6 @@ const Returns = ({ status }) => {
   }, []);
 
   const uploadFields = [
-    /**file
-string($binary)
-ReturnDate
-string($date-time)
-TotalAmount
-number($double)
-EFTNo
-number($double)
-ReturnTypeId
-string($uuid)
-BankBranchId
-string($uuid)
-BankId
-string($uuid)
- */
     {
       name: 'returnDate',
       label: 'Return Date',
@@ -421,8 +406,8 @@ string($uuid)
       type: 'select',
       required: true,
       options: [
-        { id: '1', name: 'Pension' },
-        { id: '2', name: 'Deduction' },
+        { id: 0, name: 'Monthly' },
+        { id: 1, name: 'Lumpsum' },
       ],
     },
     {
@@ -469,7 +454,7 @@ string($uuid)
       content: (
         <div>
           <BaseInputCard
-            fields={fields}
+            fields={uploadFields}
             apiEndpoint={financeEndpoints.updateBudget}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}

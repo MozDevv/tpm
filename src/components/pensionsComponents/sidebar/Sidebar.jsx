@@ -807,6 +807,15 @@ export const adminItems = [
           },
         ],
       },
+      {
+        title: 'IGC Setups',
+        subChildren: [
+          {
+            title: 'IGC Document Setups',
+            path: '/pensions/setups/igc-document-setups',
+          },
+        ],
+      },
 
       {
         title: 'No. Series',
