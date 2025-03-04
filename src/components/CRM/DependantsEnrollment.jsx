@@ -263,6 +263,15 @@ function DependantsEnrollment() {
       }
     });
 
+    formDataToSend.append(
+      'supporting_document_number',
+      formData['supporting_document_number'] || ''
+    );
+    formDataToSend.append(
+      'principal_pensioner_id_card_number',
+      formData['principal_pensioner_id_card_number'] || ''
+    );
+
     console.log('Final FormData before sending:');
     for (let pair of formDataToSend.entries()) {
       console.log(pair[0], pair[1]);
@@ -282,14 +291,14 @@ function DependantsEnrollment() {
         }
       );
       if (response.data.succeeded === true) {
-        setOpenPensionerDetails(true);
-        message.success('Principal Pensioner details successfully retrieved.');
-        setDetails(response.data.data);
+        //  setOpenPensionerDetails(true);
+        message.success('Principal Pensioner Initiated Successfully.');
+        //  setDetails(response.data.data);
       } else if (
         response.data.succeeded === false &&
-        response.data.message[0]
+        response.data.messages[0]
       ) {
-        message.error(response.data.message[0]);
+        message.error(response.data.messages[0]);
       } else {
         message.error('Error occurred while processing your request');
       }
