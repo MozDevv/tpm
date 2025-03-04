@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Autocomplete,
+  Backdrop,
   Box,
   Dialog,
   DialogContent,
@@ -181,6 +182,8 @@ function DependantsEnrollment() {
     },
   ];
 
+  const [loading, setLoading] = useState(false);
+
   const handleFileChange = ({ fileList }, fieldName, documentTypesSetupId) => {
     if (!fileList.length) return;
 
@@ -222,6 +225,7 @@ function DependantsEnrollment() {
     }
   };
   const handleSave = async () => {
+    setLoading(true);
     const validationErrors = {};
     fields.forEach((field) => {
       if (field.required && !formData[field.name]) {
@@ -305,6 +309,8 @@ function DependantsEnrollment() {
     } catch (error) {
       message.error('Failed to save data');
       console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -348,6 +354,23 @@ function DependantsEnrollment() {
 
   return (
     <div className="p-4 mr-5 rounded-sm relative bg-white shadow-md">
+      {loading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 999999 }}
+          open={loading}
+          onClick={() => setLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-base flex items-center">
+            Processing your request
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <Dialog
         open={openPensionerDetails}
         onClose={() => setOpenPensionerDetails(false)}
