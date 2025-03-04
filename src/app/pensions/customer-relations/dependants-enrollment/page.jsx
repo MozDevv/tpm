@@ -1,3 +1,4 @@
+'use client';
 import DependantsEnrollment from '@/components/CRM/DependantsEnrollment';
 import CustomBreadcrumbsList from '@/components/CustomBreadcrumbs/CustomBreadcrumbsList';
 import React from 'react';

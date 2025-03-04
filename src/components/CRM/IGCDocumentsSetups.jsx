@@ -51,7 +51,10 @@ const IGCDocumentsSetups = () => {
       filter: true,
       flex: 1,
       valueFormatter: (params) => {
-        return documentTypes.find((d) => d.id === params.value)?.name;
+        return (
+          documentTypes &&
+          documentTypes.find((d) => d.id === params.value)?.name
+        );
       },
     },
     {
@@ -170,7 +173,7 @@ const IGCDocumentsSetups = () => {
           <div>
             <BaseInputCard
               fields={fields}
-              //apiEndpoint={endpoints.updateRole(clickedItem.id)}
+              apiEndpoint={endpoints.updateIGCDoc}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
               setOpenBaseCard={setOpenBaseCard}

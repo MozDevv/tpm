@@ -1,11 +1,19 @@
-'use client';
-import React, { useState } from 'react';
-import { Dialog, DialogContent, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Autocomplete,
+  Box,
+  Dialog,
+  DialogContent,
+  Divider,
+  Popper,
+  TextField,
+} from '@mui/material';
 import { Button, Table, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import CRMBaseInput from './CRMBaseInput';
 import endpoints, { apiService } from '../services/setupsApi';
 import { Button as MuiButton } from '@mui/material';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 function DependantsEnrollment() {
   const [formData, setFormData] = useState({});
@@ -13,141 +21,106 @@ function DependantsEnrollment() {
   const [fileList, setFileList] = useState([]);
   const [openPensionerDetails, setOpenPensionerDetails] = useState(false);
   const [details, setDetails] = useState([]);
-  const [previewContent, setPreviewContent] = useState(null); // State for preview content
-  const [previewOpen, setPreviewOpen] = useState(false); // State for preview dialog
+  const [previewContent, setPreviewContent] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const { data: documentTypes } = useFetchAsync(
+    endpoints.igcDocuments,
+    apiService
+  );
 
-  const fields = [
-    {
-      name: 'principal_pensioner_id_card_number',
-      label: 'Principal Pensioner ID Card Number',
-      type: 'text',
-      required: true,
-    },
+  const igcTypes = [
+    { id: 0, name: 'Dependant Pension' },
+    { id: 1, name: 'Killed On Duty' },
+    { id: 2, name: 'Injury or Disability Pension' },
+    { id: 3, name: 'Revised Disability' },
+    { id: 4, name: 'RevisedCases Erroneous Deductions' },
+    { id: 5, name: 'RevisedCases Court Order' },
+    { id: 6, name: 'RevisedCases Salary Change' },
+    { id: 7, name: 'RevisedCases Erroneous Awards' },
   ];
 
-  const fileData = [
-    {
-      name: 'principal_pensioner_id_card_front',
-      description: 'Principal Pensioner ID Card Front',
-      required: true,
-    },
-    {
-      name: 'principal_pensioner_id_card_back',
-      description: 'Principal Pensioner ID Card Back',
-      required: true,
-    },
-  ];
-
-  const otherFields = [
-    {
-      name: 'death_certificate_number',
-      label: 'Death Certificate Number',
-      type: 'text',
-    },
-    {
-      name: 'death_certificate',
-      label: 'Death Certificate',
-      type: 'file',
-    },
-    {
-      name: 'burial_permit_number',
-      label: 'Burial Permit Number',
-      type: 'text',
-    },
-    {
-      name: 'burial_permit',
-      label: 'Burial Permit',
-      type: 'file',
-    },
-  ];
+  const handleDocumentTypeChange = (value) => {
+    const selectedDocument = documentTypes.find(
+      (doc) => doc.document_type_id === value
+    );
+    setFormData((prev) => ({
+      ...prev,
+      documentType: value,
+      documentTypeSetup: selectedDocument.documentTypeSetup,
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: '' });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
   };
 
-  //   const handleFileChange = (info, fieldName) => {
-  //     let fileList = [...info.fileList];
-  //     fileList = fileList.slice(-1);
-  //     setFileList(fileList);
-
-  //     if (info.file.status === 'done') {
-  //       const file = info.file.originFileObj;
-  //       const pdfUrl = URL.createObjectURL(file); // Create a preview URL
-  //       setPreviewContent(
-  //         <embed
-  //           src={pdfUrl}
-  //           type="application/pdf"
-  //           width="100%"
-  //           height="600px"
-  //         />
-  //       );
-  //       setFormData({ ...formData, [fieldName]: info.file.response });
-  //       message.success(`${info.file.name} file uploaded successfully`);
-  //     } else if (info.file.status === 'error') {
-  //       message.error(`${info.file.name} file upload failed.`);
-  //     }
-  //   };
-
-  const handleSave = async () => {
-    const validationErrors = {};
-    [...fields, ...fileData, ...otherFields].forEach((field) => {
-      if (field.required && !formData[field.name]) {
-        validationErrors[field.name] = `${
-          field.label || field.description
-        } is required`;
-      }
-    });
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    console.log('data to be saved', formData);
-
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
-    });
-
-    try {
-      const response = await apiService.post(
-        endpoints.confirmPrincipalPensioner,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+  const renderUploadFields = () => {
+    const selectedDocument =
+      documentTypes &&
+      documentTypes.find(
+        (doc) => doc.document_type_id === formData.documentType
       );
-      if (response.data.succeeded === true) {
-        setOpenPensionerDetails(true);
-        message.success('Principal Pensioner details successfully retrieved.');
-        setDetails(response.data.data);
-        console.log('Response:', response.data);
-      } else if (
-        response.data.succeeded === false &&
-        response.data.message[0]
-      ) {
-        message.error(response.data.message[0]);
-      } else {
-        message.error('Error occured while processing your request');
-      }
-    } catch (error) {
-      message.error('Failed to save data');
-      console.error('Error:', error);
-    }
-  };
 
-  const handleFileChange = ({ fileList }, fieldName) => {
-    const file = fileList[0]?.originFileObj; // Get the first file
-    setFileList(fileList);
+    if (!selectedDocument) return null;
 
-    if (file) {
-      setFormData({ ...formData, [fieldName]: file }); // Store the file object
+    const uploadFields = [];
+    if (selectedDocument.front) {
+      uploadFields.push({
+        name: 'front',
+        description: `${selectedDocument.documentTypeSetup.name} Front`,
+        required: selectedDocument.required,
+        documentTypesSetupId: selectedDocument.documentTypeSetup.id,
+      });
     }
+    if (selectedDocument.back) {
+      uploadFields.push({
+        name: 'back',
+        description: `${selectedDocument.documentTypeSetup.name} Back`,
+        required: selectedDocument.required,
+        documentTypesSetupId: selectedDocument.documentTypeSetup.id,
+      });
+    }
+
+    return (
+      <>
+        <div className="my-2">
+          <label className="text-xs font-semibold text-gray-600">
+            {selectedDocument
+              ? `${selectedDocument.documentTypeSetup.name} Number`
+              : 'Document Number'}
+          </label>
+          <TextField
+            type="text"
+            name="supporting_document_number"
+            variant="outlined"
+            size="small"
+            value={formData['supporting_document_number'] || ''}
+            onChange={(e) => handleInputChange(e)}
+            error={!!errors['supporting_document_number']}
+            helperText={errors['supporting_document_number']}
+            required={true}
+            fullWidth
+          />
+        </div>
+        <Table
+          columns={fileColumns}
+          dataSource={uploadFields}
+          pagination={false}
+          rowKey="name"
+          className="antcustom-table"
+        />
+      </>
+    );
   };
 
   const fileColumns = [
@@ -164,9 +137,11 @@ function DependantsEnrollment() {
       render: (_, record) => (
         <Upload
           name={record.name}
-          onChange={(info) => handleFileChange(info, record.name)}
+          onChange={(info) =>
+            handleFileChange(info, record.name, record.documentTypesSetupId)
+          }
           fileList={fileList.filter((file) => file.name === record.name)}
-          beforeUpload={() => false} // Prevent automatic upload
+          beforeUpload={() => false}
         >
           <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
@@ -206,6 +181,162 @@ function DependantsEnrollment() {
     },
   ];
 
+  const handleFileChange = ({ fileList }, fieldName, documentTypesSetupId) => {
+    if (!fileList.length) return;
+
+    const file = fileList[0]?.originFileObj;
+    setFileList(fileList);
+
+    if (file) {
+      setFormData((prev) => {
+        const existingDocuments = prev.IGC_Supporting_Documents || [];
+
+        // Check if documentType already exists
+        const docIndex = existingDocuments.findIndex(
+          (doc) => doc.documentTypesSetupId === documentTypesSetupId
+        );
+
+        let updatedDocuments;
+        if (docIndex !== -1) {
+          // Update existing entry
+          updatedDocuments = [...existingDocuments];
+          updatedDocuments[docIndex].files = [file];
+        } else {
+          // Add new entry
+          updatedDocuments = [
+            ...existingDocuments,
+            {
+              files: [file],
+
+              igc_document_id: documentTypesSetupId,
+            },
+          ];
+        }
+
+        return {
+          ...prev,
+          [fieldName]: file,
+          IGC_Supporting_Documents: updatedDocuments,
+        };
+      });
+    }
+  };
+  const handleSave = async () => {
+    const validationErrors = {};
+    fields.forEach((field) => {
+      if (field.required && !formData[field.name]) {
+        validationErrors[field.name] = `${field.label} is required`;
+      }
+    });
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const formDataToSend = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      if (key === 'IGC_Supporting_Documents') {
+        formData[key].forEach((doc, index) => {
+          if (doc.files?.length) {
+            doc.files.forEach((file, fileIndex) => {
+              formDataToSend.append(
+                `IGC_Supporting_Documents[${index}].files`,
+                file
+              );
+            });
+          } else {
+            // Ensuring that the 'files' key is present even if it's empty to prevent validation errors
+            formDataToSend.append(
+              `IGC_Supporting_Documents[${index}].files`,
+              new Blob(),
+              ''
+            );
+          }
+
+          formDataToSend.append(
+            `IGC_Supporting_Documents[${index}].igc_document_id`,
+            doc.igc_document_id
+          );
+        });
+      }
+    });
+
+    console.log('Final FormData before sending:');
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    console.log('FormData before sending:', formData);
+    console.log('FormDataToSend:', formDataToSend);
+
+    try {
+      const response = await apiService.post(
+        endpoints.initiateIGC,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      if (response.data.succeeded === true) {
+        setOpenPensionerDetails(true);
+        message.success('Principal Pensioner details successfully retrieved.');
+        setDetails(response.data.data);
+      } else if (
+        response.data.succeeded === false &&
+        response.data.message[0]
+      ) {
+        message.error(response.data.message[0]);
+      } else {
+        message.error('Error occurred while processing your request');
+      }
+    } catch (error) {
+      message.error('Failed to save data');
+      console.error('Error:', error);
+    }
+  };
+
+  const fields = [
+    {
+      name: 'documentType',
+      label: 'Select Document Type',
+      type: 'select',
+      required: true,
+      options: documentTypes
+        ? documentTypes.map((doc) => ({
+            id: doc.document_type_id,
+            name: doc.documentTypeSetup.name,
+            igcType: igcTypes.find((igc) => igc.id === doc.igC_Type).name,
+          }))
+        : [],
+    },
+  ];
+  const renderRequiredDocumentsTable = () => {
+    const requiredDocuments = documentTypes
+      ? documentTypes.filter((doc) => doc.required)
+      : [];
+
+    return (
+      <div className="">
+        <Table
+          columns={fileColumns}
+          dataSource={requiredDocuments.map((doc) => ({
+            name: doc.document_type_id,
+            description: doc.documentTypeSetup.name,
+            required: doc.required,
+            documentTypesSetupId: doc.documentTypeSetup.id,
+          }))}
+          pagination={false}
+          rowKey="name"
+          className="antcustom-table"
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="p-4 mr-5 rounded-sm relative bg-white shadow-md">
       <Dialog
@@ -214,48 +345,10 @@ function DependantsEnrollment() {
         maxWidth="sm"
         fullWidth
       >
-        <div className="p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-xl font-bold text-primary mb-6">
-            Confirm Pensioner Details
-          </h2>
-
-          <div className="space-y-4 bg-gray-50 p-4 rounded-md">
-            {[
-              {
-                label: 'Full Name',
-                value: `${details.first_name} ${details.middle_name} ${details.surname}`,
-              },
-              { label: 'Other Name', value: details.other_name || 'N/A' },
-              { label: 'Pensioner Number', value: details.pensioner_number },
-              {
-                label: 'National ID Number',
-                value: details.national_id_number,
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center border-b pb-[1px]"
-              >
-                <p className="text-sm font-semibold  text-primary">
-                  {item.label}:
-                </p>
-                <p className="text-base text-gray-800">{item.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-between mt-6 space-x-3">
-            <button
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-              onClick={() => setOpenPensionerDetails(false)}
-            >
-              Cancel
-            </button>
-            <button className="px-4 py-2 text-white bg-primary rounded-lg hover:bg-primary-dark transition">
-              Confirm Details
-            </button>
-          </div>
-        </div>
+        <DialogContent>
+          <h2>Confirm Pensioner Details</h2>
+          {/* Display pensioner details here */}
+        </DialogContent>
       </Dialog>
 
       <MuiButton
@@ -264,96 +357,168 @@ function DependantsEnrollment() {
         onClick={handleSave}
         sx={{
           display: 'block',
-          //align right
           marginLeft: 'auto',
         }}
       >
-        Confirm Pensioner Details
+        Initiate IGC Claim
       </MuiButton>
-      {fields.map((field, index) => (
-        <div
-          key={index}
-          style={{
-            flexDirection: 'column',
-            display: field.hide === true ? 'none' : 'flex',
-            marginBottom: '16px',
-          }}
-        >
-          {field.type !== 'file' && (
-            <label className="text-xs font-semibold text-gray-600 flex gap-1 items-center">
-              {field.label}
-              <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-                *
-              </div>
-            </label>
-          )}
-          <TextField
-            type={field.type}
-            name={field.name}
-            variant="outlined"
-            size="small"
-            value={formData[field.name] || ''}
-            onChange={handleInputChange}
-            error={!!errors[field.name]}
-            helperText={errors[field.name]}
-            required={field.required}
-            fullWidth
-          />
-        </div>
-      ))}
 
-      <div className="mb-6">
-        <Table
-          columns={fileColumns}
-          dataSource={fileData}
-          pagination={false}
-          rowKey="name"
-          className="antcustom-table"
+      <div className="flex flex-col mb-3">
+        <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+          Principal Pensioner ID Card Number
+          <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+            *
+          </div>
+        </label>
+        <TextField
+          type="text"
+          name="principal_pensioner_id_card_number"
+          variant="outlined"
+          size="small"
+          value={formData['principal_pensioner_id_card_number'] || ''}
+          onChange={(e) => handleInputChange(e)}
+          error={!!errors['principal_pensioner_id_card_number']}
+          helperText={errors['principal_pensioner_id_card_number']}
+          required={true}
+          fullWidth
         />
       </div>
+      <div className="my-2">
+        <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
+          These are the required documents:
+          <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+            *
+          </div>
+        </p>
+        {renderRequiredDocumentsTable()}
+      </div>
 
-      {otherFields.map((field, index) => (
-        <div
-          key={index}
-          style={{
-            flexDirection: 'column',
-            display: field.hide === true ? 'none' : 'flex',
-            marginBottom: '16px',
-          }}
-        >
-          {field.type !== 'file' && (
-            <label className="text-xs font-semibold text-gray-600">
-              {field.label}
-            </label>
-          )}
-          {field.type === 'file' ? (
-            <div className="mb-6">
-              <Table
-                columns={fileColumns}
-                dataSource={[{ name: field.name, description: field.label }]}
-                pagination={false}
-                rowKey="name"
-                className="antcustom-table"
-              />
-            </div>
-          ) : (
+      <Divider
+        sx={{
+          my: 4,
+        }}
+      />
+      <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
+        Upload Other Documents
+      </p>
+
+      {fields.map((field, index) => (
+        <div key={index} style={{ marginBottom: '16px' }}>
+          <label className="text-xs font-semibold text-gray-600">
+            {field.label}
+          </label>
+          {field.type === 'text' ? (
             <TextField
               type={field.type}
               name={field.name}
               variant="outlined"
               size="small"
               value={formData[field.name] || ''}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+              }}
               error={!!errors[field.name]}
               helperText={errors[field.name]}
               required={field.required}
               fullWidth
             />
+          ) : (
+            <Autocomplete
+              options={field.options}
+              getOptionLabel={(option) =>
+                field.searchByAccountNo ? option.accountNo : option.name
+              }
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  [field.name]: newValue ? newValue.id : '', // Ensure empty value if nothing is selected
+                }));
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name={field.name}
+                />
+              )}
+              value={
+                (field.options.length > 0 &&
+                  field.options.find(
+                    (option) => option.id === formData[field.name]
+                  )) ||
+                null
+              }
+              renderOption={(props, option, { selected }) => (
+                <div className="">
+                  <li
+                    {...props}
+                    style={{
+                      border: 'none',
+                      boxShadow: 'none',
+                      backgroundColor: selected ? '#B2E9ED' : 'white',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: '100%',
+                        pr: '40px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: 3,
+                        }}
+                      >
+                        <p
+                          className="text-primary font-normal text-[12px] items-start"
+                          style={{ alignSelf: 'flex-start' }}
+                        >
+                          {option.igcType}
+                        </p>
+                        <p
+                          className="text-[12px] items-center"
+                          style={{ alignSelf: 'flex-center' }}
+                        >
+                          {option.name}
+                        </p>
+                      </Box>
+                    </Box>
+                  </li>
+                </div>
+              )}
+              ListboxProps={{
+                sx: {
+                  padding: 0,
+                  '& ul': {
+                    padding: 0,
+                    margin: 0,
+                  },
+                  // Additional styling for the listbox
+                },
+              }}
+              PopperComponent={(props) => (
+                <Popper {...props}>
+                  {/* Header */}
+                  <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                    <p className="text-xs font-normal">Igc Type</p>
+                    <p className="text-xs font-normal">Name</p>
+                  </li>
+                  {props.children}
+                </Popper>
+              )}
+            />
           )}
         </div>
       ))}
 
-      {/* Preview Section */}
+      {renderUploadFields()}
+
       <Dialog
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}

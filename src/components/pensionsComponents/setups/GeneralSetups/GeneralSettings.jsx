@@ -79,6 +79,10 @@ const GeneralSettings = () => {
         item.compassionate_annual_allowance_minimum_years_applicable_cap189,
       parliamentary_term_span_years: item.parliamentary_term_span_years,
       parliamentary_term_span_years_min: item.parliamentary_term_span_years_min,
+      military_assisted_living_allowance_amount:
+        item.military_assisted_living_allowance_amount,
+      parliamentary_prequalification_age:
+        item.parliamentary_prequalification_age,
       // roles: item.roles,
     }));
   };
@@ -306,6 +310,16 @@ const GeneralSettings = () => {
     {
       name: 'parliamentary_term_span_years',
       label: 'Parliamentary Term Span Years',
+      type: 'number',
+    },
+    {
+      name: 'military_assisted_living_allowance_amount',
+      label: 'Military Assisted Living Allowance Amount',
+      type: 'number',
+    },
+    {
+      name: 'parliamentary_prequalification_age',
+      label: 'Parliamentary Prequalification Age',
       type: 'number',
     },
   ];
