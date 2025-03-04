@@ -79,7 +79,7 @@ function DependantsEnrollment() {
         name: 'front',
         description: `${selectedDocument.documentTypeSetup.name} Front`,
         required: selectedDocument.required,
-        documentTypesSetupId: selectedDocument.documentTypeSetup.id,
+        documentTypesSetupId: selectedDocument.document_type_id,
       });
     }
     if (selectedDocument.back) {
@@ -87,7 +87,7 @@ function DependantsEnrollment() {
         name: 'back',
         description: `${selectedDocument.documentTypeSetup.name} Back`,
         required: selectedDocument.required,
-        documentTypesSetupId: selectedDocument.documentTypeSetup.id,
+        documentTypesSetupId: selectedDocument.document_type_id,
       });
     }
 
@@ -327,7 +327,7 @@ function DependantsEnrollment() {
             name: doc.document_type_id,
             description: doc.documentTypeSetup.name,
             required: doc.required,
-            documentTypesSetupId: doc.documentTypeSetup.id,
+            documentTypesSetupId: doc.document_type_id,
           }))}
           pagination={false}
           rowKey="name"

@@ -89,9 +89,21 @@ const IGCDocumentsSetups = () => {
 
   const transformData = (data) => {
     return data.map((item, index) => ({
+      id: item.document_type_id,
       ...item,
+
       // roles: item.roles,
     }));
+  };
+
+  const handleDeleteSchedule = async () => {
+    try {
+      const res = await apiService.delete(endpoints.deleteIgc, {
+        id: clickedItem.document_type_id,
+      });
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
+    }
   };
 
   const handlers = {
@@ -166,8 +178,7 @@ const IGCDocumentsSetups = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteRole(clickedItem?.id)}
-        deleteApiService={apiService.post}
+        customDeleteFunction={handleDeleteSchedule}
       >
         {clickedItem ? (
           <div>

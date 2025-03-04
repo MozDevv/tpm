@@ -468,7 +468,9 @@ const endpoints = {
 
   createIgcDocument: '/api/Setups/CreateIGCDocuments',
   updateIGCDoc: '/api/Setups/UpdateIGCDocuments',
+
   initiateIGC: '/api/IGCClaimInitiation/initiateIGCClaimCommand',
+  deleteIgc: '/api/Setups/DeleteIGCDocuments',
 };
 
 export const apiService = {
