@@ -285,7 +285,9 @@ export const FieldDocuments = ({
         {/* Left Side: Document Viewer */}
         <Grid item xs={9}>
           {previewContent ? (
-            <div className="h-[100vh] overflow-auto">{previewContent}</div>
+            <div className="h-[70vh] shadow-sm overflow-auto">
+              {previewContent}
+            </div>
           ) : (
             <div className="flex items-center justify-center min-h-[65vh]">
               <div className="text-center">
@@ -336,136 +338,147 @@ export const FieldDocuments = ({
               <h6 className="text-base font-semibold mb-4 text-primary">
                 Verifications
               </h6>
-              {fieldData.documents[selectedIndex].documentSelectionVerifications
-                .length > 0 ? (
-                fieldData.documents[
-                  selectedIndex
-                ].documentSelectionVerifications.map((verification, index) => {
-                  const status =
-                    verification.claim_stage !== null
-                      ? claimsStatus[verification.claim_stage]
-                      : preclaimsStatus[
-                          verification.prospective_pensioner_notification_status
-                        ];
+              <div className="h-[60vh] overflow-auto">
+                {fieldData.documents[selectedIndex]
+                  .documentSelectionVerifications.length > 0 ? (
+                  fieldData.documents[
+                    selectedIndex
+                  ].documentSelectionVerifications.map(
+                    (verification, index) => {
+                      const status =
+                        verification.claim_stage !== null
+                          ? claimsStatus[verification.claim_stage]
+                          : preclaimsStatus[
+                              verification
+                                .prospective_pensioner_notification_status
+                            ];
 
-                  const userDetails = users?.find(
-                    (user) => user.id === verification.verified_by_id
-                  );
+                      const userDetails = users?.find(
+                        (user) => user.id === verification.verified_by_id
+                      );
 
-                  const isVerified = verification.verified_by_id !== null;
+                      const isVerified = verification.verified_by_id !== null;
 
-                  return (
-                    <Card
-                      key={index}
-                      sx={{
-                        mb: 2,
-                        px: 2,
-                        py: '3px',
-                        borderLeft: `6px solid ${status.color}`,
-                        boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.1)',
+                      return (
+                        <Card
+                          key={index}
+                          sx={{
+                            mb: 2,
+                            px: 2,
+                            py: '3px',
+                            borderLeft: `6px solid ${status.color}`,
+                            boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.1)',
+                          }}
+                        >
+                          <Stack spacing={1}>
+                            <div className="flex w-full justify-between items-center">
+                              <Chip
+                                label={status.name}
+                                size="small"
+                                sx={{
+                                  backgroundColor: status.color,
+                                  height: '18px',
+                                  color: '#fff',
+                                  fontWeight: 'bold',
+                                  fontSize: '10px',
+                                  alignSelf: 'start',
+                                }}
+                              />
+                              {isVerified ? (
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  <Verified
+                                    style={{
+                                      color: '#2e7d32',
+                                      marginRight: '3px',
+                                      fontSize: '19px',
+                                    }}
+                                  />
+                                  <span
+                                    style={{
+                                      color: '#2e7d32',
+                                      fontWeight: 'bold',
+                                      fontSize: '12px',
+                                    }}
+                                  >
+                                    Verified
+                                  </span>
+                                </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  <Cancel
+                                    style={{
+                                      color: '#d32f2f',
+                                      marginRight: '3px',
+                                      fontSize: '19px',
+                                    }}
+                                  />
+                                  <span
+                                    style={{
+                                      color: '#d32f2f',
+                                      fontWeight: 'bold',
+                                      fontSize: '12px',
+                                    }}
+                                  >
+                                    Not Verified
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <Typography variant="body2">
+                              <strong>Verified By:</strong>
+                              {'   '}
+                              {userDetails
+                                ? `${userDetails.firstName} ${userDetails.middleName} ${userDetails.lastName}`
+                                : 'Not Verified'}
+                            </Typography>
+                            <Typography variant="body2">
+                              <strong>Email:</strong>
+                              {'   '}
+                              {userDetails?.email ?? 'Not Verified'}
+                            </Typography>
+                            <Typography variant="body2">
+                              <strong>Department:</strong>
+                              {'   '}
+                              {userDetails?.department?.name ?? 'Not Verified'}
+                            </Typography>
+                            <Typography variant="body2">
+                              <strong>Date Verified:</strong>
+                              {'   '}
+                              {new Date(
+                                verification.date_verified
+                              ).toLocaleDateString()}
+                            </Typography>
+                            {verification.verification_comments && (
+                              <Alert severity="info" sx={{ mt: 1 }}>
+                                {verification.verification_comments}
+                              </Alert>
+                            )}
+                          </Stack>
+                        </Card>
+                      );
+                    }
+                  )
+                ) : (
+                  <div className="">
+                    <Empty
+                      style={{
+                        marginTop: '20px',
                       }}
-                    >
-                      <Stack spacing={1}>
-                        <div className="flex w-full justify-between items-center">
-                          <Chip
-                            label={status.name}
-                            size="small"
-                            sx={{
-                              backgroundColor: status.color,
-                              height: '18px',
-                              color: '#fff',
-                              fontWeight: 'bold',
-                              fontSize: '10px',
-                              alignSelf: 'start',
-                            }}
-                          />
-                          {isVerified ? (
-                            <div
-                              style={{ display: 'flex', alignItems: 'center' }}
-                            >
-                              <Verified
-                                style={{
-                                  color: '#2e7d32',
-                                  marginRight: '3px',
-                                  fontSize: '19px',
-                                }}
-                              />
-                              <span
-                                style={{
-                                  color: '#2e7d32',
-                                  fontWeight: 'bold',
-                                  fontSize: '12px',
-                                }}
-                              >
-                                Verified
-                              </span>
-                            </div>
-                          ) : (
-                            <div
-                              style={{ display: 'flex', alignItems: 'center' }}
-                            >
-                              <Cancel
-                                style={{
-                                  color: '#d32f2f',
-                                  marginRight: '3px',
-                                  fontSize: '19px',
-                                }}
-                              />
-                              <span
-                                style={{
-                                  color: '#d32f2f',
-                                  fontWeight: 'bold',
-                                  fontSize: '12px',
-                                }}
-                              >
-                                Not Verified
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <Typography variant="body2">
-                          <strong>Verified By:</strong>
-                          {'   '}
-                          {userDetails
-                            ? `${userDetails.firstName} ${userDetails.middleName} ${userDetails.lastName}`
-                            : 'Not Verified'}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Email:</strong>
-                          {'   '}
-                          {userDetails?.email ?? 'Not Verified'}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Department:</strong>
-                          {'   '}
-                          {userDetails?.department?.name ?? 'Not Verified'}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Date Verified:</strong>
-                          {'   '}
-                          {new Date(
-                            verification.date_verified
-                          ).toLocaleDateString()}
-                        </Typography>
-                        {verification.verification_comments && (
-                          <Alert severity="info" sx={{ mt: 1 }}>
-                            {verification.verification_comments}
-                          </Alert>
-                        )}
-                      </Stack>
-                    </Card>
-                  );
-                })
-              ) : (
-                <div className="">
-                  <Empty
-                    style={{
-                      marginTop: '20px',
-                    }}
-                    description="No verifications available"
-                  />
-                </div>
-              )}
+                      description="No verifications available"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
