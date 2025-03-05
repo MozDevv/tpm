@@ -643,6 +643,21 @@ const BaseInputCard = ({
                   ))}
                 </TextField>
               )
+            ) : field.type === 'radio' ? (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={formData[field.name] === true}
+                    onChange={handleInputChange}
+                    disabled={field.disabled || disableAll}
+                    name={field.name}
+                    color="primary"
+                  />
+                }
+                label={
+                  formData[field.name] ? field.switchTrue : field.switchFalse
+                }
+              />
             ) : field.type === 'switch' ? (
               <FormControlLabel
                 control={

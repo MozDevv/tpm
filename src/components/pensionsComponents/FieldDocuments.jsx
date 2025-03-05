@@ -19,6 +19,7 @@ import endpoints, { apiService } from '../services/setupsApi';
 import { Empty, message } from 'antd';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import { ArrowBack, Cancel, Verified } from '@mui/icons-material';
+import { BASE_CORE_API } from '@/utils/constants';
 
 export const FieldDocuments = ({
   fieldData,
@@ -31,8 +32,44 @@ export const FieldDocuments = ({
   const [comments, setComments] = useState('');
   const [approved, setApproved] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [previewContent, setPreviewContent] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { data: users } = useFetchAsync(endpoints.getUsers, apiService);
+
+  const handlePreview = async () => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${fieldData.documents[selectedIndex].selectionId}`
+      );
+      const base64Data = res.data?.messages[0];
+      if (base64Data) {
+        setPreviewContent(
+          <embed
+            src={`data:application/pdf;base64,${base64Data}`}
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          />
+        );
+      } else {
+        message.error('No preview available for this document.');
+      }
+    } catch (error) {
+      console.log('Error fetching document:', error);
+      message.error('Failed to fetch document.');
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (fieldData.documents.length > 0) {
+      handlePreview();
+    }
+  }, []);
 
   const handleTabSelection = (event, newValue) => {
     setSelectedTab(newValue);
@@ -102,15 +139,6 @@ export const FieldDocuments = ({
     }
   };
 
-  const getMatchingVerification = (document, isPreclaim, status) => {
-    return document.documentSelectionVerifications.find((verification) => {
-      const statusMatch = isPreclaim
-        ? verification.prospective_pensioner_notification_status === status
-        : verification.claim_stage === status;
-      return statusMatch;
-    });
-  };
-
   const preclaimsStatus = {
     0: { name: 'UNNOTIFIED', color: '#e74c3c' }, // Light Red
     1: { name: 'SCHEDULED', color: '#f39c12' }, // Bright Orange
@@ -144,6 +172,7 @@ export const FieldDocuments = ({
 
   return (
     <Box sx={{ padding: 3, width: '100%' }}>
+      {/* {JSON.stringify(fieldData.documents[selectedIndex])} */}
       <Typography
         variant="h5"
         gutterBottom
@@ -255,36 +284,15 @@ export const FieldDocuments = ({
       <Grid container>
         {/* Left Side: Document Viewer */}
         <Grid item xs={9}>
-          <Card
-            sx={{
-              height: '70vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {/* {fieldData.documents[selectedIndex].fileUrl ? (
-              <iframe
-                src={fieldData.documents[selectedIndex].fileUrl }
-                width="100%"
-                height="100%"
-                style={{ border: 'none', borderRadius: '8px' }}
-                title="Document Preview"
-              />
-            ) : (
-              <Typography >
-                No file available for preview
-              </Typography>
-            )} */}
-
-            <iframe
-              src="https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf"
-              width="100%"
-              height="100%"
-              style={{ border: 'none', borderRadius: '8px' }}
-              title="Document Preview"
-            />
-          </Card>
+          {previewContent ? (
+            <div className="h-[100vh] overflow-auto">{previewContent}</div>
+          ) : (
+            <div className="flex items-center justify-center min-h-[65vh]">
+              <div className="text-center">
+                <Empty description="No PDF available to display." />
+              </div>
+            </div>
+          )}
         </Grid>
 
         <Grid item xs={3}>

@@ -36,6 +36,7 @@ const Users = () => {
       defaultPasswordGracePeriod: item.defaultPasswordGracePeriod,
       capName: mdas.find((m) => m.id === item.mdaId)?.pensionCap.name,
       mdaName: mdas.find((m) => m.id === item.mdaId)?.description,
+      is_at_work: item.is_at_work,
     }));
   };
 
@@ -167,6 +168,13 @@ const Users = () => {
   const title = clickedItem ? 'User Details' : 'Create New User';
 
   const fields = [
+    {
+      name: 'is_at_work',
+      label: 'Available at Work',
+      type: 'radio',
+      switchTrue: 'Available',
+      switchFalse: 'Not Available',
+    },
     {
       name: 'employeeNumber',
       label: 'Employee Number',
