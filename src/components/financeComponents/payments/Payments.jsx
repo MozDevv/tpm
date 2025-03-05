@@ -275,6 +275,7 @@ const Payments = ({ status }) => {
       prospectivePensionerId: item.prospectivePensionerId,
       claimId: item?.claimId,
       stage: item.stage,
+      id_claim: item.claimId,
     }));
   };
 

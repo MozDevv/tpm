@@ -25,6 +25,7 @@ const authEndpoints = {
   resetPassword: '/Auth/ResetPassword',
   forgetPassword: '/Auth/ForgetPassword',
   resendOtp: '/Auth/ResendOTP',
+  unlockUser: (email) => `/Auth/UnlockUser?email=${email}`,
 
   //users
 

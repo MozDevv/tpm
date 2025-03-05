@@ -1260,7 +1260,11 @@ function PensionerDetails({
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
                       </div>
 
-                      <Collapse in={!open} timeout="auto" unmountOnExit>
+                      <Collapse
+                        in={!open || isPayment}
+                        timeout="auto"
+                        unmountOnExit
+                      >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 px-6 ">
                           {section.fields
                             .filter((field) => {

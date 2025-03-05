@@ -42,12 +42,14 @@ import {
   EditNote,
   Replay,
   TrendingUp,
+  Search,
+  LockOpen,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
-import { Divider, Menu, MenuItem } from '@mui/material';
+import { Divider, Menu, MenuItem, TextField } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { name } from 'dayjs/locale/en-au';
 
@@ -57,6 +59,7 @@ const ListNavigation = ({
   clickedItem,
   reportItems,
   selectedRows,
+  setSearchedValue,
 }) => {
   const { auth } = useAuth();
   const permissions = auth?.user?.permissions;
@@ -131,6 +134,13 @@ const ListNavigation = ({
       icon: FilterList,
       action: 'filter',
       requiredPermissions: [],
+    },
+    {
+      name: 'Search',
+      icon: Search,
+      action: 'search',
+      requiredPermissions: [],
+      disabled: false,
     },
     {
       name: 'Open in Excel',
@@ -425,13 +435,7 @@ const ListNavigation = ({
       action: 'postReconciliation',
       requiredPermissions: [],
     },
-    {
-      name: 'Search',
-      icon: ArticleOutlined,
-      action: 'search',
-      requiredPermissions: [],
-      disabled: true,
-    },
+
     {
       name: 'Export Schedule Lines to Excel',
       icon: Launch,
@@ -556,6 +560,12 @@ const ListNavigation = ({
       name: 'Upload Return',
       icon: PostAdd,
       action: 'uploadReturn',
+      requiredPermissions: [],
+    },
+    {
+      name: "Unlock User's Account",
+      icon: LockOpen,
+      action: 'unlockUserAccount',
       requiredPermissions: [],
     },
   ];
@@ -746,56 +756,73 @@ const ListNavigation = ({
   const handleItemClick = () => {
     setItemClicked(true);
   };
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
-  // Render buttons based on permissions and status
   const renderButtons = () => {
     return buttons
       .filter((button) => !button.status || button.status.includes(status))
       .filter((button) => !button.action || handlers[button.action])
       .map((button, index) => (
-        <Button
-          key={index}
-          onClick={() => {
-            handleItemClick();
-            handlers[button.action]();
-          }}
-          sx={{ mb: -1, maxHeight: '25px' }}
-          disabled={
-            button.requiredPermissions.some(
-              (permission) => !permissions?.includes(permission)
-            ) || button.disabled
-          }
-          startIcon={
-            button.image ? (
-              <img
-                src={button.image}
-                alt="excel"
-                className=""
-                height={18}
-                width={24}
-              />
-            ) : (
-              <button.icon
-                sx={{
-                  fontSize: '20px',
-                  mr: '2px',
-                  color:
-                    button.requiredPermissions.some(
-                      (permission) => !permissions?.includes(permission)
-                    ) || button.disabled
-                      ? 'gray'
-                      : 'primary',
-                }}
-                color="primary"
-              />
-            )
-          }
-        >
-          <p className="font-medium text-gray -ml-2 text-sm">{button.name}</p>
-        </Button>
+        <div key={index}>
+          {button.action === 'search' && isSearchActive ? (
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search..."
+              onBlur={() => setIsSearchActive(false)}
+              sx={{ mb: -1, maxHeight: '25px', ml: -1 }}
+              onChange={(e) => setSearchedValue(e.target.value)}
+            />
+          ) : (
+            <Button
+              onClick={() => {
+                if (button.action === 'search') {
+                  setIsSearchActive(true);
+                } else {
+                  handleItemClick();
+                  handlers[button.action]();
+                }
+              }}
+              sx={{ mb: -1, maxHeight: '25px' }}
+              disabled={
+                button.requiredPermissions.some(
+                  (permission) => !permissions?.includes(permission)
+                ) || button.disabled
+              }
+              startIcon={
+                button.image ? (
+                  <img
+                    src={button.image}
+                    alt="excel"
+                    className=""
+                    height={18}
+                    width={24}
+                  />
+                ) : (
+                  <button.icon
+                    sx={{
+                      fontSize: '20px',
+                      mr: '2px',
+                      color:
+                        button.requiredPermissions.some(
+                          (permission) => !permissions?.includes(permission)
+                        ) || button.disabled
+                          ? 'gray'
+                          : 'primary',
+                    }}
+                    color="primary"
+                  />
+                )
+              }
+            >
+              <p className="font-medium text-gray -ml-2 text-sm">
+                {button.name}
+              </p>
+            </Button>
+          )}
+        </div>
       ));
   };
-
   const renderApprovalButtons = () => {
     return (
       <div className="flex flex-col gap-2 w-full">

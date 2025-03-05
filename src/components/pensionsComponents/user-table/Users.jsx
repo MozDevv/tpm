@@ -10,6 +10,7 @@ import NewUserCard from '../recordCard/NewUserCard';
 import RecordCard from '../recordCard/RecordCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { message } from 'antd';
 
 const Users = () => {
   const transformData = (data) => {
@@ -39,6 +40,7 @@ const Users = () => {
   };
 
   const [editUser, setEditUser] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -65,10 +67,33 @@ const Users = () => {
       //  setOpenBaseCard(true);
       //  setClickedItem(item);
     },
+    ...(clickedItem?.lockoutEnabled
+      ? {
+          unlockUserAccount: () => {
+            handleUnlockUser();
+          },
+        }
+      : {}),
+  };
+
+  const handleUnlockUser = async () => {
+    try {
+      const res = await AuthApiService.post(
+        authEndpoints.unlockUser(clickedItem.email),
+        {}
+      );
+      if (res.status === 200) {
+        setClickedItem({ ...clickedItem, lockoutEnabled: false });
+        message.success('User Account unlocked successfully');
+        console.log('User unlocked successfully');
+      }
+    } catch (e) {
+      console.error('Error unlocking user:', e);
+    }
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
+
   const [departments, setDepartments] = React.useState([]);
 
   const [refreshData, setRefreshData] = React.useState(false);

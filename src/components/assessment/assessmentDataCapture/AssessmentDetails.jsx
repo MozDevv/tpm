@@ -20,6 +20,7 @@ function AssessmentDetails({
   viewBreakDown,
   setViewCompleteSummary,
   viewCompleteSummary,
+  isPayment,
 }) {
   const [expanded, setExpanded] = useState(false);
   const [dialogContent, setDialogContent] = useState(null);
@@ -79,10 +80,12 @@ function AssessmentDetails({
             />
           </BaseCollapse>
         )}
-        <PensionerDetails
-          clickedItem={clickedItem}
-          retireeId={clickedItem?.retiree}
-        />
+        {!isPayment && (
+          <PensionerDetails
+            clickedItem={clickedItem}
+            retireeId={clickedItem?.retiree}
+          />
+        )}
         <BaseCollapse
           name="Qualifying Service"
           expandHandler={() =>

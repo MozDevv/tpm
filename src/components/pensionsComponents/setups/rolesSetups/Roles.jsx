@@ -7,6 +7,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 
 const columnDefs = [
   {
@@ -62,6 +63,7 @@ const Roles = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
   const [departments, setDepartments] = useState([]); // [1]
+  const [inputData, setInputData] = useState({});
 
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -78,7 +80,8 @@ const Roles = () => {
       created_date: item.created_date,
       departmentId: item.departmentID,
       departmentName: item?.department?.name,
-      // roles: item.roles,
+      claimStage: item.claim_stage,
+      officer_incharge_id: item.officer_incharge_id,
     }));
   };
 
@@ -115,6 +118,8 @@ const Roles = () => {
 
   const title = clickedItem ? 'Role' : 'Create a New Role';
 
+  const { data: users } = useFetchAsync(endpoints.getUsers, apiService);
+
   const fields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
     {
@@ -133,6 +138,35 @@ const Roles = () => {
         name: d.name,
       })),
     },
+
+    ...(departments &&
+    inputData &&
+    inputData.departmentId &&
+    departments
+      .find((d) => d.departmentId === inputData.departmentId)
+      ?.name.toLowerCase()
+      .includes('claims')
+      ? [
+          {
+            name: 'claimStage',
+            label: 'Claim Stage',
+            type: 'select',
+            required: false,
+            options: [
+              { id: 0, name: 'Claims Verification' },
+              { id: 1, name: 'Claims Validation' },
+              { id: 2, name: 'Claim Approval' },
+            ],
+          },
+          {
+            name: 'officer_incharge_id',
+            label: 'Officer In Charge ID',
+            type: 'autocomplete',
+            required: false,
+            options: users && users.map((u) => ({ id: u.id, name: u.email })),
+          },
+        ]
+      : []),
   ];
 
   const fetchDepartments = async () => {
@@ -171,6 +205,7 @@ const Roles = () => {
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
             useRequestBody={false}
+            setInputData={setInputData}
           />
         ) : (
           <BaseInputCard
@@ -179,10 +214,12 @@ const Roles = () => {
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            setInputData={setInputData}
           />
         )}
       </BaseCard>
       <BaseTable
+        scrollable={true}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}

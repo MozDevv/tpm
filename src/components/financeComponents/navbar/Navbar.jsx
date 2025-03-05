@@ -101,7 +101,7 @@ function Navbar() {
                   </InputAdornment>
                 ),
               }}
-              placeholder="Search"
+              placeholder="Search Not"
             />
           </div>
         </div>

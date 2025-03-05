@@ -5,6 +5,7 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import { AgGridReact } from 'ag-grid-react';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { apiService } from '@/components/services/financeApi';
+import { apiService as preApiservice } from '@/components/services/preclaimsApi';
 import endpoints, {
   apiService as setupsApiService,
 } from '@/components/services/setupsApi';
@@ -13,6 +14,9 @@ import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputT
 import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
+import BaseTabs from '@/components/baseComponents/BaseTabs';
+import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import AssessmentCard from './PensionerDetailsTabs';
 
 const { TabPane } = Tabs;
 
@@ -44,6 +48,7 @@ function PaymentsCard({
               name: acc.accountNo,
               accountName: acc.name,
               accountType: acc.accountType,
+              ...acc,
             };
           })
         );
@@ -160,23 +165,24 @@ function PaymentsCard({
         },
       ],
     },
-
-    {
-      value: 'accountId',
-      label: 'Account No',
-      type: 'select',
-      required: true,
-
-      options: allOptions && allOptions,
-    },
     {
       value: 'accountNo',
-      label: 'Account Name',
+      label: 'Account No',
       type: 'text',
       required: true,
       disabled: true,
       options: allOptions && allOptions,
     },
+
+    {
+      value: 'accountId',
+      label: 'Account Name',
+      type: 'select',
+      required: true,
+
+      options: allOptions && allOptions,
+    },
+
     {
       value: 'narration',
       label: 'Narration',
@@ -375,93 +381,226 @@ function PaymentsCard({
   ];
 
   const [totalAmmounts, setTotalAmmounts] = useState(totalAmounts1);
+  const [retiree, setRetiree] = useState(null);
 
-  return (
-    <div className="p-2   mt-2">
-      <div>
-        <div>
-          <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
-            <div className="flex flex-col">
+  const fetchRetiree = async () => {
+    try {
+      const res = await preApiservice.get(
+        preClaimsEndpoints.getProspectivePensioner(
+          clickedItem?.prospectivePensionerId
+        )
+      );
+      if (res.status === 200) {
+        setRetiree(res.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRetiree();
+  }, []);
+
+  const tabPanes = [
+    {
+      title: 'Payment Details',
+      key: '1',
+      content: (
+        <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
+          <div className="flex flex-col">
+            <div className="flex-grow">
+              {' '}
+              {/* This allows the card to grow */}
+              <BaseAutoSaveInputCard
+                setClickedItem={setClickedItem}
+                fields={fields}
+                apiEndpoint={financeEndpoints.addPayment}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.updatePayment}
+                postApiFunction={apiService.post}
+                getApiEndpoint={financeEndpoints.getPaymentById(
+                  clickedItem?.id
+                )}
+                getApiFunction={apiService.get}
+                transformData={transformData}
+                setOpenBaseCard={setOpenBaseCard}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                disableAll={disableAll}
+              />
+            </div>
+
+            <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
               <div className="flex-grow">
                 {' '}
-                {/* This allows the card to grow */}
-                <BaseAutoSaveInputCard
-                  setClickedItem={setClickedItem}
-                  fields={fields}
-                  apiEndpoint={financeEndpoints.addPayment}
-                  putApiFunction={apiService.post}
-                  updateApiEndpoint={financeEndpoints.updatePayment}
-                  postApiFunction={apiService.post}
-                  getApiEndpoint={financeEndpoints.getPaymentById(
+                {/* Make this grow too */}
+                {clickedItem?.prospectivePensionerId &&
+                  clickedItem.source !== 0 && (
+                    <div className="ml-[-13px]">
+                      <PensionerDetails
+                        isPayment={true}
+                        clickedItem={clickedItem}
+                        retireeId={clickedItem?.prospectivePensionerId}
+                      />
+                    </div>
+                  )}
+                <BaseFinanceInputTable
+                  disableAll={disableAll}
+                  allOptions={allOptions}
+                  setSelectedAccountTypeId={setSelectedAccountTypeId}
+                  selectedAccountTypeId={selectedAccountTypeId}
+                  title="Payment Lines"
+                  fields={tableFields}
+                  id={clickedItem?.id}
+                  idLabel="paymentId"
+                  getApiService={apiService.get}
+                  postApiService={apiService.post}
+                  putApiService={apiService.post}
+                  getEndpoint={financeEndpoints.getPaymentLines(
                     clickedItem?.id
                   )}
-                  getApiFunction={apiService.get}
-                  transformData={transformData}
-                  setOpenBaseCard={setOpenBaseCard}
-                  clickedItem={clickedItem}
-                  useRequestBody={true}
-                  disableAll={disableAll}
+                  deleteEndpoint={financeEndpoints.deletePaymentLine}
+                  setTotalAmmounts={setTotalAmmounts}
+                  postEndpoint={financeEndpoints.addPaymentLine}
+                  putEndpoint={financeEndpoints.updatePaymentLine}
+                  passProspectivePensionerId={true}
+                  branches={branches}
                 />
-              </div>
-
-              <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
-                <div className="flex-grow">
-                  {' '}
-                  {/* Make this grow too */}
-                  {clickedItem?.prospectivePensionerId &&
-                    clickedItem.source !== 0 && (
-                      <div className="ml-[-13px]">
-                        <PensionerDetails
-                          isPayment={true}
-                          clickedItem={clickedItem}
-                          retireeId={clickedItem?.prospectivePensionerId}
-                        />
-                      </div>
-                    )}
-                  <BaseFinanceInputTable
-                    disableAll={disableAll}
-                    allOptions={allOptions}
-                    setSelectedAccountTypeId={setSelectedAccountTypeId}
-                    selectedAccountTypeId={selectedAccountTypeId}
-                    title="Payment Lines"
-                    fields={tableFields}
-                    id={clickedItem?.id}
-                    idLabel="paymentId"
-                    getApiService={apiService.get}
-                    postApiService={apiService.post}
-                    putApiService={apiService.post}
-                    getEndpoint={financeEndpoints.getPaymentLines(
-                      clickedItem?.id
-                    )}
-                    deleteEndpoint={financeEndpoints.deletePaymentLine}
-                    setTotalAmmounts={setTotalAmmounts}
-                    postEndpoint={financeEndpoints.addPaymentLine}
-                    putEndpoint={financeEndpoints.updatePaymentLine}
-                    passProspectivePensionerId={true}
-                    branches={branches}
-                  />
-                </div>
-
-                {/* <div className="flex justify-between mt-10">
-                  <div className="flex flex-row justify-between w-full">
-                    {totalAmmounts.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col gap-4 justify-between"
-                      >
-                        <span className="text-sm font-semibold text-gray-600">
-                          {item.name}
-                        </span>
-                        <span className="items-end text-right">
-                          {item.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
+        </div>
+      ),
+    },
+    {
+      title: 'Pensioner Work History',
+      key: '2',
+      content: <></>,
+    },
+  ];
+
+  return (
+    <div className="p-2">
+      <div>
+        <div className="mt-[-10px]">
+          {/* <BaseTabs tabPanes={tabPanes} /> */}
+
+          {clickedItem?.source === 1 || clickedItem?.source === 2 ? (
+            <AssessmentCard
+              claim={clickedItem}
+              clickedItem={retiree}
+              claimId={clickedItem?.claimId}
+              disableAll={disableAll}
+              setOpenBaseCard={setOpenBaseCard}
+              allOptions={allOptions}
+              setSelectedAccountTypeId={setSelectedAccountTypeId}
+              selected
+            >
+              <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
+                <div className="flex flex-col">
+                  <div className="flex-grow">
+                    <BaseAutoSaveInputCard
+                      setClickedItem={setClickedItem}
+                      fields={fields}
+                      apiEndpoint={financeEndpoints.addPayment}
+                      putApiFunction={apiService.post}
+                      updateApiEndpoint={financeEndpoints.updatePayment}
+                      postApiFunction={apiService.post}
+                      getApiEndpoint={financeEndpoints.getPaymentById(
+                        clickedItem?.id
+                      )}
+                      getApiFunction={apiService.get}
+                      transformData={transformData}
+                      setOpenBaseCard={setOpenBaseCard}
+                      clickedItem={clickedItem}
+                      useRequestBody={true}
+                      disableAll={disableAll}
+                    />
+                  </div>
+                  <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
+                    <div className="flex-grow">
+                      <BaseFinanceInputTable
+                        disableAll={disableAll}
+                        allOptions={allOptions}
+                        setSelectedAccountTypeId={setSelectedAccountTypeId}
+                        selectedAccountTypeId={selectedAccountTypeId}
+                        title="Payment Lines"
+                        fields={tableFields}
+                        id={clickedItem?.id}
+                        idLabel="paymentId"
+                        getApiService={apiService.get}
+                        postApiService={apiService.post}
+                        putApiService={apiService.post}
+                        getEndpoint={financeEndpoints.getPaymentLines(
+                          clickedItem?.id
+                        )}
+                        deleteEndpoint={financeEndpoints.deletePaymentLine}
+                        setTotalAmmounts={setTotalAmmounts}
+                        postEndpoint={financeEndpoints.addPaymentLine}
+                        putEndpoint={financeEndpoints.updatePaymentLine}
+                        passProspectivePensionerId={true}
+                        branches={branches}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AssessmentCard>
+          ) : (
+            <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
+              <div className="flex flex-col">
+                <div className="flex-grow">
+                  {' '}
+                  {/* This allows the card to grow */}
+                  <BaseAutoSaveInputCard
+                    setClickedItem={setClickedItem}
+                    fields={fields}
+                    apiEndpoint={financeEndpoints.addPayment}
+                    putApiFunction={apiService.post}
+                    updateApiEndpoint={financeEndpoints.updatePayment}
+                    postApiFunction={apiService.post}
+                    getApiEndpoint={financeEndpoints.getPaymentById(
+                      clickedItem?.id
+                    )}
+                    getApiFunction={apiService.get}
+                    transformData={transformData}
+                    setOpenBaseCard={setOpenBaseCard}
+                    clickedItem={clickedItem}
+                    useRequestBody={true}
+                    disableAll={disableAll}
+                  />
+                </div>
+
+                <div className="max-h-[90vh] h-[99vh] overflow-y-auto">
+                  <div className="flex-grow">
+                    <BaseFinanceInputTable
+                      disableAll={disableAll}
+                      allOptions={allOptions}
+                      setSelectedAccountTypeId={setSelectedAccountTypeId}
+                      selectedAccountTypeId={selectedAccountTypeId}
+                      title="Payment Lines"
+                      fields={tableFields}
+                      id={clickedItem?.id}
+                      idLabel="paymentId"
+                      getApiService={apiService.get}
+                      postApiService={apiService.post}
+                      putApiService={apiService.post}
+                      getEndpoint={financeEndpoints.getPaymentLines(
+                        clickedItem?.id
+                      )}
+                      deleteEndpoint={financeEndpoints.deletePaymentLine}
+                      setTotalAmmounts={setTotalAmmounts}
+                      postEndpoint={financeEndpoints.addPaymentLine}
+                      putEndpoint={financeEndpoints.updatePaymentLine}
+                      passProspectivePensionerId={true}
+                      branches={branches}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

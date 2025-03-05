@@ -133,7 +133,7 @@ const BaseExcelComponent = ({
             Select All / Unselect All
           </Checkbox>
         </div>
-        <div className="grid grid-cols-3 gap-2 mt-3 max-h-[400px] overflow-y-auto">
+        <div className="grid grid-cols-3 gap-2 mt-3 h-[250px] overflow-y-auto">
           {columns.map((column, index) => (
             <div key={column.field} className="w-full mb-2">
               <Checkbox

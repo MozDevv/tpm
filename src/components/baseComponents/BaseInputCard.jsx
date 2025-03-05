@@ -80,6 +80,12 @@ const BaseInputCard = ({
   }, [clickedItem]);
 
   useEffect(() => {
+    if (setInputData) {
+      setInputData(clickedItem);
+    }
+  }, [clickedItem]);
+
+  useEffect(() => {
     if (formData.pensionAwardId) {
       setFormData((prev) => ({
         ...prev,
@@ -444,6 +450,16 @@ const BaseInputCard = ({
           <Alert
             message={truncateMessage(saveError, 70)}
             type="error"
+            showIcon
+            closable
+          />
+        </div>
+      )}
+      {formData.lockoutEnabled && (
+        <div className="mb-4">
+          <Alert
+            message="User Account is locked"
+            type="warning"
             showIcon
             closable
           />

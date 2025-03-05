@@ -31,6 +31,27 @@ function ChartsOfAccounts() {
   const [subGroups, setSubGroups] = useState([]);
   const [openTrialBalanceReport, setOpenTrialBalanceReport] = useState(false);
 
+  const [searchedValue, setSearchedValue] = useState('');
+
+  const [originalRowData, setOriginalRowData] = useState([]);
+
+  useEffect(() => {
+    const lowercasedKeyword = searchedValue.toLowerCase();
+    if (searchedValue) {
+      const filtered = rowData.filter((row) =>
+        Object.values(row).some(
+          (value) =>
+            value !== null &&
+            value !== undefined &&
+            value.toString().toLowerCase().includes(lowercasedKeyword)
+        )
+      );
+      setRowData(filtered);
+    } else {
+      setRowData(originalRowData); // Reset to original row data when search value is empty
+    }
+  }, [searchedValue, originalRowData]);
+
   function calculateTotals(data) {
     let totals = {};
     let currentTotal = 0;
@@ -333,6 +354,7 @@ function ChartsOfAccounts() {
         budgetBalance: account.budgetBalance,
       }));
       setRowData(accounts);
+      setOriginalRowData(accounts);
     } catch (error) {
       console.log(error);
     }
@@ -345,6 +367,7 @@ function ChartsOfAccounts() {
   }, []);
 
   const handlers = {
+    search: () => console.log('Search clicked'),
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => exportData(),
     create: () => {
@@ -657,6 +680,7 @@ function ChartsOfAccounts() {
 
         <ListNavigation
           handlers={handlers}
+          setSearchedValue={setSearchedValue}
           reportItems={['Trial Balance', 'Balance Sheet']}
         />
         <Divider sx={{ mt: 2, mb: '-5px' }} />
