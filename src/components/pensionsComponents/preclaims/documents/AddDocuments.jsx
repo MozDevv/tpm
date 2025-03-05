@@ -12,7 +12,7 @@ import { BASE_CORE_API } from '@/utils/constants';
 import BaseLoadingBackdrop from '@/components/baseComponents/BaseLoadingBackdrop';
 import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 
-const AddDocuments = ({ id, moveToPreviousTab, status, clickedItem2 }) => {
+const AddDocuments = ({ id, moveToPreviousTab, status }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
 
   //const [awardDocumentsFromPortal, setAwardDocumentsFromPortal] = useState([]);
@@ -134,29 +134,11 @@ const AddDocuments = ({ id, moveToPreviousTab, status, clickedItem2 }) => {
       const res = await apiService.get(
         `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
       );
-
-      console.log('API Response:', res.data);
-
-      const message = res.data?.messages[0];
-      if (!message) {
-        message.error('No preview available for this document.');
-        return;
-      }
-
-      const parsedMessage = JSON.parse(atob(message));
-      console.log('Parsed Message:', parsedMessage);
-
-      const fileUrl = parsedMessage?.file_latest?.url; // <-- Fetch from correct URL
-
-      if (fileUrl) {
-        const fileResponse = await fetch(fileUrl, { method: 'GET' });
-        const blob = await fileResponse.blob(); // Convert response to a Blob
-
-        const pdfUrl = URL.createObjectURL(blob); // Create a preview URL
-
+      const base64Data = res.data?.messages[0];
+      if (base64Data) {
         setPreviewContent(
           <embed
-            src={pdfUrl}
+            src={`data:application/pdf;base64,${base64Data}`}
             type="application/pdf"
             width="100%"
             height="100%"
@@ -165,11 +147,12 @@ const AddDocuments = ({ id, moveToPreviousTab, status, clickedItem2 }) => {
         setPreviewTitle(record.name);
         setPreviewVisible(true);
       } else {
-        message.error('No valid document URL found.');
+        message.error('No preview available for this document.');
       }
     } catch (error) {
       console.log('Error fetching document:', error);
       message.error('Failed to fetch document.');
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -236,10 +219,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status, clickedItem2 }) => {
       key: 'extensions',
     },
 
-    clickedItem2?.notification_status === 2 ||
-    clickedItem2?.notification_status === null ||
-    clickedItem2?.notification_status === 0 ||
-    clickedItem2?.notification_status === 3
+    status !== 5
       ? {
           title: 'Select File',
           dataIndex: 'select',
