@@ -191,7 +191,7 @@ function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
             </div>
           </div>
 
-          <div className="px-4 bg-gray-50 rounded-lg ">
+          <div className="px-4 rounded-lg ">
             {taskDetails.current_user ? (
               <div>
                 <p className="text-gray-700 mb-2">
@@ -217,15 +217,18 @@ function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
             ) : (
               <Empty
                 description={
-                  <span style={{ fontSize: '14px', color: 'primary.main' }}>
-                    No User Assigned
+                  <span
+                    className="text-gray-800 font-sans"
+                    style={{ fontSize: '14px' }}
+                  >
+                    Unassigned, No user allocated.
                   </span>
                 }
                 style={{
                   p: 0,
                   // marginTop: '-6px',
                 }}
-                imageStyle={{ height: 44 }}
+                imageStyle={{ height: 48 }}
                 // image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}
@@ -245,7 +248,9 @@ function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
                   []
                 }
                 getOptionLabel={(option) =>
-                  `${option.firstName} ${option.lastName || ''}`
+                  `${option.firstName} ${option.lastName || ''} - ${
+                    option.email || ''
+                  }`
                 }
                 onChange={(event, newValue) => {
                   setReassignUser(newValue);
