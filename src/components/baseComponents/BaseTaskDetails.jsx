@@ -201,7 +201,13 @@ function BaseTaskDetails({ documentType, documentId }) {
           <Typography variant="subtitle2">Reassign Task</Typography>
           <Autocomplete
             id="reassign-user"
-            options={users || []}
+            options={
+              (users &&
+                users.filter((user) =>
+                  user.department.name.toLowerCase().includes('claims')
+                )) ||
+              []
+            }
             getOptionLabel={(option) =>
               `${option.firstName} ${option.lastName || ''}`
             }

@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 
 import authEndpoints, { AuthApiService } from '@/components/services/authApi';
-import { Person } from '@mui/icons-material';
+import {
+  Cancel,
+  CheckCircle,
+  HowToReg,
+  Person,
+  PersonOff,
+} from '@mui/icons-material';
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
 import BaseCard from '@/components/baseComponents/BaseCard';
@@ -124,6 +130,30 @@ const Users = () => {
       hide: false,
     },
     {
+      field: 'is_at_work',
+      headerName: 'Availability',
+      filter: true,
+      width: 150,
+      cellRenderer: (params) =>
+        params.value ? (
+          <>
+            <CheckCircle
+              style={{ color: 'green', marginRight: '4px', fontSize: '16px' }}
+            />
+            <span style={{ color: 'green', fontSize: '12px' }}>Available</span>
+          </>
+        ) : (
+          <>
+            <Cancel
+              style={{ color: 'red', marginRight: '4px', fontSize: '16px' }}
+            />
+            <span style={{ color: 'red', fontSize: '12px' }}>
+              Not Available
+            </span>
+          </>
+        ),
+    },
+    {
       field: 'idNumber',
       headerName: 'ID Number',
       filter: true,
@@ -165,8 +195,28 @@ const Users = () => {
   const pageSize = 12;
 
   const [roles, setRoles] = React.useState([]);
-  const title = clickedItem ? 'User Details' : 'Create New User';
-
+  const title = clickedItem ? (
+    <>
+      {clickedItem?.employeeNumber}
+      {clickedItem?.is_at_work ? (
+        <>
+          <HowToReg style={{ color: 'green', marginLeft: '24px' }} />
+          <span style={{ marginLeft: '4px', fontSize: '13px', color: 'green' }}>
+            Available
+          </span>
+        </>
+      ) : (
+        <>
+          <PersonOff style={{ color: 'red', marginLeft: '24px' }} />
+          <span style={{ marginLeft: '4px', fontSize: '13px', color: 'red' }}>
+            Not Available
+          </span>
+        </>
+      )}
+    </>
+  ) : (
+    'Create New User'
+  );
   const fields = [
     {
       name: 'is_at_work',
