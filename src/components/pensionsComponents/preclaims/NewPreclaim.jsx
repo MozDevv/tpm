@@ -72,6 +72,8 @@ function NewPreclaim({
 
   const [selectedField, setSelectedField] = useState(null);
 
+  const [refreshFieldsDocs, setRefreshFieldDocs] = useState(1);
+
   //const [hasId, setHasId] = useState(false);
 
   useEffect(() => {
@@ -255,6 +257,12 @@ function NewPreclaim({
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (retireeId) {
+      fetchRetiree();
+    }
+  }, [refreshFieldsDocs]);
 
   const getInitialFormData = () => {
     try {
@@ -1176,6 +1184,7 @@ function NewPreclaim({
           }}
         >
           <FieldDocuments
+            setRefreshFieldDocs={setRefreshFieldDocs}
             fieldData={selectedField}
             clickedItem={formData}
             status={status}

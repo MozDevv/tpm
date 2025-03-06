@@ -27,6 +27,7 @@ export const FieldDocuments = ({
   isPreclaim,
   status,
   handleOnClose,
+  setRefreshFieldDocs,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [comments, setComments] = useState('');
@@ -124,6 +125,7 @@ export const FieldDocuments = ({
         data
       );
       if (response.data.succeeded) {
+        setRefreshFieldDocs((prev) => prev + 1);
         message.success('Document approved successfully');
       } else if (
         response.data.succeeded === false &&
@@ -335,8 +337,8 @@ export const FieldDocuments = ({
           </Tabs>
           {selectedTab === 1 && (
             <div className="p-4">
-              <h6 className="text-base font-semibold mb-4 text-primary">
-                Verifications
+              <h6 className="text-base font-semibold mb-5 text-primary">
+                Approvals
               </h6>
               <div className="h-[60vh] overflow-auto">
                 {fieldData.documents[selectedIndex]
@@ -363,7 +365,7 @@ export const FieldDocuments = ({
                         <Card
                           key={index}
                           sx={{
-                            mb: 2,
+                            mb: 3,
                             px: 2,
                             py: '3px',
                             borderLeft: `6px solid ${status.color}`,

@@ -48,14 +48,14 @@ function CreateProspectivePensioner({
   const { activeCapName } = useMda();
 
   return (
-    <div className="p-2 h-[100vh] max-h-[100vh] overflow-auto  z-10 ">
+    <div className="p-2 h-[90vh] max-h-[90vh] overflow-auto  z-10 ">
       <div>
         <div>
-          <div className="px-5 mt-[-10px] z-50">
+          <div className="px-5 mt-[-10px] z-40">
             <Tabs
               activeKey={activeKey}
               onChange={handleTabChange}
-              className="!bg-transparent z-50"
+              className="!bg-transparent z-40"
               style={{ zIndex: 1 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >

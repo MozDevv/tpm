@@ -49,6 +49,7 @@ import ClaimVerification from './reports/ClaimVerification';
 import GP178Report from './reports/GP178Report';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
+import BaseTaskDetails from '@/components/baseComponents/BaseTaskDetails';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -793,13 +794,26 @@ const ClaimsTable = ({ status, isDashboard }) => {
             'Voucher Paid',
           ]}
         >
-          <CreateProspectivePensioner
-            setOpenBaseCard={setOpenPreclaimDialog}
-            openBaseCard={openPreclaimDialog}
-            clickedItem={clickedItem}
-            status={clickedItem?.stage}
-            isPreclaim={false}
-          />
+          <div className="">
+            <CreateProspectivePensioner
+              setOpenBaseCard={setOpenPreclaimDialog}
+              openBaseCard={openPreclaimDialog}
+              clickedItem={clickedItem}
+              status={clickedItem?.stage}
+              isPreclaim={false}
+            />
+          </div>
+          <div
+            style={{
+              boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
+            }}
+            className="sticky h-[160px] bottom-[-40px] bg-gray-100 p-4"
+          >
+            <BaseTaskDetails
+              documentId={clickedItem?.id_claim}
+              documentType={0}
+            />
+          </div>
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2">
           <ListNavigation

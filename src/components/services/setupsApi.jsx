@@ -471,6 +471,10 @@ const endpoints = {
 
   initiateIGC: '/api/IGCClaimInitiation/initiateIGCClaimCommand',
   deleteIgc: '/api/Setups/DeleteIGCDocuments',
+  getTaskDetails: (id, type) =>
+    `/api/TaskAllocations/GetCurrentTaskAllocation?recordId=${id}&taskType=${type}`,
+
+  reassignTask: '/api/TaskAllocations/ReassignTaskAllocation',
 };
 
 export const apiService = {
