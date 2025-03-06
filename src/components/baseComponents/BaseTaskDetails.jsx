@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   TextField,
-  Button,
   Grid,
   Paper,
   Typography,
   IconButton,
   MenuItem,
   Autocomplete,
+  Tooltip,
+  Button,
 } from '@mui/material';
 import endpoints, { apiService } from '../services/setupsApi';
 import {
@@ -15,13 +16,14 @@ import {
   ArrowForward,
   CheckCircle,
   KeyboardArrowDown,
+  KeyboardArrowUp,
   RemoveRedEye,
   Visibility,
 } from '@mui/icons-material';
 import useFetchAsync from '../hooks/DynamicFetchHook';
-import { message } from 'antd';
+import { Empty, message } from 'antd';
 
-function BaseTaskDetails({ documentType, documentId }) {
+function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
   const [taskDetails, setTaskDetails] = useState({});
   const [reassignUser, setReassignUser] = useState('');
 
@@ -101,142 +103,178 @@ function BaseTaskDetails({ documentType, documentId }) {
   };
 
   return (
-    <div className=" rounded-lg px-4 mt-[-10px] z-50">
-      <div className="flex justify-between items-center w-full">
-        <h2 className="text-base font-semibold text-primary ">
+    <div
+      style={{
+        zIndex: 9999999999,
+      }}
+      className="rounded-lg px-4 mt-[-10px] z-50 bg-white"
+    >
+      <div className="flex justify-between items-center w-full border-b pb-2 mb-2">
+        <h2 className="text-lg font-semibold text-primary">
           Task Allocation Details
         </h2>
-        <div className="">
-          <IconButton>
-            <KeyboardArrowDown
-              sx={{
-                color: 'primary.main',
-              }}
-            />
-          </IconButton>
-        </div>
+
+        {!minimize ? (
+          <Tooltip title="Show Less">
+            <IconButton onClick={() => setMinimize(!minimize)}>
+              <KeyboardArrowDown
+                sx={{
+                  color: 'primary.main',
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Show More">
+            <IconButton onClick={() => setMinimize(!minimize)}>
+              <KeyboardArrowUp
+                sx={{
+                  color: 'primary.main',
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div
-          style={{
-            paddingX: '16px',
-            borderRadius: '8px',
-          }}
-        >
-          <p
-            className="text-gray-700 flex gap-3 items-center"
-            style={{ marginBottom: '8px' }}
-          >
-            <p className="text-[12px] font-semibold text-gray-600">Status:</p>
-            <span>{documentStatusComponent()}</span>
-          </p>
-          <p
-            className="text-gray-700 flex gap-3 items-center"
-            style={{ marginBottom: '8px' }}
-          >
-            <p className="text-[12px] font-semibold text-gray-600">
-              Task Type:
-            </p>
-            <span
-              style={{
-                color: types[taskDetails.type]?.color || 'black',
-                fontWeight: 'bold',
-                fontSize: '12px',
-              }}
-            >
-              {types[taskDetails.type]?.name || 'N/A'}
-            </span>
-          </p>
-          <p
-            className="text-gray-700 flex gap-3 items-center"
-            style={{ marginBottom: '8px' }}
-          >
-            <p className="text-[12px] font-semibold text-gray-600">End Date:</p>
-            <span
-              style={{
-                fontSize: '12px',
-              }}
-            >
-              {taskDetails.end_date
-                ? new Date(taskDetails.end_date).toLocaleDateString()
-                : 'N/A'}
-            </span>
-          </p>
-        </div>
-        <div>
-          <Typography variant="subtitle1" gutterBottom>
-            Assigned User
-          </Typography>
-          {taskDetails.current_user ? (
-            <div>
-              <p className="text-gray-700">
-                <p className="text-[12px] font-semibold text-gray-600">
-                  Assigned To:
-                </p>{' '}
-                {taskDetails.current_user.firstName}{' '}
-                {taskDetails.current_user.lastName || ''}
-              </p>
-              <p className="text-gray-700">
-                <p className="text-[12px] font-semibold text-gray-600">Emal:</p>{' '}
-                {taskDetails.current_user.email || 'N/A'}
-              </p>
-              <p className="text-gray-700">
-                <p className="text-[12px] font-semibold text-gray-600">
-                  Employee Number:
-                </p>{' '}
-                {taskDetails.current_user.employeeNumber || 'N/A'}
-              </p>
-            </div>
-          ) : (
-            <p className="text-gray-700 text-[12px]">No user assigned</p>
-          )}
-        </div>
-        <div
-          style={{
-            paddingX: '8px',
-            borderRadius: '8px',
-            marginTop: '-15px',
-          }}
-        >
-          <Typography variant="subtitle2">Reassign Task</Typography>
-          <Autocomplete
-            id="reassign-user"
-            options={
-              (users &&
-                users.filter((user) =>
-                  user.department.name.toLowerCase().includes('claims')
-                )) ||
-              []
-            }
-            getOptionLabel={(option) =>
-              `${option.firstName} ${option.lastName || ''}`
-            }
-            onChange={(event, newValue) => {
-              setReassignUser(newValue);
+      {!minimize && (
+        <div className="grid grid-cols-3 gap-6">
+          <div
+            className="px-4 py-1 rounded-sm bg-white "
+            style={{
+              borderLeft: `6px solid ${
+                documentStatus[taskDetails.status]?.color || '#ccc'
+              }`,
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Select User to Reassign Task"
-                variant="outlined"
-                size="small"
+          >
+            <div className="space-y-2">
+              {/* Status */}
+              <div className="flex items-center">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 w-24 font-medium"
+                >
+                  Status:
+                </Typography>
+                {documentStatusComponent()}
+              </div>
+
+              {/* Task Type */}
+              <div className="flex items-center">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 w-24 font-medium"
+                >
+                  Task Type:
+                </Typography>
+                <span
+                  className="font-semibold text-sm"
+                  style={{ color: types[taskDetails.type]?.color || 'black' }}
+                >
+                  {types[taskDetails.type]?.name || 'N/A'}
+                </span>
+              </div>
+
+              {/* Closing Date */}
+              <div className="flex items-center">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 w-24 font-medium"
+                >
+                  Closing Date:
+                </Typography>
+                <span className="text-sm text-gray-800 font-semibold">
+                  {taskDetails.end_date
+                    ? new Date(taskDetails.end_date).toLocaleDateString()
+                    : 'N/A'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-4 bg-gray-50 rounded-lg ">
+            {taskDetails.current_user ? (
+              <div>
+                <p className="text-gray-700 mb-2">
+                  <span className="text-sm font-semibold text-gray-600">
+                    Assigned To:
+                  </span>{' '}
+                  {taskDetails.current_user.firstName}{' '}
+                  {taskDetails.current_user.lastName || ''}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <span className="text-sm font-semibold text-gray-600">
+                    Email:
+                  </span>{' '}
+                  {taskDetails.current_user.email || 'N/A'}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <span className="text-sm font-semibold text-gray-600">
+                    Employee Number:
+                  </span>{' '}
+                  {taskDetails.current_user.employeeNumber || 'N/A'}
+                </p>
+              </div>
+            ) : (
+              <Empty
+                description={
+                  <span style={{ fontSize: '14px', color: 'primary.main' }}>
+                    No User Assigned
+                  </span>
+                }
+                style={{
+                  p: 0,
+                  // marginTop: '-6px',
+                }}
+                imageStyle={{ height: 44 }}
+                // image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}
-          />
-
-          <div className="mt-2">
-            <Button
-              variant="contained"
-              color="primary"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={handleReassign}
-              size="small"
-            >
-              Reassign
-            </Button>
+          </div>
+          <div className="px-4 mt-[-8px] bg-gray-50 rounded-lg flex items-center w-full">
+            <div className="w-full">
+              <Typography variant="subtitle2" gutterBottom>
+                Reassign Task
+              </Typography>
+              <Autocomplete
+                id="reassign-user"
+                options={
+                  (users &&
+                    users.filter((user) =>
+                      user.department.name.toLowerCase().includes('claims')
+                    )) ||
+                  []
+                }
+                getOptionLabel={(option) =>
+                  `${option.firstName} ${option.lastName || ''}`
+                }
+                onChange={(event, newValue) => {
+                  setReassignUser(newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Select User to Reassign Task"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                  />
+                )}
+              />
+            </div>
+            <div className="ml-4 mt-7">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReassign}
+                size="small"
+                startIcon={<ArrowForward />}
+              >
+                Reassign
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

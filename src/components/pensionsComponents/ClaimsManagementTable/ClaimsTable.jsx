@@ -50,6 +50,7 @@ import GP178Report from './reports/GP178Report';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 import BaseTaskDetails from '@/components/baseComponents/BaseTaskDetails';
+import { motion } from 'framer-motion';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -637,6 +638,8 @@ const ClaimsTable = ({ status, isDashboard }) => {
   }, []);
 
   const [excelLoading, setExcelLoading] = useState(false);
+
+  const [minimize, setMinimize] = useState(false);
   return (
     <>
       {excelLoading && (
@@ -803,17 +806,21 @@ const ClaimsTable = ({ status, isDashboard }) => {
               isPreclaim={false}
             />
           </div>
-          <div
+          <motion.div
+            animate={{ height: minimize ? '70px' : '180px' }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
             style={{
               boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
             }}
-            className="sticky h-[160px] bottom-[-40px] bg-gray-100 p-4"
+            className="sticky bottom-[-40px] bg-white p-4 overflow-hidden"
           >
             <BaseTaskDetails
               documentId={clickedItem?.id_claim}
               documentType={0}
+              minimize={minimize}
+              setMinimize={setMinimize}
             />
-          </div>
+          </motion.div>
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2">
           <ListNavigation
