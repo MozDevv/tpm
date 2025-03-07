@@ -848,42 +848,49 @@ const Preclaims = ({
   return (
     <div className="">
       {openApprovalBase && isApproval ? (
-        <BaseCard
-          documentNo={clickedApproval && clickedApproval?.no}
-          openBaseCard={openApprovalBase}
-          setOpenBaseCard={setOpenApprovalBase}
-          status={status}
-          handlers={baseCardHandlers}
-          title={
-            isApproval ? 'Pensioner Details' : 'Create Prospective Pensioner'
-          }
-          clickedItem={clickedApproval && clickedApproval}
-          openAction={openAction}
-          setOpenAction={setOpenAction}
-          fetchAllPreclaims={fetchAllPreclaims}
-          isClaim={false}
-          activeStep={clickedApproval?.notification_status}
-          onCloseWarnings={onCloseWarnings}
-          setOnCloseWarnings={setOnCloseWarnings}
-          steps={[
-            'Data Capture',
-            'Notification Scheduling',
-            'Retiree Notification',
-            'Preclaim Submission',
-            'Preclaim Review',
-            'Pending Approval',
-            'Claim Creation',
-          ]}
-        >
-          <CreateProspectivePensioner
-            setOnCloseWarnings={setOnCloseWarnings}
-            setOpenBaseCard={setOpenBaseCard}
-            openBaseCard={openBaseCard}
+        <>
+          <BaseCard
+            documentNo={clickedApproval && clickedApproval?.no}
+            openBaseCard={openApprovalBase}
+            setOpenBaseCard={setOpenApprovalBase}
+            status={status}
+            handlers={baseCardHandlers}
+            title={
+              isApproval ? 'Pensioner Details' : 'Create Prospective Pensioner'
+            }
             clickedItem={clickedApproval && clickedApproval}
-            status={clickedApproval?.notification_status}
-            isPreclaim={true}
-          />
-        </BaseCard>
+            openAction={openAction}
+            setOpenAction={setOpenAction}
+            fetchAllPreclaims={fetchAllPreclaims}
+            isClaim={false}
+            activeStep={clickedApproval?.notification_status}
+            onCloseWarnings={onCloseWarnings}
+            setOnCloseWarnings={setOnCloseWarnings}
+            steps={[
+              'Data Capture',
+              'Notification Scheduling',
+              'Retiree Notification',
+              'Preclaim Submission',
+              'Preclaim Review',
+              'Pending Approval',
+              'Claim Creation',
+            ]}
+          >
+            <BaseApprovalCard
+              openApprove={openApprove}
+              setOpenApprove={setOpenApprove}
+              documentNo={selectedRows.map((item) => item.no_series)}
+            />
+            <CreateProspectivePensioner
+              setOnCloseWarnings={setOnCloseWarnings}
+              setOpenBaseCard={setOpenBaseCard}
+              openBaseCard={openBaseCard}
+              clickedItem={clickedApproval && clickedApproval}
+              status={clickedApproval?.notification_status}
+              isPreclaim={true}
+            />
+          </BaseCard>{' '}
+        </>
       ) : (
         <div
           style={{

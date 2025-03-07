@@ -185,9 +185,7 @@ function BaseCard({
   return (
     <Dialog
       open={openBaseCard}
-      onClose={() => {
-        handleOnClose();
-      }}
+      onClose={handleOnClose}
       fullWidth
       maxWidth="xl"
       sx={{

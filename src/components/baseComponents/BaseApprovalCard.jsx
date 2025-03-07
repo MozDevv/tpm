@@ -134,6 +134,11 @@ function BaseApprovalCard({
       aria-describedby="delete-dialog-description"
       maxWidth="sm"
       fullWidth
+      sx={
+        {
+          //  position: 'absolute',
+        }
+      }
     >
       <div>
         <div className="p-8 h-[100%]">
@@ -175,7 +180,6 @@ function BaseApprovalCard({
           {errors.status && (
             <div className="mt-2 text-red-500 text-sm">{errors.message}</div>
           )}
-
         </div>
       </div>
     </Dialog>

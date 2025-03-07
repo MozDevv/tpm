@@ -423,6 +423,17 @@ const GeneralBudget = ({
           deleteApiService={apiService.post}
         >
           <div className="flex flex-col  overflow-auto max-h-[80vh]">
+            <BaseApprovalCard
+              openApprove={openApprove}
+              setOpenApprove={setOpenApprove}
+              documentNo={
+                selectedRows.length > 0
+                  ? selectedRows.map((item) => item.documentNo)
+                  : clickedItem
+                  ? [clickedItem.documentNo]
+                  : []
+              }
+            />
             <BaseInputCard
               fields={fields}
               apiEndpoint={financeEndpoints.updateBudget}
