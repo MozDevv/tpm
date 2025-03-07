@@ -84,46 +84,7 @@ function DueForApproval() {
 
   const [expand, setExpand] = React.useState(false);
 
-  const [numberingSections, setNumberingSections] = React.useState([
-    {
-      name: 'PROSPECTIVE PENSIONER',
-      section: 0,
-      numberSeriesId: 'd0ac4419-44f7-4660-a4d5-9e8f8b82cf9f',
-      numberSeries: {
-        code: 'Mil',
-        description: 'Military No. series',
-        id: 'd0ac4419-44f7-4660-a4d5-9e8f8b82cf9f',
-        created_by: null,
-        created_date: '2024-10-22T17:39:50.990271Z',
-        updated_by: null,
-        updated_date: null,
-      },
-      id: '8f8597f2-651c-48b4-bd1d-08cc094154ad',
-      created_by: null,
-      created_date: null,
-      updated_by: null,
-      updated_date: '2024-10-22T17:46:07.78948Z',
-    },
-    {
-      name: 'BUDGET',
-      section: 23,
-      numberSeriesId: '8b9b5f40-0a61-4cdb-847d-58784b91cb70',
-      numberSeries: {
-        code: 'BGT',
-        description: 'BUDGET',
-        id: '8b9b5f40-0a61-4cdb-847d-58784b91cb70',
-        created_by: 'fa2d588b-d2e4-4eb8-a69b-f61991e7b33d',
-        created_date: '2025-01-16T09:18:27.514888Z',
-        updated_by: null,
-        updated_date: null,
-      },
-      id: 'ea074def-b666-4264-82cf-60d44d19dfd6',
-      created_by: null,
-      created_date: null,
-      updated_by: 'fa2d588b-d2e4-4eb8-a69b-f61991e7b33d',
-      updated_date: '2025-01-16T09:19:31.921456Z',
-    },
-  ]);
+  const [numberingSections, setNumberingSections] = React.useState([]);
 
   useEffect(() => {
     fetchRowData();
@@ -131,8 +92,10 @@ function DueForApproval() {
 
   const fetchNumberingSections = async () => {
     try {
-      const res = await setupsApiService.get(endpoints.getNumberingSections);
-      //  setNumberingSections(res.data.data);
+      const res = await setupsApiService.get(endpoints.getNumberingSections, {
+        'paging.pageSize': 1000,
+      });
+      setNumberingSections(res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -141,28 +104,6 @@ function DueForApproval() {
   useEffect(() => {
     fetchNumberingSections();
   }, []);
-
-  // const numberingSections = [
-  //   {
-  //     name: 'BUDGET',
-  //     section: 23,
-  //     numberSeriesId: '8b9b5f40-0a61-4cdb-847d-58784b91cb70',
-  //     numberSeries: {
-  //       code: 'BGT',
-  //       description: 'BUDGET',
-  //       id: '8b9b5f40-0a61-4cdb-847d-58784b91cb70',
-  //       created_by: 'fa2d588b-d2e4-4eb8-a69b-f61991e7b33d',
-  //       created_date: '2025-01-16T09:18:27.514888Z',
-  //       updated_by: null,
-  //       updated_date: null,
-  //     },
-  //     id: 'ea074def-b666-4264-82cf-60d44d19dfd6',
-  //     created_by: null,
-  //     created_date: null,
-  //     updated_by: 'fa2d588b-d2e4-4eb8-a69b-f61991e7b33d',
-  //     updated_date: '2025-01-16T09:19:31.921456Z',
-  //   },
-  // ];
 
   const sectionMapper = (sectionName, item) => {
     switch (sectionName) {
@@ -203,8 +144,12 @@ function DueForApproval() {
 
   const fetchClickedRow = async (item) => {
     let fetchClickedRowEnpoint, fetchClickedRowApiService;
+
     for (const section of numberingSections) {
-      if (item.documentNo.startsWith(section.numberSeries.code)) {
+      if (
+        section.numberSeries &&
+        item.documentNo.startsWith(section.numberSeries.code)
+      ) {
         console.log('Matched section:', section);
         console.log('Item:', item);
         ({ fetchClickedRowEnpoint, fetchClickedRowApiService } = sectionMapper(
@@ -214,7 +159,7 @@ function DueForApproval() {
         break;
       }
     }
-    setLoadingDoc(item.documentNo);
+    console.log('Fetch Clicked Row:', fetchClickedRowEnpoint(item.documentNo));
 
     try {
       const res = await fetchClickedRowApiService.get(
@@ -230,7 +175,10 @@ function DueForApproval() {
 
   const ComponentToOpen = (documentNo, fetchedDoc) => {
     for (const section of numberingSections) {
-      if (documentNo.startsWith(section.numberSeries.code)) {
+      if (
+        section.numberSeries &&
+        documentNo.startsWith(section.numberSeries.code)
+      ) {
         return sectionMapper(section.name, fetchedDoc).component;
       }
     }
@@ -244,15 +192,15 @@ function DueForApproval() {
     );
   };
 
-  const handleSearch = () => {
+  useEffect(() => {
     const filtered = filteredData.filter((item) =>
       item.documentNo.toLowerCase().includes(searchedValue.toLowerCase())
     );
     setFilteredData(filtered);
-  };
+  }, [searchedValue]);
 
   const handlers = {
-    search: handleSearch,
+    search: () => console.log('searching'),
   };
 
   return (
