@@ -879,7 +879,7 @@ const Preclaims = ({
             <BaseApprovalCard
               openApprove={openApprove}
               setOpenApprove={setOpenApprove}
-              documentNo={selectedRows.map((item) => item.no_series)}
+              documentNo={clickedApproval && clickedApproval?.no}
             />
             <CreateProspectivePensioner
               setOnCloseWarnings={setOnCloseWarnings}
