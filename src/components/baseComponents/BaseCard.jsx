@@ -18,6 +18,7 @@ import ReturnToPreclaims from '../pensionsComponents/ClaimsManagementTable/Retur
 import TabPane from 'antd/es/tabs/TabPane';
 import AttachmentStepper from '../pensionsComponents/ClaimsApprovalComponents/AttachmentStepper';
 import BaseWorkFlow from './BaseWorkFlow';
+import { motion } from 'framer-motion';
 import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
@@ -494,15 +495,17 @@ function BaseCard({
           // }`}
           className="grid gap-2 grid-cols-12 mt-[-20px]"
         >
-          {' '}
-          <div
-            className={`col-span-${isDetailsVisible ? '12' : '9'}`}
-            // className="col-span-9"
-          >
+          <div className={`col-span-${isDetailsVisible ? '12' : '9'}`}>
             {children}
           </div>
           {!isDetailsVisible && (
-            <div className="col-span-3 flex flex-col mt-10">
+            <motion.div
+              className="col-span-3 flex flex-col mt-10"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
               {isUserComponent ? (
                 <>
                   <UserDetailCard clickedItem={clickedItem} />
@@ -554,7 +557,7 @@ function BaseCard({
               ) : (
                 <></>
               )}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

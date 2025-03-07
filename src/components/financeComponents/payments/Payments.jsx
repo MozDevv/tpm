@@ -283,8 +283,11 @@ const Payments = ({ status }) => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [isSchedule, setIsSchedule] = React.useState(false);
 
+  const [revertPv, setRevertPv] = React.useState(false);
+
   const [openApprove, setOpenApprove] = React.useState(0);
   const [openPV, setOpenPV] = React.useState(false);
+
   const [openTrialBalanceReport, setOpenTrialBalanceReport] =
     React.useState(false);
   const handlers = {
@@ -302,6 +305,7 @@ const Payments = ({ status }) => {
         console.log('Submit Payment For Approval');
       },
     }),
+
     // ...(status === 1 && {
     //   approvePaymentVoucher: () => {
     //     setOpenPV(true);
@@ -314,6 +318,12 @@ const Payments = ({ status }) => {
         setIsSchedule(true);
         setOpenPV(true);
         console.log('Schedule Payment');
+      },
+    }),
+    ...((status === 0 || status === 2 || status === 5) && {
+      revertPaymentVoucher: () => {
+        setRevertPv(true);
+        setOpenPV(true);
       },
     }),
     // ...(status === 3 && {
@@ -365,6 +375,12 @@ const Payments = ({ status }) => {
         setSelectedRows([clickedItem]);
         setOpenPV(true);
         console.log('Submit Payment For Approval');
+      },
+    }),
+    ...((status === 0 || status === 2 || status === 5) && {
+      revertPaymentVoucher: () => {
+        setRevertPv(true);
+        setOpenPV(true);
       },
     }),
     ...(status === 2 && {
@@ -498,6 +514,7 @@ const Payments = ({ status }) => {
         open={openPV && selectedRows.length > 0}
         onClose={() => {
           setOpenPV(false);
+          setRevertPv(false);
           setIsSchedule(false);
         }}
         fullWidth
@@ -509,6 +526,7 @@ const Payments = ({ status }) => {
         }}
       >
         <PVActions
+          revertPv={revertPv}
           isSchedule={isSchedule}
           status={status}
           clickedItem={clickedItem}

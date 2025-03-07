@@ -581,7 +581,7 @@ export const createSections = (
         pensionCap: ['CAP189', 'CAP199', 'CAP190', 'CAP195', 'CAP195'],
       },
       {
-        label: 'Retirement Date/Date of Death',
+        label: 'Last Pay Date',
         name: 'retirement_date',
         type: 'date',
         pensionCap: [
@@ -628,7 +628,7 @@ export const createSections = (
         ],
       },
       {
-        label: 'Last Pay Date',
+        label: 'Deletion Date',
         name: 'last_pay_date',
         type: 'date',
         pensionCap: [

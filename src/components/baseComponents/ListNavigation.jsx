@@ -568,6 +568,12 @@ const ListNavigation = ({
       action: 'unlockUserAccount',
       requiredPermissions: [],
     },
+    {
+      name: 'Revert Payment Voucher',
+      icon: Replay,
+      action: 'revertPaymentVoucher',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

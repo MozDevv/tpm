@@ -421,7 +421,14 @@ export const mapRowData = (items) =>
       was_in_mixed_service: item?.was_in_mixed_service,
     }));
 
-const Preclaims = ({ status, isDashboard }) => {
+const Preclaims = ({
+  status,
+  isDashboard,
+  isApproval,
+  openApprovalBase,
+  clickedApproval,
+  setOpenApprovalBase,
+}) => {
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -839,243 +846,298 @@ const Preclaims = ({ status, isDashboard }) => {
 
   const [excelLoading, setExcelLoading] = useState(false);
   return (
-    <>
-      {excelLoading && (
-        <Backdrop
-          sx={{ color: '#fff', zIndex: 999999 }}
-          open={excelLoading}
-          onClick={() => setExcelLoading(false)}
+    <div className="">
+      {openApprovalBase && isApproval ? (
+        <BaseCard
+          documentNo={clickedApproval && clickedApproval?.no}
+          openBaseCard={openApprovalBase}
+          setOpenBaseCard={setOpenApprovalBase}
+          status={status}
+          handlers={baseCardHandlers}
+          title={
+            isApproval ? 'Pensioner Details' : 'Create Prospective Pensioner'
+          }
+          clickedItem={clickedApproval && clickedApproval}
+          openAction={openAction}
+          setOpenAction={setOpenAction}
+          fetchAllPreclaims={fetchAllPreclaims}
+          isClaim={false}
+          activeStep={clickedApproval?.notification_status}
+          onCloseWarnings={onCloseWarnings}
+          setOnCloseWarnings={setOnCloseWarnings}
+          steps={[
+            'Data Capture',
+            'Notification Scheduling',
+            'Retiree Notification',
+            'Preclaim Submission',
+            'Preclaim Review',
+            'Pending Approval',
+            'Claim Creation',
+          ]}
         >
-          {/* <span class="loader"></span> */}
-          <div className="ml-3 font-semibold text-xl flex items-center">
-            Generating Excel File
-            <div className="ellipsis ml-1 mb-4">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
-            </div>
-          </div>
-        </Backdrop>
-      )}
-      {loading ? (
-        <p>
-          <Spinner />
-        </p>
-      ) : (
-        <div className=" relative h-full w-full overflow-hidden">
-          <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
-            <BaseExcelComponent
-              setOpenExcel={setOpenExcel}
-              fetchApiService={apiService.get}
-              fetchApiEndpoint={preClaimsEndpoints.getPreclaims}
-              filters={
-                (status || status === 0) && status !== 5 && mdaId
-                  ? {
-                      'filterCriterion.criterions[0].propertyName':
-                        'notification_status',
-                      'filterCriterion.criterions[0].propertyValue': status,
-                      'filterCriterion.criterions[0].criterionType': 0,
-                      'filterCriterion.criterions[1].propertyName': 'mda_id',
-                      'filterCriterion.criterions[1].propertyValue': mdaId,
-                      'filterCriterion.criterions[1].criterionType': 0,
-                    }
-                  : status === 5
-                  ? {
-                      'filterCriterion.criterions[0].propertyName':
-                        'notification_status',
-                      'filterCriterion.criterions[0].propertyValue': status,
-                      'filterCriterion.criterions[0].criterionType': 0,
-                    }
-                  : !status && status !== 0 && mdaId
-                  ? {
-                      'filterCriterion.criterions[0].propertyName': 'mda_id',
-                      'filterCriterion.criterions[0].propertyValue': mdaId,
-                      'filterCriterion.criterions[0].criterionType': 0,
-                    }
-                  : !mdaId && status
-                  ? {
-                      'filterCriterion.criterions[0].propertyName':
-                        'notification_status',
-                      'filterCriterion.criterions[0].propertyValue': status,
-                      'filterCriterion.criterions[0].criterionType': 0,
-                    }
-                  : !mdaId && !status
-                  ? {}
-                  : {}
-              }
-              columns={colDefs}
-              transformData={mapRowData}
-              fileName={
-                status
-                  ? `Preclaims_${notificationStatusMap[status].name}`
-                  : 'Preclaims Listing'
-              }
-              setLoading={setExcelLoading}
-            />
-          </Dialog>
-          <BaseApprovalCard
-            openApprove={openApprove}
-            setOpenApprove={setOpenApprove}
-            documentNo={selectedRows.map((item) => item.no_series)}
-          />
-          <BaseCard
-            documentNo={clickedItem && clickedItem?.no_series}
-            openBaseCard={openBaseCard}
-            setOpenBaseCard={setOpenBaseCard}
-            status={status}
-            handlers={baseCardHandlers}
-            title={title}
-            clickedItem={clickedItem}
-            openAction={openAction}
-            setOpenAction={setOpenAction}
-            fetchAllPreclaims={fetchAllPreclaims}
-            isClaim={clickedItem}
-            activeStep={clickedItem?.notification_status}
-            onCloseWarnings={onCloseWarnings}
+          <CreateProspectivePensioner
             setOnCloseWarnings={setOnCloseWarnings}
-            steps={[
-              'Data Capture',
-              'Notification Scheduling',
-              'Retiree Notification',
-              'Preclaim Submission',
-              'Preclaim Review',
-              'Pending Approval',
-              'Claim Creation',
-            ]}
-          >
-            <CreateProspectivePensioner
-              setOnCloseWarnings={setOnCloseWarnings}
-              setOpenBaseCard={setOpenBaseCard}
-              openBaseCard={openBaseCard}
-              clickedItem={clickedItem}
-              status={clickedItem?.notification_status}
-              isPreclaim={true}
-            />
-          </BaseCard>
-          <CreatePreclaim
-            permissions={permissions}
-            openCreate={openCreate}
-            setOpenCreate={setOpenCreate}
-            fetchAllPreclaims={fetchAllPreclaims}
+            setOpenBaseCard={setOpenBaseCard}
+            openBaseCard={openBaseCard}
+            clickedItem={clickedApproval && clickedApproval}
+            status={clickedApproval?.notification_status}
+            isPreclaim={true}
           />
-          <PreclaimsNotifications
-            //clickedItem={}
-            isSendNotificationEnabled={isSendNotificationEnabled}
-            fetchAllPreclaims={fetchAllPreclaims}
-            selectedRows={selectedRows}
-            openNotification={openNotification}
-            setOpenNotification={setOpenNotification}
-          />
+        </BaseCard>
+      ) : (
+        <div
+          style={{
+            display: !isApproval ? 'block' : 'none',
+          }}
+        >
+          {excelLoading && (
+            <Backdrop
+              sx={{ color: '#fff', zIndex: 999999 }}
+              open={excelLoading}
+              onClick={() => setExcelLoading(false)}
+            >
+              {/* <span class="loader"></span> */}
+              <div className="ml-3 font-semibold text-xl flex items-center">
+                Generating Excel File
+                <div className="ellipsis ml-1 mb-4">
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                </div>
+              </div>
+            </Backdrop>
+          )}
+          {loading ? (
+            <p>
+              <Spinner />
+            </p>
+          ) : (
+            <div className=" relative h-full w-full overflow-hidden">
+              <Dialog
+                open={openExcel}
+                onClose={() => setOpenExcel(false)}
+                sx={{}}
+              >
+                <BaseExcelComponent
+                  setOpenExcel={setOpenExcel}
+                  fetchApiService={apiService.get}
+                  fetchApiEndpoint={preClaimsEndpoints.getPreclaims}
+                  filters={
+                    (status || status === 0) && status !== 5 && mdaId
+                      ? {
+                          'filterCriterion.criterions[0].propertyName':
+                            'notification_status',
+                          'filterCriterion.criterions[0].propertyValue': status,
+                          'filterCriterion.criterions[0].criterionType': 0,
+                          'filterCriterion.criterions[1].propertyName':
+                            'mda_id',
+                          'filterCriterion.criterions[1].propertyValue': mdaId,
+                          'filterCriterion.criterions[1].criterionType': 0,
+                        }
+                      : status === 5
+                      ? {
+                          'filterCriterion.criterions[0].propertyName':
+                            'notification_status',
+                          'filterCriterion.criterions[0].propertyValue': status,
+                          'filterCriterion.criterions[0].criterionType': 0,
+                        }
+                      : !status && status !== 0 && mdaId
+                      ? {
+                          'filterCriterion.criterions[0].propertyName':
+                            'mda_id',
+                          'filterCriterion.criterions[0].propertyValue': mdaId,
+                          'filterCriterion.criterions[0].criterionType': 0,
+                        }
+                      : !mdaId && status
+                      ? {
+                          'filterCriterion.criterions[0].propertyName':
+                            'notification_status',
+                          'filterCriterion.criterions[0].propertyValue': status,
+                          'filterCriterion.criterions[0].criterionType': 0,
+                        }
+                      : !mdaId && !status
+                      ? {}
+                      : {}
+                  }
+                  columns={colDefs}
+                  transformData={mapRowData}
+                  fileName={
+                    status
+                      ? `Preclaims_${notificationStatusMap[status].name}`
+                      : 'Preclaims Listing'
+                  }
+                  setLoading={setExcelLoading}
+                />
+              </Dialog>
+              <BaseApprovalCard
+                openApprove={openApprove}
+                setOpenApprove={setOpenApprove}
+                documentNo={selectedRows.map((item) => item.no_series)}
+              />
+              <BaseCard
+                documentNo={clickedItem && clickedItem?.no_series}
+                openBaseCard={openBaseCard}
+                setOpenBaseCard={setOpenBaseCard}
+                status={status}
+                handlers={baseCardHandlers}
+                title={title}
+                clickedItem={clickedItem}
+                openAction={openAction}
+                setOpenAction={setOpenAction}
+                fetchAllPreclaims={fetchAllPreclaims}
+                isClaim={clickedItem}
+                activeStep={clickedItem?.notification_status}
+                onCloseWarnings={onCloseWarnings}
+                setOnCloseWarnings={setOnCloseWarnings}
+                steps={[
+                  'Data Capture',
+                  'Notification Scheduling',
+                  'Retiree Notification',
+                  'Preclaim Submission',
+                  'Preclaim Review',
+                  'Pending Approval',
+                  'Claim Creation',
+                ]}
+              >
+                <CreateProspectivePensioner
+                  setOnCloseWarnings={setOnCloseWarnings}
+                  setOpenBaseCard={setOpenBaseCard}
+                  openBaseCard={openBaseCard}
+                  clickedItem={clickedItem}
+                  status={clickedItem?.notification_status}
+                  isPreclaim={true}
+                />
+              </BaseCard>
+              <CreatePreclaim
+                permissions={permissions}
+                openCreate={openCreate}
+                setOpenCreate={setOpenCreate}
+                fetchAllPreclaims={fetchAllPreclaims}
+              />
+              <PreclaimsNotifications
+                //clickedItem={}
+                isSendNotificationEnabled={isSendNotificationEnabled}
+                fetchAllPreclaims={fetchAllPreclaims}
+                selectedRows={selectedRows}
+                openNotification={openNotification}
+                setOpenNotification={setOpenNotification}
+              />
 
-          {/* <PreclaimDialog
+              {/* <PreclaimDialog
             permissions={permissions}
             clickedItem={clickedItem}
             setOpenPreclaimDialog={setOpenPreclaimDialog}
             openPreclaimDialog={openPreclaimDialog}
             setOpenNotification={setOpenNotification}
           /> */}
-          <div className="h-full w-full">
-            {!isDashboard && (
-              <>
-                {' '}
-                <ListNavigation
-                  handlers={handlers}
-                  // permissions={permissions}
-                  status={status}
-                  clickedItem={selectedRows[0]}
-                />
-                <div className="flex justify-between flex-row mt-2"></div>
-                <Divider sx={{ mt: 1, mb: 1 }} />
-              </>
-            )}
+              <div className="h-full w-full">
+                {!isDashboard && (
+                  <>
+                    {' '}
+                    <ListNavigation
+                      handlers={handlers}
+                      // permissions={permissions}
+                      status={status}
+                      clickedItem={selectedRows[0]}
+                    />
+                    <div className="flex justify-between flex-row mt-2"></div>
+                    <Divider sx={{ mt: 1, mb: 1 }} />
+                  </>
+                )}
 
-            <div className="flex">
-              {/* Custom Drawer */}
-              <Collapse
-                in={openFilter}
-                sx={{
-                  bgcolor: 'white',
-                  mt: 2,
-                  borderRadius: '10px',
-                  color: 'black',
-                  borderRadius: '10px',
-                }}
-                timeout="auto"
-                unmountOnExit
-              >
-                <FilterComponent
-                  columnDefs={colDefs}
-                  filteredData={filteredData}
-                  onApplyFilters={handleFilters}
-                  fetchData={fetchAllPreclaims}
-                  startIndex={getStatus(mdaId, status)}
-                />
-              </Collapse>
-              <div
-                className="ag-theme-quartz flex flex-col"
-                style={{
-                  padding: '20px',
-                  marginLeft: '-10px',
-                  width: openFilter ? 'calc(100vw - 300px)' : '100vw',
-                }}
-              >
-                <AgGridReact
-                  paginationPageSize={pageSize}
-                  loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
-                  loadingOverlayComponentParams={loadingOverlayComponentParams}
-                  //  pagination={true}
-                  rowData={filteredData}
-                  columnDefs={colDefs.map((col) => ({
-                    ...col,
-                    headerTooltip: col.headerName,
-                  }))}
-                  rowSelection="multiple"
-                  noRowsOverlayComponent={BaseEmptyComponent}
-                  onSelectionChanged={onSelectionChanged}
-                  domLayout="autoHeight"
-                  className={isDashboard ? 'custom-grid1' : 'ag-theme-quartz'}
-                  onGridReady={onGridReady}
-                  totalRecords={totalRecords}
-                  rowHeight={36}
-                  onRowClicked={(event) => {
-                    setClickedRow(event.data);
-                    // console.log('event.data', event.data);
-                  }}
-                  onCellDoubleClicked={(event) => {
-                    setOpenBaseCard(true);
-                    setClickedItem(event.data); // Update selected item
-
-                    // console.log("event.data", event.data);
-                    setActiveCapName(event.data.mda_pensionCap_name);
-                  }}
-                />
-
-                {totalPages > 1 && (
-                  <Box
+                <div className="flex">
+                  {/* Custom Drawer */}
+                  <Collapse
+                    in={openFilter}
                     sx={{
-                      mt: '40px',
-                      display: 'flex',
-                      justifyContent: 'center',
+                      bgcolor: 'white',
+                      mt: 2,
+                      borderRadius: '10px',
+                      color: 'black',
+                      borderRadius: '10px',
+                    }}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <FilterComponent
+                      columnDefs={colDefs}
+                      filteredData={filteredData}
+                      onApplyFilters={handleFilters}
+                      fetchData={fetchAllPreclaims}
+                      startIndex={getStatus(mdaId, status)}
+                    />
+                  </Collapse>
+                  <div
+                    className="ag-theme-quartz flex flex-col"
+                    style={{
+                      padding: '20px',
+                      marginLeft: '-10px',
+                      width: openFilter ? 'calc(100vw - 300px)' : '100vw',
                     }}
                   >
-                    <Pagination
-                      showFirstButton
-                      showLastButton
-                      count={totalPages}
-                      page={pageNumber}
-                      onChange={handlePageChange}
-                      color="primary"
-                      variant="outlined"
-                      shape="rounded"
+                    <AgGridReact
+                      paginationPageSize={pageSize}
+                      loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+                      loadingOverlayComponentParams={
+                        loadingOverlayComponentParams
+                      }
+                      //  pagination={true}
+                      rowData={filteredData}
+                      columnDefs={colDefs.map((col) => ({
+                        ...col,
+                        headerTooltip: col.headerName,
+                      }))}
+                      rowSelection="multiple"
+                      noRowsOverlayComponent={BaseEmptyComponent}
+                      onSelectionChanged={onSelectionChanged}
+                      domLayout="autoHeight"
+                      className={
+                        isDashboard ? 'custom-grid1' : 'ag-theme-quartz'
+                      }
+                      onGridReady={onGridReady}
+                      totalRecords={totalRecords}
+                      rowHeight={36}
+                      onRowClicked={(event) => {
+                        setClickedRow(event.data);
+                        // console.log('event.data', event.data);
+                      }}
+                      onCellDoubleClicked={(event) => {
+                        setOpenBaseCard(true);
+                        setClickedItem(event.data); // Update selected item
+
+                        // console.log("event.data", event.data);
+                        setActiveCapName(event.data.mda_pensionCap_name);
+                      }}
                     />
-                  </Box>
-                )}
+
+                    {totalPages > 1 && (
+                      <Box
+                        sx={{
+                          mt: '40px',
+                          display: 'flex',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Pagination
+                          showFirstButton
+                          showLastButton
+                          count={totalPages}
+                          page={pageNumber}
+                          onChange={handlePageChange}
+                          color="primary"
+                          variant="outlined"
+                          shape="rounded"
+                        />
+                      </Box>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

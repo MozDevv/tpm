@@ -175,6 +175,7 @@ function BaseApprovalCard({
           {errors.status && (
             <div className="mt-2 text-red-500 text-sm">{errors.message}</div>
           )}
+
         </div>
       </div>
     </Dialog>

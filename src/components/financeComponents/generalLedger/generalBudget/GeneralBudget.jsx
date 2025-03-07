@@ -141,7 +141,13 @@ const columnDefs = [
   },
 ];
 
-const GeneralBudget = ({ status }) => {
+const GeneralBudget = ({
+  status,
+  isApproval,
+  openApprovalBase,
+  clickedApproval,
+  setOpenApprovalBase,
+}) => {
   const [uploadExcel, setUploadExcel] = React.useState(false);
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -302,14 +308,14 @@ const GeneralBudget = ({ status }) => {
       type: 'autocomplete',
       required: true,
       options:
-        accountingPeriod &&
-        Array.isArray(accountingPeriod) &&
-        accountingPeriod.map((item) => ({
-          id: item.id,
-          name: item.finYearName,
-          startDate: item.fromDate,
-          endDate: item.toDate,
-        })),
+        accountingPeriod && Array.isArray(accountingPeriod)
+          ? accountingPeriod.map((item) => ({
+              id: item.id,
+              name: item.finYearName,
+              startDate: item.fromDate,
+              endDate: item.toDate,
+            }))
+          : [],
     },
 
     {
@@ -401,58 +407,27 @@ const GeneralBudget = ({ status }) => {
     },
   ];
 
+  const [allRows, setAllRows] = React.useState([]);
+
   return (
     <div className="">
-      <BaseApprovalCard
-        openApprove={openApprove}
-        setOpenApprove={setOpenApprove}
-        documentNo={
-          selectedRows.length > 0
-            ? selectedRows.map((item) => item.documentNo)
-            : clickedItem
-            ? [clickedItem.documentNo]
-            : []
-        }
-      />
-      <BaseCard
-        openBaseCard={uploadExcel}
-        setOpenBaseCard={setUploadExcel}
-        title={'Upload Budget'}
-        clickedItem={clickedItem}
-        isSecondaryCard={true}
-        handlers={{
-          generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
-        }}
-      >
-        {' '}
-        <BaseInputCard
-          fields={uploadFields}
-          apiEndpoint={financeEndpoints.uploadBudget}
-          postApiFunction={apiService.post}
-          //  clickedItem={clickedItem}
-          useRequestBody={false}
-          setOpenBaseCard={setUploadExcel}
-          isBranch={true}
-          refreshData={false}
-        />
-      </BaseCard>
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={title}
-        clickedItem={clickedItem}
-        isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
-      >
-        {clickedItem ? (
+      {openApprovalBase && isApproval ? (
+        <BaseCard
+          openBaseCard={openApprovalBase}
+          setOpenBaseCard={setOpenApprovalBase}
+          handlers={baseCardHandlers}
+          title={clickedApproval?.budgetName || 'Budget Approval'}
+          clickedItem={clickedApproval && clickedApproval}
+          isUserComponent={false}
+          deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+          deleteApiService={apiService.post}
+        >
           <div className="flex flex-col  overflow-auto max-h-[80vh]">
             <BaseInputCard
               fields={fields}
               apiEndpoint={financeEndpoints.updateBudget}
               postApiFunction={apiService.post}
-              clickedItem={clickedItem}
+              clickedItem={clickedApproval && clickedApproval}
               useRequestBody={true}
               disableAll={status !== 0}
               setOpenBaseCard={setOpenBaseCard}
@@ -460,43 +435,119 @@ const GeneralBudget = ({ status }) => {
             <div className="mt-[-20px]">
               <BaseCollapse name="GL Accounts">
                 <GLAccounts
-                  clickedBudget={clickedItem}
+                  clickedBudget={clickedApproval && clickedApproval}
                   uploadExcel={uploadExcel}
                 />
               </BaseCollapse>
             </div>
           </div>
-        ) : (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.createBudget}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
+        </BaseCard>
+      ) : (
+        <div
+          className=""
+          style={{
+            display: !isApproval ? 'block' : 'none',
+          }}
+        >
+          <BaseApprovalCard
+            openApprove={openApprove}
+            setOpenApprove={setOpenApprove}
+            documentNo={
+              selectedRows.length > 0
+                ? selectedRows.map((item) => item.documentNo)
+                : clickedItem
+                ? [clickedItem.documentNo]
+                : []
+            }
           />
-        )}
-      </BaseCard>
-      <div className="">
-        <BaseTable
-          openBaseCard={openBaseCard}
-          clickedItem={clickedItem}
-          setClickedItem={setClickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getBudgetByStatus(status)}
-          fetchApiService={apiService.get}
-          transformData={transformData}
-          uploadExcel={uploadExcel}
-          pageSize={30}
-          handlers={handlers}
-          breadcrumbTitle="General Budget"
-          currentTitle="General Budget"
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          openApproveDialog={openApprove}
-        />
-      </div>
+          <BaseCard
+            openBaseCard={uploadExcel}
+            setOpenBaseCard={setUploadExcel}
+            title={'Upload Budget'}
+            clickedItem={clickedItem}
+            isSecondaryCard={true}
+            handlers={{
+              generateBudgetUploadTemplate: () =>
+                generateBudgetUploadTemplate(),
+            }}
+          >
+            {' '}
+            <BaseInputCard
+              fields={uploadFields}
+              apiEndpoint={financeEndpoints.uploadBudget}
+              postApiFunction={apiService.post}
+              //  clickedItem={clickedItem}
+              useRequestBody={false}
+              setOpenBaseCard={setUploadExcel}
+              isBranch={true}
+              refreshData={false}
+            />
+          </BaseCard>
+          <BaseCard
+            openBaseCard={openBaseCard}
+            setOpenBaseCard={setOpenBaseCard}
+            handlers={baseCardHandlers}
+            title={title}
+            clickedItem={clickedItem}
+            isUserComponent={false}
+            deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+            deleteApiService={apiService.post}
+          >
+            {clickedItem ? (
+              <div className="flex flex-col  overflow-auto max-h-[80vh]">
+                <BaseInputCard
+                  fields={fields}
+                  apiEndpoint={financeEndpoints.updateBudget}
+                  postApiFunction={apiService.post}
+                  clickedItem={clickedItem}
+                  useRequestBody={true}
+                  disableAll={status !== 0}
+                  setOpenBaseCard={setOpenBaseCard}
+                />
+                <div className="mt-[-20px]">
+                  <BaseCollapse name="GL Accounts">
+                    <GLAccounts
+                      clickedBudget={clickedItem}
+                      uploadExcel={uploadExcel}
+                    />
+                  </BaseCollapse>
+                </div>
+              </div>
+            ) : (
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={financeEndpoints.createBudget}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+            )}
+          </BaseCard>
+          <div className="">
+            <BaseTable
+              setAllRows={setAllRows}
+              allRows={allRows}
+              openBaseCard={openBaseCard}
+              clickedItem={clickedItem}
+              setClickedItem={setClickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              columnDefs={columnDefs}
+              fetchApiEndpoint={financeEndpoints.getBudgetByStatus(status)}
+              fetchApiService={apiService.get}
+              transformData={transformData}
+              uploadExcel={uploadExcel}
+              pageSize={30}
+              handlers={handlers}
+              breadcrumbTitle="General Budget"
+              currentTitle="General Budget"
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+              openApproveDialog={openApprove}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -147,6 +147,7 @@ function NewPreclaim({
         first_name: retiree?.first_name ?? '',
         surname: retiree?.surname ?? '',
         other_name: retiree?.other_name ?? '',
+        middle_name: retiree?.middle_name ?? '',
         dob: retiree?.dob
           ? new Date(retiree.dob).toISOString().split('T')[0]
           : '',
@@ -252,6 +253,8 @@ function NewPreclaim({
           retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
           '',
         was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
+        death_certificate_number: retiree?.death_certificate_number ?? '',
+        date_of_death: retiree?.date_of_death,
       });
     } catch (error) {
       console.log(error);

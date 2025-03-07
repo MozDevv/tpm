@@ -32,6 +32,7 @@ function PVActions({
   clickedItem,
   isSchedule,
   status,
+  revertPv,
 }) {
   const [errors, setErrors] = React.useState({
     status: false,
@@ -110,6 +111,27 @@ function PVActions({
           })),
         };
 
+        const res = await apiService.post(endpoint, requestData);
+
+        if (res && res.data && res.data.succeeded && res.status === 200) {
+          // handleUpdateClaimStatus(); // Call the function to update claim status
+          setSelectedRows([]);
+          setOpenPostGL(false);
+          setOpenBaseCard && setOpenBaseCard(false);
+          message.success(successMessage);
+        } else {
+          handleErrorResponse(res, errorMessage);
+        }
+      } else if ((status === 0 || status === 2 || status === 5) && revertPv) {
+        // Case for scheduling
+        endpoint = financeEndpoints.revertPv;
+        successMessage = 'Payment Vouchers scheduled successfully';
+        errorMessage = 'Failed to schedule Payment Vouchers';
+        requestData = {
+          payments: selectedIds.map((item) => ({ paymentId: item.id })),
+        };
+
+        // Make the API call for scheduling
         const res = await apiService.post(endpoint, requestData);
 
         if (res && res.data && res.data.succeeded && res.status === 200) {
@@ -268,20 +290,17 @@ function PVActions({
     }
   };
 
-  const navTitle =
-    status === 0
-      ? 'Submit'
-      : status === 1
-      ? 'Approve'
-      : status === 2
-      ? isSchedule
-        ? 'Schedule'
-        : 'Post to Ledger'
-      : status === 3
-      ? 'Post'
-      : status === 7
-      ? 'Create'
-      : 'Post';
+  const navTitle = (() => {
+    if (revertPv && (status === 0 || status === 2 || status === 5))
+      return 'Revert';
+    if (status === 0) return 'Submit';
+    if (status === 1) return 'Approve';
+    if (status === 2) return isSchedule ? 'Schedule' : 'Post to Ledger';
+    if (status === 3) return 'Post';
+    if (status === 7) return 'Create';
+
+    return 'Post';
+  })();
 
   return (
     <div className="p-5">

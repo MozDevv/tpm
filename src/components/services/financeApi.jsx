@@ -67,6 +67,9 @@ const financeEndpoints = {
   getBudget: '/Accounts/GetBudget',
   getBudgetByStatus: (status) => `/Accounts/GetBudget?Stage=${status}`,
 
+  getBudgetByDocNumber: (docNumber) =>
+    `/Accounts/GetBudget?paging.pageNumber=1&paging.pageSize=1000&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=documentNo&filterCriterion.criterions[0].propertyValue=${docNumber}`,
+
   addBudgetLines: '/Accounts/AddBudgetLines',
   updateBudgetLine: '/Accounts/UpdateBudgetLines',
 
@@ -411,6 +414,10 @@ const financeEndpoints = {
   createPayrollPv: '/Posting/PostPayrollLiabilityToLedger',
   getReturns: '/Revenue/GetReturns',
   uploadReturn: '/Revenue/UploadReturn',
+  revertPv: '/Posting/RevertPaymentToClaim',
+
+  getPreclaimByDocNo: (docNo) =>
+    `/ProspectivePensioners/GetProspectivePensioners?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&paging.pageNumber=1&paging.pageSize=1000&filterCriterion.criterions[0].propertyName=no&filterCriterion.criterions[0].propertyValue=${docNo}`,
 };
 
 export const apiService = {
