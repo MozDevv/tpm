@@ -34,6 +34,7 @@ import endpoints, {
 } from '@/components/services/setupsApi';
 import Preclaims from '../../preclaims/Preclaims';
 import ListNavigation from '@/components/baseComponents/ListNavigation';
+import Payments from '@/components/financeComponents/payments/Payments';
 
 function DueForApproval() {
   const [rowData, setRowData] = React.useState([]);
@@ -134,6 +135,20 @@ function DueForApproval() {
             />
           ),
           fetchClickedRowEnpoint: financeEndpoints.getPreclaimByDocNo,
+          fetchClickedRowApiService: apiService,
+        };
+      case 'PAYMENT VOUCHER':
+        return {
+          component: (
+            <Payments
+              status={1}
+              isApproval={true}
+              openApprovalBase={openApprovalBase}
+              setOpenApprovalBase={setOpenApprovalBase}
+              clickedApproval={fetchedDoc}
+            />
+          ),
+          fetchClickedRowEnpoint: financeEndpoints.getPaymentByDocNo,
           fetchClickedRowApiService: apiService,
         };
       // Add more cases here for different section names

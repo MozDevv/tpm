@@ -418,6 +418,9 @@ const financeEndpoints = {
 
   getPreclaimByDocNo: (docNo) =>
     `/ProspectivePensioners/GetProspectivePensioners?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&paging.pageNumber=1&paging.pageSize=1000&filterCriterion.criterions[0].propertyName=no&filterCriterion.criterions[0].propertyValue=${docNo}`,
+
+  getPaymentByDocNo: (docNo) =>
+    `Posting/GetPayments?PaymentVoucherStage=1&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&paging.pageNumber=1&paging.pageSize=1000&filterCriterion.criterions[0].propertyName=documentNo&filterCriterion.criterions[0].propertyValue=${docNo}`,
 };
 
 export const apiService = {

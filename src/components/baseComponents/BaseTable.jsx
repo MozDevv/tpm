@@ -65,8 +65,6 @@ const BaseTable = ({
   deleteApiService,
   isPayroll,
   excelTitle,
-  allRows,
-  setAllRows,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -156,8 +154,8 @@ const BaseTable = ({
 
         const transformedData = transformData(data);
 
-        setRowData(setAllRows);
-        setAllRows(setAllRows);
+        setRowData(transformedData);
+
         setTotalRecords(totalCount);
         setTotalPages(totalPages);
 

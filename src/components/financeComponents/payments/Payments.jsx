@@ -44,7 +44,13 @@ const statusIcons = {
   5: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
-const Payments = ({ status }) => {
+const Payments = ({
+  status,
+  isApproval,
+  openApprovalBase,
+  clickedApproval,
+  setOpenApprovalBase,
+}) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
   const [bankAccounts, setBankAccounts] = React.useState([]);
 
@@ -498,97 +504,17 @@ const Payments = ({ status }) => {
   ];
 
   return (
-    <div className="">
-      <BaseApprovalCard
-        openApprove={openApprove}
-        setOpenApprove={setOpenApprove}
-        documentNo={
-          selectedRows.length > 0
-            ? selectedRows.map((item) => item.documentNo)
-            : clickedItem
-            ? [clickedItem.documentNo]
-            : []
-        }
-      />
-      <Dialog
-        open={openPV && selectedRows.length > 0}
-        onClose={() => {
-          setOpenPV(false);
-          setRevertPv(false);
-          setIsSchedule(false);
-        }}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          padding: '20px',
-          maxHeight: '90vh',
-          zIndex: 999999999,
-        }}
-      >
-        <PVActions
-          revertPv={revertPv}
-          isSchedule={isSchedule}
-          status={status}
-          clickedItem={clickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          selectedRows={selectedRows}
-          setOpenPostGL={setOpenPV}
-          setSelectedRows={setSelectedRows}
-        />
-      </Dialog>
-      <div className="">
-        <div className="">
-          <Dialog
-            open={openTrialBalanceReport}
-            onClose={() => setOpenTrialBalanceReport(false)}
-            sx={{
-              '& .MuiPaper-root': {
-                minHeight: '90vh',
-                maxHeight: '90vh',
-                minWidth: '55vw',
-                maxWidth: '55vw',
-              },
-              zIndex: 99999,
-            }}
-          >
-            <div className="flex-grow overflow-hidden">
-              <PaymentVoucherReport
-                setOpenTrialBalanceReport={setOpenTrialBalanceReport}
-                clickedItem={clickedItem}
-              />
-            </div>
-          </Dialog>
-          <Dialog
-            open={openGratuity}
-            onClose={() => setOpenGratuity(false)}
-            sx={{
-              '& .MuiPaper-root': {
-                minHeight: '90vh',
-                maxHeight: '90vh',
-                minWidth: '45vw',
-                maxWidth: '55vw',
-              },
-              zIndex: 99999,
-            }}
-          >
-            <div className="flex-grow overflow-hidden">
-              <GratuityLetterReport
-                setOpenGratuity={setOpenGratuity}
-                clickedItem={clickedItem}
-              />
-            </div>
-          </Dialog>
-        </div>
-
+    <>
+      {openApprovalBase && isApproval ? (
         <BaseCard
           reportItems={reportItems}
           isClaim={true}
-          retireeId={clickedItem?.prospectivePensionerId}
+          retireeId={clickedApproval?.prospectivePensionerId}
           openBaseCard={openBaseCard}
           setOpenBaseCard={setOpenBaseCard}
           handlers={baseCardHandlers}
           title={title}
-          clickedItem={clickedItem}
+          clickedItem={clickedApproval}
           setClickedItem={setClickedItem}
           isUserComponent={false}
           setOpenAction={setOpenAction}
@@ -604,19 +530,30 @@ const Payments = ({ status }) => {
           ]}
           activeStep={status}
         >
-          {clickedItem ? (
+          {clickedApproval ? (
             <>
               {' '}
+              <BaseApprovalCard
+                openApprove={openApprove}
+                setOpenApprove={setOpenApprove}
+                documentNo={
+                  selectedRows.length > 0
+                    ? selectedRows.map((item) => item.documentNo)
+                    : clickedItem
+                    ? [clickedItem.documentNo]
+                    : []
+                }
+              />{' '}
               <PaymentsCard
                 fields={fields}
                 apiEndpoint={financeEndpoints.updatePayment}
                 postApiFunction={apiService.post}
-                clickedItem={clickedItem}
+                clickedItem={clickedApproval}
                 setOpenBaseCard={setOpenBaseCard}
                 useRequestBody={true}
                 setClickedItem={setClickedItem}
                 transformData={transformData}
-                disableAll={status !== 0 || clickedItem.source === 1}
+                disableAll={status !== 0 || clickedApproval.source === 1}
               />{' '}
             </>
           ) : (
@@ -636,30 +573,176 @@ const Payments = ({ status }) => {
             />
           )}
         </BaseCard>
-        <BaseTable
-          openPostToGL={openPV}
-          openAction={openAction}
-          openBaseCard={openBaseCard}
-          onSelectionChange={handleSelectionChange}
-          clickedItem={clickedItem}
-          setClickedItem={setClickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          columnDefs={columnDefs}
-          fetchApiEndpoint={
-            status === 0
-              ? financeEndpoints.getPaymentByStages(status)
-              : financeEndpoints.getPaymentByStages(status)
-          }
-          fetchApiService={apiService.get}
-          transformData={transformData}
-          pageSize={30}
-          handlers={handlers}
-          breadcrumbTitle={navTitle}
-          currentTitle={navTitle}
-          openApproveDialog={openApprove}
-        />
-      </div>
-    </div>
+      ) : (
+        <div
+          className=""
+          style={{
+            display: !isApproval ? 'block' : 'none',
+          }}
+        >
+          <BaseApprovalCard
+            openApprove={openApprove}
+            setOpenApprove={setOpenApprove}
+            documentNo={
+              selectedRows.length > 0
+                ? selectedRows.map((item) => item.documentNo)
+                : clickedItem
+                ? [clickedItem.documentNo]
+                : []
+            }
+          />
+          <Dialog
+            open={openPV && selectedRows.length > 0}
+            onClose={() => {
+              setOpenPV(false);
+              setRevertPv(false);
+              setIsSchedule(false);
+            }}
+            fullWidth
+            maxWidth="sm"
+            sx={{
+              padding: '20px',
+              maxHeight: '90vh',
+              zIndex: 999999999,
+            }}
+          >
+            <PVActions
+              revertPv={revertPv}
+              isSchedule={isSchedule}
+              status={status}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              selectedRows={selectedRows}
+              setOpenPostGL={setOpenPV}
+              setSelectedRows={setSelectedRows}
+            />
+          </Dialog>
+          <div className="">
+            <div className="">
+              <Dialog
+                open={openTrialBalanceReport}
+                onClose={() => setOpenTrialBalanceReport(false)}
+                sx={{
+                  '& .MuiPaper-root': {
+                    minHeight: '90vh',
+                    maxHeight: '90vh',
+                    minWidth: '55vw',
+                    maxWidth: '55vw',
+                  },
+                  zIndex: 99999,
+                }}
+              >
+                <div className="flex-grow overflow-hidden">
+                  <PaymentVoucherReport
+                    setOpenTrialBalanceReport={setOpenTrialBalanceReport}
+                    clickedItem={clickedItem}
+                  />
+                </div>
+              </Dialog>
+              <Dialog
+                open={openGratuity}
+                onClose={() => setOpenGratuity(false)}
+                sx={{
+                  '& .MuiPaper-root': {
+                    minHeight: '90vh',
+                    maxHeight: '90vh',
+                    minWidth: '45vw',
+                    maxWidth: '55vw',
+                  },
+                  zIndex: 99999,
+                }}
+              >
+                <div className="flex-grow overflow-hidden">
+                  <GratuityLetterReport
+                    setOpenGratuity={setOpenGratuity}
+                    clickedItem={clickedItem}
+                  />
+                </div>
+              </Dialog>
+            </div>
+
+            <BaseCard
+              reportItems={reportItems}
+              isClaim={true}
+              retireeId={clickedItem?.prospectivePensionerId}
+              openBaseCard={openBaseCard}
+              setOpenBaseCard={setOpenBaseCard}
+              handlers={baseCardHandlers}
+              title={title}
+              clickedItem={clickedItem}
+              setClickedItem={setClickedItem}
+              isUserComponent={false}
+              setOpenAction={setOpenAction}
+              openAction={openAction}
+              useRequestBody={true}
+              dialogType={dialogType}
+              steps={[
+                'Payment Preparation',
+                'Payment Request Approval',
+                'Payment Approval',
+                'Payment Scheduling',
+                'Payment Posting',
+              ]}
+              activeStep={status}
+            >
+              {clickedItem ? (
+                <>
+                  {' '}
+                  <PaymentsCard
+                    fields={fields}
+                    apiEndpoint={financeEndpoints.updatePayment}
+                    postApiFunction={apiService.post}
+                    clickedItem={clickedItem}
+                    setOpenBaseCard={setOpenBaseCard}
+                    useRequestBody={true}
+                    setClickedItem={setClickedItem}
+                    transformData={transformData}
+                    disableAll={status !== 0 || clickedItem.source === 1}
+                  />{' '}
+                </>
+              ) : (
+                <BaseAutoSaveInputCard
+                  fields={fields.filter((field) => field.name !== 'documentNo')}
+                  apiEndpoint={financeEndpoints.addPayment}
+                  putApiFunction={apiService.post}
+                  updateApiEndpoint={financeEndpoints.updatePayment}
+                  postApiFunction={apiService.post}
+                  getApiEndpoint={financeEndpoints.getPaymentById(status)}
+                  getApiFunction={apiService.get}
+                  transformData={transformData}
+                  setOpenBaseCard={setOpenBaseCard}
+                  useRequestBody={true}
+                  openBaseCard={openBaseCard}
+                  setClickedItem={setClickedItem}
+                />
+              )}
+            </BaseCard>
+            <BaseTable
+              openPostToGL={openPV}
+              openAction={openAction}
+              openBaseCard={openBaseCard}
+              onSelectionChange={handleSelectionChange}
+              clickedItem={clickedItem}
+              setClickedItem={setClickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              columnDefs={columnDefs}
+              fetchApiEndpoint={
+                status === 0
+                  ? financeEndpoints.getPaymentByStages(status)
+                  : financeEndpoints.getPaymentByStages(status)
+              }
+              fetchApiService={apiService.get}
+              transformData={transformData}
+              pageSize={30}
+              handlers={handlers}
+              breadcrumbTitle={navTitle}
+              currentTitle={navTitle}
+              openApproveDialog={openApprove}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
