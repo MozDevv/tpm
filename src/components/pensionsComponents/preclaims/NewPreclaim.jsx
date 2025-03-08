@@ -28,6 +28,7 @@ import {
   FormControl,
   InputLabel,
   Link,
+  Skeleton,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -73,6 +74,8 @@ function NewPreclaim({
   const [selectedField, setSelectedField] = useState(null);
 
   const [refreshFieldsDocs, setRefreshFieldDocs] = useState(1);
+
+  const [loading, setLoading] = useState(false);
 
   //const [hasId, setHasId] = useState(false);
 
@@ -121,6 +124,7 @@ function NewPreclaim({
   }
 
   const fetchRetiree = async () => {
+    setLoading(true);
     try {
       const res = await apiService.get(
         preClaimsEndpoints.getProspectivePensioner(retireeId)
@@ -258,6 +262,8 @@ function NewPreclaim({
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1380,184 +1386,207 @@ function NewPreclaim({
                                   flexDirection: 'column',
                                 }}
                               >
-                                <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
-                                  <div className="flex items-center">
-                                    {field.label}
-                                    {field.name !== 'other_name' &&
-                                      field.name !== 'service_increments' &&
-                                      field.name !== 'middle_name' && (
-                                        <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-                                          *
-                                        </div>
-                                      )}
-                                  </div>
-                                  {Array(fieldsWithDocs) &&
-                                    fieldsWithDocs &&
-                                    fieldsWithDocs?.fields?.some(
-                                      (f) => f.name === field.name
-                                    ) && (
-                                      <IconButton
-                                        sx={{
-                                          py: 0,
-                                        }}
-                                        onClick={() => {
-                                          setOpenFieldDocs(true);
-                                          setSelectedField(
-                                            fieldsWithDocs.fields.find(
-                                              (f) => f.name === field.name
-                                            )
-                                          );
-                                        }}
-                                      >
-                                        <Attachment
-                                          sx={{
-                                            fontSize: '24px ',
-                                            color: '#006990',
-                                          }}
-                                        />
-                                      </IconButton>
-                                    )}
-                                </label>
-                                {field.name === 'phone_number' ? (
-                                  <MuiPhoneNumber
-                                    defaultCountry="ke" // Kenya as the default country
-                                    name="phoneNumber"
-                                    value={formData.phone_number}
-                                    onChange={(value) =>
-                                      handleInputChange({
-                                        target: { name: 'phone_number', value },
-                                      })
-                                    }
-                                    error={!!errors.phone_number}
-                                    helperText={errors.phone_number}
-                                    disabled={!canEdit}
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onBlur={handleSubmit}
-                                    dropdownClass="custom-dropdown" // Custom class for the dropdown
-                                    MenuProps={{
-                                      PaperProps: {
-                                        style: {
-                                          maxHeight: '120px', // Set max height for the dropdown
-                                          overflowY: 'auto',
-                                        },
-                                      },
-                                      anchorOrigin: {
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                      },
-                                      transformOrigin: {
-                                        vertical: 'top',
-                                        horizontal: 'left',
-                                      },
-                                    }}
-                                  />
-                                ) : field.type === 'select' ? (
-                                  <TextField
-                                    select
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onBlur={handleSubmit}
-                                    name={field.name}
-                                    disabled={!canEdit || field.disabled}
-                                    value={formData[field.name]}
-                                    onChange={handleInputChange}
-                                    error={!!errors[field.name]} // Show error style if there is an error
-                                    helperText={errors[field.name]} // Display the error message
-                                  >
-                                    <MenuItem value="">
-                                      Select {field.label}
-                                    </MenuItem>
-                                    {field?.children?.map((option) => (
-                                      <MenuItem
-                                        key={option?.id}
-                                        value={option?.id}
-                                      >
-                                        {option?.code
-                                          ? `${option.name} - ${option.code}`
-                                          : option.name}
-                                      </MenuItem>
-                                    ))}
-                                  </TextField>
-                                ) : field.type === 'autocomplete' ? (
-                                  <Autocomplete
-                                    options={field.children}
-                                    getOptionLabel={(option) => option.name}
-                                    onChange={(event, newValue) => {
-                                      handleInputChange({
-                                        target: {
-                                          name: field.name,
-                                          value: newValue ? newValue.id : '',
-                                        },
-                                      });
-                                    }}
-                                    PaperComponent={(props) => (
-                                      <Paper
-                                        {...props}
-                                        style={{
-                                          maxHeight: 300,
-                                          overflow: 'auto',
+                                {loading ? (
+                                  <>
+                                    <Skeleton
+                                      variant="text"
+                                      width={100}
+                                      height={20}
+                                    />
+                                    <Skeleton
+                                      variant="rectangular"
+                                      width="100%"
+                                      height={35}
+                                    />
+                                  </>
+                                ) : (
+                                  <>
+                                    {' '}
+                                    <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
+                                      <div className="flex items-center">
+                                        {field.label}
+                                        {field.name !== 'other_name' &&
+                                          field.name !== 'service_increments' &&
+                                          field.name !== 'middle_name' && (
+                                            <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                                              *
+                                            </div>
+                                          )}
+                                      </div>
+                                      {Array(fieldsWithDocs) &&
+                                        fieldsWithDocs &&
+                                        fieldsWithDocs?.fields?.some(
+                                          (f) => f.name === field.name
+                                        ) && (
+                                          <IconButton
+                                            sx={{
+                                              py: 0,
+                                            }}
+                                            onClick={() => {
+                                              setOpenFieldDocs(true);
+                                              setSelectedField(
+                                                fieldsWithDocs.fields.find(
+                                                  (f) => f.name === field.name
+                                                )
+                                              );
+                                            }}
+                                          >
+                                            <Attachment
+                                              sx={{
+                                                fontSize: '24px ',
+                                                color: '#006990',
+                                              }}
+                                            />
+                                          </IconButton>
+                                        )}
+                                    </label>
+                                    {field.name === 'phone_number' ? (
+                                      <MuiPhoneNumber
+                                        defaultCountry="ke" // Kenya as the default country
+                                        name="phoneNumber"
+                                        value={formData.phone_number}
+                                        onChange={(value) =>
+                                          handleInputChange({
+                                            target: {
+                                              name: 'phone_number',
+                                              value,
+                                            },
+                                          })
+                                        }
+                                        error={!!errors.phone_number}
+                                        helperText={errors.phone_number}
+                                        disabled={!canEdit}
+                                        variant="outlined"
+                                        size="small"
+                                        fullWidth
+                                        onBlur={handleSubmit}
+                                        dropdownClass="custom-dropdown" // Custom class for the dropdown
+                                        MenuProps={{
+                                          PaperProps: {
+                                            style: {
+                                              maxHeight: '120px', // Set max height for the dropdown
+                                              overflowY: 'auto',
+                                            },
+                                          },
+                                          anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'left',
+                                          },
+                                          transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                          },
                                         }}
                                       />
-                                    )}
-                                    disabled={!canEdit}
-                                    renderInput={(params) => (
+                                    ) : field.type === 'select' ? (
                                       <TextField
-                                        {...params}
+                                        select
                                         variant="outlined"
                                         size="small"
                                         fullWidth
                                         onBlur={handleSubmit}
                                         name={field.name}
+                                        disabled={!canEdit || field.disabled}
+                                        value={formData[field.name]}
+                                        onChange={handleInputChange}
+                                        error={!!errors[field.name]} // Show error style if there is an error
+                                        helperText={errors[field.name]} // Display the error message
+                                      >
+                                        <MenuItem value="">
+                                          Select {field.label}
+                                        </MenuItem>
+                                        {field?.children?.map((option) => (
+                                          <MenuItem
+                                            key={option?.id}
+                                            value={option?.id}
+                                          >
+                                            {option?.code
+                                              ? `${option.name} - ${option.code}`
+                                              : option.name}
+                                          </MenuItem>
+                                        ))}
+                                      </TextField>
+                                    ) : field.type === 'autocomplete' ? (
+                                      <Autocomplete
+                                        options={field.children}
+                                        getOptionLabel={(option) => option.name}
+                                        onChange={(event, newValue) => {
+                                          handleInputChange({
+                                            target: {
+                                              name: field.name,
+                                              value: newValue
+                                                ? newValue.id
+                                                : '',
+                                            },
+                                          });
+                                        }}
+                                        PaperComponent={(props) => (
+                                          <Paper
+                                            {...props}
+                                            style={{
+                                              maxHeight: 300,
+                                              overflow: 'auto',
+                                            }}
+                                          />
+                                        )}
                                         disabled={!canEdit}
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            size="small"
+                                            fullWidth
+                                            onBlur={handleSubmit}
+                                            name={field.name}
+                                            disabled={!canEdit}
+                                            error={!!errors[field.name]}
+                                            helperText={errors[field.name]}
+                                          />
+                                        )}
+                                        value={
+                                          field.children.find(
+                                            (option) =>
+                                              option.id === formData[field.name]
+                                          ) || null
+                                        }
+                                      />
+                                    ) : (
+                                      // ) : field.type === "date" ? (
+                                      //   <LocalizationProvider
+                                      //     dateAdapter={AdapterDayjs}
+                                      //     adapterLocale="en-au" // Use the locale here
+                                      //   >
+                                      //     <TextField
+                                      //       name={field.name}
+                                      //       type="date"
+                                      //       variant="outlined"
+                                      //       size="small"
+                                      //       error={!!errors[field.name]}
+                                      //       helperText={errors[field.name]}
+                                      //       onChange={handleInputChange}
+                                      //       fullWidth
+                                      //     />
+                                      //   </LocalizationProvider>
+                                      <TextField
+                                        type={field.type}
+                                        name={field.name}
+                                        variant="outlined"
+                                        disabled={
+                                          !canEdit ||
+                                          field.disabled ||
+                                          (field.name === 'retirement_date' &&
+                                            formData.mortality_status === 1)
+                                        }
+                                        size="small"
+                                        onBlur={handleSubmit}
+                                        value={formData[field.name]}
+                                        onChange={handleInputChange}
                                         error={!!errors[field.name]}
                                         helperText={errors[field.name]}
+                                        fullWidth
                                       />
                                     )}
-                                    value={
-                                      field.children.find(
-                                        (option) =>
-                                          option.id === formData[field.name]
-                                      ) || null
-                                    }
-                                  />
-                                ) : (
-                                  // ) : field.type === "date" ? (
-                                  //   <LocalizationProvider
-                                  //     dateAdapter={AdapterDayjs}
-                                  //     adapterLocale="en-au" // Use the locale here
-                                  //   >
-                                  //     <TextField
-                                  //       name={field.name}
-                                  //       type="date"
-                                  //       variant="outlined"
-                                  //       size="small"
-                                  //       error={!!errors[field.name]}
-                                  //       helperText={errors[field.name]}
-                                  //       onChange={handleInputChange}
-                                  //       fullWidth
-                                  //     />
-                                  //   </LocalizationProvider>
-                                  <TextField
-                                    type={field.type}
-                                    name={field.name}
-                                    variant="outlined"
-                                    disabled={
-                                      !canEdit ||
-                                      field.disabled ||
-                                      (field.name === 'retirement_date' &&
-                                        formData.mortality_status === 1)
-                                    }
-                                    size="small"
-                                    onBlur={handleSubmit}
-                                    value={formData[field.name]}
-                                    onChange={handleInputChange}
-                                    error={!!errors[field.name]}
-                                    helperText={errors[field.name]}
-                                    fullWidth
-                                  />
+                                  </>
                                 )}
                               </div>
                             ))}
