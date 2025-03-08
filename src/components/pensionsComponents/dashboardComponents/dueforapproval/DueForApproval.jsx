@@ -147,8 +147,8 @@ function DueForApproval() {
 
     for (const section of numberingSections) {
       if (
-        section.numberSeries &&
-        item.documentNo.startsWith(section.numberSeries.code)
+        section?.numberSeries &&
+        item.documentNo?.startsWith(section.numberSeries.code)
       ) {
         console.log('Matched section:', section);
         console.log('Item:', item);
@@ -176,8 +176,8 @@ function DueForApproval() {
   const ComponentToOpen = (documentNo, fetchedDoc) => {
     for (const section of numberingSections) {
       if (
-        section.numberSeries &&
-        documentNo.startsWith(section.numberSeries.code)
+        section?.numberSeries &&
+        documentNo?.startsWith(section.numberSeries.code)
       ) {
         return sectionMapper(section.name, fetchedDoc).component;
       }
@@ -205,7 +205,15 @@ function DueForApproval() {
 
   return (
     <div className="">
-      {openBaseCard && ComponentToOpen(clickedItem?.documentNo, fetchedDoc)}
+      {(openBaseCard &&
+        ComponentToOpen(clickedItem?.documentNo, fetchedDoc)) || (
+        <BaseApprovalCard
+          clickedItem={clickedItem}
+          openApprove={openApprove}
+          setOpenApprove={setOpenApprove}
+          documentNo={clickedItem?.documentNo}
+        />
+      )}
 
       <Dialog
         open={expand}
@@ -315,7 +323,7 @@ function DueForApproval() {
                         sx={{
                           marginLeft: 1,
                           maxHeight: '20px',
-                          textTransform: 'none',
+
                           fontSize: '12px',
                         }}
                         onClick={async () => {
@@ -328,9 +336,10 @@ function DueForApproval() {
                           setOpenApprovalBase(true);
                           setOpenBaseCard(true);
                         }}
+                        //  disabled={loadingDoc === item.documentNo}
                       >
                         {loadingDoc === item.documentNo ? (
-                          <CircularProgress size={16} sx={{ color: 'white' }} /> // Show loader inside button
+                          <CircularProgress size={16} /> // Show loader inside button
                         ) : (
                           'View'
                         )}

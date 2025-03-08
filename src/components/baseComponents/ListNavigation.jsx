@@ -679,7 +679,8 @@ const ListNavigation = ({
     {
       name: 'Send For Approval',
       action: 'sendApprovalRequest',
-      disabled: approvalActions?.sendForApproval,
+      //   disabled: approvalActions?.sendForApproval,
+      disabled: false,
       icon: IosShare,
       parent: 'approvalRequest',
     },
@@ -778,6 +779,7 @@ const ListNavigation = ({
               onBlur={() => setIsSearchActive(false)}
               sx={{ mb: -1, maxHeight: '25px', ml: -1 }}
               onChange={(e) => setSearchedValue(e.target.value)}
+              autoFocus={isSearchActive}
             />
           ) : (
             <Button
