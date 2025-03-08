@@ -566,6 +566,14 @@ const BaseInputTable = ({
     ...fields.map((col, index) => {
       let columnDef = {
         headerName: col.label,
+        headerComponent: () => (
+          <span>
+            {col.label}{' '}
+            {!col.notRequired && !col.disabled && (
+              <span style={{ color: 'red', fontSize: '18px' }}>*</span>
+            )}
+          </span>
+        ),
         field: col.value,
         editable: !disableAll && !col.disabled,
         sortable: true,
