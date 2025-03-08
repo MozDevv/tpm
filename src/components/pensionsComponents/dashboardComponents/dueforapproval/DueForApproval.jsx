@@ -193,11 +193,11 @@ function DueForApproval() {
   };
 
   useEffect(() => {
-    const filtered = filteredData.filter((item) =>
+    const filtered = rowData.filter((item) =>
       item.documentNo.toLowerCase().includes(searchedValue.toLowerCase())
     );
     setFilteredData(filtered);
-  }, [searchedValue]);
+  }, [searchedValue, rowData]);
 
   const handlers = {
     search: () => console.log('searching'),
@@ -381,9 +381,9 @@ function DueForApproval() {
 
         <div className="h-[380px] overflow-y-auto ">
           <List sx={{}}>
-            {Array.isArray(rowData) && rowData.length > 0 ? (
+            {Array.isArray(filteredData) && filteredData.length > 0 ? (
               <>
-                {rowData.map((item) => (
+                {filteredData.map((item) => (
                   <ListItem key={item.documentNo} sx={{ alignItems: 'center' }}>
                     <ListItemAvatar>
                       <ArticleOutlined
