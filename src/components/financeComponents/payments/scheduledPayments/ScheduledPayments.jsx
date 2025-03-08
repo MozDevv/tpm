@@ -31,7 +31,13 @@ import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import ScheduleControlReport from './reports/ScheduleControlReport';
 import TaxReport from './reports/TaxReport';
 
-const ScheduledPayments = ({ status }) => {
+const ScheduledPayments = ({
+  status,
+  isApproval,
+  openApprovalBase,
+  clickedApproval,
+  setOpenApprovalBase,
+}) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
   const [bankAccounts, setBankAccounts] = React.useState([]);
 
@@ -460,161 +466,217 @@ const ScheduledPayments = ({ status }) => {
   const reportItems = ['Schedule Control Report', 'Tax Report'];
 
   return (
-    <div className="">
-      <Dialog
-        open={openReport && clickedItem}
-        onClose={() => setOpenReport(false)}
-        sx={{
-          '& .MuiPaper-root': {
-            minHeight: '90vh',
-            maxHeight: '90vh',
-            minWidth: '45vw',
-            maxWidth: '55vw',
-          },
-          zIndex: 99999,
-        }}
-      >
-        <div className="flex-grow overflow-hidden">
-          <ScheduleControlReport
-            setOpenReport={setOpenReport}
-            id={clickedItem?.id}
-            data={clickedItem?.paymentScheduleLines}
+    <>
+      {openApprovalBase && isApproval ? (
+        <BaseCard
+          reportItems={reportItems}
+          openBaseCard={openApprovalBase}
+          setOpenBaseCard={setOpenApprovalBase}
+          handlers={baseCardHandlers}
+          title={'Scheduled Payments'}
+          clickedItem={clickedApproval}
+          setClickedItem={setClickedItem}
+          isUserComponent={false}
+          setOpenAction={setOpenAction}
+          openAction={openAction}
+          useRequestBody={true}
+          dialogType={dialogType}
+          customDeleteFunction={handleDeleteSchedule}
+        >
+          {clickedApproval ? (
+            <ScheduledPaymentsCard
+              openDialog={openDialog}
+              baseCardHandlers={scheduleHandlers}
+              selectedLines={selectedLines}
+              setSelectedLines={setSelectedLines}
+              exportScheduleLines={exportScheduleLines}
+              fields={fields}
+              apiEndpoint={financeEndpoints.updatePayment}
+              postApiFunction={apiService.post}
+              clickedItem={clickedApproval}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              setClickedItem={setClickedItem}
+              gridApi={gridApi}
+              setGridApi={setGridApi}
+              transformData={transformData}
+              loading={loading}
+            />
+          ) : (
+            <BaseAutoSaveInputCard
+              fields={fields}
+              apiEndpoint={financeEndpoints.addPayment}
+              putApiFunction={apiService.post}
+              updateApiEndpoint={financeEndpoints.updatePayment}
+              postApiFunction={apiService.post}
+              getApiEndpoint={financeEndpoints.getPaymentById(status)}
+              getApiFunction={apiService.get}
+              transformData={transformData}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+              openBaseCard={openBaseCard}
+              setClickedItem={setClickedItem}
+            />
+          )}
+        </BaseCard>
+      ) : (
+        <div className="">
+          <Dialog
+            open={openReport && clickedItem}
+            onClose={() => setOpenReport(false)}
+            sx={{
+              '& .MuiPaper-root': {
+                minHeight: '90vh',
+                maxHeight: '90vh',
+                minWidth: '45vw',
+                maxWidth: '55vw',
+              },
+              zIndex: 99999,
+            }}
+          >
+            <div className="flex-grow overflow-hidden">
+              <ScheduleControlReport
+                setOpenReport={setOpenReport}
+                id={clickedItem?.id}
+                data={clickedItem?.paymentScheduleLines}
+              />
+            </div>
+          </Dialog>
+          <Dialog
+            open={openReport === 1 && clickedItem}
+            onClose={() => setOpenReport(false)}
+            sx={{
+              '& .MuiPaper-root': {
+                minHeight: '90vh',
+                maxHeight: '90vh',
+                minWidth: '45vw',
+                maxWidth: '55vw',
+              },
+              zIndex: 99999,
+            }}
+          >
+            <div className="flex-grow overflow-hidden">
+              <TaxReport
+                setOpenReport={setOpenReport}
+                data={clickedItem?.paymentScheduleLines}
+              />
+            </div>
+          </Dialog>
+          <BaseApprovalCard
+            openApprove={openApprove}
+            setOpenApprove={setOpenApprove}
+            documentNo={
+              selectedRows.length > 0
+                ? selectedRows.map((item) => item.documentNo)
+                : clickedItem
+                ? [clickedItem.documentNo]
+                : []
+            }
           />
-        </div>
-      </Dialog>
-      <Dialog
-        open={openReport === 1 && clickedItem}
-        onClose={() => setOpenReport(false)}
-        sx={{
-          '& .MuiPaper-root': {
-            minHeight: '90vh',
-            maxHeight: '90vh',
-            minWidth: '45vw',
-            maxWidth: '55vw',
-          },
-          zIndex: 99999,
-        }}
-      >
-        <div className="flex-grow overflow-hidden">
-          <TaxReport
-            setOpenReport={setOpenReport}
-            data={clickedItem?.paymentScheduleLines}
-          />
-        </div>
-      </Dialog>
-      <BaseApprovalCard
-        openApprove={openApprove}
-        setOpenApprove={setOpenApprove}
-        documentNo={
-          selectedRows.length > 0
-            ? selectedRows.map((item) => item.documentNo)
-            : clickedItem
-            ? [clickedItem.documentNo]
-            : []
-        }
-      />
-      <AddSchedules
-        clickedItem={clickedItem}
-        openDialog={openDialog}
-        setOpenDialog={setOpenDialog}
-      />
-      <Dialog
-        open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
-        onClose={() => {
-          setOpenPV(false);
-          setIsSchedule(false);
-        }}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          padding: '20px',
-          maxHeight: '90vh',
-        }}
-      >
-        <ScheduledPvActions
-          isSchedule={isSchedule}
-          status={status}
-          clickedItem={clickedItem}
-          setOpenBaseCard={setOpenBaseCard}
-          selectedRows={selectedRows}
-          setOpenPostGL={setOpenPV}
-          setSelectedRows={setSelectedRows}
-        />
-      </Dialog>
-      <BaseCard
-        reportItems={reportItems}
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={'Scheduled Payments'}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        isUserComponent={false}
-        setOpenAction={setOpenAction}
-        openAction={openAction}
-        useRequestBody={true}
-        dialogType={dialogType}
-        customDeleteFunction={handleDeleteSchedule}
-      >
-        {clickedItem ? (
-          <ScheduledPaymentsCard
-            openDialog={openDialog}
-            baseCardHandlers={scheduleHandlers}
-            selectedLines={selectedLines}
-            setSelectedLines={setSelectedLines}
-            exportScheduleLines={exportScheduleLines}
-            fields={fields}
-            apiEndpoint={financeEndpoints.updatePayment}
-            postApiFunction={apiService.post}
+          <AddSchedules
             clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-            setClickedItem={setClickedItem}
-            gridApi={gridApi}
-            setGridApi={setGridApi}
-            transformData={transformData}
-            loading={loading}
+            openDialog={openDialog}
+            setOpenDialog={setOpenDialog}
           />
-        ) : (
-          <BaseAutoSaveInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.addPayment}
-            putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updatePayment}
-            postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getPaymentById(status)}
-            getApiFunction={apiService.get}
-            transformData={transformData}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
+          <Dialog
+            open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
+            onClose={() => {
+              setOpenPV(false);
+              setIsSchedule(false);
+            }}
+            fullWidth
+            maxWidth="sm"
+            sx={{
+              padding: '20px',
+              maxHeight: '90vh',
+            }}
+          >
+            <ScheduledPvActions
+              isSchedule={isSchedule}
+              status={status}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              selectedRows={selectedRows}
+              setOpenPostGL={setOpenPV}
+              setSelectedRows={setSelectedRows}
+            />
+          </Dialog>
+          <BaseCard
+            reportItems={reportItems}
             openBaseCard={openBaseCard}
+            setOpenBaseCard={setOpenBaseCard}
+            handlers={baseCardHandlers}
+            title={'Scheduled Payments'}
+            clickedItem={clickedItem}
             setClickedItem={setClickedItem}
+            isUserComponent={false}
+            setOpenAction={setOpenAction}
+            openAction={openAction}
+            useRequestBody={true}
+            dialogType={dialogType}
+            customDeleteFunction={handleDeleteSchedule}
+          >
+            {clickedItem ? (
+              <ScheduledPaymentsCard
+                openDialog={openDialog}
+                baseCardHandlers={scheduleHandlers}
+                selectedLines={selectedLines}
+                setSelectedLines={setSelectedLines}
+                exportScheduleLines={exportScheduleLines}
+                fields={fields}
+                apiEndpoint={financeEndpoints.updatePayment}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+                setClickedItem={setClickedItem}
+                gridApi={gridApi}
+                setGridApi={setGridApi}
+                transformData={transformData}
+                loading={loading}
+              />
+            ) : (
+              <BaseAutoSaveInputCard
+                fields={fields}
+                apiEndpoint={financeEndpoints.addPayment}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.updatePayment}
+                postApiFunction={apiService.post}
+                getApiEndpoint={financeEndpoints.getPaymentById(status)}
+                getApiFunction={apiService.get}
+                transformData={transformData}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+                openBaseCard={openBaseCard}
+                setClickedItem={setClickedItem}
+              />
+            )}
+          </BaseCard>
+          <BaseTable
+            openPostToGL={openPV}
+            openAction={openAction}
+            openBaseCard={openBaseCard}
+            onSelectionChange={handleSelectionChange}
+            clickedItem={clickedItem}
+            setClickedItem={setClickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            columnDefs={columnDefs}
+            fetchApiEndpoint={
+              status === 0
+                ? financeEndpoints.getPaymentSchedulesByStage(status)
+                : financeEndpoints.getPaymentSchedulesByStage(status)
+            }
+            fetchApiService={apiService.get}
+            transformData={transformData}
+            pageSize={30}
+            handlers={handlers}
+            breadcrumbTitle={navTitle}
+            currentTitle={navTitle}
+            openApproveDialog={openApprove}
           />
-        )}
-      </BaseCard>
-      <BaseTable
-        openPostToGL={openPV}
-        openAction={openAction}
-        openBaseCard={openBaseCard}
-        onSelectionChange={handleSelectionChange}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={
-          status === 0
-            ? financeEndpoints.getPaymentSchedulesByStage(status)
-            : financeEndpoints.getPaymentSchedulesByStage(status)
-        }
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle={navTitle}
-        currentTitle={navTitle}
-        openApproveDialog={openApprove}
-      />
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

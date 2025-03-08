@@ -26,6 +26,7 @@ import {
   Visibility,
 } from '@mui/icons-material';
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
+import { Alert } from 'antd';
 
 const statusIcons = {
   /**  {
@@ -539,8 +540,8 @@ const Payments = ({
                 documentNo={
                   selectedRows.length > 0
                     ? selectedRows.map((item) => item.documentNo)
-                    : clickedItem
-                    ? [clickedItem.documentNo]
+                    : clickedApproval
+                    ? [clickedApproval.documentNo]
                     : []
                 }
               />{' '}
@@ -557,20 +558,23 @@ const Payments = ({
               />{' '}
             </>
           ) : (
-            <BaseAutoSaveInputCard
-              fields={fields.filter((field) => field.name !== 'documentNo')}
-              apiEndpoint={financeEndpoints.addPayment}
-              putApiFunction={apiService.post}
-              updateApiEndpoint={financeEndpoints.updatePayment}
-              postApiFunction={apiService.post}
-              getApiEndpoint={financeEndpoints.getPaymentById(status)}
-              getApiFunction={apiService.get}
-              transformData={transformData}
-              setOpenBaseCard={setOpenBaseCard}
-              useRequestBody={true}
-              openBaseCard={openBaseCard}
-              setClickedItem={setClickedItem}
-            />
+            <>
+              <Alert description="Document not found" type="error" />
+              <BaseAutoSaveInputCard
+                fields={fields.filter((field) => field.name !== 'documentNo')}
+                apiEndpoint={financeEndpoints.addPayment}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.updatePayment}
+                postApiFunction={apiService.post}
+                getApiEndpoint={financeEndpoints.getPaymentById(status)}
+                getApiFunction={apiService.get}
+                transformData={transformData}
+                setOpenBaseCard={setOpenBaseCard}
+                useRequestBody={true}
+                openBaseCard={openBaseCard}
+                setClickedItem={setClickedItem}
+              />
+            </>
           )}
         </BaseCard>
       ) : (

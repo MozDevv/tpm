@@ -89,7 +89,7 @@ function DueForApproval() {
 
   useEffect(() => {
     fetchRowData();
-  }, [openBaseCard, openApprove]);
+  }, [openBaseCard, openApprove, openApprovalBase]);
 
   const fetchNumberingSections = async () => {
     try {
