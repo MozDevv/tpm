@@ -355,6 +355,7 @@ const BaseInputForPensionableSalary = ({
   const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.sizeColumnsToFit();
+    gridApiRef.current.showLoadingOverlay();
   }, []);
 
   const isRowComplete = (row) => {

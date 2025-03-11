@@ -137,6 +137,7 @@ const BaseTable = ({
       let res;
       if (isPayroll) {
         const res = await fetchApiService(fetchApiEndpoint);
+        console.log('res', res);
         if (res && res.data) {
           const transformedData = transformData(res.data);
           setRowData(transformedData);
@@ -145,7 +146,7 @@ const BaseTable = ({
           setRowData([]); // Set an empty array if data is undefined or null
         }
       } else {
-        res = await fetchApiService(fetchApiEndpoint, {
+        const res = await fetchApiService(fetchApiEndpoint, {
           'paging.pageNumber': pageNumber,
           'paging.pageSize': 10,
           ...filter,
@@ -164,7 +165,7 @@ const BaseTable = ({
     } catch (error) {
       console.log('', error);
 
-      console.error('Error fetching data:', error.response);
+      console.error('Error fetching data:', error);
     }
   };
 
