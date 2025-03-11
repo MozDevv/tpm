@@ -203,27 +203,30 @@ const Approvers = () => {
             name: 'primary_approver_id',
             label: 'Primary Approver',
             type: 'autocomplete',
-            options: inputData.mdaId
-              ? users.filter((user) => user.mdaId === inputData.mdaId)
-              : users,
+            options:
+              inputData && inputData.mdaId
+                ? users.filter((user) => user.mdaId === inputData.mdaId)
+                : users,
           },
 
           {
             name: 'secondary_approver_id',
             label: 'Secondary Approver',
             type: 'autocomplete',
-            options: inputData.mdaId
-              ? users.filter((user) => user.mdaId === inputData.mdaId)
-              : users,
+            options:
+              inputData && inputData.mdaId
+                ? users.filter((user) => user.mdaId === inputData.mdaId)
+                : users,
           },
 
           {
             name: 'direct_approver_id',
             label: 'Direct Approver',
             type: 'autocomplete',
-            options: inputData.mdaId
-              ? users.filter((user) => user.mdaId === inputData.mdaId)
-              : users,
+            options:
+              inputData && inputData
+                ? users.filter((user) => user.mdaId === inputData.mdaId)
+                : users,
           },
         ]),
   ];
