@@ -2,7 +2,7 @@
 import AssessmentTable from '@/components/assessment/assessmentDataCapture/AssessmentTable';
 import MainPayroll from '@/components/payrollComponents/payrollRun/MainPayroll copy';
 import ClaimsTable from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
-import RetirementTrends from '@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue';
+// import RetirementTrends from '@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue';
 import ClaimsValue from '@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue';
 import DueForApproval from '@/components/pensionsComponents/dashboardComponents/dueforapproval/DueForApproval';
 import Preclaims from '@/components/pensionsComponents/preclaims/Preclaims';
@@ -12,7 +12,15 @@ import { AccountBalanceOutlined, Launch } from '@mui/icons-material';
 import { Box, Grid, IconButton, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
-
+const RetirementTrends = dynamic(
+  () =>
+    import(
+      '@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue'
+    ),
+  {
+    ssr: false, // This ensures the component is only rendered on the client side
+  }
+);
 function Dashboard() {
   const [department, setDepartment] = useState('');
   const { auth } = useAuth();
