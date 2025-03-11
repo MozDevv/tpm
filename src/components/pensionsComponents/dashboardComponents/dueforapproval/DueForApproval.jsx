@@ -37,8 +37,8 @@ import ListNavigation from '@/components/baseComponents/ListNavigation';
 import Payments from '@/components/financeComponents/payments/Payments';
 
 function DueForApproval() {
-  const [rowData, setRowData] = React.us;
-  eState([]);
+  const [rowData, setRowData] = React.useState([]);
+
   const [users, setUsers] = React.useState([]);
   const { auth } = useAuth();
   const [loading, setLoading] = React.useState(false);
