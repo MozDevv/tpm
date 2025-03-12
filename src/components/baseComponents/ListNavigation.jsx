@@ -309,6 +309,13 @@ const ListNavigation = ({
       status: [6],
     },
     {
+      name: 'Return to COB',
+      icon: Undo,
+      action: 'returnToCOB',
+      requiredPermissions: [],
+      status: [7],
+    },
+    {
       name: 'Move to Finance',
       icon: AssuredWorkload,
       action: 'moveToFinance',

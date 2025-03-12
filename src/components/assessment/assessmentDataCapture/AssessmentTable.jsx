@@ -588,6 +588,10 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenAction(1);
       setOpenMoveStatus(true);
     },
+    returnToCOB: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
+    },
     ...(status === 5
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),

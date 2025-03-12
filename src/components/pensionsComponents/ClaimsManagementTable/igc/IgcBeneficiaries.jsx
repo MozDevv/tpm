@@ -28,7 +28,6 @@ const IgcBeneficiaries = () => {
       field: 'igc_no',
       headerName: 'IGC No',
       headerClass: 'prefix-header',
-      flex: 1,
       pinned: 'left',
       filter: true,
       cellRenderer: (params) => {
@@ -42,14 +41,12 @@ const IgcBeneficiaries = () => {
       headerName: 'Surname',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'first_name',
       headerName: 'First Name',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
 
     {
@@ -57,14 +54,12 @@ const IgcBeneficiaries = () => {
       headerName: 'Identifier',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'relationship',
       headerName: 'Relationship',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'mobile_number',
@@ -85,7 +80,6 @@ const IgcBeneficiaries = () => {
       headerName: 'Date of Birth',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
       valueFormatter: (params) => parseDate(params.value),
     },
     {
@@ -93,35 +87,30 @@ const IgcBeneficiaries = () => {
       headerName: 'Age',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'address',
       headerName: 'Address',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'birth_certificate_no',
       headerName: 'Birth Certificate No',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'supporting_document_number',
       headerName: 'Supporting Document Number',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
       field: 'document_status',
       headerName: 'Document Status',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
       cellRenderer: (params) => {
         const status = statusIcons[params.value];
         if (!status) return null;
@@ -155,7 +144,6 @@ const IgcBeneficiaries = () => {
       headerName: 'IGC Submission Status',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
       cellRenderer: (params) => {
         const status = notificationStatusMap[params.value];
         if (!status) return null;
@@ -182,7 +170,6 @@ const IgcBeneficiaries = () => {
       headerName: 'Created Date',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
       valueFormatter: (params) => parseDate(params.value),
     },
   ];

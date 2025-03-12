@@ -23,6 +23,7 @@ import { Launch } from '@mui/icons-material';
 import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { message } from 'antd';
+import BaseTabs from '@/components/baseComponents/BaseTabs';
 
 const MainPayroll = ({ stage, status }) => {
   const columnDefs = [
@@ -243,15 +244,21 @@ const MainPayroll = ({ stage, status }) => {
     }
   };
 
-  const trialRun = async (id) => {
+  const trialRun = async () => {
     setComputing(true);
     try {
-      const res = await payrollApiService.post(payrollEndpoints.trialRun, {});
+      const res = await payrollApiService.get(payrollEndpoints.trialRun, {
+        periodTypeId: clickedItem?.periodId,
+      });
       if (res.status === 200) {
         setComputing(false);
+      } else {
+        message.error('Error running payroll');
       }
     } catch (error) {
       console.log('Error computing payroll >>>>>>>>>>>:', error);
+    } finally {
+      setComputing(false);
     }
   };
 
@@ -368,6 +375,42 @@ const MainPayroll = ({ stage, status }) => {
 
   const [openViewAll, setOpenViewAll] = React.useState(false);
 
+  const tabPanes = [
+    {
+      key: '1',
+      title: 'Summary',
+      content: (
+        <BaseCollapse name="Summary">
+          <BaseInputCard
+            fields={fields}
+            apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
+            postApiFunction={payrollApiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
+          />
+        </BaseCollapse>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Earnings',
+      content: (
+        <BaseCollapse name="Earnings">
+          <IconButton
+            onClick={() => setOpenViewAll(true)}
+            sx={{ position: 'absolute', right: '40px', top: '20px' }}
+          >
+            <Launch />
+          </IconButton>
+          <div className="pt-2">
+            <PayrollPensionerDetails payrollDetails={payrollDetails} />
+          </div>
+        </BaseCollapse>
+      ),
+    },
+  ];
+
   return (
     <div className="">
       {computing && (
@@ -432,33 +475,36 @@ const MainPayroll = ({ stage, status }) => {
         isClaim={true}
       >
         {clickedItem ? (
-          <div className="flex flex-col gap-2">
-            <div className=" overflow-y-auto ">
-              <BaseCollapse name="Summary">
-                <BaseInputCard
-                  fields={fields}
-                  apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
-                  postApiFunction={payrollApiService.post}
-                  clickedItem={clickedItem}
-                  useRequestBody={true}
-                  setOpenBaseCard={setOpenBaseCard}
-                />
-              </BaseCollapse>
-              <div className="relative">
-                <BaseCollapse name="Earnings">
-                  <IconButton
-                    onClick={() => setOpenViewAll(true)}
-                    sx={{ position: 'absolute', right: '40px', top: '20px' }}
-                  >
-                    <Launch />
-                  </IconButton>
-                  <div className="pt-2">
-                    <PayrollPensionerDetails payrollDetails={payrollDetails} />
-                  </div>
-                </BaseCollapse>
-              </div>
-            </div>
-          </div>
+          // <div className="flex flex-col gap-2">
+          //   <div className=" overflow-y-auto ">
+          //     <BaseCollapse name="Summary">
+          //       <BaseInputCard
+          //         fields={fields}
+          //         apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
+          //         postApiFunction={payrollApiService.post}
+          //         clickedItem={clickedItem}
+          //         useRequestBody={true}
+          //         setOpenBaseCard={setOpenBaseCard}
+          //       />
+          //     </BaseCollapse>
+          //     <div className="relative">
+          //       <BaseCollapse name="Earnings">
+          //         <IconButton
+          //           onClick={() => setOpenViewAll(true)}
+          //           sx={{ position: 'absolute', right: '40px', top: '20px' }}
+          //         >
+          //           <Launch />
+          //         </IconButton>
+          //         <div className="pt-2">
+          //           <PayrollPensionerDetails payrollDetails={payrollDetails} />
+          //         </div>
+          //       </BaseCollapse>
+          //     </div>
+          //   </div>
+          // </div>
+          <>
+            <BaseTabs tabPanes={tabPanes} />
+          </>
         ) : (
           <BaseInputCard
             fields={fields}
