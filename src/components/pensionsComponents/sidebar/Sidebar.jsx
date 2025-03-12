@@ -85,6 +85,15 @@ export const menuItems = [
     icon: <ArticleOutlinedIcon />,
     children: [
       {
+        title: 'Internally Generated Claims',
+        subChildren: [
+          {
+            title: 'IGC Initiation List',
+            path: '/pensions/claims/igc/igc-initiation-list',
+          },
+        ],
+      },
+      {
         title: 'Claims Management',
         path: '/pensions/claims/claims-management',
       },

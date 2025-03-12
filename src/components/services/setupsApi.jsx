@@ -475,6 +475,8 @@ const endpoints = {
     `/api/TaskAllocations/GetCurrentTaskAllocation?recordId=${id}&taskType=${type}`,
 
   reassignTask: '/api/TaskAllocations/ReassignTaskAllocation',
+
+  getIgcInitiation: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
 };
 
 export const apiService = {
