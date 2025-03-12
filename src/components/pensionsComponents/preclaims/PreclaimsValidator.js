@@ -82,13 +82,13 @@ export const validateField = (name, value, formData) => {
       }
     }
 
-    if (name === 'date_from_which_pension_will_commence' && value) {
-      const pensionableOfficeDate = dayjs(value);
+    // if (name === 'date_from_which_pension_will_commence' && value) {
+    //   const pensionableOfficeDate = dayjs(value);
 
-      if (pensionableOfficeDate.isAfter(deathDate)) {
-        error = 'Date pension will commence cannot be after the date of death';
-      }
-    }
+    //   if (pensionableOfficeDate.isAfter(deathDate)) {
+    //     error = 'Date pension will commence cannot be after the date of death';
+    //   }
+    // }
     if (name === 'date_of_first_appointment' && value) {
       const appointmentDate = dayjs(value);
 
