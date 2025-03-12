@@ -227,6 +227,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
           render: (_, record) => (
             <Upload
               name="file"
+              accept=".pdf"
               showUploadList={false}
               onChange={(info) => handleChange(info, record)}
               disabled={record.pensioner_upload}
