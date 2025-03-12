@@ -49,6 +49,63 @@ export const validateField = (name, value, formData) => {
 
   /**change tax exempt certificate date to tax exempt certificate expiry date */
 
+  /**ad another snippet on validation date_of_death such that that pensioners were 18yrs and above at the time of death use dob snippet only */
+  if (
+    name === 'date_of_death' &&
+    value &&
+    formData.dob &&
+    formData.mortality_status === 1
+  ) {
+    const deathDate = dayjs(value);
+    const dobDate = dayjs(formData.dob);
+
+    // Debugging: Check if the dates are valid
+    if (!dobDate.isValid() || !deathDate.isValid()) {
+      error = 'Invalid date format';
+      return error;
+    }
+
+    // Validate that the pensioner was at least 18 years old at the time of death
+    if (deathDate.isBefore(dobDate.add(18, 'years'))) {
+      error = 'Pensioner must be at least 18 years old at the time of death';
+    }
+  }
+
+  if (formData.mortality_status === 1 && formData.date_of_death) {
+    const deathDate = dayjs(formData.date_of_death);
+
+    if (name === 'date_of_confirmation' && value) {
+      const confirmationDate = dayjs(value);
+
+      if (confirmationDate.isAfter(deathDate)) {
+        error = 'Date of confirmation cannot be after the date of death';
+      }
+    }
+
+    if (name === 'date_from_which_pension_will_commence' && value) {
+      const pensionableOfficeDate = dayjs(value);
+
+      if (pensionableOfficeDate.isAfter(deathDate)) {
+        error = 'Date pension will commence cannot be after the date of death';
+      }
+    }
+    if (name === 'date_of_first_appointment' && value) {
+      const appointmentDate = dayjs(value);
+
+      if (appointmentDate.isAfter(deathDate)) {
+        error = 'Date of first appointment cannot be after the date of death';
+      }
+    }
+    if (name === 'tax_exempt_certificate_date' && value) {
+      const taxExemptDate = dayjs(value);
+
+      if (taxExemptDate.isBefore(deathDate)) {
+        error =
+          'Tax Exempt Certificate Date cannot be before the date of death';
+      }
+    }
+  }
+
   if (
     name === 'tax_exempt_certificate_date' &&
     value &&
@@ -60,6 +117,19 @@ export const validateField = (name, value, formData) => {
     if (taxExemptExpiryDate.isAfter(maxExpiryDate)) {
       error =
         'Tax Exempt Certificate Expiry Date cannot exceed 5 years from today';
+    }
+  }
+  if (
+    name === 'tax_exempt_certificate_date' &&
+    value &&
+    formData.disability_status === 0 &&
+    formData.date_of_confirmation
+  ) {
+    const confirmationDate = dayjs(formData.date_of_confirmation);
+    const taxExemptExpiryDate = dayjs(value);
+    if (taxExemptExpiryDate.isBefore(confirmationDate)) {
+      error =
+        'Tax Exempt Certificate Expiry Date cannot be before date of confirmation';
     }
   }
 
@@ -323,11 +393,15 @@ export const validateField = (name, value, formData) => {
     value &&
     formData.mortality_status === 1
   ) {
-    if (!/^[\d/]+$/.test(value) || value.length < 5 || value.length > 15) {
+    if (
+      !/^[a-zA-Z0-9/]+$/.test(value) ||
+      value.length < 5 ||
+      value.length > 15
+    ) {
       error = 'Death certificate must be valid';
     }
   } else if (name === 'personal_number' && value) {
-    if (!/^[a-zA-Z0-9/-]+$/.test(value)) {
+    if (!/^\d+$/.test(value)) {
       error = 'Personal number is not valid';
     } else if (value.length > 15) {
       error = 'Personal number cannot exceed 15 characters';

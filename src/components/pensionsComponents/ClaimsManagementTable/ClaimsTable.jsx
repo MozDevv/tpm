@@ -35,6 +35,8 @@ import './ag-theme.css';
 
 import { apiService } from '@/components/services/preclaimsApi';
 
+import { apiService as setupsApi } from '@/components/services/setupsApi';
+
 import claimsEndpoints from '@/components/services/claimsApi';
 import { useIsLoading } from '@/context/LoadingContext';
 import Spinner from '@/components/spinner/Spinner';
@@ -51,6 +53,8 @@ import FilterComponent from '@/components/baseComponents/FilterComponent';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 import BaseTaskDetails from '@/components/baseComponents/BaseTaskDetails';
 import { motion } from 'framer-motion';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import endpoints from '@/components/services/setupsApi';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -640,6 +644,9 @@ const ClaimsTable = ({ status, isDashboard }) => {
   const [excelLoading, setExcelLoading] = useState(false);
 
   const [minimize, setMinimize] = useState(false);
+
+  const { data: users } = useFetchAsync(endpoints.getUsers, setupsApi);
+
   return (
     <>
       {excelLoading && (
@@ -817,6 +824,29 @@ const ClaimsTable = ({ status, isDashboard }) => {
             <BaseTaskDetails
               documentId={clickedItem?.id_claim}
               documentType={0}
+              users={
+                users &&
+                users.filter((user) => {
+                  if (!user.is_at_work) {
+                    return false;
+                  }
+                  if (clickedItem?.stage === 3 || clickedItem?.stage === 4) {
+                    return user.department.name
+                      .toLowerCase()
+                      .includes('assess');
+                  }
+                  if (
+                    clickedItem?.stage === 0 ||
+                    clickedItem?.stage === 1 ||
+                    clickedItem?.stage === 2
+                  ) {
+                    return user.department.name
+                      .toLowerCase()
+                      .includes('claims');
+                  }
+                  return false;
+                })
+              }
               minimize={minimize}
               setMinimize={setMinimize}
             />

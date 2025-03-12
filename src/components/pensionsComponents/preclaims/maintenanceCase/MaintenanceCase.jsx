@@ -15,6 +15,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 
 const MaintenanceCase = ({ id, clickedItem2 }) => {
   const [rowData, setRowData] = useState([]);
@@ -103,7 +104,25 @@ const MaintenanceCase = ({ id, clickedItem2 }) => {
 
   const title = clickedItem ? 'Maintenance Case' : 'Create a  Maintenance Case';
 
+  const { data: relationships } = useFetchAsync(
+    endpoints.getBeneficiariesRelationShips,
+    apiService
+  );
+
   const fields2 = [
+    {
+      value: 'relationship',
+      label: 'Relationship',
+      type: 'select',
+      options: relationships && relationships,
+    },
+    {
+      value: 'dob',
+      label: 'Date of Birth',
+      type: 'date',
+      required: true,
+    },
+
     {
       value: 'maintainee_name',
       label: 'Name',
@@ -310,6 +329,7 @@ const MaintenanceCase = ({ id, clickedItem2 }) => {
             clickedItem2?.notification_status !== 3
           }
           idLabel="prospective_pensioner_id"
+          principalDob={clickedItem2?.dob}
           getApiService={apiService.get}
           postApiService={apiService.post}
           putApiService={apiService.put}

@@ -214,6 +214,7 @@ function GovernmentSalary({ id, clickedItem }) {
           clickedItem?.notification_status !== 3 &&
           clickedItem?.notification_status !== 7
         }
+        clickedItem={clickedItem}
         retirementDate={clickedItem?.retirement_date}
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}

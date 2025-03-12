@@ -23,11 +23,15 @@ import {
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import { Empty, message } from 'antd';
 
-function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
+function BaseTaskDetails({
+  users,
+  documentType,
+  documentId,
+  minimize,
+  setMinimize,
+}) {
   const [taskDetails, setTaskDetails] = useState({});
   const [reassignUser, setReassignUser] = useState('');
-
-  const { data: users } = useFetchAsync(endpoints.getUsers, apiService);
 
   useEffect(() => {
     getTaskDetails();
@@ -240,13 +244,7 @@ function BaseTaskDetails({ documentType, documentId, minimize, setMinimize }) {
               </Typography>
               <Autocomplete
                 id="reassign-user"
-                options={
-                  (users &&
-                    users.filter((user) =>
-                      user.department.name.toLowerCase().includes('claims')
-                    )) ||
-                  []
-                }
+                options={(users && users.length > 0 && users) || []}
                 getOptionLabel={(option) =>
                   `${option.firstName} ${option.lastName || ''} - ${
                     option.email || ''

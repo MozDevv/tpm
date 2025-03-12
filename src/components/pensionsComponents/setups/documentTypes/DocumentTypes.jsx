@@ -73,6 +73,7 @@ const DocumentTypes = () => {
       description: item.description,
       extenstions: item.extenstions,
       has_two_sides: item.has_two_sides,
+      max_file_size_in_mb: item.max_file_size_in_mb,
       // roles: item.roles,
     }));
   };

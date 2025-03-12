@@ -152,21 +152,67 @@ export const baseValidatorFn = {
     }
     return null;
   },
+  maintainee_name: (value) => {
+    if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+      return 'Name is not valid. Please enter a valid name';
+    }
+    return null;
+  },
+  account_name: (value) => {
+    if (!/^[a-zA-Z'-\s]+$/.test(value)) {
+      return 'Name is not valid. Please enter a valid name';
+    }
+    return null;
+  },
+  //gratuity_rate between 1 and 100
+  gratuity_rate: (value) => {
+    if (isNaN(value)) {
+      return 'Gratuity rate must be a number';
+    }
+    if (value < 1 || value > 100) {
+      return 'Gratuity rate must be between 1 and 100%';
+    }
+    return null;
+  },
+  monthly_pension_rate: (value) => {
+    if (isNaN(value)) {
+      return 'Monthly pension rate must be a number';
+    }
+    if (value < 1 || value > 100) {
+      return 'Monthly pension rate must be between 1 and 100%';
+    }
+    return null;
+  },
+  fromDate: (value) => {
+    const date = dayjs(value);
+    const earliestDate = dayjs('1949-01-01');
 
-  //check if dob is earlier than parent dob
+    // Not allow future date
+    if (date.isAfter(dayjs())) {
+      return 'From date cannot be in the future';
+    }
 
-  // post: (value) => {
-  //   {
-  //     if (!/^[a-zA-Z'-\s]+$/.test(value)) {
-  //       return 'Post is not valid. Please enter a valid post';
-  //     }
-  //   }
-  //   return null;
-  // },
-  // account_number: (value) => {
-  //   const accountNumberRegex = /^[0-9]{10}$/;
-  //   if (!accountNumberRegex.test(value))
-  //     return "Please enter a valid account number";
-  //   return null;
-  // },
+    // Not allow date before 1949
+    if (date.isBefore(earliestDate)) {
+      return 'From date cannot be before 1949';
+    }
+
+    return null;
+  },
+  toDate: (value) => {
+    const date = dayjs(value);
+    const earliestDate = dayjs('1949-01-01');
+
+    // Not allow future date
+    if (date.isAfter(dayjs())) {
+      return 'To date cannot be in the future';
+    }
+
+    // Not allow date before 1949
+    if (date.isBefore(earliestDate)) {
+      return 'To date cannot be before 1949';
+    }
+
+    return null;
+  },
 };

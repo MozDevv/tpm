@@ -51,6 +51,7 @@ const BaseInputTable = ({
   validators = {},
   title,
   cap,
+  principalDob,
 
   id,
   idLabel,
@@ -81,6 +82,7 @@ const BaseInputTable = ({
   retirementDate,
   parentDob,
   scrollable,
+  clickedItem,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -1063,9 +1065,108 @@ const BaseInputTable = ({
         //   const postField = fields.find((field) => field.value === 'post');
         //   if (postField) {
         //     postField.type = 'select';
-        //   }
+        //   }if()
         // }
         const datePair = findDatePair(field);
+
+        if ((data.to_date || data.from_date) && clickedItem?.retirement_date) {
+          const toDate = dayjs(data.to_date);
+          const fromDate = dayjs(data.from_date);
+          const retirementDate = dayjs(clickedItem.retirement_date);
+
+          // Validate that the to_date and from_date do not exceed the retirement date
+          if (
+            toDate.isAfter(retirementDate) ||
+            fromDate.isAfter(retirementDate)
+          ) {
+            message.error('Dates cannot exceed the retirement date.');
+            setCellError(
+              data.id,
+              'to_date',
+              'Dates cannot exceed the retirement date.'
+            );
+            setCellError(
+              data.id,
+              'from_date',
+              'Dates cannot exceed the retirement date.'
+            );
+            return;
+          } else {
+            // Clear any previous errors if the validation passes
+            handleClearError(data, 'to_date');
+            handleClearError(data, 'from_date');
+          }
+        }
+        if ((data.toDate || data.fromDate) && retirementDate) {
+          const toDate = dayjs(data.toDate);
+          const fromDate = dayjs(data.fromDate);
+          const retirementDateDayjs = dayjs(retirementDate); // Use a different variable name
+
+          console.log('toDate:', toDate);
+          console.log('fromDate:', fromDate);
+
+          // Validate that the toDate and fromDate do not exceed the retirement date
+          if (
+            toDate.isAfter(retirementDateDayjs) ||
+            fromDate.isAfter(retirementDateDayjs)
+          ) {
+            message.error('Dates cannot exceed the retirement date.');
+            setCellError(
+              data.id,
+              'toDate',
+              'Dates cannot exceed the retirement date.'
+            );
+            setCellError(
+              data.id,
+              'fromDate',
+              'Dates cannot exceed the retirement date.'
+            );
+            return;
+          } else {
+            // Clear any previous errors if the validation passes
+            handleClearError(data, 'toDate');
+            handleClearError(data, 'fromDate');
+          }
+        }
+
+        if (data.dob && principalDob) {
+          // Log the dates for debugging
+          console.log('DOB:', data.dob);
+          console.log('Principal DOB:', principalDob);
+
+          // Validate that the D.O.B is not in the future
+          const dobDate = dayjs(data.dob);
+          const today = dayjs();
+          if (dobDate.isAfter(today)) {
+            message.error('Date of Birth cannot be in the future.');
+            setCellError(
+              data.id,
+              'dob',
+              'Date of Birth cannot be in the future.'
+            );
+            return;
+          }
+
+          // Validate that the Principal Pensioner is at least 15 years older than the maintenee
+          const principalDobDate = dayjs(principalDob);
+          const ageDifference = dobDate.diff(principalDobDate, 'years');
+
+          // Log the calculated age difference
+          console.log('Age Difference:', ageDifference);
+
+          if (ageDifference < 15) {
+            message.error('Age difference must be at least 15 years.');
+            setCellError(
+              data.id,
+              'dob',
+              'Age difference must be at least 15 years.'
+            );
+            return;
+          } else {
+            // Clear any previous errors if the validation passes
+            handleClearError(data, 'dob');
+          }
+        }
 
         if (datePair && data[datePair.start] && data[datePair.end]) {
           const currentStartDate = data[datePair.start];
@@ -1424,7 +1525,7 @@ const BaseInputTable = ({
             <Button
               onClick={onAddRow}
               variant="text"
-              // disabled={disableAll || retirementDateCaptured}
+              disabled={disableAll || retirementDateCaptured}
               startIcon={<Add />}
               style={{ marginLeft: '10px', marginBottom: '10px' }}
             >
@@ -1450,6 +1551,23 @@ const BaseInputTable = ({
                 role={undefined}
               >
                 Import excel
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={handleFileUpload}
+                  multiple
+                />
+              </Button>
+            )}
+            {title === 'Maintenance Case' && (
+              <Button
+                variant="text"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                sx={{ mt: '-13px' }}
+                component="label"
+                role={undefined}
+              >
+                Upload Court Order
                 <VisuallyHiddenInput
                   type="file"
                   onChange={handleFileUpload}

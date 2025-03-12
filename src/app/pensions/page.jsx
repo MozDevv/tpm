@@ -21,7 +21,6 @@ const ClaimsValue = dynamic(() =>
     '@/components/pensionsComponents/dashboardComponents/claimsValue/ClaimsValue'
   )
 );
-
 const RecentClaims = dynamic(() =>
   import(
     '@/components/pensionsComponents/dashboardComponents/recentClaims/RecentClaims'

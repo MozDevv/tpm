@@ -254,7 +254,7 @@ function CreateProspectivePensioner({
                     )}
                   </>
                 )}
-              {clickedItem?.maintenance_case === 0 && (
+              {/* {clickedItem?.maintenance_case === 0 && (
                 <TabPane
                   tab={
                     <span className="text-primary font-montserrat">
@@ -271,7 +271,7 @@ function CreateProspectivePensioner({
                     />
                   </div>
                 </TabPane>
-              )}
+              )} */}
             </Tabs>
           </div>
         </div>

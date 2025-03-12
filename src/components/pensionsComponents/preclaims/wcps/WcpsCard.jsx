@@ -261,6 +261,7 @@ function WcpsCard({
                     fields={inputFields}
                     id={referenceId}
                     idLabel="wCPS_contribution_id"
+                    clickedItem={clickedItem2}
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.put}
