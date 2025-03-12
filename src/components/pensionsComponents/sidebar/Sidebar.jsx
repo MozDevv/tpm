@@ -91,6 +91,10 @@ export const menuItems = [
             title: 'IGC Initiation List',
             path: '/pensions/claims/igc/igc-initiation-list',
           },
+          {
+            title: 'IGC Beneficiaries List',
+            path: '/pensions/claims/igc/igc-beneficiaries-list',
+          },
         ],
       },
       {
