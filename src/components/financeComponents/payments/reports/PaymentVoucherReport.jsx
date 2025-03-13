@@ -453,7 +453,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                       </div>
                     )
                   )}
-
+                  {/* 
                   <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
                       Total Tax Amount:
@@ -498,7 +498,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                             ?.slice(0, 2) || '00'
                         : '00'}
                     </p>
-                  </div>
+                  </div> */}
 
                   <div className="grid grid-cols-8 border-b border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start justify-between flex">
