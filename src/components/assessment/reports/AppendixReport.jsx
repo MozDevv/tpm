@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
 import { Cancel, GetApp } from '@mui/icons-material';
 import { Empty } from 'antd';
+import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
@@ -62,17 +63,24 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
         setLoading(false);
       });
   };
+
+  const [pensionerBenefits, setPensionerBenefits] = useState([]);
+
   const fetchPVReport = async () => {
     setLoading(true);
     try {
-      const [calculationSummaryRes, pensionableServiceRes] = await Promise.all([
-        assessApiService.get(
-          assessEndpoints.getCalculationSummary(clickedItem.id_claim)
-        ),
-        assessApiService.get(
-          assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
-        ),
-      ]);
+      const [calculationSummaryRes, pensionableServiceRes, pensionerBenefits] =
+        await Promise.all([
+          assessApiService.get(
+            assessEndpoints.getCalculationSummary(clickedItem.id_claim)
+          ),
+          assessApiService.get(
+            assessEndpoints.getClaimPensionableService(clickedItem.id_claim)
+          ),
+          assessApiService.get(
+            assessEndpoints.getPensionerBenefits(clickedItem?.id_claim)
+          ),
+        ]);
 
       if (calculationSummaryRes.data.succeeded) {
         console.log('Report:', calculationSummaryRes.data.data);
@@ -82,6 +90,10 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
       if (pensionableServiceRes.data.succeeded) {
         console.log('Pensionable Service:', pensionableServiceRes.data.data);
         setPensionableService(pensionableServiceRes.data.data);
+      }
+      if (pensionerBenefits.data.succeeded) {
+        console.log('Pensioner Benefits:', pensionerBenefits.data.data);
+        setPensionerBenefits(pensionerBenefits.data.data);
       }
     } catch (error) {
       console.log('Error fetching data:', error);
@@ -302,13 +314,14 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-2 font-semibold ">
-                <p>
-                  Pension Number:{' '}
-                  <strong className="font-normal ml-3">
-                    {clickedItem?.prospectivePensionerAwards?.[0]?.pension_award
-                      ?.prefix + clickedItem?.pensioner_number}
-                  </strong>
-                </p>
+                {pensionerBenefits?.map((item, index) => (
+                  <p>
+                    Pension Number:{' '}
+                    <strong className="font-normal ml-3">
+                      {item?.pensioner_award_code}
+                    </strong>
+                  </p>
+                ))}
                 <p>
                   Ministry/Department:{' '}
                   <strong className="font-normal ml-3">

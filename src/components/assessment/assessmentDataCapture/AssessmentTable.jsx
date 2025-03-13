@@ -508,6 +508,7 @@ const AssessmentTable = ({ status, statusArr }) => {
           ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
               ?.pension_award?.prefix + item?.pensioner_number
           : item?.pensioner_number,
+        createdBy: item?.created_by,
       }));
 
       setRowData(mappedData);
@@ -669,6 +670,10 @@ const AssessmentTable = ({ status, statusArr }) => {
     },
     'Detailed Report': () => {
       setOpenGP178Report(true);
+    },
+    returnToCOB: () => {
+      setOpenAction(1);
+      setOpenMoveStatus(true);
     },
     ...(status === 5
       ? {

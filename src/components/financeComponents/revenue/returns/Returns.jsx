@@ -488,11 +488,11 @@ const Returns = ({ status }) => {
       <BaseCard
         openBaseCard={uploadExcel}
         setOpenBaseCard={setUploadExcel}
-        title={'Upload Budget'}
+        title={'Upload Return'}
         clickedItem={clickedItem}
         isSecondaryCard={true}
         handlers={{
-          generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
+          generateReturnTemplate: () => generateBudgetUploadTemplate(),
         }}
       >
         {' '}

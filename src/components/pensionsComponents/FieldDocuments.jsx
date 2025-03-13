@@ -29,6 +29,9 @@ export const FieldDocuments = ({
   handleOnClose,
   setRefreshFieldDocs,
 }) => {
+  // fieldsWithDocs.fields.find(
+  //   (f) => f.name === field.name
+  // )
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [comments, setComments] = useState('');
   const [approved, setApproved] = useState(false);
@@ -196,7 +199,11 @@ export const FieldDocuments = ({
         >
           <ArrowBack sx={{ color: '#006990' }} />
         </IconButton>
-        Documents for: {fieldData.name}
+        Documents for:{' '}
+        {fieldData.name
+          .split('_')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
         <div className="ml-3">
           {fieldData.documents[
             selectedIndex
@@ -336,7 +343,7 @@ export const FieldDocuments = ({
             />
           </Tabs>
           {selectedTab === 1 && (
-            <div className="p-4">
+            <div className="p-4 ">
               <h6 className="text-base font-semibold mb-5 text-primary">
                 Approvals
               </h6>
@@ -526,6 +533,37 @@ export const FieldDocuments = ({
                     {fieldData.documents[selectedIndex].extenstions}
                   </Typography>
                 </CardContent>
+              </div>
+              <Divider
+                sx={{
+                  mb: 2,
+                }}
+              />
+              <div className="ml-1 px-3 pb-2">
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  color="primary.main"
+                  sx={{
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {fieldData.name
+                    .split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
+                  :
+                  <span
+                    style={{
+                      color: '#333',
+                      marginLeft: '8px',
+                      fontWeight: 'normal',
+                    }}
+                  >
+                    {clickedItem[fieldData.name]}
+                  </span>
+                </Typography>
               </div>
 
               <Divider

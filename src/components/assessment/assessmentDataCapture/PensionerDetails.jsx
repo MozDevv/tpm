@@ -7,6 +7,7 @@ import {
   Attachment,
   ExpandLess,
   KeyboardArrowRight,
+  Launch,
   OpenInFull,
 } from '@mui/icons-material';
 import {
@@ -42,6 +43,7 @@ import './ag-theme.css';
 import MuiPhoneNumber from 'mui-phone-number';
 import { toProperCase } from '@/utils/numberFormatters';
 import { FieldDocuments } from '@/components/pensionsComponents/FieldDocuments';
+import BaseExpandCard from '@/components/baseComponents/BaseExpandCard';
 
 dayjs.extend(isSameOrBefore);
 
@@ -1151,6 +1153,7 @@ function PensionerDetails({
     formData.notification_status === '';
 
   const [open, setOpen] = useState(true);
+  const [openExpand, setOpenExpand] = useState(false);
 
   return (
     <div className=" overflow-y-auto ">
@@ -1220,6 +1223,254 @@ function PensionerDetails({
               </div>
             </div>
 
+            <BaseExpandCard
+              open={openExpand}
+              onClose={() => setOpenExpand(false)}
+              title="Prospective Pensioner Information"
+            >
+              {' '}
+              <div className="p-2 mt-[-15px] overflow-y-auto h-[70vh]">
+                {sections
+                  .filter((section) => {
+                    if (section.title === 'Contact Details') {
+                      return (
+                        formData.notification_status !== 0 &&
+                        formData.notification_status !== 2 &&
+                        formData.notification_status !== ''
+                      );
+                    }
+                    return true;
+                  })
+
+                  .map((section, index) => {
+                    return (
+                      <div key={index} className="gap-3 my-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 px-6 ">
+                          {section.fields
+                            .filter((field) => {
+                              return (
+                                !activeCapName ||
+                                field.pensionCap.includes(activeCapName)
+                              );
+                            })
+                            .filter((field) => {
+                              if (
+                                field.name ===
+                                  'authority_for_retirement_reference' ||
+                                field.name === 'commutation_option_selection' ||
+                                field.name ===
+                                  'commutation_option_selection_date'
+                              ) {
+                                return (
+                                  formData.notification_status !== 0 &&
+                                  formData.notification_status !== 2 &&
+                                  formData.notification_status !== ''
+                                );
+                              }
+                              return true;
+                            })
+                            .filter((field) => {
+                              if (!formData.isCommutable) {
+                                return (
+                                  field.name !==
+                                    'commutation_option_selection' &&
+                                  field.name !==
+                                    'commutation_option_selection_date'
+                                );
+                              }
+
+                              return true;
+                            })
+                            .map((field, fieldIndex) => (
+                              <div
+                                key={fieldIndex}
+                                style={{
+                                  display: field.hide ? 'none' : 'flex',
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
+                                  <div className="flex items-center">
+                                    {field.label}
+                                    {field.name !== 'other_name' &&
+                                      field.name !== 'service_increments' &&
+                                      field.name !== 'middle_name' && (
+                                        <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                                          *
+                                        </div>
+                                      )}
+                                  </div>
+                                  {Array(fieldsWithDocs) &&
+                                    fieldsWithDocs &&
+                                    fieldsWithDocs?.fields?.some(
+                                      (f) => f.name === field.name
+                                    ) && (
+                                      <IconButton
+                                        sx={{
+                                          py: 0,
+                                        }}
+                                        onClick={() => {
+                                          setOpenFieldDocs(true);
+                                          setSelectedField(
+                                            fieldsWithDocs.fields.find(
+                                              (f) => f.name === field.name
+                                            )
+                                          );
+                                        }}
+                                      >
+                                        <Attachment
+                                          sx={{
+                                            fontSize: '24px ',
+                                            color: '#006990',
+                                          }}
+                                        />
+                                      </IconButton>
+                                    )}
+                                </label>
+                                {field.name === 'phone_number' ? (
+                                  <MuiPhoneNumber
+                                    defaultCountry="ke" // Kenya as the default country
+                                    name="phoneNumber"
+                                    value={formData.phone_number}
+                                    onChange={(value) =>
+                                      handleInputChange({
+                                        target: {
+                                          name: 'phone_number',
+                                          value,
+                                        },
+                                      })
+                                    }
+                                    error={!!errors.phone_number}
+                                    helperText={errors.phone_number}
+                                    disabled={!canEdit}
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    dropdownClass="custom-dropdown" // Custom class for the dropdown
+                                    MenuProps={{
+                                      PaperProps: {
+                                        style: {
+                                          maxHeight: '120px', // Set max height for the dropdown
+                                          overflowY: 'auto',
+                                        },
+                                      },
+                                      anchorOrigin: {
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                      },
+                                      transformOrigin: {
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                      },
+                                    }}
+                                  />
+                                ) : field.type === 'select' ? (
+                                  <TextField
+                                    select
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    name={field.name}
+                                    disabled={!canEdit || field.disabled}
+                                    value={formData[field.name]}
+                                    onChange={handleInputChange}
+                                    error={!!errors[field.name]} // Show error style if there is an error
+                                    helperText={errors[field.name]} // Display the error message
+                                  >
+                                    <MenuItem value="">
+                                      Select {field.label}
+                                    </MenuItem>
+                                    {field?.children?.map((option) => (
+                                      <MenuItem
+                                        key={option?.id}
+                                        value={option?.id}
+                                      >
+                                        {option?.code
+                                          ? `${option.name} - ${option.code}`
+                                          : option.name}
+                                      </MenuItem>
+                                    ))}
+                                  </TextField>
+                                ) : field.type === 'autocomplete' ? (
+                                  <Autocomplete
+                                    options={field.children}
+                                    getOptionLabel={(option) => option.name}
+                                    onChange={(event, newValue) => {
+                                      handleInputChange({
+                                        target: {
+                                          name: field.name,
+                                          value: newValue ? newValue.id : '',
+                                        },
+                                      });
+                                    }}
+                                    PaperComponent={(props) => (
+                                      <Paper
+                                        {...props}
+                                        style={{
+                                          maxHeight: 300,
+                                          overflow: 'auto',
+                                        }}
+                                      />
+                                    )}
+                                    disabled={!canEdit}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        size="small"
+                                        fullWidth
+                                        name={field.name}
+                                        disabled={!canEdit}
+                                        error={!!errors[field.name]}
+                                        helperText={errors[field.name]}
+                                      />
+                                    )}
+                                    value={
+                                      field.children.find(
+                                        (option) =>
+                                          option.id === formData[field.name]
+                                      ) || null
+                                    }
+                                  />
+                                ) : (
+                                  // ) : field.type === "date" ? (
+                                  //   <LocalizationProvider
+                                  //     dateAdapter={AdapterDayjs}
+                                  //     adapterLocale="en-au" // Use the locale here
+                                  //   >
+                                  //     <TextField
+                                  //       name={field.name}
+                                  //       type="date"
+                                  //       variant="outlined"
+                                  //       size="small"
+                                  //       error={!!errors[field.name]}
+                                  //       helperText={errors[field.name]}
+                                  //       onChange={handleInputChange}
+                                  //       fullWidth
+                                  //     />
+                                  //   </LocalizationProvider>
+                                  <TextField
+                                    type={field.type}
+                                    name={field.name}
+                                    variant="outlined"
+                                    disabled={!canEdit || field.disabled}
+                                    size="small"
+                                    value={formData[field.name]}
+                                    onChange={handleInputChange}
+                                    error={!!errors[field.name]}
+                                    helperText={errors[field.name]}
+                                    fullWidth
+                                  />
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </BaseExpandCard>
+
             <div className="p-2 mt-[-15px] ">
               {sections
                 .filter((section) => {
@@ -1258,6 +1509,21 @@ function PensionerDetails({
                           )}
                         </IconButton>
                         <hr className="flex-grow border-blue-500 border-opacity-20" />
+                        <Tooltip title="Click to Expand" arrow placement="top">
+                          <IconButton
+                            sx={{
+                              mr: 2,
+                            }}
+                            onClick={() => setOpenExpand(true)}
+                          >
+                            <Launch
+                              sx={{
+                                color: 'primary.main',
+                                fontSize: '22px',
+                              }}
+                            />
+                          </IconButton>
+                        </Tooltip>
                       </div>
 
                       <Collapse

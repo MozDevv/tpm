@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { Cancel, GetApp } from '@mui/icons-material';
 import { Empty } from 'antd';
 import { formatDateToDayMonthYear } from '@/utils/dateFormatter';
+import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
 const Page5Report = ({ setOpenGratuity, clickedItem }) => {
@@ -21,6 +22,24 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
   const [pensionableService, setPensionableService] = useState([]);
   const [pensionerBenefits, setPensionerBenefits] = useState([]);
+
+  const [accountingOfficer, setAccountingOfficer] = useState(null);
+  const fetchUserDetails = async () => {
+    try {
+      const res = await AuthApiService.get(authEndpoints.getUsers, {
+        documentID: clickedItem?.createdBy,
+      });
+      if (res.status === 200) {
+        setAccountingOfficer(res.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [clickedItem]);
 
   const handleDownload = async () => {
     setLoading(true);
@@ -272,7 +291,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 </span>
                 per year with a gratuity of Ksh.{' '}
                 <span className="font-bold">
-                  {formatNumber(report?.unreduced_pension || 0, 2)}
+                  {formatNumber(report?.lumpsum_amount || 0, 2)}
                 </span>
               </p>
               <div className="py-3 flex w-full justify-between relative">
@@ -393,20 +412,23 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p>
                 The Accounting Officer, P/S{' '}
                 <span className="font-bold">
-                  THE TEACHERS SERVICE COMMISSION
+                  {clickedItem?.mda_description || 'N/A'}
                 </span>
               </p>
               <p className="flex gap-2 my-1">
                 Mr./Miss/Mrs.{' '}
                 <span className="font-bold mr-4">
-                  NANCY JEPEKEMBOI KABUTEI--
-                </span>{' '}
-                PO Box <span className="font-bold">14</span>
+                  {accountingOfficer?.firstName}
+                  {' ' + accountingOfficer?.lastName}
+                  {' ' + accountingOfficer?.middleName}
+                </span>
+                {/* PO Box <span className="font-bold">14</span> */}
               </p>
               <p className="flex space-x-2">
-                <span>MARIGAT,</span>
+                {/* <span>MARIGAT,</span>
                 <span>Rift Valley Province,</span>
-                <span>Kenya</span>
+                <span>Kenya</span> */}
+                {accountingOfficer?.email}
               </p>
             </div>
           </div>

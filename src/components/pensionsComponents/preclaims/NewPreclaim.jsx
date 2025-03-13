@@ -10,9 +10,11 @@ import {
   Close,
   Done,
   ExpandLess,
+  HighlightOff,
   InsertLink,
   KeyboardArrowRight,
   OpenInFull,
+  Verified,
 } from '@mui/icons-material';
 import {
   Collapse,
@@ -123,6 +125,8 @@ function NewPreclaim({
     return transformed;
   }
 
+  const [unverifiedDocs, setUnverifiedDocs] = useState([]);
+
   const fetchRetiree = async () => {
     setLoading(true);
     try {
@@ -140,6 +144,15 @@ function NewPreclaim({
       };
 
       const fieldsWithDocs = mapFieldsToDocs(retiree);
+
+      const unverifiedDocuments = checkUnverifiedFields(
+        fieldsWithDocs.fields,
+        status,
+        isPreclaim === false ? true : false
+      );
+
+      setUnverifiedDocs(unverifiedDocuments);
+      console.log('unverifiedDocuments', unverifiedDocuments);
 
       setFieldsWithDocs(fieldsWithDocs);
       const ageOnDischarge = computeAgeOfDischarge(
@@ -272,6 +285,42 @@ function NewPreclaim({
       fetchRetiree();
     }
   }, [refreshFieldsDocs]);
+
+  function checkUnverifiedFields(fieldsObject, currentStatus, isClaim) {
+    const unverifiedFields = [];
+
+    // Loop through each field in the fields array
+    fieldsObject.forEach((field) => {
+      const fieldName = field.name;
+
+      // Loop through each document in the documents array
+      field.documents.forEach((document) => {
+        // Loop through each verification in the documentSelectionVerifications array
+        document.documentSelectionVerifications.forEach((verification) => {
+          // Check if the verification matches the current status based on isClaim
+          if (
+            (isClaim && verification.claim_stage === currentStatus) ||
+            (!isClaim &&
+              verification.prospective_pensioner_notification_status ===
+                currentStatus)
+          ) {
+            // If the document is not verified, store the relevant information
+            // if (!verification.verified_by_id) {
+            unverifiedFields.push({
+              field: fieldName,
+              documentName: document.name,
+              documentDescription: document.description,
+              fileUrl: document.fileUrl,
+              selectionId: document.selectionId,
+              isVerified: verification.verified_by_id ? true : false,
+            });
+          }
+        });
+      });
+    });
+
+    return unverifiedFields;
+  }
 
   const getInitialFormData = () => {
     try {
@@ -1194,7 +1243,11 @@ function NewPreclaim({
         >
           <FieldDocuments
             setRefreshFieldDocs={setRefreshFieldDocs}
-            fieldData={selectedField}
+            fieldData={
+              fieldsWithDocs &&
+              fieldsWithDocs.fields &&
+              fieldsWithDocs.fields.find((f) => f.name === selectedField)
+            }
             clickedItem={formData}
             status={status}
             isPreclaim={isPreclaim}
@@ -1424,11 +1477,7 @@ function NewPreclaim({
                                             }}
                                             onClick={() => {
                                               setOpenFieldDocs(true);
-                                              setSelectedField(
-                                                fieldsWithDocs.fields.find(
-                                                  (f) => f.name === field.name
-                                                )
-                                              );
+                                              setSelectedField(field.name);
                                             }}
                                           >
                                             <Attachment
@@ -1438,6 +1487,48 @@ function NewPreclaim({
                                               }}
                                             />
                                           </IconButton>
+                                        )}
+                                      {Array(unverifiedDocs) &&
+                                        unverifiedDocs &&
+                                        unverifiedDocs.some(
+                                          (doc) => doc.field === field.name
+                                        ) && (
+                                          <Tooltip
+                                            title={
+                                              unverifiedDocs.find(
+                                                (doc) =>
+                                                  doc.field === field.name
+                                              ).isVerified
+                                                ? 'Verified'
+                                                : 'Not Verified'
+                                            }
+                                          >
+                                            <IconButton
+                                              sx={{
+                                                py: 0,
+                                                ml: 'auto',
+                                              }}
+                                            >
+                                              {unverifiedDocs.find(
+                                                (doc) =>
+                                                  doc.field === field.name
+                                              ).isVerified ? (
+                                                <Verified
+                                                  sx={{
+                                                    color: 'green',
+                                                    fontSize: '20px',
+                                                  }}
+                                                />
+                                              ) : (
+                                                <Close
+                                                  sx={{
+                                                    color: 'red',
+                                                    fontSize: '20px',
+                                                  }}
+                                                />
+                                              )}
+                                            </IconButton>
+                                          </Tooltip>
                                         )}
                                     </label>
                                     {field.name === 'phone_number' ? (
