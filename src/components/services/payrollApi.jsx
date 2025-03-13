@@ -24,7 +24,7 @@ const payrollEndpoints = {
   getPeriodSchedule: (periodId) =>
     `api/Application/Schedule?periodId=${periodId}`,
 
-  trialRun: '/api/Application/trial-run',
+  trialRun: (id) => '/api/Application/trial-run?periodTypeId=' + id,
 
   createIncreamentMaster: '/api/Setups/increment-masters',
   getIncreamentMasters: '/api/Setups/increment-masters',
@@ -48,7 +48,7 @@ const payrollEndpoints = {
   sendPeriodForApproval: (id) =>
     `/api/Application/SendForApproval?periodId=${id}`,
   getAllPayrollPensinoers: '/api/Pensioner/All',
-  admit: '/api/Pensioner/Admit',
+  admit: (id) => '/api/Pensioner/Admit?id=' + id,
 };
 api.interceptors.request.use(
   (config) => {

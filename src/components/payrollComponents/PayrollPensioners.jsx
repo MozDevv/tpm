@@ -123,8 +123,7 @@ const PayrollPensioners = ({ stage, status }) => {
       for (const row of selectedRows) {
         try {
           const response = await payrollApiService.post(
-            payrollEndpoints.admit,
-            { id: row.payrollId }
+            payrollEndpoints.admit(row.payrollId)
           );
           if (response.status === 200) {
             message.success('Admitted successfully');

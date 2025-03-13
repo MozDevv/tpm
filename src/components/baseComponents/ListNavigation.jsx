@@ -622,6 +622,12 @@ const ListNavigation = ({
       action: 'changeRequest',
       requiredPermissions: [],
     },
+    {
+      name: 'Run Payroll',
+      icon: TrendingUp,
+      action: 'runPayroll',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseChildren = [

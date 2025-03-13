@@ -352,6 +352,10 @@ export const menuItems = [
         path: '/pensions/payroll/pensioners-listing',
       },
       {
+        title: 'Run Payroll',
+        path: '/pensions/payroll/run-payroll',
+      },
+      {
         title: 'Main Payroll',
         // path: '/pensions/payroll/main-payroll/payroll-run',
         subChildren: [
