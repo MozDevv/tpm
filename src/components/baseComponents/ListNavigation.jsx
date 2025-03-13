@@ -587,6 +587,12 @@ const ListNavigation = ({
       action: 'admit',
       requiredPermissions: [],
     },
+    {
+      name: 'Run Payroll',
+      icon: TrendingUp,
+      action: 'runPayroll',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
@@ -620,12 +626,6 @@ const ListNavigation = ({
       name: 'Change Request',
       icon: EditNote,
       action: 'changeRequest',
-      requiredPermissions: [],
-    },
-    {
-      name: 'Run Payroll',
-      icon: TrendingUp,
-      action: 'runPayroll',
       requiredPermissions: [],
     },
   ];
