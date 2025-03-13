@@ -78,6 +78,26 @@ function PVActions({
           } else {
             handleErrorResponse(res, errorMessage);
           }
+        } else if (revertPv) {
+          endpoint = financeEndpoints.revertPv;
+          successMessage = 'Payment Vouchers scheduled successfully';
+          errorMessage = 'Failed to schedule Payment Vouchers';
+          requestData = {
+            payments: selectedIds.map((item) => ({ paymentId: item.id })),
+          };
+
+          // Make the API call for scheduling
+          const res = await apiService.post(endpoint, requestData);
+
+          if (res && res.data && res.data.succeeded && res.status === 200) {
+            // handleUpdateClaimStatus(); // Call the function to update claim status
+            setSelectedRows([]);
+            setOpenPostGL(false);
+            setOpenBaseCard && setOpenBaseCard(false);
+            message.success(successMessage);
+          } else {
+            handleErrorResponse(res, errorMessage);
+          }
         } else {
           // Case for posting to ledger
           endpoint = financeEndpoints.postPaymentToLedger;

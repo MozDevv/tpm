@@ -581,6 +581,12 @@ const ListNavigation = ({
       action: 'revertPaymentVoucher',
       requiredPermissions: [],
     },
+    {
+      name: 'Admit Pensioner(s) to Payroll',
+      icon: IosShare,
+      action: 'admit',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

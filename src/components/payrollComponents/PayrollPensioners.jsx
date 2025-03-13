@@ -10,6 +10,7 @@ import payrollEndpoints, {
   payrollApiService,
 } from '@/components/services/payrollApi';
 import { formatNumber } from '@/utils/numberFormatters';
+import { message } from 'antd';
 
 const PayrollPensioners = ({ stage, status }) => {
   const columnDefs = [
@@ -94,9 +95,47 @@ const PayrollPensioners = ({ stage, status }) => {
     }));
   };
 
-  const baseCardHandlers = {};
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
-  const handlers = {};
+  const baseCardHandlers = {
+    admit: async () => {
+      try {
+        const response = await payrollApiService.post(payrollEndpoints.admit, {
+          id: clickedItem.payrollId,
+        });
+        if (response.status === 200) {
+          message.success('Admitted successfully');
+        }
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  };
+
+  const handlers = {
+    admit: async () => {
+      if (!selectedRows || selectedRows.length === 0) {
+        message.warning('No rows selected');
+        return;
+      }
+
+      for (const row of selectedRows) {
+        try {
+          const response = await payrollApiService.post(
+            payrollEndpoints.admit,
+            { id: row.payrollId }
+          );
+          if (response.status === 200) {
+            message.success('Admitted successfully');
+          }
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+  };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
@@ -256,7 +295,7 @@ const PayrollPensioners = ({ stage, status }) => {
         breadcrumbTitle="Pensioners Listing"
         currentTitle="Pensioners List"
         isPayroll={true}
-        //  onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
       />
     </div>
   );

@@ -48,6 +48,7 @@ const payrollEndpoints = {
   sendPeriodForApproval: (id) =>
     `/api/Application/SendForApproval?periodId=${id}`,
   getAllPayrollPensinoers: '/api/Pensioner/All',
+  admit: '/api/Pensioner/Admit',
 };
 api.interceptors.request.use(
   (config) => {
