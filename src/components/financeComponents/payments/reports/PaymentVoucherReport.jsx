@@ -550,7 +550,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
               {/* Additional Information */}
               <div className="mb-2 border-b border-black pb-1 pl-2">
                 <p className="text-start flex flex-row gap-5">
-                  <strong>Authority Reference No:</strong> APN/PC0000368915
+                  <strong>Authority Reference No:</strong>{' '}
+                  {report?.pensionerNumber}
                 </p>
               </div>
 
