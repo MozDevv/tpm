@@ -546,7 +546,7 @@ const LedgerEntries = ({ type }) => {
             transactionDate: item.transactionDate,
             amount: item.amount,
             description: transformString(item.description),
-            vendorName: item?.vendor.vendorName,
+            vendorName: item?.vendor?.vendorName || 'N/A',
           };
         case 'Customer Ledger Entries':
           return {
@@ -560,7 +560,6 @@ const LedgerEntries = ({ type }) => {
             amount: item.amount,
             description: transformString(item.description),
           };
-
         case 'Bank Account Ledger Entries':
           return {
             no: index + 1,
@@ -573,12 +572,10 @@ const LedgerEntries = ({ type }) => {
             amount: item.amount,
             description: transformString(item.description),
             glEntryNo: item.glEntryNo,
-            bankAccountName: item?.bankAccount.bankAccountName,
-            bankAccountNo: item?.bankAccount.bankAccountNo,
-            bankAccountCode: item?.bankAccount.bankAccountCode,
-            bankAccountNo: item?.bankAccount.bankAccountNo,
+            bankAccountName: item?.bankAccount?.bankAccountName || 'N/A',
+            bankAccountNo: item?.bankAccount?.bankAccountNo || 'N/A',
+            bankAccountCode: item?.bankAccount?.bankAccountCode || 'N/A',
           };
-
         case 'General Ledger Entries':
           return {
             no: index + 1,
@@ -589,7 +586,6 @@ const LedgerEntries = ({ type }) => {
             amount: item.amount,
             accountNo: item.accountNo,
           };
-
         default:
           return {};
       }
