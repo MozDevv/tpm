@@ -257,6 +257,12 @@ const BaseTable = ({
 
   const [excelLoading, setExcelLoading] = useState(false);
 
+  setTimeout(() => {
+    if (gridApiRef.current.api) {
+      gridApiRef.current.api.hideOverlay();
+    }
+  }, 50000);
+
   return (
     <div>
       {excelLoading && (
@@ -381,6 +387,7 @@ const BaseTable = ({
               alwaysShowHorizontalScroll={true}
               loadingOverlayComponent={BaseLoadingOverlay}
               loadingOverlayComponentParams={loadingOverlayComponentParams}
+              noRowsOverlayComponent={BaseEmptyComponent}
               onGridReady={(params) => {
                 params.api.sizeColumnsToFit();
                 onGridReady(params);
