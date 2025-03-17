@@ -83,6 +83,25 @@ const BaseAutoSaveInputCard = ({
     setUnsavedChanges(true);
     const { name, value, type, checked, multiple } = e.target;
 
+    // Initialize newErrors object
+    const newErrors = {};
+
+    // Account number validation (only numerics, hyphens, and slashes)
+    if (name === 'accountNo' && value) {
+      if (!/^[\d\-\/]+$/.test(value)) {
+        newErrors[name] = 'Account number is not valid';
+      }
+    }
+    // Account name validation (only alphabets)
+    if (name === 'accountName' && value) {
+      if (!/^[A-Za-z\s]+$/.test(value)) {
+        newErrors[name] = 'Account name should only contain alphabets';
+      }
+    }
+
+    // Set errors state
+    setErrors(newErrors);
+
     if (name === selectedLabel) {
       setSelectedValue(value);
     }
@@ -106,12 +125,6 @@ const BaseAutoSaveInputCard = ({
       }
     }
 
-    // if (name === filterValue && fields && value) {
-    //   const options = fields.find(
-    //     (field) => field.name === filterValue
-    //   ).options;
-    // }
-
     if (name === 'bank_id' && value) {
       const filteredBranches = banks.filter(
         (branch) => branch.bankId === value
@@ -120,12 +133,7 @@ const BaseAutoSaveInputCard = ({
       setSelectedBank(filteredBranches);
     }
     if (name === fieldName && value !== '' && options) {
-      console.log('Filtering options...', options);
-
       const filtered = options.filter((item) => item[filterKey] === value);
-
-      console.log('Filtered options: ', filtered);
-
       setResultFunction(filtered); // Set the filtered result
     }
     if (multiple) {
@@ -149,8 +157,6 @@ const BaseAutoSaveInputCard = ({
       }));
     }
     setIsEditing(true);
-
-    // validateForm();
   };
 
   const handleAmountChange = (e) => {
@@ -733,7 +739,11 @@ const BaseAutoSaveInputCard = ({
                 onChange={handleInputChange}
                 error={!!errors[field.name]}
                 helperText={
-                  field.name === 'bankAccountNo' ? errors[field.name] : ''
+                  field.name === 'bankAccountNo' ||
+                  field.name === 'accountName' ||
+                  field.name === 'accountNo'
+                    ? errors[field.name]
+                    : ''
                 }
                 required={field.required}
                 disabled={field.disabled || disableAll}
