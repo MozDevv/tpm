@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseTable from '@/components/baseComponents/BaseTable';
 import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
@@ -7,6 +7,11 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate, parseDate } from '@/utils/dateFormatter';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import { Button } from '@mui/material';
+import { name } from 'dayjs/locale/en-au';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import assessEndpoints, {
+  assessApiService,
+} from '@/components/services/assessmentApi';
 
 const IgcBeneficiaries = () => {
   const statusIcons = {
@@ -194,12 +199,78 @@ const IgcBeneficiaries = () => {
       created_date: item.igcEnrolment.created_date,
     }));
   };
+  const [openInitiate, setOpenInitiate] = useState(false);
 
-  const handlers = {};
+  const handlers = {
+    initiateDependentEnrollment: () => {
+      setOpenInitiate(true);
+      setOpenBaseCard(true);
+    },
+  };
   const baseCardHandlers = {};
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+
   const title = clickedItem ? 'Beneficiary' : 'Create New Beneficiary';
+
+  const { data: beneficiaries } = useFetchAsync(
+    endpoints.getRelationships,
+    apiService
+  );
+  const [claims, setClaims] = useState([]);
+
+  const fetchPensioners = async () => {
+    let filters = {};
+    let statusArr = [7, 8, 9, 10, 11];
+
+    if (statusArr && statusArr.length > 0) {
+      // When statusArr is provided, loop through it and populate criterions array
+      statusArr.forEach((status, index) => {
+        filters[`filterCriterion.criterions[${index}].propertyName`] = 'stage';
+        filters[`filterCriterion.criterions[${index}].propertyValue`] = status;
+        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+      });
+    }
+
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getAssessmentClaims,
+        {
+          'paging.pageSize': 100000,
+          'paging.pageNumber': 1,
+          ...filters,
+          'filterCriterion.compositionType': 1,
+        }
+      );
+      if (res.status === 200) {
+        const mappedData = res.data.data.map((item) => ({
+          id: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+            ?.pension_award?.prefix
+            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+                ?.pension_award?.prefix + item?.pensioner_number
+            : item?.pensioner_number ?? 'N/A',
+          name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+            ?.pension_award?.prefix
+            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+                ?.pension_award?.prefix + item?.pensioner_number
+            : item?.pensioner_number ?? 'N/A',
+          accountNo:
+            item?.prospectivePensioner?.first_name +
+            ' ' +
+            item?.prospectivePensioner?.surname,
+        }));
+        console.log('mappedData', mappedData);
+        setClaims(mappedData);
+      } // Handle the response as needed
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPensioners();
+    // fetchBanksAndBranches();
+  }, []);
 
   const fields = [
     { name: 'igc_no', label: 'IGC No', type: 'text', disabled: true },
@@ -272,6 +343,102 @@ const IgcBeneficiaries = () => {
     },
   ];
 
+  const uploadFields = [
+    {
+      name: 'prospective_pensioner_id',
+      label: 'Retiree',
+      type: 'select',
+      options: claims && claims,
+      table: true,
+    },
+    { name: 'reason', label: 'Reason', type: 'text' },
+    {
+      name: 'relationship',
+      label: 'Relationship',
+      type: 'autocomplete',
+      options:
+        beneficiaries &&
+        beneficiaries?.map((item) => ({
+          id: item.id,
+          name: item.name,
+        })),
+    },
+
+    {
+      name: 'is_spouse',
+      label: 'Is Spouse',
+      type: 'select',
+      disabled: false,
+      options: [
+        { id: true, name: 'No' },
+        { id: false, name: 'Yes' },
+      ],
+    },
+    {
+      name: 'is_guardian',
+      label: 'Is Guardian',
+      type: 'select',
+      disabled: false,
+      options: [
+        { id: true, name: 'No' },
+        { id: false, name: 'Yes' },
+      ],
+    },
+    { name: 'igc_no', label: 'IGC No', type: 'text' },
+    { name: 'surname', label: 'Surname', type: 'text' },
+    { name: 'first_name', label: 'First Name', type: 'text' },
+    { name: 'other_name', label: 'Other Name', type: 'text' },
+    { name: 'identifier', label: 'Identifier', type: 'text' },
+
+    {
+      name: 'mobile_number',
+      label: 'Mobile Number',
+      type: 'text',
+    },
+    {
+      name: 'email_address',
+      label: 'Email Address',
+      type: 'text',
+    },
+    { name: 'dob', label: 'Date of Birth', type: 'date' },
+    { name: 'age', label: 'Age', type: 'text' },
+    { name: 'address', label: 'Address', type: 'text' },
+    {
+      name: 'birth_certificate_no',
+      label: 'Birth Certificate No',
+      type: 'text',
+    },
+    {
+      name: 'supporting_document_number',
+      label: 'Supporting Document Number',
+      type: 'text',
+    },
+    {
+      name: 'document_status',
+      label: 'Document Status',
+      type: 'select',
+
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Rejected' },
+      ],
+    },
+    {
+      name: 'submission_status',
+      label: 'IGC Submission Status',
+      type: 'select',
+
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Rejected' },
+      ],
+    },
+  ];
+
   return (
     <div className="">
       <BaseCard
@@ -281,8 +448,6 @@ const IgcBeneficiaries = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
@@ -293,6 +458,17 @@ const IgcBeneficiaries = () => {
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
           />
+        ) : openInitiate ? (
+          <>
+            <BaseInputCard
+              fields={uploadFields}
+              apiEndpoint={endpoints.createDepartment}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />
+          </>
         ) : (
           <BaseInputCard
             fields={fields}

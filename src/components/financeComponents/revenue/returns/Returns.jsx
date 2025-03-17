@@ -135,7 +135,7 @@ const Returns = ({ status }) => {
         },
       }),
     ...(status === 0 &&
-      !clickedItem && {
+      clickedItem && {
         generateReturnTemplate: () => generateBudgetUploadTemplate(),
       }),
     ...(status === 0 && clickedItem

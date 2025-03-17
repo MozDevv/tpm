@@ -95,6 +95,14 @@ const OldCases = () => {
       if (res.status === 200 && res.data.succeeded) {
         message.success('Return added to IGC successfully');
         // setOpenBaseCard(false);
+      } else if (
+        res.status === 200 &&
+        !res.data.succeeded &&
+        res.data.messages[0]
+      ) {
+        message.error(res.data.messages[0]);
+      } else {
+        message.error('An error occurred');
       }
     } catch (error) {
       console.log(error);

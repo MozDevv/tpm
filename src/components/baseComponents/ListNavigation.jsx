@@ -617,6 +617,12 @@ const ListNavigation = ({
       action: 'submitReturnForApproval',
       requiredPermissions: [],
     },
+    {
+      name: "Initiate Dependent's Enrollment",
+      action: 'initiateDependentEnrollment',
+      icon: PostAdd,
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
