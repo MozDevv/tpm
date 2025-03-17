@@ -281,14 +281,21 @@ const Returns = ({ status }) => {
       name: 'bankBranchId',
       label: 'Branch',
       type: 'autocomplete',
+
       required: true,
-      options: branches
-        .filter((branch) => branch.bankId === selectedBank)
-        .map((branch) => ({
-          id: branch.id,
-          name: branch.name,
-          bankId: branch.bankId,
-        })),
+      options: !clickedItem
+        ? branches
+            .filter((branch) => branch.bankId === selectedBank)
+            .map((branch) => ({
+              id: branch.id,
+              name: branch.name,
+              bankId: branch.bankId,
+            }))
+        : branches.map((branch) => ({
+            id: branch.id,
+            name: branch.name,
+            bankId: branch.bankId,
+          })),
     },
     {
       name: 'chartOfAccountId',
