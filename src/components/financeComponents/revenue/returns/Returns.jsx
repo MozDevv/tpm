@@ -34,6 +34,10 @@ import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { formatNumber } from '@/utils/numberFormatters';
 import ReturnActions from './ReturnActions';
 import { Dialog } from '@mui/material';
+import assessEndpoints, {
+  assessApiService,
+} from '@/components/services/assessmentApi';
+import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -188,6 +192,7 @@ const Returns = ({ status }) => {
 
   const [banks, setBanks] = React.useState([]);
   const [branches, setBranches] = React.useState([]);
+  const [claims, setClaims] = React.useState([]);
 
   const { data: paymentMeth } = useFetchAsync(
     financeEndpoints.getPaymentMethods,
@@ -451,9 +456,9 @@ const Returns = ({ status }) => {
       headerClass: 'prefix-header',
       flex: 1,
       cellRenderer: (params) => {
-        const paymentMethod = paymentMeth.find(
-          (method) => method.id === params.value
-        );
+        const paymentMethod =
+          paymentMeth &&
+          paymentMeth.find((method) => method.id === params.value);
         return paymentMethod?.description;
       },
     },
@@ -486,7 +491,57 @@ const Returns = ({ status }) => {
       console.log('Error fetching banks and branches:', error);
     }
   };
+
+  const fetchPensioners = async () => {
+    let filters = {};
+    let statusArr = [7, 8, 9, 10, 11];
+
+    if (statusArr && statusArr.length > 0) {
+      // When statusArr is provided, loop through it and populate criterions array
+      statusArr.forEach((status, index) => {
+        filters[`filterCriterion.criterions[${index}].propertyName`] = 'stage';
+        filters[`filterCriterion.criterions[${index}].propertyValue`] = status;
+        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+      });
+    }
+
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getAssessmentClaims,
+        {
+          'paging.pageSize': 100000,
+          'paging.pageNumber': 1,
+          ...filters,
+          'filterCriterion.compositionType': 1,
+        }
+      );
+      if (res.status === 200) {
+        const mappedData = res.data.data.map((item) => ({
+          id: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+            ?.pension_award?.prefix
+            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+                ?.pension_award?.prefix + item?.pensioner_number
+            : item?.pensioner_number ?? 'N/A',
+          name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+            ?.pension_award?.prefix
+            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+                ?.pension_award?.prefix + item?.pensioner_number
+            : item?.pensioner_number ?? 'N/A',
+          accountName:
+            item?.prospectivePensioner?.first_name +
+            ' ' +
+            item?.prospectivePensioner?.surname,
+        }));
+        console.log('mappedData', mappedData);
+        setClaims(mappedData);
+      } // Handle the response as needed
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    fetchPensioners();
     fetchBanksAndBranches();
   }, []);
 
@@ -578,16 +633,17 @@ const Returns = ({ status }) => {
 
   const returnLineFields = [
     {
+      label: 'Pensioner No',
+      value: 'pensionerNo',
+      type: 'select',
+      options: claims && claims,
+    },
+    {
       label: 'Pensioner Name',
       value: 'pensionerName',
       type: 'text',
       required: true,
-    },
-    {
-      label: 'Pensioner No',
-      value: 'pensionerNo',
-      type: 'text',
-      required: true,
+      disabled: true,
     },
     {
       label: 'Return Reason',
@@ -677,8 +733,7 @@ const Returns = ({ status }) => {
                 disableAll={true}
                 setOpenBaseCard={setOpenBaseCard}
               />
-              <BaseInputTable
-                
+              <BaseFinanceInputTable
                 title="Return Details"
                 fields={returnLineFields}
                 id={clickedItem?.id}
@@ -692,6 +747,7 @@ const Returns = ({ status }) => {
                 postEndpoint={financeEndpoints.addReturnLine}
                 putEndpoint={financeEndpoints.updateReturnLine}
                 passProspectivePensionerId={true}
+                allOptions={claims}
               />
             </div>
           </>

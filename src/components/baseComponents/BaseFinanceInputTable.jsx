@@ -138,7 +138,7 @@ const BaseFinanceInputTable = ({
         ];
 
         // Set state with the totalAmounts array
-        setTotalAmmounts(totalAmounts);
+        setTotalAmmounts && setTotalAmmounts(totalAmounts);
 
         setRowData((prevRowData) => {
           const datePairs = [
@@ -761,6 +761,26 @@ const BaseFinanceInputTable = ({
           }
         }
 
+        if (field === 'pensionerNo') {
+          const pensionerNo = newValue;
+
+          const selectedOption =
+            allOptions &&
+            allOptions.find((option) => option.id === pensionerNo);
+
+          console.log('Selected Option', selectedOption);
+          console.log('Pensioner No', pensionerNo);
+          console.log('All Options', allOptions);
+
+          if (selectedOption) {
+            data.pensionerName = selectedOption.accountName;
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          } else {
+            data.pensionerName = '';
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          }
+        }
+
         if (colDef.field === 'debitAmount') {
           const debitAmount = parseFloat(newValue) || 0;
           if (debitAmount > 0) {
@@ -777,10 +797,6 @@ const BaseFinanceInputTable = ({
 
         // Refresh the cell to reflect changes
         params.api.refreshCells({ rowNodes: [params.node], force: true });
-
-        console.log('Data ', data);
-        console.log('New Value', newValue);
-        console.log('Column Definition', colDef);
 
         const datePair = findDatePair(field);
 
