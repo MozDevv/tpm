@@ -402,6 +402,7 @@ const Reciepts = ({ status }) => {
           <div className="flex flex-col ">
             <BaseAutoSaveInputCard
               fields={fields}
+              disableAll={status !== 0 && status !== 1}
               apiEndpoint={financeEndpoints.addReceipt}
               putApiFunction={apiService.post}
               updateApiEndpoint={financeEndpoints.updateTheReceipt}
@@ -415,7 +416,7 @@ const Reciepts = ({ status }) => {
               setClickedItem={setClickedItem}
               clickedItem={clickedItem}
             />
-            <RecieptLines clickedItem={clickedItem} />
+            <RecieptLines clickedItem={clickedItem} status={status} />
           </div>
         ) : (
           <BaseAutoSaveInputCard

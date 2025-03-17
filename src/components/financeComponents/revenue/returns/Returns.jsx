@@ -678,6 +678,7 @@ const Returns = ({ status }) => {
                 setOpenBaseCard={setOpenBaseCard}
               />
               <BaseInputTable
+                
                 title="Return Details"
                 fields={returnLineFields}
                 id={clickedItem?.id}

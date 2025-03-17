@@ -15,7 +15,7 @@ import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInput
 
 const { TabPane } = Tabs;
 
-function RecieptLines({ clickedItem }) {
+function RecieptLines({ clickedItem, status }) {
   const [selectedAccountTypeId, setSelectedAccountTypeId] = useState(null);
 
   const [allOptions, setAllOptions] = useState(null);
@@ -253,6 +253,7 @@ function RecieptLines({ clickedItem }) {
                   {' '}
                   {/* Make this grow too */}
                   <BaseFinanceInputTable
+                    disableAll={status !== 0 && status !== 1}
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
                     selectedAccountTypeId={selectedAccountTypeId}
