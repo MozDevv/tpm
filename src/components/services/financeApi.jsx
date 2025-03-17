@@ -413,6 +413,7 @@ const financeEndpoints = {
   getPayrollSummaries: '/Posting/GetPayrollSummary',
   createPayrollPv: '/Posting/PostPayrollLiabilityToLedger',
   getReturns: '/Revenue/GetReturns',
+  getReturnsByStage: (stage) => `/Revenue/GetReturns?stage=${stage}`,
   uploadReturn: '/Revenue/UploadReturn',
   revertPv: '/Posting/RevertPaymentToClaim',
 
@@ -423,9 +424,16 @@ const financeEndpoints = {
     `Posting/GetPayments?PaymentVoucherStage=1&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&paging.pageNumber=1&paging.pageSize=1000&filterCriterion.criterions[0].propertyName=documentNo&filterCriterion.criterions[0].propertyValue=${docNo}`,
   addReturnLine: 'Revenue/AddReturnDetail',
   getReturnLineById: (id) => `/Revenue/GetReturnDetail?ReturnId=${id}`,
+  getReturnDetails: `/Revenue/GetReturnDetail`,
   updateReturnLine: 'Revenue/UpdateReturnDetail',
   addReturn: 'Revenue/AddReturn',
   postReturnToLedger: 'Posting/CreateReturnReceipt',
+  addReturnToIGC: 'Revenue/AddReturnToIGC',
+  submitReturnForApproval: (id) =>
+    `/Posting/SubmitReturnForApproval?ReturnId=${id}`,
+  submitReceiptForApproval: (id) =>
+    `/Posting/SubmitReceiptForApproval?ReceiptId=${id}`,
+  getReceiptBystage: (stage) => `/Posting/GetReceipts?stage=${stage}`,
 };
 
 export const apiService = {

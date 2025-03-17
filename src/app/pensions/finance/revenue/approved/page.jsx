@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <Returns status={0} />
+      <Returns status={2} />
     </div>
   );
 }

@@ -240,13 +240,31 @@ export const menuItems = [
             title: 'Customers',
             path: '/pensions/finance/customers',
           },
-          {
-            title: 'Receipts',
-            path: '/pensions/finance/recievables/receipts',
-          },
+
           {
             title: 'Customer Ledger Entries',
             path: '/pensions/finance/recievables/ledger-entries',
+          },
+        ],
+      },
+      {
+        title: 'Receipts',
+        subChildren: [
+          {
+            title: 'New Receipts',
+            path: '/pensions/finance/recievables/receipts',
+          },
+          {
+            title: 'Pending Receipts',
+            path: '/pensions/finance/recievables/receipts/pending',
+          },
+          {
+            title: 'Approved Receipts',
+            path: '/pensions/finance/recievables/receipts/approved',
+          },
+          {
+            title: 'Posted Receipts',
+            path: '/pensions/finance/recievables/receipts/posted',
           },
         ],
       },
@@ -335,10 +353,30 @@ export const menuItems = [
         title: 'Revenue',
         subChildren: [
           {
-            title: 'Returns',
+            title: 'New Returns',
             path: '/pensions/finance/revenue',
           },
+          {
+            title: 'Returns Pending Approval',
+            path: '/pensions/finance/revenue/pending-approval',
+          },
+          {
+            title: 'Approved Returns',
+            path: '/pensions/finance/revenue/approved',
+          },
+          {
+            title: 'Paid Returns',
+            path: '/pensions/finance/revenue/paid',
+          },
+          {
+            title: 'Rejected Returns',
+            path: '/pensions/finance/revenue/rejected',
+          },
         ],
+      },
+      {
+        title: 'Old Cases',
+        path: '/pensions/finance/old-cases',
       },
     ],
   },

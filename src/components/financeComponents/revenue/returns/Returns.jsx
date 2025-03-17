@@ -69,39 +69,32 @@ const Returns = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
   const [selectedBank, setSelectedBank] = React.useState(null);
   const [openAddReturn, setOpenAddReturn] = React.useState(false);
+  const [refresh, setRefresh] = React.useState(0);
 
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
       ...item,
-
-      // roles: item.roles,
     }));
   };
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    generateReturnTemplate: () => generateBudgetUploadTemplate(),
-    uploadReturn: () => {
-      setUploadExcel(true);
-      setOpenBaseCard(true);
-    },
-    addReturn: () => {
-      setOpenAddReturn(true);
-      setOpenBaseCard(true);
-    },
+    ...(status === 0 && {
+      generateReturnTemplate: () => generateBudgetUploadTemplate(),
+      uploadReturn: () => {
+        setUploadExcel(true);
+        setOpenBaseCard(true);
+      },
+      addReturn: () => {
+        setOpenAddReturn(true);
+        setOpenBaseCard(true);
+      },
+    }),
     ...(status === 0
       ? {
-          create: () => {
-            setOpenBaseCard(true);
-            setClickedItem(null);
-          },
-          delete: () => console.log('Delete clicked'),
-          reports: () => console.log('Reports clicked'),
-          generateBudgetUploadTemplate: () => generateBudgetUploadTemplate(),
-          uploadGeneralBudget: () => setUploadExcel(true),
-          submitBudgetForApproval: () => {
+          submitReturnForApproval: () => {
             if (clickedItem) {
               submitBudgetForApproval();
             } else {
@@ -122,36 +115,64 @@ const Returns = ({ status }) => {
           },
         }
       : {}),
-    addReturn: () => {
-      setOpenAddReturn(true);
-      setOpenBaseCard(true);
-    },
-    createReturnReceipt: () => {
-      setOpenAction(true);
-    },
-  };
 
-  const baseCardHandlers = {
-    ...(clickedItem && {
+    ...(status === 2 && {
       createReturnReceipt: () => {
         setOpenAction(true);
       },
     }),
   };
 
+  const baseCardHandlers = {
+    ...(clickedItem &&
+      status === 2 && {
+        createReturnReceipt: () => {
+          setOpenAction(true);
+        },
+      }),
+    ...(status === 0 && {
+      generateReturnTemplate: () => generateBudgetUploadTemplate(),
+    }),
+    ...(status === 0 && clickedItem
+      ? {
+          submitReturnForApproval: () => {
+            if (clickedItem) {
+              submitBudgetForApproval();
+            } else {
+              message.error('Please select a budget to submit for approval');
+            }
+          },
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : {}),
+  };
+
   const submitBudgetForApproval = async () => {
     try {
       const response = await apiService.post(
-        financeEndpoints.submitBudgetForApproval(clickedItem.id)
+        financeEndpoints.submitReturnForApproval(clickedItem.id)
       );
       if (response.status === 200 && response.data.succeeded) {
-        message.success('Budget submitted for approval successfully');
+        message.success('Return submitted for approval successfully');
         if (openBaseCard) {
           setOpenBaseCard(false);
         }
       }
     } catch (error) {
       console.error('Error submitting budget for approval:', error);
+    } finally {
+      setRefresh((prev) => prev + 1);
     }
   };
 
@@ -698,12 +719,13 @@ const Returns = ({ status }) => {
       </BaseCard>
       <div className="">
         <BaseTable
+          refreshData={refresh}
           openBaseCard={openBaseCard}
           clickedItem={clickedItem}
           setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getReturns}
+          fetchApiEndpoint={financeEndpoints.getReturnsByStage(status)}
           fetchApiService={apiService.get}
           transformData={transformData}
           uploadExcel={uploadExcel}

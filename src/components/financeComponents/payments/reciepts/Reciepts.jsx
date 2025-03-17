@@ -17,6 +17,8 @@ import PVActions from '../PVActions';
 import { formatNumber } from '@/utils/numberFormatters';
 import RecieptLines from './ReceiptLines';
 import ReceiptActions from './ReceiptActions';
+import { message } from 'antd';
+import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const Reciepts = ({ status }) => {
   const [paymentMethods, setPaymentMethods] = React.useState([]);
@@ -167,46 +169,63 @@ const Reciepts = ({ status }) => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [isSchedule, setIsSchedule] = React.useState(false);
   const [openPV, setOpenPV] = React.useState(false);
-  const handlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    postReceiptToGL: () => setOpenPV(true),
-    notify: () => console.log('Notify clicked'),
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [refresh, setRefresh] = React.useState(1);
 
-    ...(status === 0 && {
-      submitPaymentForApproval: () => {
-        setOpenPV(true);
-        console.log('Submit Payment For Approval');
-      },
-    }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Approve Payment');
-      },
-    }),
-    ...(status === 2 && {
-      postPaymentToLedger: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-      schedulePaymentVoucher: () => {
-        setIsSchedule(true);
-        setOpenPV(true);
-        console.log('Schedule Payment');
-      },
-    }),
-    ...(status === 3 && {
-      postPaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-    }),
+  const submitBudgetForApproval = async () => {
+    try {
+      const response = await apiService.post(
+        financeEndpoints.submitReceiptForApproval(clickedItem.id)
+      );
+      if (response.status === 200 && response.data.succeeded) {
+        message.success('Receipt submitted for approval successfully');
+        if (openBaseCard) {
+          setOpenBaseCard(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting budget for approval:', error);
+    } finally {
+      setRefresh((prev) => prev + 1);
+    }
+  };
+  const handlers = {
+    ...(status === 0
+      ? {
+          submitPaymentForApproval: () => {
+            if (clickedItem) {
+              submitBudgetForApproval();
+            } else {
+              message.error('Please select a budget to submit for approval');
+            }
+          },
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+
+          delete: () => console.log('Delete clicked'),
+          reports: () => console.log('Reports clicked'),
+
+          notify: () => console.log('Notify clicked'),
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : status === 2
+      ? {
+          postReceiptToGL: () => setOpenPV(true),
+        }
+      : {}),
   };
 
   const [openAction, setOpenAction] = React.useState(false);
@@ -214,50 +233,45 @@ const Reciepts = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      setOpenBaseCard(true);
-      setClickedItem(item);
-    },
-    delete: (item) => {
-      setOpenBaseCard(true);
-      setClickedItem(item);
-    },
-    createConstituency: () => {
-      setDialogType('branch');
-      setOpenAction(true);
-    },
-    ...(status === 0 && {
-      submitPaymentForApproval: () => {
-        console.log('Submit Payment For Approval');
-        setOpenPV(true);
-      },
-    }),
-    ...(status === 1 && {
-      approvePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Approve Payment');
-      },
-    }),
-    ...(status === 2 && {
-      postPaymentToLedger: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-      schedulePaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Schedule Payment');
-      },
-    }),
-    ...(status === 3 && {
-      postPaymentVoucher: () => {
-        setOpenPV(true);
-        console.log('Post Payment');
-      },
-    }),
+    ...(status === 0
+      ? {
+          submitPaymentForApproval: () => {
+            if (clickedItem) {
+              submitBudgetForApproval();
+            } else {
+              message.error('Please select a budget to submit for approval');
+            }
+          },
+          create: () => {
+            setOpenBaseCard(true);
+            setClickedItem(null);
+          },
+          edit: (item) => {
+            setOpenBaseCard(true);
+            setClickedItem(item);
+          },
+          delete: (item) => {
+            setOpenBaseCard(true);
+            setClickedItem(item);
+          },
+        }
+      : status === 1
+      ? {
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenApprove(1),
+          cancelApprovalRequest: () => setOpenApprove(2),
+          approveDocument: () => setOpenApprove(3),
+          rejectDocumentApproval: () => setOpenApprove(4),
+          delegateApproval: () => {
+            setOpenApprove(5);
+            setWorkFlowChange(Date.now());
+          },
+        }
+      : status === 2
+      ? {
+          postReceiptToGL: () => setOpenPV(true),
+        }
+      : {}),
   };
 
   const title = clickedItem
@@ -331,12 +345,23 @@ const Reciepts = ({ status }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   const handleSelectionChange = (selectedRows) => {
-    console.log('Slected rows in ParentComponent:', selectedRows);
+    // console.log('Slected rows in ParentComponent:', selectedRows);
     setSelectedRows(selectedRows);
   };
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         open={openPV && selectedRows.length > 0}
         onClose={() => {
@@ -410,6 +435,7 @@ const Reciepts = ({ status }) => {
         )}
       </BaseCard>
       <BaseTable
+        refreshData={refresh}
         openPostToGL={openPV}
         openAction={openAction}
         openBaseCard={openBaseCard}
@@ -418,7 +444,7 @@ const Reciepts = ({ status }) => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getReceipts}
+        fetchApiEndpoint={financeEndpoints.getReceiptBystage(status)}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

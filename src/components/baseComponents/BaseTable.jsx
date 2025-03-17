@@ -287,7 +287,10 @@ const BaseTable = ({
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}
-          columns={columnDefs}
+          columns={columnDefs.map((col) => ({
+            headerName: col.headerName,
+            field: col.field,
+          }))}
           transformData={transformData}
           fileName={currentTitle}
           setLoading={setExcelLoading}

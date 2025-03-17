@@ -1,10 +1,10 @@
-import Returns from '@/components/financeComponents/revenue/returns/Returns';
+import OldCases from '@/components/financeComponents/OldCases/OldCases';
 import React from 'react';
 
 function page() {
   return (
     <div>
-      <Returns status={0} />
+      <OldCases />
     </div>
   );
 }

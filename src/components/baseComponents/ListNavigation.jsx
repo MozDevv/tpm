@@ -601,8 +601,20 @@ const ListNavigation = ({
     },
     {
       name: 'Create Return Receipt',
-      icon: Add,
+      icon: PlaylistAdd,
       action: 'createReturnReceipt',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Add return to IGC',
+      icon: PlaylistAdd,
+      action: 'addReturnToIGC',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Submit Return for Approval',
+      icon: Send,
+      action: 'submitReturnForApproval',
       requiredPermissions: [],
     },
   ];

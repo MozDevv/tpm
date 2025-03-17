@@ -484,16 +484,16 @@ const LedgerEntries = ({ type }) => {
             filter: true,
           },
           {
-            field: 'accountName',
+            field: 'glAccount.accountName',
             headerName: 'Account Name',
             flex: 1,
             filter: true,
-            valueFormatter: (params) => {
-              const account = allOptions?.find(
-                (acc) => acc.name === params.data.accountNo
-              );
-              return account?.accountName ?? 'N/A';
-            },
+            // valueFormatter: (params) => {
+            //   const account = allOptions?.find(
+            //     (acc) => acc.name === params.data.accountNo
+            //   );
+            //   return account?.accountName ?? 'N/A';
+            // },
           },
           {
             field: 'amount',
@@ -585,6 +585,7 @@ const LedgerEntries = ({ type }) => {
             transactionDate: item.transactionDate,
             amount: item.amount,
             accountNo: item.accountNo,
+            glAccount: item?.glAccount,
           };
         default:
           return {};
