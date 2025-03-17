@@ -434,6 +434,10 @@ const financeEndpoints = {
   submitReceiptForApproval: (id) =>
     `/Posting/SubmitReceiptForApproval?ReceiptId=${id}`,
   getReceiptBystage: (stage) => `/Posting/GetReceipts?stage=${stage}`,
+
+  getOldCasesReturnDetails: 'Revenue/GetOldCasesReturnDetail',
+  getOldCaseLinesByPensionerNo: (pensionerNo) =>
+    `Revenue/GetReturnDetail?filterCriterion.criterions[0].propertyName=pensionerNo&filterCriterion.criterions[0].propertyValue=${pensionerNo}&filterCriterion.criterions[0].criterionType=2`,
 };
 
 export const apiService = {

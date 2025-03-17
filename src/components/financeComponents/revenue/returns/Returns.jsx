@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -134,9 +134,10 @@ const Returns = ({ status }) => {
           setOpenAction(true);
         },
       }),
-    ...(status === 0 && {
-      generateReturnTemplate: () => generateBudgetUploadTemplate(),
-    }),
+    ...(status === 0 &&
+      !clickedItem && {
+        generateReturnTemplate: () => generateBudgetUploadTemplate(),
+      }),
     ...(status === 0 && clickedItem
       ? {
           submitReturnForApproval: () => {
@@ -676,7 +677,7 @@ const Returns = ({ status }) => {
       setUploadExcel(false);
     }
   }, [openBaseCard]);
-
+  const [refetch, setRefetch] = useState(0);
   return (
     <div className="">
       <BaseApprovalCard
@@ -734,6 +735,7 @@ const Returns = ({ status }) => {
                 setOpenBaseCard={setOpenBaseCard}
               />
               <BaseFinanceInputTable
+                clickedItem={clickedItem}
                 title="Return Details"
                 fields={returnLineFields}
                 id={clickedItem?.id}
@@ -748,6 +750,7 @@ const Returns = ({ status }) => {
                 putEndpoint={financeEndpoints.updateReturnLine}
                 passProspectivePensionerId={true}
                 allOptions={claims}
+                refetchData={clickedItem}
               />
             </div>
           </>
@@ -776,6 +779,7 @@ const Returns = ({ status }) => {
             setSelectedBank={setSelectedBank}
             setClickedItem={setClickedItem}
             setCloseProp={setUploadExcel}
+            setReFetchData={setRefetch}
           />
         ) : (
           <></>

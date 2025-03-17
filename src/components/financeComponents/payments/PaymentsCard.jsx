@@ -495,7 +495,6 @@ function PaymentsCard({
               setOpenBaseCard={setOpenBaseCard}
               allOptions={allOptions}
               setSelectedAccountTypeId={setSelectedAccountTypeId}
-              selected
             >
               <div className="px-5 mt-[-20px] h-[95vh] max-h-[95vh] overflow-y-auto">
                 <div className="flex flex-col">

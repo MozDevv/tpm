@@ -59,6 +59,7 @@ const BaseFinanceInputTable = ({
   branches,
   disableAll,
   fetchChildren,
+  refetchData,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -224,6 +225,10 @@ const BaseFinanceInputTable = ({
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [refetchData]);
 
   const gridApiRef = useRef(null);
 

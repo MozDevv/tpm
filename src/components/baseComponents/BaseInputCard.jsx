@@ -39,7 +39,7 @@ const BaseInputCard = ({
   clickedItem,
   setOpenBaseCard,
   useRequestBody,
-  setReFetchData,
+
   inputTitle,
   id,
   idLabel,
@@ -59,6 +59,7 @@ const BaseInputCard = ({
   isAddMoreFields,
   setCloseProp,
   setClickedItem,
+  setReFetchData,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -419,6 +420,7 @@ const BaseInputCard = ({
           setClickedItem &&
             setClickedItem({ ...formattedFormData, id: res.data.data });
           refreshData && refreshData(res.data.data.id);
+          setReFetchData && setReFetchData((prev) => prev + 1);
           fetchData && fetchData();
           setCloseProp && setCloseProp(false);
           message.success('Record saved successfully');

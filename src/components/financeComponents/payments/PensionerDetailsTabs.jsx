@@ -19,7 +19,7 @@ import PensionerDetails from '@/components/assessment/assessmentDataCapture/Pens
 
 const { TabPane } = Tabs;
 
-function AssessmentCard({ clickedItem, claimId, claim, children }) {
+function AssessmentCard({ clickedItem, claimId, claim, isOldCase, children }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
   const [qualifyingService, setQualifyingService] = useState([]);
@@ -121,7 +121,8 @@ function AssessmentCard({ clickedItem, claimId, claim, children }) {
                 key="12"
               >
                 <div className="h-[550px] overflow-y-auto">
-                  {claim?.prospectivePensionerId && claim.source !== 0 && (
+                  {((claim?.prospectivePensionerId && claim.source !== 0) ||
+                    isOldCase) && (
                     <PensionerDetails
                       isPayment={true}
                       clickedItem={claim}

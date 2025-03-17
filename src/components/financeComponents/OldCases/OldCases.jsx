@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -10,6 +10,11 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import { formatDate } from '@/utils/dateFormatter';
 import { formatNumber } from '@/utils/numberFormatters';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import AssessmentCard from '../payments/PensionerDetailsTabs';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import { apiService as preApiservice } from '@/components/services/preclaimsApi';
 
 const columnDefs = [
   {
@@ -122,6 +127,91 @@ const OldCases = () => {
     },
     { name: 'amount', label: 'Amount', type: 'text', disabled: true },
   ];
+  const returnLineFields = [
+    {
+      value: 'pensionerName',
+      label: 'Pensioner Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      value: 'pensionerNo',
+      label: 'Pensioner No',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      value: 'returnReason',
+      label: 'Return Reason',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      value: 'amount',
+      label: 'Amount',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      value: 'returnType',
+      label: 'Return Type',
+      type: 'select',
+      disabled: true,
+    },
+  ];
+
+  const [retiree, setRetiree] = React.useState(null);
+  const [clickedItem2, setClickedItem2] = React.useState(null);
+
+  const [prospectivePensionerId, setProspectivePensionerId] =
+    React.useState(null);
+  const [claimId, setClaimId] = React.useState(null);
+
+  const fetchRetiree = async (prospectivePensionerId) => {
+    try {
+      const res = await preApiservice.get(
+        preClaimsEndpoints.getProspectivePensioner(prospectivePensionerId)
+      );
+      if (res.status === 200) {
+        setRetiree(res.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (openBaseCard && clickedItem) {
+      const fetchDetailsToGetPensioner = async () => {
+        try {
+          const res = await apiService.get(
+            financeEndpoints.getOldCaseLinesByPensionerNo(
+              clickedItem?.pensionerNo
+            )
+          );
+          const details = res.data.data;
+          setClickedItem2(details);
+
+          // Check if there is a prospectivePensionerId
+          const prospectivePensionerId = details.find(
+            (item) => item.prospectivePensionerId
+          )?.prospectivePensionerId;
+
+          const claimId = details.find((item) => item.claimId)?.claimId;
+
+          setClaimId(claimId);
+          setProspectivePensionerId(prospectivePensionerId);
+          if (prospectivePensionerId) {
+            await fetchRetiree(prospectivePensionerId);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetchDetailsToGetPensioner();
+    }
+  }, [openBaseCard, clickedItem]);
 
   return (
     <div className="">
@@ -134,14 +224,43 @@ const OldCases = () => {
         isUserComponent={false}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={financeEndpoints.updateReturnLine}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <>
+            <AssessmentCard
+              claim={{ ...clickedItem, prospectivePensionerId, claimId }}
+              clickedItem={retiree}
+              claimId={claimId}
+              setOpenBaseCard={setOpenBaseCard}
+              isOldCase={true}
+            >
+              <div className="">
+                <BaseInputCard
+                  fields={fields}
+                  apiEndpoint={financeEndpoints.updateReturnLine}
+                  postApiFunction={apiService.post}
+                  clickedItem={clickedItem}
+                  useRequestBody={true}
+                  setOpenBaseCard={setOpenBaseCard}
+                />
+
+                <BaseInputTable
+                  disableAll={true}
+                  title="Return Details"
+                  fields={returnLineFields}
+                  id={clickedItem?.id}
+                  idLabel="returnId"
+                  getApiService={apiService.get}
+                  postApiService={apiService.post}
+                  putApiService={apiService.post}
+                  getEndpoint={financeEndpoints.getOldCaseLinesByPensionerNo(
+                    clickedItem?.pensionerNo
+                  )}
+                  postEndpoint={financeEndpoints.addReturnLine}
+                  putEndpoint={financeEndpoints.updateReturnLine}
+                  passProspectivePensionerId={true}
+                />
+              </div>
+            </AssessmentCard>
+          </>
         ) : (
           <BaseInputCard
             fields={fields}
@@ -159,7 +278,7 @@ const OldCases = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={financeEndpoints.getReturnDetails}
+        fetchApiEndpoint={financeEndpoints.getOldCasesReturnDetails}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
