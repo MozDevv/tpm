@@ -16,10 +16,11 @@ import {
   getColumnDefsByType2,
 } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 import TrialBalance from '../reports/TrialBalance';
-import { Dialog, Divider } from '@mui/material';
+import { Collapse, Dialog, Divider } from '@mui/material';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import BalanceSheet from '../reports/BalanceSheet';
+import FilterComponent from '@/components/baseComponents/FilterComponent';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -93,7 +94,7 @@ function ChartsOfAccounts() {
   const colDefs = [
     {
       headerName: 'Account No.',
-      field: 'glAccountNo',
+      field: 'accountNo',
       width: 120,
       pinned: 'left',
 
@@ -108,7 +109,7 @@ function ChartsOfAccounts() {
     },
     {
       headerName: 'Account Name',
-      field: 'glAccountName',
+      field: 'accountName',
 
       width: 350,
       cellStyle: ({ data }) => ({
@@ -338,10 +339,11 @@ function ChartsOfAccounts() {
     fetchNewOptions();
   }, []);
 
-  const fetchGlAccounts = async () => {
+  const fetchGlAccounts = async (filterParams) => {
     try {
       const response = await apiService.get(financeEndpoints.fetchGlAccounts, {
         'paging.pageSize': 1000,
+        ...filterParams,
       });
 
       const accounts = response.data.data.map((account) => ({
@@ -568,6 +570,11 @@ function ChartsOfAccounts() {
   }, [rowData]);
 
   const [openDrilldown, setOpenDrilldown] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const handleFilters = async (filterParams) => {
+    await fetchGlAccounts(filterParams);
+  };
 
   return (
     <div className="flex flex-col">
@@ -686,29 +693,51 @@ function ChartsOfAccounts() {
         <Divider sx={{ mt: 2, mb: '-5px' }} />
         <div className="mt-6 overflow-hidden"></div>
       </div>
-      <div
-        className="ag-theme-quartz font-segoe"
-        style={{
-          height: gridHeight ? `${gridHeight}px` : '75vh',
-          width: '100%',
-          overflow: 'hidden',
-          maxHeight: '600px',
-        }} // Set the height as needed
-      >
-        <AgGridReact
-          columnDefs={colDefs}
-          rowData={rowData}
-          onCellDoubleClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
+      <div className="flex gap-2">
+        <Collapse
+          in={openFilter}
+          sx={{
+            bgcolor: 'white',
+            mt: 2,
+            borderRadius: '10px',
+            color: 'black',
+            borderRadius: '10px',
           }}
-          noRowsOverlayComponent={BaseEmptyComponent}
-          className="font-sans"
-          onGridReady={onGridReady}
-          animateRows={true}
-          rowHeight={rowHeight}
-          domLayout="normal"
-        />
+          timeout="auto"
+          unmountOnExit
+        >
+          <FilterComponent
+            columnDefs={colDefs}
+            filteredData={rowData}
+            onApplyFilters={handleFilters}
+            fetchData={fetchGlAccounts}
+            startIndex={0}
+          />
+        </Collapse>
+        <div
+          className="ag-theme-quartz font-segoe"
+          style={{
+            height: gridHeight ? `${gridHeight}px` : '75vh',
+            width: openFilter ? 'calc(100vw - 300px)' : '100vw',
+            overflow: 'hidden',
+            maxHeight: '600px',
+          }} // Set the height as needed
+        >
+          <AgGridReact
+            columnDefs={colDefs}
+            rowData={rowData}
+            onCellDoubleClicked={(e) => {
+              setOpenBaseCard(true);
+              setClickedItem(e.data);
+            }}
+            noRowsOverlayComponent={BaseEmptyComponent}
+            className="font-sans"
+            onGridReady={onGridReady}
+            animateRows={true}
+            rowHeight={rowHeight}
+            domLayout="normal"
+          />
+        </div>
       </div>
     </div>
   );

@@ -45,6 +45,8 @@ function ReturnActions({
         message.success('Receipt(s) Posted to Ledger successfully');
         setOpenPostGL(false);
         setSelectedRows([]);
+      } else if (res.status === 200 && !res.data.succeeded) {
+        message.error(res.data.message[0]);
       }
     } catch (error) {
       console.error('Error processing action:', error);
