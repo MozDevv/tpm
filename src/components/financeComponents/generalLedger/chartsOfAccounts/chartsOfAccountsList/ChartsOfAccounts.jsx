@@ -16,11 +16,12 @@ import {
   getColumnDefsByType2,
 } from '@/components/financeComponents/baseSubledgerData/BaseSubledgerData';
 import TrialBalance from '../reports/TrialBalance';
-import { Collapse, Dialog, Divider } from '@mui/material';
+import { Backdrop, Collapse, Dialog, Divider } from '@mui/material';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import BalanceSheet from '../reports/BalanceSheet';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
+import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 
 function ChartsOfAccounts() {
   const [rowData, setRowData] = useState([]);
@@ -312,6 +313,9 @@ function ChartsOfAccounts() {
   };
   const [allOptions, setAllOptions] = useState([]);
 
+  const [openExcel, setOpenExcel] = useState(false);
+  const [excelLoading, setExcelLoading] = useState(false);
+
   const fetchNewOptions = async () => {
     try {
       const res = await apiService.get(financeEndpoints.getAccounts, {
@@ -371,7 +375,7 @@ function ChartsOfAccounts() {
   const handlers = {
     search: () => console.log('Search clicked'),
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
-    openInExcel: () => exportData(),
+    openInExcel: () => setOpenExcel(true),
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
@@ -578,6 +582,23 @@ function ChartsOfAccounts() {
 
   return (
     <div className="flex flex-col">
+      {excelLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: 999999 }}
+          open={excelLoading}
+          onClick={() => setExcelLoading(false)}
+        >
+          {/* <span class="loader"></span> */}
+          <div className="ml-3 font-semibold text-xl flex items-center">
+            Generating Excel File
+            <div className="ellipsis ml-1 mb-4">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </div>
+          </div>
+        </Backdrop>
+      )}
       <Dialog
         open={openTrialBalanceReport === 1}
         onClose={() => setOpenTrialBalanceReport(false)}
@@ -693,6 +714,21 @@ function ChartsOfAccounts() {
         <Divider sx={{ mt: 2, mb: '-5px' }} />
         <div className="mt-6 overflow-hidden"></div>
       </div>
+      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+        <BaseExcelComponent
+          setOpenExcel={setOpenExcel}
+          fetchApiService={apiService.get}
+          fetchApiEndpoint={financeEndpoints.fetchGlAccounts}
+          columns={colDefs.map((col) => ({
+            headerName: col.headerName,
+            field: col.field,
+          }))}
+          transformData={(data) => data}
+          fileName="Chart of Accounts"
+          setLoading={setExcelLoading}
+          excelTitle="Chart of Accounts"
+        />
+      </Dialog>
       <div className="flex gap-2">
         <Collapse
           in={openFilter}
