@@ -30,6 +30,10 @@ import { name } from 'dayjs/locale/en-au';
 import { apiService as setupsApiService } from '@/components/services/setupsApi';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
 import ReturnsLines from './ReturnsLines';
+import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { formatNumber } from '@/utils/numberFormatters';
+import ReturnActions from './ReturnActions';
+import { Dialog } from '@mui/material';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -56,12 +60,15 @@ const Returns = ({ status }) => {
     });
   };
 
+  const [openAction, setOpenAction] = React.useState(false);
+
   const [openApprove, setOpenApprove] = React.useState(0);
   const [workFlowChange, setWorkFlowChange] = React.useState(0);
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
   const [selectedBank, setSelectedBank] = React.useState(null);
+  const [openAddReturn, setOpenAddReturn] = React.useState(false);
 
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -76,7 +83,14 @@ const Returns = ({ status }) => {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
     generateReturnTemplate: () => generateBudgetUploadTemplate(),
-    uploadReturn: () => setUploadExcel(true),
+    uploadReturn: () => {
+      setUploadExcel(true);
+      setOpenBaseCard(true);
+    },
+    addReturn: () => {
+      setOpenAddReturn(true);
+      setOpenBaseCard(true);
+    },
     ...(status === 0
       ? {
           create: () => {
@@ -108,31 +122,21 @@ const Returns = ({ status }) => {
           },
         }
       : {}),
+    addReturn: () => {
+      setOpenAddReturn(true);
+      setOpenBaseCard(true);
+    },
+    createReturnReceipt: () => {
+      setOpenAction(true);
+    },
   };
 
   const baseCardHandlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
-    ...(status === 0
-      ? {
-          edit: () => console.log('Edit clicked'),
-          delete: () => console.log('Delete clicked'),
-          reports: () => console.log('Reports clicked'),
-          notify: () => console.log('Notify clicked'),
-        }
-      : status === 1
-      ? {
-          approvalRequest: () => console.log('Approval Request clicked'),
-          sendApprovalRequest: () => setOpenApprove(1),
-          cancelApprovalRequest: () => setOpenApprove(2),
-          approveDocument: () => setOpenApprove(3),
-          rejectDocumentApproval: () => setOpenApprove(4),
-          delegateApproval: () => {
-            setOpenApprove(5);
-            setWorkFlowChange(Date.now());
-          },
-        }
-      : {}),
+    ...(clickedItem && {
+      createReturnReceipt: () => {
+        setOpenAction(true);
+      },
+    }),
   };
 
   const submitBudgetForApproval = async () => {
@@ -151,56 +155,126 @@ const Returns = ({ status }) => {
     }
   };
 
-  const title = clickedItem ? clickedItem?.budgetName : 'Create a New Budget';
+  const title = clickedItem
+    ? clickedItem?.documentNo
+    : uploadExcel
+    ? 'Upload Return'
+    : 'Add Return';
   const { data: accountingPeriod } = useFetchAsync(
     financeEndpoints.getAccountingPeriods,
     apiService
   );
 
+  const [banks, setBanks] = React.useState([]);
+  const [branches, setBranches] = React.useState([]);
+
+  const { data: paymentMeth } = useFetchAsync(
+    financeEndpoints.getPaymentMethods,
+    apiService
+  );
+
+  const [glAccounts, setGlAccounts] = React.useState([]);
+
+  const fetchGlAccounts = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getGLAccountsAccounttype(0),
+        {
+          'paging.pageSize': 150,
+        }
+      );
+
+      setGlAccounts(
+        response.data.data.map((account) => ({
+          id: account.id,
+          name: account.accountNo,
+          accountNo: account.name,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGlAccounts();
+  }, []);
   const fields = [
-    { name: 'budgetName', label: 'Budget Name', type: 'text', required: true },
     {
-      name: 'budgetDescription',
-      label: 'Budget Description',
+      name: 'receiptNo',
+      label: 'Receipt No',
       type: 'text',
       required: true,
     },
-    // {name: }
     {
-      name: 'accountingPeriodId',
-      label: 'Accounting Period',
-      type: 'autocomplete',
+      name: 'returnDate',
+      label: 'Return Date',
+      type: 'date',
       required: true,
-      options:
-        accountingPeriod &&
-        Array.isArray(accountingPeriod) &&
-        accountingPeriod.map((item) => ({
-          id: item.id,
-          name: item.finYearName,
-          startDate: item.fromDate,
-          endDate: item.toDate,
-        })),
+    },
+    {
+      name: 'totalAmount',
+      label: 'Total Amount',
+      type: 'amount',
+      required: true,
     },
 
     {
-      name: 'startDate',
-      label: 'Start Date',
-      type: 'date',
+      name: 'returnTypeId',
+      label: 'Return Type',
+      type: 'select',
       required: true,
-      disabled: true,
+      options: [
+        { id: 0, name: 'Monthly' },
+        { id: 1, name: 'Lumpsum' },
+      ],
     },
     {
-      name: 'endDate',
-      label: 'End Date',
-      type: 'date',
+      name: 'paymentMethodId',
+      label: 'Payment Method',
+      type: 'select',
       required: true,
-      disabled: true,
+      options:
+        paymentMeth &&
+        paymentMeth.map((method) => ({
+          id: method.id,
+          name: method.description,
+        })),
     },
     {
-      name: 'isBlocked',
-      label: 'Is Blocked',
-      type: 'switch',
-      // required: true,
+      name: 'eftNo',
+      label: 'EFT No',
+      type: 'number',
+    },
+    {
+      name: 'bankId',
+      label: 'Bank',
+      type: 'autocomplete',
+      required: true,
+      options: banks.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+      })),
+    },
+    {
+      name: 'bankBranchId',
+      label: 'Branch',
+      type: 'autocomplete',
+      required: true,
+      options: branches
+        .filter((branch) => branch.bankId === selectedBank)
+        .map((branch) => ({
+          id: branch.id,
+          name: branch.name,
+          bankId: branch.bankId,
+        })),
+    },
+    {
+      name: 'chartOfAccountId',
+      label: 'Account',
+      type: 'select',
+      options: glAccounts,
+      table: true,
     },
   ];
 
@@ -230,14 +304,6 @@ const Returns = ({ status }) => {
     }
   };
 
-  const [banks, setBanks] = React.useState([]);
-  const [branches, setBranches] = React.useState([]);
-
-  const { data: paymentMeth } = useFetchAsync(
-    financeEndpoints.getPaymentMethods,
-    apiService
-  );
-
   const columnDefs = [
     {
       field: 'documentNo',
@@ -256,21 +322,21 @@ const Returns = ({ status }) => {
         );
       },
     },
-    {
-      field: 'chequeNo',
-      headerName: 'Cheque No',
-      headerClass: 'prefix-header',
-      flex: 1,
-      cellRenderer: (params) => {
-        return <p className=" text-primary font-semibold">{params.value}</p>;
-      },
-    },
-    {
-      field: 'chequeDate',
-      headerName: 'Cheque Date',
-      headerClass: 'prefix-header',
-      flex: 1,
-    },
+    // {
+    //   field: 'chequeNo',
+    //   headerName: 'Cheque No',
+    //   headerClass: 'prefix-header',
+    //   flex: 1,
+    //   cellRenderer: (params) => {
+    //     return <p className=" text-primary font-semibold">{params.value}</p>;
+    //   },
+    // },
+    // {
+    //   field: 'chequeDate',
+    //   headerName: 'Cheque Date',
+    //   headerClass: 'prefix-header',
+    //   flex: 1,
+    // },
 
     /**[
       {
@@ -302,12 +368,19 @@ const Returns = ({ status }) => {
       headerName: 'Return Date',
       headerClass: 'prefix-header',
       flex: 1,
+      cellRenderer: (params) => {
+        return parseDate(params.value);
+      },
     },
     {
       field: 'totalAmount',
       headerName: 'Total Amount',
       headerClass: 'prefix-header',
       flex: 1,
+
+      cellRenderer: (params) => {
+        return <div className="text-right">{formatNumber(params.value)}</div>;
+      },
     },
     {
       field: 'eftNo',
@@ -320,13 +393,16 @@ const Returns = ({ status }) => {
       headerName: 'Return Type',
       headerClass: 'prefix-header',
       flex: 1,
+      cellRenderer: (params) => {
+        return params.value === 0 ? 'Monthly' : 'Lumpsum';
+      },
     },
     {
       field: 'bankBranchId',
       headerName: 'Branch',
       headerClass: 'prefix-header',
       flex: 1,
-      valueGetter: (params) => {
+      cellRenderer: (params) => {
         const branch = branches.find((branch) => branch.id === params.value);
         return branch?.name;
       },
@@ -336,7 +412,7 @@ const Returns = ({ status }) => {
       headerName: 'Bank',
       headerClass: 'prefix-header',
       flex: 1,
-      valueGetter: (params) => {
+      cellRenderer: (params) => {
         const bank = banks.find((bank) => bank.id === params.value);
         return bank?.name;
       },
@@ -346,11 +422,11 @@ const Returns = ({ status }) => {
       headerName: 'Payment Method',
       headerClass: 'prefix-header',
       flex: 1,
-      valueGetter: (params) => {
+      cellRenderer: (params) => {
         const paymentMethod = paymentMeth.find(
           (method) => method.id === params.value
         );
-        return paymentMethod?.name;
+        return paymentMethod?.description;
       },
     },
   ];
@@ -388,6 +464,12 @@ const Returns = ({ status }) => {
 
   const uploadFields = [
     {
+      name: 'receiptNo',
+      label: 'Receipt No',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'returnDate',
       label: 'Return Date',
       type: 'date',
@@ -409,6 +491,18 @@ const Returns = ({ status }) => {
         { id: 0, name: 'Monthly' },
         { id: 1, name: 'Lumpsum' },
       ],
+    },
+    {
+      name: 'paymentMethodId',
+      label: 'Payment Method',
+      type: 'select',
+      required: true,
+      options:
+        paymentMeth &&
+        paymentMeth.map((method) => ({
+          id: method.id,
+          name: method.description,
+        })),
     },
     {
       name: 'eftNo',
@@ -439,6 +533,13 @@ const Returns = ({ status }) => {
         })),
     },
     {
+      name: 'chartOfAccountId',
+      label: 'Account',
+      type: 'select',
+      options: glAccounts,
+      table: true,
+    },
+    {
       name: 'file',
       label: 'Upload File',
       type: 'file',
@@ -447,30 +548,50 @@ const Returns = ({ status }) => {
     },
   ];
 
-  const tabPanes = [
+  const returnLineFields = [
     {
-      key: '1',
-      title: "Return's Information",
-      content: (
-        <div>
-          <BaseInputCard
-            fields={uploadFields}
-            apiEndpoint={financeEndpoints.updateBudget}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            disableAll={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
-        </div>
-      ),
+      label: 'Pensioner Name',
+      value: 'pensionerName',
+      type: 'text',
+      required: true,
     },
     {
-      key: '2',
-      title: 'Return Details',
-      content: <ReturnsLines payrollLines={clickedItem?.returnDetails} />,
+      label: 'Pensioner No',
+      value: 'pensionerNo',
+      type: 'text',
+      required: true,
     },
+    {
+      label: 'Return Reason',
+      value: 'returnReason',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: 'Amount',
+      value: 'amount',
+      type: 'amount',
+      required: true,
+    },
+    // {
+    //   value: 'returnTypeId',
+    //   label: 'Return Type',
+    //   type: 'select',
+    //   required: true,
+    //   options: [
+    //     { id: 0, name: 'Monthly' },
+    //     { id: 1, name: 'Lumpsum' },
+    //   ],
+    // },
   ];
+
+  useEffect(() => {
+    if (!openBaseCard) {
+      setClickedItem(null);
+      setOpenAddReturn(false);
+      setUploadExcel(false);
+    }
+  }, [openBaseCard]);
 
   return (
     <div className="">
@@ -485,29 +606,29 @@ const Returns = ({ status }) => {
             : []
         }
       />
-      <BaseCard
-        openBaseCard={uploadExcel}
-        setOpenBaseCard={setUploadExcel}
-        title={'Upload Return'}
-        clickedItem={clickedItem}
-        isSecondaryCard={true}
-        handlers={{
-          generateReturnTemplate: () => generateBudgetUploadTemplate(),
+      <Dialog
+        open={openAction}
+        onClose={() => {
+          setOpenAction(false);
+        }}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          padding: '20px',
+          maxHeight: '90vh',
         }}
       >
-        {' '}
-        <BaseInputCard
-          fields={uploadFields}
-          apiEndpoint={financeEndpoints.uploadReturn}
-          postApiFunction={apiService.post}
-          //  clickedItem={clickedItem}
-          useRequestBody={false}
-          setOpenBaseCard={setUploadExcel}
-          isBranch={true}
-          refreshData={false}
-          setSelectedBank={setSelectedBank}
+        <ReturnActions
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          setOpenPostGL={setOpenAction}
+          clickedItem={clickedItem}
+          status={status}
+          postApiFunction={financeEndpoints.postReturnToLedger}
+          postApiService={apiService.post}
         />
-      </BaseCard>
+      </Dialog>
+
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -515,22 +636,64 @@ const Returns = ({ status }) => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <>
-            <BaseTabs tabPanes={tabPanes} />
+            <div>
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={financeEndpoints.updateBudget}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                disableAll={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+              <BaseInputTable
+                title="Return Details"
+                fields={returnLineFields}
+                id={clickedItem?.id}
+                idLabel="returnId"
+                getApiService={apiService.get}
+                postApiService={apiService.post}
+                putApiService={apiService.post}
+                getEndpoint={financeEndpoints.getReturnLineById(
+                  clickedItem?.id
+                )}
+                postEndpoint={financeEndpoints.addReturnLine}
+                putEndpoint={financeEndpoints.updateReturnLine}
+                passProspectivePensionerId={true}
+              />
+            </div>
           </>
-        ) : (
+        ) : openAddReturn ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.uploadBudget}
+            apiEndpoint={financeEndpoints.addReturn}
             postApiFunction={apiService.post}
-            clickedItem={clickedItem}
             useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
+            setOpenBaseCard={setOpenAddReturn}
+            isBranch={true}
+            refreshData={false}
+            setSelectedBank={setSelectedBank}
+            setCloseProp={setOpenAddReturn}
+            setClickedItem={setClickedItem}
           />
+        ) : uploadExcel ? (
+          <BaseInputCard
+            fields={uploadFields}
+            apiEndpoint={financeEndpoints.uploadReturn}
+            postApiFunction={apiService.post}
+            //  clickedItem={clickedItem}
+            useRequestBody={false}
+            isBranch={true}
+            refreshData={false}
+            setSelectedBank={setSelectedBank}
+            setClickedItem={setClickedItem}
+            setCloseProp={setUploadExcel}
+          />
+        ) : (
+          <></>
         )}
       </BaseCard>
       <div className="">
@@ -549,7 +712,7 @@ const Returns = ({ status }) => {
           breadcrumbTitle="Returns"
           currentTitle="Returns"
           selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
+          onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           openApproveDialog={openApprove}
         />
       </div>

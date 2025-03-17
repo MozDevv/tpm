@@ -593,6 +593,18 @@ const ListNavigation = ({
       action: 'runPayroll',
       requiredPermissions: [],
     },
+    {
+      name: 'Add Return',
+      icon: PlaylistAdd,
+      action: 'addReturn',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Create Return Receipt',
+      icon: Add,
+      action: 'createReturnReceipt',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
