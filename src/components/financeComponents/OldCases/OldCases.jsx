@@ -15,6 +15,7 @@ import AssessmentCard from '../payments/PensionerDetailsTabs';
 import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import preClaimsEndpoints from '@/components/services/preclaimsApi';
 import { apiService as preApiservice } from '@/components/services/preclaimsApi';
+import { message } from 'antd';
 
 const columnDefs = [
   {
@@ -66,6 +67,8 @@ const OldCases = () => {
     });
   };
 
+  // const []
+
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
@@ -77,7 +80,25 @@ const OldCases = () => {
   const handlers = {};
 
   const baseCardHandlers = {
-    addReturnToIGC: () => {},
+    addReturnToIGC: () => {
+      handleReturnToIgc();
+    },
+  };
+
+  const handleReturnToIgc = async () => {
+    try {
+      const res = await apiService.post(financeEndpoints.addReturnToIGC, {
+        pensionerNumber: clickedItem.pensionerNo,
+        returnType: clickedItem.returnType,
+      });
+
+      if (res.status === 200 && res.data.succeeded) {
+        message.success('Return added to IGC successfully');
+        // setOpenBaseCard(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -92,7 +113,7 @@ const OldCases = () => {
       name: 'returnType',
       label: 'Return Type',
       type: 'autocomplete',
-      required: true,
+      disabled: true,
       options: [
         {
           id: 0,
@@ -156,7 +177,24 @@ const OldCases = () => {
       value: 'returnType',
       label: 'Return Type',
       type: 'select',
-      disabled: true,
+      options: [
+        {
+          id: 0,
+          name: 'None',
+        },
+        {
+          id: 1,
+          name: 'Death',
+        },
+        {
+          id: 2,
+          name: 'Dormant Account',
+        },
+        {
+          id: 3,
+          name: 'Wrong Bank Details',
+        },
+      ],
     },
   ];
 
@@ -243,7 +281,6 @@ const OldCases = () => {
                 />
 
                 <BaseInputTable
-                  disableAll={true}
                   title="Return Details"
                   fields={returnLineFields}
                   id={clickedItem?.id}
@@ -255,7 +292,7 @@ const OldCases = () => {
                     clickedItem?.pensionerNo
                   )}
                   postEndpoint={financeEndpoints.addReturnLine}
-                  putEndpoint={financeEndpoints.updateReturnLine}
+                  putEndpoint={financeEndpoints.updateOldCaseLine}
                   passProspectivePensionerId={true}
                 />
               </div>

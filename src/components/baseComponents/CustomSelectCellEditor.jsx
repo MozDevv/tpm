@@ -5,7 +5,8 @@ import Popper from '@mui/material/Popper';
 import Box from '@mui/material/Box';
 
 const CustomPopper = (props) => {
-  const isAccountId = props.colDef.field === 'accountId' || 'pensionerNo';
+  const isAccountId =
+    props.colDef.field === 'accountId' || props.colDef.field === 'pensionerNo';
   return (
     <Popper
       {...props}

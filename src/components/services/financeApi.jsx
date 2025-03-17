@@ -438,6 +438,9 @@ const financeEndpoints = {
   getOldCasesReturnDetails: 'Revenue/GetOldCasesReturnDetail',
   getOldCaseLinesByPensionerNo: (pensionerNo) =>
     `Revenue/GetReturnDetail?filterCriterion.criterions[0].propertyName=pensionerNo&filterCriterion.criterions[0].propertyValue=${pensionerNo}&filterCriterion.criterions[0].criterionType=2`,
+
+  updateOldCaseLine: 'Revenue/UpdateReturnTypeOnDetail',
+  addReturnToIgc: 'Revenue/AddReturnToIGC',
 };
 
 export const apiService = {
