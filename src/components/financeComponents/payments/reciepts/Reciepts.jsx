@@ -177,8 +177,12 @@ const Reciepts = ({ status }) => {
       const response = await apiService.post(
         financeEndpoints.submitReceiptForApproval(clickedItem.id)
       );
-      if (response.status === 200 && response.data.succeeded) {
-        message.success('Receipt submitted for approval successfully');
+      if (
+        response.status === 200 &&
+        response.data.succeeded &&
+        response.data.messages[0]
+      ) {
+        message.success(response.data.messages[0]);
         if (openBaseCard) {
           setOpenBaseCard(false);
         }
