@@ -449,6 +449,16 @@ const financeEndpoints = {
   } */
   getGeneratedReceiptLines: (id) =>
     `Revenue/GetReceiptNoGeneratorLine?ReceiptNoGeneratorHeaderId=${id}&paging.pageNumber=1&paging.pageSize=100000 `,
+  addReceiptType: 'AccountsSetup/AddReceiptType',
+  getReceiptType: 'AccountsSetup/GetReceiptTypes',
+  updateReceiptType: 'AccountsSetup/UpdateReceiptType',
+  deleteReceiptType: (id) => `/AccountsSetup/DeleteReceiptType?id=${id}`,
+
+  addReceiptPostingGroup: 'PostingSetUp/AddReceiptPostingGroup',
+  getReceiptPostingGroups: 'PostingSetUp/GetReceiptPostingGroups',
+  updateReceiptPostingGroup: 'PostingSetUp/UpdateReceiptPostingGroup',
+  deleteReceiptPostingGroup: (id) =>
+    `/PostingSetUp/DeleteReceiptPostingGroup?id=${id}`,
 };
 
 export const apiService = {

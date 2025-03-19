@@ -248,13 +248,17 @@ const Returns = ({ status }) => {
     },
 
     {
-      name: 'returnType',
-      label: 'Return Type',
+      name: 'typeEnum',
+      label: 'Receipt Type',
       type: 'select',
-      required: true,
       options: [
-        { id: 0, name: 'Monthly' },
-        { id: 1, name: 'Lumpsum' },
+        { id: 0, name: 'Payroll Returns' },
+        { id: 1, name: 'Uncollected Payments' },
+        { id: 2, name: 'Secondment' },
+        { id: 3, name: 'WCPS' },
+        { id: 4, name: 'Deduction To Cap' },
+        { id: 5, name: 'Payroll Deduction To Cap' },
+        { id: 6, name: 'Abatement' },
       ],
     },
     {

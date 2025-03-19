@@ -740,6 +740,14 @@ export const adminItems = [
             path: '/pensions/setups/receipt-generation',
           },
           {
+            title: 'Receipt Types',
+            path: '/pensions/setups/receipt-types',
+          },
+          {
+            title: 'Receipt Posting Groups',
+            path: '/pensions/setups/receipt-posting-groups',
+          },
+          {
             title: 'Recoveries & Deductions',
             path: '/pensions/setups/recoveries-deductions',
           },
