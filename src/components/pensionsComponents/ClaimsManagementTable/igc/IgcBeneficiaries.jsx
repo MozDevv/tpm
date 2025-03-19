@@ -28,17 +28,17 @@ const IgcBeneficiaries = () => {
   };
 
   const pensionStatusMap = {
-    0: { name: 'Dependant Pension', color: '#1976d2' },
-    1: { name: 'Killed On Duty', color: '#fbc02d' },
-    2: { name: 'Injury or Disability Pension', color: '#2e7d32' },
-    3: { name: 'Revised Disability', color: '#d32f2f' },
-    4: { name: 'Revised Cases Erroneous Deductions', color: '#1976d2' },
-    5: { name: 'Revised Cases Court Order', color: '#fbc02d' },
-    6: { name: 'Revised Cases Salary Change', color: '#2e7d32' },
-    7: { name: 'Revised Cases Erroneous Awards', color: '#d32f2f' },
-    8: { name: 'Add Beneficiary Alive', color: '#1976d2' },
-    9: { name: 'Add Beneficiary Deceased', color: '#fbc02d' },
-    10: { name: 'Change of Pay Point', color: '#2e7d32' },
+    0: { name: 'Dependant Pension', color: '#1976d2' }, // Blue
+    1: { name: 'Killed On Duty', color: '#fbc02d' }, // Yellow
+    2: { name: 'Injury or Disability Pension', color: '#2e7d32' }, // Green
+    3: { name: 'Revised Disability', color: '#d32f2f' }, // Red
+    4: { name: 'Revised Cases Erroneous Deductions', color: '#8e24aa' }, // Purple
+    5: { name: 'Revised Cases Court Order', color: '#ff7043' }, // Orange
+    6: { name: 'Revised Cases Salary Change', color: '#0288d1' }, // Light Blue
+    7: { name: 'Revised Cases Erroneous Awards', color: '#6d4c41' }, // Dark Purple
+    8: { name: 'Add Beneficiary Alive', color: '#c2185b' }, // Pink
+    9: { name: 'Add Beneficiary Deceased', color: '#7b1fa2' }, // Brown
+    10: { name: 'Change of Pay Point', color: '#009688' }, // Teal
   };
 
   const columnDefs = [
@@ -57,6 +57,26 @@ const IgcBeneficiaries = () => {
         );
       },
       width: 160,
+    },
+    {
+      field: 'retireeName',
+      headerName: 'Retiree Name',
+      filter: true,
+      width: 200,
+      valueGetter: (params) => {
+        const firstName = params.data.prospective_pensioner?.first_name || '';
+        const surname = params.data.prospective_pensioner?.surname || '';
+        return `${firstName} ${surname}`;
+      },
+    },
+    {
+      field: 'personal_number',
+      headerName: 'Personal Number',
+      filter: true,
+      width: 200,
+      valueGetter: (params) => {
+        return params.data.prospective_pensioner?.personal_number;
+      },
     },
     {
       field: 'igc_submission_status',
@@ -117,6 +137,11 @@ const IgcBeneficiaries = () => {
           </Button>
         );
       },
+    },
+    {
+      field: 'stopped',
+      headerName: 'Stopped',
+      filter: true,
     },
   ];
 

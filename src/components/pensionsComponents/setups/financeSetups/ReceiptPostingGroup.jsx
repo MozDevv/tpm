@@ -30,22 +30,17 @@ const ReceiptPostingGroup = () => {
     },
     {
       field: 'description',
-      headerName: 'Group Name',
+      headerName: 'Description',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
-      name: 'receiptTypeId',
+      field: 'receiptTypeName',
       headerName: 'Receipt Type',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
-      valueFormatter: (params) => {
-        return (
-          data && data.find((item) => item.id === params.value)?.receiptTypeName
-        );
-      },
     },
     {
       field: 'accountNo',

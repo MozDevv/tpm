@@ -230,7 +230,7 @@ const Returns = ({ status }) => {
   const fields = [
     {
       name: 'receiptNo',
-      label: 'Receipt No',
+      label: 'Government Receipt No',
       type: 'text',
       required: true,
     },

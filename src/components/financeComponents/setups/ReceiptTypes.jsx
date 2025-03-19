@@ -128,7 +128,7 @@ const ReceiptTypes = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addReceipt}
+            apiEndpoint={financeEndpoints.addReceiptType}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
