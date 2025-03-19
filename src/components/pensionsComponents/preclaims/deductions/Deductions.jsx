@@ -15,7 +15,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { useMda } from '@/context/MdaContext';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const Deductions = ({ id, clickedItem2 }) => {
+const Deductions = ({ id, clickedItem2, enabled }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -147,13 +147,7 @@ const Deductions = ({ id, clickedItem2 }) => {
         title="Deductions"
         fields={fields}
         id={id}
-        disableAll={
-          clickedItem2?.notification_status !== 2 &&
-          clickedItem2?.notification_status !== null &&
-          clickedItem2?.notification_status !== 0 &&
-          clickedItem2?.notification_status !== 3 &&
-          clickedItem2?.notification_status !== 7
-        }
+        disableAll={!enabled}
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}

@@ -17,8 +17,11 @@ import { PORTAL_BASE_URL } from '@/utils/constants';
 import preClaimsEndpoints from '@/components/services/preclaimsApi';
 import { apiService as preApiservice } from '@/components/services/preclaimsApi';
 import AssessmentCard from '@/components/financeComponents/payments/PensionerDetailsTabs';
+import IgcRevisedInputCard from './IgcRevisedInputCard';
+import { message } from 'antd';
+import { useIgcIdStore } from '@/zustand/store';
 
-const IgcBeneficiaries = () => {
+const IgcListing = () => {
   const statusIcons = {
     0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
     1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
@@ -39,6 +42,7 @@ const IgcBeneficiaries = () => {
     8: { name: 'Add Beneficiary Alive', color: '#c2185b' }, // Pink
     9: { name: 'Add Beneficiary Deceased', color: '#7b1fa2' }, // Brown
     10: { name: 'Change of Pay Point', color: '#009688' }, // Teal
+    11: { name: 'Revised Case', color: '#0288d1' }, // Deep Orange
   };
 
   const columnDefs = [
@@ -154,6 +158,7 @@ const IgcBeneficiaries = () => {
   const [openInitiate, setOpenInitiate] = useState(false);
   const [openChangePaypoint, setOpenChangePaypoint] = useState(false);
 
+  const [initiateRevisedCase, setInitiateRevisedCase] = useState(false);
   const handlers = {
     initiateDependentEnrollment: () => {
       setOpenInitiate(true);
@@ -164,10 +169,38 @@ const IgcBeneficiaries = () => {
       setOpenChangePaypoint(true);
       setOpenBaseCard(true);
     },
+    initiateRevisedCase: () => {
+      setInitiateRevisedCase(true);
+      setOpenBaseCard(true);
+    },
+    sendIGCForApproval: () => handleSendForApproval(),
   };
   const baseCardHandlers = {};
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [refreshData, setRefreshData] = React.useState(1);
+
+  //loop the selectedRows
+  const handleSendForApproval = async () => {
+    const promises = selectedRows.map((item) => {
+      return apiService.post(endpoints.sendIgcForApproval, {
+        id: item.id,
+      });
+    });
+
+    try {
+      const res = await Promise.all(promises);
+      if (res.length > 0) {
+        message.success('IGC sent for approval successfully');
+        setSelectedRows([]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshData((prev) => prev + 1);
+    }
+  };
 
   const title = clickedItem
     ? clickedItem?.document_number
@@ -604,8 +637,18 @@ const IgcBeneficiaries = () => {
     if (!openBaseCard) {
       setOpenInitiate(false);
       setOpenChangePaypoint(false);
+      setClickedItem(null);
+      setInitiateRevisedCase(false);
     }
   }, [openBaseCard]);
+
+  const { igcId, setIgcId } = useIgcIdStore();
+
+  useEffect(() => {
+    if (clickedItem) {
+      setIgcId(clickedItem.id);
+    }
+  }, [clickedItem]);
   return (
     <div className="">
       <BaseCard
@@ -616,7 +659,7 @@ const IgcBeneficiaries = () => {
         clickedItem={clickedItem}
         isUserComponent={false}
       >
-        {clickedItem ? (
+        {clickedItem && clickedItem?.igc_type === 11 ? (
           <AssessmentCard
             claim={
               clickedItem
@@ -629,25 +672,49 @@ const IgcBeneficiaries = () => {
                   ]
                 : null
             }
+            igcId={clickedItem?.id}
             clickedItem={retiree}
             claimId={null}
             setOpenBaseCard={setOpenBaseCard}
             isIgc={true}
             childTitle="IGC Details"
-          >
-            <div className="">
-              <BaseInputCard
-                fields={generateFieldsFromJsonPayload(
-                  clickedItem?.json_payload
-                )}
-                apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-                postApiFunction={apiService.post}
-                clickedItem={clickedItem}
-                useRequestBody={true}
-                setOpenBaseCard={setOpenBaseCard}
-              />
-            </div>
-          </AssessmentCard>
+            jsonPayload={clickedItem?.json_payload}
+          />
+        ) : clickedItem && clickedItem?.igc_type !== 11 ? (
+          <>
+            {' '}
+            <AssessmentCard
+              claim={
+                clickedItem
+                  ? [
+                      {
+                        ...clickedItem,
+                        prospectivePensionerId:
+                          clickedItem?.prospective_pensioner_id,
+                      },
+                    ]
+                  : null
+              }
+              clickedItem={retiree}
+              claimId={null}
+              setOpenBaseCard={setOpenBaseCard}
+              isIgc={true}
+              childTitle="IGC Details"
+            >
+              <div className="">
+                <BaseInputCard
+                  fields={generateFieldsFromJsonPayload(
+                    clickedItem?.json_payload
+                  )}
+                  apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+                  postApiFunction={apiService.post}
+                  clickedItem={clickedItem}
+                  useRequestBody={true}
+                  setOpenBaseCard={setOpenBaseCard}
+                />
+              </div>
+            </AssessmentCard>
+          </>
         ) : openInitiate ? (
           <>
             <BaseInputCard
@@ -670,6 +737,8 @@ const IgcBeneficiaries = () => {
             setOpenBaseCard={setOpenBaseCard}
             setSelectedBank={setSelectedBank}
           />
+        ) : initiateRevisedCase ? (
+          <IgcRevisedInputCard setOpenBaseCard={setOpenBaseCard} />
         ) : (
           <></>
         )}
@@ -687,9 +756,11 @@ const IgcBeneficiaries = () => {
         handlers={handlers}
         breadcrumbTitle="Igc List"
         currentTitle="Igc List"
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+        refreshData={refreshData}
       />
     </div>
   );
 };
 
-export default IgcBeneficiaries;
+export default IgcListing;

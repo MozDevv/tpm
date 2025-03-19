@@ -47,12 +47,6 @@ const columnDefs = [
     filter: true,
     flex: 1,
   },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    filter: true,
-    flex: 1,
-  },
 ];
 
 const RecieptGenerator = () => {

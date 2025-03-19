@@ -17,6 +17,9 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
 import NewPreclaim from '@/components/pensionsComponents/preclaims/NewPreclaim';
+import NewPreclaimForIgc from '@/components/pensionsComponents/preclaims/NewPreclaimForIgc';
+import { Error, Warning } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 const { TabPane } = Tabs;
 
@@ -28,6 +31,8 @@ function AssessmentCard({
   children,
   childTitle,
   isIgc,
+  jsonPayload,
+  igcId
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -79,6 +84,29 @@ function AssessmentCard({
     getClaimQualifyingService(claimId);
   }, [claimId]);
 
+  const isSectionEnabled = (sectionName) => {
+    const sectionIndex = [
+      'BASIC_DETAILS',
+      'WORK_HISTORY',
+      'GOVERNMENT_SALARY',
+      'DEDUCTIONS',
+      'WCPS',
+      'PARLIAMENTARY_CONTRIBUTIONS',
+    ].indexOf(sectionName);
+    return jsonPayload.SectionsEnabled.includes(sectionIndex);
+  };
+
+  const sectionIndexof = (sectionName) => {
+    return [
+      'BASIC_DETAILS',
+      'WORK_HISTORY',
+      'GOVERNMENT_SALARY',
+      'DEDUCTIONS',
+      'WCPS',
+      'PARLIAMENTARY_CONTRIBUTIONS',
+    ].indexOf(sectionName);
+  }
+
   // const { activeCapName } = useMda();
   return (
     <div className="p-2  overflow-auto">
@@ -92,34 +120,44 @@ function AssessmentCard({
               style={{ zIndex: 999999999 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    {childTitle || 'Payment Details'}
-                  </span>
-                }
-                key="1"
-              >
-                <div className="">{children}</div>
-              </TabPane>
+              {children && (
+                <TabPane
+                  tab={
+                    <span className="text-primary font-montserrat">
+                      {childTitle || 'Payment Details'}
+                    </span>
+                  }
+                  key="1"
+                >
+                  <div className="">{children}</div>
+                </TabPane>
+              )}
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
                     Pensioner Information
+                    {isSectionEnabled('BASIC_DETAILS') && (
+                      <Tooltip title="This section needs editing">
+                        <Error style={{ color: 'orange' }} className="ml-2" />
+                      </Tooltip>
+                    )}
                   </span>
                 }
-                key="12"
+                key={children ? '12' : '1'}
               >
                 <div className="h-[550px] overflow-y-auto">
                   {(claim?.prospectivePensionerId && claim.source !== 0) ||
                   isOldCase ? (
                     <PensionerDetails
+                      jsonPayload={jsonPayload}
                       isPayment={true}
                       clickedItem={claim}
                       retireeId={claim?.prospectivePensionerId}
+                      clickedIgc={clickedItem}
                     />
                   ) : isIgc ? (
-                    <NewPreclaim
+                    <NewPreclaimForIgc
+                      jsonPayload={jsonPayload}
                       status={5}
                       retireeId={clickedItem?.id}
                       clickedItem={clickedItem}
@@ -170,6 +208,14 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat overflow-hidden">
                           Work History
+                          {isSectionEnabled('BASIC_DETAILS') && (
+                            <Tooltip title="This section needs editing">
+                              <Error
+                                style={{ color: 'orange' }}
+                                className="ml-2"
+                              />
+                            </Tooltip>
+                          )}
                         </span>
                       }
                       key="3"
@@ -186,13 +232,25 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat">
                           Government Salary
+                          {isSectionEnabled('GOVERNMENT_SALARY') && (
+                            <Tooltip title="This section needs editing">
+                              <Error
+                                style={{ color: 'orange' }}
+                                className="ml-2"
+                              />
+                            </Tooltip>
+                          )}
                         </span>
                       }
                       key="9"
                     >
                       <GovernmentSalary
+                        enabled={isSectionEnabled('GOVERNMENT_SALARY')}
                         id={clickedItem?.id}
                         clickedItem={clickedItem}
+                        igcId={igcId}
+                        sectionIndex={sectionIndexof('GOVERNMENT_SALARY')}
+
                       />
                     </TabPane>
                     <TabPane
@@ -231,11 +289,20 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat">
                           Deductions
+                          {isSectionEnabled('DEDUCTIONS') && (
+                            <Tooltip title="This section needs editing">
+                              <Error
+                                style={{ color: 'orange' }}
+                                className="ml-2"
+                              />
+                            </Tooltip>
+                          )}
                         </span>
                       }
                       key="7"
                     >
                       <Deductions
+                        enabled={isSectionEnabled('DEDUCTIONS')}
                         id={clickedItem?.id}
                         clickedItem2={clickedItem}
                       />
@@ -257,6 +324,14 @@ function AssessmentCard({
                         tab={
                           <span className="text-primary font-montserrat">
                             Women & Children Contributions Scheme
+                            {isSectionEnabled('WCPS') && (
+                              <Tooltip title="This section needs editing">
+                                <Error
+                                  style={{ color: 'orange' }}
+                                  className="ml-2"
+                                />
+                              </Tooltip>
+                            )}
                           </span>
                         }
                         key="8"
@@ -270,6 +345,16 @@ function AssessmentCard({
                         tab={
                           <span className="text-primary font-montserrat">
                             Parliament Contributions
+                            {isSectionEnabled(
+                              'PARLIAMENTARY_CONTRIBUTIONS'
+                            ) && (
+                              <Tooltip title="This section needs editing">
+                                <Error
+                                  style={{ color: 'orange' }}
+                                  className="ml-2"
+                                />
+                              </Tooltip>
+                            )}
                           </span>
                         }
                         key="10"

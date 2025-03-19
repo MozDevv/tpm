@@ -48,6 +48,8 @@ import preClaimsEndpoints, {
 } from '@/components/services/preclaimsApi';
 import BaseExpandCard from './BaseExpandCard';
 import BaseExcelComponent from './BaseExcelComponent';
+import endpoints, { apiService as setupsApi } from '../services/setupsApi';
+import { useIgcIdStore } from '@/zustand/store';
 
 const BaseInputTable = ({
   fields = [],
@@ -87,6 +89,8 @@ const BaseInputTable = ({
   scrollable,
   clickedItem,
   refreshFetch,
+  igcObject,
+  sectionIndex,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -1339,6 +1343,8 @@ const BaseInputTable = ({
         if (isRowComplete(data)) {
           if (isAddMoreFields) {
             setTableInputData((prevData) => [...prevData, data]);
+          } else if (igcObject) {
+            await saveIgcChanges(data);
           } else {
             if (data.id) {
               await handleSave(data);
@@ -1361,6 +1367,26 @@ const BaseInputTable = ({
       return columnDef;
     }),
   ];
+
+  const { igcId } = useIgcIdStore();
+  const saveIgcChanges = async (data) => {
+    try {
+      // Filter formData to only include fields in jsonPayload.BasicDetailFiel
+      const dataToSend = {
+        id: igcId,
+        section: sectionIndex,
+        data: {
+          [igcObject]: [data],
+          // wcPsData: {},
+        },
+      };
+      const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
+      if (res.status === 200) {
+      }
+    } catch (error) {
+      console.error('Error saving IGC changes:', error);
+    }
+  };
 
   const onAddRow = async () => {
     if (gridApiRef.current) {

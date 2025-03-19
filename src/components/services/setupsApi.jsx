@@ -482,6 +482,10 @@ const endpoints = {
     '/api/IGCClaimInitiation/initiateDependantsEnrolmentCommand',
   initiateChangeOfPaypoint:
     '/api/IGCClaimInitiation/initiate_igc_change_of_pay_point',
+  getBasicFields: '/api/RevisedClaim/GetSectionsAndBasicFields',
+  createRevisedClaim: '/api/RevisedClaim/CreateRevisedClaim',
+  sendIgcForApproval: '/api/RevisedClaim/SendForApproval',
+  updateRevisedCase: '/api/RevisedClaim/UpdateClaim',
 };
 
 export const apiService = {

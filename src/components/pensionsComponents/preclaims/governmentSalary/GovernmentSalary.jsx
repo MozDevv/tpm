@@ -6,7 +6,14 @@ import { BASE_CORE_API } from '@/utils/constants';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-function GovernmentSalary({ id, clickedItem }) {
+function GovernmentSalary({
+  id,
+  clickedItem,
+  enabled,
+  clickedIgc,
+  igcId,
+  sectionIndex,
+}) {
   const [designations, setDesignations] = useState([]);
   const [grades, setGrades] = useState([]);
   const [selectedDesignation, setSelectedDesignation] = useState(null);
@@ -207,13 +214,7 @@ function GovernmentSalary({ id, clickedItem }) {
         title="Government Salary"
         fields={fields}
         id={id}
-        disableAll={
-          clickedItem?.notification_status !== 2 &&
-          clickedItem?.notification_status !== null &&
-          clickedItem?.notification_status !== 0 &&
-          clickedItem?.notification_status !== 3 &&
-          clickedItem?.notification_status !== 7
-        }
+        disableAll={!enabled}
         clickedItem={clickedItem}
         retirementDate={clickedItem?.retirement_date}
         idLabel="prospective_pensioner_id"
@@ -226,6 +227,9 @@ function GovernmentSalary({ id, clickedItem }) {
         putEndpoint={endpoints.updateGovernmentSalary}
         deleteEndpoint={endpoints.deleteGovernmentSalary}
         setSelectedValue={setSelectedDesignation}
+        igcObject="deductionData"
+        igcId={igcId}
+        sectionIndex={sectionIndex}
       />
     </div>
   );

@@ -630,6 +630,18 @@ const ListNavigation = ({
       icon: AddCard,
       requiredPermissions: [],
     },
+    {
+      name: 'Initiate Revised Case',
+      action: 'initiateRevisedCase',
+      icon: PostAdd,
+      requiredPermissions: [],
+    },
+    {
+      name: 'Send IGC for Approval',
+      action: 'sendIGCForApproval',
+      icon: Send,
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
