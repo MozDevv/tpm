@@ -245,6 +245,31 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
     }
   };
 
+  const [startDateError, setStartDateError] = useState('');
+  const [endDateError, setEndDateError] = useState('');
+
+  const handleStartDateChange = (e) => {
+    const selectedDate = e.target.value;
+    const today = dayjs().format('YYYY-MM-DD');
+    if (selectedDate > today) {
+      setStartDateError('Start Date cannot be in the future');
+    } else {
+      setStartDateError('');
+      setStartDate(selectedDate);
+    }
+  };
+
+  const handleEndDateChange = (e) => {
+    const selectedDate = e.target.value;
+    const today = dayjs().format('YYYY-MM-DD');
+    if (selectedDate > today) {
+      setEndDateError('End Date cannot be in the future');
+    } else {
+      setEndDateError('');
+      setEndDate(selectedDate);
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
@@ -270,7 +295,7 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
             label="Start Date"
             type="date"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={handleStartDateChange}
             InputLabelProps={{ shrink: true }}
             className="w-full"
             sx={{
@@ -281,12 +306,14 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
                 color: '#006990',
               },
             }}
+            error={!!startDateError}
+            helperText={startDateError}
           />
           <TextField
             label="End Date"
             type="date"
             value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            onChange={handleEndDateChange}
             InputLabelProps={{ shrink: true }}
             className="w-full"
             sx={{
@@ -297,6 +324,8 @@ const BalanceSheet = ({ setOpenTrialBalanceReport }) => {
                 color: '#006990',
               },
             }}
+            error={!!endDateError}
+            helperText={endDateError}
           />
           <Button
             variant="contained"

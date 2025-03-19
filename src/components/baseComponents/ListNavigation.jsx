@@ -44,6 +44,7 @@ import {
   TrendingUp,
   Search,
   LockOpen,
+  AddCard,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -621,6 +622,12 @@ const ListNavigation = ({
       name: "Initiate Dependent's Enrollment",
       action: 'initiateDependentEnrollment',
       icon: PostAdd,
+      requiredPermissions: [],
+    },
+    {
+      name: 'Initiate Change of PayPoint',
+      action: 'initiateChangeOfPayPoint',
+      icon: AddCard,
       requiredPermissions: [],
     },
   ];

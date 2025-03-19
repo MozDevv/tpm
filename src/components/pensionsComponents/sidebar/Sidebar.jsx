@@ -88,12 +88,12 @@ export const menuItems = [
         title: 'Internally Generated Claims',
         subChildren: [
           {
-            title: 'IGC Initiation List',
-            path: '/pensions/claims/igc/igc-initiation-list',
+            title: 'IGC List',
+            path: '/pensions/claims/igc/igc-beneficiaries-list',
           },
           {
-            title: 'IGC Beneficiaries List',
-            path: '/pensions/claims/igc/igc-beneficiaries-list',
+            title: 'IGC Initiation List',
+            path: '/pensions/claims/igc/igc-initiation-list',
           },
         ],
       },
@@ -734,6 +734,10 @@ export const adminItems = [
           {
             title: 'Operation Setups',
             path: '/pensions/setups/operation-setups',
+          },
+          {
+            title: 'Receipt Generation',
+            path: '/pensions/setups/receipt-generation',
           },
           {
             title: 'Recoveries & Deductions',

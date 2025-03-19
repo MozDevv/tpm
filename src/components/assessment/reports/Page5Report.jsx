@@ -5,7 +5,11 @@ import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
-import { formatNumber, numberToWords } from '@/utils/numberFormatters';
+import {
+  amountToWords,
+  formatNumber,
+  numberToWords,
+} from '@/utils/numberFormatters';
 import dayjs from 'dayjs';
 import { Cancel, GetApp } from '@mui/icons-material';
 import { Empty } from 'antd';
@@ -368,7 +372,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p>
                 A reduced pension{' '}
                 <span className="font-bold uppercase">
-                  {numberToWords(report?.reduced_pension || 0, 2)}
+                  {amountToWords(report?.reduced_pension || 0, 2)}
                 </span>{' '}
               </p>
               <p className="my-2">
@@ -377,13 +381,13 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
               <p>
                 Together with a Gratuity{' '}
                 <span className="font-bold uppercase">
-                  {numberToWords(report?.lumpsum_amount || 0)}
+                  {amountToWords(report?.lumpsum_amount || 0)}
                 </span>{' '}
               </p>
               <p className="mt-4 gap-2  flex">
                 <span className="underline">Income Tax</span>
                 <span className="font-bold uppercase">
-                  {numberToWords(pensionerBenefits?.lumpsum_tax_amount || 0)}
+                  {amountToWords(pensionerBenefits?.lumpsum_tax_amount || 0)}
                 </span>
               </p>
               <p className="mt-1 gap-2 flex ">

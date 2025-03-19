@@ -12,6 +12,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
   Button,
   Collapse,
+  Dialog,
   Divider,
   FormControlLabel,
   IconButton,
@@ -45,6 +46,8 @@ import CustomPhoneNumberCellEditor from './CustomPhoneNumberCellEditor';
 import preClaimsEndpoints, {
   apiService as preclaimApiService,
 } from '@/components/services/preclaimsApi';
+import BaseExpandCard from './BaseExpandCard';
+import BaseExcelComponent from './BaseExcelComponent';
 
 const BaseInputTable = ({
   fields = [],
@@ -83,6 +86,7 @@ const BaseInputTable = ({
   parentDob,
   scrollable,
   clickedItem,
+  refreshFetch,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -359,13 +363,16 @@ const BaseInputTable = ({
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    fetchData();
+  }, [refreshFetch]);
 
   const gridApiRef = useRef(null);
 
   const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.sizeColumnsToFit();
-    gridApiRef.current.showLoadingOverlay();
+    // gridApiRef.current.showLoadingOverlay();
   }, []);
 
   const isRowComplete = (row) => {
@@ -811,6 +818,20 @@ const BaseInputTable = ({
         columnDef.valueParser = (params) => {
           const parsedValue = parseFloat(params.newValue.replace(/,/g, ''));
           return isNaN(parsedValue) ? params.newValue : parsedValue;
+        };
+      } else if (col.type === 'checkbox') {
+        columnDef.cellRenderer = (params) => {
+          return (
+            <input
+              type="checkbox"
+              checked={params.value}
+              disabled={disableAll || col.disabled}
+              onChange={(e) => {
+                const newValue = e.target.checked;
+                params.node.setDataValue(col.value, newValue);
+              }}
+            />
+          );
         };
       } else if (col.hide) {
         columnDef.hide = true;
@@ -1499,9 +1520,27 @@ const BaseInputTable = ({
     setIsFiscalYear(!isFiscalYear);
   };
 
+  const [expanded, setExpanded] = useState(false);
+  const [openExcel, setOpenExcel] = useState(false);
+  const [excelLoading, setExcelLoading] = useState(false);
+
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
+        <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+          <BaseExcelComponent
+            setOpenExcel={setOpenExcel}
+            fetchApiService={getApiService}
+            fetchApiEndpoint={getEndpoint}
+            columns={fields.map((col) => ({
+              headerName: col.label,
+              field: col.value,
+            }))}
+            transformData={(data) => data}
+            fileName={title}
+            setLoading={setExcelLoading}
+          />
+        </Dialog>
         <div className="text-primary font-montserrat text-base font-semibold mb-2">
           {title}
         </div>
@@ -1518,7 +1557,59 @@ const BaseInputTable = ({
           )}
         </IconButton>
         <hr className="flex-grow border-blue-500 border-opacity-20 mt-[-5px]" />
+        <Tooltip title="Click to Expand" arrow placement="top">
+          <IconButton
+            sx={{
+              mt: -1,
+            }}
+            onClick={() => setExpanded((prevExpanded) => !prevExpanded)}
+          >
+            <Launch
+              sx={{
+                color: 'primary.main',
+                fontSize: '16px',
+              }}
+            />
+          </IconButton>
+        </Tooltip>
       </div>
+      <BaseExpandCard
+        open={expanded}
+        onClose={() => setExpanded(false)}
+        title={title}
+        handlers={{ openInExcel: () => setOpenExcel(true) }}
+      >
+        <div
+          className="ag-theme-quartz px-4"
+          style={{
+            maxHeight: '75vh',
+            width: '100%',
+            height: scrollable || isFiscalYear ? '60vh' : 'auto',
+          }}
+        >
+          <AgGridReact
+            ref={gridApiRef}
+            rowData={!isFiscalYear ? rowData : fiscalRecords}
+            frameworkComponents={{
+              customSelectCellEditor: CustomSelectCellEditor, // Register your custom component
+            }}
+            animateRows={true}
+            singleClickEdit={true}
+            columnDefs={headers}
+            defaultColDef={{
+              flex: 1,
+              minWidth: 150,
+              height: '400px',
+              minHehight: '100px',
+            }}
+            className={disableAll ? 'custom-grid' : ''}
+            onCellKeyDown={onCellKeyDown}
+            onGridReady={onGridReady}
+            domLayout={scrollable || isFiscalYear ? 'normal' : 'autoHeight'}
+            rowSelection="multiple"
+          />
+        </div>
+      </BaseExpandCard>
       <Collapse in={!openSections[sectionKey]} timeout="auto" unmountOnExit>
         <div className="ag-theme-quartz">
           <div className="flex flex-row gap-5 ml-[-15px]">

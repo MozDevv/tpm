@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import BaseTable from '@/components/baseComponents/BaseTable';
 import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
@@ -12,6 +12,11 @@ import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
+import { PORTAL_BASE_URL } from '@/utils/constants';
+
+import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import { apiService as preApiservice } from '@/components/services/preclaimsApi';
+import AssessmentCard from '@/components/financeComponents/payments/PensionerDetailsTabs';
 
 const IgcBeneficiaries = () => {
   const statusIcons = {
@@ -19,103 +24,45 @@ const IgcBeneficiaries = () => {
     1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
     2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
     3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+    4: { icon: Cancel, name: 'Cancelled', color: '#d32f2f' }, // Red
   };
 
-  const notificationStatusMap = {
-    0: { name: 'Open', color: '#1976d2' },
-    1: { name: 'Pending', color: '#fbc02d' },
-    2: { name: 'Approved', color: '#2e7d32' },
-    3: { name: 'Rejected', color: '#d32f2f' },
+  const pensionStatusMap = {
+    0: { name: 'Dependant Pension', color: '#1976d2' },
+    1: { name: 'Killed On Duty', color: '#fbc02d' },
+    2: { name: 'Injury or Disability Pension', color: '#2e7d32' },
+    3: { name: 'Revised Disability', color: '#d32f2f' },
+    4: { name: 'Revised Cases Erroneous Deductions', color: '#1976d2' },
+    5: { name: 'Revised Cases Court Order', color: '#fbc02d' },
+    6: { name: 'Revised Cases Salary Change', color: '#2e7d32' },
+    7: { name: 'Revised Cases Erroneous Awards', color: '#d32f2f' },
+    8: { name: 'Add Beneficiary Alive', color: '#1976d2' },
+    9: { name: 'Add Beneficiary Deceased', color: '#fbc02d' },
+    10: { name: 'Change of Pay Point', color: '#2e7d32' },
   };
 
   const columnDefs = [
     {
-      field: 'igc_no',
-      headerName: 'IGC No',
+      field: 'document_number',
+      headerName: 'Document No',
       headerClass: 'prefix-header',
       pinned: 'left',
       filter: true,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
       cellRenderer: (params) => {
         return (
           <p className="underline text-primary font-semibold">{params.value}</p>
         );
       },
+      width: 160,
     },
     {
-      field: 'surname',
-      headerName: 'Surname',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'first_name',
-      headerName: 'First Name',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-
-    {
-      field: 'identifier',
-      headerName: 'Identifier',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'relationship',
-      headerName: 'Relationship',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'mobile_number',
-      headerName: 'Mobile Number',
-      headerClass: 'prefix-header',
+      field: 'igc_submission_status',
+      headerName: 'Submission Status',
       filter: true,
       width: 200,
-    },
-    {
-      field: 'email_address',
-      headerName: 'Email Address',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
-    {
-      field: 'dob',
-      headerName: 'Date of Birth',
-      headerClass: 'prefix-header',
-      filter: true,
-      valueFormatter: (params) => parseDate(params.value),
-    },
-    {
-      field: 'age',
-      headerName: 'Age',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'birth_certificate_no',
-      headerName: 'Birth Certificate No',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'supporting_document_number',
-      headerName: 'Supporting Document Number',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'document_status',
-      headerName: 'Document Status',
-      headerClass: 'prefix-header',
-      filter: true,
       cellRenderer: (params) => {
         const status = statusIcons[params.value];
         if (!status) return null;
@@ -145,12 +92,12 @@ const IgcBeneficiaries = () => {
       },
     },
     {
-      field: 'submission_status',
-      headerName: 'IGC Submission Status',
-      headerClass: 'prefix-header',
+      field: 'igc_type',
+      headerName: 'IGC Type',
       filter: true,
+      width: 200,
       cellRenderer: (params) => {
-        const status = notificationStatusMap[params.value];
+        const status = pensionStatusMap[params.value];
         if (!status) return null;
 
         return (
@@ -158,6 +105,7 @@ const IgcBeneficiaries = () => {
             variant="text"
             sx={{
               ml: 3,
+
               maxHeight: '22px',
               cursor: 'pointer',
               color: status.color,
@@ -165,45 +113,30 @@ const IgcBeneficiaries = () => {
               fontWeight: 'bold',
             }}
           >
-            {status.name.toLowerCase()}
+            {status.name}
           </Button>
         );
       },
-    },
-    {
-      field: 'created_date',
-      headerName: 'Created Date',
-      headerClass: 'prefix-header',
-      filter: true,
-      valueFormatter: (params) => parseDate(params.value),
     },
   ];
 
   const transformData = (data) => {
     return data.map((item) => ({
-      igc_no: item.igcEnrolment.no,
-      surname: item.beneficiary.surname,
-      first_name: item.beneficiary.first_name,
-      other_name: item.beneficiary.other_name,
-      identifier: item.beneficiary.identifier,
-      relationship: item.beneficiary.relationship.name,
-      mobile_number: item.beneficiary.mobile_number,
-      email_address: item.beneficiary.email_address,
-      dob: item.beneficiary.dob,
-      age: item.beneficiary.age,
-      address: item.beneficiary.address,
-      birth_certificate_no: item.beneficiary.birth_certificate_no,
-      supporting_document_number: item.igcEnrolment.supporting_document_number,
-      document_status: item.igcEnrolment.doumet_status,
-      submission_status: item.igcEnrolment.iGCSubmissionStatuses,
-      created_date: item.igcEnrolment.created_date,
+      ...item,
+      ...item?.json_payload,
     }));
   };
   const [openInitiate, setOpenInitiate] = useState(false);
+  const [openChangePaypoint, setOpenChangePaypoint] = useState(false);
 
   const handlers = {
     initiateDependentEnrollment: () => {
       setOpenInitiate(true);
+      setOpenBaseCard(true);
+    },
+
+    initiateChangeOfPayPoint: () => {
+      setOpenChangePaypoint(true);
       setOpenBaseCard(true);
     },
   };
@@ -211,7 +144,13 @@ const IgcBeneficiaries = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Beneficiary' : 'Create New Beneficiary';
+  const title = clickedItem
+    ? clickedItem?.document_number
+    : openInitiate
+    ? 'Initiate Dependent Enrollment'
+    : openChangePaypoint
+    ? 'Initiate Change of Paypoint'
+    : 'Create New Beneficiary';
 
   const { data: beneficiaries } = useFetchAsync(
     endpoints.getRelationships,
@@ -231,7 +170,6 @@ const IgcBeneficiaries = () => {
         filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
       });
     }
-
     try {
       const res = await assessApiService.get(
         assessEndpoints.getAssessmentClaims,
@@ -244,11 +182,7 @@ const IgcBeneficiaries = () => {
       );
       if (res.status === 200) {
         const mappedData = res.data.data.map((item) => ({
-          id: item?.prospectivePensioner?.prospectivePensionerAwards[0]
-            ?.pension_award?.prefix
-            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
-                ?.pension_award?.prefix + item?.pensioner_number
-            : item?.pensioner_number ?? 'N/A',
+          id: item?.prospectivePensioner?.id,
           name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
             ?.pension_award?.prefix
             ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
@@ -343,6 +277,62 @@ const IgcBeneficiaries = () => {
     },
   ];
 
+  const [formData, setFormData] = useState({});
+  const [retireeBeneficiaries, setRetireeBeneficiaries] = useState([]);
+  const [guardians, setGuardians] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [selectedBank, setSelectedBank] = useState(null);
+
+  const fetchRetireesBeneficiaries = async (id) => {
+    try {
+      const res = await assessApiService.get(
+        `${PORTAL_BASE_URL}/portal/getBeneficiaries/${id}`
+      );
+      setGuardians([...res.data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await apiService.get(endpoints.getBanks, {
+        'paging.pageSize': 1000,
+      });
+      const rawData = res.data.data;
+
+      const banksData = rawData.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+        branches: bank.branches,
+      }));
+
+      const branchesData = rawData.flatMap((bank) =>
+        bank.branches.map((branch) => ({
+          ...branch,
+          bankId: bank.id,
+        }))
+      );
+      console.log('banksData', banksData);
+      console.log('branchesData', branchesData);
+
+      setBanks(banksData);
+      setBranches(branchesData);
+    } catch (error) {
+      console.log('Error fetching banks and branches:', error);
+    }
+  };
+  useEffect(() => {
+    fetchBanksAndBranches();
+  }, []);
+
+  useEffect(() => {
+    if (formData?.prospective_pensioner_id) {
+      fetchRetireesBeneficiaries(formData.prospective_pensioner_id);
+    }
+  }, [formData?.prospective_pensioner_id]);
+
   const uploadFields = [
     {
       name: 'prospective_pensioner_id',
@@ -351,9 +341,8 @@ const IgcBeneficiaries = () => {
       options: claims && claims,
       table: true,
     },
-    { name: 'reason', label: 'Reason', type: 'text' },
     {
-      name: 'relationship',
+      name: 'relationship_id',
       label: 'Relationship',
       type: 'autocomplete',
       options:
@@ -363,7 +352,21 @@ const IgcBeneficiaries = () => {
           name: item.name,
         })),
     },
+    { name: 'reason', label: 'Reason', type: 'text' },
+    { name: 'dob', label: 'Date of Birth', type: 'date' },
 
+    {
+      name: 'guardianId',
+      label: 'Guardian',
+      type: 'autocomplete',
+      options:
+        guardians &&
+        guardians.length > 0 &&
+        guardians.map((guardian) => ({
+          id: guardian.id,
+          name: guardian.display_name,
+        })),
+    },
     {
       name: 'is_spouse',
       label: 'Is Spouse',
@@ -384,24 +387,32 @@ const IgcBeneficiaries = () => {
         { id: false, name: 'Yes' },
       ],
     },
-    { name: 'igc_no', label: 'IGC No', type: 'text' },
+
     { name: 'surname', label: 'Surname', type: 'text' },
     { name: 'first_name', label: 'First Name', type: 'text' },
     { name: 'other_name', label: 'Other Name', type: 'text' },
+    {
+      label: 'Type Of Identification',
+      name: 'identifier_type',
+      type: 'select',
+      options: [
+        { id: 0, name: 'National ID' },
+        { id: 1, name: 'Passport No' },
+      ],
+    },
     { name: 'identifier', label: 'Identifier', type: 'text' },
 
     {
       name: 'mobile_number',
       label: 'Mobile Number',
-      type: 'text',
+      type: 'phone_number',
     },
     {
       name: 'email_address',
       label: 'Email Address',
       type: 'text',
     },
-    { name: 'dob', label: 'Date of Birth', type: 'date' },
-    { name: 'age', label: 'Age', type: 'text' },
+
     { name: 'address', label: 'Address', type: 'text' },
     {
       name: 'birth_certificate_no',
@@ -413,32 +424,163 @@ const IgcBeneficiaries = () => {
       label: 'Supporting Document Number',
       type: 'text',
     },
-    {
-      name: 'document_status',
-      label: 'Document Status',
-      type: 'select',
+  ];
 
-      options: [
-        { id: 0, name: 'Open' },
-        { id: 1, name: 'Pending' },
-        { id: 2, name: 'Approved' },
-        { id: 3, name: 'Rejected' },
-      ],
+  const filteredFields = (formData) => {
+    const age = formData?.dob
+      ? new Date().getFullYear() - new Date(formData.dob).getFullYear()
+      : null;
+
+    if (age !== null && age < 18) {
+      return uploadFields.filter((field) =>
+        [
+          'prospective_pensioner_id',
+          'relationship',
+          'reason',
+          'dob',
+          'guardianId',
+          'surname',
+          'first_name',
+          'other_name',
+          'birth_certificate_no',
+          'guardianId',
+          'supporting_document_number',
+        ].includes(field.name)
+      );
+    } else if (age !== null && age >= 18) {
+      return uploadFields.filter(
+        (field) => !['guardianId', 'birth_certificate_no'].includes(field.name)
+      );
+    } else {
+      return uploadFields.slice(0, 4); // Show the first 4 fields by default
+    }
+  };
+
+  //cont initiate Change of Paypoint
+
+  const paypointFields = [
+    {
+      name: 'prospective_pensioner_id',
+      label: 'Retiree',
+      type: 'autocomplete',
+      options: claims && claims,
+      required: true,
     },
     {
-      name: 'submission_status',
-      label: 'IGC Submission Status',
-      type: 'select',
+      name: 'bankId',
+      label: 'Bank',
+      type: 'autocomplete',
+      required: true,
+      options: banks.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+      })),
+    },
+    {
+      name: 'bank_branch_id',
+      label: 'Branch',
+      type: 'autocomplete',
+      required: true,
+      options: branches
+        .filter((branch) => branch.bankId === selectedBank)
+        .map((branch) => ({
+          id: branch.id,
+          name: branch.name,
+          bankId: branch.bankId,
+        })),
+    },
+    {
+      name: 'account_number',
+      label: 'Account Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'account_name',
+      label: 'Account Name',
+      type: 'text',
+      required: true,
+    },
 
-      options: [
-        { id: 0, name: 'Open' },
-        { id: 1, name: 'Pending' },
-        { id: 2, name: 'Approved' },
-        { id: 3, name: 'Rejected' },
-      ],
+    {
+      name: 'reason',
+      label: 'Reason',
+      type: 'text',
+      required: true,
     },
   ];
 
+  const [retiree, setRetiree] = React.useState(null);
+
+  const fetchRetiree = async (prospectivePensionerId) => {
+    try {
+      const res = await preApiservice.get(
+        preClaimsEndpoints.getProspectivePensioner(prospectivePensionerId)
+      );
+      if (res.status === 200) {
+        setRetiree(res.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (clickedItem) {
+      fetchRetiree(clickedItem?.prospective_pensioner_id);
+    }
+  }, [clickedItem]);
+
+  const generateFieldsFromJsonPayload = (jsonPayload) => {
+    const excludedFields = [
+      'id',
+      'prospective_pensioner_id',
+      'beneficiary_id',
+      'stage_id',
+      'igc_type_id',
+      'parent_id',
+      'guardian_id',
+    ];
+
+    return Object.keys(jsonPayload)
+      .filter((key) => !excludedFields.includes(key))
+      .map((key) => {
+        const value = jsonPayload[key];
+        let type = 'text';
+
+        if (typeof value === 'boolean') {
+          type = 'select';
+        } else if (typeof value === 'string' && value.includes('@')) {
+          type = 'email';
+        } else if (
+          typeof value === 'string' &&
+          value.match(/^\d{4}-\d{2}-\d{2}T/)
+        ) {
+          type = 'date';
+        } else if (
+          typeof value === 'string' &&
+          value.match(/^\+\d{1,3}\s?\(?\d{1,4}\)?[\d\s-]{7,}$/)
+        ) {
+          type = 'phone_number';
+        }
+
+        return {
+          name: key,
+          label: key
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
+          type,
+          value,
+          disabled: true,
+        };
+      });
+  };
+
+  useEffect(() => {
+    if (!openBaseCard) {
+      setOpenInitiate(false);
+      setOpenChangePaypoint(false);
+    }
+  }, [openBaseCard]);
   return (
     <div className="">
       <BaseCard
@@ -450,34 +592,61 @@ const IgcBeneficiaries = () => {
         isUserComponent={false}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+          <AssessmentCard
+            claim={
+              clickedItem
+                ? [
+                    {
+                      ...clickedItem,
+                      prospectivePensionerId:
+                        clickedItem?.prospective_pensioner_id,
+                    },
+                  ]
+                : null
+            }
+            clickedItem={retiree}
+            claimId={null}
             setOpenBaseCard={setOpenBaseCard}
-          />
+            isIgc={true}
+            childTitle="IGC Details"
+          >
+            <div className="">
+              <BaseInputCard
+                fields={generateFieldsFromJsonPayload(
+                  clickedItem?.json_payload
+                )}
+                apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+            </div>
+          </AssessmentCard>
         ) : openInitiate ? (
           <>
             <BaseInputCard
-              fields={uploadFields}
-              apiEndpoint={endpoints.createDepartment}
+              fields={filteredFields(formData)}
+              apiEndpoint={endpoints.initiateIgcBeneficiary}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}
-              useRequestBody={true}
               setOpenBaseCard={setOpenBaseCard}
+              setInputData={setFormData}
+              useRequestBody={true}
             />
           </>
-        ) : (
+        ) : openChangePaypoint ? (
           <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            fields={paypointFields}
+            apiEndpoint={endpoints.initiateChangeOfPaypoint}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
             setOpenBaseCard={setOpenBaseCard}
+            setSelectedBank={setSelectedBank}
           />
+        ) : (
+          <></>
         )}
       </BaseCard>
       <BaseTable
@@ -491,8 +660,8 @@ const IgcBeneficiaries = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Igc Beneficiaries List"
-        currentTitle="Igc Beneficiaries List"
+        breadcrumbTitle="Igc List"
+        currentTitle="Igc List"
       />
     </div>
   );

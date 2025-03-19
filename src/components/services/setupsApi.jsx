@@ -477,7 +477,11 @@ const endpoints = {
   reassignTask: '/api/TaskAllocations/ReassignTaskAllocation',
 
   getIgcInitiation: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
-  igcBeneficiaries: '/api/IGCClaimInitiation/GetIGCBeneficiaryTrack',
+  igcBeneficiaries: '/api/IGCClaimInitiation/GetIGCs',
+  initiateIgcBeneficiary:
+    '/api/IGCClaimInitiation/initiateDependantsEnrolmentCommand',
+  initiateChangeOfPaypoint:
+    '/api/IGCClaimInitiation/initiate_igc_change_of_pay_point',
 };
 
 export const apiService = {

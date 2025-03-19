@@ -16,10 +16,19 @@ import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
+import NewPreclaim from '@/components/pensionsComponents/preclaims/NewPreclaim';
 
 const { TabPane } = Tabs;
 
-function AssessmentCard({ clickedItem, claimId, claim, isOldCase, children }) {
+function AssessmentCard({
+  clickedItem,
+  claimId,
+  claim,
+  isOldCase,
+  children,
+  childTitle,
+  isIgc,
+}) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
   const [qualifyingService, setQualifyingService] = useState([]);
@@ -86,12 +95,39 @@ function AssessmentCard({ clickedItem, claimId, claim, isOldCase, children }) {
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
-                    Payment Details
+                    {childTitle || 'Payment Details'}
                   </span>
                 }
                 key="1"
               >
                 <div className="">{children}</div>
+              </TabPane>
+              <TabPane
+                tab={
+                  <span className="text-primary font-montserrat">
+                    Pensioner Information
+                  </span>
+                }
+                key="12"
+              >
+                <div className="h-[550px] overflow-y-auto">
+                  {(claim?.prospectivePensionerId && claim.source !== 0) ||
+                  isOldCase ? (
+                    <PensionerDetails
+                      isPayment={true}
+                      clickedItem={claim}
+                      retireeId={claim?.prospectivePensionerId}
+                    />
+                  ) : isIgc ? (
+                    <NewPreclaim
+                      status={5}
+                      retireeId={clickedItem?.id}
+                      clickedItem={clickedItem}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </TabPane>
               <TabPane
                 tab={
@@ -110,25 +146,6 @@ function AssessmentCard({ clickedItem, claimId, claim, isOldCase, children }) {
                     qualifyingService={qualifyingService}
                     isPayment={true}
                   />
-                </div>
-              </TabPane>
-              <TabPane
-                tab={
-                  <span className="text-primary font-montserrat">
-                    Pensioner Information
-                  </span>
-                }
-                key="12"
-              >
-                <div className="h-[550px] overflow-y-auto">
-                  {((claim?.prospectivePensionerId && claim.source !== 0) ||
-                    isOldCase) && (
-                    <PensionerDetails
-                      isPayment={true}
-                      clickedItem={claim}
-                      retireeId={claim?.prospectivePensionerId}
-                    />
-                  )}
                 </div>
               </TabPane>
 

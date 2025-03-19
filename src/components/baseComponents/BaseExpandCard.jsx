@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, IconButton, Tooltip } from '@mui/material';
+import { Dialog, Divider, IconButton, Tooltip } from '@mui/material';
 import { ArrowBack, CloseFullscreen, OpenInFull } from '@mui/icons-material';
+import ListNavigation from './ListNavigation';
 
-const BaseExpandCard = ({ open, onClose, children, title }) => {
+const BaseExpandCard = ({ open, onClose, children, title, handlers = {} }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const currentSize = isExpanded
@@ -72,6 +73,14 @@ const BaseExpandCard = ({ open, onClose, children, title }) => {
       </div>
 
       {/* Dialog Content */}
+      <div className="px-4 pb-2 ml-2">
+        <ListNavigation handlers={handlers} />
+      </div>
+      <Divider
+        sx={{
+          mx: 4,
+        }}
+      />
       <div className="p-4">{children}</div>
     </Dialog>
   );

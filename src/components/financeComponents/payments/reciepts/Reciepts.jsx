@@ -137,11 +137,11 @@ const Reciepts = ({ status }) => {
       field: 'postingDate',
       valueFormatter: (params) => formatDate(params.value),
     },
-    {
-      headerName: 'Is Posted',
-      field: 'isPosted',
-      type: 'boolean',
-    },
+    // {
+    //   headerName: 'Is Posted',
+    //   field: 'isPosted',
+    //   type: 'boolean',
+    // },
   ];
 
   const transformString = (str) => {

@@ -441,6 +441,14 @@ const financeEndpoints = {
 
   updateOldCaseLine: 'Revenue/UpdateReturnTypeOnDetail',
   addReturnToIgc: 'Revenue/AddReturnToIGC',
+  getGeneratedReceiptHeaders: 'Revenue/GetReceiptNoGeneratorHeader',
+  generateReceiptNo: 'Revenue/GenerateReceiptNo',
+  /**"sortProperties": {
+    "propertyName": "created_date",
+    "sortCriteria": 0
+  } */
+  getGeneratedReceiptLines: (id) =>
+    `Revenue/GetReceiptNoGeneratorLine?ReceiptNoGeneratorHeaderId=${id}&paging.pageNumber=1&paging.pageSize=100000 `,
 };
 
 export const apiService = {

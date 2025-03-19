@@ -51,7 +51,7 @@ function PushToFinance({
     try {
       let endpoint = financeEndpoints.postClaimtoFinance;
       let successMessage =
-        'Claim successfully approved. Check list of payment vouchers to view';
+        'Payment voucher created successfully. Check list of payment vouchers to view';
       let errorMessage = 'Error moving claim to finance.';
 
       const promises = selectedIds.map(async (id) => {

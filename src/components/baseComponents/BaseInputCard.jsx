@@ -30,6 +30,7 @@ import {
   Upload as MuiUpload,
   Launch,
 } from '@mui/icons-material';
+import MuiPhoneNumber from 'mui-phone-number';
 
 const BaseInputCard = ({
   handlePreview,
@@ -723,6 +724,38 @@ const BaseInputCard = ({
                   </div>
                 )}
               </div>
+            ) : field.type === 'phone_number' ? (
+              <MuiPhoneNumber
+                defaultCountry="ke" // Kenya as the default countr
+                name={field.name}
+                variant="outlined"
+                size="small"
+                error={!!errors[field.name]}
+                value={formData[field.name] || ''}
+                defaultValue={''}
+                helperText={errors[field.name]}
+                onChange={(e) =>
+                  handleInputChange({ target: { name: field.name, value: e } })
+                }
+                disabled={field.disabled || disableAll}
+                dropdownClass="custom-dropdown" // Custom class for the dropdown
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: '120px', // Set max height for the dropdown
+                      overflowY: 'auto',
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                }}
+              />
             ) : field.type === 'date' ? (
               <TextField
                 name={field.name}

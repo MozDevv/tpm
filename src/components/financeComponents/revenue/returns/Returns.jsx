@@ -79,6 +79,7 @@ const Returns = ({ status }) => {
     return data.map((item, index) => ({
       no: index + 1,
       ...item,
+      receiptNo: item?.recieptNo,
     }));
   };
 
@@ -247,7 +248,7 @@ const Returns = ({ status }) => {
     },
 
     {
-      name: 'returnTypeId',
+      name: 'returnType',
       label: 'Return Type',
       type: 'select',
       required: true,
