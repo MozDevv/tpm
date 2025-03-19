@@ -154,9 +154,9 @@ const ReceiptPostingGroup = () => {
       type: 'select',
       required: true,
       options:
-        data &&
-        Array.isArray(data.data) &&
-        data.map((item) => ({ id: item.id, name: item.receiptTypeName })),
+        data && Array.isArray(data)
+          ? data.map((item) => ({ id: item.id, name: item.receiptTypeName }))
+          : [],
     },
   ];
 
