@@ -1428,7 +1428,6 @@ function NewPreclaim({
                                     'commutation_option_selection_date'
                                 );
                               }
-
                               return true;
                             })
                             .map((field, fieldIndex) => (

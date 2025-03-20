@@ -233,21 +233,28 @@ const Returns = ({ status }) => {
     apiService
   );
   const { data: receiptNoLines } = useFetchAsync(
-    financeEndpoints.getAllReceiptNoGeneratorLine,
+    financeEndpoints.getUsedNoGeneratorHeader,
     apiService
   );
-  const { data: receiptTypesSelect } = useFetchAsync(
+  const { data: allReciepts } = useFetchAsync(
     financeEndpoints.getReceiptTypeSelect,
     apiService
   );
   const fields = [
-    {
-      name: 'is_uncollected_payments',
-      label: 'Is Uncollected Payments',
-      type: 'switch',
-    },
-
-    ...(inputData && inputData.is_uncollected_payments
+    ...(!clickedItem
+      ? [
+          {
+            name: 'is_uncollected_payments',
+            label: 'Is Uncollected Payments',
+            type: 'select',
+            options: [
+              { id: false, name: 'No' },
+              { id: true, name: 'Yes' },
+            ],
+          },
+        ]
+      : []),
+    ...(inputData && !inputData.is_uncollected_payments
       ? [
           {
             name: 'receiptCode',
@@ -258,7 +265,7 @@ const Returns = ({ status }) => {
               receiptNos &&
               receiptNos.map((item) => {
                 return {
-                  id: item.id,
+                  id: item.receiptCode,
                   name: item.receiptCode,
                   accountNo: item.fromNumber + ' - ' + item.toNumber,
                 };
@@ -270,24 +277,17 @@ const Returns = ({ status }) => {
             type: 'autocomplete',
             required: true,
             options:
-              receiptNoLines &&
-              (receiptNoLines
-                .filter(
-                  (item) =>
-                    item.receiptNoGeneratorHeaderId === inputData.receiptCode
-                )
-                ?.map((item) => {
-                  return {
-                    id: item.id,
-                    name: item.receiptNo,
-                  };
-                }) ||
-                receiptNoLines.map((item) => {
-                  return {
-                    id: item.id,
-                    name: item.receiptNo,
-                  };
-                })),
+              (receiptNos &&
+                receiptNos
+                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
+                  ?.receiptNoGeneratorLines?.map((item) => {
+                    return {
+                      id: item.id,
+                      name: item.receiptNo,
+                      lineId: item.receiptNo,
+                    };
+                  })) ||
+              [],
           },
         ]
       : []),
@@ -309,8 +309,8 @@ const Returns = ({ status }) => {
       label: 'Receipt Type',
       type: 'select',
       options:
-        receiptTypesSelect &&
-        receiptTypesSelect.map((item) => {
+        allReciepts &&
+        allReciepts.map((item) => {
           return {
             id: item.id,
             name: item.receiptTypeName,

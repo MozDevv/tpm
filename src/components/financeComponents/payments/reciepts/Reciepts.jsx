@@ -312,7 +312,7 @@ const Reciepts = ({ status }) => {
     ...(inputData && inputData.is_uncollected_payments
       ? [
           {
-            name: 'receiptNoGeneratorLin',
+            name: 'receiptCode',
             label: 'Receipt Code',
             type: 'select',
             table: true,
@@ -335,10 +335,7 @@ const Reciepts = ({ status }) => {
             options:
               (receiptNos &&
                 receiptNos
-                  ?.find(
-                    (item) =>
-                      item.receiptCode === inputData?.receiptNoGeneratorLin
-                  )
+                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
                   ?.receiptNoGeneratorLines?.map((item) => {
                     return {
                       id: item.id,

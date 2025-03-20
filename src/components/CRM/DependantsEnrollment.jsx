@@ -324,7 +324,8 @@ function DependantsEnrollment() {
         ? documentTypes.map((doc) => ({
             id: doc.document_type_id,
             name: doc.documentTypeSetup.name,
-            igcType: igcTypes.find((igc) => igc.id === doc.igC_Type).name,
+            igcType:
+              igcTypes && igcTypes?.find((igc) => igc.id === doc.igC_Type).name,
           }))
         : [],
     },

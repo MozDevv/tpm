@@ -797,7 +797,7 @@ const BaseInputCard = ({
             field.type === 'autocomplete' ? (
               <Autocomplete
                 options={field.options}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option.name.toString()}
                 onChange={(event, newValue) => {
                   handleInputChange({
                     target: {

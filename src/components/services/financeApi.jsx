@@ -444,6 +444,7 @@ const financeEndpoints = {
   getGeneratedReceiptHeaders: 'Revenue/GetReceiptNoGeneratorHeader',
   getUnusedReceiptNoGeneratorHeader:
     'Revenue/GetReceiptNoGeneratorHeader?isUsed=false',
+  getUsedNoGeneratorHeader: 'Revenue/GetReceiptNoGeneratorHeader?isUsed=false',
   generateReceiptNo: 'Revenue/GenerateReceiptNo',
   /**"sortProperties": {
     "propertyName": "created_date",
