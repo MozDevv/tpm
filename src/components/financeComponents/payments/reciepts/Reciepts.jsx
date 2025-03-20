@@ -349,20 +349,10 @@ const Reciepts = ({ status }) => {
       : clickedItem
       ? [
           {
-            name: 'receiptCode',
+            name: 'recieptCode',
             label: 'Receipt Code',
             disabled: true,
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
-                return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
-                };
-              }),
+            type: 'text',
           },
           {
             name: 'recieptNo',

@@ -445,8 +445,8 @@ const financeEndpoints = {
   addReturnToIgc: 'Revenue/AddReturnToIGC',
   getGeneratedReceiptHeaders: 'Revenue/GetReceiptNoGeneratorHeader',
   getUnusedReceiptNoGeneratorHeader:
-    'Revenue/GetReceiptNoGeneratorHeader?isUsed=false',
-  getUsedNoGeneratorHeader: 'Revenue/GetReceiptNoGeneratorHeader?isUsed=false',
+    'Revenue/GetReceiptNoGeneratorHeader?status=2',
+  getUsedNoGeneratorHeader: 'Revenue/GetReceiptNoGeneratorHeader?status=1',
   generateReceiptNo: 'Revenue/GenerateReceiptNo',
   /**"sortProperties": {
     "propertyName": "created_date",

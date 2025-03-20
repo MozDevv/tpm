@@ -226,7 +226,7 @@ const Returns = ({ status }) => {
   }, []);
   const [inputData, setInputData] = useState(null);
   const { data: receiptNos } = useFetchAsync(
-    financeEndpoints.getGeneratedReceiptHeaders,
+    financeEndpoints.getUsedNoGeneratorHeader,
     apiService
   );
   const { data: receiptNoLines } = useFetchAsync(
@@ -274,6 +274,42 @@ const Returns = ({ status }) => {
         ]
       : []),
     ...(inputData && !inputData.is_uncollected_payments
+      ? [
+          {
+            name: 'receiptCode',
+            label: 'Receipt Code',
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.receiptCode,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
+          {
+            name: 'receiptNo',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            options:
+              (receiptNos &&
+                receiptNos
+                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
+                  ?.receiptNoGeneratorLines?.map((item) => {
+                    return {
+                      id: item.id,
+                      name: item.receiptNo,
+                      lineId: item.receiptNo,
+                    };
+                  })) ||
+              [],
+          },
+        ]
+      : clickedItem
       ? [
           {
             name: 'receiptCode',

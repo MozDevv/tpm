@@ -146,6 +146,14 @@ function RecieptLines({ clickedItem, status }) {
     financeEndpoints.getPaymentMethods,
     apiService
   );
+  const { data: crAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(0),
+    apiService
+  );
+  const { data: drAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(3),
+    apiService
+  );
   const tableFields = [
     {
       value: 'receiptTypeId',
@@ -157,22 +165,24 @@ function RecieptLines({ clickedItem, status }) {
           return {
             id: item.receiptTypeId,
             name: item.receiptTypeName,
-            crAccount: item.crAccountNo,
-            drAccount: item.drAccountNo,
+            crAccount: item.crAccountId,
+            drAccount: item.drAccountId,
           };
         }),
     },
     {
       value: 'crAccountId',
       label: 'CR Account',
-      type: 'text',
+      type: 'select',
       disabled: true,
+      options: crAccounts && crAccounts,
     },
     {
       value: 'drAccountId',
       label: 'DR Account',
       disabled: true,
-      type: 'text',
+      type: 'select',
+      options: drAccounts && drAccounts,
     },
 
     {
@@ -196,47 +206,7 @@ function RecieptLines({ clickedItem, status }) {
           };
         }),
     },
-    // {
-    //   value: 'appliesToDocType',
-    //   label: 'Applies To Doc Type',
-    //   type: 'select',
-    //   options: [
-    //     {
-    //       id: 0,
-    //       name: 'Payment Voucher',
-    //     },
-    //     {
-    //       id: 1,
-    //       name: 'Purchase Invoice',
-    //     },
-    //     {
-    //       id: 2,
-    //       name: 'Sales Invoice',
-    //     },
-    //     {
-    //       id: 3,
-    //       name: 'Receipt',
-    //     },
-    //     {
-    //       id: 4,
-    //       name: 'Purchase Credit Memo',
-    //     },
-    //     {
-    //       id: 5,
-    //       name: 'Sales Credit Memo',
-    //     },
-    //     {
-    //       id: 6,
-    //       name: 'Journal Voucher',
-    //     },
-    //   ],
-    // },
-    // {
-    //   value: 'appliesToDocNo',
-    //   label: 'Applies To Doc No',
-    //   type: 'text',
-    //   required: true,
-    // },
+
     {
       value: 'chequeOrEftNo',
       label: 'Cheque/EFT No',
