@@ -210,7 +210,7 @@ const Reciepts = ({ status }) => {
 
   const [inputData, setInputData] = useState(null);
   const { data: receiptNos } = useFetchAsync(
-    financeEndpoints.getGeneratedReceiptHeaders,
+    financeEndpoints.getUnusedReceiptNoGeneratorHeader,
     apiService
   );
   const { data: receiptNoLines } = useFetchAsync(
@@ -309,7 +309,7 @@ const Reciepts = ({ status }) => {
           },
         ]
       : []),
-    ...(!clickedItem && inputData && inputData.is_uncollected_payments
+    ...(!clickedItem && inputData && !inputData.is_uncollected_payments
       ? [
           {
             name: 'receiptCode',
