@@ -91,15 +91,15 @@ function AddPensionersWorkHistory({
             PostAndNatures:
               Array.isArray(postAndNature) && postAndNature.length > 0
                 ? postAndNature
-                : null,
+                : [],
             PensionableSalaries:
               Array.isArray(pensionableSalary) && pensionableSalary.length > 0
                 ? pensionableSalary
-                : null,
+                : [],
             PeriodsOfAbsence:
               Array.isArray(periodsOfAbsence) && periodsOfAbsence.length > 0
                 ? periodsOfAbsence
-                : null,
+                : [],
           },
         },
       };
@@ -109,6 +109,9 @@ function AddPensionersWorkHistory({
       );
       if (res.status === 200 && res.data.succeeded) {
         message.success('Changes saved successfully');
+      } else if (res.data.succeeded === false && res.data.messages[0]) {
+        setError(res.data.messages[0]);
+        message.error(res.data.messages[0]);
       }
     } catch (error) {
       console.error('Error saving IGC changes:', error);

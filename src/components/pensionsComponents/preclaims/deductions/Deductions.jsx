@@ -149,11 +149,11 @@ const Deductions = ({ id, clickedItem2, enabled }) => {
         id={id}
         disableAll={
           !enabled &&
-          clickedItem?.notification_status !== 2 &&
-          clickedItem?.notification_status !== null &&
-          clickedItem?.notification_status !== 0 &&
-          clickedItem?.notification_status !== 3 &&
-          clickedItem?.notification_status !== 7
+          clickedItem2?.notification_status !== 2 &&
+          clickedItem2?.notification_status !== null &&
+          clickedItem2?.notification_status !== 0 &&
+          clickedItem2?.notification_status !== 3 &&
+          clickedItem2?.notification_status !== 7
         }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
