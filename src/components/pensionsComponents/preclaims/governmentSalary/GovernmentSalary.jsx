@@ -214,7 +214,14 @@ function GovernmentSalary({
         title="Government Salary"
         fields={fields}
         id={id}
-        disableAll={!enabled}
+        disableAll={
+          !enabled &&
+          clickedItem?.notification_status !== 2 &&
+          clickedItem?.notification_status !== null &&
+          clickedItem?.notification_status !== 0 &&
+          clickedItem?.notification_status !== 3 &&
+          clickedItem?.notification_status !== 7
+        }
         clickedItem={clickedItem}
         retirementDate={clickedItem?.retirement_date}
         idLabel="prospective_pensioner_id"

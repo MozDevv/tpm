@@ -25,7 +25,7 @@ import endpoints from '@/components/services/setupsApi';
 import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
 import { parseDate, parseDateSlash } from '@/utils/dateFormatter';
 
-function PensionableSalary({ id, clickedItem }) {
+function PensionableSalary({ id, clickedItem, enabled }) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -284,6 +284,7 @@ function PensionableSalary({ id, clickedItem }) {
         fields={finalFields}
         id={id}
         disableAll={
+          !enabled &&
           clickedItem?.notification_status !== 2 &&
           clickedItem?.notification_status !== null &&
           clickedItem?.notification_status !== 0 &&
@@ -306,6 +307,7 @@ function PensionableSalary({ id, clickedItem }) {
         addAditionalCols={addAditionalCols}
         setAddAditionalCols={setAddAditionalCols}
         retirementDate={clickedItem?.retirement_date}
+        enabled={enabled}
       />
     </div>
   );

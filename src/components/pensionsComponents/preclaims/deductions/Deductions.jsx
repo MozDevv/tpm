@@ -147,7 +147,14 @@ const Deductions = ({ id, clickedItem2, enabled }) => {
         title="Deductions"
         fields={fields}
         id={id}
-        disableAll={!enabled}
+        disableAll={
+          !enabled &&
+          clickedItem?.notification_status !== 2 &&
+          clickedItem?.notification_status !== null &&
+          clickedItem?.notification_status !== 0 &&
+          clickedItem?.notification_status !== 3 &&
+          clickedItem?.notification_status !== 7
+        }
         idLabel="prospective_pensioner_id"
         getApiService={apiService.get}
         postApiService={apiService.post}

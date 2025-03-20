@@ -34,6 +34,7 @@ import preClaimsEndpoints from '../services/preclaimsApi';
 import { apiService as preclaimsApiService } from '../services/preclaimsApi';
 import AmountCellEditor from './AmountCellEditor';
 import { formatNumber } from '@/utils/numberFormatters';
+import { usePensionableSalaryStore } from '@/zustand/store';
 
 const BaseInputForPensionableSalary = ({
   fields = [],
@@ -62,7 +63,9 @@ const BaseInputForPensionableSalary = ({
   deleteApiService,
   setRefreshColumns,
   retirementDate,
+  enabled,
 }) => {
+  const { setPensionableSalary } = usePensionableSalaryStore();
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
       fields.reduce((acc, field) => {
@@ -73,6 +76,17 @@ const BaseInputForPensionableSalary = ({
 
     return [...defaultRows, ...initialData];
   });
+
+  useEffect(() => {
+    const isRowEmpty = (row) =>
+      Object.values(row).every((value) => value === '');
+
+    if (title === 'Pensionable Salary' && enabled) {
+      const filteredRowData = rowData.filter((row) => !isRowEmpty(row));
+      setPensionableSalary(filteredRowData);
+      return;
+    }
+  }, [rowData]);
 
   const [rowErrors, setRowErrors] = useState({});
   const [openSections, setOpenSections] = useState({});

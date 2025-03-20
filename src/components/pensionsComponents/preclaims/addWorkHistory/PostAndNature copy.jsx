@@ -356,6 +356,7 @@ function PostAndNature({ id, clickedItem, enabled }) {
         putEndpoint={preClaimsEndpoints.updatePostAndNature}
         deleteEndpoint={preClaimsEndpoints.deletePostAndNature}
         passProspectivePensionerId={true}
+        enabled={enabled}
         retirementDate={clickedItem?.retirement_date}
       />{' '}
     </div>

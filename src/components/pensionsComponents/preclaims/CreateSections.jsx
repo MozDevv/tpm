@@ -285,7 +285,7 @@ export const createSections = (
         children: [
           { id: 0, name: 'Civilian ID' },
           { id: 1, name: 'Passport No' },
-          { id: 2, name: 'Military ID' },
+          // { id: 2, name: 'Military ID' },
         ],
         pensionCap: ['CAP199'],
       },

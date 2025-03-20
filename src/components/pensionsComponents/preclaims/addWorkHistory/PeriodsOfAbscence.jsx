@@ -27,7 +27,7 @@ import { useMda } from '@/context/MdaContext';
 import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-function PeriodsOfAbsence({ id, status, clickedItem }) {
+function PeriodsOfAbsence({ id, status, clickedItem, enabled }) {
   const [periodsOfAbsence, setPeriodsOfAbsence] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -93,6 +93,7 @@ function PeriodsOfAbsence({ id, status, clickedItem }) {
           fields={fields}
           id={id}
           disableAll={
+            !enabled &&
             clickedItem?.notification_status !== 2 &&
             clickedItem?.notification_status !== null &&
             clickedItem?.notification_status !== 0 &&
@@ -110,6 +111,7 @@ function PeriodsOfAbsence({ id, status, clickedItem }) {
           putEndpoint={preClaimsEndpoints.UpdatePeriodsOfAbsence}
           deleteEndpoint={preClaimsEndpoints.deletePeriodsOfAbsence}
           passProspectivePensionerId={true}
+          enabled={enabled}
         />
       </div>
     </div>

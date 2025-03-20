@@ -49,7 +49,11 @@ import preClaimsEndpoints, {
 import BaseExpandCard from './BaseExpandCard';
 import BaseExcelComponent from './BaseExcelComponent';
 import endpoints, { apiService as setupsApi } from '../services/setupsApi';
-import { useIgcIdStore } from '@/zustand/store';
+import {
+  useIgcIdStore,
+  usePeriodsOfAbsenceStore,
+  usePostAndNatureStore,
+} from '@/zustand/store';
 
 const BaseInputTable = ({
   fields = [],
@@ -91,6 +95,7 @@ const BaseInputTable = ({
   refreshFetch,
   igcObject,
   sectionIndex,
+  enabled,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -107,6 +112,9 @@ const BaseInputTable = ({
   const [openSections, setOpenSections] = useState({});
   const [sectionKey, setSectionKey] = useState(title);
   const [retirementDateCaptured, setRetirementDateCaptured] = useState(false);
+
+  const { periodsOfAbsence, setPeriodsOfAbsence } = usePeriodsOfAbsenceStore();
+  const { postAndNature, setPostAndNature } = usePostAndNatureStore();
 
   const handleToggleSection = (key) => {
     setOpenSections((prevOpenSections) => {
@@ -1345,6 +1353,8 @@ const BaseInputTable = ({
             setTableInputData((prevData) => [...prevData, data]);
           } else if (igcObject) {
             await saveIgcChanges(data);
+          } else if (enabled) {
+            return;
           } else {
             if (data.id) {
               await handleSave(data);
@@ -1367,6 +1377,22 @@ const BaseInputTable = ({
       return columnDef;
     }),
   ];
+
+  useEffect(() => {
+    const isRowEmpty = (row) =>
+      Object.values(row).every((value) => value === '');
+
+    if (title === 'Post and Nature of Service' && enabled) {
+      const filteredRowData = rowData.filter((row) => !isRowEmpty(row));
+      setPostAndNature(filteredRowData);
+      return;
+    }
+    if (title === 'Periods of Absence' && enabled) {
+      const filteredRowData = rowData.filter((row) => !isRowEmpty(row));
+      setPeriodsOfAbsence(filteredRowData);
+      return;
+    }
+  }, [rowData]);
 
   const { igcId } = useIgcIdStore();
   const saveIgcChanges = async (data) => {

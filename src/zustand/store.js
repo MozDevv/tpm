@@ -9,3 +9,6 @@ const stateFactory = (key) =>
 
 export const useIgcIdStore = stateFactory('igcId');
 export const useClickedItemStore = stateFactory('clickedItem');
+export const usePostAndNatureStore = stateFactory('postAndNature');
+export const usePeriodsOfAbsenceStore = stateFactory('periodsOfAbsence');
+export const usePensionableSalaryStore = stateFactory('pensionableSalary');

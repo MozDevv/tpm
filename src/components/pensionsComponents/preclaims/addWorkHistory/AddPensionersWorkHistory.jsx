@@ -13,6 +13,14 @@ import preClaimsEndpoints, {
 import MixedServicePost from './MixedServicePost';
 import { useMda } from '@/context/MdaContext';
 import PostAndNature from './PostAndNature copy';
+import {
+  useIgcIdStore,
+  usePensionableSalaryStore,
+  usePeriodsOfAbsenceStore,
+  usePostAndNatureStore,
+} from '@/zustand/store';
+import endpoints from '@/components/services/setupsApi';
+import { Alert, message } from 'antd';
 
 function AddPensionersWorkHistory({
   id,
@@ -65,23 +73,33 @@ function AddPensionersWorkHistory({
   useEffect(() => {
     fetchRetiree();
   }, []);
+  const { pensionableSalary, setPensionableSalary } =
+    usePensionableSalaryStore();
+  const { periodsOfAbsence, setPeriodsOfAbsence } = usePeriodsOfAbsenceStore();
+  const { postAndNature, setPostAndNature } = usePostAndNatureStore();
+  const { igcId, setIgcId } = useIgcIdStore();
+  const [error, setError] = useState(null);
 
   const saveIgcChanges = async () => {
     try {
-      // Filter formData to only include fields in jsonPayload.BasicDetailFields
-
-      let filteredFormData = formData;
-      if (filteredFormData.hasOwnProperty('was_injured')) {
-        filteredFormData.was_injured = filteredFormData.was_injured === 1;
-      }
       const dataToSend = {
         id: igcId,
-        section: 0,
+        section: 1,
         data: {
-          basicDetails: {
-            ...filteredFormData,
-            exit_ground_id: formData.exit_grounds,
-            mda_id: clickedItem?.mda_id,
+          basicDetails: null,
+          workHistoryData: {
+            PostAndNatures:
+              Array.isArray(postAndNature) && postAndNature.length > 0
+                ? postAndNature
+                : null,
+            PensionableSalaries:
+              Array.isArray(pensionableSalary) && pensionableSalary.length > 0
+                ? pensionableSalary
+                : null,
+            PeriodsOfAbsence:
+              Array.isArray(periodsOfAbsence) && periodsOfAbsence.length > 0
+                ? periodsOfAbsence
+                : null,
           },
         },
       };
@@ -94,6 +112,15 @@ function AddPensionersWorkHistory({
       }
     } catch (error) {
       console.error('Error saving IGC changes:', error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errorMessages = Object.values(error.response.data.errors)
+          .flat()
+          .join(', ');
+        setError(errorMessages);
+        message.error(`Error saving IGC changes: ${errorMessages}`);
+      } else {
+        message.error('An unexpected error occurred while saving IGC changes.');
+      }
     }
   };
 
@@ -102,11 +129,20 @@ function AddPensionersWorkHistory({
       <div className="flex justify-between items-center px-6 sticky top-0 bg-white z-10">
         <div></div>
       </div>
-      <div className="flex justify-end mr-5">
-        <Button variant="contained" onClick={saveIgcChanges}>
-          Save Changes
-        </Button>
-      </div>
+      {enabled && (
+        <div className="w-full flex items-center">
+          {error && (
+            <div className="w-full">
+              <Alert message={error} type="error" showIcon closable />
+            </div>
+          )}
+          <div className="flex justify-end w-full">
+            <Button variant="contained" onClick={saveIgcChanges}>
+              Save Changes
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className=" overflow-y-auto h-[70vh]">
         <PostAndNature
