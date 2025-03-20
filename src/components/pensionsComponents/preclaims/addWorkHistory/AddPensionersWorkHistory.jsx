@@ -21,6 +21,7 @@ function AddPensionersWorkHistory({
   status,
   moveToPreviousTab,
   clickedItem,
+  enabled,
 }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -65,10 +66,46 @@ function AddPensionersWorkHistory({
     fetchRetiree();
   }, []);
 
+  const saveIgcChanges = async () => {
+    try {
+      // Filter formData to only include fields in jsonPayload.BasicDetailFields
+
+      let filteredFormData = formData;
+      if (filteredFormData.hasOwnProperty('was_injured')) {
+        filteredFormData.was_injured = filteredFormData.was_injured === 1;
+      }
+      const dataToSend = {
+        id: igcId,
+        section: 0,
+        data: {
+          basicDetails: {
+            ...filteredFormData,
+            exit_ground_id: formData.exit_grounds,
+            mda_id: clickedItem?.mda_id,
+          },
+        },
+      };
+      const res = await apiService.post(
+        endpoints.updateRevisedCase,
+        dataToSend
+      );
+      if (res.status === 200 && res.data.succeeded) {
+        message.success('Changes saved successfully');
+      }
+    } catch (error) {
+      console.error('Error saving IGC changes:', error);
+    }
+  };
+
   return (
     <div className="p-2 overflow-hidden flex flex-col">
       <div className="flex justify-between items-center px-6 sticky top-0 bg-white z-10">
         <div></div>
+      </div>
+      <div className="flex justify-end mr-5">
+        <Button variant="contained" onClick={saveIgcChanges}>
+          Save Changes
+        </Button>
       </div>
 
       <div className=" overflow-y-auto h-[70vh]">
@@ -80,6 +117,7 @@ function AddPensionersWorkHistory({
           setLoading={setLoading}
           dateOfFirstAppointment={dateOfFirstAppointment}
           activeCapName={activeCapName}
+          enabled={enabled}
         />
 
         <Suspense fallback={<Spinner />}>
@@ -88,6 +126,7 @@ function AddPensionersWorkHistory({
             status={status}
             clickedItem={clickedItem}
             retirementDate={retirementDate}
+            enabled={enabled}
           />
         </Suspense>
         <div className="pb-15">
@@ -96,6 +135,7 @@ function AddPensionersWorkHistory({
               id={id}
               status={status}
               clickedItem={clickedItem}
+              enabled={enabled}
             />
           </Suspense>
         </div>

@@ -32,7 +32,7 @@ import EditableTable from '@/components/baseComponents/EditableTable';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 import { BASE_CORE_API } from '@/utils/constants';
 
-function PostAndNature({ id, clickedItem }) {
+function PostAndNature({ id, clickedItem, enabled }) {
   const [postAndNatureData, setPostAndNatureData] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -335,6 +335,7 @@ function PostAndNature({ id, clickedItem }) {
         fields={fields}
         id={id}
         disableAll={
+          !enabled &&
           clickedItem?.notification_status !== 2 &&
           clickedItem?.notification_status !== null &&
           clickedItem?.notification_status !== 0 &&

@@ -32,7 +32,7 @@ function AssessmentCard({
   childTitle,
   isIgc,
   jsonPayload,
-  igcId
+  igcId,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -105,7 +105,7 @@ function AssessmentCard({
       'WCPS',
       'PARLIAMENTARY_CONTRIBUTIONS',
     ].indexOf(sectionName);
-  }
+  };
 
   // const { activeCapName } = useMda();
   return (
@@ -208,7 +208,7 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat overflow-hidden">
                           Work History
-                          {isSectionEnabled('BASIC_DETAILS') && (
+                          {isSectionEnabled('WORK_HISTORY') && (
                             <Tooltip title="This section needs editing">
                               <Error
                                 style={{ color: 'orange' }}
@@ -221,6 +221,7 @@ function AssessmentCard({
                       key="3"
                     >
                       <AddPensionersWorkHistory
+                        enabled={isSectionEnabled('WORK_HISTORY')}
                         status={clickedItem.notification_status}
                         id={activeRetireeId}
                         name={clickedItem ? clickedItem.first_name : undefined}
@@ -250,7 +251,6 @@ function AssessmentCard({
                         clickedItem={clickedItem}
                         igcId={igcId}
                         sectionIndex={sectionIndexof('GOVERNMENT_SALARY')}
-
                       />
                     </TabPane>
                     <TabPane

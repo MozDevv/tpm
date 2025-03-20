@@ -702,8 +702,8 @@ const Preclaims = ({
     // create: () => router.push("/pensions/preclaims/listing/new"),
     ...((status === 0 || !status) && {
       create: () => {
-        setOpenBaseCard(true);
         setClickedItem(null);
+        setOpenBaseCard(true);
       },
     }),
 

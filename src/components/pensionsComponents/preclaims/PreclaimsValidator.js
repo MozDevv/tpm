@@ -207,12 +207,13 @@ export const validateField = (name, value, formData) => {
     if (lastPayDate.isBefore(confirmationDate)) {
       error = 'Last pay date cannot be before date of confirmation';
     }
-  } else if (
+  } // Validate tax_exempt_certificate_number to allow both formats
+  else if (
     name === 'tax_exempt_certificate_number' &&
     value &&
     formData.disability_status === 0
   ) {
-    const regex = /^NCPWD\/\d{1,8}$/; // Starts with 'NCPWD/', followed by up to 8 digits
+    const regex = /^(NCPWD|KRA\/PWD)\/\d{1,8}$/; // Starts with 'NCPWD/' or 'KRA/PWD/', followed by up to 8 digits
 
     if (!regex.test(value)) {
       error = 'Tax Exempt Certificate Number is not valid';
