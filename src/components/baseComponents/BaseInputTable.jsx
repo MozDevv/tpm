@@ -388,7 +388,7 @@ const BaseInputTable = ({
 
   useEffect(() => {
     if (enabled) {
-      const fetchData = async () => {
+      const fetchEdited = async () => {
         const revisionPayload = await fetchRevisionPayload();
         console.log('Revision payload:', revisionPayload);
 
@@ -397,111 +397,121 @@ const BaseInputTable = ({
           return;
         }
 
-        if (
-          title === 'Post and Nature of Service' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(1)
-        ) {
-          console.log('Setting row data for Post and Nature of Service');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerPostAndNatureofSalaries
-          );
-        } else if (
-          title === 'Periods of Absence' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(1)
-        ) {
-          console.log('Setting row data for Periods of Absence');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
-          );
-        } else if (
-          title === 'Government Salary' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(2)
-        ) {
-          console.log('Setting row data for Government Salary');
-          setRowData(
-            revisionPayload?.prospective_pensioner?.governmentSalaries
-          );
-        } else if (
-          title === 'Deductions' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(3)
-        ) {
-          console.log('Setting row data for Deductions');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerDeductions
-          );
+        if (revisionPayload.sectionsUpdated?.includes(sectionIndex)) {
+          if (
+            title === 'Post and Nature of Service' &&
+            Array.isArray(revisionPayload.sectionsUpdated) &&
+            revisionPayload.sectionsUpdated.includes(1)
+          ) {
+            console.log('Setting row data for Post and Nature of Service');
+            setRowData(
+              revisionPayload?.prospective_pensioner
+                ?.prospectivePensionerPostAndNatureofSalaries
+            );
+          } else if (
+            title === 'Periods of Absence' &&
+            Array.isArray(revisionPayload.sectionsUpdated) &&
+            revisionPayload.sectionsUpdated.includes(1)
+          ) {
+            console.log('Setting row data for Periods of Absence');
+            setRowData(
+              revisionPayload?.prospective_pensioner
+                ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
+            );
+          } else if (
+            title === 'Government Salary' &&
+            Array.isArray(revisionPayload.sectionsUpdated) &&
+            revisionPayload.sectionsUpdated.includes(2)
+          ) {
+            console.log('Setting row data for Government Salary');
+            setRowData(
+              revisionPayload?.prospective_pensioner?.governmentSalaries
+            );
+          } else if (
+            title === 'Deductions' &&
+            Array.isArray(revisionPayload.sectionsUpdated) &&
+            revisionPayload.sectionsUpdated.includes(3)
+          ) {
+            console.log('Setting row data for Deductions');
+            setRowData(
+              revisionPayload?.prospective_pensioner
+                ?.prospectivePensionerDeductions
+            );
+          } else {
+            console.log('No matching section found.');
+          }
         } else {
-          console.log('No matching section found.');
+          fetchData();
         }
       };
 
+      fetchEdited();
+    } else {
       fetchData();
     }
   }, []);
-  useEffect(() => {
-    if (enabled) {
-      const fetchData = async () => {
-        const revisionPayload = await fetchRevisionPayload();
-        console.log('Revision payload:', revisionPayload);
+  // useEffect(() => {
+  //   if (enabled) {
+  //     const fetchEdited = async () => {
+  //       const revisionPayload = await fetchRevisionPayload();
+  //       console.log('Revision payload:', revisionPayload);
 
-        if (!revisionPayload) {
-          console.log('No revision payload found.');
-          return;
-        }
+  //       if (!revisionPayload) {
+  //         console.log('No revision payload found.');
+  //         return;
+  //       }
 
-        if (
-          title === 'Post and Nature of Service' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(1)
-        ) {
-          console.log('Setting row data for Post and Nature of Service');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerPostAndNatureofSalaries
-          );
-        } else if (
-          title === 'Periods of Absence' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(1)
-        ) {
-          console.log('Setting row data for Periods of Absence');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
-          );
-        } else if (
-          title === 'Government Salary' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(2)
-        ) {
-          console.log('Setting row data for Government Salary');
-          setRowData(
-            revisionPayload?.prospective_pensioner?.governmentSalaries
-          );
-        } else if (
-          title === 'Deductions' &&
-          Array.isArray(revisionPayload.sectionsUpdated) &&
-          revisionPayload.sectionsUpdated.includes(3)
-        ) {
-          console.log('Setting row data for Deductions');
-          setRowData(
-            revisionPayload?.prospective_pensioner
-              ?.prospectivePensionerDeductions
-          );
-        } else {
-          console.log('No matching section found.');
-        }
-      };
+  //       if (revisionPayload.sectionsUpdated?.includes(sectionIndex)) {
+  //         if (
+  //           title === 'Post and Nature of Service' &&
+  //           Array.isArray(revisionPayload.sectionsUpdated) &&
+  //           revisionPayload.sectionsUpdated.includes(1)
+  //         ) {
+  //           console.log('Setting row data for Post and Nature of Service');
+  //           setRowData(
+  //             revisionPayload?.prospective_pensioner
+  //               ?.prospectivePensionerPostAndNatureofSalaries
+  //           );
+  //         } else if (
+  //           title === 'Periods of Absence' &&
+  //           Array.isArray(revisionPayload.sectionsUpdated) &&
+  //           revisionPayload.sectionsUpdated.includes(1)
+  //         ) {
+  //           console.log('Setting row data for Periods of Absence');
+  //           setRowData(
+  //             revisionPayload?.prospective_pensioner
+  //               ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
+  //           );
+  //         } else if (
+  //           title === 'Government Salary' &&
+  //           Array.isArray(revisionPayload.sectionsUpdated) &&
+  //           revisionPayload.sectionsUpdated.includes(2)
+  //         ) {
+  //           console.log('Setting row data for Government Salary');
+  //           setRowData(
+  //             revisionPayload?.prospective_pensioner?.governmentSalaries
+  //           );
+  //         } else if (
+  //           title === 'Deductions' &&
+  //           Array.isArray(revisionPayload.sectionsUpdated) &&
+  //           revisionPayload.sectionsUpdated.includes(3)
+  //         ) {
+  //           console.log('Setting row data for Deductions');
+  //           setRowData(
+  //             revisionPayload?.prospective_pensioner
+  //               ?.prospectivePensionerDeductions
+  //           );
+  //         } else {
+  //           console.log('No matching section found.');
+  //         }
+  //       } else {
+  //         fetchData();
+  //       }
+  //     };
 
-      fetchData();
-    }
-  }, [refreshFetch]);
+  //     fetchEdited();
+  //   }
+  // }, [refreshFetch]);
 
   const gridApiRef = useRef(null);
 

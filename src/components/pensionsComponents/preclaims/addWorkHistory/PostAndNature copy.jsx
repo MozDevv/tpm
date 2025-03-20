@@ -358,6 +358,7 @@ function PostAndNature({ id, clickedItem, enabled }) {
         passProspectivePensionerId={true}
         enabled={enabled}
         retirementDate={clickedItem?.retirement_date}
+        sectionIndex={1}
       />{' '}
     </div>
   );

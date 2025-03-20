@@ -3,22 +3,6 @@ import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
 import React, { useEffect, useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Dialog,
-  Select,
-  MenuItem,
-  TextField,
-  FormControl,
-  IconButton,
-} from '@mui/material';
 import { Edit, Delete, Visibility } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useAlert } from '@/context/AlertContext';
@@ -112,6 +96,7 @@ function PeriodsOfAbsence({ id, status, clickedItem, enabled }) {
           deleteEndpoint={preClaimsEndpoints.deletePeriodsOfAbsence}
           passProspectivePensionerId={true}
           enabled={enabled}
+          sectionIndex={1}
         />
       </div>
     </div>
