@@ -15,7 +15,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { useMda } from '@/context/MdaContext';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
 
-const Deductions = ({ id, clickedItem2, enabled }) => {
+const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -163,6 +163,9 @@ const Deductions = ({ id, clickedItem2, enabled }) => {
         postEndpoint={endpoints.createDeductions}
         putEndpoint={endpoints.updateGovernmentSalary}
         passProspectivePensionerId={true}
+        igcObject="deductionData"
+        sectionIndex={sectionIndex}
+        enabled={enabled}
       />
     </div>
   );

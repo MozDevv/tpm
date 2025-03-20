@@ -12,6 +12,7 @@ import BaseFinanceInputCard from '@/components/baseComponents/BaseFinanceInputCa
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import financeEndpoints from '@/components/services/financeApi';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 
 const { TabPane } = Tabs;
 
@@ -137,53 +138,43 @@ function RecieptLines({ clickedItem, status }) {
     fetchBanksAndBranches();
   }, []);
 
+  const { data: receiptTypes } = useFetchAsync(
+    financeEndpoints.getReceiptPostingGroups,
+    apiService
+  );
+  const { data: paymentMethods } = useFetchAsync(
+    financeEndpoints.getPaymentMethods,
+    apiService
+  );
   const tableFields = [
     {
-      value: 'receiptType',
+      value: 'receiptTypeId',
       label: 'Receipt Type',
       type: 'select',
-      options: [
-        { id: 0, name: 'Customer' },
-        { id: 1, name: 'Vendor' },
-      ],
+      options:
+        receiptTypes &&
+        receiptTypes.map((item) => {
+          return {
+            id: item.receiptTypeId,
+            name: item.receiptTypeName,
+            crAccount: item.crAccountNo,
+            drAccount: item.drAccountNo,
+          };
+        }),
     },
     {
-      value: 'accountType',
-      label: 'Account Type',
-      type: 'select',
-      options: [
-        {
-          id: 0,
-          name: 'General_Ledger',
-        },
-        {
-          id: 1,
-          name: 'Vendor',
-        },
-        {
-          id: 2,
-          name: 'Customer',
-        },
-        {
-          id: 3,
-          name: 'Bank',
-        },
-      ],
+      value: 'crAccountId',
+      label: 'CR Account',
+      type: 'text',
+      disabled: true,
     },
     {
-      value: 'accountId',
-      label: 'Account No',
-      type: 'select',
-      options: allOptions && allOptions,
+      value: 'drAccountId',
+      label: 'DR Account',
+      disabled: true,
+      type: 'text',
     },
-    // {
-    //   value: 'accountName',
-    //   label: 'Account Name',
-    //   type: 'text',
-    //   required: true,
-    //   disabled: true,
-    //   options: allOptions && allOptions,
-    // },
+
     {
       value: 'amount',
       label: 'Amount',
@@ -191,53 +182,82 @@ function RecieptLines({ clickedItem, status }) {
       required: true,
     },
     { value: 'narration', label: 'Narration', type: 'text', required: true },
-    {
-      value: 'description',
-      label: 'Description',
-      type: 'text',
-      required: true,
-    },
 
     {
-      value: 'appliesToDocType',
-      label: 'Applies To Doc Type',
+      value: 'paymentMethodId',
+      label: 'Payment Method',
       type: 'select',
-      options: [
-        {
-          id: 0,
-          name: 'Payment Voucher',
-        },
-        {
-          id: 1,
-          name: 'Purchase Invoice',
-        },
-        {
-          id: 2,
-          name: 'Sales Invoice',
-        },
-        {
-          id: 3,
-          name: 'Receipt',
-        },
-        {
-          id: 4,
-          name: 'Purchase Credit Memo',
-        },
-        {
-          id: 5,
-          name: 'Sales Credit Memo',
-        },
-        {
-          id: 6,
-          name: 'Journal Voucher',
-        },
-      ],
+      options:
+        paymentMethods &&
+        paymentMethods.map((item) => {
+          return {
+            id: item.id,
+            name: item.description,
+          };
+        }),
     },
+    // {
+    //   value: 'appliesToDocType',
+    //   label: 'Applies To Doc Type',
+    //   type: 'select',
+    //   options: [
+    //     {
+    //       id: 0,
+    //       name: 'Payment Voucher',
+    //     },
+    //     {
+    //       id: 1,
+    //       name: 'Purchase Invoice',
+    //     },
+    //     {
+    //       id: 2,
+    //       name: 'Sales Invoice',
+    //     },
+    //     {
+    //       id: 3,
+    //       name: 'Receipt',
+    //     },
+    //     {
+    //       id: 4,
+    //       name: 'Purchase Credit Memo',
+    //     },
+    //     {
+    //       id: 5,
+    //       name: 'Sales Credit Memo',
+    //     },
+    //     {
+    //       id: 6,
+    //       name: 'Journal Voucher',
+    //     },
+    //   ],
+    // },
+    // {
+    //   value: 'appliesToDocNo',
+    //   label: 'Applies To Doc No',
+    //   type: 'text',
+    //   required: true,
+    // },
     {
-      value: 'appliesToDocNo',
-      label: 'Applies To Doc No',
+      value: 'chequeOrEftNo',
+      label: 'Cheque/EFT No',
       type: 'text',
       required: true,
+    },
+    {
+      value: 'bankId',
+      label: 'Bank',
+      type: 'select',
+      required: true,
+      options: banks,
+      required: true,
+    },
+    {
+      value: 'bankBranchId',
+      label: 'Bank Branch',
+      type: 'select',
+      required: true,
+      required: true,
+      options: branches,
     },
   ];
 
@@ -272,6 +292,7 @@ function RecieptLines({ clickedItem, status }) {
                     putEndpoint={financeEndpoints.updateReceiptLine}
                     passProspectivePensionerId={true}
                     setTotalAmmounts={setTotalAmmounts}
+                    branches={branches}
                   />
                 </div>
 

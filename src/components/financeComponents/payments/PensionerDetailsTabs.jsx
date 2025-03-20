@@ -93,7 +93,7 @@ function AssessmentCard({
       'WCPS',
       'PARLIAMENTARY_CONTRIBUTIONS',
     ].indexOf(sectionName);
-    return jsonPayload.SectionsEnabled.includes(sectionIndex);
+    return jsonPayload?.SectionsEnabled.includes(sectionIndex);
   };
 
   const sectionIndexof = (sectionName) => {
@@ -305,6 +305,7 @@ function AssessmentCard({
                         enabled={isSectionEnabled('DEDUCTIONS')}
                         id={clickedItem?.id}
                         clickedItem2={clickedItem}
+                        sectionIndex={sectionIndexof('DEDUCTIONS')}
                       />
                     </TabPane>
                     {/* <TabPane

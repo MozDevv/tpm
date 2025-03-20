@@ -36,11 +36,11 @@ const BaseInputCard = ({
   handlePreview,
   fields,
   apiEndpoint,
+
   postApiFunction,
   clickedItem,
   setOpenBaseCard,
   useRequestBody,
-
   inputTitle,
   id,
   idLabel,
@@ -142,6 +142,19 @@ const BaseInputCard = ({
           ...prev,
           startDate: selectedAccountingPeriod.startDate,
           endDate: selectedAccountingPeriod.endDate,
+        }));
+      }
+    }
+
+    if (name === 'receiptTypeId' && value) {
+      const selectedReceiptType = fields
+        .find((field) => field.name === 'receiptTypeId')
+        .options.find((option) => option.id === value);
+
+      if (selectedReceiptType) {
+        setFormData((prev) => ({
+          ...prev,
+          chartOfAccountId: selectedReceiptType.accountId,
         }));
       }
     }
@@ -520,8 +533,9 @@ const BaseInputCard = ({
                       {selected.map((value) => (
                         <span key={value} style={{ margin: 2 }}>
                           {
-                            field.options.find((option) => option.id === value)
-                              ?.name
+                            field?.options?.find(
+                              (option) => option.id === value
+                            )?.name
                           }
                         </span>
                       ))}
@@ -563,7 +577,7 @@ const BaseInputCard = ({
                     />
                   )}
                   value={
-                    field.options.find(
+                    field?.options?.find(
                       (option) => option.id === formData[field.name]
                     ) || null
                   }
@@ -804,7 +818,7 @@ const BaseInputCard = ({
                   />
                 )}
                 value={
-                  field.options.find(
+                  field?.options?.find(
                     (option) => option.id === formData[field.name]
                   ) || null
                 }
@@ -861,7 +875,7 @@ const BaseInputCard = ({
                   />
                 )}
                 value={
-                  field.options.find(
+                  field?.options?.find(
                     (option) => option.id === formData[field.name]
                   ) || null
                 }

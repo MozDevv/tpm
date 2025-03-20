@@ -234,9 +234,10 @@ function GovernmentSalary({
         putEndpoint={endpoints.updateGovernmentSalary}
         deleteEndpoint={endpoints.deleteGovernmentSalary}
         setSelectedValue={setSelectedDesignation}
-        igcObject="deductionData"
+        igcObject="governmentSalaryData"
         igcId={igcId}
         sectionIndex={sectionIndex}
+        enabled={enabled}
       />
     </div>
   );

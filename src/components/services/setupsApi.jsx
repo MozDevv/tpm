@@ -486,6 +486,7 @@ const endpoints = {
   createRevisedClaim: '/api/RevisedClaim/CreateRevisedClaim',
   sendIgcForApproval: '/api/RevisedClaim/SendForApproval',
   updateRevisedCase: '/api/RevisedClaim/UpdateClaim',
+  getRevisionPayload: (id) => `/api/RevisedClaim/GetRevisionPayload?id=${id}`,
 };
 
 export const apiService = {

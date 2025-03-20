@@ -442,6 +442,8 @@ const financeEndpoints = {
   updateOldCaseLine: 'Revenue/UpdateReturnTypeOnDetail',
   addReturnToIgc: 'Revenue/AddReturnToIGC',
   getGeneratedReceiptHeaders: 'Revenue/GetReceiptNoGeneratorHeader',
+  getUnusedReceiptNoGeneratorHeader:
+    'Revenue/GetReceiptNoGeneratorHeader?isUsed=false',
   generateReceiptNo: 'Revenue/GenerateReceiptNo',
   /**"sortProperties": {
     "propertyName": "created_date",
@@ -449,6 +451,9 @@ const financeEndpoints = {
   } */
   getGeneratedReceiptLines: (id) =>
     `Revenue/GetReceiptNoGeneratorLine?ReceiptNoGeneratorHeaderId=${id}&paging.pageNumber=1&paging.pageSize=100000 `,
+  getAllReceiptNoGeneratorLine:
+    'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000&isUsed=false',
+
   addReceiptType: 'AccountsSetup/AddReceiptType',
   getReceiptType: 'AccountsSetup/GetReceiptTypes',
   updateReceiptType: 'AccountsSetup/UpdateReceiptType',
@@ -459,6 +464,7 @@ const financeEndpoints = {
   updateReceiptPostingGroup: 'PostingSetUp/UpdateReceiptPostingGroup',
   deleteReceiptPostingGroup: (id) =>
     `/PostingSetUp/DeleteReceiptPostingGroup?id=${id}`,
+  getReceiptTypeSelect: 'AccountsSetup/GetReceiptTypesSelect',
 };
 
 export const apiService = {

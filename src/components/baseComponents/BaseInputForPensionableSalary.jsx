@@ -34,7 +34,8 @@ import preClaimsEndpoints from '../services/preclaimsApi';
 import { apiService as preclaimsApiService } from '../services/preclaimsApi';
 import AmountCellEditor from './AmountCellEditor';
 import { formatNumber } from '@/utils/numberFormatters';
-import { usePensionableSalaryStore } from '@/zustand/store';
+import { useIgcIdStore, usePensionableSalaryStore } from '@/zustand/store';
+import endpoints, { apiService as setupsApi } from '../services/setupsApi';
 
 const BaseInputForPensionableSalary = ({
   fields = [],
@@ -64,6 +65,7 @@ const BaseInputForPensionableSalary = ({
   setRefreshColumns,
   retirementDate,
   enabled,
+  sectionIndex,
 }) => {
   const { setPensionableSalary } = usePensionableSalaryStore();
   const [rowData, setRowData] = useState(() => {
@@ -360,8 +362,48 @@ const BaseInputForPensionableSalary = ({
     }
   };
 
+  const fetchRevisionPayload = async () => {
+    try {
+      const res = await setupsApi.get(endpoints.getRevisionPayload(igcId));
+      if (res.status === 200) {
+        console.log('Fetched revision payload:', res.data.result);
+        return res.data.result.data;
+      }
+    } catch (error) {
+      console.log('Error fetching revision payload:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchData();
+    if (enabled) {
+      const fetchData = async () => {
+        const revisionPayload = await fetchRevisionPayload();
+        console.log('Revision payload:', revisionPayload);
+
+        if (revisionPayload.sectionsUpdated.includes(sectionIndex)) {
+          if (!revisionPayload) {
+            console.log('No revision payload found.');
+            return;
+          }
+          if (
+            title === 'Periods of Absence' &&
+            Array.isArray(revisionPayload.sectionsUpdated) &&
+            revisionPayload.sectionsUpdated.includes(1)
+          ) {
+            console.log('Setting row data for Periods of Absence');
+            setRowData(
+              revisionPayload?.prospective_pensioner
+                ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
+            );
+          } else {
+            console.log('No matching section found.');
+          }
+        }
+      };
+      fetchData();
+    } else {
+      fetchData();
+    }
   }, []);
 
   const gridApiRef = useRef(null);
@@ -369,7 +411,7 @@ const BaseInputForPensionableSalary = ({
   const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.sizeColumnsToFit();
-    gridApiRef.current.showLoadingOverlay();
+    // gridApiRef.current.showLoadingOverlay();
   }, []);
 
   const isRowComplete = (row) => {
@@ -1043,26 +1085,52 @@ const BaseInputForPensionableSalary = ({
         }
 
         if (isRowComplete(data)) {
-          if (data.id) {
-            await handleSave(data);
+          if (isAddMoreFields) {
+            setTableInputData((prevData) => [...prevData, data]);
+          } else if (igcObject) {
+            await saveIgcChanges(data);
+          } else if (enabled) {
+            return;
           } else {
-            await handleSave(data);
+            if (data.id) {
+              await handleSave(data);
+            } else {
+              await handleSave(data);
+            }
+            await refreshData();
+
+            message.success('Row saved successfully!');
+
+            setRowErrors((prevErrors) => {
+              const updatedErrors = { ...prevErrors };
+              delete updatedErrors[data.id];
+              return updatedErrors;
+            });
           }
-          await refreshData();
-
-          message.success('Row saved successfully!');
-
-          setRowErrors((prevErrors) => {
-            const updatedErrors = { ...prevErrors };
-            delete updatedErrors[data.id];
-            return updatedErrors;
-          });
         }
       };
 
       return columnDef;
     }),
   ];
+  const { igcId } = useIgcIdStore();
+  const saveIgcChanges = async (data) => {
+    try {
+      const dataToSend = {
+        id: igcId,
+        section: sectionIndex,
+        data: {
+          [igcObject]: [data],
+        },
+      };
+      const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
+      if (res.status === 200 && res.data.succeeded) {
+        message.success("IGC's changes saved successfully!");
+      }
+    } catch (error) {
+      console.error('Error saving IGC changes:', error);
+    }
+  };
 
   const onAddRow = async () => {
     if (gridApiRef.current) {

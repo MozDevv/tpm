@@ -55,6 +55,7 @@ const BaseAutoSaveInputCard = ({
   setResultFunction,
 
   setOpenDrilldown,
+  setInputData,
   disableAll,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
@@ -72,6 +73,7 @@ const BaseAutoSaveInputCard = ({
 
   useEffect(() => {
     if (clickedItem) {
+      setInputData && setInputData(clickedItem);
       setFormData(clickedItem);
     } else {
       // Reset form data if no clickedItem
@@ -83,6 +85,11 @@ const BaseAutoSaveInputCard = ({
     setUnsavedChanges(true);
     const { name, value, type, checked, multiple } = e.target;
 
+    setInputData &&
+      setInputData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     // Initialize newErrors object
     const newErrors = {};
 
@@ -132,6 +139,20 @@ const BaseAutoSaveInputCard = ({
 
       setSelectedBank(filteredBranches);
     }
+
+    if (name === 'receiptNoGeneratorLineId' && value) {
+      const selectedReceiptType = fields
+        .find((field) => field.name === 'receiptNoGeneratorLineId')
+        .options.find((option) => option.id === value);
+
+      if (selectedReceiptType) {
+        setFormData((prev) => ({
+          ...prev,
+          receiptNo: selectedReceiptType.lineId,
+        }));
+      }
+    }
+    // if()
     if (name === fieldName && value !== '' && options) {
       const filtered = options.filter((item) => item[filterKey] === value);
       setResultFunction(filtered); // Set the filtered result
@@ -463,6 +484,7 @@ const BaseAutoSaveInputCard = ({
                       name={field.name}
                       error={!!errors[field.name]}
                       helperText={errors[field.name]}
+                      disabled={field.disabled}
                     />
                   )}
                   value={
@@ -574,7 +596,11 @@ const BaseAutoSaveInputCard = ({
                 size="small"
                 disabled={field.disabled || disableAll}
                 error={!!errors[field.name]}
-                value={dayjs(formData[field.name]).format('YYYY-MM-DD')}
+                value={
+                  formData[field.name]
+                    ? dayjs(formData[field.name]).format('YYYY-MM-DD')
+                    : ''
+                }
                 // helperText={errors[field.name]}
                 onChange={handleInputChange}
                 fullWidth
@@ -582,7 +608,8 @@ const BaseAutoSaveInputCard = ({
             ) : field.type === 'autocomplete' ? (
               <Autocomplete
                 options={field.options}
-                getOptionLabel={(option) => option.name}
+                disabled={field.disabled || disableAll}
+                getOptionLabel={(option) => option.name.toString()} // Ensure the label is a string
                 onChange={(event, newValue) => {
                   handleInputChange({
                     target: {
@@ -600,6 +627,7 @@ const BaseAutoSaveInputCard = ({
                     name={field.name}
                     error={!!errors[field.name]}
                     onBlur={handleAutoSave}
+                    disabled={field.disabled}
                     // helperText={errors[field.name]}
                   />
                 )}

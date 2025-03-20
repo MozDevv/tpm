@@ -43,15 +43,16 @@ const ReceiptPostingGroup = () => {
       flex: 1,
     },
     {
-      field: 'accountNo',
-      headerName: 'GL Account',
+      field: 'crAccountName',
+      headerName: 'CR Account',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
+
     {
-      field: 'accountName',
-      headerName: 'GL Account',
+      field: 'drAccountName',
+      headerName: 'DR Account',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
@@ -69,11 +70,33 @@ const ReceiptPostingGroup = () => {
         }
       );
 
+      setGlAccounts(
+        response.data.data.map((account) => ({
+          id: account.id,
+          name: account.accountNo,
+          accountNo: account.name,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [bankAcc, setBankAcc] = React.useState([]);
+
+  const fetchGlAccounts2 = async () => {
+    try {
+      const response = await apiService.get(
+        financeEndpoints.getGLAccountsAccounttype(3),
+        {
+          'paging.pageSize': 150,
+        }
+      );
+
       // const accounts = response.data.data.filter(
       //   (acc) => acc.accountTypeName === 'POSTING'
       // );
 
-      setGlAccounts(
+      setBankAcc(
         response.data.data.map((account) => ({
           id: account.id,
           name: account.accountNo,
@@ -86,6 +109,7 @@ const ReceiptPostingGroup = () => {
   };
 
   useEffect(() => {
+    fetchGlAccounts2();
     fetchGlAccounts();
   }, []);
   const getAccountName = (id) => {
@@ -135,14 +159,7 @@ const ReceiptPostingGroup = () => {
 
   const fields = [
     { name: 'description', label: 'Description', type: 'text', required: true },
-    {
-      name: 'accountId',
-      label: 'GL Account',
-      type: 'select',
-      required: true,
-      options: glAccounts,
-      table: true,
-    },
+
     {
       name: 'receiptTypeId',
       label: 'Receipt Type',
@@ -152,6 +169,22 @@ const ReceiptPostingGroup = () => {
         data && Array.isArray(data)
           ? data.map((item) => ({ id: item.id, name: item.receiptTypeName }))
           : [],
+    },
+    {
+      name: 'crAccountId',
+      label: 'CR Account',
+      type: 'select',
+      required: true,
+      options: glAccounts,
+      table: true,
+    },
+    {
+      name: 'drAccountId',
+      label: 'DR Account',
+      type: 'select',
+      required: true,
+      options: bankAcc,
+      table: true,
     },
   ];
 

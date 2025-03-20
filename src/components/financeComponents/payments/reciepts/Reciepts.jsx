@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -10,17 +10,28 @@ import { apiService } from '@/components/services/financeApi';
 import financeEndpoints from '@/components/services/financeApi';
 import { formatDate } from '@/utils/dateFormatter';
 
-import PaymentsCard from '../PaymentsCard';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { Dialog } from '@mui/material';
-import PVActions from '../PVActions';
-import { formatNumber } from '@/utils/numberFormatters';
 import RecieptLines from './ReceiptLines';
 import ReceiptActions from './ReceiptActions';
 import { message } from 'antd';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import {
+  AccessTime,
+  AddTask,
+  Cancel,
+  Verified,
+  Visibility,
+} from '@mui/icons-material';
 
 const Reciepts = ({ status }) => {
+  const statusIcons = {
+    0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+    1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+    3: { icon: AddTask, name: 'Posted', color: '#2e7d32' }, // Red
+  };
   const [paymentMethods, setPaymentMethods] = React.useState([]);
   const [bankAccounts, setBankAccounts] = React.useState([]);
 
@@ -69,81 +80,6 @@ const Reciepts = ({ status }) => {
     fetchBankAccounts();
   }, []);
 
-  const columnDefs = [
-    {
-      headerName: 'Document No',
-      field: 'documentNo',
-      type: 'string',
-      checkboxSelection: true,
-      headerCheckboxSelection: true,
-      pinned: 'left',
-      cellRenderer: (params) => {
-        return (
-          <p className="underline text-primary font-semibold">{params.value}</p>
-        );
-      },
-    },
-    {
-      headerName: 'Reciept Date',
-      field: 'recieptDate',
-
-      valueFormatter: (params) => formatDate(params.value),
-    },
-    {
-      headerName: 'Payment Method',
-      field: 'paymentMethodId',
-      type: 'select',
-      valueFormatter: (params) => {
-        const paymentMethod = paymentMethods.find(
-          (meth) => meth.id === params.value
-        );
-        return paymentMethod ? paymentMethod.name : '';
-      },
-    },
-    {
-      headerName: 'Cheque No',
-      field: 'chequeNo',
-      type: 'string',
-      cellRenderer: (params) => {
-        return <p className=" text-primary font-normal">{params.value}</p>;
-      },
-    },
-    {
-      headerName: 'Cheque Date',
-      field: 'chequeDate',
-      valueFormatter: (params) => formatDate(params.value),
-    },
-    {
-      headerName: 'Payment Narration',
-      field: 'paymentNarration',
-      type: 'string',
-    },
-    {
-      headerName: 'Recieved From',
-      field: 'recievedFrom',
-      type: 'string',
-    },
-    {
-      headerName: 'Paying Bank Account',
-      field: 'payingBankAccountId',
-      type: 'select',
-      valueFormatter: (params) => {
-        const bankAccount = bankAccounts.find((acc) => acc.id === params.value);
-        return bankAccount ? bankAccount.name : '';
-      },
-    },
-    {
-      headerName: 'Posting Date',
-      field: 'postingDate',
-      valueFormatter: (params) => formatDate(params.value),
-    },
-    // {
-    //   headerName: 'Is Posted',
-    //   field: 'isPosted',
-    //   type: 'boolean',
-    // },
-  ];
-
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -151,17 +87,7 @@ const Reciepts = ({ status }) => {
   };
   const transformData = (data) => {
     return data.map((item, index) => ({
-      id: item.id,
-      documentNo: item.documentNo,
-      recieptDate: item.recieptDate,
-      paymentMethodId: item.paymentMethodId,
-      chequeNo: item.chequeNo,
-      chequeDate: item.chequeDate,
-      paymentNarration: item.paymentNarration,
-      recievedFrom: item.recievedFrom,
-      payingBankAccountId: item.payingBankAccountId,
-      postingDate: item.postingDate,
-      isPosted: item.isPosted,
+      ...item,
     }));
   };
 
@@ -282,13 +208,149 @@ const Reciepts = ({ status }) => {
     ? `${clickedItem.documentNo} `
     : 'Create New Payment';
 
-  const fields = [
+  const [inputData, setInputData] = useState(null);
+  const { data: receiptNos } = useFetchAsync(
+    financeEndpoints.getGeneratedReceiptHeaders,
+    apiService
+  );
+  const { data: receiptNoLines } = useFetchAsync(
+    financeEndpoints.getUnusedReceiptNoGeneratorHeader,
+    apiService
+  );
+  const { data: allReciepts } = useFetchAsync(
+    financeEndpoints.getReceiptTypeSelect,
+    apiService
+  );
+
+  const columnDefs = [
     {
-      label: 'Document No.',
-      name: 'documentNo',
-      type: 'text',
-      disabled: true,
+      headerName: 'Document No',
+      field: 'documentNo',
+      type: 'string',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      pinned: 'left',
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
     },
+    {
+      headerName: 'Reciept Date',
+      field: 'recieptDate',
+
+      valueFormatter: (params) => formatDate(params.value),
+    },
+    {
+      headerName: 'Stage',
+      field: 'stage',
+      width: 150,
+      filter: true,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
+
+    {
+      headerName: 'Payment Narration',
+      field: 'narration',
+      type: 'string',
+    },
+  ];
+  useEffect(() => {
+    console.log('inputData:', inputData);
+  }, [inputData]);
+  const fields = [
+    ...(clickedItem
+      ? [
+          {
+            label: 'Document No.',
+            name: 'documentNo',
+            type: 'text',
+            disabled: true,
+          },
+        ]
+      : []),
+    ...(!clickedItem
+      ? [
+          {
+            name: 'is_uncollected_payments',
+            label: 'Is Uncollected Payments',
+            type: 'select',
+            options: [
+              { id: false, name: 'No' },
+              { id: true, name: 'Yes' },
+            ],
+          },
+        ]
+      : []),
+    ...(inputData && inputData.is_uncollected_payments
+      ? [
+          {
+            name: 'receiptNoGeneratorLin',
+            label: 'Receipt Code',
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.receiptCode,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
+          {
+            name: 'receiptNoGeneratorLineId',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            disabled: clickedItem ? true : false,
+            options:
+              (receiptNos &&
+                receiptNos
+                  ?.find(
+                    (item) =>
+                      item.receiptCode === inputData?.receiptNoGeneratorLin
+                  )
+                  ?.receiptNoGeneratorLines?.map((item) => {
+                    return {
+                      id: item.id,
+                      name: item.receiptNo,
+                      lineId: item.receiptNo,
+                    };
+                  })) ||
+              [],
+          },
+        ]
+      : []),
+
     {
       label: 'Reciept Date',
       name: 'recieptDate',
@@ -297,53 +359,32 @@ const Reciepts = ({ status }) => {
     },
 
     {
-      label: 'Payment Method',
-      name: 'paymentMethodId',
-      type: 'select',
-      options: paymentMethods,
-      required: true,
-    },
-    {
-      label: 'Cheque No',
-      name: 'chequeNo',
-      type: 'string',
-      required: true,
-    },
-    {
-      label: 'Cheque Date',
-      name: 'chequeDate',
-      type: 'date',
-      required: true,
-    },
-    {
-      label: 'Payment Narration',
-      name: 'paymentNarration',
+      label: 'Narration',
+      name: 'narration',
       type: 'string',
     },
     {
-      label: 'Recieved From',
-      name: 'recievedFrom',
-      type: 'string',
+      label: 'Total Amount',
+      name: 'totalAmount',
+      type: 'amount',
       required: true,
     },
-    {
-      label: 'Paying Bank Account',
-      name: 'payingBankAccountId',
-      type: 'select',
-      options: bankAccounts,
-      required: true,
-    },
-    {
-      label: 'Posting Date',
-      name: 'postingDate',
-      type: 'date',
-      required: true,
-    },
-    {
-      label: 'Is Posted',
-      name: 'isPosted',
-      type: 'switch',
-    },
+    ...(clickedItem
+      ? [
+          {
+            label: 'Posting Date',
+            name: 'postingDate',
+            type: 'date',
+            disabled: true,
+          },
+          {
+            label: 'Is Posted',
+            name: 'isPosted',
+            type: 'switch',
+            disabled: true,
+          },
+        ]
+      : []),
   ];
 
   const [selectedRows, setSelectedRows] = React.useState([]);
@@ -424,6 +465,7 @@ const Reciepts = ({ status }) => {
           </div>
         ) : (
           <BaseAutoSaveInputCard
+            setInputData={setInputData}
             fields={fields.filter((field) => field.name !== 'documentNo')}
             apiEndpoint={financeEndpoints.addReceipt}
             putApiFunction={apiService.post}

@@ -766,6 +766,30 @@ const BaseFinanceInputTable = ({
           }
         }
 
+        if (field === 'receiptTypeId') {
+          const accountId = newValue;
+
+          const receiptOptions = fields.find(
+            (field) => field.value === 'receiptTypeId'
+          ).options;
+
+          const selectedOption = receiptOptions.find(
+            (option) => option.id === accountId
+          );
+
+          if (selectedOption) {
+            data.crAccountId = selectedOption.crAccount;
+            data.drAccountId = selectedOption.drAccount;
+            data.accountType = 0;
+            // data.drAccountId = selectedOption.accountNo;
+
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          } else {
+            data.accountName = '';
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          }
+        }
+
         if (field === 'pensionerNo') {
           const pensionerNo = newValue;
 

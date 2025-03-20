@@ -372,11 +372,135 @@ const BaseInputTable = ({
     }
   };
 
+  const [revisionPayload, setRevisionPayload] = useState(null);
+
+  const fetchRevisionPayload = async () => {
+    try {
+      const res = await setupsApi.get(endpoints.getRevisionPayload(igcId));
+      if (res.status === 200) {
+        console.log('Fetched revision payload:', res.data.result);
+        return res.data.result.data;
+      }
+    } catch (error) {
+      console.log('Error fetching revision payload:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchData();
+    if (enabled) {
+      const fetchData = async () => {
+        const revisionPayload = await fetchRevisionPayload();
+        console.log('Revision payload:', revisionPayload);
+
+        if (!revisionPayload) {
+          console.log('No revision payload found.');
+          return;
+        }
+
+        if (
+          title === 'Post and Nature of Service' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(1)
+        ) {
+          console.log('Setting row data for Post and Nature of Service');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerPostAndNatureofSalaries
+          );
+        } else if (
+          title === 'Periods of Absence' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(1)
+        ) {
+          console.log('Setting row data for Periods of Absence');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
+          );
+        } else if (
+          title === 'Government Salary' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(2)
+        ) {
+          console.log('Setting row data for Government Salary');
+          setRowData(
+            revisionPayload?.prospective_pensioner?.governmentSalaries
+          );
+        } else if (
+          title === 'Deductions' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(3)
+        ) {
+          console.log('Setting row data for Deductions');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerDeductions
+          );
+        } else {
+          console.log('No matching section found.');
+        }
+      };
+
+      fetchData();
+    }
   }, []);
   useEffect(() => {
-    fetchData();
+    if (enabled) {
+      const fetchData = async () => {
+        const revisionPayload = await fetchRevisionPayload();
+        console.log('Revision payload:', revisionPayload);
+
+        if (!revisionPayload) {
+          console.log('No revision payload found.');
+          return;
+        }
+
+        if (
+          title === 'Post and Nature of Service' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(1)
+        ) {
+          console.log('Setting row data for Post and Nature of Service');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerPostAndNatureofSalaries
+          );
+        } else if (
+          title === 'Periods of Absence' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(1)
+        ) {
+          console.log('Setting row data for Periods of Absence');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerPeriodsOfAbsenceWithoutSalaries
+          );
+        } else if (
+          title === 'Government Salary' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(2)
+        ) {
+          console.log('Setting row data for Government Salary');
+          setRowData(
+            revisionPayload?.prospective_pensioner?.governmentSalaries
+          );
+        } else if (
+          title === 'Deductions' &&
+          Array.isArray(revisionPayload.sectionsUpdated) &&
+          revisionPayload.sectionsUpdated.includes(3)
+        ) {
+          console.log('Setting row data for Deductions');
+          setRowData(
+            revisionPayload?.prospective_pensioner
+              ?.prospectivePensionerDeductions
+          );
+        } else {
+          console.log('No matching section found.');
+        }
+      };
+
+      fetchData();
+    }
   }, [refreshFetch]);
 
   const gridApiRef = useRef(null);
@@ -1397,17 +1521,16 @@ const BaseInputTable = ({
   const { igcId } = useIgcIdStore();
   const saveIgcChanges = async (data) => {
     try {
-      // Filter formData to only include fields in jsonPayload.BasicDetailFiel
       const dataToSend = {
         id: igcId,
         section: sectionIndex,
         data: {
           [igcObject]: [data],
-          // wcPsData: {},
         },
       };
       const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.succeeded) {
+        message.success("IGC's changes saved successfully!");
       }
     } catch (error) {
       console.error('Error saving IGC changes:', error);

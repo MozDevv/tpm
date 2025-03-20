@@ -227,13 +227,70 @@ const Returns = ({ status }) => {
   useEffect(() => {
     fetchGlAccounts();
   }, []);
+  const [inputData, setInputData] = useState(null);
+  const { data: receiptNos } = useFetchAsync(
+    financeEndpoints.getGeneratedReceiptHeaders,
+    apiService
+  );
+  const { data: receiptNoLines } = useFetchAsync(
+    financeEndpoints.getAllReceiptNoGeneratorLine,
+    apiService
+  );
+  const { data: receiptTypesSelect } = useFetchAsync(
+    financeEndpoints.getReceiptTypeSelect,
+    apiService
+  );
   const fields = [
     {
-      name: 'receiptNo',
-      label: 'Government Receipt No',
-      type: 'text',
-      required: true,
+      name: 'is_uncollected_payments',
+      label: 'Is Uncollected Payments',
+      type: 'switch',
     },
+
+    ...(inputData && inputData.is_uncollected_payments
+      ? [
+          {
+            name: 'receiptCode',
+            label: 'Receipt Code',
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.id,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
+          {
+            name: 'receiptNo',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            options:
+              receiptNoLines &&
+              (receiptNoLines
+                .filter(
+                  (item) =>
+                    item.receiptNoGeneratorHeaderId === inputData.receiptCode
+                )
+                ?.map((item) => {
+                  return {
+                    id: item.id,
+                    name: item.receiptNo,
+                  };
+                }) ||
+                receiptNoLines.map((item) => {
+                  return {
+                    id: item.id,
+                    name: item.receiptNo,
+                  };
+                })),
+          },
+        ]
+      : []),
     {
       name: 'returnDate',
       label: 'Return Date',
@@ -248,19 +305,29 @@ const Returns = ({ status }) => {
     },
 
     {
-      name: 'typeEnum',
+      name: 'receiptTypeId',
       label: 'Receipt Type',
       type: 'select',
-      options: [
-        { id: 0, name: 'Payroll Returns' },
-        { id: 1, name: 'Uncollected Payments' },
-        { id: 2, name: 'Secondment' },
-        { id: 3, name: 'WCPS' },
-        { id: 4, name: 'Deduction To Cap' },
-        { id: 5, name: 'Payroll Deduction To Cap' },
-        { id: 6, name: 'Abatement' },
-      ],
+      options:
+        receiptTypesSelect &&
+        receiptTypesSelect.map((item) => {
+          return {
+            id: item.id,
+            name: item.receiptTypeName,
+            accountId: item?.accountId,
+          };
+        }),
     },
+
+    {
+      name: 'chartOfAccountId',
+      label: 'Account',
+      type: 'select',
+      options: glAccounts,
+      table: true,
+      disable: true,
+    },
+
     {
       name: 'paymentMethodId',
       label: 'Payment Method',
@@ -276,7 +343,7 @@ const Returns = ({ status }) => {
     {
       name: 'eftNo',
       label: 'EFT No',
-      type: 'number',
+      type: 'text',
     },
     {
       name: 'bankId',
@@ -307,13 +374,6 @@ const Returns = ({ status }) => {
             name: branch.name,
             bankId: branch.bankId,
           })),
-    },
-    {
-      name: 'chartOfAccountId',
-      label: 'Account',
-      type: 'select',
-      options: glAccounts,
-      table: true,
     },
   ];
 
@@ -553,11 +613,20 @@ const Returns = ({ status }) => {
 
   const uploadFields = [
     {
-      name: 'receiptNo',
-      label: 'Receipt No',
-      type: 'text',
-      required: true,
+      name: 'is_uncollected_payments',
+      label: 'Is Uncollected Payments',
+      type: 'switch',
     },
+    ...(inputData && inputData.is_uncollected_payments
+      ? [
+          {
+            name: 'receiptNo',
+            label: 'Receipt No',
+            type: 'text',
+            required: true,
+          },
+        ]
+      : []),
     {
       name: 'returnDate',
       label: 'Return Date',
@@ -683,6 +752,11 @@ const Returns = ({ status }) => {
     }
   }, [openBaseCard]);
   const [refetch, setRefetch] = useState(0);
+
+  useEffect(() => {
+    console.log('recueopt No Lines', receiptNoLines);
+    console.log('inputData', inputData);
+  }, [inputData]);
   return (
     <div className="">
       <BaseApprovalCard
@@ -771,6 +845,7 @@ const Returns = ({ status }) => {
             setSelectedBank={setSelectedBank}
             setCloseProp={setOpenAddReturn}
             setClickedItem={setClickedItem}
+            setInputData={setInputData}
           />
         ) : uploadExcel ? (
           <BaseInputCard
@@ -785,6 +860,7 @@ const Returns = ({ status }) => {
             setClickedItem={setClickedItem}
             setCloseProp={setUploadExcel}
             setReFetchData={setRefetch}
+            setInputData={setInputData}
           />
         ) : (
           <></>
