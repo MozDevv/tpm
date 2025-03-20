@@ -205,12 +205,9 @@ const Returns = ({ status }) => {
 
   const fetchGlAccounts = async () => {
     try {
-      const response = await apiService.get(
-        financeEndpoints.getGLAccountsAccounttype(0),
-        {
-          'paging.pageSize': 150,
-        }
-      );
+      const response = await apiService.get(financeEndpoints.getAllAccounts, {
+        'paging.pageSize': 1500,
+      });
 
       setGlAccounts(
         response.data.data.map((account) => ({
@@ -237,7 +234,19 @@ const Returns = ({ status }) => {
     apiService
   );
   const { data: allReciepts } = useFetchAsync(
-    financeEndpoints.getReceiptTypeSelect,
+    financeEndpoints.getReceiptPostingGroups,
+    apiService
+  );
+  const { data: crAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(0),
+    apiService
+  );
+  const { data: drAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(3),
+    apiService
+  );
+  const { data: paymentMethods } = useFetchAsync(
+    financeEndpoints.getPaymentMethods,
     apiService
   );
   const fields = [
@@ -251,6 +260,16 @@ const Returns = ({ status }) => {
               { id: false, name: 'No' },
               { id: true, name: 'Yes' },
             ],
+          },
+        ]
+      : []),
+    ...(clickedItem
+      ? [
+          {
+            name: 'documentNo',
+            label: 'Document No',
+            type: 'text',
+            disabled: true,
           },
         ]
       : []),
@@ -295,60 +314,56 @@ const Returns = ({ status }) => {
       name: 'returnDate',
       label: 'Return Date',
       type: 'date',
-      required: true,
+      disabled: true,
     },
     {
       name: 'totalAmount',
       label: 'Total Amount',
       type: 'amount',
-      required: true,
+      disabled: true,
     },
 
     {
       name: 'receiptTypeId',
       label: 'Receipt Type',
-      type: 'select',
+      type: 'autocomplete',
+      disabled: true,
       options:
         allReciepts &&
         allReciepts.map((item) => {
           return {
-            id: item.id,
+            id: item.receiptTypeId,
             name: item.receiptTypeName,
-            accountId: item?.accountId,
+            crAccount: item.crAccountNo,
+            drAccount: item.drAccountNo,
           };
         }),
     },
 
     {
-      name: 'chartOfAccountId',
-      label: 'Account',
-      type: 'select',
-      options: glAccounts,
-      table: true,
-      disable: true,
-    },
-
-    {
       name: 'paymentMethodId',
       label: 'Payment Method',
-      type: 'select',
+      type: 'autocomplete',
+      disabled: true,
       required: true,
       options:
-        paymentMeth &&
-        paymentMeth.map((method) => ({
+        paymentMethods &&
+        paymentMethods.map((method) => ({
           id: method.id,
           name: method.description,
         })),
     },
     {
       name: 'eftNo',
-      label: 'EFT No',
+      label: 'Cheque/EFT No',
       type: 'text',
+      disabled: true,
     },
     {
       name: 'bankId',
       label: 'Bank',
       type: 'autocomplete',
+      disabled: true,
       required: true,
       options: banks.map((bank) => ({
         id: bank.id,
@@ -359,21 +374,27 @@ const Returns = ({ status }) => {
       name: 'bankBranchId',
       label: 'Branch',
       type: 'autocomplete',
-
+      disabled: true,
       required: true,
-      options: !clickedItem
-        ? branches
-            .filter((branch) => branch.bankId === selectedBank)
-            .map((branch) => ({
-              id: branch.id,
-              name: branch.name,
-              bankId: branch.bankId,
-            }))
-        : branches.map((branch) => ({
-            id: branch.id,
-            name: branch.name,
-            bankId: branch.bankId,
-          })),
+      options: branches.map((branch) => ({
+        id: branch.id,
+        name: branch.name,
+        bankId: branch.bankId,
+      })),
+    },
+    {
+      name: 'drAccountId',
+      label: 'Debit Account',
+      type: 'autocomplete',
+      options: drAccounts,
+      disabled: true,
+    },
+    {
+      name: 'crAccountId',
+      label: 'Credit Account',
+      type: 'autocomplete',
+      options: crAccounts,
+      disabled: true,
     },
   ];
 
@@ -682,13 +703,11 @@ const Returns = ({ status }) => {
       label: 'Branch',
       type: 'autocomplete',
       required: true,
-      options: branches
-        .filter((branch) => branch.bankId === selectedBank)
-        .map((branch) => ({
-          id: branch.id,
-          name: branch.name,
-          bankId: branch.bankId,
-        })),
+      options: branches.map((branch) => ({
+        id: branch.id,
+        name: branch.name,
+        bankId: branch.bankId,
+      })),
     },
     {
       name: 'chartOfAccountId',

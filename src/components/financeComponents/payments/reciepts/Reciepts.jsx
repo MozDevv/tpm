@@ -217,8 +217,8 @@ const Reciepts = ({ status }) => {
     financeEndpoints.getUnusedReceiptNoGeneratorHeader,
     apiService
   );
-  const { data: allReciepts } = useFetchAsync(
-    financeEndpoints.getReceiptTypeSelect,
+  const { data: allNoLines } = useFetchAsync(
+    financeEndpoints.getAllReceiptNoGeneratorLine,
     apiService
   );
 
@@ -309,7 +309,7 @@ const Reciepts = ({ status }) => {
           },
         ]
       : []),
-    ...(inputData && inputData.is_uncollected_payments
+    ...(!clickedItem && inputData && inputData.is_uncollected_payments
       ? [
           {
             name: 'receiptCode',
@@ -344,6 +344,32 @@ const Reciepts = ({ status }) => {
                     };
                   })) ||
               [],
+          },
+        ]
+      : clickedItem
+      ? [
+          {
+            name: 'receiptCode',
+            label: 'Receipt Code',
+            disabled: true,
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.receiptCode,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
+          {
+            name: 'recieptNo',
+            label: 'Receipt No',
+            type: 'text',
+            required: true,
+            disabled: true,
           },
         ]
       : []),

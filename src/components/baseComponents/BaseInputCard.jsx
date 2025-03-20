@@ -31,6 +31,7 @@ import {
   Launch,
 } from '@mui/icons-material';
 import MuiPhoneNumber from 'mui-phone-number';
+import financeEndpoints, { apiService } from '../services/financeApi';
 
 const BaseInputCard = ({
   handlePreview,
@@ -458,6 +459,33 @@ const BaseInputCard = ({
     handlePreview(file);
   };
 
+  const handleOnBlur = async (name) => {
+    try {
+      const res = await apiService.get(financeEndpoints.getReceiptsByNo(name));
+      if (res.status === 200) {
+        const receipt = res.data.data[0];
+        const data = {
+          returnDate: receipt?.recieptDate,
+          totalAmount: receipt?.totalAmount,
+          bankId: receipt?.receiptLines[0]?.bankId,
+          bankBranchId: receipt?.receiptLines[0]?.bankBranchId,
+          receiptTypeId: receipt?.receiptLines[0]?.receiptTypeId,
+          paymentMethodId: receipt?.receiptLines[0]?.paymentMethodId,
+          eftNo: receipt?.receiptLines[0]?.chequeOrEftNo,
+          crAccountId: receipt?.receiptLines[0]?.crAccountId,
+          drAccountId: receipt?.receiptLines[0]?.drAccountId,
+        };
+        setFormData((prev) => {
+          return {
+            ...prev,
+            ...data,
+          };
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="py-6 px-15">
       {inputTitle && (
@@ -796,8 +824,9 @@ const BaseInputCard = ({
             //
             field.type === 'autocomplete' ? (
               <Autocomplete
+                disabled={field.disabled || disableAll}
                 options={field.options}
-                getOptionLabel={(option) => option.name.toString()}
+                getOptionLabel={(option) => option?.name?.toString()}
                 onChange={(event, newValue) => {
                   handleInputChange({
                     target: {
@@ -815,6 +844,11 @@ const BaseInputCard = ({
                     name={field.name}
                     error={!!errors[field.name]}
                     helperText={errors[field.name]}
+                    onBlur={(event) => {
+                      if (field.name === 'receiptNo') {
+                        handleOnBlur(params.inputProps.value);
+                      }
+                    }}
                   />
                 )}
                 value={

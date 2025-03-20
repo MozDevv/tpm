@@ -321,12 +321,14 @@ function DependantsEnrollment() {
       type: 'select',
       required: true,
       options: documentTypes
-        ? documentTypes.map((doc) => ({
-            id: doc.document_type_id,
-            name: doc.documentTypeSetup.name,
-            igcType:
-              igcTypes && igcTypes?.find((igc) => igc.id === doc.igC_Type).name,
-          }))
+        ? documentTypes.map((doc) => {
+            const igcType = igcTypes?.find((igc) => igc.id === doc.igC_Type);
+            return {
+              id: doc.document_type_id,
+              name: doc.documentTypeSetup.name,
+              igcType: igcType ? igcType.name : 'N/A', // Provide a default value if igcType is undefined
+            };
+          })
         : [],
     },
   ];

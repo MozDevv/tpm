@@ -174,6 +174,8 @@ const financeEndpoints = {
 
   getAccountByAccountType: (accountType) =>
     `/Accounts/GetAccounts?AccountType=${accountType}`,
+  getAccountByAccountTypeNoPage: (accountType) =>
+    `/Accounts/GetAccounts?AccountType=${accountType}&paging.PageSize=1000`,
 
   getAllAccounts: `/Accounts/GetAccounts`,
 
@@ -457,6 +459,7 @@ const financeEndpoints = {
 
   addReceiptType: 'AccountsSetup/AddReceiptType',
   getReceiptType: 'AccountsSetup/GetReceiptTypes',
+  getReceiptsByNo: (no) => `/Posting/GetReceipts?recieptNo=${no}`,
   updateReceiptType: 'AccountsSetup/UpdateReceiptType',
   deleteReceiptType: (id) => `/AccountsSetup/DeleteReceiptType?id=${id}`,
 

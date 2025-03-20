@@ -148,7 +148,7 @@ const BaseAutoSaveInputCard = ({
       if (selectedReceiptType) {
         setFormData((prev) => ({
           ...prev,
-          receiptNo: selectedReceiptType.lineId,
+          recieptNo: selectedReceiptType.lineId.toString(),
         }));
       }
     }
