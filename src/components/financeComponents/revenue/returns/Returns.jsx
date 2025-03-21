@@ -937,17 +937,7 @@ const Returns = ({ status }) => {
             : []
         }
       />
-      <BaseApprovalCard
-        openApprove={openApprove}
-        setOpenApprove={setOpenApprove}
-        documentNo={
-          selectedRows.length > 0
-            ? selectedRows.map((item) => item.documentNo)
-            : clickedItem
-            ? [clickedItem.documentNo]
-            : []
-        }
-      />
+
       <Dialog
         open={openAction}
         onClose={() => {

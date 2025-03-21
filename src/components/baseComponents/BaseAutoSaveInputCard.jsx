@@ -582,6 +582,7 @@ const BaseAutoSaveInputCard = ({
                     onChange={handleInputChange}
                     name={field.name}
                     color="primary"
+                    disabled={field.disabled || disableAll}
                     onBlur={handleAutoSave}
                   />
                 }
