@@ -291,7 +291,7 @@ const Returns = ({ status }) => {
               }),
           },
           {
-            name: 'receiptNo',
+            name: 'recieptNo',
             label: 'Receipt No',
             type: 'autocomplete',
             required: true,

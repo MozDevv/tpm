@@ -24,6 +24,7 @@ import {
   Verified,
   Visibility,
 } from '@mui/icons-material';
+import ReceiptVoucher from './ReceiptVoucher';
 
 const Reciepts = ({ status }) => {
   const statusIcons = {
@@ -161,8 +162,10 @@ const Reciepts = ({ status }) => {
   const [openAction, setOpenAction] = React.useState(false);
   const [dialogType, setDialogType] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [openReceiptReport, setOpenReceiptReport] = React.useState(false);
 
   const baseCardHandlers = {
+    'Receipt Voucher': () => setOpenReceiptReport(true),
     ...(status === 0
       ? {
           submitPaymentForApproval: () => {
@@ -407,8 +410,30 @@ const Reciepts = ({ status }) => {
     setSelectedRows(selectedRows);
   };
 
+  const reportItems = ['Receipt Voucher'];
+
   return (
     <div className="">
+      <Dialog
+        open={openReceiptReport}
+        onClose={() => setOpenReceiptReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
+            minWidth: '85vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <ReceiptVoucher
+            setOpenReceiptReport={setOpenReceiptReport}
+            clickedItem={clickedItem}
+          />
+        </div>
+      </Dialog>
       <BaseApprovalCard
         openApprove={openApprove}
         setOpenApprove={setOpenApprove}
@@ -444,6 +469,7 @@ const Reciepts = ({ status }) => {
         />
       </Dialog>
       <BaseCard
+        reportItems={reportItems}
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
         handlers={baseCardHandlers}
