@@ -166,7 +166,7 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
         igcObject="deductionData"
         sectionIndex={sectionIndex}
         enabled={enabled}
-      />
+      />{' '}
     </div>
   );
 };

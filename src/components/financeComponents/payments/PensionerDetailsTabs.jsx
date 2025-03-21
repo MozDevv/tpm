@@ -18,8 +18,18 @@ import assessEndpoints, {
 import PensionerDetails from '@/components/assessment/assessmentDataCapture/PensionerDetails';
 import NewPreclaim from '@/components/pensionsComponents/preclaims/NewPreclaim';
 import NewPreclaimForIgc from '@/components/pensionsComponents/preclaims/NewPreclaimForIgc';
-import { Error, Warning } from '@mui/icons-material';
+import {
+  Edit,
+  EditNote,
+  EditOff,
+  Error,
+  PlaylistAdd,
+  PlaylistAddCheck,
+  TaskAlt,
+  Warning,
+} from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
+import endpoints, { apiService } from '@/components/services/setupsApi';
 
 const { TabPane } = Tabs;
 
@@ -93,7 +103,11 @@ function AssessmentCard({
       'WCPS',
       'PARLIAMENTARY_CONTRIBUTIONS',
     ].indexOf(sectionName);
-    return jsonPayload?.SectionsEnabled.includes(sectionIndex);
+
+    const isUpdated = revisionData?.sectionsUpdated?.includes(sectionIndex);
+    const isEnabled = jsonPayload?.SectionsEnabled.includes(sectionIndex);
+
+    return { isEnabled, isUpdated };
   };
 
   const sectionIndexof = (sectionName) => {
@@ -107,6 +121,24 @@ function AssessmentCard({
     ].indexOf(sectionName);
   };
 
+  const fetchRevisionPayload = async () => {
+    try {
+      const res = await apiService.get(endpoints.getRevisionPayload(igcId));
+      if (res.status === 200) {
+        console.log('Fetched revision payload:', res.data.result);
+        return res.data.result.data;
+      }
+    } catch (error) {
+      console.log('Error fetching revision payload:', error);
+    }
+  };
+  const [revisionData, setRevisionData] = useState(null);
+
+  useEffect(() => {
+    fetchRevisionPayload().then((data) => {
+      setRevisionData(data);
+    });
+  }, [igcId, activeKey]);
   // const { activeCapName } = useMda();
   return (
     <div className="p-2  overflow-auto">
@@ -136,11 +168,30 @@ function AssessmentCard({
                 tab={
                   <span className="text-primary font-montserrat">
                     Pensioner Information
-                    {isSectionEnabled('BASIC_DETAILS') && (
-                      <Tooltip title="This section needs editing">
-                        <Error style={{ color: 'orange' }} className="ml-2" />
-                      </Tooltip>
-                    )}
+                    {(() => {
+                      const { isEnabled, isUpdated } =
+                        isSectionEnabled('BASIC_DETAILS');
+                      if (isEnabled && !isUpdated) {
+                        return (
+                          <Tooltip title="This section needs editing">
+                            <EditOff
+                              style={{ color: 'orange' }}
+                              className="ml-2"
+                            />
+                          </Tooltip>
+                        );
+                      } else if (isUpdated) {
+                        return (
+                          <Tooltip title="This section has been edited">
+                            <Edit
+                              style={{ color: '#2e7d32' }}
+                              className="ml-2"
+                            />
+                          </Tooltip>
+                        );
+                      }
+                      return null;
+                    })()}
                   </span>
                 }
                 key={children ? '12' : '1'}
@@ -208,14 +259,30 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat overflow-hidden">
                           Work History
-                          {isSectionEnabled('WORK_HISTORY') && (
-                            <Tooltip title="This section needs editing">
-                              <Error
-                                style={{ color: 'orange' }}
-                                className="ml-2"
-                              />
-                            </Tooltip>
-                          )}
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('WORK_HISTORY');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            }
+                            return null;
+                          })()}
                         </span>
                       }
                       key="3"
@@ -233,14 +300,30 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat">
                           Government Salary
-                          {isSectionEnabled('GOVERNMENT_SALARY') && (
-                            <Tooltip title="This section needs editing">
-                              <Error
-                                style={{ color: 'orange' }}
-                                className="ml-2"
-                              />
-                            </Tooltip>
-                          )}
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('GOVERNMENT_SALARY');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            }
+                            return null;
+                          })()}
                         </span>
                       }
                       key="9"
@@ -289,14 +372,30 @@ function AssessmentCard({
                       tab={
                         <span className="text-primary font-montserrat">
                           Deductions
-                          {isSectionEnabled('DEDUCTIONS') && (
-                            <Tooltip title="This section needs editing">
-                              <Error
-                                style={{ color: 'orange' }}
-                                className="ml-2"
-                              />
-                            </Tooltip>
-                          )}
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('DEDUCTIONS');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            }
+                            return null;
+                          })()}
                         </span>
                       }
                       key="7"
@@ -325,14 +424,30 @@ function AssessmentCard({
                         tab={
                           <span className="text-primary font-montserrat">
                             Women & Children Contributions Scheme
-                            {isSectionEnabled('WCPS') && (
-                              <Tooltip title="This section needs editing">
-                                <Error
-                                  style={{ color: 'orange' }}
-                                  className="ml-2"
-                                />
-                              </Tooltip>
-                            )}
+                            {(() => {
+                              const { isEnabled, isUpdated } =
+                                isSectionEnabled('WCPS');
+                              if (isEnabled && !isUpdated) {
+                                return (
+                                  <Tooltip title="This section needs editing">
+                                    <EditOff
+                                      style={{ color: 'orange' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              } else if (isUpdated) {
+                                return (
+                                  <Tooltip title="This section has been edited">
+                                    <Edit
+                                      style={{ color: '#2e7d32' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              }
+                              return null;
+                            })()}
                           </span>
                         }
                         key="8"
@@ -346,16 +461,31 @@ function AssessmentCard({
                         tab={
                           <span className="text-primary font-montserrat">
                             Parliament Contributions
-                            {isSectionEnabled(
-                              'PARLIAMENTARY_CONTRIBUTIONS'
-                            ) && (
-                              <Tooltip title="This section needs editing">
-                                <Error
-                                  style={{ color: 'orange' }}
-                                  className="ml-2"
-                                />
-                              </Tooltip>
-                            )}
+                            {(() => {
+                              const { isEnabled, isUpdated } = isSectionEnabled(
+                                'PARLIAMENTARY_CONTRIBUTIONS'
+                              );
+                              if (isEnabled && !isUpdated) {
+                                return (
+                                  <Tooltip title="This section needs editing">
+                                    <EditOff
+                                      style={{ color: 'orange' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              } else if (isUpdated) {
+                                return (
+                                  <Tooltip title="This section has been edited">
+                                    <Edit
+                                      style={{ color: '#2e7d32' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              }
+                              return null;
+                            })()}
                           </span>
                         }
                         key="10"

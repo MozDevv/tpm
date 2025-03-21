@@ -793,305 +793,6 @@ function NewPreclaimForIgc({
     message: '',
   });
 
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-
-  //     if (retireeId && !editMode) {
-  //       // router.push(
-  //       //   `/pensions/preclaims/listing/new/add-payment-details?id=${retireeId}`
-  //       // );
-  //       //   moveToNextTab();
-  //       return;
-  //     }
-
-  //     for (const key of Object.keys(formData)) {
-  //       if (
-  //         key === 'is_parliamentary' &&
-  //         (activeCapName === 'CAP196' ||
-  //           activeCapName === 'DSO/RK' ||
-  //           activeCapName === 'APN/PK')
-  //       ) {
-  //         formData.is_parliamentary = true;
-  //       }
-  //       if (
-  //         key === 'date_of_confirmation' &&
-  //         (activeCapName === 'CAP196' ||
-  //           activeCapName === 'DSO/RK' ||
-  //           activeCapName === 'APN/PK')
-  //       ) {
-  //         formData.date_of_confirmation = formData.date_of_first_appointment;
-  //       }
-  //     }
-
-  //     const newErrors = {};
-  //     for (const key of Object.keys(formData)) {
-  //       if (
-  //         key !== 'other_name' &&
-  //         key !== 'postal_code' &&
-  //         key !== 'notification_status' &&
-  //         key !== 'designation_grade' &&
-  //         key !== 'postal_address' &&
-  //         key !== 'city_town' &&
-  //         key !== 'country_id' &&
-  //         key !== 'county_id' &&
-  //         key !== 'constituency_id' &&
-  //         key !== 'authority_for_retirement_reference' &&
-  //         key !== 'authority_for_retirement_dated' &&
-  //         key !== 'tax_exempt_certificate_number' &&
-  //         key !== 'tax_exempt_certificate_date' &&
-  //         key !== 'date_of_confirmation' &&
-  //         key !== 'is_parliamentary' &&
-  //         key !== 'military_id' &&
-  //         key !== 'monthly_salary_in_ksh' &&
-  //         key !== 'service_increments' &&
-  //         key !== 'monthly_aditional_pay' &&
-  //         key !== 'tribe' &&
-  //         key !== 'maintenance_case' &&
-  //         key !== 'is_wcps' &&
-  //         key !== 'commutation_option_selection' &&
-  //         key !== 'commutation_option_selection_date' &&
-  //         key !== 'isCommutable' &&
-  //         key !== 'was_injured' &&
-  //         key !== 'date_of_injury_for_cap189' &&
-  //         key !== 'salary_at_injury_for_cap189' &&
-  //         key !== 'rate_of_injury_id_for_cap189' &&
-  //         key !== 'degree_of_disablement_for_cap199' &&
-  //         key !== 'date_of_injury_for_cap199' &&
-  //         key !== 'salary_at_injury_for_cap199' &&
-  //         key !== 'pension_award_id' &&
-  //         key !== 'pension_cap' &&
-  //         key !== 'was_in_mixed_service' &&
-  //         key !== 'national_id' &&
-  //         key !== 'assisted_living' &&
-  //         key !== 'killed_on_duty' &&
-  //         //   key !== 'last_basic_salary_amount' &&
-  //         (formData[key] === undefined ||
-  //           formData[key] === null ||
-  //           formData[key] === '' ||
-  //           formData[key] === false)
-  //       ) {
-  //         // console.log('Keys not filled', key);
-  //         // newErrors[key] = 'This field is required';
-  //         // message.error(`This field is required: ${key}`);
-  //         return; // Exit the function or block to stop further processing
-  //       }
-  //     }
-  //     for (const key of Object.keys(formData)) {
-  //       if (key === 'phone_number' && formData[key] === '') {
-  //         newErrors[key] = 'This field is required';
-  //         message.error('Phone number is required, Please fill in the field');
-  //         return; // Exit the function or block to stop further processing
-  //       }
-  //     }
-
-  //     for (const key of Object.keys(formData)) {
-  //       const error = validateField(key, formData[key], formData);
-  //       if (error) {
-  //         newErrors[key] = error;
-  //         message.error(error);
-  //         return; // Exit the function or block to stop further processing
-  //       }
-  //     }
-
-  //     if (formData.dob) {
-  //       const dobDate = dayjs(formData.dob);
-  //       const age = dayjs().diff(dobDate, 'year');
-  //       if (age < 18) {
-  //         newErrors.dob = 'User must be at least 18 years old';
-  //       }
-  //     }
-
-  //     const errors = validateRetirementDate() || {};
-
-  //     if (dobError) {
-  //       return;
-  //     }
-
-  //     // Check if there are any errors
-  //     if (Object.keys(errors).length > 0) {
-  //       setErrors(errors);
-  //       return;
-  //     }
-
-  //     setErrors(newErrors);
-
-  //     /*  if (Object.keys(newErrors).length > 0) {
-  //       console.log("Errors found", newErrors);
-  //       return; // Don't submit if there are errors
-  //     }
-  // */
-  //     // setIsLoading(true);
-  //     const formattedFormData = { ...formData };
-  //     Object.keys(formattedFormData).forEach((key) => {
-  //       if (
-  //         (dayjs(formattedFormData[key]).isValid() && key.includes('date')) ||
-  //         key === 'dob'
-  //       ) {
-  //         formattedFormData[key] = dayjs(formattedFormData[key]).format(
-  //           'YYYY-MM-DDTHH:mm:ss[Z]'
-  //         );
-  //       }
-  //     });
-
-  //     if (!mdaId) {
-  //       message.error('MDA not found, Please sign in as an MDA user');
-  //       return;
-  //     }
-
-  //     const injury_details =
-  //       activeCapName === 'CAP189'
-  //         ? {
-  //             date_of_injury: dayjs(formData.date_of_injury_for_cap189).isValid()
-  //               ? dayjs(formData.date_of_injury_for_cap189).format(
-  //                   'YYYY-MM-DDTHH:mm:ss[Z]'
-  //                 )
-  //               : '',
-  //             salary_at_injury: formData.salary_at_injury_for_cap189 ?? '',
-  //             rate_of_injury_id: formData.rate_of_injury_id_for_cap189 ?? '',
-  //           }
-  //         : null;
-
-  //     const disablement_details =
-  //       activeCapName === 'CAP199'
-  //         ? {
-  //             date_of_injury: dayjs(formData.date_of_injury_for_cap199).isValid()
-  //               ? dayjs(formData.date_of_injury_for_cap199).format(
-  //                   'YYYY-MM-DDTHH:mm:ss[Z]'
-  //                 )
-  //               : '',
-  //             degree_of_disablement:
-  //               formData.degree_of_disablement_for_cap199 ?? 0,
-  //             salary_at_injury: formData.salary_at_injury_for_cap199 ?? '',
-  //           }
-  //         : null;
-
-  //     const data = {
-  //       ...formattedFormData,
-  //       mda_id: mdaId,
-  //       ...(formData?.was_injured === 1 && {
-  //         disablement_details,
-  //         injury_details,
-  //       }),
-  //       was_injured: formData?.was_injured === 1 ? true : false,
-  //     };
-
-  //     try {
-  //       let res;
-  //       setSaving(1);
-
-  //       if (retireeId) {
-  //         res = await axios.post(
-  //           `${BASE_CORE_API}api/ProspectivePensioners/UpdateProspectivePensioner`,
-  //           { ...data, id: retireeId },
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           }
-  //         );
-
-  //         if (res?.status === 200 && res?.data?.succeeded) {
-  //           if (
-  //             res.data.messages[0] ===
-  //             'Prospective pensioner updated successfully'
-  //           ) {
-  //             localStorage.removeItem('retireeFormData');
-  //             setSaving(2);
-  //             setAlert({
-  //               open: true,
-  //               message: 'Prospective pensioner Information updated successfully',
-  //             });
-  //             setOnCloseWarnings(false);
-  //             fetchRetiree();
-  //             setEditMode(false);
-  //             return;
-  //           }
-  //         }
-
-  //         if (res?.data?.validationErrors?.length > 0) {
-  //           res.data.validationErrors.forEach((error) => {
-  //             error.errors.forEach((err) => {
-  //               message.error(`${error.field}: ${err}`);
-  //             });
-  //           });
-  //           setSaving(3);
-  //           return;
-  //         }
-
-  //         if (res.data.succeeded === false && res.data.messages[0]) {
-  //           message.error(res.data.messages[0]);
-  //           setSaving(3);
-  //           return;
-  //         }
-  //       } else {
-  //         res = await axios.post(
-  //           `${BASE_CORE_API}api/ProspectivePensioners/CreateProspectivePensioner`,
-  //           data,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           }
-  //         );
-  //       }
-
-  //       if (res.data.succeeded && res.status === 200) {
-  //         setSaving(2);
-  //         if (formData.mortality_status == 1) {
-  //           message.warning(
-  //             'Prospective pensioner updated successfully, please proceed to the add Beneficiary Details'
-  //           );
-
-  //           setAlert({
-  //             open: true,
-  //             message:
-  //               'Please fill in the Beneficiaries Details for the deceased retiree',
-  //             severity: 'warning',
-  //           });
-  //         } else {
-  //           setAlert({
-  //             open: true,
-  //             message: 'Prospective pensioner Information saved successfully',
-  //           });
-  //         }
-
-  //         setRetireeId(res.data.data);
-
-  //         localStorage.removeItem('retireeFormData');
-
-  //         return;
-  //       }
-
-  //       if (res?.data?.validationErrors?.length > 0) {
-  //         res.data.validationErrors.forEach((error) => {
-  //           error.errors.forEach((err) => {
-  //             message.error(`${error.field}: ${err}`);
-  //           });
-  //         });
-  //         setSaving(3);
-  //         return;
-  //       }
-
-  //       if (res?.data?.succeeded === false) {
-  //         if (
-  //           res.data.messages[0] ===
-  //           'A similar award has already been created for the retiree.'
-  //         ) {
-  //           message.error(res.data.messages[0]);
-  //           setSaving(3);
-  //           return;
-  //         } else if (res.data.messages[0]) {
-  //           message.error(res.data.messages[0]);
-  //           setSaving(3);
-  //           return;
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.log('API Error:', error);
-  //       // setSaving(3);
-  //     }
-  //   };
-
   const [dobError, setDobError] = useState(null);
   const handleSubmit = () => {};
 
@@ -1251,6 +952,38 @@ function NewPreclaimForIgc({
     } catch (error) {
       console.error('Error saving IGC changes:', error);
     }
+  };
+
+  // const {igcId} = useIgcIdStore();
+
+  const fetchRevisionPayload = async () => {
+    try {
+      const res = await setupsApi.get(endpoints.getRevisionPayload(igcId));
+      if (res.status === 200) {
+        console.log('Fetched revision payload:', res.data.result);
+        return res.data.result.data;
+      }
+    } catch (error) {
+      console.log('Error fetching revision payload:', error);
+    }
+  };
+  const [revisionData, setRevisionData] = useState(null);
+
+  useEffect(() => {
+    fetchRevisionPayload().then((data) => {
+      setRevisionData(data);
+    });
+  }, [igcId]);
+
+  const getFieldValue = (field) => {
+    if (
+      revisionData &&
+      revisionData.sectionsUpdated?.includes(0) &&
+      revisionData.basicDetailFields?.includes(field.name)
+    ) {
+      return revisionData.prospective_pensioner[field.name];
+    }
+    return formData[field.name];
   };
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
@@ -1589,7 +1322,7 @@ function NewPreclaimForIgc({
                                         }}
                                         name={field.name}
                                         disabled={!canEdit(field.name)}
-                                        value={formData[field.name]}
+                                        value={getFieldValue(field)}
                                         onChange={handleInputChange}
                                         error={!!errors[field.name]} // Show error style if there is an error
                                         helperText={errors[field.name]} // Display the error message
@@ -1655,7 +1388,7 @@ function NewPreclaimForIgc({
                                         value={
                                           field.children.find(
                                             (option) =>
-                                              option.id === formData[field.name]
+                                              option.id === getFieldValue(field)
                                           ) || null
                                         }
                                       />
@@ -1688,7 +1421,7 @@ function NewPreclaimForIgc({
                                             ? '#e0f7fa'
                                             : 'inherit', // Change background color if editable
                                         }}
-                                        value={formData[field.name]}
+                                        value={getFieldValue(field)}
                                         onChange={handleInputChange}
                                         error={!!errors[field.name]}
                                         helperText={errors[field.name]}
