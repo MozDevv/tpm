@@ -457,6 +457,9 @@ const financeEndpoints = {
   getAllReceiptNoGeneratorLine:
     'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000&isUsed=false',
 
+  getAllGeneratedLines:
+    'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000',
+
   addReceiptType: 'AccountsSetup/AddReceiptType',
   getReceiptType: 'AccountsSetup/GetReceiptTypes',
   getReceiptsByNo: (no) => `/Posting/GetReceipts?recieptNo=${no}`,

@@ -845,7 +845,10 @@ const BaseInputCard = ({
                     error={!!errors[field.name]}
                     helperText={errors[field.name]}
                     onBlur={(event) => {
-                      if (field.name === 'receiptNo') {
+                      if (
+                        field.name === 'receiptNo' ||
+                        field.name === 'recieptNo'
+                      ) {
                         handleOnBlur(params.inputProps.value);
                       }
                     }}

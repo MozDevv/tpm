@@ -38,6 +38,7 @@ import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
+import ReceiptVoucher from '../../payments/reciepts/ReceiptVoucher';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -127,8 +128,10 @@ const Returns = ({ status }) => {
       },
     }),
   };
+  const [openReceiptReport, setOpenReceiptReport] = React.useState(false);
 
   const baseCardHandlers = {
+    'Receipt Voucher': () => setOpenReceiptReport(true),
     ...(clickedItem &&
       status === 2 && {
         createReturnReceipt: () => {
@@ -249,6 +252,11 @@ const Returns = ({ status }) => {
     financeEndpoints.getPaymentMethods,
     apiService
   );
+  const { data: allNos } = useFetchAsync(
+    financeEndpoints.getAllGeneratedLines,
+    apiService
+  );
+
   const fields = [
     ...(!clickedItem
       ? [
@@ -329,20 +337,8 @@ const Returns = ({ status }) => {
           {
             name: 'receiptNo',
             label: 'Receipt No',
-            type: 'autocomplete',
+            type: 'text',
             required: true,
-            options:
-              (receiptNos &&
-                receiptNos
-                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
-                  ?.receiptNoGeneratorLines?.map((item) => {
-                    return {
-                      id: item.id,
-                      name: item.receiptNo,
-                      lineId: item.receiptNo,
-                    };
-                  })) ||
-              [],
           },
         ]
       : []),
@@ -669,13 +665,82 @@ const Returns = ({ status }) => {
   }, []);
 
   const uploadFields = [
-    {
-      name: 'is_uncollected_payments',
-      label: 'Is Uncollected Payments',
-      type: 'switch',
-    },
-    ...(inputData && inputData.is_uncollected_payments
+    ...(!clickedItem
       ? [
+          {
+            name: 'is_uncollected_payments',
+            label: 'Is Uncollected Payments',
+            type: 'select',
+            options: [
+              { id: false, name: 'No' },
+              { id: true, name: 'Yes' },
+            ],
+          },
+        ]
+      : []),
+    ...(clickedItem
+      ? [
+          {
+            name: 'documentNo',
+            label: 'Document No',
+            type: 'text',
+            disabled: true,
+          },
+        ]
+      : []),
+    ...(inputData && !inputData.is_uncollected_payments
+      ? [
+          {
+            name: 'receiptCode',
+            label: 'Receipt Code',
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.receiptCode,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
+          {
+            name: 'recieptNo',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            options:
+              (receiptNos &&
+                receiptNos
+                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
+                  ?.receiptNoGeneratorLines?.map((item) => {
+                    return {
+                      id: item.id,
+                      name: item.receiptNo,
+                      lineId: item.receiptNo,
+                    };
+                  })) ||
+              [],
+          },
+        ]
+      : clickedItem
+      ? [
+          {
+            name: 'receiptCode',
+            label: 'Receipt Code',
+            type: 'select',
+            table: true,
+            options:
+              receiptNos &&
+              receiptNos.map((item) => {
+                return {
+                  id: item.receiptCode,
+                  name: item.receiptCode,
+                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                };
+              }),
+          },
           {
             name: 'receiptNo',
             label: 'Receipt No',
@@ -688,46 +753,56 @@ const Returns = ({ status }) => {
       name: 'returnDate',
       label: 'Return Date',
       type: 'date',
-      required: true,
+      disabled: true,
     },
     {
       name: 'totalAmount',
       label: 'Total Amount',
       type: 'amount',
-      required: true,
+      disabled: true,
     },
 
     {
-      name: 'returnTypeId',
-      label: 'Return Type',
-      type: 'select',
-      required: true,
-      options: [
-        { id: 0, name: 'Monthly' },
-        { id: 1, name: 'Lumpsum' },
-      ],
+      name: 'receiptTypeId',
+      label: 'Receipt Type',
+      type: 'autocomplete',
+      disabled: true,
+      options:
+        allReciepts &&
+        allReciepts.map((item) => {
+          return {
+            id: item.receiptTypeId,
+            name: item.receiptTypeName,
+            crAccount: item.crAccountNo,
+            drAccount: item.drAccountNo,
+          };
+        }),
     },
+
     {
       name: 'paymentMethodId',
       label: 'Payment Method',
-      type: 'select',
+      type: 'autocomplete',
+      disabled: true,
       required: true,
       options:
-        paymentMeth &&
-        paymentMeth.map((method) => ({
+        paymentMethods &&
+        paymentMethods.map((method) => ({
           id: method.id,
           name: method.description,
         })),
     },
     {
       name: 'eftNo',
-      label: 'EFT No',
-      type: 'number',
+      label: 'Cheque/EFT No',
+      type: 'text',
+      disabled: true,
     },
     {
       name: 'bankId',
       label: 'Bank',
       type: 'autocomplete',
+      disabled: true,
       required: true,
       options: banks.map((bank) => ({
         id: bank.id,
@@ -738,6 +813,7 @@ const Returns = ({ status }) => {
       name: 'bankBranchId',
       label: 'Branch',
       type: 'autocomplete',
+      disabled: true,
       required: true,
       options: branches.map((branch) => ({
         id: branch.id,
@@ -746,11 +822,18 @@ const Returns = ({ status }) => {
       })),
     },
     {
-      name: 'chartOfAccountId',
-      label: 'Account',
-      type: 'select',
-      options: glAccounts,
-      table: true,
+      name: 'drAccountId',
+      label: 'Debit Account',
+      type: 'autocomplete',
+      options: drAccounts,
+      disabled: true,
+    },
+    {
+      name: 'crAccountId',
+      label: 'Credit Account',
+      type: 'autocomplete',
+      options: crAccounts,
+      disabled: true,
     },
     {
       name: 'file',
@@ -818,8 +901,42 @@ const Returns = ({ status }) => {
     console.log('recueopt No Lines', receiptNoLines);
     console.log('inputData', inputData);
   }, [inputData]);
+  const reportItems = ['Receipt Voucher'];
   return (
     <div className="">
+      <Dialog
+        open={openReceiptReport}
+        onClose={() => setOpenReceiptReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
+            minWidth: '55vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <ReceiptVoucher
+            crAccounts={crAccounts}
+            drAccounts={drAccounts}
+            setOpenReceiptReport={setOpenReceiptReport}
+            clickedItem={clickedItem}
+          />
+        </div>
+      </Dialog>
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <BaseApprovalCard
         openApprove={openApprove}
         setOpenApprove={setOpenApprove}
@@ -861,6 +978,7 @@ const Returns = ({ status }) => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
+        reportItems={reportItems}
       >
         {clickedItem ? (
           <>
@@ -922,6 +1040,7 @@ const Returns = ({ status }) => {
             setCloseProp={setUploadExcel}
             setReFetchData={setRefetch}
             setInputData={setInputData}
+          
           />
         ) : (
           <></>
