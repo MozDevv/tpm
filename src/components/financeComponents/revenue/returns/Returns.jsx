@@ -281,7 +281,7 @@ const Returns = ({ status }) => {
           },
         ]
       : []),
-    ...(inputData && !inputData.is_uncollected_payments
+    ...(inputData && !inputData.is_uncollected_payments && !clickedItem
       ? [
           {
             name: 'receiptCode',
@@ -1040,7 +1040,6 @@ const Returns = ({ status }) => {
             setCloseProp={setUploadExcel}
             setReFetchData={setRefetch}
             setInputData={setInputData}
-          
           />
         ) : (
           <></>

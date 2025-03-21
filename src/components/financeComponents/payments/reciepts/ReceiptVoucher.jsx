@@ -145,12 +145,10 @@ const ReceiptVoucher = ({
     }, 100); // Adjust the delay as needed
   };
   useEffect(() => {
-    if (report) {
-      // Add a small delay to ensure the DOM is fully updated
-      setTimeout(() => {
-        generatePdfBlob();
-      }, 100); // Adjust the delay as needed
-    }
+    // Add a small delay to ensure the DOM is fully updated
+    setTimeout(() => {
+      generatePdfBlob();
+    }, 100); // Adjust the delay as needed
   }, [report]);
   return (
     <div
@@ -252,7 +250,8 @@ const ReceiptVoucher = ({
                 </p>
                 <div className="mt-4">
                   <p className="px-4 mb-2">
-                    Being receipt of Cheque/Deposit for 31% Contribution
+                    Being receipt of Cheque/Deposit for{' '}
+                    {clickedItem?.receiptTypeName}
                   </p>
                   <p className="px-4">
                     RECEIPTED VIDE OUR MR-NO: 6148751 OF 13-FEB-25
@@ -351,7 +350,7 @@ const ReceiptVoucher = ({
               <div className="border-r border-black  h-[60px]">
                 <p className="text-center pt-1 font-semibold">SubHead</p>
                 <p className="text-center pt-1 font-semibold">
-                  31% CONTRIBUTION
+                  {clickedItem?.receiptTypeName}
                 </p>
               </div>
             </div>
