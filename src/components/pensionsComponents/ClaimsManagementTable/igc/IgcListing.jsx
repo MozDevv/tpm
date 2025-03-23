@@ -179,7 +179,7 @@ const IgcListing = () => {
   const baseCardHandlers = {
     ...(clickedItem &&
     clickedItem?.igc_type === 11 &&
-    clickedItem?.igc_submission_status === 3
+    clickedItem?.igc_submission_status === 2
       ? {
           moveStatusIgc: () => {
             handleMovestatus();
@@ -214,10 +214,10 @@ const IgcListing = () => {
   };
   const handleMovestatus = async () => {
     try {
-      const res = await apiService(endpoints.moveIgcStatus, {
+      const res = await apiService.post(endpoints.moveIgcStatus, {
         id: clickedItem?.id,
       });
-      if (res.status === 200) {
+      if (res.status === 200 && res.data.succeeded === true) {
         message.success('IGC moved to the next status successfully');
         setSelectedRows([]);
       }

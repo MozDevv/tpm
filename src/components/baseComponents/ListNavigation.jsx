@@ -643,6 +643,12 @@ const ListNavigation = ({
       icon: Send,
       requiredPermissions: [],
     },
+    {
+      name: 'Move IGC Status',
+      icon: IosShare,
+      action: 'moveStatusIgc',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
@@ -676,13 +682,6 @@ const ListNavigation = ({
       name: 'Change Request',
       icon: EditNote,
       action: 'changeRequest',
-      requiredPermissions: [],
-    },
-
-    {
-      nmae: 'Move IGC Status',
-      icon: Send,
-      action: 'moveStatusIgc',
       requiredPermissions: [],
     },
   ];
