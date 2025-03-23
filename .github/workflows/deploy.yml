@@ -1,33 +1,33 @@
-name: Deploy to Server
+name: Build and Push Docker Image
 
+# Trigger the workflow on changes to the 'main' branch
 on:
   push:
     branches:
-      - work
+      - main
 
 jobs:
-  deploy:
+  build-and-push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install Dependencies and Build
-        run: |
-          npm install
-          npm run build
-
-      - name: SSH into Server and Restart PM2
-        uses: appleboy/ssh-action@master
+      # Step 2: Log in to Docker Hub using Docker Hub credentials from GitHub Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DROPLET_SSH_PORT }}
-          script: |
-            cd tpm/tpm/tpm
-            git pull
-            npm install
-            npm install     # Install PM2 globally if not already installed
-            pm2 restart tpm       # Restart your PM2 process (adjust as needed)
+          username: ${{ secrets.DOCKER_USERNAME }} # Replace with your Docker Hub username secret
+          password: ${{ secrets.DOCKER_PASSWORD }} # Replace with your Docker Hub password secret
+
+      # Step 3: Build and push Docker image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: agilesam/pmis:latest

@@ -51,6 +51,7 @@ import BaseExcelComponent from './BaseExcelComponent';
 import endpoints, { apiService as setupsApi } from '../services/setupsApi';
 import {
   useIgcIdStore,
+  useIgEditedStore,
   usePeriodsOfAbsenceStore,
   usePostAndNatureStore,
 } from '@/zustand/store';
