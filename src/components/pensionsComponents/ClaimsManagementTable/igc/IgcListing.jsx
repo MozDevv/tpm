@@ -22,6 +22,7 @@ import { message } from 'antd';
 import { useIgcIdStore } from '@/zustand/store';
 
 const IgcListing = () => {
+  const [clickedItem, setClickedItem] = React.useState(null);
   const statusIcons = {
     0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
     1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
@@ -175,9 +176,19 @@ const IgcListing = () => {
     },
     sendIGCForApproval: () => handleSendForApproval(),
   };
-  const baseCardHandlers = {};
+  const baseCardHandlers = {
+    ...(clickedItem &&
+    clickedItem?.igc_type === 11 &&
+    clickedItem?.igc_submission_status === 3
+      ? {
+          moveStatusIgc: () => {
+            handleMovestatus();
+          },
+        }
+      : {}),
+  };
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
+
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [refreshData, setRefreshData] = React.useState(1);
 
@@ -193,6 +204,21 @@ const IgcListing = () => {
       const res = await Promise.all(promises);
       if (res.length > 0) {
         message.success('IGC sent for approval successfully');
+        setSelectedRows([]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshData((prev) => prev + 1);
+    }
+  };
+  const handleMovestatus = async () => {
+    try {
+      const res = await apiService(endpoints.moveIgcStatus, {
+        id: clickedItem?.id,
+      });
+      if (res.status === 200) {
+        message.success('IGC moved to the next status successfully');
         setSelectedRows([]);
       }
     } catch (error) {

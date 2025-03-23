@@ -156,6 +156,7 @@ const ListNavigation = ({
       action: 'create',
       requiredPermissions: [],
     },
+
     {
       name: 'Edit',
       icon: Edit,
@@ -675,6 +676,13 @@ const ListNavigation = ({
       name: 'Change Request',
       icon: EditNote,
       action: 'changeRequest',
+      requiredPermissions: [],
+    },
+
+    {
+      nmae: 'Move IGC Status',
+      icon: Send,
+      action: 'moveStatusIgc',
       requiredPermissions: [],
     },
   ];
