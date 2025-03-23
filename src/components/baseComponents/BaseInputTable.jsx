@@ -1485,7 +1485,7 @@ const BaseInputTable = ({
         if (isRowComplete(data)) {
           if (isAddMoreFields) {
             setTableInputData((prevData) => [...prevData, data]);
-          } else if (igcObject) {
+          } else if (igcObject && enabled) {
             await saveIgcChanges(data);
           } else if (enabled) {
             return;
@@ -1535,7 +1535,13 @@ const BaseInputTable = ({
         id: igcId,
         section: sectionIndex,
         data: {
-          [igcObject]: [data],
+          [igcObject]: [
+            {
+              ...data,
+              ...(idLabel && id ? { [idLabel]: id } : {}),
+              ...(igcId && { id: igcId }),
+            },
+          ],
         },
       };
       const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
