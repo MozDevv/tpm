@@ -1529,6 +1529,7 @@ const BaseInputTable = ({
   }, [rowData]);
 
   const { igcId } = useIgcIdStore();
+  const { igEdited, setIgEdited } = useIgEditedStore();
   const saveIgcChanges = async (data) => {
     try {
       const dataToSend = {
@@ -1547,6 +1548,7 @@ const BaseInputTable = ({
       const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
       if (res.status === 200 && res.data.succeeded) {
         message.success("IGC's changes saved successfully!");
+        setIgEdited((prev) => !prev);
       }
     } catch (error) {
       console.error('Error saving IGC changes:', error);

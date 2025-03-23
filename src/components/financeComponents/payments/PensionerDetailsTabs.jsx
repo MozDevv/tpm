@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import endpoints, { apiService } from '@/components/services/setupsApi';
+import { useIgEditedStore } from '@/zustand/store';
 
 const { TabPane } = Tabs;
 
@@ -133,12 +134,13 @@ function AssessmentCard({
     }
   };
   const [revisionData, setRevisionData] = useState(null);
+  const { igEdited } = useIgEditedStore();
 
   useEffect(() => {
     fetchRevisionPayload().then((data) => {
       setRevisionData(data);
     });
-  }, [igcId, activeKey]);
+  }, [igcId, activeKey, igEdited]);
   // const { activeCapName } = useMda();
   return (
     <div className="p-2  overflow-auto">
