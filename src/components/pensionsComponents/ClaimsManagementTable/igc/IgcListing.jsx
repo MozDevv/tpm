@@ -30,20 +30,16 @@ const IgcListing = () => {
     3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
     4: { icon: Cancel, name: 'Cancelled', color: '#d32f2f' }, // Red
   };
-
   const pensionStatusMap = {
     0: { name: 'Dependant Pension', color: '#1976d2' }, // Blue
     1: { name: 'Killed On Duty', color: '#fbc02d' }, // Yellow
     2: { name: 'Injury or Disability Pension', color: '#2e7d32' }, // Green
     3: { name: 'Revised Disability', color: '#d32f2f' }, // Red
-    4: { name: 'Revised Cases Erroneous Deductions', color: '#8e24aa' }, // Purple
-    5: { name: 'Revised Cases Court Order', color: '#ff7043' }, // Orange
-    6: { name: 'Revised Cases Salary Change', color: '#0288d1' }, // Light Blue
-    7: { name: 'Revised Cases Erroneous Awards', color: '#6d4c41' }, // Dark Purple
-    8: { name: 'Add Beneficiary Alive', color: '#c2185b' }, // Pink
-    9: { name: 'Add Beneficiary Deceased', color: '#7b1fa2' }, // Brown
-    10: { name: 'Change of Pay Point', color: '#009688' }, // Teal
-    11: { name: 'Revised Case', color: '#0288d1' }, // Deep Orange
+    4: { name: 'Revised Cases Court Order', color: '#ff7043' }, // Orange
+    5: { name: 'Add Beneficiary Alive', color: '#c2185b' }, // Pink
+    6: { name: 'Add Beneficiary Deceased', color: '#7b1fa2' }, // Brown
+    7: { name: 'Change of Pay Point', color: '#009688' }, // Teal
+    8: { name: 'Revised Computation', color: '#0288d1' }, // Deep Orange
   };
 
   const columnDefs = [
@@ -668,13 +664,24 @@ const IgcListing = () => {
     }
   }, [openBaseCard]);
 
-  const { igcId, setIgcId } = useIgcIdStore();
+  const { igcId, setIgcId } = useIgcIdStorre();
 
   useEffect(() => {
     if (clickedItem) {
       setIgcId(clickedItem.id);
     }
   }, [clickedItem]);
+  const isRevisedType = (igcType) => {
+    const revisedTypes = [
+      'Revised Disability',
+      'Revised Cases Court Order',
+      'Revised Cases Erroneous Deductions',
+      'Revised Cases Salary Change',
+      'Revised Cases Erroneous Awards',
+      'Revised Computation',
+    ];
+    return revisedTypes.includes(igcType);
+  };
   return (
     <div className="">
       <BaseCard
@@ -685,7 +692,7 @@ const IgcListing = () => {
         clickedItem={clickedItem}
         isUserComponent={false}
       >
-        {clickedItem && clickedItem?.igc_type === 11 ? (
+        {clickedItem && isRevisedType(clickedItem?.igc_type) ? (
           <AssessmentCard
             claim={
               clickedItem
@@ -706,9 +713,8 @@ const IgcListing = () => {
             childTitle="IGC Details"
             jsonPayload={clickedItem?.json_payload}
           />
-        ) : clickedItem && clickedItem?.igc_type !== 11 ? (
+        ) : clickedItem && !isRevisedType(clickedItem?.igc_type) ? (
           <>
-            {' '}
             <AssessmentCard
               claim={
                 clickedItem

@@ -15,4 +15,5 @@ export const usePensionableSalaryStore = stateFactory('pensionableSalary');
 export const useClickedProspectiveIdStore = stateFactory(
   'clickedProspectiveId'
 );
-export const useIgEditedStore = stateFactory('igEdited');
+export const useIgcIdStorre = stateFactory('igcId');
+// export const useIgEditedStore = stateFactory('igEdited');

@@ -92,8 +92,40 @@ export const menuItems = [
             path: '/pensions/claims/igc/igc-beneficiaries-list',
           },
           {
-            title: 'IGC Initiation List',
-            path: '/pensions/claims/igc/igc-initiation-list',
+            title: "IGC Dependant's Pension",
+            path: '/pensions/claims/igc/igc-dependants-pension',
+          },
+          {
+            title: 'IGC Killed On Duty',
+            path: '/pensions/claims/igc/igc-killed-on-duty',
+          },
+          {
+            title: 'IGC Injury or Disability Pension',
+            path: '/pensions/claims/igc/igc-injury-or-disability-pension',
+          },
+          {
+            title: 'IGC Revised Disability',
+            path: '/pensions/claims/igc/igc-revised-disability',
+          },
+          {
+            title: 'IGC Revised Cases Court Order',
+            path: '/pensions/claims/igc/igc-revised-cases-court-order',
+          },
+          {
+            title: 'IGC Add Beneficiary Alive',
+            path: '/pensions/claims/igc/igc-add-beneficiary-alive',
+          },
+          {
+            title: 'IGC Add Beneficiary Deceased',
+            path: '/pensions/claims/igc/igc-add-beneficiary-deceased',
+          },
+          {
+            title: 'IGC Change of Pay Point',
+            path: '/pensions/claims/igc/igc-change-of-pay-point',
+          },
+          {
+            title: 'IGC Revised Computation',
+            path: '/pensions/claims/igc/igc-revised-computation',
           },
         ],
       },
