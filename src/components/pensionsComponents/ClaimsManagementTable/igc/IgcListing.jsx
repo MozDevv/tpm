@@ -664,7 +664,7 @@ const IgcListing = () => {
     }
   }, [openBaseCard]);
 
-  const { igcId, setIgcId } = useIgcIdStorre();
+  const { igcId, setIgcId } = useIgcIdStore();
 
   useEffect(() => {
     if (clickedItem) {

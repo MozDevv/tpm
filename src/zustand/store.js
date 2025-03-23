@@ -12,8 +12,5 @@ export const useClickedItemStore = stateFactory('clickedItem');
 export const usePostAndNatureStore = stateFactory('postAndNature');
 export const usePeriodsOfAbsenceStore = stateFactory('periodsOfAbsence');
 export const usePensionableSalaryStore = stateFactory('pensionableSalary');
-export const useClickedProspectiveIdStore = stateFactory(
-  'clickedProspectiveId'
-);
-export const useIgcIdStorre = stateFactory('igcId');
-// export const useIgEditedStore = stateFactory('igEdited');
+export const usePensionableSalaryStore2 = stateFactory('pensionableSalary2');
+export const useIgEditedStore = stateFactory('isEsIgedied');
