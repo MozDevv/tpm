@@ -44,6 +44,7 @@ function AssessmentCard({
   isIgc,
   jsonPayload,
   igcId,
+  setClickedItem,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -140,8 +141,11 @@ function AssessmentCard({
     fetchRevisionPayload().then((data) => {
       setRevisionData(data);
     });
-  }, [igcId, activeKey, igEdited]);
+  }, [igcId, activeKey, igEdited, clickedItem]);
 
+  useEffect(() => {
+    console.log('Clicked item 😂❤️:', clickedItem); // Debug line
+  }, [clickedItem]);
   return (
     <div className="p-2  overflow-auto">
       <div>
@@ -210,6 +214,7 @@ function AssessmentCard({
                     />
                   ) : isIgc ? (
                     <NewPreclaimForIgc
+                      setClickedItem={setClickedItem}
                       jsonPayload={jsonPayload}
                       status={5}
                       retireeId={clickedItem?.id}

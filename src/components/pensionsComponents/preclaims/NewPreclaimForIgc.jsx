@@ -64,6 +64,7 @@ function NewPreclaimForIgc({
   setOnCloseWarnings,
   status,
   isPreclaim,
+  setClickedItem,
   jsonPayload,
 }) {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -445,6 +446,12 @@ function NewPreclaimForIgc({
   const handleInputChange = (e) => {
     if (retireeId) {
       setEditMode(true);
+    }
+    if (setClickedItem) {
+      setClickedItem((prevItem) => ({
+        ...prevItem,
+        [e.target.name]: e.target.value,
+      }));
     }
     let { name, value, type } = e.target;
     let parsedValue = type === 'number' ? parseFloat(value) : value;

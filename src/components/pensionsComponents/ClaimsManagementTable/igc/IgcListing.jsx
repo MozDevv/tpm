@@ -700,6 +700,7 @@ const IgcListing = () => {
                 : null
             }
             igcId={clickedItem?.id}
+            setClickedItem={setClickedItem}
             clickedItem={retiree}
             claimId={null}
             setOpenBaseCard={setOpenBaseCard}
