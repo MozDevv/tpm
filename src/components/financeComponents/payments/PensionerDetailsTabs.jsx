@@ -19,7 +19,7 @@ import PensionerDetails from '@/components/assessment/assessmentDataCapture/Pens
 import NewPreclaim from '@/components/pensionsComponents/preclaims/NewPreclaim';
 import NewPreclaimForIgc from '@/components/pensionsComponents/preclaims/NewPreclaimForIgc';
 import {
-  Edit,
+  Verified,
   EditNote,
   EditOff,
   Error,
@@ -183,7 +183,7 @@ function AssessmentCard({
                       } else if (isUpdated) {
                         return (
                           <Tooltip title="This section has been edited">
-                            <Edit
+                            <Verified
                               style={{ color: '#2e7d32' }}
                               className="ml-2"
                             />
@@ -274,7 +274,7 @@ function AssessmentCard({
                             } else if (isUpdated) {
                               return (
                                 <Tooltip title="This section has been edited">
-                                  <Edit
+                                  <Verified
                                     style={{ color: '#2e7d32' }}
                                     className="ml-2"
                                   />
@@ -315,7 +315,7 @@ function AssessmentCard({
                             } else if (isUpdated) {
                               return (
                                 <Tooltip title="This section has been edited">
-                                  <Edit
+                                  <Verified
                                     style={{ color: '#2e7d32' }}
                                     className="ml-2"
                                   />
@@ -387,7 +387,7 @@ function AssessmentCard({
                             } else if (isUpdated) {
                               return (
                                 <Tooltip title="This section has been edited">
-                                  <Edit
+                                  <Verified
                                     style={{ color: '#2e7d32' }}
                                     className="ml-2"
                                   />
@@ -439,7 +439,7 @@ function AssessmentCard({
                               } else if (isUpdated) {
                                 return (
                                   <Tooltip title="This section has been edited">
-                                    <Edit
+                                    <Verified
                                       style={{ color: '#2e7d32' }}
                                       className="ml-2"
                                     />
@@ -477,7 +477,7 @@ function AssessmentCard({
                               } else if (isUpdated) {
                                 return (
                                   <Tooltip title="This section has been edited">
-                                    <Edit
+                                    <Verified
                                       style={{ color: '#2e7d32' }}
                                       className="ml-2"
                                     />

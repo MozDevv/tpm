@@ -14,6 +14,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { useMda } from '@/context/MdaContext';
 import BaseInputTable from '@/components/baseComponents/BaseInputTable';
+import { useClickedProspectiveIdStore } from '@/zustand/store';
 
 const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
   const [rowData, setRowData] = useState([]);
@@ -141,6 +142,7 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
     fetchMdas();
   }, []);
 
+  const { clickedProspectiveId } = useClickedProspectiveIdStore();
   return (
     <div className="">
       <BaseInputTable
