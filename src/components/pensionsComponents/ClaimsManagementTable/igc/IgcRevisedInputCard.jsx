@@ -5,7 +5,7 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import React, { useEffect, useState } from 'react';
 import { mapRowData } from '../ClaimsTable';
 import { Autocomplete, Box, Button, Popper, TextField } from '@mui/material';
-import { message } from 'antd';
+import { Alert, message } from 'antd';
 
 function IgcRevisedInputCard({ setOpenBaseCard }) {
   const { data: fieldsAndSections } = useFetchAsync(
@@ -92,6 +92,12 @@ function IgcRevisedInputCard({ setOpenBaseCard }) {
       if (res.status === 200 && res.data.succeeded) {
         message.success('Igc Revised Case created successfully');
         setOpenBaseCard(false);
+      } else if (
+        res.status === 200 &&
+        !res.data.succeeded &&
+        Array.isArray(res?.data?.messages)
+      ) {
+        message.error(res.data.messages[0]);
       }
     } catch (error) {
       console.log(error);
@@ -101,6 +107,16 @@ function IgcRevisedInputCard({ setOpenBaseCard }) {
   return (
     <div>
       <div className="flex justify-end mr-5">
+        <div className="absolute">
+          {errors && (
+            <div className="mr-4">
+              {Object.values(errors).map((error, index) => (
+                <Alert key={index} message={error} type="error" showIcon />
+              ))}
+            </div>
+          )}
+        </div>
+
         <Button variant="contained" onClick={handleSubmit}>
           Submit
         </Button>
