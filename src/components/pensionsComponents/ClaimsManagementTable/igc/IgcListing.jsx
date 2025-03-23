@@ -672,16 +672,10 @@ const IgcListing = () => {
     }
   }, [clickedItem]);
   const isRevisedType = (igcType) => {
-    const revisedTypes = [
-      'Revised Disability',
-      'Revised Cases Court Order',
-      'Revised Cases Erroneous Deductions',
-      'Revised Cases Salary Change',
-      'Revised Cases Erroneous Awards',
-      'Revised Computation',
-    ];
+    const revisedTypes = [3, 4, 8]; // Enum values for revised types
     return revisedTypes.includes(igcType);
   };
+
   return (
     <div className="">
       <BaseCard

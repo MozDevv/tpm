@@ -141,7 +141,7 @@ function AssessmentCard({
       setRevisionData(data);
     });
   }, [igcId, activeKey, igEdited]);
-  // const { activeCapName } = useMda();
+
   return (
     <div className="p-2  overflow-auto">
       <div>
