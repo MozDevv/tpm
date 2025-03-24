@@ -419,6 +419,7 @@ export const mapRowData = (items) =>
       age_on_discharge: item?.age_on_discharge,
       maintenance_case: item?.maintenance_case,
       was_in_mixed_service: item?.was_in_mixed_service,
+      has_wcps_proforma_recovery: item?.has_wcps_proforma_recovery,
     }));
 
 const Preclaims = ({
