@@ -25,7 +25,13 @@ import endpoints from '@/components/services/setupsApi';
 import BaseInputForPensionableSalary from '@/components/baseComponents/BaseInputForPensionableSalary';
 import { parseDate, parseDateSlash } from '@/utils/dateFormatter';
 
-function PensionableSalary({ id, clickedItem, enabled, sectionIndex }) {
+function PensionableSalary({
+  id,
+  clickedItem,
+  enabled,
+  sectionIndex,
+  igcObject,
+}) {
   const [pensionableSalary, setPensionableSalary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -309,6 +315,8 @@ function PensionableSalary({ id, clickedItem, enabled, sectionIndex }) {
         retirementDate={clickedItem?.retirement_date}
         enabled={enabled}
         sectionIndex={1}
+        isAddMoreFields={false}
+        // igcObject={igcObject}
       />
     </div>
   );

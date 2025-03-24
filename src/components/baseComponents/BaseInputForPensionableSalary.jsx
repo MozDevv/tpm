@@ -67,6 +67,8 @@ const BaseInputForPensionableSalary = ({
   enabled,
   sectionIndex,
   useRequestBody,
+  isAddMoreFields,
+  igcObject,
 }) => {
   const { setPensionableSalary } = usePensionableSalaryStore();
   const [rowData, setRowData] = useState(() => {
@@ -1079,10 +1081,8 @@ const BaseInputForPensionableSalary = ({
         if (isRowComplete(data)) {
           if (isAddMoreFields) {
             setTableInputData((prevData) => [...prevData, data]);
-          } else if (igcObject) {
-            await saveIgcChanges(data);
           } else if (enabled) {
-            return;
+            await saveIgcChanges(data);
           } else {
             if (data.id) {
               await handleSave(data);
@@ -1112,7 +1112,9 @@ const BaseInputForPensionableSalary = ({
         id: igcId,
         section: sectionIndex,
         data: {
-          [igcObject]: [data],
+          workHistoryData: {
+            ['PensionableSalaries']: [data],
+          },
         },
       };
       const res = await setupsApi.post(endpoints.updateRevisedCase, dataToSend);
