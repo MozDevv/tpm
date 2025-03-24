@@ -57,7 +57,10 @@ function WcpsCard({
 
   const fetchMaintenance = async () => {
     try {
-      const res = await apiService.get(endpoints.getWcps(id));
+      const res = isWcpsProforma
+        ? await apiService.get(endpoints.getWcpsProforma(id))
+        : await apiService.get(endpoints.getWcps(id));
+
       const data = res.data.data;
 
       console.log('Data', res.data.data[0]);
@@ -81,7 +84,6 @@ function WcpsCard({
       console.error('Error fetching data:', error);
     }
   };
-
   useEffect(() => {
     fetchMaintenance();
   }, []);
