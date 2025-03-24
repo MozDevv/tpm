@@ -871,6 +871,10 @@ function NewPreclaim({
           formData[key] === '' ||
           formData[key] === false)
       ) {
+        console.log(
+          'field which have not been saved which need are required to be saved',
+          key
+        );
         // console.log('Keys not filled', key);
         // newErrors[key] = 'This field is required';
         // message.error(`This field is required: ${key}`);

@@ -97,7 +97,7 @@ const BaseInputTable = ({
   igcObject,
   sectionIndex,
   enabled,
-  useRequestBody,
+  useFormData,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -592,7 +592,6 @@ const BaseInputTable = ({
   };
 
   const mdaId = localStorage.getItem('mdaId');
-
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
@@ -608,9 +607,17 @@ const BaseInputTable = ({
     });
 
     try {
-      const requestData = useRequestBody
-        ? { requestBody: formattedFormData }
-        : formattedFormData;
+      let requestData;
+      if (useFormData) {
+        requestData = new FormData();
+        Object.keys(formattedFormData).forEach((key) => {
+          requestData.append(key, formattedFormData[key]);
+        });
+      } else {
+        requestData = useRequestBody
+          ? { requestBody: formattedFormData }
+          : formattedFormData;
+      }
 
       if (data.id) {
         const res = await putApiService(putEndpoint, {
