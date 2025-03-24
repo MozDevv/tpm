@@ -98,6 +98,7 @@ const BaseInputTable = ({
   sectionIndex,
   enabled,
   useFormData,
+  useRequestBody,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
