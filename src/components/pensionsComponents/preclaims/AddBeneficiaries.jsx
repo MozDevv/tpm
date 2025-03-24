@@ -87,7 +87,7 @@ const AddBeneficiaries = ({
       value: 'relationship_id',
       label: 'Relationship',
       type: 'select',
-      options: filteredRelationships.map((relationship) => ({
+      options: relationships.map((relationship) => ({
         id: relationship.id,
         name: relationship.name,
         gender: relationship.gender,
