@@ -142,7 +142,6 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
     fetchMdas();
   }, []);
 
-  const { clickedProspectiveId } = useClickedProspectiveIdStore();
   return (
     <div className="">
       <BaseInputTable
