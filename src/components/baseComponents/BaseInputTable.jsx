@@ -20,7 +20,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { message } from 'antd';
+import { message, Upload } from 'antd';
 import {
   Add,
   Api,
@@ -55,6 +55,12 @@ import {
   usePeriodsOfAbsenceStore,
   usePostAndNatureStore,
 } from '@/zustand/store';
+import { Button as AntButton } from 'antd';
+import {
+  UploadFileOutlined,
+  UploadOutlined,
+  Upload as MuiUpload,
+} from '@mui/icons-material';
 
 const BaseInputTable = ({
   fields = [],
@@ -99,6 +105,7 @@ const BaseInputTable = ({
   enabled,
   useFormData,
   useRequestBody,
+  uploadFile,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -374,7 +381,37 @@ const BaseInputTable = ({
       getPostAndNatureFiscalRecords();
     }
   };
+  const handleFileUploadNeeded = (file, fieldName) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileData = e.target.result;
 
+      setPreviewFile(file);
+
+      setRowData((prevData) => {
+        const newRow = { [fieldName]: fileData };
+
+        console.log('New Row:', newRow);
+
+        // Save the row if it is complete
+        if (isRowComplete(newRow)) {
+          console.log('Row is complete, saving:', newRow);
+          handleSave({ ...prevData[prevData.length - 1], [fieldName]: file });
+        } else {
+          console.log('Row is incomplete:', newRow);
+          handleSave(
+            fields.reduce((acc, field) => {
+              acc[field.value] = newRow[field.value];
+              return acc;
+            }, {})
+          );
+        }
+
+        return [...prevData, newRow];
+      });
+    };
+    reader.readAsDataURL(file);
+  };
   const [revisionPayload, setRevisionPayload] = useState(null);
 
   const fetchRevisionPayload = async () => {
@@ -596,6 +633,7 @@ const BaseInputTable = ({
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
+    console.log('datatosend from baseInput', formattedFormData);
     if (id) {
       formattedFormData[idLabel] = id;
     }
@@ -721,6 +759,25 @@ const BaseInputTable = ({
     });
   };
 
+  const [previewFile, setPreviewFile] = useState(null);
+
+  const handlePreviewInBaseInputCard = (file) => {
+    setPreviewFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      // Display the preview of the file content
+      console.log('Preview Data:', jsonData);
+      message.info('File preview is available in the console.');
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   const headers = [
     {
       headerCheckboxSelection: true,
@@ -732,6 +789,7 @@ const BaseInputTable = ({
       suppressSizeToFit: true,
       cellStyle: { width: '50px', borderRight: '1px solid #f0f0f0' },
     },
+
     ...fields.map((col, index) => {
       let columnDef = {
         headerName: col.label,
@@ -927,6 +985,56 @@ const BaseInputTable = ({
 
           // Parse the user input into a date
           return parseDate(params.newValue);
+        };
+      } else if (col.type === 'file') {
+        return {
+          headerName: col.label,
+          field: col.value,
+          cellRenderer: (params) => (
+            <div className="flex justify-between ">
+              <Upload
+                beforeUpload={async (file) => {
+                  handleFileUploadNeeded(file, col.value); // Capture the file and store it
+                  // handlePreviewInBaseInputCard(file);
+
+                  return false; // Prevent the auto-upload, we'll handle it manually
+                }}
+              >
+                <AntButton
+                  icon={
+                    <MuiUpload
+                      sx={{
+                        fontSize: '20px',
+                      }}
+                    />
+                  }
+                >
+                  Click to Upload
+                </AntButton>
+              </Upload>
+              {previewFile && (
+                <div className="mb-4">
+                  <AntButton
+                    onClick={() => handlePreviewInBaseInputCard(previewFile)}
+                    type="primary"
+                    style={{
+                      backgroundColor: '#006990',
+                      borderColor: '#006990',
+                    }}
+                    icon={
+                      <Launch
+                        sx={{
+                          fontSize: '20px',
+                        }}
+                      />
+                    }
+                  >
+                    Preview File
+                  </AntButton>
+                </div>
+              )}
+            </div>
+          ),
         };
       } else if (col.type === 'phone_number') {
         columnDef.cellEditor = CustomPhoneNumberCellEditor;

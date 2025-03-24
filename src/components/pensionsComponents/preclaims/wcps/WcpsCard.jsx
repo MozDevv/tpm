@@ -276,7 +276,11 @@ function WcpsCard({
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.put}
-                    apiService={apiService}
+                    apiService={
+                      clickedItem2?.has_wcps_proforma_recovery
+                        ? apiService
+                        : apiService
+                    }
                     deleteEndpoint={endpoints.deleteWcpsLine}
                     getEndpoint={
                       clickedItem2?.has_wcps_proforma_recovery

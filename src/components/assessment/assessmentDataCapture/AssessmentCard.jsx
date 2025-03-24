@@ -12,6 +12,7 @@ import AddBankDetails from '@/components/pensionsComponents/preclaims/AddBankDet
 import Deductions from '@/components/pensionsComponents/preclaims/deductions/Deductions';
 import WcpsCard from '@/components/pensionsComponents/preclaims/wcps/WcpsCard';
 import ParliamentContributions from '@/components/pensionsComponents/preclaims/Contributions/ParliamentContributions';
+import ViewBeneficiaries from '@/components/pensionsComponents/preclaims/ViewBeneficiaries';
 
 const { TabPane } = Tabs;
 
@@ -223,6 +224,17 @@ function AssessmentCard({
                       key="11"
                     >
                       <Liabilities id={clickedItem?.id} />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Beneficiaries & Guardian Details
+                        </span>
+                      }
+                      key="5"
+                      style={{ zIndex: 1 }}
+                    >
+                      <ViewBeneficiaries clickedItem={clickedItem} />
                     </TabPane>
                   </>
                 )}

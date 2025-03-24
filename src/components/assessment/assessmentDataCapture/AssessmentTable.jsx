@@ -52,6 +52,7 @@ import Cap196Death from '@/components/pensionsComponents/ClaimsManagementTable/r
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
+import DependantsReport from '../reports/DependantsReport';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -616,6 +617,7 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [computed, setComputed] = useState(false);
   const [openReport, setOpenReport] = useState(false);
   const [openGP178Report, setOpenGP178Report] = useState(false);
+  const [openDependantsReport, setOpenDependantsReport] = useState(false);
 
   const baseCardHandlers = {
     reports: () => console.log('Reports clicked'),
@@ -667,6 +669,9 @@ const AssessmentTable = ({ status, statusArr }) => {
 
     'Page 5 Report': () => {
       setOpenReport(2);
+    },
+    'Dependants Computations': () => {
+      setOpenDependantsReport(true);
     },
     'Detailed Report': () => {
       setOpenGP178Report(true);
@@ -875,6 +880,26 @@ const AssessmentTable = ({ status, statusArr }) => {
         </div>
       </Dialog>
       <Dialog
+        open={openDependantsReport}
+        onClose={() => setOpenDependantsReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '85vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        <div className="flex-grow overflow-hidden">
+          <DependantsReport
+            setOpenGratuity={setOpenDependantsReport}
+            clickedItem={clickedItem}
+          />
+        </div>
+      </Dialog>
+      <Dialog
         open={openReport === 2}
         onClose={() => setOpenReport(false)}
         sx={{
@@ -975,7 +1000,12 @@ const AssessmentTable = ({ status, statusArr }) => {
           openAction={openAction}
           setOpenAction={setOpenAction}
           isClaim={true}
-          reportItems={['Appendix', 'Page 5 Report', 'Detailed Report']}
+          reportItems={[
+            'Appendix',
+            'Page 5 Report',
+            'Detailed Report',
+            'Dependants Computations',
+          ]}
           isClaimManagement={true}
           activeStep={clickedItem?.stage}
           steps={[

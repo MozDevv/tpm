@@ -322,6 +322,12 @@ function PostAndNature({ id, clickedItem, enabled }) {
       type: 'select',
       options: natureOfServiceOptions[cap] || [],
     },
+    // {
+    //   label: 'Attachment',
+    //   value: 'attachment',
+    //   type: 'file',
+    //   notRequired: true,
+    // },
   ];
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();
