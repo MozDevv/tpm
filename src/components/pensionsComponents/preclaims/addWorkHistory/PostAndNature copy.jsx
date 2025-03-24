@@ -342,6 +342,7 @@ function PostAndNature({ id, clickedItem, enabled }) {
           clickedItem?.notification_status !== 3 &&
           clickedItem?.notification_status !== 7
         }
+        useRequestBody={true}
         cap={cap}
         setSeconded={setSeconded}
         idLabel="prospective_pensioner_id"

@@ -66,6 +66,7 @@ const BaseInputForPensionableSalary = ({
   retirementDate,
   enabled,
   sectionIndex,
+  useRequestBody,
 }) => {
   const { setPensionableSalary } = usePensionableSalaryStore();
   const [rowData, setRowData] = useState(() => {
@@ -497,22 +498,14 @@ const BaseInputForPensionableSalary = ({
       formattedFormData.review_period = formattedFormData.start_date;
     }
 
-    // Object.keys(formattedFormData).forEach((key) => {
-    //   if (dayjs(formattedFormData[key]).isValid() && key.includes('date')) {
-    //     // Set the time portion to 00:00:00
-    //     formattedFormData[key] = dayjs(formattedFormData[key])
-    //       .set('hour', 0)
-    //       .set('minute', 0)
-    //       .set('second', 0)
-    //       .set('millisecond', 0)
-    //       .format('YYYY-MM-DDTHH:mm:ss[Z]');
-    //   }
-    // });
-
     try {
+      const requestData = useRequestBody
+        ? { requestBody: formattedFormData }
+        : formattedFormData;
+
       if (data.id) {
         const res = await putApiService(putEndpoint, {
-          ...formattedFormData,
+          ...requestData,
           id: data.id,
         });
 
@@ -550,7 +543,7 @@ const BaseInputForPensionableSalary = ({
           throw new Error(res.data.message[0]);
         }
       } else {
-        const res = await postApiService(postEndpoint, formattedFormData);
+        const res = await postApiService(postEndpoint, requestData);
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
@@ -558,7 +551,6 @@ const BaseInputForPensionableSalary = ({
           message.success('Record added successfully');
 
           // Clear errors upon successful submission
-
           setRowErrors((prevErrors) => {
             const updatedErrors = { ...prevErrors };
             delete updatedErrors[data.id];

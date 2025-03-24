@@ -97,6 +97,7 @@ const BaseInputTable = ({
   igcObject,
   sectionIndex,
   enabled,
+  useRequestBody,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -607,9 +608,13 @@ const BaseInputTable = ({
     });
 
     try {
+      const requestData = useRequestBody
+        ? { requestBody: formattedFormData }
+        : formattedFormData;
+
       if (data.id) {
         const res = await putApiService(putEndpoint, {
-          ...formattedFormData,
+          ...requestData,
           id: data.id,
         });
 
@@ -644,7 +649,7 @@ const BaseInputTable = ({
           throw new Error(res.data.message[0]);
         }
       } else {
-        const res = await postApiService(postEndpoint, formattedFormData);
+        const res = await postApiService(postEndpoint, requestData);
 
         if (res.status === 200 && res.data.succeeded) {
           refreshData();
@@ -652,7 +657,6 @@ const BaseInputTable = ({
           message.success('Record added successfully');
 
           // Clear errors upon successful submission
-
           setRowErrors((prevErrors) => {
             const updatedErrors = { ...prevErrors };
             delete updatedErrors[data.id];
@@ -683,7 +687,7 @@ const BaseInputTable = ({
     } catch (error) {
       // Log the error and set a generic row error if needed
       setCellError(data.id, null, error.message || 'An unknown error occurred');
-      // console.log(error);
+      console.log(error);
       throw error;
     }
   };
