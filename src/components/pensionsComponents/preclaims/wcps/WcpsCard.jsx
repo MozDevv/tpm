@@ -241,7 +241,7 @@ function WcpsCard({
                   idLabel="prospective_pensioner_id"
                   fields={refFields}
                   apiEndpoint={
-                    clickedItem?.has_wcps_proforma_recovery
+                    clickedItem2?.has_wcps_proforma_recovery
                       ? endpoints.createWcpsProforma
                       : endpoints.createWcps
                   }
@@ -266,7 +266,7 @@ function WcpsCard({
                     fields={inputFields}
                     id={referenceId}
                     idLabel={
-                      clickedItem?.has_wcps_proforma_recovery
+                      clickedItem2?.has_wcps_proforma_recovery
                         ? 'wCPS_proforma_id'
                         : 'wcps_contribution_id'
                     }
@@ -277,17 +277,17 @@ function WcpsCard({
                     apiService={apiService}
                     deleteEndpoint={endpoints.deleteWcpsLine}
                     getEndpoint={
-                      clickedItem?.has_wcps_proforma_recovery
+                      clickedItem2?.has_wcps_proforma_recovery
                         ? endpoints.getWcpsProformaLine(id)
                         : endpoints.getWcpsLine(id)
                     }
                     apiEndpoint={
-                      clickedItem?.has_wcps_proforma_recovery
+                      clickedItem2?.has_wcps_proforma_recovery
                         ? endpoints.createWcpsProformaLine
                         : endpoints.createWcpsLine
                     }
                     putEndpoint={
-                      clickedItem?.has_wcps_proforma_recovery
+                      clickedItem2?.has_wcps_proforma_recovery
                         ? endpoints.updateWcpsProformaLine
                         : endpoints.updateWcpsLine
                     }
