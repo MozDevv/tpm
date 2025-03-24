@@ -690,7 +690,20 @@ export const createSections = (
             },
           ]
         : []),
-
+      ...(formData?.is_wcps === 0
+        ? [
+            {
+              label: 'Wcps Proforma',
+              name: 'has_wcps_proforma_recovery',
+              type: 'select',
+              children: [
+                { id: true, name: 'Yes' },
+                { id: false, name: 'No' },
+              ],
+              pensionCap: ['CAP189', 'CAP190', 'CAP195', 'CAP195'],
+            },
+          ]
+        : []),
       {
         label: 'Maintenance Allowance',
         name: 'maintenance_case',

@@ -1400,7 +1400,7 @@ function NewPreclaim({
                                 '';
 
                               return (
-                                !capName || field.pensionCap.includes(capName)
+                                !capName || field?.pensionCap.includes(capName)
                               );
                             })
                             .filter((field) => {

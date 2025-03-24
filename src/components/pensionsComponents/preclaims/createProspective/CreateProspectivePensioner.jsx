@@ -209,13 +209,18 @@ function CreateProspectivePensioner({
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
-                            Women & Children Contributions Scheme
+                            {clickedItem?.has_wcps_proforma_recovery
+                              ? 'Women & Children Contributions Scheme Proforma'
+                              : 'Women & Children Contributions Scheme'}
                           </span>
                         }
                         key="9"
                         style={{ zIndex: 1 }}
                       >
                         <WcpsCard
+                          isWcpsProforma={
+                            clickedItem?.has_wcps_proforma_recovery
+                          }
                           id={clickedItem?.id}
                           clickedItem2={clickedItem}
                         />

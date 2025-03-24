@@ -21,6 +21,7 @@ function WcpsCard({
   openAction,
   id,
   clickedItem2,
+  isWcpsProforma,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -239,7 +240,11 @@ function WcpsCard({
                   id={id}
                   idLabel="prospective_pensioner_id"
                   fields={refFields}
-                  apiEndpoint={endpoints.createWcps}
+                  apiEndpoint={
+                    clickedItem?.has_wcps_proforma_recovery
+                      ? endpoints.createWcpsProforma
+                      : endpoints.createWcps
+                  }
                   postApiFunction={apiService.post}
                   clickedItem={clickedItem}
                   setOpenBaseCard={setOpenAddReference}
@@ -260,16 +265,33 @@ function WcpsCard({
                     title="WCPS Contributions Lines"
                     fields={inputFields}
                     id={referenceId}
-                    idLabel="wCPS_contribution_id"
+                    idLabel={
+                      clickedItem?.has_wcps_proforma_recovery
+                        ? 'wCPS_proforma_id'
+                        : 'wcps_contribution_id'
+                    }
                     clickedItem={clickedItem2}
                     getApiService={apiService.get}
                     postApiService={apiService.post}
                     putApiService={apiService.put}
                     apiService={apiService}
                     deleteEndpoint={endpoints.deleteWcpsLine}
-                    getEndpoint={endpoints.getWcpsLine(id)}
-                    postEndpoint={endpoints.createWcpsLine}
-                    putEndpoint={endpoints.updateWcpsLine}
+                    getEndpoint={
+                      clickedItem?.has_wcps_proforma_recovery
+                        ? endpoints.getWcpsProformaLine(id)
+                        : endpoints.getWcpsLine(id)
+                    }
+                    apiEndpoint={
+                      clickedItem?.has_wcps_proforma_recovery
+                        ? endpoints.createWcpsProformaLine
+                        : endpoints.createWcpsLine
+                    }
+                    putEndpoint={
+                      clickedItem?.has_wcps_proforma_recovery
+                        ? endpoints.updateWcpsProformaLine
+                        : endpoints.updateWcpsLine
+                    }
+                    // putEndpoint={endpoints.updateWcpsLine}
                     passProspectivePensionerId={true}
                     domLayout="normal"
                     scrollable={true}

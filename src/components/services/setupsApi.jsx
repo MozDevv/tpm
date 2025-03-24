@@ -348,10 +348,24 @@ const endpoints = {
 
   getWcpsLine: (id) =>
     `/api/ProspectivePensioners/GetWCPSContributionLines?prospective_pensioner_id=${id}`,
-  createWcpsLine: '/api/ProspectivePensioners/CreateWCPSContributionLine',
+  createWcpsLine: '/api/ProspectivePensioners/CreateWCPSProforma',
   updateWcpsLine: '/api/ProspectivePensioners/UpdateWCPSContributionLine',
   deleteWcpsLine: (id) =>
     `/api/ProspectivePensioners/DeleteWCPSContributionLine?id=${id}`,
+
+  getWcpsProforma: (id) =>
+    `api/ProspectivePensioners/GetWCPSProformas?prospective_pensioner_id=${id}`,
+  createWcpsProforma: '/api/ProspectivePensioners/CreateWCPSProforma',
+  updateWcpsProforma: '/api/ProspectivePensioners/UpdateWCPSProforma',
+  deleteWcpsProforma: (id) =>
+    `/api/ProspectivePensioners/DeleteWCPSProforma?id=${id}`,
+
+  getWcpsProformaLine: (id) =>
+    `/api/ProspectivePensioners/GetWCPSProformaLines?filterCriterion.criterions[0].propertyName=wCPS_proforma_id&filterCriterion.criterions[0].propertyValue=${id}`,
+  createWcpsProformaLine: '/api/ProspectivePensioners/CreateWCPSProformaLine',
+  deleteWcpsProformaLine: (id) =>
+    `/api/ProspectivePensioners/DeleteWCPSProformaLine?id=${id}`,
+  updateWcpsProformaLine: '/api/ProspectivePensioners/UpdateWCPSProformaLine',
 
   getLiabilities: (id) =>
     `/api/ProspectivePensioners/GetLiabilties?prospective_pensioner_id=${id}`,
