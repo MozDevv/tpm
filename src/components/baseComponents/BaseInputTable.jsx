@@ -381,36 +381,40 @@ const BaseInputTable = ({
       getPostAndNatureFiscalRecords();
     }
   };
-  const handleFileUploadNeeded = (file, fieldName) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const fileData = e.target.result;
+  const handleFileUploadNeeded = (file, fieldName, rowIndex) => {
+    setPreviewFile(file);
 
-      setPreviewFile(file);
+    setRowData((prevData) => {
+      const newRow = {
+        ...prevData[rowIndex],
+        [fieldName]: file,
+      };
 
-      setRowData((prevData) => {
-        const newRow = { [fieldName]: fileData };
+      console.log('New Row:', newRow);
 
-        console.log('New Row:', newRow);
+      // Save the row if it is complete
+      if (isRowComplete(newRow)) {
+        console.log('Row is complete, saving:', newRow);
+        handleSave(newRow);
+      } else {
+        console.log('Row is incomplete, saving:', newRow);
+        handleSave(newRow);
+      }
 
-        // Save the row if it is complete
-        if (isRowComplete(newRow)) {
-          console.log('Row is complete, saving:', newRow);
-          handleSave({ ...prevData[prevData.length - 1], [fieldName]: file });
-        } else {
-          console.log('Row is incomplete:', newRow);
-          handleSave(
-            fields.reduce((acc, field) => {
-              acc[field.value] = newRow[field.value];
-              return acc;
-            }, {})
-          );
-        }
+      const updatedData = [...prevData];
+      updatedData[rowIndex] = newRow;
+      return updatedData;
+    });
 
-        return [...prevData, newRow];
-      });
-    };
-    reader.readAsDataURL(file);
+    // If the row has an id, update it separately
+    if (rowData[rowIndex]?.id) {
+      const updatedRow = {
+        ...rowData[rowIndex],
+        [fieldName]: file,
+      };
+
+      handleSave(updatedRow);
+    }
   };
   const [revisionPayload, setRevisionPayload] = useState(null);
 
@@ -630,6 +634,7 @@ const BaseInputTable = ({
   };
 
   const mdaId = localStorage.getItem('mdaId');
+
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
 
@@ -645,89 +650,103 @@ const BaseInputTable = ({
       }
     });
 
+    console.log(
+      'IFormData',
+      useFormData ? `${useFormData} muli` : formattedFormData
+    );
+
     try {
       let requestData;
       if (useFormData) {
+        console.log('inside useFormData', useFormData);
         requestData = new FormData();
         Object.keys(formattedFormData).forEach((key) => {
           requestData.append(key, formattedFormData[key]);
         });
-      } else {
-        requestData = useRequestBody
-          ? { requestBody: formattedFormData }
-          : formattedFormData;
-      }
-
-      if (data.id) {
-        const res = await putApiService(putEndpoint, {
-          ...requestData,
-          id: data.id,
-        });
-
-        if (res.status === 200 && res.data.succeeded) {
+        let res;
+        // requestData.append('id', formattedFormData.id);
+        if (data.id) {
+          res = await putApiService(putEndpoint, requestData);
+        } else {
+          res = await postApiService(postEndpoint, requestData);
+        }
+        if (res.status && res.data.succeeded) {
+          console.log('res', res);
+          message.success('Record added successfully');
           refreshData();
-          message.success('Record updated successfully');
-          // Clear errors upon successful submission
-          setRowErrors((prevErrors) => {
-            const updatedErrors = { ...prevErrors };
-            delete updatedErrors[data.id];
-            return updatedErrors;
-          });
-        } else if (
-          res?.data?.validationErrors &&
-          res?.data?.validationErrors?.length > 0
-        ) {
-          res.data.validationErrors.forEach((error) => {
-            error.errors.forEach((err) => {
-              message.error(`${error.field}: ${err}`);
-
-              setCellError(data.id, error.field, err);
-            });
-          });
-          throw new Error('An error occurred while submitting the data.');
-        } else if (
-          res.status === 200 &&
-          !res.data.succeeded &&
-          res.data.messages.length > 0
-        ) {
-          message.error(res.data.messages[0]);
-          setCellError(data.id, null, res.data.message[0]);
-          throw new Error(res.data.message[0]);
         }
       } else {
-        const res = await postApiService(postEndpoint, requestData);
-
-        if (res.status === 200 && res.data.succeeded) {
-          refreshData();
-          refetchDataFromAnotherComponent?.();
-          message.success('Record added successfully');
-
-          // Clear errors upon successful submission
-          setRowErrors((prevErrors) => {
-            const updatedErrors = { ...prevErrors };
-            delete updatedErrors[data.id];
-            return updatedErrors;
+        if (data.id) {
+          const res = await putApiService(putEndpoint, {
+            ...requestData,
+            id: data.id,
           });
-        } else if (
-          res?.data?.validationErrors &&
-          res?.data?.validationErrors?.length > 0
-        ) {
-          res.data.validationErrors.forEach((error) => {
-            error.errors.forEach((err) => {
-              message.error(`${error.field}: ${err}`);
 
-              setCellError(data.id, error.field, err);
+          if (res.status === 200 && res.data.succeeded) {
+            refreshData();
+            message.success('Record updated successfully');
+            // Clear errors upon successful submission
+            setRowErrors((prevErrors) => {
+              const updatedErrors = { ...prevErrors };
+              delete updatedErrors[data.id];
+              return updatedErrors;
             });
-          });
-          throw new Error('An error occurred while submitting the data.');
-        } else if (
-          res.status === 200 &&
-          !res.data.succeeded &&
-          res.data.messages.length > 0
-        ) {
-          message.error(res.data.messages[0]);
-          setCellError(data.id, null, res.data.message[0]);
-          throw new Error(res.data.message[0]);
+          } else if (
+            res?.data?.validationErrors &&
+            res?.data?.validationErrors?.length > 0
+          ) {
+            res.data.validationErrors.forEach((error) => {
+              error.errors.forEach((err) => {
+                message.error(`${error.field}: ${err}`);
+
+                setCellError(data.id, error.field, err);
+              });
+            });
+            throw new Error('An error occurred while submitting the data.');
+          } else if (
+            res.status === 200 &&
+            !res.data.succeeded &&
+            res.data.messages.length > 0
+          ) {
+            message.error(res.data.messages[0]);
+            setCellError(data.id, null, res.data.message[0]);
+            throw new Error(res.data.message[0]);
+          }
+        } else {
+          const res = await postApiService(postEndpoint, requestData);
+
+          if (res.status === 200 && res.data.succeeded) {
+            refreshData();
+            refetchDataFromAnotherComponent?.();
+            message.success('Record added successfully');
+
+            // Clear errors upon successful submission
+            setRowErrors((prevErrors) => {
+              const updatedErrors = { ...prevErrors };
+              delete updatedErrors[data.id];
+              return updatedErrors;
+            });
+          } else if (
+            res?.data?.validationErrors &&
+            res?.data?.validationErrors?.length > 0
+          ) {
+            res.data.validationErrors.forEach((error) => {
+              error.errors.forEach((err) => {
+                message.error(`${error.field}: ${err}`);
+
+                setCellError(data.id, error.field, err);
+              });
+            });
+            throw new Error('An error occurred while submitting the data.');
+          } else if (
+            res.status === 200 &&
+            !res.data.succeeded &&
+            res.data.messages.length > 0
+          ) {
+            message.error(res.data.messages[0]);
+            setCellError(data.id, null, res.data.message[0]);
+            throw new Error(res.data.message[0]);
+          }
         }
       }
     } catch (error) {
@@ -994,9 +1013,7 @@ const BaseInputTable = ({
             <div className="flex justify-between ">
               <Upload
                 beforeUpload={async (file) => {
-                  handleFileUploadNeeded(file, col.value); // Capture the file and store it
-                  // handlePreviewInBaseInputCard(file);
-
+                  handleFileUploadNeeded(file, col.value, params.node.rowIndex); // Capture the file and store it
                   return false; // Prevent the auto-upload, we'll handle it manually
                 }}
               >

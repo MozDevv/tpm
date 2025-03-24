@@ -103,6 +103,7 @@ function PostAndNature({ id, clickedItem, enabled }) {
       setDateOfFirstAppointment(res.data.data[0].date_of_first_appointment);
 
       setCap(res.data.data[0].mda.pensionCap.name);
+
       //setCap("CAP196");
       setMdaId(res.data.data[0].mda.id);
     } catch (error) {
@@ -322,12 +323,12 @@ function PostAndNature({ id, clickedItem, enabled }) {
       type: 'select',
       options: natureOfServiceOptions[cap] || [],
     },
-    // {
-    //   label: 'Attachment',
-    //   value: 'attachment',
-    //   type: 'file',
-    //   notRequired: true,
-    // },
+    {
+      label: 'Attachment',
+      value: 'attachment',
+      type: 'file',
+      // notRequired: true,
+    },
   ];
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState();

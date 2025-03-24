@@ -113,7 +113,7 @@ function CreateProspectivePensioner({
                       <AddPensionersWorkHistory
                         status={clickedItem?.notification_status}
                         clickedItem={clickedItem}
-                        id={activeRetireeId}
+                        id={clickedItem?.id}
                         name={clickedItem ? clickedItem.first_name : undefined}
                         moveToNextTab={moveToNextTab}
                         moveToPreviousTab={moveToPreviousTab}

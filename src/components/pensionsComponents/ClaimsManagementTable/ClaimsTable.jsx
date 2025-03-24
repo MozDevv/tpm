@@ -168,6 +168,7 @@ export const mapRowData = (items) =>
 
     prospectivePensionerAwards:
       item?.prospectivePensioner?.prospectivePensionerAwards,
+    was_in_mixed_service: item?.prospectivePensioner?.was_in_mixed_service,
   }));
 
 const colDefs = [
@@ -510,6 +511,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
 
         prospectivePensionerAwards:
           item?.prospectivePensioner?.prospectivePensionerAwards,
+        was_in_mixed_service: item?.prospectivePensioner?.was_in_mixed_service,
       }));
 
       setRowData(mappedData);
