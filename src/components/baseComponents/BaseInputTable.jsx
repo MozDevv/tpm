@@ -713,7 +713,7 @@ const BaseInputTable = ({
             throw new Error(res.data.message[0]);
           }
         } else {
-          const res = await postApiService(postEndpoint, requestData);
+          const res = await postApiService(postEndpoint, formattedFormData);
 
           if (res.status === 200 && res.data.succeeded) {
             refreshData();
