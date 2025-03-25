@@ -99,8 +99,46 @@ const BaseAutoSaveInputCard = ({
         newErrors[name] = 'Account number is not valid';
       }
     }
-    // Account name validation (only alphabets)
+
+    if (name === 'receiptTypeId' && value) {
+      console.log('Receipt Type ID changed:', value);
+
+      // Find the field with name 'receiptTypeId'
+      const receiptTypeField = fields.find(
+        (field) => field.name === 'receiptTypeId'
+      );
+      if (!receiptTypeField) {
+        console.error('Field with name "receiptTypeId" not found in fields.');
+        return;
+      }
+
+      console.log('Receipt Type Field:', receiptTypeField);
+
+      // Find the selected receipt type option
+      const selectedReceiptType = receiptTypeField.options.find(
+        (option) => option.id === value
+      );
+      if (!selectedReceiptType) {
+        console.error('Selected receipt type not found for value:', value);
+        return;
+      }
+
+      console.log('Selected Receipt Type:', selectedReceiptType);
+
+      // Set the crAccount and drAccount in formData
+      setFormData((prev) => ({
+        ...prev,
+        crAccountId: selectedReceiptType.crAccount,
+        drAccountId: selectedReceiptType.drAccount,
+      }));
+
+      console.log('Updated Form Data:', {
+        crAccount: selectedReceiptType.crAccount,
+        drAccount: selectedReceiptType.drAccount,
+      });
+    }
     if (name === 'accountName' && value) {
+      // Account name validation (only alphabets)
       if (!/^[A-Za-z\s]+$/.test(value)) {
         newErrors[name] = 'Account name should only contain alphabets';
       }
@@ -140,18 +178,6 @@ const BaseAutoSaveInputCard = ({
       setSelectedBank(filteredBranches);
     }
 
-    if (name === 'receiptNoGeneratorLineId' && value) {
-      const selectedReceiptType = fields
-        .find((field) => field.name === 'receiptNoGeneratorLineId')
-        .options.find((option) => option.id === value);
-
-      if (selectedReceiptType) {
-        setFormData((prev) => ({
-          ...prev,
-          recieptNo: selectedReceiptType.lineId.toString(),
-        }));
-      }
-    }
     // if()
     if (name === fieldName && value !== '' && options) {
       const filtered = options.filter((item) => item[filterKey] === value);

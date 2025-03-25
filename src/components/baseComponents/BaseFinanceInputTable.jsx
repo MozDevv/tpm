@@ -766,6 +766,71 @@ const BaseFinanceInputTable = ({
           }
         }
 
+        /**
+       * If bankId setBankName to sleeted bank name
+       *        id: bank.id,
+        name: bank.code,
+        bankName: bank.name,
+        branches: bank.branches,
+      }));  {
+      value: 'bankId',
+      label: 'Bank Code',
+      type: 'select',
+      required: true,
+      options: banks,
+      required: true,
+    },
+    {
+      value: 'bankName',
+      label: 'Bank Name',
+      type: 'text',
+      // required
+    },
+       */
+        if (field === 'bankId') {
+          const bankId = newValue;
+
+          // Find the field with value 'bankId'
+          const bankField = fields.find((field) => field.value === 'bankId');
+          if (!bankField || !bankField.options) {
+            console.error(
+              'Field with value "bankId" or its options not found.'
+            );
+            data.bankName = '';
+            api.refreshCells({ rowNodes: [params.node], force: true });
+            return;
+          }
+
+          // Find the selected option in the options array
+          const selectedOption = bankField.options.find(
+            (option) => option.id === bankId
+          );
+
+          if (selectedOption) {
+            data.bankName = selectedOption.bankName;
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          } else {
+            console.warn(`No matching bank found for bankId: ${bankId}`);
+            data.bankName = '';
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          }
+        }
+
+        if (field === 'bankBranchId') {
+          const bankBranchId = newValue;
+
+          const selectedOption = branches.find(
+            (option) => option.id === bankBranchId
+          );
+
+          if (selectedOption) {
+            data.bankBranchName = selectedOption.branchName;
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          } else {
+            data.bankBranchName = '';
+            api.refreshCells({ rowNodes: [params.node], force: true });
+          }
+        }
         if (field === 'receiptTypeId') {
           const accountId = newValue;
 

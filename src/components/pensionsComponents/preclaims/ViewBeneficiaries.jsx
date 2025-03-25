@@ -27,20 +27,17 @@ function ViewBeneficiaries({
         preClaimsEndpoints.getBeneficiariesfromId(clickedItem.id)
       );
 
-      const beneficiariesData = res.data;
+      const beneficiariesData = res.data.data;
 
-      // Collect guardians from all children arrays
-      const guardiansData = beneficiariesData.reduce((acc, item) => {
-        if (item.children && Array.isArray(item.children)) {
-          return acc.concat(item.children);
-        }
-        return acc;
-      }, []);
+      // Collect guardians from the `guardian` field of each beneficiary
+      const guardiansData = beneficiariesData
+        .filter((item) => item.guardian !== null)
+        .map((item) => item.guardian);
 
       setBeneficiaries(beneficiariesData);
       setGuardians(guardiansData);
     } catch (error) {
-      console.log(error);
+      console.log('Error fetching beneficiaries:', error);
     }
   };
 

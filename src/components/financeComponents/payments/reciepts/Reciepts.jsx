@@ -286,7 +286,31 @@ const Reciepts = ({ status }) => {
   useEffect(() => {
     console.log('inputData:', inputData);
   }, [inputData]);
+
+  const { data: receiptTypes } = useFetchAsync(
+    financeEndpoints.getReceiptPostingGroups,
+    apiService
+  );
+
+  const { data: crAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(0),
+    apiService
+  );
+  const { data: drAccounts } = useFetchAsync(
+    financeEndpoints.getAccountByAccountTypeNoPage(3),
+    apiService
+  );
   const fields = [
+    /**{
+{
+  "recieptDate": "2025-03-25T20:19:32.930Z",
+  "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "receiptNoGeneratorLineId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "recieptNo": "string",
+  "narration": "string",
+  "totalAmount": 0
+}
+} */
     ...(clickedItem
       ? [
           {
@@ -297,74 +321,52 @@ const Reciepts = ({ status }) => {
           },
         ]
       : []),
-    ...(!clickedItem
-      ? [
-          {
-            name: 'is_uncollected_payments',
-            label: 'Is Uncollected Payments',
-            type: 'select',
-            options: [
-              { id: false, name: 'No' },
-              { id: true, name: 'Yes' },
-            ],
-          },
-        ]
-      : []),
-    ...(!clickedItem && inputData && !inputData.is_uncollected_payments
-      ? [
-          {
-            name: 'receiptCode',
-            label: 'Receipt Code',
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
-                return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
-                };
-              }),
-          },
-          {
-            name: 'receiptNoGeneratorLineId',
-            label: 'Receipt No',
-            type: 'autocomplete',
-            required: true,
-            disabled: clickedItem ? true : false,
-            options:
-              (receiptNos &&
-                receiptNos
-                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
-                  ?.receiptNoGeneratorLines?.map((item) => {
-                    return {
-                      id: item.id,
-                      name: item.receiptNo,
-                      lineId: item.receiptNo,
-                    };
-                  })) ||
-              [],
-          },
-        ]
-      : clickedItem
-      ? [
-          {
-            name: 'recieptCode',
-            label: 'Receipt Code',
-            disabled: true,
-            type: 'text',
-          },
-          {
-            name: 'recieptNo',
-            label: 'Receipt No',
-            type: 'text',
-            required: true,
-            disabled: true,
-          },
-        ]
-      : []),
 
+    {
+      name: 'receiptNoGeneratorLineId',
+      label: 'Receipt No',
+      type: 'autocomplete',
+      required: true,
+      // disabled: clickedItem ? true : false,
+      options:
+        (allNoLines &&
+          allNoLines?.map((item) => {
+            return {
+              id: item.id,
+              name: item.receiptNo,
+            };
+          })) ||
+        [],
+    },
+    {
+      name: 'receiptTypeId',
+      label: 'Receipt Type',
+      type: 'select',
+      options:
+        receiptTypes &&
+        receiptTypes.map((item) => {
+          return {
+            id: item.receiptTypeId,
+            name: item.receiptTypeName,
+            crAccount: item.crAccountId,
+            drAccount: item.drAccountId,
+          };
+        }),
+    },
+    {
+      name: 'crAccountId',
+      label: 'CR Account',
+      type: 'select',
+      disabled: true,
+      options: crAccounts && crAccounts,
+    },
+    {
+      name: 'drAccountId',
+      label: 'DR Account',
+      disabled: true,
+      type: 'select',
+      options: drAccounts && drAccounts,
+    },
     {
       label: 'Reciept Date',
       name: 'recieptDate',
@@ -381,6 +383,12 @@ const Reciepts = ({ status }) => {
       label: 'Total Amount',
       name: 'totalAmount',
       type: 'amount',
+      required: true,
+    },
+    {
+      label: 'Received From',
+      name: 'receivedFrom',
+      type: 'text',
       required: true,
     },
     ...(clickedItem

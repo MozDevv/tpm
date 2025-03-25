@@ -115,13 +115,17 @@ function RecieptLines({ clickedItem, status }) {
 
       const banksData = rawData.map((bank) => ({
         id: bank.id,
-        name: bank.name,
+        name: bank.code,
+        bankName: bank.name,
         branches: bank.branches,
       }));
 
       const branchesData = rawData.flatMap((bank) =>
         bank.branches.map((branch) => ({
-          ...branch,
+          id: branch.id,
+          name: branch.branch_code,
+          branchName: branch.name,
+
           bankId: bank.id,
         }))
       );
@@ -156,44 +160,6 @@ function RecieptLines({ clickedItem, status }) {
   );
   const tableFields = [
     {
-      value: 'receiptTypeId',
-      label: 'Receipt Type',
-      type: 'select',
-      options:
-        receiptTypes &&
-        receiptTypes.map((item) => {
-          return {
-            id: item.receiptTypeId,
-            name: item.receiptTypeName,
-            crAccount: item.crAccountId,
-            drAccount: item.drAccountId,
-          };
-        }),
-    },
-    {
-      value: 'crAccountId',
-      label: 'CR Account',
-      type: 'select',
-      disabled: true,
-      options: crAccounts && crAccounts,
-    },
-    {
-      value: 'drAccountId',
-      label: 'DR Account',
-      disabled: true,
-      type: 'select',
-      options: drAccounts && drAccounts,
-    },
-
-    {
-      value: 'amount',
-      label: 'Amount',
-      type: 'amount',
-      required: true,
-    },
-    { value: 'narration', label: 'Narration', type: 'text', required: true },
-
-    {
       value: 'paymentMethodId',
       label: 'Payment Method',
       type: 'select',
@@ -207,6 +173,20 @@ function RecieptLines({ clickedItem, status }) {
         }),
     },
 
+    // {
+    //   label: 'Personal/Pensional Number',
+    //   value: 'pensionerNumber',
+    //   type: 'text',
+    //   required: true,
+    // },
+    // {
+    //   label: 'Pensioner Name',
+    //   value: 'pensionerName',
+    //   type: 'text',
+    // },
+
+    // { value: 'narration', label: 'Narration', type: 'text', required: true },
+
     {
       value: 'chequeOrEftNo',
       label: 'Cheque/EFT No',
@@ -215,19 +195,38 @@ function RecieptLines({ clickedItem, status }) {
     },
     {
       value: 'bankId',
-      label: 'Bank',
+      label: 'Bank Code',
       type: 'select',
       required: true,
       options: banks,
       required: true,
     },
     {
+      value: 'bankName',
+      label: 'Bank Name',
+      type: 'text',
+      disabled: true,
+      // required
+    },
+    {
       value: 'bankBranchId',
-      label: 'Bank Branch',
+      label: 'Bank Branch Code',
       type: 'select',
       required: true,
       required: true,
       options: branches,
+    },
+    {
+      value: 'bankBranchName',
+      label: 'Bank Branch Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      value: 'amount',
+      label: 'Amount',
+      type: 'amount',
+      required: true,
     },
   ];
 
