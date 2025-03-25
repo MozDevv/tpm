@@ -273,7 +273,7 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
       >
         <div className="flex flex-col">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Appendix Report
+            Dependants Report
           </h2>
           <p className="text-sm text-gray-500">
             Detailed analysis and insights
