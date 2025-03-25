@@ -510,6 +510,7 @@ const AssessmentTable = ({ status, statusArr }) => {
               ?.pension_award?.prefix + item?.pensioner_number
           : item?.pensioner_number,
         createdBy: item?.created_by,
+        date_of_death: item?.prospectivePensioner?.date_of_death,
       }));
 
       setRowData(mappedData);
