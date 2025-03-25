@@ -159,6 +159,16 @@ function RecieptLines({ clickedItem, status }) {
     apiService
   );
   const tableFields = [
+    /**{
+  "ReceiptId": "3723dbc1-5dde-4a59-8e7c-a42004fa2b41",
+  "PaymentMethodId": "69e90a4a-7eb1-4c40-a92e-9d3d489334ac",
+  "BankId": "99285702-1196-4e11-8b70-725e50aef567",
+  "BankBranchId": "5c3392d5-2807-403f-a34d-1c00325eccf1",
+  "ChequeOrEftDate": "2024-03-25T00:00:00Z",
+  "ChequeOrEftNo": "CHQ123458",
+  "Amount": 1000.00,
+  "AppliesToDocNo": "DOC788"
+} */
     {
       value: 'paymentMethodId',
       label: 'Payment Method',
@@ -172,20 +182,12 @@ function RecieptLines({ clickedItem, status }) {
           };
         }),
     },
-
-    // {
-    //   label: 'Personal/Pensional Number',
-    //   value: 'pensionerNumber',
-    //   type: 'text',
-    //   required: true,
-    // },
-    // {
-    //   label: 'Pensioner Name',
-    //   value: 'pensionerName',
-    //   type: 'text',
-    // },
-
-    // { value: 'narration', label: 'Narration', type: 'text', required: true },
+    {
+      value: 'chequeOrEftDate',
+      label: 'Cheque/EFT Date',
+      type: 'date',
+      required: true,
+    },
 
     {
       value: 'chequeOrEftNo',
@@ -227,6 +229,11 @@ function RecieptLines({ clickedItem, status }) {
       label: 'Amount',
       type: 'amount',
       required: true,
+    },
+    {
+      value: 'appliesToDocNo',
+      label: 'Applies To Doc No',
+      type: 'text',
     },
   ];
 
