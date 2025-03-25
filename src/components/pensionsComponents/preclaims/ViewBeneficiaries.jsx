@@ -24,7 +24,7 @@ function ViewBeneficiaries({
   const getBeneficiaries = async () => {
     try {
       const res = await apiService.get(
-        `${PORTAL_BASE_URL}/portal/getBeneficiaries/${clickedItem.id}`
+        preClaimsEndpoints.getBeneficiariesfromId(clickedItem.id)
       );
 
       const beneficiariesData = res.data;

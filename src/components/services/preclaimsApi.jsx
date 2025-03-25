@@ -133,6 +133,9 @@ const preClaimsEndpoints = {
 
   getPostFiscalRecords: (id) =>
     `api/ProspectivePensioners/GetPostAndNatureInFiscal?id=${id}&paging.pageNumber=1&paging.pageSize=100`,
+
+  getBeneficiariesfromId: (id) =>
+    `api/Claims/getBeneficiaries?prospective_pensioner_id=${id}`,
 };
 
 export const apiService = {
