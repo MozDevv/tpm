@@ -271,7 +271,7 @@ function NewPreclaim({
           '',
         was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
         death_certificate_number: retiree?.death_certificate_number ?? '',
-        date_of_death: retiree?.date_of_death,
+        date_of_death: retiree?.date_of_death ?? '',
         has_wcps_proforma_recovery:
           retiree?.has_wcps_proforma_recovery ?? false,
       });

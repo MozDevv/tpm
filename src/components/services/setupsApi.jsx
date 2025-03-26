@@ -442,6 +442,8 @@ const endpoints = {
     `api/Claims/getAllBeneficiaries?prospective_pensioner_id=${id}`,
   createBeneficiary: '/api/Claims/createBeneficiary',
 
+  updateBeneficiaries: '/api/Claims/UpdateBeneficiary',
+
   getRetireesDesignationGvtSalary: (id) =>
     `api/ProspectivePensioners/GetProspectivePensionerPostAndNatureofSalaries?prospective_pensioner_id=${id}`,
 
