@@ -271,7 +271,9 @@ function NewPreclaim({
           '',
         was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
         death_certificate_number: retiree?.death_certificate_number ?? '',
-        date_of_death: retiree?.date_of_death ?? '',
+        date_of_death: retiree?.date_of_death
+          ? new Date(retiree?.date_of_death).toISOString().split('T')[0]
+          : '',
         has_wcps_proforma_recovery:
           retiree?.has_wcps_proforma_recovery ?? false,
       });
@@ -437,6 +439,9 @@ function NewPreclaim({
         '',
       was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
       has_wcps_proforma_recovery: retiree?.has_wcps_proforma_recovery ?? false,
+      date_of_death: retiree?.date_of_death
+        ? new Date(retiree?.date_of_death).toISOString().split('T')[0]
+        : '',
     };
   };
 
@@ -794,6 +799,9 @@ function NewPreclaim({
     message: '',
   });
 
+  useEffect(() => {
+    console.log('formData', formData);
+  }, [formData]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 

@@ -1249,6 +1249,23 @@ const BaseInputTable = ({
                 );
                 return;
               } else {
+              /**
+               *  else if (ageDifference < 10) {
+                message.error(
+                  `The child must be at least 10 years younger than the Parent's Date of Birth ${parentDobDate.format(
+                    'DD/MM/YYYY'
+                  )}.`
+                );
+                setCellError(
+                  data.id,
+                  'dob',
+                  `The child must be at least 10 years younger than the Parent's Date of Birth <strong>${parentDobDate.format(
+                    'DD/MM/YYYY'
+                  )}</strong>.`
+                );
+                return;
+              } 
+               */
                 handleClearError(data, 'dob');
               }
             }
