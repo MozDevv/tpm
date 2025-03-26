@@ -276,6 +276,7 @@ function NewPreclaim({
           : '',
         has_wcps_proforma_recovery:
           retiree?.has_wcps_proforma_recovery ?? false,
+        killed_on_duty: retiree?.killed_on_duty ?? false,
       });
     } catch (error) {
       console.log(error);
@@ -442,6 +443,7 @@ function NewPreclaim({
       date_of_death: retiree?.date_of_death
         ? new Date(retiree?.date_of_death).toISOString().split('T')[0]
         : '',
+      killed_on_duty: retiree?.killed_on_duty ?? false,
     };
   };
 

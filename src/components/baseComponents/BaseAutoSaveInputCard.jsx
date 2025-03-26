@@ -137,11 +137,11 @@ const BaseAutoSaveInputCard = ({
         drAccount: selectedReceiptType.drAccount,
       });
     }
-    if (name === 'recieptNo' && value) {
+    if (name === 'receiptId' && value) {
       console.log('Receipt Type ID changed:', value);
 
       // Find the field with name 'receiptTypeId'
-      const receiptNoField = fields.find((field) => field.name === 'recieptNo');
+      const receiptNoField = fields.find((field) => field.name === 'receiptId');
       if (!receiptNoField) {
         console.error('Field with name "receiptTypeId" not found in fields.');
         return;
@@ -175,6 +175,7 @@ const BaseAutoSaveInputCard = ({
       // Set the crAccount and drAccount in formData
       setFormData((prev) => ({
         ...prev,
+        recieptNo: selectedReceipt.name,
         crAccountId: selectedReceipt.crAccountId,
         drAccountId: selectedReceipt.drAccountId,
         receiptTypeId: selectedReceipt.receiptTypeId,
@@ -368,13 +369,13 @@ const BaseAutoSaveInputCard = ({
   };
 
   useEffect(() => {
-    if (formData.total_emoluments) {
+    if (formData && formData.total_emoluments) {
       setFormData((prev) => ({
         ...prev,
         contribution_amount: (prev.total_emoluments * 0.02).toFixed(2),
       }));
     }
-  }, [formData.total_emoluments]);
+  }, [formData?.total_emoluments]);
 
   const [recordId, setRecordId] = useState(clickedItem ? clickedItem.id : null);
   const [saving, setSaving] = useState(false);
@@ -444,6 +445,8 @@ const BaseAutoSaveInputCard = ({
       console.error('Error fetching data:', error);
     }
   };
+
+  // useEffect(() => {}, [formData]);
 
   return (
     <div className="py-6 px-15">

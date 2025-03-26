@@ -415,6 +415,7 @@ const financeEndpoints = {
   getPayrollSummaries: '/Posting/GetPayrollSummary',
   createPayrollPv: '/Posting/PostPayrollLiabilityToLedger',
   getReturns: '/Revenue/GetReturns',
+  getReturnsById: (id) => `Revenue/GetReturns?id=${id}`,
   getReturnsByStage: (stage) => `/Revenue/GetReturns?stage=${stage}`,
   uploadReturn: '/Revenue/UploadReturn',
   revertPv: '/Posting/RevertPaymentToClaim',
@@ -430,7 +431,10 @@ const financeEndpoints = {
   getReturnDetails: `/Revenue/GetReturnDetail`,
   updateReturnLine: 'Revenue/UpdateReturnDetail',
   addReturn: 'Revenue/AddReturn',
-  getReturnById: (id) => `/Revenue/GetReturn?id=${id}`,
+  updateReturn: 'Revenue/UpdateReturn',
+
+  getMonths: 'AccountsSetup/GetMonths',
+  getReturnById: (id) => `/Revenue/GetReturns?id=${id}`,
   postReturnToLedger: 'Posting/CreateReturnReceipt',
   addReturnToIGC: 'Revenue/AddReturnToIGC',
   submitReturnForApproval: (id) =>
@@ -462,6 +466,11 @@ const financeEndpoints = {
   getAllGeneratedLines:
     'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000',
 
+  getPaymentReturnReasons: 'AccountsSetup/GetPaymentReturnReasons',
+  addPaymentReturnReason: 'AccountsSetup/AddPaymentReturnReason',
+  updatePaymentReturnReason: 'AccountsSetup/UpdatePaymentReturnReason',
+  deletePaymentReturnReason: (id) =>
+    `/AccountsSetup/DeletePaymentReturnReason?id=${id}`,
   addReceiptType: 'AccountsSetup/AddReceiptType',
   getReceiptType: 'AccountsSetup/GetReceiptTypes',
   getReceiptsByNo: (no) => `/Posting/GetReceipts?recieptNo=${no}`,

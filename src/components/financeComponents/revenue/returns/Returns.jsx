@@ -277,59 +277,52 @@ const Returns = ({ status }) => {
 
     /**{
   "ReceiptId": "3723dbc1-5dde-4a59-8e7c-a42004fa2b41",
-  "PaymentMethodId": "69e90a4a-7eb1-4c40-a92e-9d3d489334ac",
-  "BankId": "99285702-1196-4e11-8b70-725e50aef567",
-  "BankBranchId": "5c3392d5-2807-403f-a34d-1c00325eccf1",
-  "ChequeOrEftDate": "2024-03-25T00:00:00Z",
-  "ChequeOrEftNo": "CHQ123458",
-  "Amount": 1000.00,
-  "AppliesToDocNo": "DOC788"
+{
+  "recieptNo": "string",
+  "receiptDate": "2025-03-26T09:40:40.451Z",
+  "receiptAmount": 0,
+  "bankBranchId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "bankId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "receiptId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "accountNumber": "string",
+  "remarks": "string"
+}
 } */
-    {
-      name: 'receiptId',
-      label: 'Receipt No',
-      type: 'autocomplete',
-      required: true,
-      options:
-        recieptsFromReceipts &&
-        recieptsFromReceipts.map((item) => {
-          return {
-            /*"recieptNo": "string",
-      "recieptCode": "string",
-      "narration": "string",
-      "totalAmount": 0,
-      "postingDate": "2025-03-26T07:22:51.545Z",
-      "isPosted": true,
-      "stage": 0,
-      "receiptLines": [
-        {
-          "accountType": 0,
-          "crAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "drAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "receiptId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "receiptTypeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "paymentMethodId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "bankId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "bankBranchId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "chequeOrEftNo": "string",
-          "amount": 0,
-          "narration": "string",
-          "appliesToDocType": 0,
-          "appliesToDocNo": "string"
-        } */
-            id: item.id,
-            name: item.recieptNo ? String(item.recieptNo) : 'No reciept Nos',
-            receiptAmount: item.totalAmount,
-            receiptCode: item.receiptCode,
-            bankId: item.receiptLines[0].bankId,
-            bankBranchId: item.receiptLines[0].bankBranchId,
-            receiptType: item.receiptLines[0].receiptTypeId,
-            drAccountId: item.drAccountId,
-            crAccountId: item.crAccountId,
-            receiptTypeId: item?.receiptTypeId,
-          };
-        }),
-    },
+    ...(clickedItem
+      ? [
+          {
+            name: 'recieptNo',
+            label: 'Receipt No',
+            type: 'text',
+            // required: true,
+          },
+        ]
+      : [
+          {
+            name: 'receiptId',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            options:
+              recieptsFromReceipts &&
+              recieptsFromReceipts.map((item) => {
+                return {
+                  id: item.id,
+                  name: item.recieptNo
+                    ? String(item.recieptNo)
+                    : 'No reciept Nos',
+                  receiptAmount: item.totalAmount,
+                  receiptCode: item.receiptCode,
+                  bankId: item.receiptLines[0].bankId,
+                  bankBranchId: item.receiptLines[0].bankBranchId,
+                  receiptType: item.receiptLines[0].receiptTypeId,
+                  drAccountId: item.drAccountId,
+                  crAccountId: item.crAccountId,
+                  receiptTypeId: item?.receiptTypeId,
+                };
+              }),
+          },
+        ]),
 
     {
       name: 'receiptAmount',
@@ -408,7 +401,7 @@ const Returns = ({ status }) => {
       name: 'accountNumber',
       label: 'Account Number',
       type: 'text',
-      required: true,
+      // required: true,
     },
   ];
 
@@ -826,11 +819,32 @@ const Returns = ({ status }) => {
     },
   ];
 
+  const { data: months } = useFetchAsync(
+    financeEndpoints.getMonths,
+    apiService
+  );
+  const { data: paymentReasons } = useFetchAsync(
+    financeEndpoints.getPaymentReturnReasons,
+    apiService
+  );
   const returnLineFields = [
+    /**{
+  "pensionerName": "string",
+  "pensionerNo": "string",
+  "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "paymentDate": "2025-03-26T10:17:58.991Z",
+  "monthId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "paymentReturnReasonId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "amount": 0,
+  "paymentMethodId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "chequeOrEftDate": "2025-03-26T10:17:58.991Z",
+  "chequeOrEftNo": "string"
+} */
     {
       label: 'Pensioner No',
       value: 'pensionerNo',
       type: 'select',
+      required: true,
       options: claims && claims,
     },
     {
@@ -841,10 +855,25 @@ const Returns = ({ status }) => {
       disabled: true,
     },
     {
+      label: 'Month',
+      value: 'monthId',
+      type: 'select',
+      required: true,
+      options:
+        months &&
+        months.map((month) => ({ id: month.id, name: month.description })),
+    },
+    {
       label: 'Return Reason',
       value: 'returnReason',
-      type: 'text',
+      type: 'select',
       required: true,
+      options:
+        paymentReasons &&
+        paymentReasons.map((item) => ({
+          id: item.id,
+          name: item.description,
+        })),
     },
     {
       label: 'Amount',
@@ -858,16 +887,31 @@ const Returns = ({ status }) => {
       type: 'date',
       required: true,
     },
-    // {
-    //   value: 'returnTypeId',
-    //   label: 'Return Type',
-    //   type: 'select',
-    //   required: true,
-    //   options: [
-    //     { id: 0, name: 'Monthly' },
-    //     { id: 1, name: 'Lumpsum' },
-    //   ],
-    // },
+
+    {
+      label: 'Payment Method',
+      value: 'paymentMethodId',
+      type: 'select',
+      required: true,
+      options:
+        paymentMethods &&
+        paymentMethods.map((method) => ({
+          id: method.id,
+          name: method.description,
+        })),
+    },
+    {
+      label: 'Cheque/EFT Date',
+      value: 'chequeOrEftDate',
+      type: 'date',
+      required: true,
+    },
+    {
+      label: 'Cheque/EFT No',
+      value: 'chequeOrEftNo',
+      type: 'text',
+      required: true,
+    },
   ];
 
   useEffect(() => {
@@ -955,15 +999,28 @@ const Returns = ({ status }) => {
         {clickedItem ? (
           <>
             <div>
-              <BaseInputCard
+              <BaseAutoSaveInputCard
                 fields={fields}
-                apiEndpoint={financeEndpoints.updateBudget}
+                apiEndpoint={financeEndpoints.addReturn}
+                putApiFunction={apiService.post}
+                updateApiEndpoint={financeEndpoints.updateReturn}
                 postApiFunction={apiService.post}
-                clickedItem={clickedItem}
+                getApiEndpoint={financeEndpoints.getReturnsById}
+                getApiFunction={apiService.get}
+                transformData={(data) => data}
                 useRequestBody={true}
-                disableAll={true}
-                setOpenBaseCard={setOpenBaseCard}
+                setOpenBaseCard={setOpenAddReturn}
+                isBranch={true}
+                refreshData={false}
+                setSelectedBank={setSelectedBank}
+                setCloseProp={setOpenAddReturn}
+                setClickedItem={setClickedItem}
+                clickedItem={clickedItem}
+                setInputData={setInputData}
               />
+
+              {/* {Do not confuse  } */}
+
               <BaseFinanceInputTable
                 clickedItem={clickedItem}
                 title="Return Details"
@@ -982,6 +1039,8 @@ const Returns = ({ status }) => {
                 allOptions={claims}
                 refetchData={clickedItem}
               />
+
+              {/* {Do not confuse  } */}
             </div>
           </>
         ) : openAddReturn ? (
@@ -989,9 +1048,9 @@ const Returns = ({ status }) => {
             fields={fields}
             apiEndpoint={financeEndpoints.addReturn}
             putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateTheReceipt}
+            updateApiEndpoint={financeEndpoints.updateReturn}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getReceiptsById}
+            getApiEndpoint={financeEndpoints.getReturnsById}
             getApiFunction={apiService.get}
             transformData={(data) => data}
             useRequestBody={true}

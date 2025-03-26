@@ -5,8 +5,7 @@ import Popper from '@mui/material/Popper';
 import Box from '@mui/material/Box';
 
 const CustomPopper = (props) => {
-  const isAccountId =
-    props.colDef.field === 'accountId' || props.colDef.field === 'pensionerNo';
+  const isAccountId = props.colDef.field === 'accountId';
   return (
     <Popper
       {...props}
@@ -31,8 +30,6 @@ const CustomSelectCellEditor = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value || ''); // Allow falsy values
   const options = props.options || [];
   const isAccountId = props.colDef.field === 'accountId'; // Check if the field is 'accountId'
-
-  const isPensionerNo = props.colDef.field === 'pensionerNo'; // Check if the field is 'pensionerNo'
 
   useEffect(() => {
     setSelectedValue(props.value !== undefined ? props.value : ''); // Accept falsy values
@@ -110,10 +107,10 @@ const CustomSelectCellEditor = (props) => {
             variant="outlined"
             size="small"
             autoFocus
-            style={{ height: '56px' }}
+            style={{ height: '42px' }}
             InputProps={{
               ...params.InputProps,
-              style: { padding: '4px 8px', height: '100%' },
+              style: { padding: '0px 0px', height: '100%' },
             }}
             InputLabelProps={{
               style: { margin: '0px', padding: '0px' },
@@ -126,16 +123,12 @@ const CustomSelectCellEditor = (props) => {
               ? option.accountName
                   .toLowerCase()
                   .includes(state.inputValue.toLowerCase())
-              : isPensionerNo
-              ? option.name
-                  .toLowerCase()
-                  .includes(state.inputValue.toLowerCase())
               : option.name
                   .toLowerCase()
                   .includes(state.inputValue.toLowerCase())
           );
         }}
-        renderOption={isAccountId || isPensionerNo ? renderOption : undefined}
+        renderOption={isAccountId ? renderOption : undefined}
         PopperComponent={(popperProps) => (
           <CustomPopper {...popperProps} colDef={props.colDef} />
         )}
