@@ -3,7 +3,7 @@ trigger:
 
 # Define the self-hosted agent pool for the entire pipeline
 pool:
-  vmImage: 'ubuntu-latest' # This will be used for Docker build task
+  vmImage: 'tnt-selfhosted-devpool' # This will be used for Docker build task
 
 stages:
   - stage: BuildAndPush
@@ -12,7 +12,7 @@ stages:
       - job: BuildAndPush
         displayName: 'Build and Push Docker Image'
         pool:
-          vmImage: 'ubuntu-latest' # Using Ubuntu VM image for the build task
+          vmImage: 'tnt-selfhosted-devpool' # Using Ubuntu VM image for the build task
         steps:
           # Step 1: Build and push Docker image to Docker Hub
           - task: Docker@2

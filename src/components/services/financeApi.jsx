@@ -425,10 +425,12 @@ const financeEndpoints = {
   getPaymentByDocNo: (docNo) =>
     `Posting/GetPayments?PaymentVoucherStage=1&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&paging.pageNumber=1&paging.pageSize=1000&filterCriterion.criterions[0].propertyName=documentNo&filterCriterion.criterions[0].propertyValue=${docNo}`,
   addReturnLine: 'Revenue/AddReturnDetail',
+
   getReturnLineById: (id) => `/Revenue/GetReturnDetail?ReturnId=${id}`,
   getReturnDetails: `/Revenue/GetReturnDetail`,
   updateReturnLine: 'Revenue/UpdateReturnDetail',
   addReturn: 'Revenue/AddReturn',
+  getReturnById: (id) => `/Revenue/GetReturn?id=${id}`,
   postReturnToLedger: 'Posting/CreateReturnReceipt',
   addReturnToIGC: 'Revenue/AddReturnToIGC',
   submitReturnForApproval: (id) =>

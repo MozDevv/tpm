@@ -39,6 +39,7 @@ import assessEndpoints, {
 } from '@/components/services/assessmentApi';
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import ReceiptVoucher from '../../payments/reciepts/ReceiptVoucher';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -257,20 +258,12 @@ const Returns = ({ status }) => {
     apiService
   );
 
+  const { data: recieptsFromReceipts } = useFetchAsync(
+    financeEndpoints.getReceipts,
+    apiService
+  );
+
   const fields = [
-    ...(!clickedItem
-      ? [
-          {
-            name: 'is_uncollected_payments',
-            label: 'Is Uncollected Payments',
-            type: 'select',
-            options: [
-              { id: false, name: 'No' },
-              { id: true, name: 'Yes' },
-            ],
-          },
-        ]
-      : []),
     ...(clickedItem
       ? [
           {
@@ -284,37 +277,48 @@ const Returns = ({ status }) => {
     ...(inputData && !inputData.is_uncollected_payments && !clickedItem
       ? [
           {
-            name: 'receiptCode',
-            label: 'Receipt Code',
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
-                return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
-                };
-              }),
-          },
-          {
             name: 'recieptNo',
             label: 'Receipt No',
             type: 'autocomplete',
             required: true,
             options:
-              (receiptNos &&
-                receiptNos
-                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
-                  ?.receiptNoGeneratorLines?.map((item) => {
-                    return {
-                      id: item.id,
-                      name: item.receiptNo,
-                      lineId: item.receiptNo,
-                    };
-                  })) ||
-              [],
+              recieptsFromReceipts &&
+              recieptsFromReceipts.map((item) => {
+                return {
+                  /*"recieptNo": "string",
+      "recieptCode": "string",
+      "narration": "string",
+      "totalAmount": 0,
+      "postingDate": "2025-03-26T07:22:51.545Z",
+      "isPosted": true,
+      "stage": 0,
+      "receiptLines": [
+        {
+          "accountType": 0,
+          "crAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "drAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "receiptId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "receiptTypeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "paymentMethodId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "bankId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "bankBranchId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "chequeOrEftNo": "string",
+          "amount": 0,
+          "narration": "string",
+          "appliesToDocType": 0,
+          "appliesToDocNo": "string"
+        } */
+                  id: item.receiptNo,
+                  name: item.receiptNo,
+                  receiptAmount: item.totalAmount,
+                  receiptCode: item.receiptCode,
+                  bankId: item.receiptLines[0].bankId,
+                  bankBranchId: item.receiptLines[0].bankBranchId,
+                  receiptType: item.receiptLines[0].receiptTypeId,
+                  drAccountId: item.receiptLines[0].drAccountId,
+                  crAccountId: item.receiptLines[0].crAccountId,
+                };
+              }),
           },
         ]
       : clickedItem
@@ -1003,10 +1007,15 @@ const Returns = ({ status }) => {
             </div>
           </>
         ) : openAddReturn ? (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
             fields={fields}
             apiEndpoint={financeEndpoints.addReturn}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateTheReceipt}
             postApiFunction={apiService.post}
+            getApiEndpoint={financeEndpoints.getReceiptsById}
+            getApiFunction={apiService.get}
+            transformData={(data) => data}
             useRequestBody={true}
             setOpenBaseCard={setOpenAddReturn}
             isBranch={true}
