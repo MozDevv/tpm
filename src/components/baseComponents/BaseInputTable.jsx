@@ -20,7 +20,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { message, Upload } from 'antd';
+import { Empty, message, Upload } from 'antd';
 import {
   Add,
   Api,
@@ -28,9 +28,11 @@ import {
   CloudUpload,
   Delete,
   ExpandLess,
+  GetApp,
   KeyboardArrowRight,
   Launch,
   MoreVert,
+  Refresh,
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
@@ -61,6 +63,7 @@ import {
   UploadOutlined,
   Upload as MuiUpload,
 } from '@mui/icons-material';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const BaseInputTable = ({
   fields = [],
@@ -634,6 +637,41 @@ const BaseInputTable = ({
   };
 
   const mdaId = localStorage.getItem('mdaId');
+  const [loading, setLoading] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewContent, setPreviewContent] = useState(null);
+  const [clickedDocument, setClickedDocument] = useState(null);
+
+  const handlePreview = async (record) => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
+      );
+      const base64Data = res.data?.messages[0];
+      if (base64Data) {
+        setPreviewContent(
+          <embed
+            src={`data:application/pdf;base64,${base64Data}`}
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          />
+        );
+        setPreviewTitle(record.name);
+        setPreviewVisible(true);
+      } else {
+        message.error('No preview available for this document.');
+      }
+    } catch (error) {
+      console.log('Error fetching document:', error);
+      message.error('Failed to fetch document.');
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
@@ -670,10 +708,35 @@ const BaseInputTable = ({
         } else {
           res = await postApiService(postEndpoint, requestData);
         }
-        if (res.status && res.data.succeeded) {
-          console.log('res', res);
-          message.success('Record added successfully');
+        if (res.status === 200 && res.data.succeeded) {
           refreshData();
+          message.success('Record saved successfully');
+          // Clear errors upon successful submission
+          setRowErrors((prevErrors) => {
+            const updatedErrors = { ...prevErrors };
+            delete updatedErrors[data.id];
+            return updatedErrors;
+          });
+        } else if (
+          res?.data?.validationErrors &&
+          res?.data?.validationErrors?.length > 0
+        ) {
+          res.data.validationErrors.forEach((error) => {
+            error.errors.forEach((err) => {
+              message.error(`${error.field}: ${err}`);
+
+              setCellError(data.id, error.field, err);
+            });
+          });
+          throw new Error('An error occurred while submitting the data.');
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.messages.length > 0
+        ) {
+          message.error(res.data.messages[0]);
+          setCellError(data.id, null, res.data.message[0]);
+          throw new Error(res.data.message[0]);
         }
       } else {
         if (data.id) {
@@ -1009,30 +1072,38 @@ const BaseInputTable = ({
         return {
           headerName: col.label,
           field: col.value,
+          // width: 300,
           cellRenderer: (params) => (
-            <div className="flex justify-between ">
-              <Upload
-                beforeUpload={async (file) => {
-                  handleFileUploadNeeded(file, col.value, params.node.rowIndex); // Capture the file and store it
-                  return false; // Prevent the auto-upload, we'll handle it manually
-                }}
-              >
-                <AntButton
-                  icon={
-                    <MuiUpload
-                      sx={{
-                        fontSize: '20px',
-                      }}
-                    />
-                  }
+            <div className="flex justify-between gap-2">
+              <div className="mt-[1px]">
+                <Upload
+                  beforeUpload={async (file) => {
+                    handleFileUploadNeeded(
+                      file,
+                      col.value,
+                      params.node.rowIndex
+                    ); // Capture the file and store it
+                    return false; // Prevent the auto-upload, we'll handle it manually
+                  }}
                 >
-                  Click to Upload
-                </AntButton>
-              </Upload>
-              {previewFile && (
+                  <AntButton
+                    icon={
+                      <MuiUpload
+                        sx={{
+                          fontSize: '20px',
+                        }}
+                      />
+                    }
+                  ></AntButton>
+                </Upload>
+              </div>
+              {(previewFile || params.data.documentUpload) && (
                 <div className="mb-4">
                   <AntButton
-                    onClick={() => handlePreviewInBaseInputCard(previewFile)}
+                    onClick={() => {
+                      setClickedDocument(params.data.documentUpload);
+                      handlePreview(params.data.documentUpload);
+                    }}
                     type="primary"
                     style={{
                       backgroundColor: '#006990',
@@ -1045,9 +1116,7 @@ const BaseInputTable = ({
                         }}
                       />
                     }
-                  >
-                    Preview File
-                  </AntButton>
+                  ></AntButton>
                 </div>
               )}
             </div>
@@ -1857,6 +1926,64 @@ const BaseInputTable = ({
 
   return (
     <>
+      <Dialog
+        open={previewVisible}
+        onClose={() => setPreviewVisible(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '60vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div
+          className="bg-white h-[90px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
+          style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
+        >
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold text-gray-800 mt-1">
+              {clickedDocument?.fileName}
+            </h2>
+            <p className="text-sm text-gray-500 py-2">
+              Preview of the document
+            </p>
+          </div>
+          <div className="space-x-4">
+            <IconButton onClick={handlePreview}>
+              <Refresh />
+            </IconButton>
+            <Button
+              // onClick={handleDownload}
+              variant="contained"
+              color="primary"
+              startIcon={<GetApp />}
+              className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
+            >
+              Download PDF
+            </Button>
+            <Button
+              onClick={() => setPreviewVisible(false)}
+              variant="outlined"
+              color="primary"
+              startIcon={<Cancel />}
+              className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+        {previewContent ? (
+          <div className="h-[100vh] overflow-auto">{previewContent}</div>
+        ) : (
+          <div className="flex items-center justify-center min-h-[65vh]">
+            <div className="text-center">
+              <Empty description="No PDF available to display." />
+            </div>
+          </div>
+        )}
+      </Dialog>
       <div className="flex items-center gap-1">
         <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
           <BaseExcelComponent
