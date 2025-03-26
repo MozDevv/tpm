@@ -48,16 +48,17 @@ const ReceiptVoucher = ({
     watermark.textContent = 'MOF - Pensions';
     watermark.style.position = 'absolute';
     watermark.style.left = '50%';
-    watermark.style.top = '50%';
+    watermark.style.top = '30%';
     watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
     watermark.style.fontSize = '5rem'; // Adjust the font size as needed
     watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
     watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
-    watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+    watermark.style.color = 'rgba(0, 0, 0, 0.03)'; // Very light gray color for watermark
     watermark.style.whiteSpace = 'nowrap';
     watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
     watermark.style.zIndex = '10'; // Ensure watermark is below content
 
+    wrapper.appendChild(watermark);
     const clonedElement = element.cloneNode(true);
     const scale = 0.86; // Scale factor to reduce the size
     clonedElement.style.transform = `scale(${scale})`;
@@ -110,17 +111,17 @@ const ReceiptVoucher = ({
       watermark.textContent = 'MOF - Pensions';
       watermark.style.position = 'absolute';
       watermark.style.left = '50%';
-      watermark.style.top = '50%';
+      watermark.style.top = '30%';
       watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
       watermark.style.fontSize = '5rem'; // Adjust the font size as needed
       watermark.style.fontFamily = 'Georgia, serif'; // Use a more elegant font
       watermark.style.fontWeight = 'lighter'; // Lighter weight for subtlety
-      watermark.style.color = 'rgba(0, 0, 0, 0.05)'; // Very light gray color for watermark
+      watermark.style.color = 'rgba(0, 0, 0, 0.03)'; // Very light gray color for watermark
       watermark.style.whiteSpace = 'nowrap';
       watermark.style.pointerEvents = 'none'; // Ensure the watermark doesn't interfere with other elements
       watermark.style.zIndex = '10'; // Ensure watermark is below content
 
-      //   wrapper.appendChild(watermark);
+      wrapper.appendChild(watermark);
 
       const clonedElement = element.cloneNode(true);
       const scale = 0.86; // Scale factor to reduce the size
@@ -257,21 +258,23 @@ const ReceiptVoucher = ({
                     RECEIPTED VIDE OUR MR-NO: 6148751 OF 13-FEB-25
                   </p>
 
-                  <div className="border-black grid grid-cols-3 px-4 mt-4 items-center w-full">
-                    <div>
-                      <p className="font-bold">Personal Number</p>
-                      <p>{clickedItem?.returnDetails[0]?.pensionerNo}</p>
-                    </div>
-                    <div>
-                      <p className="font-bold">Name</p>
-                      <p>{clickedItem?.returnDetails[0]?.pensionerName}</p>
-                    </div>
-                    <div>
-                      <p className="font-bold">Amount</p>
-                      <p>
-                        {formatNumber(clickedItem?.returnDetails[0]?.amount)}
-                      </p>
-                    </div>
+                  <div className="pl-4 pt-2">
+                    {clickedItem?.returnDetails?.map((detail, index) => (
+                      <div key={index} className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="font-bold">Personal Number</p>
+                          <p>{detail.pensionerNo}</p>
+                        </div>
+                        <div>
+                          <p className="font-bold">Name</p>
+                          <p>{detail.pensionerName}</p>
+                        </div>
+                        <div>
+                          <p className="font-bold">Amount</p>
+                          <p>{formatNumber(detail.amount)}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -322,32 +325,32 @@ const ReceiptVoucher = ({
 
           {/* Footer */}
           <div className="mt-8 border-b border-black">
-            <div className=" grid grid-cols-4 p-4 gap-4">
+            <div className="grid grid-cols-4 p-4 gap-4">
               <div className="border-t border-black">
                 <p className="text-center">Date</p>
               </div>
               <div className="border-t border-black">
-                <p className="text-center"> Signature</p>
+                <p className="text-center">Signature</p>
               </div>
               <div className="border-t border-black">
                 <p className="text-center">Designation</p>
               </div>
-              <div className="mt-[-25px]">
+              <div className="mt-[-35px]">
                 <p className="mb-[-10px] font-bold text-center">PENSIONS</p>{' '}
                 ________________________
-                <p className=" text-center">Department</p>
+                <p className="text-center">Department</p>
               </div>
             </div>
-            <div className="grid grid-cols-3 border-t border-black ">
-              <div className="border-r border-black h-[60px]">
+            <div className="grid grid-cols-3 border-t border-black">
+              <div className="h-[60px]">
                 <p className="text-center pt-1 font-semibold">Vote</p>
                 <p className="text-center pt-1 font-semibold">DEPOSIT & FUND</p>
               </div>
-              <div className="border-r border-black  h-[60px]">
+              <div className="h-[60px]">
                 <p className="text-center pt-1 font-semibold">Head</p>
                 <p className="text-center pt-1 font-semibold">SUSUPENSE</p>
               </div>
-              <div className="border-r border-black  h-[60px]">
+              <div className="h-[60px]">
                 <p className="text-center pt-1 font-semibold">SubHead</p>
                 <p className="text-center pt-1 font-semibold">
                   {clickedItem?.receiptTypeName}
@@ -357,15 +360,14 @@ const ReceiptVoucher = ({
           </div>
 
           {/* Cash book */}
-          <div className="mt-8">
-            <table className=" w-full text-left text-sm">
+          <div>
+            <table className="w-full text-left text-sm">
               <thead>
                 <tr>
                   <th className="border border-black p-2">Account No.</th>
                   <th className="border border-black p-2">Dept.Vch.No.</th>
                   <th className="border border-black p-2">Station</th>
-
-                  <th className="border border-black ">
+                  <th className="border border-black">
                     <div className="text-center">Cash Book</div>
                     <table className="w-full">
                       <thead>
@@ -373,14 +375,14 @@ const ReceiptVoucher = ({
                           <th className="text-left border-t border-r border-black">
                             Voucher No.
                           </th>
-                          <th className="text-left border-t pl-1 border-black">
+                          <th className="text-left border-t border-black pl-1">
                             Date
                           </th>
                         </tr>
                       </thead>
                     </table>
                   </th>
-                  <th className="border border-black ">
+                  <th className="border border-black">
                     <div className="text-center">Amount</div>
                     <table className="w-full">
                       <thead>
@@ -388,7 +390,7 @@ const ReceiptVoucher = ({
                           <th className="text-left border-t border-r border-black">
                             Sh.
                           </th>
-                          <th className="text-left border-t pl-1 border-black">
+                          <th className="text-left border-t border-black pl-1">
                             cts
                           </th>
                         </tr>

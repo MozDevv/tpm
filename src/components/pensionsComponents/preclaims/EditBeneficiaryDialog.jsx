@@ -45,24 +45,36 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
   };
 
   const handleSave = () => {
-    // Add save logic here
     console.log('Saving data:', formData);
     onClose();
+  };
+
+  // Helper function to safely get nested values
+  const getNestedValue = (obj, path) => {
+    if (!path) return '';
+    if (typeof path === 'string') return obj[path] || '';
+
+    return path.reduce((acc, key) => {
+      if (acc && typeof acc === 'object' && key in acc) {
+        return acc[key];
+      }
+      return '';
+    }, obj);
   };
 
   // Define fields based on provided column structure
   const fields = {
     personalDetails: [
-      { label: 'First Name', name: 'firstName', type: 'text' },
+      { label: 'First Name', name: 'first_name', type: 'text' },
       { label: 'Surname', name: 'surname', type: 'text' },
-      { label: 'Middle Name', name: 'middleName', type: 'text' },
+      { label: 'Other Name', name: 'other_name', type: 'text' },
       { label: 'Identification Number', name: 'identifier', type: 'text' },
       { label: 'National ID', name: 'national_id', type: 'text' },
       { label: 'Email Address', name: 'email_address', type: 'email' },
       { label: 'Phone', name: 'mobile_number', type: 'text' },
       { label: 'Address', name: 'address', type: 'text' },
       { label: 'City', name: 'city', type: 'text' },
-      { label: 'Date of Birth', name: 'dateOfBirth', type: 'date' },
+      { label: 'Date of Birth', name: 'dob', type: 'date' },
       { label: 'Percentage', name: 'percentage', type: 'number' },
       { label: 'Date of Death', name: 'date_of_death', type: 'date' },
       {
@@ -96,32 +108,13 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         type: 'email',
       },
       { label: 'Guardian City', name: ['guardian', 'city'], type: 'text' },
-
-      { label: 'Timestamp', name: 'timestamp', type: 'text' },
-
-      // { label: "Preview URL", name: "preview_url", type: "text" },
       { label: 'Share Percentage', name: 'share_percentage', type: 'number' },
-      {
-        label: 'Identification Type',
-        name: 'identification_type',
-        type: 'text',
-      },
-      { label: 'Display Name', name: 'display_name', type: 'text' },
-      { label: 'Other Name', name: 'other_name', type: 'text' },
-      { label: 'Postal Address', name: 'postal_address', type: 'text' },
-      { label: 'Postal Code', name: 'postal_code', type: 'text' },
-
-      { label: 'Postal Code Name', name: 'postal_code_name', type: 'text' },
+      { label: 'Identification Type', name: 'identifier_type', type: 'text' },
       { label: 'Gender', name: 'gender', type: 'text' },
-      { label: 'Parent Name', name: 'parent_name', type: 'text' },
-      { label: 'Relationship', name: 'relationship', type: 'text' },
-      { label: 'KRA PIN', name: 'kra_pin', type: 'text' },
-      // { label: "Is Guardian", name: "is_guardian", type: "text" },
-
-      // { label: "Deceased", name: "deceased", type: "" },
+      { label: 'Relationship', name: ['relationship', 'name'], type: 'text' },
       {
         label: 'Birth Certificate Number',
-        name: 'birth_cert_no',
+        name: 'birth_certificate_no',
         type: 'text',
       },
     ],
@@ -146,18 +139,17 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
   const [loading, setLoading] = React.useState(false);
 
   const handlePreviewBirthCertificate = async () => {
-    if (!formData.birth_cert_no) return;
+    if (!formData.birth_certificate_no) return;
 
     setLoading(true);
     try {
       const res = await axios.get(
-        `${PORTAL_BASE_URL}/portal/birthCert/${id}/${formData.birth_cert_no}`,
+        `${PORTAL_BASE_URL}/portal/birthCert/${id}/${formData.birth_certificate_no}`,
         {
           responseType: 'arraybuffer',
         }
       );
       const base64Data = res.data;
-      console.log('base64Data', base64Data);
       if (base64Data) {
         setPreviewContent(new Blob([res.data], { type: 'application/pdf' }));
         setPreviewTitle('Birth Certificate');
@@ -182,9 +174,9 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
         fullWidth
         sx={{ padding: '20px' }}
       >
-        <div className="p-8 ">
+        <div className="p-8">
           <DialogTitle>
-            <div className="flex  flex-row gap-1 items-center">
+            <div className="flex flex-row gap-1 items-center">
               <IconButton
                 sx={{
                   border: '1px solid #006990',
@@ -198,14 +190,14 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                 <ArrowBack sx={{ color: '#006990' }} />
               </IconButton>
               <p className="text-primary py-3 text-lg font-bold">
-                {isGuardian ? 'Guardian' : 'Beneficiary'} :{' '}
-                {beneficiary?.relationship}
+                {isGuardian ? 'Guardian' : 'Beneficiary'}:{' '}
+                {beneficiary?.relationship?.name || 'No relationship specified'}
               </p>
             </div>
           </DialogTitle>
           <DialogContent>
             {Object.keys(fields).map((sectionKey) => (
-              <div key={sectionKey} className="p-2 ">
+              <div key={sectionKey} className="p-2">
                 <div className="flex items-center gap-2">
                   <h6 className="font-semibold text-primary text-sm">
                     {sectionKey.replace(/([A-Z])/g, ' $1').toUpperCase()}
@@ -233,88 +225,45 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6">
                     {fields[sectionKey].map((field, fieldIndex) => {
-                      const fieldValue = Array.isArray(field.name)
-                        ? field.name.reduce(
-                            (acc, key) => acc && acc[key],
-                            formData
-                          )
-                        : formData[field.name];
+                      const fieldValue = getNestedValue(formData, field.name);
 
-                      if (fieldValue === undefined || fieldValue === null) {
-                        return null; // Skip rendering this field if its value is not present
+                      if (
+                        fieldValue === undefined ||
+                        fieldValue === null ||
+                        fieldValue === ''
+                      ) {
+                        return null;
                       }
+
+                      const displayValue =
+                        typeof fieldValue === 'object'
+                          ? fieldValue.name || JSON.stringify(fieldValue)
+                          : fieldValue;
 
                       return (
                         <div key={fieldIndex} className="flex flex-col">
                           <label className="text-xs font-semibold text-gray-600">
                             {field.label}
                           </label>
-                          {field.type === 'select' ? (
-                            <TextField
-                              select
-                              variant="outlined"
-                              size="small"
-                              fullWidth
-                              disabled={true}
-                              name={field.name}
-                              value={fieldValue || ''}
-                              onChange={handleChange}
-                              // Add logic for options if needed
-                            >
-                              <MenuItem value="">Select {field.label}</MenuItem>
-                              {/* Map options here if needed */}
-                            </TextField>
-                          ) : field.type === 'autocomplete' ? (
-                            <Autocomplete
-                              options={field.children || []}
-                              disabled={true}
-                              getOptionLabel={(option) => option.name}
-                              onChange={(event, newValue) => {
-                                handleChange({
-                                  target: {
-                                    name: field.name,
-                                    value: newValue ? newValue.id : '',
-                                  },
-                                });
-                              }}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  variant="outlined"
-                                  size="small"
-                                  fullWidth
-                                  name={field.name}
-                                />
-                              )}
-                              value={
-                                field.children?.find(
-                                  (option) => option.id === fieldValue
-                                ) || null
-                              }
-                            />
-                          ) : (
-                            <TextField
-                              type={field.type}
-                              name={field.name}
-                              disabled={true}
-                              variant="outlined"
-                              size="small"
-                              value={
-                                (fieldValue === 2
-                                  ? 'Female'
-                                  : fieldValue === 1
-                                  ? 'Male'
-                                  : fieldValue) || ''
-                              }
-                              onChange={handleChange}
-                              fullWidth
-                            />
-                          )}
+                          <TextField
+                            type={field.type}
+                            name={
+                              Array.isArray(field.name)
+                                ? field.name.join('.')
+                                : field.name
+                            }
+                            disabled={true}
+                            variant="outlined"
+                            size="small"
+                            value={displayValue}
+                            onChange={handleChange}
+                            fullWidth
+                          />
                         </div>
                       );
                     })}
 
-                    {formData.birth_cert_no &&
+                    {formData.birth_certificate_no &&
                       sectionKey === 'personalDetails' && (
                         <Button
                           startIcon={<Launch />}
@@ -331,28 +280,8 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
               </div>
             ))}
           </DialogContent>
-
-          {/* <DialogActions>
-            <Button onClick={onClose} variant="contained" color="error">
-              Close
-            </Button>
-            {/* <Button onClick={handleSave} variant="contained" color="primary">
-            Save
-          </Button> 
-          </DialogActions> */}
         </div>
       </Dialog>
-
-      {/* <Dialog
-        open={previewVisible}
-        onClose={() => setPreviewVisible(false)}
-        maxWidth="lg"
-        fullWidth
-        sx={{ padding: "20px", height: "500px" }}
-      >
-        <DialogTitle>{previewTitle}</DialogTitle>
-        {previewContent}
-      </Dialog> */}
 
       <Modal
         open={previewVisible}
@@ -368,6 +297,7 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
           <iframe
             src={URL.createObjectURL(previewContent)}
             style={{ width: '100%', height: '100%' }}
+            title={previewTitle}
           />
         )}
       </Modal>

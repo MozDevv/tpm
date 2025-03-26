@@ -49,8 +49,7 @@ function ViewBeneficiaries({
     {
       headerName: 'Relationship',
       field: 'relationshipName',
-      valueGetter: (params) =>
-        params.data.relationshipName || params.data.relationship,
+      valueGetter: (params) => params.data.relationship?.name,
     },
     { headerName: 'Surname', field: 'surname' },
     {
