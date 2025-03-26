@@ -697,22 +697,25 @@ function NewPreclaim({
           currentPensionCap === undefined ||
           currentPensionCap === ''
         ) {
-          if (formData.mortality_status === 1) {
-            return exitGround.is_death;
-          } else if (formData.mortality_status === 2) {
-            return !exitGround.is_death;
-          }
+          // Commenting out the mortality_status filter
+          // if (formData.mortality_status === 1) {
+          //   return exitGround.is_death;
+          // } else if (formData.mortality_status === 2) {
+          //   return !exitGround.is_death;
+          // }
           return true;
         }
 
         if (exitGround.pension_cap_id !== currentPensionCap) {
           return false;
         }
-        if (formData.mortality_status === 1) {
-          return exitGround.is_death;
-        } else if (formData.mortality_status === 2) {
-          return !exitGround.is_death;
-        }
+
+        // Commenting out the mortality_status filter
+        // if (formData.mortality_status === 1) {
+        //   return exitGround.is_death;
+        // } else if (formData.mortality_status === 2) {
+        //   return !exitGround.is_death;
+        // }
 
         return true;
       })
@@ -748,11 +751,11 @@ function NewPreclaim({
 
     setExitGroundOptions(filteredOptions);
   }, [
-    formData.mortality_status,
+    // Removed formData.mortality_status from the dependency array
     formData.pension_cap,
     exitGrounds,
     activePensionCap,
-    formData.gender, // Add formData.gender to the dependency array
+    formData.gender,
     formData.dob,
     formData.retirement_date,
   ]);
@@ -1677,10 +1680,9 @@ function NewPreclaim({
                                         name={field.name}
                                         variant="outlined"
                                         disabled={
-                                          !canEdit ||
-                                          field.disabled ||
-                                          (field.name === 'retirement_date' &&
-                                            formData.mortality_status === 1)
+                                          !canEdit || field.disabled
+                                          // (field.name === 'retirement_date' &&
+                                          //   formData.mortality_status === 1)
                                         }
                                         size="small"
                                         onBlur={handleSubmit}
