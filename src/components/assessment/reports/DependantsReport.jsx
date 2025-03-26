@@ -387,7 +387,7 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
                 </p>
               </div>
             </div>
-            <div className="w-full pb-5">
+            <div className="w-full pb-1">
               {/* Header */}
               <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] border-t border-b border-black font-bold pb-1">
                 <div className=" text-start pl-1">Dependant No</div>

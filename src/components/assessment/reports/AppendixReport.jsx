@@ -447,7 +447,9 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                             }
                           )}
                         </td>
-                        <td className="py-1 text-gray-700">(full)</td>
+                        <td className="py-1 text-gray-700">
+                          ({service.factor_description})
+                        </td>
                         <td className="py-1 text-gray-700">
                           {service.pensionable_service_years}
                         </td>
