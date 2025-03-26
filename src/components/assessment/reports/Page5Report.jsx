@@ -376,7 +376,13 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                 </span>{' '}
               </p>
               <p className="my-2">
-                W.E.F. <span className="font-bold">01-JUL-22</span>
+                W.E.F.{' '}
+                <span className="font-bold">
+                  {' '}
+                  {formatDateToDayMonthYear(
+                    clickedItem?.date_from_which_pension_will_commence
+                  )}
+                </span>
               </p>
               <p>
                 Together with a Gratuity{' '}

@@ -958,7 +958,7 @@ export const createSections = (
         type: 'number',
         pensionCap: [
           'CAP189',
-          // 'CAP199',
+          'CAP199',
           'CAP196',
           'APN/PK',
           'CAP190',

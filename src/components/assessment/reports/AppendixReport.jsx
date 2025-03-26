@@ -314,14 +314,16 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-2 font-semibold ">
-                {pensionerBenefits?.map((item, index) => (
-                  <p>
-                    Pension Number:{' '}
-                    <strong className="font-normal ml-3">
-                      {item?.pensioner_award_code}
-                    </strong>
-                  </p>
-                ))}
+                {pensionerBenefits
+                  ?.filter((item) => !item.beneficiary && !item.maintenance)
+                  .map((item, index) => (
+                    <p>
+                      Pension Number:{' '}
+                      <strong className="font-normal ml-3">
+                        {item?.pensioner_award_code}
+                      </strong>
+                    </p>
+                  ))}
                 <p>
                   Ministry/Department:{' '}
                   <strong className="font-normal ml-3">
@@ -448,7 +450,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                           )}
                         </td>
                         <td className="py-1 text-gray-700">
-                          ({service.factor_description})
+                          {service?.factor_description || 'Full'}
                         </td>
                         <td className="py-1 text-gray-700">
                           {service.pensionable_service_years}
