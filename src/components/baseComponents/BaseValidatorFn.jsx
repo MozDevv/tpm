@@ -165,24 +165,24 @@ export const baseValidatorFn = {
     return null;
   },
   //gratuity_rate between 1 and 100
-  gratuity_rate: (value) => {
-    if (isNaN(value)) {
-      return 'Gratuity rate must be a number';
-    }
-    if (value < 1 || value > 100) {
-      return 'Gratuity rate must be between 1 and 100%';
-    }
-    return null;
-  },
-  monthly_pension_rate: (value) => {
-    if (isNaN(value)) {
-      return 'Monthly pension rate must be a number';
-    }
-    if (value < 1 || value > 100) {
-      return 'Monthly pension rate must be between 1 and 100%';
-    }
-    return null;
-  },
+  // gratuity_rate: (value) => {
+  //   if (isNaN(value)) {
+  //     return 'Gratuity rate must be a number';
+  //   }
+  //   if (value < 1 || value > 100) {
+  //     return 'Gratuity rate must be between 1 and 100%';
+  //   }
+  //   return null;
+  // },
+  // monthly_pension_rate: (value) => {
+  //   if (isNaN(value)) {
+  //     return 'Monthly pension rate must be a number';
+  //   }
+  //   if (value < 1 || value > 100) {
+  //     return 'Monthly pension rate must be between 1 and 100%';
+  //   }
+  //   return null;
+  // },
   fromDate: (value) => {
     const date = dayjs(value);
     const earliestDate = dayjs('1949-01-01');

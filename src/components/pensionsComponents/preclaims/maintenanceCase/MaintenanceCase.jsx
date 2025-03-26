@@ -150,20 +150,20 @@ const MaintenanceCase = ({ id, clickedItem2 }) => {
       label: 'Phone Number',
       type: 'string',
     },
-    {
-      value: 'temporary_postal_address',
-      label: 'Temporary Postal Address',
-      type: 'number',
-    },
-    {
-      value: 'temporaty_postal_code_id',
-      label: 'Temporary Postal Code',
-      type: 'select',
-      options: postalAddress.map((address) => ({
-        id: address.id,
-        name: address.code,
-      })),
-    },
+    // {
+    //   value: 'temporary_postal_address',
+    //   label: 'Temporary Postal Address',
+    //   type: 'number',
+    // },
+    // {
+    //   value: 'temporaty_postal_code_id',
+    //   label: 'Temporary Postal Code',
+    //   type: 'select',
+    //   options: postalAddress.map((address) => ({
+    //     id: address.id,
+    //     name: address.code,
+    //   })),
+    // },
     {
       value: 'permanent_postal_address',
       label: 'Permanent Postal Address',
