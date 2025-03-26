@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop, Button } from '@mui/material';
+import { Backdrop, Button, IconButton } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Cancel, GetApp } from '@mui/icons-material';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { Empty } from 'antd';
 import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 import { parseDate } from '@/utils/dateFormatter';
@@ -280,6 +280,9 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
           </p>
         </div>
         <div className="space-x-4">
+          <IconButton onClick={generatePdfBlob}>
+            <Refresh />
+          </IconButton>
           <Button
             onClick={handleDownload}
             variant="contained"
@@ -339,101 +342,101 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
           display: 'none',
         }}
       >
-        <div ref={contentRef} className="  px-4 max-w-3xl mx-auto font-sans ">
-          <div className="pl-4">
-            <h2 className="text-xl font-bold mb-6 text-center">
-              DEPENDANT COMPUTATION
-            </h2>
+        <div ref={contentRef} className="  px-4  mx-auto courier-font ">
+          <h2 className="text-xl font-bold mb-6 text-center">
+            DEPENDANT COMPUTATION
+          </h2>
+          <div className="border border-gray-800 pb-4">
             <div className="grid grid-cols-3 pb-3 ml-3">
               <div className="">
-                <p className="text-gray-500">Pensioner Name</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Pensioner Name</p>
+                <p className="text-gray-400 font-semibold">
                   {clickedItem?.first_name} {clickedItem?.other_name}{' '}
                   {clickedItem?.surname}
                 </p>
               </div>
               <div className="">
-                <p className="text-gray-500">Personal Number</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Personal Number</p>
+                <p className="text-gray-400 font-semibold">
                   {clickedItem?.personal_number}
                 </p>
               </div>
               <div className="">
-                <p className="text-gray-500">Retirement Date</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Retirement Date</p>
+                <p className="text-gray-400 font-semibold">
                   {parseDate(clickedItem?.retirement_date)}
                 </p>
               </div>
               <div className="">
-                <p className="text-gray-500">Monthly Pension</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Monthly Pension</p>
+                <p className="text-gray-400 font-semibold">
                   {report?.monthly_pension}
                 </p>
               </div>
 
               <div className="">
-                <p className="text-gray-500">Unreduced Pension</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Unreduced Pension</p>
+                <p className="text-gray-400 font-semibold">
                   {formatNumber(report?.unreduced_pension)}
                 </p>
               </div>
               <div className="">
-                <p className="text-gray-500">Death Date</p>
-                <p className="text-gray-800 font-semibold">
+                <p className="font-bold">Death Date</p>
+                <p className="text-gray-400 font-semibold">
                   {parseDate(clickedItem?.death_date)} {/*  */}
                 </p>
               </div>
             </div>
-            <table className="table-auto w-full border-collapse border border-gray-200 pb-5">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border border-gray-400 p-2">Dependant No</th>
-                  <th className="border border-gray-400 p-2">Dependant Name</th>
-                  <th className="border border-gray-400 p-2">Relationship</th>
-                  <th className="border border-gray-400 p-2">D.O.B</th>
-                  <th className="border border-gray-400 p-2">Eff Date</th>
-                  <th className="border border-gray-400 p-2">Deletion Date</th>
-                  <th className="border border-gray-400 p-2">Cessation Date</th>
-                  <th className="border border-gray-400 p-2">
-                    Monthly Pension
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {pensionerBenefits
-                  .filter((benefit) => benefit.beneficiary !== null)
-                  .map((benefit, index) => (
-                    <tr key={index} className="text-center">
-                      <td className="border border-gray-400 p-2">
-                        {benefit.pensioner_award_code}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {benefit.beneficiary?.first_name}{' '}
-                        {benefit.beneficiary?.other_name}{' '}
-                        {benefit.beneficiary?.surname}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {benefit.beneficiary?.relationship?.name}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {parseDate(benefit.beneficiary?.dob)}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {parseDate(benefit.beneficiary?.created_date)}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {parseDate(benefit.beneficiary?.date_of_death)}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {parseDate(benefit.benefitEndDate)}
-                      </td>
-                      <td className="border border-gray-400 p-2">
-                        {formatNumber(benefit.monthly_pension)}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+            <div className="w-full pb-5">
+              {/* Header */}
+              <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] border-t border-b border-black font-bold pb-1">
+                <div className=" text-center">Dependant No</div>
+                <div className=" text-center">Dependant Name</div>
+                <div className=" text-center">Relationship</div>
+                <div className=" text-center">D.O.B</div>
+                <div className=" text-center">Eff Date</div>
+                <div className=" text-center">Deletion Date</div>
+                <div className=" text-center">Cessation Date</div>
+                <div className=" text-center">Monthly Pension</div>
+              </div>
+
+              {/* Data Rows */}
+              {pensionerBenefits
+                .filter((benefit) => benefit.beneficiary !== null)
+                .map((benefit, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] text-center border-b border-gray-200 text-[12px]"
+                  >
+                    <div className="p-2 whitespace-nowrap">
+                      {benefit.pensioner_award_code}
+                    </div>
+                    <div className="p-2 whitespace-nowrap">
+                      {benefit.beneficiary?.first_name}{' '}
+                      {benefit.beneficiary?.other_name}{' '}
+                      {benefit.beneficiary?.surname}
+                    </div>
+                    <div className="p-2">
+                      {benefit.beneficiary?.relationship?.name}
+                    </div>
+                    <div className="p-2">
+                      {parseDate(benefit.beneficiary?.dob)}
+                    </div>
+                    <div className="p-2">
+                      {parseDate(benefit.beneficiary?.created_date)}
+                    </div>
+                    <div className="p-2">
+                      {parseDate(benefit.beneficiary?.date_of_death)}
+                    </div>
+                    <div className="p-2">
+                      {parseDate(benefit.benefitEndDate)}
+                    </div>
+                    <div className="p-2">
+                      {formatNumber(benefit.monthly_pension)}
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>

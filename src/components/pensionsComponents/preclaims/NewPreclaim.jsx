@@ -215,7 +215,7 @@ function NewPreclaim({
                 .toISOString()
                 .split('T')[0]
             : '',
-        last_basic_salary_amount: retiree?.last_basic_salary_amount ?? '',
+        last_basic_salary_amount: retiree?.last_basic_salary_amount ?? null,
         last_pay_date: retiree.last_pay_date
           ? new Date(retiree.last_pay_date).toISOString().split('T')[0]
           : '',
@@ -390,7 +390,7 @@ function NewPreclaim({
       date_from_which_pension_will_commence: parseDate(
         retiree?.date_from_which_pension_will_commence
       ),
-      last_basic_salary_amount: retiree?.last_basic_salary_amount ?? '',
+      last_basic_salary_amount: retiree?.last_basic_salary_amount ?? null,
       last_pay_date: parseDate(retiree?.last_pay_date),
       disability_status: retiree?.disability_status ?? '',
       maintenance_case: retiree?.maintenance_case ?? 1,
