@@ -274,18 +274,27 @@ const Returns = ({ status }) => {
           },
         ]
       : []),
-    ...(inputData && !inputData.is_uncollected_payments && !clickedItem
-      ? [
-          {
-            name: 'recieptNo',
-            label: 'Receipt No',
-            type: 'autocomplete',
-            required: true,
-            options:
-              recieptsFromReceipts &&
-              recieptsFromReceipts.map((item) => {
-                return {
-                  /*"recieptNo": "string",
+
+    /**{
+  "ReceiptId": "3723dbc1-5dde-4a59-8e7c-a42004fa2b41",
+  "PaymentMethodId": "69e90a4a-7eb1-4c40-a92e-9d3d489334ac",
+  "BankId": "99285702-1196-4e11-8b70-725e50aef567",
+  "BankBranchId": "5c3392d5-2807-403f-a34d-1c00325eccf1",
+  "ChequeOrEftDate": "2024-03-25T00:00:00Z",
+  "ChequeOrEftNo": "CHQ123458",
+  "Amount": 1000.00,
+  "AppliesToDocNo": "DOC788"
+} */
+    {
+      name: 'receiptId',
+      label: 'Receipt No',
+      type: 'autocomplete',
+      required: true,
+      options:
+        recieptsFromReceipts &&
+        recieptsFromReceipts.map((item) => {
+          return {
+            /*"recieptNo": "string",
       "recieptCode": "string",
       "narration": "string",
       "totalAmount": 0,
@@ -308,53 +317,23 @@ const Returns = ({ status }) => {
           "appliesToDocType": 0,
           "appliesToDocNo": "string"
         } */
-                  id: item.receiptNo,
-                  name: item.receiptNo,
-                  receiptAmount: item.totalAmount,
-                  receiptCode: item.receiptCode,
-                  bankId: item.receiptLines[0].bankId,
-                  bankBranchId: item.receiptLines[0].bankBranchId,
-                  receiptType: item.receiptLines[0].receiptTypeId,
-                  drAccountId: item.receiptLines[0].drAccountId,
-                  crAccountId: item.receiptLines[0].crAccountId,
-                };
-              }),
-          },
-        ]
-      : clickedItem
-      ? [
-          {
-            name: 'receiptCode',
-            label: 'Receipt Code',
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
-                return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
-                };
-              }),
-          },
-          {
-            name: 'receiptNo',
-            label: 'Receipt No',
-            type: 'text',
-            required: true,
-          },
-        ]
-      : []),
-    {
-      name: 'returnDate',
-      label: 'Return Date',
-      type: 'date',
-      disabled: true,
+            id: item.id,
+            name: item.recieptNo ? String(item.recieptNo) : 'No reciept Nos',
+            receiptAmount: item.totalAmount,
+            receiptCode: item.receiptCode,
+            bankId: item.receiptLines[0].bankId,
+            bankBranchId: item.receiptLines[0].bankBranchId,
+            receiptType: item.receiptLines[0].receiptTypeId,
+            drAccountId: item.drAccountId,
+            crAccountId: item.crAccountId,
+            receiptTypeId: item?.receiptTypeId,
+          };
+        }),
     },
+
     {
-      name: 'totalAmount',
-      label: 'Total Amount',
+      name: 'receiptAmount',
+      label: 'Receipt Amount',
       type: 'amount',
       disabled: true,
     },
@@ -376,25 +355,6 @@ const Returns = ({ status }) => {
         }),
     },
 
-    {
-      name: 'paymentMethodId',
-      label: 'Payment Method',
-      type: 'autocomplete',
-      disabled: true,
-      required: true,
-      options:
-        paymentMethods &&
-        paymentMethods.map((method) => ({
-          id: method.id,
-          name: method.description,
-        })),
-    },
-    {
-      name: 'eftNo',
-      label: 'Cheque/EFT No',
-      type: 'text',
-      disabled: true,
-    },
     {
       name: 'bankId',
       label: 'Bank',
@@ -431,6 +391,24 @@ const Returns = ({ status }) => {
       type: 'autocomplete',
       options: crAccounts,
       disabled: true,
+    },
+    {
+      name: 'receiptDate',
+      label: 'Voucher Date',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'remarks',
+      label: 'Remarks',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'accountNumber',
+      label: 'Account Number',
+      type: 'text',
+      required: true,
     },
   ];
 

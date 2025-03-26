@@ -137,6 +137,57 @@ const BaseAutoSaveInputCard = ({
         drAccount: selectedReceiptType.drAccount,
       });
     }
+    if (name === 'recieptNo' && value) {
+      console.log('Receipt Type ID changed:', value);
+
+      // Find the field with name 'receiptTypeId'
+      const receiptNoField = fields.find((field) => field.name === 'recieptNo');
+      if (!receiptNoField) {
+        console.error('Field with name "receiptTypeId" not found in fields.');
+        return;
+      }
+
+      console.log('Receipt Type Field:', receiptNoField);
+
+      // Find the selected receipt type option
+      const selectedReceipt = receiptNoField.options.find(
+        (option) => option.id === value
+      );
+      if (!selectedReceipt) {
+        console.error('Selected receipt type not found for value:', value);
+        return;
+      }
+
+      console.log('Selected Receipt Type:', selectedReceipt);
+
+      /**
+       *  id: item.id,
+                   name: item.receiptNo,
+                   receiptAmount: item.totalAmount,
+                   receiptCode: item.receiptCode,
+                   bankId: item.receiptLines[0].bankId,
+                   bankBranchId: item.receiptLines[0].bankBranchId,
+                   receiptType: item.receiptLines[0].receiptTypeId,
+                   drAccountId: item.receiptLines[0].drAccountId,
+                   crAccountId: item.receiptLines[0].crAccountId,
+                   receiptTypeId: item.receiptLines[0].receiptTypeId,
+       */
+      // Set the crAccount and drAccount in formData
+      setFormData((prev) => ({
+        ...prev,
+        crAccountId: selectedReceipt.crAccountId,
+        drAccountId: selectedReceipt.drAccountId,
+        receiptTypeId: selectedReceipt.receiptTypeId,
+        bankId: selectedReceipt.bankId,
+        bankBranchId: selectedReceipt.bankBranchId,
+        receiptAmount: selectedReceipt.receiptAmount,
+      }));
+
+      console.log('Updated Form Data:', {
+        crAccount: selectedReceipt.crAccount,
+        drAccount: selectedReceipt.drAccount,
+      });
+    }
     if (name === 'accountName' && value) {
       // Account name validation (only alphabets)
       if (!/^[A-Za-z\s]+$/.test(value)) {

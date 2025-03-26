@@ -877,6 +877,8 @@ function NewPreclaim({
         key !== 'assisted_living' &&
         key !== 'killed_on_duty' &&
         key !== 'has_wcps_proforma_recovery' &&
+        key !== 'date_of_death' &&
+        key !== 'death_certificate_number' &&
         (formData[key] === undefined ||
           formData[key] === null ||
           formData[key] === '' ||

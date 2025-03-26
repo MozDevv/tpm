@@ -338,6 +338,16 @@ const Reciepts = ({ status }) => {
           })) ||
         [],
     },
+    /**{
+    "RecieptNo": "4567847",
+    "ReceiptDate": "2024-03-25T00:00:00Z",
+    "ReceiptAmount": 3000.00,
+    "BankId": "99285702-1196-4e11-8b70-725e50aef567",
+    "BankBranchId": "5c3392d5-2807-403f-a34d-1c00325eccf1",
+    "ReceiptId": "9f1e4978-349c-45a2-a988-5975f5300c34",
+    "AccountNumber": "1234567890",
+    "Remarks": "Payment received successfully"
+} */
     {
       name: 'receiptTypeId',
       label: 'Receipt Type',
