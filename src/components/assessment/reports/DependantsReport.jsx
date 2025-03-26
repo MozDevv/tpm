@@ -390,7 +390,7 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
             <div className="w-full pb-5">
               {/* Header */}
               <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] border-t border-b border-black font-bold pb-1">
-                <div className=" text-center">Dependant No</div>
+                <div className=" text-start pl-1">Dependant No</div>
                 <div className=" text-center">Dependant Name</div>
                 <div className=" text-center">Relationship</div>
                 <div className=" text-center">D.O.B</div>
@@ -406,32 +406,32 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
                 .map((benefit, index) => (
                   <div
                     key={index}
-                    className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] text-center border-b border-gray-200 text-[12px]"
+                    className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] text-center  text-[12px]"
                   >
-                    <div className="p-2 whitespace-nowrap">
+                    <div className="p-1 whitespace-nowrap">
                       {benefit.pensioner_award_code}
                     </div>
-                    <div className="p-2 whitespace-nowrap">
+                    <div className="p-1 whitespace-nowrap">
                       {benefit.beneficiary?.first_name}{' '}
                       {benefit.beneficiary?.other_name}{' '}
                       {benefit.beneficiary?.surname}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {benefit.beneficiary?.relationship?.name}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {parseDate(benefit.beneficiary?.dob)}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {parseDate(benefit.beneficiary?.created_date)}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {parseDate(benefit.beneficiary?.date_of_death)}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {parseDate(benefit.benefitEndDate)}
                     </div>
-                    <div className="p-2">
+                    <div className="p-1">
                       {formatNumber(benefit.monthly_pension)}
                     </div>
                   </div>
