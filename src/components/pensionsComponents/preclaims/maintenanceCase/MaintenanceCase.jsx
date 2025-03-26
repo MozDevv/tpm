@@ -76,6 +76,8 @@ const MaintenanceCase = ({ id, clickedItem2 }) => {
       account_name: item.account_name,
       created_date: item.created_date,
       bank_id: item.bankBranch.bank_id,
+      gratuity_amount: item.gratuity_amount,
+      pension_amount: item.pension_amount,
     }));
   };
 
@@ -177,11 +179,13 @@ const MaintenanceCase = ({ id, clickedItem2 }) => {
       })),
     },
     { value: 'gratuity_rate', label: 'Gratuity Rate', type: 'number' },
+    { value: 'gratuity_amount', label: 'Gratuity Amount', type: 'number' },
     {
       value: 'monthly_pension_rate',
       label: 'Monthly Pension Rate',
       type: 'number',
     },
+    { value: 'pension_amount', label: 'Pension Amount', type: 'number' },
     { value: 'bank_id', label: 'Bank', type: 'select', options: banks },
     {
       value: 'bank_branch_id',

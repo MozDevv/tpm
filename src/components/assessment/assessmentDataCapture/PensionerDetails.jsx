@@ -370,6 +370,10 @@ function PensionerDetails({
 
   // State for form data
   const [formData, setFormData] = useState(getInitialFormData());
+
+  useEffect(() => {
+    console.log('Form Data: ', formData);
+  }, [formData]);
   const router = useRouter();
 
   const validateField = (name, value, formData) => {
