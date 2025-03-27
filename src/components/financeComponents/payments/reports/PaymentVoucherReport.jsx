@@ -367,7 +367,7 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                   </div>
 
                   {/* Payment Details */}
-                  <div className="grid grid-cols-8 border-black">
+                  {/* <div className="grid grid-cols-8 border-black">
                     <p className="p-1 col-span-3 border-r border-black text-start">
                       Being Payment of Returned Gratuity/Liability
                     </p>
@@ -375,50 +375,34 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-2 text-right border-r border-black"></p>
                     <p className="p-1 col-span-1 text-right">85</p>
-                  </div>
+                  </div> */}
 
                   <div className="grid grid-cols-8 border-black">
-                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
+                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between items-center">
                       Payable Amount
+                      <p className="font-bold text-[14px]">
+                        {' '}
+                        {formatNumber(report?.grossAmount)}
+                      </p>
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
-                    <p className="p-1 col-span-2 text-right border-r border-black">
-                      {report?.grossAmount
-                        ? Math.floor(report.grossAmount).toLocaleString('en-US')
-                        : '0'}
-                    </p>
-                    <p className="p-1 col-span-1 text-right">
-                      {report?.grossAmount
-                        ? report.grossAmount
-                            .toString()
-                            .split('.')[1]
-                            ?.slice(0, 2) || '00'
-                        : '00'}
-                    </p>
+                    <p className="p-1 col-span-2 text-right border-r border-black"></p>
+                    <p className="p-1 col-span-1 text-right"></p>
                   </div>
 
                   <div className="grid grid-cols-8 border-black">
-                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between">
+                    <p className="p-1 col-span-3 border-r border-black text-start flex justify-between items-center">
                       Liability:
+                      <p className="font-bold text-[14px]">
+                        {' '}
+                        {formatNumber(report?.totalLiabilityAmount)}
+                      </p>
                     </p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
                     <p className="p-1 col-span-1 border-r border-black">-</p>
-                    <p className="p-1 col-span-2 text-right border-r border-black">
-                      {report?.totalLiabilityAmount
-                        ? Math.floor(
-                            report.totalLiabilityAmount
-                          ).toLocaleString('en-US')
-                        : '0'}
-                    </p>
-                    <p className="p-1 col-span-1 text-right">
-                      {report?.totalLiabilityAmount
-                        ? report.totalLiabilityAmount
-                            .toString()
-                            .split('.')[1]
-                            ?.slice(0, 2) || '00'
-                        : '00'}
-                    </p>
+                    <p className="p-1 col-span-2 text-right border-r border-black"></p>
+                    <p className="p-1 col-span-1 text-right"></p>
                   </div>
                   {report?.deductionsAndOtherPayments?.map(
                     (deduction, index) => (
@@ -426,8 +410,16 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                         key={index}
                         className="grid grid-cols-8 border-black"
                       >
-                        <p className="p-1 col-span-3 border-r border-black text-start">
+                        <p className="p-1  col-span-3 border-r border-black text-start flex justify-between items-center">
                           {deduction.description}
+                          <p className="font-bold text-[14px]">
+                            {deduction.liabilityAmt
+                              ? deduction.liabilityAmt
+                                  .toString()
+                                  .split('.')[1]
+                                  ?.slice(0, 2) || '00'
+                              : '00'}
+                          </p>
                         </p>
                         <p className="p-1 col-span-1 border-r border-black">
                           -
@@ -435,21 +427,8 @@ const PaymentVoucher = ({ setOpenTrialBalanceReport, clickedItem }) => {
                         <p className="p-1 col-span-1 border-r border-black">
                           -
                         </p>
-                        <p className="p-1 col-span-2 text-right border-r border-black">
-                          {deduction.liabilityAmt
-                            ? Math.floor(deduction.liabilityAmt).toLocaleString(
-                                'en-US'
-                              )
-                            : '0'}
-                        </p>
-                        <p className="p-1 col-span-1 text-right">
-                          {deduction.liabilityAmt
-                            ? deduction.liabilityAmt
-                                .toString()
-                                .split('.')[1]
-                                ?.slice(0, 2) || '00'
-                            : '00'}
-                        </p>
+                        <p className="p-1 col-span-2 text-right border-r border-black"></p>
+                        <p className="p-1 col-span-1 text-right"></p>
                       </div>
                     )
                   )}
