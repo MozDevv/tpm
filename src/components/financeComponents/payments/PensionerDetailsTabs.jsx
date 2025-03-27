@@ -49,6 +49,7 @@ function AssessmentCard({
   igcId,
   setClickedItem,
   openBaseCard,
+  setChildRevisedData,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -146,6 +147,7 @@ function AssessmentCard({
 
   useEffect(() => {
     fetchRevisionPayload().then((data) => {
+      setChildRevisedData && setChildRevisedData(data);
       setRevisionData(data);
     });
   }, [igcId, activeKey, igcEdited]);

@@ -711,6 +711,8 @@ const IgcListing = ({ status }) => {
     console.log('Here are the seletcedRows', selectedRows);
   }, [selectedRows]);
 
+  const [childRevisedData, setChildRevisedData] = useState([]);
+
   return (
     <div className="">
       <BaseCard
@@ -743,7 +745,10 @@ const IgcListing = ({ status }) => {
             isIgc={true}
             childTitle="IGC Details"
             jsonPayload={clickedItem?.json_payload}
-          />
+            setChildRevisedData={setChildRevisedData}
+          >
+            <ChangesView data={childRevisedData} />
+          </AssessmentCard>
         ) : clickedItem && !isRevisedType(clickedItem?.igc_type) ? (
           <>
             <AssessmentCard

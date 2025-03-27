@@ -1,6 +1,20 @@
+import React from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+} from '@mui/material';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+
 const ChangesView = ({ data }) => {
   const sections = [
-    'BASIC_DETAILS',
+    'PENSIONER_INFORMATION',
     'WORK_HISTORY',
     'GOVERNMENT_SALARY',
     'DEDUCTIONS',
@@ -11,7 +25,7 @@ const ChangesView = ({ data }) => {
   ];
 
   if (!data) {
-    return <p>No data available</p>;
+    return <Typography>No data available</Typography>;
   }
 
   const {
@@ -24,39 +38,85 @@ const ChangesView = ({ data }) => {
   const renderSection = (sectionId) => {
     const sectionName = sections[sectionId] || `Section ${sectionId}`;
     const isUpdated = sectionsUpdated.includes(sectionId);
-    const sectionStyle = isUpdated
-      ? { backgroundColor: '#f0f8ff', padding: '10px', borderRadius: '5px' }
-      : {};
 
     return (
-      <div key={sectionId} style={sectionStyle}>
-        <h3>{sectionName}</h3>
+      <React.Fragment key={sectionId}>
+        <TableRow>
+          <TableCell
+            colSpan={2}
+            style={{
+              backgroundColor: isUpdated ? '#e3f2fd' : '#f9f9f9',
+              fontWeight: 'bold',
+              padding: '16px',
+            }}
+          >
+            {sectionName.replace(/_/g, ' ')}
+          </TableCell>
+        </TableRow>
+
         {basicDetailFields.length > 0 ? (
-          <ul>
-            {basicDetailFields.map((field) => (
-              <li key={field}>
-                <strong>{field.replace(/_/g, ' ').toUpperCase()}:</strong>{' '}
+          basicDetailFields.map((field) => (
+            <TableRow key={field}>
+              <TableCell
+                style={{
+                  fontWeight: 'bold',
+                  color: isUpdated ? '#0d47a1' : '#757575',
+                  padding: '16px',
+                }}
+              >
+                {field.replace(/_/g, ' ').toUpperCase()}
+              </TableCell>
+              <TableCell style={{ padding: '16px' }}>
                 {prospective_pensioner
-                  ? prospective_pensioner[field] || 'No data'
-                  : 'No data'}
-              </li>
-            ))}
-          </ul>
+                  ? prospective_pensioner[field] || 'Not Updated'
+                  : 'Not Updated'}
+              </TableCell>
+            </TableRow>
+          ))
         ) : (
-          <p>No fields to display</p>
+          <TableRow>
+            <TableCell colSpan={2}>No fields to display</TableCell>
+          </TableRow>
         )}
-      </div>
+      </React.Fragment>
     );
   };
 
   return (
-    <div>
-      <h2>Changes Summary</h2>
-      {sectionsEnabled.length > 0 ? (
-        sectionsEnabled.map((sectionId) => renderSection(sectionId))
-      ) : (
-        <p>No sections enabled</p>
-      )}
+    <div className="mt-2">
+      <BaseCollapse titleFontSize="24" name="Summary" defaultExpanded={true}>
+        <Box padding={1} mt={0}>
+          <TableContainer component={Paper} elevation={0}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    style={{
+                      backgroundColor: '#f5f5f5',
+                      fontWeight: 'bold',
+                      padding: '16px',
+                    }}
+                  >
+                    Section Name & Details
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sectionsEnabled.length > 0 ? (
+                  sectionsEnabled.map((sectionId) => renderSection(sectionId))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      <Typography>No sections enabled</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </BaseCollapse>
     </div>
   );
 };
