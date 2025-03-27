@@ -180,7 +180,7 @@ const IgcListing = () => {
   };
   const baseCardHandlers = {
     ...(clickedItem &&
-    isRevisedType(clickedItem?.igcType) &&
+    isRevisedType(clickedItem?.igc_type) &&
     clickedItem?.igc_submission_status === 2
       ? {
           moveStatusIgc: () => {
