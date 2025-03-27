@@ -28,11 +28,13 @@ const IGCDocumentsSetups = () => {
     { id: 1, name: 'Killed On Duty' },
     { id: 2, name: 'Injury or Disability Pension' },
     { id: 3, name: 'Revised Disability' },
-    { id: 4, name: 'RevisedCases Erroneous Deductions' },
-    { id: 5, name: 'RevisedCases Court Order' },
-    { id: 6, name: 'RevisedCases Salary Change' },
-    { id: 7, name: 'RevisedCases Erroneous Awards' },
+    { id: 4, name: 'Revised Cases Court Order' },
+    { id: 5, name: 'Add Beneficiary Alive' },
+    { id: 6, name: 'Add Beneficiary Deceased' },
+    { id: 7, name: 'Change of Pay Point' },
+    { id: 8, name: 'Revised Computation' },
   ];
+
   const columnDefs = [
     {
       field: 'igC_Type',
