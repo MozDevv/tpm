@@ -169,12 +169,12 @@ const IgcListing = ({ status }) => {
         setOpenBaseCard(true);
       },
     }),
-    ...((!status || (status === 7 && status !== 0)) && {
-      initiateChangeOfPayPoint: () => {
-        setOpenChangePaypoint(true);
-        setOpenBaseCard(true);
-      },
-    }),
+    // ...((!status || (status === 7 && status !== 0)) && {
+    //   initiateChangeOfPayPoint: () => {
+    //     setOpenChangePaypoint(true);
+    //     setOpenBaseCard(true);
+    //   },
+    // }),
     ...((!status || status === 3 || status === 8 || status === 4) &&
       status !== 0 && {
         initiateRevisedCase: () => {
