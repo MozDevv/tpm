@@ -3,8 +3,7 @@ trigger:
 
 # Define the self-hosted agent pool for the entire pipeline
 pool:
-  vmImage: 'tnt-selfhosted-testpool' # This will be used for Docker build task
-
+  vmImage: 'ubuntu-latest'
 stages:
   - stage: BuildAndPush
     displayName: 'Build and Push Docker Image'
