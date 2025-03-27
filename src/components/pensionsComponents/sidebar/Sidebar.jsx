@@ -93,7 +93,7 @@ export const menuItems = [
           },
           {
             title: "IGC Dependant's Pension",
-            path: '/pensions/claims/igc/igc-dependants-pension',
+            path: '/pensions/claims/igc/dependant-pension',
           },
           {
             title: 'IGC Killed On Duty',
@@ -117,15 +117,15 @@ export const menuItems = [
           },
           {
             title: 'IGC Add Beneficiary Deceased',
-            path: '/pensions/claims/igc/igc-add-beneficiary-deceased',
+            path: '/pensions/claims/igc/igc-add-beneficiary-dead',
           },
           {
             title: 'IGC Change of Pay Point',
-            path: '/pensions/claims/igc/igc-change-of-pay-point',
+            path: '/pensions/claims/igc/change-of-pay-point',
           },
           {
             title: 'IGC Revised Computation',
-            path: '/pensions/claims/igc/igc-revised-computation',
+            path: '/pensions/claims/igc/revised-computation',
           },
         ],
       },

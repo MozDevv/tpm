@@ -22,7 +22,7 @@ import { message } from 'antd';
 import { useIgcIdStore } from '@/zustand/store';
 import { mapRowData } from '../ClaimsTable';
 
-const IgcListing = () => {
+const IgcListing = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const isRevisedType = (igcType) => {
@@ -163,19 +163,25 @@ const IgcListing = () => {
 
   const [initiateRevisedCase, setInitiateRevisedCase] = useState(false);
   const handlers = {
-    initiateDependentEnrollment: () => {
-      setOpenInitiate(true);
-      setOpenBaseCard(true);
-    },
-
-    initiateChangeOfPayPoint: () => {
-      setOpenChangePaypoint(true);
-      setOpenBaseCard(true);
-    },
-    initiateRevisedCase: () => {
-      setInitiateRevisedCase(true);
-      setOpenBaseCard(true);
-    },
+    ...((!status || status === 0) && {
+      initiateDependentEnrollment: () => {
+        setOpenInitiate(true);
+        setOpenBaseCard(true);
+      },
+    }),
+    ...((!status || (status === 7 && status !== 0)) && {
+      initiateChangeOfPayPoint: () => {
+        setOpenChangePaypoint(true);
+        setOpenBaseCard(true);
+      },
+    }),
+    ...((!status || status === 3 || status === 8 || status === 4) &&
+      status !== 0 && {
+        initiateRevisedCase: () => {
+          setInitiateRevisedCase(true);
+          setOpenBaseCard(true);
+        },
+      }),
     sendIGCForApproval: () => handleSendForApproval(),
   };
   const baseCardHandlers = {
@@ -785,7 +791,11 @@ const IgcListing = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.igcBeneficiaries}
+        fetchApiEndpoint={
+          status === 0 || status
+            ? endpoints.igcBeneficiaries
+            : endpoints.getIgcByStatus(status)
+        }
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
