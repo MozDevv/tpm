@@ -24,6 +24,11 @@ import { mapRowData } from '../ClaimsTable';
 
 const IgcListing = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
+
+  const isRevisedType = (igcType) => {
+    const revisedTypes = [3, 4, 8]; // Enum values for revised types
+    return revisedTypes.includes(igcType);
+  };
   const statusIcons = {
     0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
     1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
@@ -175,7 +180,7 @@ const IgcListing = () => {
   };
   const baseCardHandlers = {
     ...(clickedItem &&
-    clickedItem?.igc_type === 11 &&
+    isRevisedType(clickedItem?.igcType) &&
     clickedItem?.igc_submission_status === 2
       ? {
           moveStatusIgc: () => {
@@ -676,10 +681,6 @@ const IgcListing = () => {
       setIgcId(clickedItem.id);
     }
   }, [clickedItem]);
-  const isRevisedType = (igcType) => {
-    const revisedTypes = [3, 4, 8]; // Enum values for revised types
-    return revisedTypes.includes(igcType);
-  };
 
   return (
     <div className="">
