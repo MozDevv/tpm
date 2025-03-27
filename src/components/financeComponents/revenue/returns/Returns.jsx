@@ -640,19 +640,6 @@ const Returns = ({ status }) => {
   }, []);
 
   const uploadFields = [
-    ...(!clickedItem
-      ? [
-          {
-            name: 'is_uncollected_payments',
-            label: 'Is Uncollected Payments',
-            type: 'select',
-            options: [
-              { id: false, name: 'No' },
-              { id: true, name: 'Yes' },
-            ],
-          },
-        ]
-      : []),
     ...(clickedItem
       ? [
           {
@@ -663,76 +650,59 @@ const Returns = ({ status }) => {
           },
         ]
       : []),
-    ...(inputData && !inputData.is_uncollected_payments
+
+    /**{
+  "ReceiptId": "3723dbc1-5dde-4a59-8e7c-a42004fa2b41",
+{
+  "recieptNo": "string",
+  "receiptDate": "2025-03-26T09:40:40.451Z",
+  "receiptAmount": 0,
+  "bankBranchId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "bankId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "receiptId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "accountNumber": "string",
+  "remarks": "string"
+}
+} */
+    ...(clickedItem
       ? [
           {
-            name: 'receiptCode',
-            label: 'Receipt Code',
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
-                return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
-                };
-              }),
-          },
-          {
             name: 'recieptNo',
+            label: 'Receipt No',
+            type: 'text',
+            // required: true,
+          },
+        ]
+      : [
+          {
+            name: 'receiptId',
             label: 'Receipt No',
             type: 'autocomplete',
             required: true,
             options:
-              (receiptNos &&
-                receiptNos
-                  ?.find((item) => item.receiptCode === inputData?.receiptCode)
-                  ?.receiptNoGeneratorLines?.map((item) => {
-                    return {
-                      id: item.id,
-                      name: item.receiptNo,
-                      lineId: item.receiptNo,
-                    };
-                  })) ||
-              [],
-          },
-        ]
-      : clickedItem
-      ? [
-          {
-            name: 'receiptCode',
-            label: 'Receipt Code',
-            type: 'select',
-            table: true,
-            options:
-              receiptNos &&
-              receiptNos.map((item) => {
+              recieptsFromReceipts &&
+              recieptsFromReceipts.map((item) => {
                 return {
-                  id: item.receiptCode,
-                  name: item.receiptCode,
-                  accountNo: item.fromNumber + ' - ' + item.toNumber,
+                  id: item.id,
+                  name: item.recieptNo
+                    ? String(item.recieptNo)
+                    : 'No reciept Nos',
+                  receiptAmount: item.totalAmount,
+                  receiptCode: item.receiptCode,
+                  bankId: item.receiptLines[0].bankId,
+                  bankBranchId: item.receiptLines[0].bankBranchId,
+                  receiptType: item.receiptLines[0].receiptTypeId,
+                  drAccountId: item.drAccountId,
+                  crAccountId: item.crAccountId,
+                  receiptTypeId: item?.receiptTypeId,
                 };
               }),
           },
-          {
-            name: 'receiptNo',
-            label: 'Receipt No',
-            type: 'text',
-            required: true,
-          },
-        ]
-      : []),
+        ]),
+
     {
-      name: 'returnDate',
-      label: 'Return Date',
-      type: 'date',
-      disabled: true,
-    },
-    {
-      name: 'totalAmount',
-      label: 'Total Amount',
+      name: 'receiptAmount',
+      label: 'Receipt Amount',
       type: 'amount',
       disabled: true,
     },
@@ -754,25 +724,6 @@ const Returns = ({ status }) => {
         }),
     },
 
-    {
-      name: 'paymentMethodId',
-      label: 'Payment Method',
-      type: 'autocomplete',
-      disabled: true,
-      required: true,
-      options:
-        paymentMethods &&
-        paymentMethods.map((method) => ({
-          id: method.id,
-          name: method.description,
-        })),
-    },
-    {
-      name: 'eftNo',
-      label: 'Cheque/EFT No',
-      type: 'text',
-      disabled: true,
-    },
     {
       name: 'bankId',
       label: 'Bank',
@@ -809,6 +760,24 @@ const Returns = ({ status }) => {
       type: 'autocomplete',
       options: crAccounts,
       disabled: true,
+    },
+    {
+      name: 'receiptDate',
+      label: 'Voucher Date',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'remarks',
+      label: 'Remarks',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'accountNumber',
+      label: 'Account Number',
+      type: 'text',
+      // required: true,
     },
     {
       name: 'file',
