@@ -21,6 +21,7 @@ import IgcRevisedInputCard from './IgcRevisedInputCard';
 import { message } from 'antd';
 import { useIgcIdStore } from '@/zustand/store';
 import { mapRowData } from '../ClaimsTable';
+import IGCSummaryComponent from './IGCSummaryComponent';
 
 const IgcListing = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
@@ -626,7 +627,7 @@ const IgcListing = ({ status }) => {
     }
   }, [clickedItem]);
 
-  const generateFieldsFromJsonPayload = (jsonPayload) => {
+  const generateFieldsFromJsonPayload = (jsonPayload, parentKey = '') => {
     const excludedFields = [
       'id',
       'prospective_pensioner_id',
@@ -637,10 +638,24 @@ const IgcListing = ({ status }) => {
       'guardian_id',
     ];
 
-    return Object.keys(jsonPayload)
-      .filter((key) => !excludedFields.includes(key))
-      .map((key) => {
-        const value = jsonPayload[key];
+    const fields = [];
+
+    Object.keys(jsonPayload).forEach((key) => {
+      const value = jsonPayload[key];
+      const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handle nested keys
+
+      if (excludedFields.includes(key)) {
+        return; // Skip excluded fields
+      }
+
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        // Recursively process nested objects
+        fields.push(...generateFieldsFromJsonPayload(value, fullKey));
+      } else {
         let type = 'text';
 
         if (typeof value === 'boolean') {
@@ -659,16 +674,19 @@ const IgcListing = ({ status }) => {
           type = 'phone_number';
         }
 
-        return {
-          name: key,
-          label: key
+        fields.push({
+          name: fullKey,
+          label: fullKey
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase()),
           type,
           value,
           disabled: true,
-        };
-      });
+        });
+      }
+    });
+
+    return fields;
   };
 
   useEffect(() => {
@@ -687,6 +705,10 @@ const IgcListing = ({ status }) => {
       setIgcId(clickedItem.id);
     }
   }, [clickedItem]);
+
+  useEffect(() => {
+    console.log('Here are the seletcedRows', selectedRows);
+  }, [selectedRows]);
 
   return (
     <div className="">
@@ -741,18 +763,7 @@ const IgcListing = ({ status }) => {
               isIgc={true}
               childTitle="IGC Details"
             >
-              <div className="">
-                <BaseInputCard
-                  fields={generateFieldsFromJsonPayload(
-                    clickedItem?.json_payload
-                  )}
-                  apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-                  postApiFunction={apiService.post}
-                  clickedItem={clickedItem}
-                  useRequestBody={true}
-                  setOpenBaseCard={setOpenBaseCard}
-                />
-              </div>
+              <IGCSummaryComponent clickedItem={clickedItem} />
             </AssessmentCard>
           </>
         ) : openInitiate ? (
