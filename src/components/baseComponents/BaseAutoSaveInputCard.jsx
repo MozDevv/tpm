@@ -21,16 +21,18 @@ import {
   DialogActions,
   InputAdornment,
 } from '@mui/material';
-import { message } from 'antd';
+import { message, Upload } from 'antd';
 import dayjs from 'dayjs';
 
 import { useMda } from '@/context/MdaContext';
 import { formatNumber } from '@/utils/numberFormatters';
 import BaseAmountInput from './BaseAmountInput';
 import './autosave.css';
-import { Close, Done } from '@mui/icons-material';
+import { Close, Done, Launch } from '@mui/icons-material';
 import { truncateMessage } from '@/utils/handyFuncs';
 import MuiPhoneNumber from 'mui-phone-number';
+import { Button as AntButton } from 'antd';
+import { Upload as MuiUpload } from '@mui/icons-material';
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -57,6 +59,8 @@ const BaseAutoSaveInputCard = ({
   setOpenDrilldown,
   setInputData,
   disableAll,
+  useFormData = false,
+  handlePreview,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -385,10 +389,24 @@ const BaseAutoSaveInputCard = ({
       setSaving(1);
       setOpenBaseCard(true);
       setUnsavedChanges(false);
+
+      let dataToSend = { ...formData };
+
+      if (useFormData) {
+        const formDataObj = new FormData();
+        Object.keys(dataToSend).forEach((key) => {
+          formDataObj.append(key, dataToSend[key]);
+        });
+        if (formData.file) {
+          formDataObj.append('file', formData.file);
+        }
+
+        dataToSend = formDataObj;
+      }
       try {
         let res;
         if (recordId === null || recordId === undefined) {
-          res = await postApiFunction(apiEndpoint, formData);
+          res = await postApiFunction(apiEndpoint, dataToSend);
           if (res.data && res.data.succeeded) {
             setSaving(2);
             setRecordId(res.data.data);
@@ -445,9 +463,18 @@ const BaseAutoSaveInputCard = ({
       console.error('Error fetching data:', error);
     }
   };
+  const handleFileUpload = (file, fieldName) => {
+    setFormData({
+      ...formData,
+      [fieldName]: file,
+    });
+  };
 
   // useEffect(() => {}, [formData]);
 
+  const handlePreviewInBaseInputCard = (file) => {
+    handlePreview(file);
+  };
   return (
     <div className="py-6 px-15">
       {inputTitle && (
@@ -513,7 +540,54 @@ const BaseAutoSaveInputCard = ({
                 </div>
               )}
             </label>
-            {field.type === 'select' ? (
+            {field.type === 'file' && field.fileName ? (
+              <div className="flex justify-between ">
+                <Upload
+                  beforeUpload={(file) => {
+                    handleFileUpload(file, field.name); // Capture the file and store it
+                    handlePreview && handlePreview(file);
+                    //handle AutoSave
+                    handleAutoSave();
+                    return false; // Prevent the auto-upload, we'll handle it manually
+                  }}
+                >
+                  <AntButton
+                    icon={
+                      <MuiUpload
+                        sx={{
+                          fontSize: '20px',
+                        }}
+                      />
+                    }
+                  >
+                    Click to Upload
+                  </AntButton>
+                </Upload>
+                {formData[field.name] && handlePreview && (
+                  <div className="mb-4">
+                    <AntButton
+                      onClick={() =>
+                        handlePreviewInBaseInputCard(formData[field.name])
+                      }
+                      type="primary"
+                      style={{
+                        backgroundColor: '#006990',
+                        borderColor: '#006990',
+                      }}
+                      icon={
+                        <Launch
+                          sx={{
+                            fontSize: '20px',
+                          }}
+                        />
+                      }
+                    >
+                      Preview File
+                    </AntButton>
+                  </div>
+                )}
+              </div>
+            ) : field.type === 'select' ? (
               field.multiple ? (
                 <Select
                   multiple

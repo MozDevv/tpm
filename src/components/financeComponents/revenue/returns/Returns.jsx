@@ -1032,18 +1032,23 @@ const Returns = ({ status }) => {
             setInputData={setInputData}
           />
         ) : uploadExcel ? (
-          <BaseInputCard
+          <BaseAutoSaveInputCard
+            useFormData={true}
             fields={uploadFields}
             apiEndpoint={financeEndpoints.uploadReturn}
+            putApiFunction={apiService.post}
+            updateApiEndpoint={financeEndpoints.updateReturn}
             postApiFunction={apiService.post}
-            //  clickedItem={clickedItem}
-            useRequestBody={false}
+            getApiEndpoint={financeEndpoints.getReturnsById}
+            getApiFunction={apiService.get}
+            transformData={(data) => data}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenAddReturn}
             isBranch={true}
             refreshData={false}
             setSelectedBank={setSelectedBank}
+            setCloseProp={setOpenAddReturn}
             setClickedItem={setClickedItem}
-            setCloseProp={setUploadExcel}
-            setReFetchData={setRefetch}
             setInputData={setInputData}
           />
         ) : (
