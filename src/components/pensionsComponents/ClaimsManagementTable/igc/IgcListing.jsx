@@ -716,6 +716,7 @@ const IgcListing = ({ status }) => {
             clickedItem={retiree}
             claimId={null}
             setOpenBaseCard={setOpenBaseCard}
+            openBaseCard={openBaseCard}
             isIgc={true}
             childTitle="IGC Details"
             jsonPayload={clickedItem?.json_payload}

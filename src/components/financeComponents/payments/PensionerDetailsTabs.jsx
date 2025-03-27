@@ -30,7 +30,10 @@ import {
 } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import endpoints, { apiService } from '@/components/services/setupsApi';
-import { useIgEditedStore } from '@/zustand/store';
+import {
+  useIgEditedStore,
+  useRevisionPayloadFetchedStore,
+} from '@/zustand/store';
 
 const { TabPane } = Tabs;
 
@@ -45,6 +48,7 @@ function AssessmentCard({
   jsonPayload,
   igcId,
   setClickedItem,
+  openBaseCard,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -123,29 +127,32 @@ function AssessmentCard({
     ].indexOf(sectionName);
   };
 
+  const { setRevisionPayloadFetched } = useRevisionPayloadFetchedStore();
+
   const fetchRevisionPayload = async () => {
     try {
       const res = await apiService.get(endpoints.getRevisionPayload(igcId));
       if (res.status === 200) {
         console.log('Fetched revision payload:', res.data.result);
         return res.data.result.data;
+        setRevisionPayloadFetched((prev) => !prev);
       }
     } catch (error) {
       console.log('Error fetching revision payload:', error);
     }
   };
   const [revisionData, setRevisionData] = useState(null);
-  const { igEdited } = useIgEditedStore();
+  const { igcEdited } = useIgEditedStore();
 
   useEffect(() => {
     fetchRevisionPayload().then((data) => {
       setRevisionData(data);
     });
-  }, [igcId, activeKey, igEdited, clickedItem]);
+  }, [igcId, activeKey, igcEdited]);
 
   useEffect(() => {
-    console.log('Clicked item 😂❤️:', clickedItem); // Debug line
-  }, [clickedItem]);
+    console.log('IGC Has Been Edited:', igcEdited);
+  }, [igcEdited]);
   return (
     <div className="p-2  overflow-auto">
       <div>
@@ -216,9 +223,11 @@ function AssessmentCard({
                     <NewPreclaimForIgc
                       setClickedItem={setClickedItem}
                       jsonPayload={jsonPayload}
+                      revisionData={revisionData}
                       status={5}
                       retireeId={clickedItem?.id}
                       clickedItem={clickedItem}
+                      openBaseCard={openBaseCard}
                     />
                   ) : (
                     <></>

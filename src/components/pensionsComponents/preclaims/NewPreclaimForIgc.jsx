@@ -53,12 +53,17 @@ import { toProperCase } from '@/utils/numberFormatters';
 import AddBeneficiaries from './AddBeneficiaries';
 import { validateField } from './PreclaimsValidator';
 import { FieldDocuments } from '../FieldDocuments';
-import { useIgcIdStore } from '@/zustand/store';
+import {
+  useIgcIdStore,
+  useIgEditedStore,
+  useRevisionPayloadFetchedStore,
+} from '@/zustand/store';
 
 dayjs.extend(isSameOrBefore);
 
 function NewPreclaimForIgc({
   retireeId,
+  revisionData,
   setRetireeId,
   clickedItem,
   setOnCloseWarnings,
@@ -442,17 +447,14 @@ function NewPreclaimForIgc({
 
   // State for form data
   const [formData, setFormData] = useState(getInitialFormData());
+  const [isBeingEdited, setIsBeingEdited] = useState(false);
 
   const handleInputChange = (e) => {
+    setIsBeingEdited(true);
     if (retireeId) {
       setEditMode(true);
     }
-    if (setClickedItem) {
-      setClickedItem((prevItem) => ({
-        ...prevItem,
-        [e.target.name]: e.target.value,
-      }));
-    }
+
     let { name, value, type } = e.target;
     let parsedValue = type === 'number' ? parseFloat(value) : value;
 
@@ -801,7 +803,10 @@ function NewPreclaimForIgc({
   });
 
   const [dobError, setDobError] = useState(null);
-  const handleSubmit = () => {};
+  const { igcEdited, setIgcEdited } = useIgEditedStore();
+  const handleSubmit = () => {
+    setIgcEdited((prev) => !prev);
+  };
 
   const validateRetirementDate = () => {
     const pensionAward = pensionAwards.find(
@@ -954,6 +959,7 @@ function NewPreclaimForIgc({
         dataToSend
       );
       if (res.status === 200 && res.data.succeeded) {
+        setIsBeingEdited(false);
         message.success('Changes saved successfully');
       }
     } catch (error) {
@@ -963,34 +969,51 @@ function NewPreclaimForIgc({
 
   // const {igcId} = useIgcIdStore();
 
-  const fetchRevisionPayload = async () => {
-    try {
-      const res = await setupsApi.get(endpoints.getRevisionPayload(igcId));
-      if (res.status === 200) {
-        console.log('Fetched revision payload:', res.data.result);
-        return res.data.result.data;
-      }
-    } catch (error) {
-      console.log('Error fetching revision payload:', error);
-    }
-  };
-  const [revisionData, setRevisionData] = useState(null);
+  // const fetchRevisionPayload = async () => {
+  //   try {
+  //     const res = await setupsApi.get(endpoints.getRevisionPayload(igcId));
+  //     if (res.status === 200) {
+  //       console.log('Fetched revision payload:', res.data.result);
+  //       return res.data.result.data;
+  //     }
+  //   } catch (error) {
+  //     console.log('Error fetching revision payload:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchRevisionPayload().then((data) => {
-      setRevisionData(data);
-    });
-  }, [igcId]);
+  // useEffect(() => {
+  //   fetchRevisionPayload().then((data) => {
+  //     setRevisionData(data);
+  //   });
+  // }, [igcId]);
 
   const getFieldValue = (field) => {
+    let value;
     if (
+      !isBeingEdited &&
       revisionData &&
       revisionData.sectionsUpdated?.includes(0) &&
       revisionData.basicDetailFields?.includes(field.name)
     ) {
-      return revisionData.prospective_pensioner[field.name];
+      value = revisionData.prospective_pensioner[field.name];
+      // Parse the value if it is a date
+      if (field.type === 'date' && value) {
+        value = parseDate(value);
+      }
+    } else {
+      value = formData[field.name];
     }
-    return formData[field.name];
+
+    // console.log(`Field: ${field.name}, Value:`, value); // Log the field name and its value
+    return value;
+  };
+
+  // Utility function to parse date
+  const parseDate = (date) => {
+    if (date) {
+      return new Date(date).toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    }
+    return '';
   };
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
@@ -1042,7 +1065,12 @@ function NewPreclaimForIgc({
                 <div className="flex items-center gap-2"></div>
 
                 <div className="flex justify-end mr-5">
-                  <Button variant="contained" onClick={saveIgcChanges}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      saveIgcChanges();
+                    }}
+                  >
                     Save Changes
                   </Button>
                 </div>

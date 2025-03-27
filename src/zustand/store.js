@@ -13,4 +13,7 @@ export const usePostAndNatureStore = stateFactory('postAndNature');
 export const usePeriodsOfAbsenceStore = stateFactory('periodsOfAbsence');
 export const usePensionableSalaryStore = stateFactory('pensionableSalary');
 export const usePensionableSalaryStore2 = stateFactory('pensionableSalary2');
-export const useIgEditedStore = stateFactory('isEsIgedied');
+export const useIgEditedStore = stateFactory('igcEdited');
+export const useRevisionPayloadFetchedStore = stateFactory(
+  'revisionPayloadFetched'
+);
