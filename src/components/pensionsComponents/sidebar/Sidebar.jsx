@@ -382,26 +382,26 @@ export const menuItems = [
         ],
       },
       {
-        title: 'Revenue',
+        title: 'Receipt Voucher',
         subChildren: [
           {
-            title: 'New Returns',
+            title: 'New Receipt Voucher',
             path: '/pensions/finance/revenue',
           },
           {
-            title: 'Returns Pending Approval',
+            title: 'Receipt Voucher Pending Approval',
             path: '/pensions/finance/revenue/pending-approval',
           },
           {
-            title: 'Approved Returns',
+            title: 'Approved Receipt Voucher',
             path: '/pensions/finance/revenue/approved',
           },
           {
-            title: 'Paid Returns',
+            title: 'Paid Receipt Voucher',
             path: '/pensions/finance/revenue/paid',
           },
           {
-            title: 'Rejected Returns',
+            title: 'Rejected Receipt Voucher',
             path: '/pensions/finance/revenue/rejected',
           },
         ],

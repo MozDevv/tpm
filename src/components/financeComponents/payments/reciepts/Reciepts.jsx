@@ -25,6 +25,7 @@ import {
   Visibility,
 } from '@mui/icons-material';
 import ReceiptVoucher from './ReceiptVoucher';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const Reciepts = ({ status }) => {
   const statusIcons = {
@@ -282,6 +283,17 @@ const Reciepts = ({ status }) => {
       field: 'narration',
       type: 'string',
     },
+    {
+      headerName: 'Total Amount',
+      field: 'totalAmount',
+      cellRenderer: (params) => {
+        return (
+          <div className="text-right text-primary">
+            {formatNumber(params.value)}
+          </div>
+        );
+      },
+    },
   ];
   useEffect(() => {
     console.log('inputData:', inputData);
@@ -390,12 +402,17 @@ const Reciepts = ({ status }) => {
       name: 'narration',
       type: 'string',
     },
-    {
-      label: 'Total Amount',
-      name: 'totalAmount',
-      type: 'amount',
-      required: true,
-    },
+    ...(clickedItem
+      ? [
+          {
+            label: 'Total Amount',
+            name: 'totalAmount',
+            type: 'amount',
+            required: true,
+            disabled: true,
+          },
+        ]
+      : []),
     {
       label: 'Received From',
       name: 'receivedFrom',

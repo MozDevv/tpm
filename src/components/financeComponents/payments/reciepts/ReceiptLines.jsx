@@ -230,11 +230,12 @@ function RecieptLines({ clickedItem, status }) {
       type: 'amount',
       required: true,
     },
-    {
-      value: 'appliesToDocNo',
-      label: 'Applies To Doc No',
-      type: 'text',
-    },
+    // {
+    //   value: 'appliesToDocNo',
+    //   label: 'Applies To Doc No',
+    //   type: 'text',
+    //   notRequired: true,
+    // },
   ];
 
   const [totalAmmounts, setTotalAmmounts] = useState([]);
