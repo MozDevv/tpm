@@ -43,12 +43,12 @@ function IGCSummaryComponent({ clickedItem }) {
     switch (type) {
       case 7:
         return [
-          {
-            name: 'save',
-            label: 'Save',
-            type: 'select',
-            disabled: true,
-          },
+          //   {
+          //     name: 'save',
+          //     label: 'Save',
+          //     type: 'select',
+          //     disabled: true,
+          //   },
           {
             name: 'account_name',
             label: 'Account Name',

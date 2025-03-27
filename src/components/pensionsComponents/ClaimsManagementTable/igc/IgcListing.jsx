@@ -22,6 +22,7 @@ import { message } from 'antd';
 import { useIgcIdStore } from '@/zustand/store';
 import { mapRowData } from '../ClaimsTable';
 import IGCSummaryComponent from './IGCSummaryComponent';
+import ChangesView from './ChangesView';
 
 const IgcListing = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
@@ -804,7 +805,7 @@ const IgcListing = ({ status }) => {
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
         fetchApiEndpoint={
-          status === 0 || status
+          !status && status !== 0
             ? endpoints.igcBeneficiaries
             : endpoints.getIgcByStatus(status)
         }

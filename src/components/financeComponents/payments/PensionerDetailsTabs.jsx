@@ -177,6 +177,7 @@ function AssessmentCard({
                   <div className="">{children}</div>
                 </TabPane>
               )}
+
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
