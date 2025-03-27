@@ -121,7 +121,7 @@ export const menuItems = [
           },
           {
             title: 'IGC Change of Pay Point',
-            path: '/pensions/claims/igc/change-of-pay-point',
+            path: '/pensions/claims/igc/change-of-paypoint',
           },
           {
             title: 'IGC Revised Computation',
