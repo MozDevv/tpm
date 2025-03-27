@@ -104,6 +104,24 @@ const BaseAutoSaveInputCard = ({
       }
     }
 
+    if (name === 'receiptNoGeneratorLineId' && value) {
+      const receiptTypeField = fields.find(
+        (field) => field.name === 'receiptNoGeneratorLineId'
+      );
+
+      const selectedReceiptType = receiptTypeField.options.find(
+        (option) => option.id === value
+      );
+
+      if (selectedReceiptType) {
+        setFormData((prev) => ({
+          ...prev,
+          recieptNo:
+            selectedReceiptType.recieptNo &&
+            String(selectedReceiptType.recieptNo),
+        }));
+      }
+    }
     if (name === 'receiptTypeId' && value) {
       console.log('Receipt Type ID changed:', value);
 

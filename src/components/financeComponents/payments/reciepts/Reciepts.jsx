@@ -334,6 +334,7 @@ const Reciepts = ({ status }) => {
             return {
               id: item.id,
               name: item.receiptNo,
+              recieptNo: item.receiptNo,
             };
           })) ||
         [],
