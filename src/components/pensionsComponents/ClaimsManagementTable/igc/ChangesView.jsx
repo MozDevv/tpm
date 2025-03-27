@@ -11,6 +11,7 @@ import {
   Box,
 } from '@mui/material';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import { checkIsDate } from '@/utils/dateFormatter';
 
 const ChangesView = ({ data }) => {
   const sections = [
@@ -29,11 +30,22 @@ const ChangesView = ({ data }) => {
   }
 
   const {
-    sectionsEnabled = [], // Fallback to an empty array if undefined
-    sectionsUpdated = [], // Fallback to an empty array if undefined
-    basicDetailFields = [], // Fallback to an empty array if undefined
-    prospective_pensioner = null, // Fallback to null if undefined
+    sectionsEnabled = [],
+    sectionsUpdated = [],
+    basicDetailFields = [],
+    prospective_pensioner = null,
   } = data;
+
+  const parseDate = (dateString) => {
+    if (!dateString) return 'No data';
+    const date = new Date(dateString);
+    if (isNaN(date)) return 'Invalid date';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   const renderSection = (sectionId) => {
     const sectionName = sections[sectionId] || `Section ${sectionId}`;
@@ -68,7 +80,9 @@ const ChangesView = ({ data }) => {
               </TableCell>
               <TableCell style={{ padding: '16px' }}>
                 {prospective_pensioner
-                  ? prospective_pensioner[field] || 'Not Updated'
+                  ? checkIsDate(prospective_pensioner[field])
+                    ? parseDate(prospective_pensioner[field])
+                    : prospective_pensioner[field] || 'Not Updated'
                   : 'Not Updated'}
               </TableCell>
             </TableRow>
@@ -120,5 +134,7 @@ const ChangesView = ({ data }) => {
     </div>
   );
 };
+
+// export default ChangesView;
 
 export default ChangesView;
