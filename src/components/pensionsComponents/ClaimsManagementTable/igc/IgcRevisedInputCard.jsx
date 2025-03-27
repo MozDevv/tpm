@@ -7,7 +7,7 @@ import { mapRowData } from '../ClaimsTable';
 import { Autocomplete, Box, Button, Popper, TextField } from '@mui/material';
 import { Alert, message } from 'antd';
 
-function IgcRevisedInputCard({ setOpenBaseCard }) {
+function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
   const { data: fieldsAndSections } = useFetchAsync(
     endpoints.getBasicFields,
     apiService
@@ -17,28 +17,9 @@ function IgcRevisedInputCard({ setOpenBaseCard }) {
     basicDetailFields: {},
     sectionsEnabled: {},
   });
-  const [claims, setClaims] = useState([]);
+
   const [errors, setErrors] = useState({});
-  const fetchClaims = async () => {
-    try {
-      const res = await apiService.get(claimsEndpoints.getClaims, {
-        'paging.pageSize': 100000,
-        'paging.pageNumber': 1,
-      });
-      if (res.status === 200) {
-        const mappedData = mapRowData(res.data.data);
 
-        console.log('mappedData from dajskasjsakjkj', mappedData);
-        setClaims(mappedData);
-      } // Handle the response as needed
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchClaims();
-  }, []);
   const handleSectionChange = (section) => {
     setFormData((prevData) => ({
       ...prevData,

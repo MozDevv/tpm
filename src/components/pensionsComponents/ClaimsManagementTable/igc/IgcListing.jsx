@@ -20,6 +20,7 @@ import AssessmentCard from '@/components/financeComponents/payments/PensionerDet
 import IgcRevisedInputCard from './IgcRevisedInputCard';
 import { message } from 'antd';
 import { useIgcIdStore } from '@/zustand/store';
+import { mapRowData } from '../ClaimsTable';
 
 const IgcListing = () => {
   const [clickedItem, setClickedItem] = React.useState(null);
@@ -237,6 +238,7 @@ const IgcListing = () => {
     apiService
   );
   const [claims, setClaims] = useState([]);
+  const [igcClaims, setIgcClaims] = useState([]);
 
   const fetchPensioners = async () => {
     let filters = {};
@@ -261,6 +263,9 @@ const IgcListing = () => {
         }
       );
       if (res.status === 200) {
+        const mappedData2 = mapRowData(res.data.data);
+        setIgcClaims(mappedData2);
+
         const mappedData = res.data.data.map((item) => ({
           id: item?.prospectivePensioner?.id,
           name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
@@ -765,7 +770,10 @@ const IgcListing = () => {
             setSelectedBank={setSelectedBank}
           />
         ) : initiateRevisedCase ? (
-          <IgcRevisedInputCard setOpenBaseCard={setOpenBaseCard} />
+          <IgcRevisedInputCard
+            setOpenBaseCard={setOpenBaseCard}
+            claims={igcClaims}
+          />
         ) : (
           <></>
         )}
