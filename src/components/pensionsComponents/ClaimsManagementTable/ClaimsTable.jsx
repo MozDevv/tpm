@@ -17,6 +17,7 @@ import {
   Pagination,
   Dialog,
   Backdrop,
+  Chip,
 } from '@mui/material';
 import {
   AccessTime,
@@ -92,6 +93,20 @@ export const statusIcons = {
   3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
 };
 
+export const claimTypesMap = {
+  /**
+   * {
+      Principal,
+      Dependant,
+      KOD
+  }2ecc71
+   */
+
+  0: { name: 'Principal', color: '#2ecc71' }, // Light Red
+  1: { name: 'Dependant', color: '#f39c12' }, // Bright Orange
+  2: { name: 'KOD', color: '#3498db' }, // Light Blue
+};
+
 export const mapRowData = (items) =>
   items.map((item) => ({
     retiree: item?.prospectivePensioner?.id,
@@ -100,18 +115,87 @@ export const mapRowData = (items) =>
 
     id_claim: item?.id,
 
+    /**{
+	"igc_beneficiary_track": {
+		"igc_enrolment_id": "00000000-0000-0000-0000-000000000000",
+		"beneficiary_id": "48e77816-08d8-45dc-b5ea-f59a0e4a9c96",
+		"status": 4,
+		"beneficiary": {
+			"surname": "pope",
+			"first_name": "teresia",
+			"other_name": "mendosa",
+			"identifier": "362514789",
+			"identifier_type": 0,
+			"national_id": null,
+			"relationship_id": "0d516dec-7f74-4eb1-b18f-01356b7d0d3d",
+			"mobile_number": "+254790562365",
+			"address": null,
+			"email_address": "cgteresapope@mailinator.com",
+			"city": null,
+			"birth_certificate_no": null,
+			"percentage": null,
+			"age": 57,
+			"status": 1,
+			"guardian_id": null,
+			"dob": "1968-01-01T00:00:00Z",
+			"date_of_death": null,
+			"guardian": null,
+			"relationship": {
+				"name": "Wife",
+				"description": "Wife",
+				"is_spouse": true,
+				"gender": 1,
+				"id": "0d516dec-7f74-4eb1-b18f-01356b7d0d3d",
+				"created_by": null,
+				"created_date": "2024-09-30T12:05:58.54363Z",
+				"updated_by": null,
+				"updated_date": null
+			},
+			"parent_id": null,
+			"parent": null,
+			"children": [],
+			"wards": [],
+			"id": "48e77816-08d8-45dc-b5ea-f59a0e4a9c96",
+			"created_by": "66a46c67-38dc-480c-969d-ccd006aeaca7",
+			"created_date": "2025-03-27T20:48:22.114296Z",
+			"updated_by": null,
+			"updated_date": null
+		},
+		"igcEnrolment": null,
+		
+		],
+		"id": "0b948819-9427-44b0-86e9-de86d9d67143",
+		"created_by": "fa2d588b-d2e4-4eb8-a69b-f61991e7b33d",
+		"created_date": "2025-03-27T23:32:54.841667Z",
+		"updated_by": "fa2d588b-d2e4-4eb8-a69b-f61991e7b33d",
+		"updated_date": "2025-03-28T06:39:12.084172Z"
+	}
+} */
+
     stage: item?.stage,
     comments: item?.comments,
     maintenance_case: item?.prospectivePensioner?.maintenance_case,
     is_wcps: item?.prospectivePensioner?.is_wcps,
-    email_address: item?.prospectivePensioner?.email_address,
+
     notification_status: item?.prospectivePensioner?.notification_status,
     gender: item?.prospectivePensioner?.gender,
     phone_number: item?.prospectivePensioner?.phone_number,
     personal_number: item?.prospectivePensioner?.personal_number,
-    surname: item?.prospectivePensioner?.surname,
-    first_name: item?.prospectivePensioner?.first_name,
-    other_name: item?.prospectivePensioner?.other_name,
+
+    claim_type: item?.claim_type,
+    first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
+      ? item?.igc_beneficiary_track?.beneficiary?.first_name
+      : item?.prospectivePensioner?.first_name,
+    surname: item?.igc_beneficiary_track?.beneficiary?.surname
+      ? item?.igc_beneficiary_track?.beneficiary?.surname
+      : item?.prospectivePensioner?.surname,
+    other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
+      ? item?.igc_beneficiary_track?.beneficiary?.other_name
+      : item?.prospectivePensioner?.other_name,
+    email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
+      ? item?.igc_beneficiary_track?.beneficiary?.email_address
+      : item?.prospectivePensioner?.email_address,
+
     pension_award: item?.prospectivePensioner?.mda?.name,
     name: item?.prospectivePensioner?.pension_award?.name,
     national_id: item?.prospectivePensioner?.national_id,
@@ -444,16 +528,29 @@ const ClaimsTable = ({ status, isDashboard }) => {
 
         stage: item?.stage,
         comments: item?.comments,
+        igc_beneficiary_track: item?.igc_beneficiary_track,
         maintenance_case: item?.prospectivePensioner?.maintenance_case,
         is_wcps: item?.prospectivePensioner?.is_wcps,
-        email_address: item?.prospectivePensioner?.email_address,
+        // email_address: item?.prospectivePensioner?.email_address,
         notification_status: item?.prospectivePensioner?.notification_status,
         gender: item?.prospectivePensioner?.gender,
         phone_number: item?.prospectivePensioner?.phone_number,
         personal_number: item?.prospectivePensioner?.personal_number,
-        surname: item?.prospectivePensioner?.surname,
-        first_name: item?.prospectivePensioner?.first_name,
-        other_name: item?.prospectivePensioner?.other_name,
+
+        claim_type: item?.claim_type,
+        first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
+          ? item?.igc_beneficiary_track?.beneficiary?.first_name
+          : item?.prospectivePensioner?.first_name,
+        surname: item?.igc_beneficiary_track?.beneficiary?.surname
+          ? item?.igc_beneficiary_track?.beneficiary?.surname
+          : item?.prospectivePensioner?.surname,
+        other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
+          ? item?.igc_beneficiary_track?.beneficiary?.other_name
+          : item?.prospectivePensioner?.other_name,
+        email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
+          ? item?.igc_beneficiary_track?.beneficiary?.email_address
+          : item?.prospectivePensioner?.email_address,
+
         pension_award: item?.prospectivePensioner?.mda?.name,
         name: item?.prospectivePensioner?.pension_award?.name,
         national_id: item?.prospectivePensioner?.national_id,

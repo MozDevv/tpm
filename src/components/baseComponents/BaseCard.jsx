@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
-import { Avatar, IconButton, Tooltip } from '@mui/material';
+import { Avatar, Chip, IconButton, Tooltip } from '@mui/material';
 import { ArrowBack, CloseFullscreen, OpenInFull } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import PensionerDetailSummary from '../pensionsComponents/preclaims/PensionerDetailSummary';
@@ -23,6 +23,7 @@ import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import BaseWarningDialog from './BaseWarningDialog';
+import { claimTypesMap } from '../pensionsComponents/ClaimsManagementTable/ClaimsTable';
 
 function BaseCard({
   openBaseCard,
@@ -443,6 +444,23 @@ function BaseCard({
             <p className="text-lg text-primary font-semibold">
               {glAccountName || title}
             </p>
+            <div className="ml-3">
+              {clickedItem?.claim_type !== undefined && (
+                <div className="">
+                  <Chip
+                    label={
+                      claimTypesMap[clickedItem.claim_type]?.name || 'Unknown'
+                    }
+                    style={{
+                      backgroundColor:
+                        claimTypesMap[clickedItem.claim_type]?.color || '#ccc',
+                      color: '#fff',
+                      fontWeight: 'bold',
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center">
             <IconButton onClick={() => setIsExpanded(!isExpanded)}>

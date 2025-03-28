@@ -18,6 +18,7 @@ import {
   Dialog,
   Backdrop,
   CircularProgress,
+  Chip,
 } from '@mui/material';
 import {
   Add,
@@ -40,6 +41,7 @@ import assessEndpoints, {
 import ReturnToPreclaims from '@/components/pensionsComponents/ClaimsManagementTable/ReturnToPreclaims';
 import AssessmentCard from './AssessmentCard';
 import {
+  claimTypesMap,
   mapRowData,
   statusIcons,
 } from '@/components/pensionsComponents/ClaimsManagementTable/ClaimsTable';
@@ -437,14 +439,24 @@ const AssessmentTable = ({ status, statusArr }) => {
         comments: item?.comments,
         maintenance_case: item?.prospectivePensioner?.maintenance_case,
         is_wcps: item?.prospectivePensioner?.is_wcps,
-        email_address: item?.prospectivePensioner?.email_address,
+
         notification_status: item?.prospectivePensioner?.notification_status,
         gender: item?.prospectivePensioner?.gender,
         phone_number: item?.prospectivePensioner?.phone_number,
         personal_number: item?.prospectivePensioner?.personal_number,
-        surname: item?.prospectivePensioner?.surname,
-        first_name: item?.prospectivePensioner?.first_name,
-        other_name: item?.prospectivePensioner?.other_name,
+        claim_type: item?.claim_type,
+        first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
+          ? item?.igc_beneficiary_track?.beneficiary?.first_name
+          : item?.prospectivePensioner?.first_name,
+        surname: item?.igc_beneficiary_track?.beneficiary?.surname
+          ? item?.igc_beneficiary_track?.beneficiary?.surname
+          : item?.prospectivePensioner?.surname,
+        other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
+          ? item?.igc_beneficiary_track?.beneficiary?.other_name
+          : item?.prospectivePensioner?.other_name,
+        email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
+          ? item?.igc_beneficiary_track?.beneficiary?.email_address
+          : item?.prospectivePensioner?.email_address,
         pension_award: item?.prospectivePensioner?.mda?.name,
         name: item?.prospectivePensioner?.pension_award?.name,
         national_id: item?.prospectivePensioner?.national_id,
