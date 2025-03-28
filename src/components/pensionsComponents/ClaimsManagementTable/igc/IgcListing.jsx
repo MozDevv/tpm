@@ -806,6 +806,7 @@ const IgcListing = ({ status }) => {
                   : null
               }
               clickedItem={retiree}
+              clickedIgc={clickedItem}
               claimId={null}
               setOpenBaseCard={setOpenBaseCard}
               isIgc={true}
