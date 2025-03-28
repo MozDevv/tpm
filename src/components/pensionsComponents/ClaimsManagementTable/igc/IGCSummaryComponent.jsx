@@ -43,24 +43,6 @@ function IGCSummaryComponent({ clickedItem }) {
     switch (type) {
       case 7:
         return [
-          //   {
-          //     name: 'save',
-          //     label: 'Save',
-          //     type: 'select',
-          //     disabled: true,
-          //   },
-          {
-            name: 'account_name',
-            label: 'Account Name',
-            type: 'text',
-            disabled: true,
-          },
-          {
-            name: 'account_number',
-            label: 'Account Number',
-            type: 'text',
-            disabled: true,
-          },
           {
             name: 'bank_id',
             label: 'Bank',
@@ -73,6 +55,18 @@ function IGCSummaryComponent({ clickedItem }) {
             label: 'Bank Branch ',
             type: 'select',
             options: branches && branches,
+            disabled: true,
+          },
+          {
+            name: 'account_number',
+            label: 'Account Number',
+            type: 'text',
+            disabled: true,
+          },
+          {
+            name: 'account_name',
+            label: 'Account Name',
+            type: 'text',
             disabled: true,
           },
         ];
