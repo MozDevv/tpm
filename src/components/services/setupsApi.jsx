@@ -507,6 +507,8 @@ const endpoints = {
   updateRevisedCase: '/api/RevisedClaim/UpdateClaim',
   getRevisionPayload: (id) => `/api/RevisedClaim/GetRevisionPayload?id=${id}`,
   moveIgcStatus: '/api/RevisedClaim/MoveIGCRecord',
+  verifyBeneficiary: (id) =>
+    `/api/DeathInService/VerifyBeneficiary?beneficiaryId=${id}`,
 };
 
 export const apiService = {

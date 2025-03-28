@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Collapse, DialogContent, IconButton } from '@mui/material';
+import { Button, Collapse, DialogContent, IconButton } from '@mui/material';
 import EditBeneficiaryDialog from './EditBeneficiaryDialog';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -8,7 +8,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
-import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
+import { ExpandLess, KeyboardArrowRight, TaskAlt } from '@mui/icons-material';
 import { PORTAL_BASE_URL } from '@/utils/constants';
 
 function ViewBeneficiaries({
@@ -20,6 +20,8 @@ function ViewBeneficiaries({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [guardians, setGuardians] = useState([]);
+  const [clickedBeneficiary, setClickedBeneficiary] = useState(null);
+  const [clickedGuardian, setClickedGuardian] = useState(null);
 
   const getBeneficiaries = async () => {
     try {
@@ -45,10 +47,27 @@ function ViewBeneficiaries({
     getBeneficiaries();
   }, [clickedItem]);
 
+  const verifyBeneficiary = async () => {
+    try {
+      const res = await apiService.post(
+        preClaimsEndpoints.verifyBeneficiary(clickedBeneficiary.id)
+      );
+      if (res.status === 200) {
+        message.success('Beneficiary verified successfully');
+        setViewBeneficiaries(false);
+      } else {
+        message.error('Failed to verify beneficiary');
+      }
+    } catch (error) {
+      console.log('Error verifying beneficiary:', error);
+    }
+  };
   const columnDefs = [
     {
       headerName: 'Relationship',
       field: 'relationshipName',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
       valueGetter: (params) => params.data.relationship?.name,
     },
     { headerName: 'Surname', field: 'surname' },
@@ -94,6 +113,7 @@ function ViewBeneficiaries({
   ];
 
   const handleRowClick = (event) => {
+    setClickedBeneficiary(event.data);
     setSelectedBeneficiary(event.data);
     setEditDialogOpen(true);
   };
@@ -139,15 +159,27 @@ function ViewBeneficiaries({
             className="ag-theme-quartz"
             style={{ height: 400, width: '100%', marginBottom: '-30px' }}
           >
-            <AgGridReact
-              rowData={beneficiaries}
-              columnDefs={columnDefs}
-              domLayout="autoHeight"
-              className="custom-grid"
-              pagination={false}
-              rowSelection="single"
-              onRowClicked={handleRowClick}
-            />
+            <div className="mt-[-25px] mb-[10px]">
+              {clickedItem?.mortality_status === 1 && (
+                <div className="">
+                  <Button onClick={verifyBeneficiary} startIcon={<TaskAlt />}>
+                    Approve Beneficiary
+                  </Button>
+                </div>
+              )}
+              <AgGridReact
+                rowData={beneficiaries}
+                columnDefs={columnDefs}
+                domLayout="autoHeight"
+                className="custom-grid"
+                pagination={false}
+                rowSelection="single"
+                onRowClicked={handleRowClick}
+                onSelectionChanged={(e) => {
+                  setClickedBeneficiary(e.api.getSelectedRows()[0]);
+                }}
+              />
+            </div>
           </div>
         </DialogContent>
       </Collapse>{' '}
@@ -180,19 +212,32 @@ function ViewBeneficiaries({
                 className="ag-theme-quartz"
                 style={{ height: 400, width: '100%' }}
               >
-                <AgGridReact
-                  rowData={guardians}
-                  columnDefs={columnDefs}
-                  domLayout="autoHeight"
-                  pagination={false}
-                  className="custom-grid"
-                  rowSelection="single"
-                  onRowClicked={(e) => {
-                    setIsGuardian(true);
-                    setSelectedBeneficiary(e.data);
-                    setEditDialogOpen(true);
-                  }}
-                />
+                <div className=" mb-[10px]">
+                  {clickedItem?.mortality_status === 1 && (
+                    <div className="">
+                      <Button
+                        onClick={verifyBeneficiary}
+                        startIcon={<TaskAlt />}
+                      >
+                        Approve Guardian
+                      </Button>
+                    </div>
+                  )}
+                  <AgGridReact
+                    rowData={guardians}
+                    columnDefs={columnDefs}
+                    domLayout="autoHeight"
+                    pagination={false}
+                    className="custom-grid"
+                    rowSelection="single"
+                    onRowClicked={(e) => {
+                      setClickedBeneficiary(e.data);
+                      setIsGuardian(true);
+                      setSelectedBeneficiary(e.data);
+                      setEditDialogOpen(true);
+                    }}
+                  />
+                </div>
               </div>
             </DialogContent>
           </Collapse>
@@ -201,6 +246,7 @@ function ViewBeneficiaries({
       <EditBeneficiaryDialog
         id={clickedItem?.id}
         open={editDialogOpen}
+        clickedItem={clickedItem}
         isGuardian={isGuardian}
         onClose={() => setEditDialogOpen(false)}
         beneficiary={selectedBeneficiary}

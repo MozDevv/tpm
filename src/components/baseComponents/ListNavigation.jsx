@@ -649,6 +649,12 @@ const ListNavigation = ({
       action: 'moveStatusIgc',
       requiredPermissions: [],
     },
+    {
+      name: 'Create Dependants Claims',
+      icon: Add,
+      action: 'createDependantClaims',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

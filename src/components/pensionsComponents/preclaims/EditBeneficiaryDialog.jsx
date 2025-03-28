@@ -10,6 +10,7 @@ import {
   Collapse,
   MenuItem,
   Autocomplete,
+  Divider,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -17,13 +18,21 @@ import {
   ExpandLess,
   KeyboardArrowRight,
   Launch,
+  TaskAlt,
 } from '@mui/icons-material';
 import { message, Modal } from 'antd';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import axios from 'axios';
 import { PORTAL_BASE_URL } from '@/utils/constants';
 
-function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
+function EditBeneficiaryDialog({
+  open,
+  onClose,
+  beneficiary,
+  isGuardian,
+  id,
+  clickedItem,
+}) {
   const [formData, setFormData] = React.useState(beneficiary || {});
   const [openSections, setOpenSections] = React.useState({
     personalDetails: false,
@@ -196,6 +205,12 @@ function EditBeneficiaryDialog({ open, onClose, beneficiary, isGuardian, id }) {
             </div>
           </DialogTitle>
           <DialogContent>
+            {clickedItem?.mortality_status === 1 && (
+              <div className="mt-[-10px]">
+                <Button startIcon={<TaskAlt />}>Approve Beneficiary</Button>
+              </div>
+            )}
+            <Divider sx={{ margin: '5px 0' }} />
             {Object.keys(fields).map((sectionKey) => (
               <div key={sectionKey} className="p-2">
                 <div className="flex items-center gap-2">

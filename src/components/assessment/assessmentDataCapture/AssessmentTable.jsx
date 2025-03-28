@@ -510,6 +510,7 @@ const AssessmentTable = ({ status, statusArr }) => {
           : item?.pensioner_number,
         createdBy: item?.created_by,
         date_of_death: item?.prospectivePensioner?.date_of_death,
+        mortality_status: item?.prospectivePensioner?.mortality_status ?? '',
       }));
 
       setRowData(mappedData);
@@ -697,6 +698,36 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenAction('payroll');
       setOpenMoveStatus(true);
     },
+    ...(clickedItem?.mortality_status === 1 && status === 5
+      ? {
+          createDependantClaims: () => {
+            handleCreateDependantClaim();
+          },
+        }
+      : {}),
+  };
+
+  const handleCreateDependantClaim = async () => {
+    //handleCreateDependantClaim api/DeathInService/CreateDependentClaims?claimId=
+
+    if (clickedItem?.id_claim) {
+      setComputing(true);
+      try {
+        const res = await assessApiService.post(
+          assessEndpoints.createDependantClaims(clickedItem?.id_claim)
+        );
+
+        if (res.status === 200 && res.data.succeeded) {
+          getClaimQualifyingService(clickedItem?.id_claim);
+          getClaimPensionableService(clickedItem?.id_claim);
+          setComputed(true);
+        }
+      } catch (error) {
+        console.log('Error calculating and awarding claim:', error);
+      } finally {
+        setComputing(false);
+      }
+    }
   };
 
   const [computing, setComputing] = useState(false);

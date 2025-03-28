@@ -420,6 +420,7 @@ export const mapRowData = (items) =>
       maintenance_case: item?.maintenance_case,
       was_in_mixed_service: item?.was_in_mixed_service,
       has_wcps_proforma_recovery: item?.has_wcps_proforma_recovery,
+      mortality_status: item?.mortality_status ?? '',
     }));
 
 const Preclaims = ({

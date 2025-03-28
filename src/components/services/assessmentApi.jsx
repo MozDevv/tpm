@@ -70,6 +70,8 @@ const assessEndpoints = {
     `/api/Assessment/GetAwardCalcultionDetails?claim_id=${id}`,
   getPensionerBenefits: (id) =>
     `/api/Assessment/GetPensionerBenefits?claim_id=${id}`,
+  createDependantClaims: (id) =>
+    `/api/DeathInService/CreateDependentClaims?claimId=${id}`,
 };
 
 export const assessApiService = {

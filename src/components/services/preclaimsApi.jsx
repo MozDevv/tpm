@@ -136,6 +136,8 @@ const preClaimsEndpoints = {
 
   getBeneficiariesfromId: (id) =>
     `api/Claims/getBeneficiaries?prospective_pensioner_id=${id}`,
+  verifyBeneficiary: (id) =>
+    `/api/DeathInService/VerifyBeneficiary?beneficiaryId=${id}`,
 };
 
 export const apiService = {
