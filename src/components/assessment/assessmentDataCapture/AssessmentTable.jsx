@@ -433,7 +433,6 @@ const AssessmentTable = ({ status, statusArr }) => {
         claim_id: item?.claim_id,
 
         id_claim: item?.id,
-
         stage: item?.stage,
         comments: item?.comments,
         maintenance_case: item?.prospectivePensioner?.maintenance_case,

@@ -198,6 +198,7 @@ const IgcListing = ({ status }) => {
       ...item,
       ...item?.json_payload,
       stage: item?.igc_stage_type_map?.igc_stage,
+      id_claim: item?.json_payload?.claim_id,
     }));
   };
   const [openInitiate, setOpenInitiate] = useState(false);
@@ -228,7 +229,7 @@ const IgcListing = ({ status }) => {
   };
   const baseCardHandlers = {
     ...(clickedItem &&
-    isRevisedType(clickedItem?.igc_type) &&
+    // isRevisedType(clickedItem?.igc_type) &&
     clickedItem?.igc_submission_status === 2
       ? {
           moveStatusIgc: () => {
@@ -776,6 +777,7 @@ const IgcListing = ({ status }) => {
                   ]
                 : null
             }
+            clickedIgc={clickedItem}
             igcId={clickedItem?.id}
             setClickedItem={setClickedItem}
             clickedItem={retiree}
