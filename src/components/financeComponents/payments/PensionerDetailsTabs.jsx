@@ -258,193 +258,195 @@ function AssessmentCard({
                 <TabPane
                   tab={
                     <span className="text-primary font-montserrat">
-                      Bank Details
+                      Computation
                     </span>
                   }
-                  key="10"
+                  key="2"
                 >
-                  <AddBankDetails
-                    id={activeRetireeId}
-                    moveToNextTab={moveToNextTab}
-                    moveToPreviousTab={moveToPreviousTab}
-                  />
+                  <div className="">
+                    <AssessmentDetails
+                      clickedItem={claim}
+                      setRetireeId={setRetireeId}
+                      retireeId={activeRetireeId}
+                      pensionableService={pensionableService}
+                      qualifyingService={qualifyingService}
+                      isPayment={true}
+                    />
+                  </div>
                 </TabPane>
               )}
 
-              {clickedIgc?.igc_type !== 7 && (
-                <div className="">
-                  {clickedItem?.notification_status &&
-                    clickedItem.notification_status !== 2 && (
-                      <>
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat">
-                              Bank Details
-                            </span>
-                          }
-                          key="10"
-                        >
-                          <AddBankDetails
-                            id={activeRetireeId}
-                            moveToNextTab={moveToNextTab}
-                            moveToPreviousTab={moveToPreviousTab}
-                          />
-                        </TabPane>
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat overflow-hidden">
-                              Work History
-                              {(() => {
-                                const { isEnabled, isUpdated } =
-                                  isSectionEnabled('WORK_HISTORY');
-                                if (isEnabled && !isUpdated) {
-                                  return (
-                                    <Tooltip title="This section needs editing">
-                                      <EditOff
-                                        style={{ color: 'orange' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                } else if (isUpdated) {
-                                  return (
-                                    <Tooltip title="This section has been edited">
-                                      <Edit
-                                        style={{ color: '#2e7d32' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                }
-                                return null;
-                              })()}
-                            </span>
-                          }
-                          key="3"
-                        >
-                          <AddPensionersWorkHistory
-                            enabled={isSectionEnabled('WORK_HISTORY')}
-                            status={clickedItem.notification_status}
-                            id={activeRetireeId}
-                            name={
-                              clickedItem ? clickedItem.first_name : undefined
+              {clickedIgc?.igc_type !== 7 &&
+                clickedItem?.notification_status &&
+                clickedItem.notification_status !== 2 && (
+                  <>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Bank Details
+                        </span>
+                      }
+                      key="10"
+                    >
+                      <AddBankDetails
+                        id={activeRetireeId}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat overflow-hidden">
+                          Work History
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('WORK_HISTORY');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
                             }
-                            moveToNextTab={moveToNextTab}
-                            moveToPreviousTab={moveToPreviousTab}
-                          />
-                        </TabPane>
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat">
-                              Government Salary
-                              {(() => {
-                                const { isEnabled, isUpdated } =
-                                  isSectionEnabled('GOVERNMENT_SALARY');
-                                if (isEnabled && !isUpdated) {
-                                  return (
-                                    <Tooltip title="This section needs editing">
-                                      <EditOff
-                                        style={{ color: 'orange' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                } else if (isUpdated) {
-                                  return (
-                                    <Tooltip title="This section has been edited">
-                                      <Edit
-                                        style={{ color: '#2e7d32' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                }
-                                return null;
-                              })()}
-                            </span>
-                          }
-                          key="9"
-                        >
-                          <GovernmentSalary
-                            enabled={isSectionEnabled('GOVERNMENT_SALARY')}
-                            id={clickedItem?.id}
-                            clickedItem={clickedItem}
-                            igcId={igcId}
-                            sectionIndex={sectionIndexof('GOVERNMENT_SALARY')}
-                          />
-                        </TabPane>
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat">
-                              Documents
-                            </span>
-                          }
-                          key="4"
-                        >
-                          <AddDocuments
-                            clickedItem2={clickedItem}
-                            status={clickedItem.notification_status}
-                            id={activeRetireeId}
-                            moveToNextTab={moveToNextTab}
-                            moveToPreviousTab={moveToPreviousTab}
-                          />
-                        </TabPane>
-
-                        {clickedItem?.maintenance_case === 0 && (
-                          <TabPane
-                            tab={
-                              <span className="text-primary font-montserrat">
-                                Maintenance Case
-                              </span>
+                            return null;
+                          })()}
+                        </span>
+                      }
+                      key="3"
+                    >
+                      <AddPensionersWorkHistory
+                        enabled={isSectionEnabled('WORK_HISTORY')}
+                        status={clickedItem.notification_status}
+                        id={activeRetireeId}
+                        name={clickedItem ? clickedItem.first_name : undefined}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Government Salary
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('GOVERNMENT_SALARY');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
                             }
-                            key="6"
-                          >
-                            <div className="z-10">
-                              <MaintenanceCase id={clickedItem.id} />
-                            </div>
-                          </TabPane>
-                        )}
+                            return null;
+                          })()}
+                        </span>
+                      }
+                      key="9"
+                    >
+                      <GovernmentSalary
+                        enabled={isSectionEnabled('GOVERNMENT_SALARY')}
+                        id={clickedItem?.id}
+                        clickedItem={clickedItem}
+                        igcId={igcId}
+                        sectionIndex={sectionIndexof('GOVERNMENT_SALARY')}
+                      />
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Documents
+                        </span>
+                      }
+                      key="4"
+                    >
+                      <AddDocuments
+                        clickedItem2={clickedItem}
+                        status={clickedItem.notification_status}
+                        id={activeRetireeId}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                      />
+                    </TabPane>
 
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat">
-                              Deductions
-                              {(() => {
-                                const { isEnabled, isUpdated } =
-                                  isSectionEnabled('DEDUCTIONS');
-                                if (isEnabled && !isUpdated) {
-                                  return (
-                                    <Tooltip title="This section needs editing">
-                                      <EditOff
-                                        style={{ color: 'orange' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                } else if (isUpdated) {
-                                  return (
-                                    <Tooltip title="This section has been edited">
-                                      <Edit
-                                        style={{ color: '#2e7d32' }}
-                                        className="ml-2"
-                                      />
-                                    </Tooltip>
-                                  );
-                                }
-                                return null;
-                              })()}
-                            </span>
-                          }
-                          key="7"
-                        >
-                          <Deductions
-                            enabled={isSectionEnabled('DEDUCTIONS')}
-                            id={clickedItem?.id}
-                            clickedItem2={clickedItem}
-                            sectionIndex={sectionIndexof('DEDUCTIONS')}
-                          />
-                        </TabPane>
-                        {/* <TabPane
+                    {clickedItem?.maintenance_case === 0 && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Maintenance Case
+                          </span>
+                        }
+                        key="6"
+                      >
+                        <div className="z-10">
+                          <MaintenanceCase id={clickedItem.id} />
+                        </div>
+                      </TabPane>
+                    )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Deductions
+                          {(() => {
+                            const { isEnabled, isUpdated } =
+                              isSectionEnabled('DEDUCTIONS');
+                            if (isEnabled && !isUpdated) {
+                              return (
+                                <Tooltip title="This section needs editing">
+                                  <EditOff
+                                    style={{ color: 'orange' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            } else if (isUpdated) {
+                              return (
+                                <Tooltip title="This section has been edited">
+                                  <Edit
+                                    style={{ color: '#2e7d32' }}
+                                    className="ml-2"
+                                  />
+                                </Tooltip>
+                              );
+                            }
+                            return null;
+                          })()}
+                        </span>
+                      }
+                      key="7"
+                    >
+                      <Deductions
+                        enabled={isSectionEnabled('DEDUCTIONS')}
+                        id={clickedItem?.id}
+                        clickedItem2={clickedItem}
+                        sectionIndex={sectionIndexof('DEDUCTIONS')}
+                      />
+                    </TabPane>
+                    {/* <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
                           Deductions
@@ -456,96 +458,93 @@ function AssessmentCard({
                     </TabPane>
 
                     */}
-                        {clickedItem?.is_wcps === 0 && (
-                          <TabPane
-                            tab={
-                              <span className="text-primary font-montserrat">
-                                Women & Children Contributions Scheme
-                                {(() => {
-                                  const { isEnabled, isUpdated } =
-                                    isSectionEnabled('WCPS');
-                                  if (isEnabled && !isUpdated) {
-                                    return (
-                                      <Tooltip title="This section needs editing">
-                                        <EditOff
-                                          style={{ color: 'orange' }}
-                                          className="ml-2"
-                                        />
-                                      </Tooltip>
-                                    );
-                                  } else if (isUpdated) {
-                                    return (
-                                      <Tooltip title="This section has been edited">
-                                        <Edit
-                                          style={{ color: '#2e7d32' }}
-                                          className="ml-2"
-                                        />
-                                      </Tooltip>
-                                    );
-                                  }
-                                  return null;
-                                })()}
-                              </span>
-                            }
-                            key="8"
-                          >
-                            <WcpsCard id={clickedItem?.id} />
-                          </TabPane>
-                        )}
-
-                        {clickedItem?.mda_pensionCap_name === 'CAP196' && (
-                          <TabPane
-                            tab={
-                              <span className="text-primary font-montserrat">
-                                Parliament Contributions
-                                {(() => {
-                                  const { isEnabled, isUpdated } =
-                                    isSectionEnabled(
-                                      'PARLIAMENTARY_CONTRIBUTIONS'
-                                    );
-                                  if (isEnabled && !isUpdated) {
-                                    return (
-                                      <Tooltip title="This section needs editing">
-                                        <EditOff
-                                          style={{ color: 'orange' }}
-                                          className="ml-2"
-                                        />
-                                      </Tooltip>
-                                    );
-                                  } else if (isUpdated) {
-                                    return (
-                                      <Tooltip title="This section has been edited">
-                                        <Edit
-                                          style={{ color: '#2e7d32' }}
-                                          className="ml-2"
-                                        />
-                                      </Tooltip>
-                                    );
-                                  }
-                                  return null;
-                                })()}
-                              </span>
-                            }
-                            key="10"
-                          >
-                            <ParliamentContributions id={clickedItem?.id} />
-                          </TabPane>
-                        )}
-
-                        <TabPane
-                          tab={
-                            <span className="text-primary font-montserrat">
-                              Liabilities
-                            </span>
-                          }
-                          key="11"
-                        >
-                          <Liabilities id={clickedItem?.id} />
-                        </TabPane>
-                      </>
+                    {clickedItem?.is_wcps === 0 && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Women & Children Contributions Scheme
+                            {(() => {
+                              const { isEnabled, isUpdated } =
+                                isSectionEnabled('WCPS');
+                              if (isEnabled && !isUpdated) {
+                                return (
+                                  <Tooltip title="This section needs editing">
+                                    <EditOff
+                                      style={{ color: 'orange' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              } else if (isUpdated) {
+                                return (
+                                  <Tooltip title="This section has been edited">
+                                    <Edit
+                                      style={{ color: '#2e7d32' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              }
+                              return null;
+                            })()}
+                          </span>
+                        }
+                        key="8"
+                      >
+                        <WcpsCard id={clickedItem?.id} />
+                      </TabPane>
                     )}
-                </div>
-              )}
+
+                    {clickedItem?.mda_pensionCap_name === 'CAP196' && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Parliament Contributions
+                            {(() => {
+                              const { isEnabled, isUpdated } = isSectionEnabled(
+                                'PARLIAMENTARY_CONTRIBUTIONS'
+                              );
+                              if (isEnabled && !isUpdated) {
+                                return (
+                                  <Tooltip title="This section needs editing">
+                                    <EditOff
+                                      style={{ color: 'orange' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              } else if (isUpdated) {
+                                return (
+                                  <Tooltip title="This section has been edited">
+                                    <Edit
+                                      style={{ color: '#2e7d32' }}
+                                      className="ml-2"
+                                    />
+                                  </Tooltip>
+                                );
+                              }
+                              return null;
+                            })()}
+                          </span>
+                        }
+                        key="10"
+                      >
+                        <ParliamentContributions id={clickedItem?.id} />
+                      </TabPane>
+                    )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Liabilities
+                        </span>
+                      }
+                      key="11"
+                    >
+                      <Liabilities id={clickedItem?.id} />
+                    </TabPane>
+                  </>
+                )}
             </Tabs>
           </div>
         </div>
