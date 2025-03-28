@@ -49,6 +49,20 @@ const IgcListing = ({ status }) => {
     7: { name: 'Change of Pay Point', color: '#009688' }, // Teal
     8: { name: 'Revised Computation', color: '#0288d1' }, // Deep Orange
   };
+  const notificationStatusMap = {
+    0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
+    1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
+    2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
+    3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
+    4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+    5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+    6: { name: 'Controller of Budget', color: '#f39c12' }, // Bright Orange
+    7: { name: 'Finance', color: '#2ecc71' }, // Light Blue
+    8: { name: 'Voucher Preparation', color: '#f39c12' }, // Bright Orange
+    9: { name: 'Voucher Approval', color: '#3498db' }, // Light Blue
+    10: { name: 'Voucher Scheduled', color: '#f39c12' }, // Bright Orange
+    11: { name: 'Voucher Paid', color: '#8b4513' }, // Light Blue
+  };
 
   const columnDefs = [
     {
@@ -85,6 +99,31 @@ const IgcListing = ({ status }) => {
       width: 200,
       valueGetter: (params) => {
         return params.data.prospective_pensioner?.personal_number;
+      },
+    },
+    {
+      headerName: 'Stage',
+      field: 'stage',
+      width: 150,
+      cellRenderer: (params) => {
+        const status = notificationStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              borderColor: status.color,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name.toLowerCase()}
+          </Button>
+        );
       },
     },
     {
@@ -158,6 +197,7 @@ const IgcListing = ({ status }) => {
     return data.map((item) => ({
       ...item,
       ...item?.json_payload,
+      stage: item?.igc_stage_type_map?.igc_stage,
     }));
   };
   const [openInitiate, setOpenInitiate] = useState(false);
