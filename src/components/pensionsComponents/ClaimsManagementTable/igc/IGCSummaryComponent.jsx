@@ -62,6 +62,13 @@ function IGCSummaryComponent({ clickedItem }) {
             disabled: true,
           },
           {
+            name: 'bank_id',
+            label: 'Bank',
+            type: 'select',
+            options: banks && banks,
+            disabled: true,
+          },
+          {
             name: 'bank_branch_id',
             label: 'Bank Branch ',
             type: 'select',
@@ -93,6 +100,10 @@ function IGCSummaryComponent({ clickedItem }) {
           account_name: jsonPayload.bankDetails?.account_name || '',
           account_number: jsonPayload.bankDetails?.account_number || '',
           bank_branch_id: jsonPayload.bankDetails?.bank_branch_id || '',
+          bank_id:
+            branches?.find(
+              (b) => b.id === jsonPayload.bankDetails?.bank_branch_id
+            )?.bankId || '',
         };
       default:
         return jsonPayload;
