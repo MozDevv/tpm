@@ -224,7 +224,7 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
 
                     try {
                       const response = await apiService.get(
-                        `${BASE_CORE_API}api/claims/SearchClaims?${queryString}`
+                        `${BASE_CORE_API}api/claims/SearchClaims?${queryString}&paging.pageSize=100000`
                       );
                       if (response.status === 200) {
                         if (response.data.data.length === 0) {
@@ -262,7 +262,7 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
                 onChange={(event, newValue) => {
                   setFormData((prevData) => ({
                     ...prevData,
-                    claimId: newValue?.id_claim,
+                    claimId: newValue?.id,
                   }));
                 }}
                 renderInput={(params) => (
@@ -277,8 +277,8 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
                   />
                 )}
                 value={
-                  claims.find(
-                    (option) => option.id_claim === formData.claimId
+                  searchResults.find(
+                    (option) => option.id === formData.claimId
                   ) || null
                 }
                 renderOption={(props, option, { selected }) => (
