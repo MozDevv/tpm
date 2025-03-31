@@ -6,42 +6,14 @@ import {
   Avatar,
   Typography,
   Box,
-  IconButton,
   Button,
   Divider,
-  Drawer,
   Collapse,
-  Menu,
-  MenuItem,
-  Tooltip,
   Pagination,
   Dialog,
   Backdrop,
 } from '@mui/material';
-import {
-  AccessTime,
-  AccessTimeOutlined,
-  Add,
-  Cancel,
-  CancelOutlined,
-  Close,
-  Delete,
-  DeleteOutlineOutlined,
-  Edit,
-  EditOutlined,
-  FilterAlt,
-  FilterAltOutlined,
-  FilterList,
-  ForwardToInbox,
-  Launch,
-  LaunchOutlined,
-  Send,
-  SortByAlpha,
-  TaskAlt,
-  TaskAltOutlined,
-  Verified,
-  Visibility,
-} from '@mui/icons-material';
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import './ag-theme.css';
 import CreatePreclaim from './CreatePreclaim';
 
@@ -49,11 +21,7 @@ import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
 import PreclaimsNotifications from './PreclaimsNotifications';
-import PreclaimDialog from './PreclaimDialog';
-import { useAlert } from '@/context/AlertContext';
-import axios from 'axios';
 import Spinner from '@/components/spinner/Spinner';
-import ReactPaginate from 'react-paginate';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useMda } from '@/context/MdaContext';
@@ -61,13 +29,13 @@ import ListNavigation from '@/components/baseComponents/ListNavigation';
 import BaseCard from '@/components/baseComponents/BaseCard';
 import CreateProspectivePensioner from './createProspective/CreateProspectivePensioner';
 import { useSearch } from '@/context/SearchContext';
-import { message, Spin } from 'antd';
 import BaseLoadingOverlay from '@/components/baseComponents/BaseLoadingOverlay';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { useStatus } from '@/context/StatusContext';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
+import { parseDate } from '@/utils/dateFormatter';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -104,7 +72,7 @@ const statusIcons = {
 export const colDefs = [
   {
     headerName: 'No',
-    field: 'no_series',
+    field: 'no',
     width: 150,
     pinned: 'left', // Pinning to the left ensures it's the first column
     checkboxSelection: true,
@@ -174,7 +142,7 @@ export const colDefs = [
   },
   {
     headerName: 'Approval Status',
-    field: 'approval_status',
+    field: 'status',
     width: 150,
     filter: true,
     cellRenderer: (params) => {
@@ -225,36 +193,17 @@ export const colDefs = [
   },
 
   {
-    headerName: 'Pension Award',
-    field: 'pension_award',
-    width: 200,
-  },
-  {
-    headerName: 'Name',
-    field: 'name',
-    width: 150,
-  },
-  {
-    headerName: 'Other Name',
-    field: 'other_name',
-    width: 150,
-  },
-  {
     headerName: 'National ID',
     field: 'national_id',
     width: 150,
   },
-  {
-    headerName: 'KRA PIN',
-    field: 'kra_pin',
-    width: 150,
-  },
+
   {
     headerName: 'Retirement Date',
     field: 'retirement_date',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
+      return params.value ? parseDate(params.value) : '';
     },
   },
   {
@@ -262,85 +211,17 @@ export const colDefs = [
     field: 'dob',
     width: 180,
     cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
+      return params.value ? parseDate(params.value) : '';
     },
   },
-  {
-    headerName: 'Date of Confirmation',
-    field: 'date_of_confirmation',
-    width: 200,
-    cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
-    },
-  },
-  {
-    headerName: 'Last Basic Salary Amount',
-    field: 'last_basic_salary_amount',
-    width: 200,
-  },
+
   {
     headerName: 'MDA Code',
     field: 'mda_code',
-    width: 150,
-  },
-  {
-    headerName: 'MDA Description',
-    field: 'mda_description',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Pension Cap Code',
-    field: 'mda_pensionCap_code',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Pension Cap Name',
-    field: 'mda_pensionCap_name',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Pension Cap Description',
-    field: 'mda_pensionCap_description',
-    width: 250,
-  },
-
-  {
-    headerName: 'Pension Award Prefix',
-    field: 'pensionAward_prefix',
-    width: 200,
-  },
-  {
-    headerName: 'Pension Award Code',
-    field: 'pensionAward_code',
-    width: 180,
-  },
-  {
-    headerName: 'Pension Award Description',
-    field: 'pensionAward_description',
-    width: 250,
-  },
-
-  {
-    headerName: 'Pension Award Pension Cap Name',
-    field: 'pensionAward_pensionCap_name',
-    width: 250,
-  },
-  {
-    headerName: 'Pension Award Pension Cap Description',
-    field: 'pensionAward_pensionCap_description',
-    width: 300,
-  },
-  {
-    headerName: 'Pension Award Pension Cap ID',
-    field: 'pensionAward_pensionCap_id',
-    width: 250,
-    hide: true,
-  },
-  {
-    headerName: 'ID',
-    field: 'id',
-    width: 150,
-    hide: true,
+    width: 350,
+    cellRenderer: (params) => {
+      return params.data?.mda?.name || 'N/A';
+    },
   },
 ];
 
@@ -523,7 +404,7 @@ const Preclaims = ({
         : filter;
     //  setLoading(true);
     try {
-      const res = await apiService.get(preClaimsEndpoints.getPreclaims, {
+      const res = await apiService.get(preClaimsEndpoints.getPreclaimsListing, {
         'paging.pageNumber': pageNumber,
         'paging.pageSize': pageSize,
 
@@ -558,11 +439,11 @@ const Preclaims = ({
           // );
 
           // setItems(filteredApprovals);
-          const data = mapRowData(res.data.data);
-          setRowData(data);
+          // const data = mapRowData(res.data.data);
+          setRowData(res.data.data);
         } else {
-          const data = mapRowData(res.data.data);
-          setRowData(data);
+          // const data = mapRowData(res.data.data);
+          setRowData(res.data.data);
           // console.log("first, state", status);
         }
       }
@@ -981,10 +862,10 @@ const Preclaims = ({
               <BaseApprovalCard
                 openApprove={openApprove}
                 setOpenApprove={setOpenApprove}
-                documentNo={selectedRows.map((item) => item.no_series)}
+                documentNo={selectedRows.map((item) => item.no)}
               />
               <BaseCard
-                documentNo={clickedItem && clickedItem?.no_series}
+                documentNo={clickedItem && clickedItem?.no}
                 openBaseCard={openBaseCard}
                 setOpenBaseCard={setOpenBaseCard}
                 status={status}

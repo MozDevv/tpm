@@ -316,14 +316,14 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
                           </p>
                           <p
                             className="text-[12px] items-center"
-                            style={{ alignSelf: 'flex-center' }}
+                            style={{ alignSelf: 'flex-start' }}
                           >
                             {option.prospectivePensioner.first_name}{' '}
                             {option.prospectivePensioner.surname}
                           </p>
                           <p
                             className="text-[12px] items-center"
-                            style={{ alignSelf: 'flex-center' }}
+                            style={{ alignSelf: 'flex-start' }}
                           >
                             {formData.searchType === 'national_id'
                               ? `${option.prospectivePensioner.national_id}`

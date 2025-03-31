@@ -66,6 +66,7 @@ const preClaimsEndpoints = {
 
   getPreclaims: '/api/ProspectivePensioners/getProspectivePensioners',
 
+  getPreclaimsListing: 'api/prospectivePensioners/pensionersList',
   getProspectivePensioner: (id) =>
     `/api/ProspectivePensioners/getProspectivePensioners?id=${id}`,
 

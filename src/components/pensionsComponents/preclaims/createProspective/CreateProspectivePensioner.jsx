@@ -15,6 +15,10 @@ import { useMda } from '@/context/MdaContext';
 import Liabilities from '../liabilities/Liabilities';
 import GovernmentSalary from '../governmentSalary/GovernmentSalary';
 import NextOfKin from '../NextOfKin';
+import preClaimsEndpoints, {
+  apiService,
+} from '@/components/services/preclaimsApi';
+import { mapRowData } from '../Preclaims';
 
 const { TabPane } = Tabs;
 
@@ -27,6 +31,7 @@ function CreateProspectivePensioner({
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
+  const [retiree, setRetiree] = useState({});
 
   const activeRetireeId =
     retireeId !== null ? retireeId : clickedItem ? clickedItem.id : undefined;
@@ -35,6 +40,20 @@ function CreateProspectivePensioner({
     setActiveKey(key);
   };
 
+  const fetchRetiree = async () => {
+    setLoading(true);
+    try {
+      const res = await apiService.get(
+        preClaimsEndpoints.getProspectivePensioner(clickedItem?.id)
+      );
+
+      const mappedRetiree = mapRowData(res.data.data);
+
+      setRetiree(mappedRetiree[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
     //setActiveKey(nextTab);
@@ -77,7 +96,7 @@ function CreateProspectivePensioner({
                     retireeId={activeRetireeId}
                     moveToNextTab={moveToNextTab}
                     moveToPreviousTab={moveToPreviousTab}
-                    clickedItem={clickedItem}
+                    clickedItem={retiree}
                     setOnCloseWarnings={setOnCloseWarnings}
                   />
                 </div>
@@ -172,7 +191,7 @@ function CreateProspectivePensioner({
                     >
                       <NextOfKin clickedItem={clickedItem} />
                     </TabPane>
-                    {clickedItem?.maintenance_case === 0 && (
+                    {retiree?.maintenance_case === 0 && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
@@ -185,7 +204,7 @@ function CreateProspectivePensioner({
                         <div style={{ zIndex: 1 }}>
                           <MaintenanceCase
                             id={clickedItem.id}
-                            clickedItem2={clickedItem}
+                            clickedItem2={retiree}
                           />
                         </div>
                       </TabPane>
@@ -199,17 +218,14 @@ function CreateProspectivePensioner({
                       key="8"
                       style={{ zIndex: 1 }}
                     >
-                      <Deductions
-                        id={clickedItem?.id}
-                        clickedItem2={clickedItem}
-                      />
+                      <Deductions id={clickedItem?.id} clickedItem2={retiree} />
                     </TabPane>
 
-                    {clickedItem?.is_wcps === 0 && (
+                    {retiree?.is_wcps === 0 && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
-                            {clickedItem?.has_wcps_proforma_recovery
+                            {retiree?.has_wcps_proforma_recovery
                               ? 'Women & Children Contributions Scheme Proforma'
                               : 'Women & Children Contributions Scheme'}
                           </span>
@@ -218,17 +234,15 @@ function CreateProspectivePensioner({
                         style={{ zIndex: 1 }}
                       >
                         <WcpsCard
-                          isWcpsProforma={
-                            clickedItem?.has_wcps_proforma_recovery
-                          }
+                          isWcpsProforma={retiree?.has_wcps_proforma_recovery}
                           id={clickedItem?.id}
-                          clickedItem2={clickedItem}
+                          clickedItem2={retiree}
                         />
                       </TabPane>
                     )}
 
                     {(activeCapName === 'CAP196' ||
-                      clickedItem?.mda_pensionCap_name === 'CAP196') && (
+                      retiree?.mda_pensionCap_name === 'CAP196') && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
@@ -240,7 +254,7 @@ function CreateProspectivePensioner({
                       >
                         <ParliamentContributions
                           id={clickedItem?.id}
-                          clickedItem2={clickedItem}
+                          clickedItem2={retiree}
                         />
                       </TabPane>
                     )}
@@ -254,7 +268,7 @@ function CreateProspectivePensioner({
                         key="11"
                         style={{ zIndex: 1 }}
                       >
-                        <Liabilities id={clickedItem?.id} />
+                        <Liabilities id={retiree?.id} />
                       </TabPane>
                     )}
                   </>
