@@ -328,8 +328,8 @@ const OldCases = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Old Cases"
-        currentTitle="Old Cases"
+        breadcrumbTitle="Returns"
+        currentTitle="Returns"
       />
     </div>
   );

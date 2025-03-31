@@ -124,7 +124,8 @@ const Returns = ({ status }) => {
       : {}),
 
     ...(status === 2 && {
-      createReturnReceipt: () => {
+      // postReceiptToGL: () => setOpenPV(true),
+      postReceiptToGL: () => {
         setOpenAction(true);
       },
     }),
@@ -999,12 +1000,13 @@ const Returns = ({ status }) => {
         }}
       >
         <ReturnActions
+          isReceiptVoucher={true}
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
           setOpenPostGL={setOpenAction}
           clickedItem={clickedItem}
           status={status}
-          postApiFunction={financeEndpoints.postReturnToLedger}
+          postApiFunction={financeEndpoints.postReceiptToLedger}
           postApiService={apiService.post}
         />
       </Dialog>

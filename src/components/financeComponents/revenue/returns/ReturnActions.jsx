@@ -23,6 +23,7 @@ function ReturnActions({
   status,
   postApiFunction,
   postApiService,
+  isReceiptVoucher,
 }) {
   const [errors, setErrors] = useState({ status: false, message: '' });
 
@@ -34,12 +35,12 @@ function ReturnActions({
 
   const handlePostToGL = async () => {
     const selectedIds = selectedRows.map((journal) => ({
-      returnId: journal.id,
+      receiptId: journal.id,
     }));
 
     try {
       const res = await postApiService(postApiFunction, {
-        returns: selectedIds,
+        receiptList: selectedIds,
       });
       if (res.status === 200 && res.data.succeeded) {
         message.success('Receipt(s) Posted to Ledger successfully');
@@ -60,6 +61,8 @@ function ReturnActions({
     switch (status) {
       case 0:
         return 'Create';
+      case 2:
+        return 'Post';
     }
   })();
 
@@ -68,7 +71,7 @@ function ReturnActions({
       <div className="flex px-3 flex-col">
         <div className="flex items-center gap-2">
           <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
-            Create Reciept(s)
+            Post Reciept(s)
           </h5>
         </div>
         {errors.status && (

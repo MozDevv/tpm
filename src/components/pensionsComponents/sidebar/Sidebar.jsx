@@ -408,7 +408,7 @@ export const menuItems = [
         ],
       },
       {
-        title: 'Old Cases',
+        title: 'Returns',
         path: '/pensions/finance/old-cases',
       },
     ],

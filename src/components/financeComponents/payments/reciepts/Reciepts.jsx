@@ -128,34 +128,52 @@ const Reciepts = ({ status }) => {
             if (clickedItem) {
               submitBudgetForApproval();
             } else {
-              message.error('Please select a budget to submit for approval');
+              message.error('Please select a receipt to submit for approval.');
             }
           },
           create: () => {
             setOpenBaseCard(true);
             setClickedItem(null);
           },
-
-          delete: () => console.log('Delete clicked'),
-          reports: () => console.log('Reports clicked'),
-
-          notify: () => console.log('Notify clicked'),
+          delete: () => {
+            if (clickedItem) {
+              // Add delete logic here
+              console.log(`Deleting receipt with ID: ${clickedItem.id}`);
+            } else {
+              message.error('Please select a receipt to delete.');
+            }
+          },
+          reports: () => {
+            // Add reports logic here
+            console.log('Reports clicked');
+          },
+          notify: () => {
+            // Add notify logic here
+            console.log('Notify clicked');
+          },
         }
       : status === 1
       ? {
-          approvalRequest: () => console.log('Approval Request clicked'),
-          sendApprovalRequest: () => setOpenApprove(1),
-          cancelApprovalRequest: () => setOpenApprove(2),
-          approveDocument: () => setOpenApprove(3),
-          rejectDocumentApproval: () => setOpenApprove(4),
+          approvalRequest: () => {
+            // Add approval request logic here
+            console.log('Approval Request clicked');
+          },
+          sendApprovalRequest: () => {
+            setOpenApprove(1);
+          },
+          cancelApprovalRequest: () => {
+            setOpenApprove(2);
+          },
+          approveDocument: () => {
+            setOpenApprove(3);
+          },
+          rejectDocumentApproval: () => {
+            setOpenApprove(4);
+          },
           delegateApproval: () => {
             setOpenApprove(5);
             setWorkFlowChange(Date.now());
           },
-        }
-      : status === 2
-      ? {
-          postReceiptToGL: () => setOpenPV(true),
         }
       : {}),
   };
