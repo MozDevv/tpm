@@ -237,11 +237,27 @@ const Reciepts = ({ status }) => {
     financeEndpoints.getUnusedReceiptNoGeneratorHeader,
     apiService
   );
-  const { data: allNoLines } = useFetchAsync(
-    financeEndpoints.getAllReceiptNoGeneratorLine,
-    apiService
-  );
+  const [allNoLines, setAllNoLines] = useState([]);
 
+  const fetchUnusedLines = async () => {
+    try {
+      const res = await apiService.get(
+        financeEndpoints.getAllReceiptNoGeneratorLine
+      );
+      if (res.status === 200) {
+        setAllNoLines(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnusedLines();
+  }, []);
+  useEffect(() => {
+    fetchUnusedLines();
+  }, [openBaseCard]);
   const columnDefs = [
     {
       headerName: 'Document No',
