@@ -6,15 +6,17 @@ import {
   Dialog,
   DialogContent,
   Divider,
+  IconButton,
   Popper,
   TextField,
 } from '@mui/material';
-import { Button, Table, Upload, message } from 'antd';
+import { Alert, Button, Table, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import CRMBaseInput from './CRMBaseInput';
 import endpoints, { apiService } from '../services/setupsApi';
 import { Button as MuiButton } from '@mui/material';
 import useFetchAsync from '../hooks/DynamicFetchHook';
+import { ArrowBack } from '@mui/icons-material';
 
 function DependantsEnrollment() {
   const [formData, setFormData] = useState({});
@@ -355,6 +357,53 @@ function DependantsEnrollment() {
     );
   };
 
+  const [pensionerDetails, setPensionerDetails] = useState();
+
+  const handleConfirmPensionerDetails = async () => {
+    setLoading(true);
+
+    // Validate input
+    if (!formData['principal_pensioner_id_card_number']) {
+      setErrors((prev) => ({
+        ...prev,
+        principal_pensioner_id_card_number:
+          'Principal Pensioner ID Card Number is required',
+      }));
+      setLoading(false); // Stop loading if validation fails
+      return;
+    }
+
+    // Prepare FormData
+    const formData2 = new FormData();
+    formData2.append(
+      'principal_pensioner_id_card_number',
+      formData['principal_pensioner_id_card_number'] || ''
+    );
+
+    try {
+      // API call
+      const res = await apiService.post(
+        endpoints.confirmPrincipalPensioner,
+        formData2
+      );
+
+      // Handle response
+      if (res.data.succeeded) {
+        setPensionerDetails(res.data.data);
+        setOpenPensionerDetails(true); // Open dialog only on success
+      } else if (res.data.messages && res.data.messages.length > 0) {
+        message.error(res.data.messages[0]);
+      } else {
+        message.error('Error occurred while fetching pensioner details');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('An error occurred while fetching pensioner details');
+    } finally {
+      setLoading(false); // Stop loading after API call
+    }
+  };
+
   return (
     <div className="p-4 mr-5 rounded-sm relative bg-white shadow-md">
       {loading && (
@@ -375,28 +424,116 @@ function DependantsEnrollment() {
         </Backdrop>
       )}
       <Dialog
-        open={openPensionerDetails}
+        open={openPensionerDetails && !loading}
         onClose={() => setOpenPensionerDetails(false)}
         maxWidth="sm"
         fullWidth
-      >
-        <DialogContent>
-          <h2>Confirm Pensioner Details</h2>
-          {/* Display pensioner details here */}
-        </DialogContent>
-      </Dialog>
-
-      <MuiButton
-        variant="contained"
-        type="primary"
-        onClick={handleSave}
         sx={{
-          display: 'block',
-          marginLeft: 'auto',
+          '& .MuiPaper-root': {
+            borderRadius: '12px',
+            padding: 1,
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+          },
         }}
       >
-        Initiate IGC Claim
-      </MuiButton>
+        <DialogContent>
+          <div className="flex items-center gap-4 mb-4  rounded-md shadow-sm">
+            <IconButton
+              sx={{
+                border: '1px solid #006990',
+                borderRadius: '50%',
+                padding: '6px',
+                color: '#006990',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#e0f7fa', // Light hover effect
+                },
+              }}
+              onClick={() => setOpenPensionerDetails(false)}
+            >
+              <ArrowBack sx={{ color: '#006990', fontSize: '20px' }} />
+            </IconButton>
+            <h2 className="text-lg font-semibold text-primary">
+              Pensioner Details
+            </h2>
+          </div>
+          <div className="my-2">
+            <Alert
+              message="Please confirm that is the pensioner"
+              type="info"
+              showIcon
+            />
+          </div>
+          {pensionerDetails ? (
+            <div className="space-y-4 p-3 bg-gray-100  rounded-md shadow-sm">
+              <p className="text-sm">
+                <strong className="text-primary">First Name:</strong>{' '}
+                {pensionerDetails.first_name}
+              </p>
+              <p className="text-sm">
+                <strong className="text-primary">Middle Name:</strong>{' '}
+                {pensionerDetails.middle_name || 'N/A'}
+              </p>
+              <p className="text-sm">
+                <strong className="text-primary">Other Name:</strong>{' '}
+                {pensionerDetails.other_name || 'N/A'}
+              </p>
+              <p className="text-sm">
+                <strong className="text-primary">Surname:</strong>{' '}
+                {pensionerDetails.surname}
+              </p>
+              <p className="text-sm">
+                <strong className="text-primary">Pensioner Number:</strong>{' '}
+                {pensionerDetails.pensioner_number}
+              </p>
+              <p className="text-sm">
+                <strong className="text-primary">National ID Number:</strong>{' '}
+                {pensionerDetails.national_id_number}
+              </p>
+            </div>
+          ) : (
+            <p className="text-red-500 text-center mt-4">
+              No pensioner details available.
+            </p>
+          )}
+          <div className="flex justify-between w-full items-center mt-5">
+            <MuiButton
+              variant="outlined"
+              type="error"
+              onClick={() => setOpenPensionerDetails(false)}
+              sx={{}}
+            >
+              Cancel
+            </MuiButton>{' '}
+            <MuiButton
+              variant="contained"
+              type="primary"
+              onClick={() => setOpenPensionerDetails(false)}
+              sx={{}}
+            >
+              Confirm
+            </MuiButton>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <div className="flex gap-2 justify-end">
+        <MuiButton
+          variant="outlined"
+          type="primary"
+          onClick={handleConfirmPensionerDetails}
+          sx={{}}
+        >
+          Confirm Pensioner Details
+        </MuiButton>{' '}
+        <MuiButton
+          variant="contained"
+          type="primary"
+          onClick={handleSave}
+          sx={{}}
+        >
+          Initiate IGC Claim
+        </MuiButton>
+      </div>
 
       <div className="flex flex-col mb-3">
         <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
