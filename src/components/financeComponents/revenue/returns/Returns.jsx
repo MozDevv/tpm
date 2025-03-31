@@ -430,7 +430,10 @@ const Returns = ({ status }) => {
       console.error('Error downloading te file:', error);
     }
   };
-
+  const { data: receiptTypes } = useFetchAsync(
+    financeEndpoints.getReceiptPostingGroups,
+    apiService
+  );
   const columnDefs = [
     {
       field: 'documentNo',
@@ -491,8 +494,8 @@ const Returns = ({ status }) => {
       }
     ], */
     {
-      field: 'returnDate',
-      headerName: 'Return Date',
+      field: 'receiptDate',
+      headerName: 'Reciept Voucher Date',
       headerClass: 'prefix-header',
       flex: 1,
       cellRenderer: (params) => {
@@ -500,7 +503,7 @@ const Returns = ({ status }) => {
       },
     },
     {
-      field: 'totalAmount',
+      field: 'receiptAmount',
       headerName: 'Total Amount',
       headerClass: 'prefix-header',
       flex: 1,
@@ -514,14 +517,27 @@ const Returns = ({ status }) => {
       headerName: 'EFT No',
       headerClass: 'prefix-header',
       flex: 1,
+      cellRenderer: (params) => {
+        return (
+          <p className=" text-primary font-semibold">
+            {params.data?.returnDetails[0]?.chequeOrEftNo}
+          </p>
+        );
+      },
     },
     {
-      field: 'returnType',
+      field: 'receiptTypeId',
       headerName: 'Return Type',
       headerClass: 'prefix-header',
       flex: 1,
       cellRenderer: (params) => {
-        return params.value === 0 ? 'Monthly' : 'Lumpsum';
+        if (params.value && receiptTypes) {
+          const matchingType = receiptTypes.find(
+            (item) => item.receiptTypeId === params.value
+          );
+          return matchingType ? matchingType.description : '';
+        }
+        return '';
       },
     },
     {
@@ -552,7 +568,10 @@ const Returns = ({ status }) => {
       cellRenderer: (params) => {
         const paymentMethod =
           paymentMeth &&
-          paymentMeth.find((method) => method.id === params.value);
+          paymentMeth.find(
+            (method) =>
+              method.id === params.data.returnDetails[0]?.paymentMethodId
+          );
         return paymentMethod?.description;
       },
     },
@@ -1069,8 +1088,8 @@ const Returns = ({ status }) => {
           uploadExcel={uploadExcel}
           pageSize={30}
           handlers={handlers}
-          breadcrumbTitle="Returns"
-          currentTitle="Returns"
+          breadcrumbTitle="Receipt Voucher"
+          currentTitle="Receipt Voucher"
           selectedRows={selectedRows}
           onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           openApproveDialog={openApprove}
