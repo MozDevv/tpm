@@ -4,8 +4,17 @@ import claimsEndpoints from '@/components/services/claimsApi';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import React, { useEffect, useState } from 'react';
 import { mapRowData } from '../ClaimsTable';
-import { Autocomplete, Box, Button, Popper, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  MenuItem,
+  Popper,
+  TextField,
+} from '@mui/material';
 import { Alert, message } from 'antd';
+import { toProperCase } from '@/utils/numberFormatters';
+import { BASE_CORE_API } from '@/utils/constants';
 
 function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
   const { data: fieldsAndSections } = useFetchAsync(
@@ -13,12 +22,60 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
     apiService
   );
 
+  // api/claims/SearchClaims?search_input=13&claim_id=false&national_id=true&personal_number=false
+
   const [formData, setFormData] = useState({
+    searchType: '', // national_id, personal_number, or claim_id
+    searchInput: '',
     basicDetailFields: {},
     sectionsEnabled: {},
   });
 
   const [errors, setErrors] = useState({});
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearchTypeChange = (event) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      searchType: event.target.value,
+      searchInput: '', // Reset search input when type changes
+    }));
+  };
+  const handleSearchInputChange = (event) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      searchInput: event.target.value,
+    }));
+  };
+
+  const handleSearchBlur = async () => {
+    if (!formData.searchType || !formData.searchInput) {
+      setErrors({ searchInput: 'Search input is required' });
+      return;
+    }
+
+    const queryParams = {
+      search_input: formData.searchInput,
+      claim_id: formData.searchType === 'claim_id',
+      national_id: formData.searchType === 'national_id',
+      personal_number: formData.searchType === 'personal_number',
+    };
+
+    try {
+      const response = await apiService.get(`/api/claims/SearchClaims`, {
+        params: queryParams,
+      });
+      if (response.status === 200) {
+        setSearchResults(response.data || []);
+        message.success('Search completed successfully');
+      } else {
+        message.error('No results found');
+      }
+    } catch (error) {
+      console.error(error);
+      message.error('An error occurred while searching');
+    }
+  };
 
   const handleSectionChange = (section) => {
     setFormData((prevData) => ({
@@ -102,94 +159,211 @@ function IgcRevisedInputCard({ setOpenBaseCard, claims }) {
           Submit
         </Button>
       </div>
+      {/* <BaseCollapse nam */}
       <BaseCollapse name="Claim">
-        <div className="px-5 py-3">
-          <Autocomplete
-            options={claims || []}
-            getOptionLabel={(option) => `${option.claim_id}`}
-            onChange={(event, newValue) => {
-              setFormData((prevData) => ({
-                ...prevData,
-                claimId: newValue?.id_claim,
-              }));
-            }}
-            renderInput={(params) => (
+        <div className=" py-3">
+          <div className="px-5 py-3">
+            {/* Search Type Dropdown */}
+            <div className="">
+              <label className="text-[14px] mb-2 font-semibold text-primary ">
+                Search Claim By:
+              </label>
               <TextField
-                {...params}
+                select
+                value={formData.searchType || ''}
+                onChange={(event) =>
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    searchType: event.target.value,
+                    searchInput: '', // Reset search input when type changes
+                  }))
+                }
                 variant="outlined"
                 size="small"
                 fullWidth
-                name="claimId"
-                error={!!errors.claimId}
-                helperText={errors.claimId}
-              />
-            )}
-            value={
-              claims.find((option) => option.id_claim === formData.claimId) ||
-              null
-            }
-            renderOption={(props, option, { selected }) => (
-              <div>
-                <li
-                  {...props}
-                  style={{
-                    border: 'none',
-                    boxShadow: 'none',
-                    backgroundColor: selected ? '#B2E9ED' : 'white',
+              >
+                <MenuItem value="national_id">National ID</MenuItem>
+                <MenuItem value="personal_number">Personal Number</MenuItem>
+                <MenuItem value="claim_id">Claim Number</MenuItem>
+              </TextField>
+            </div>
+
+            {/* Search Input Field */}
+            {formData.searchType && (
+              <div className="mt-5">
+                <label className="text-[14px] mb-2 font-semibold text-primary ">
+                  {toProperCase(
+                    formData.searchType.replace('_', ' ').toUpperCase()
+                  )}
+                  :
+                </label>
+                <TextField
+                  value={formData.searchInput || ''}
+                  onChange={(event) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      searchInput: event.target.value,
+                    }))
+                  }
+                  onBlur={async () => {
+                    if (!formData.searchInput) {
+                      setErrors({ searchInput: 'Search input is required' });
+                      return;
+                    }
+
+                    // Manually construct the query string
+                    const queryString = `search_input=${
+                      formData.searchInput
+                    }&claim_id=${
+                      formData.searchType === 'claim_id'
+                    }&national_id=${
+                      formData.searchType === 'national_id'
+                    }&personal_number=${
+                      formData.searchType === 'personal_number'
+                    }`;
+
+                    try {
+                      const response = await apiService.get(
+                        `${BASE_CORE_API}api/claims/SearchClaims?${queryString}`
+                      );
+                      if (response.status === 200) {
+                        if (response.data.data.length === 0) {
+                          message.error('No results found');
+                          return;
+                        }
+                        setSearchResults(response.data.data || []);
+                        message.success('Search completed successfully');
+                      } else {
+                        message.error('No results found');
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      message.error('An error occurred while searching');
+                    }
                   }}
-                >
-                  <Box
-                    sx={{
-                      width: '100%',
-                      pr: '40px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 3,
-                      }}
-                    >
-                      <p
-                        className="text-primary font-normal text-[12px] items-start"
-                        style={{ alignSelf: 'flex-start' }}
-                      >
-                        {option.claim_id}
-                      </p>
-                      <p
-                        className="text-[12px] items-center"
-                        style={{ alignSelf: 'flex-center' }}
-                      >
-                        {option.first_name} {option.surname}
-                      </p>
-                    </Box>
-                  </Box>
-                </li>
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  className="mt-4"
+                  error={!!errors.searchInput}
+                  helperText={errors.searchInput}
+                />
               </div>
             )}
-            ListboxProps={{
-              sx: {
-                padding: 0,
-                '& ul': {
-                  padding: 0,
-                  margin: 0,
-                },
-              },
-            }}
-            PopperComponent={(props) => (
-              <Popper {...props}>
-                {/* Header */}
-                <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
-                  <p className="text-xs font-normal">No</p>
-                  <p className="text-xs font-normal">Name</p>
-                </li>
-                {props.children}
-              </Popper>
-            )}
-          />
+          </div>
+          {searchResults && searchResults.length > 0 && (
+            <div className="mt-2 px-4">
+              <label className="text-[14px] mb-2 font-semibold text-primary ">
+                Select Claim
+              </label>
+              <Autocomplete
+                options={searchResults || []}
+                getOptionLabel={(option) => `${option.claim_id}`}
+                onChange={(event, newValue) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    claimId: newValue?.id_claim,
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="claimId"
+                    error={!!errors.claimId}
+                    helperText={errors.claimId}
+                  />
+                )}
+                value={
+                  claims.find(
+                    (option) => option.id_claim === formData.claimId
+                  ) || null
+                }
+                renderOption={(props, option, { selected }) => (
+                  <div>
+                    <li
+                      {...props}
+                      style={{
+                        border: 'none',
+                        boxShadow: 'none',
+                        backgroundColor: selected ? '#B2E9ED' : 'white',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '100%',
+                          pr: '40px',
+                          display: 'flex',
+                          justifyContent: 'space-between', // Changed to space-around for even spacing
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 3,
+                            justifyContent: 'space-between', // Ensures even spacing between items
+                            width: '100%', // Ensures the inner box spans the full width
+                          }}
+                        >
+                          <p
+                            className="text-primary font-normal text-[12px] items-start"
+                            style={{ alignSelf: 'flex-start' }}
+                          >
+                            {option.claim_id}
+                          </p>
+                          <p
+                            className="text-[12px] items-center"
+                            style={{ alignSelf: 'flex-center' }}
+                          >
+                            {option.prospectivePensioner.first_name}{' '}
+                            {option.prospectivePensioner.surname}
+                          </p>
+                          <p
+                            className="text-[12px] items-center"
+                            style={{ alignSelf: 'flex-center' }}
+                          >
+                            {formData.searchType === 'national_id'
+                              ? `${option.prospectivePensioner.national_id}`
+                              : formData.searchType === 'personal_number'
+                              ? `${option.prospectivePensioner.personal_number}`
+                              : `${option.claim_id}`}
+                          </p>
+                        </Box>
+                      </Box>
+                    </li>
+                  </div>
+                )}
+                ListboxProps={{
+                  sx: {
+                    padding: 0,
+                    '& ul': {
+                      padding: 0,
+                      margin: 0,
+                    },
+                  },
+                }}
+                PopperComponent={(props) => (
+                  <Popper {...props}>
+                    <li className="flex items-center justify-between gap-[65px] px-3 py-2 bg-gray-100">
+                      <p className="text-xs font-normal">No</p>
+                      <p className="text-xs font-normal">Name</p>
+                      <p className="text-xs font-normal">
+                        {formData.searchType === 'national_id'
+                          ? 'National ID'
+                          : formData.searchType === 'personal_number'
+                          ? 'Personal Number'
+                          : 'Claim No'}
+                      </p>
+                    </li>
+                    {props.children}
+                  </Popper>
+                )}
+              />
+            </div>
+          )}
         </div>
       </BaseCollapse>
 

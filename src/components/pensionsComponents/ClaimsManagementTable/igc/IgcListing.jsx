@@ -818,7 +818,7 @@ const IgcListing = ({ status }) => {
         ) : openInitiate ? (
           <>
             <BaseInputCard
-              fields={filteredFields(formData)}
+              fields={[...filteredFields(formData)]}
               apiEndpoint={endpoints.initiateIgcBeneficiary}
               postApiFunction={apiService.post}
               clickedItem={clickedItem}

@@ -869,12 +869,6 @@ const Returns = ({ status }) => {
       type: 'amount',
       required: true,
     },
-    {
-      label: 'Payment Date',
-      value: 'paymentDate',
-      type: 'date',
-      required: true,
-    },
 
     {
       label: 'Payment Method',
