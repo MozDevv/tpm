@@ -34,6 +34,11 @@ import MuiPhoneNumber from 'mui-phone-number';
 import { Button as AntButton } from 'antd';
 import { Upload as MuiUpload } from '@mui/icons-material';
 import { useRefreshDataStore } from '@/zustand/store';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -205,6 +210,8 @@ const BaseAutoSaveInputCard = ({
         bankId: selectedReceipt.bankId,
         bankBranchId: selectedReceipt.bankBranchId,
         receiptAmount: selectedReceipt.receiptAmount,
+        ///receiptDate set to date.now
+        receiptDate: dayjs().tz('Africa/Nairobi').format('YYYY-MM-DD'),
       }));
 
       console.log('Updated Form Data:', {
@@ -399,6 +406,28 @@ const BaseAutoSaveInputCard = ({
       }));
     }
   }, [formData?.total_emoluments]);
+
+  useEffect(() => {
+    // Find the field with name 'receiptId'
+    const receiptField = fields.find(
+      (field) => field.name === 'receiptNoGeneratorLineId'
+    );
+
+    if (
+      receiptField &&
+      receiptField.options &&
+      receiptField.options.length > 0
+    ) {
+      const firstOption = receiptField.options[0]; // Get the first option
+
+      // Automatically set the receiptId to the first option
+      setFormData((prev) => ({
+        ...prev,
+        receiptNoGeneratorLineId: firstOption.id, // Set the id of the first option
+        recieptNo: String(firstOption.recieptNo),
+      }));
+    }
+  }, [fields]);
 
   const [recordId, setRecordId] = useState(clickedItem ? clickedItem.id : null);
   const [saving, setSaving] = useState(false);
@@ -815,9 +844,11 @@ const BaseAutoSaveInputCard = ({
                   />
                 )}
                 value={
-                  field.options.find(
-                    (option) => option.id === formData[field.name]
-                  ) || null
+                  (field.options &&
+                    field.options.find(
+                      (option) => option.id === formData[field.name]
+                    )) ||
+                  null
                 }
               />
             ) : field.type === 'drillDown' ? (

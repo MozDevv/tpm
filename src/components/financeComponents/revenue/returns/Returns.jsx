@@ -166,8 +166,53 @@ const Returns = ({ status }) => {
           },
         }
       : {}),
+    ...(status === 2
+      ? {
+          postReceiptToLedger: () => handlePostReceiptToLedger(),
+        }
+      : {}),
   };
 
+  const handlePostReceiptToLedger = async () => {
+    try {
+      // Prepare request data
+      const requestData =
+        selectedRows.length > 0
+          ? {
+              receiptList: selectedRows.map((journal) => ({
+                receiptId: journal.id,
+              })),
+            }
+          : clickedItem
+          ? {
+              receiptList: [{ receiptId: clickedItem.id }],
+            }
+          : null;
+
+      if (!requestData) {
+        message.error('No receipts selected or clicked item available.');
+        return;
+      }
+
+      // API call
+      const res = await apiService.post(
+        financeEndpoints.postReceiptToLedger,
+        requestData
+      );
+
+      // Handle response
+      if (res.status === 200 && res.data.succeeded) {
+        message.success('Receipts posted to ledger successfully.');
+      } else {
+        message.error(
+          res.data.messages?.[0] || 'Failed to post receipts to ledger.'
+        );
+      }
+    } catch (error) {
+      console.error('Error posting receipts to ledger:', error);
+      message.error('An error occurred while posting receipts to ledger.');
+    }
+  };
   const submitBudgetForApproval = async () => {
     try {
       const response = await apiService.post(
@@ -259,7 +304,7 @@ const Returns = ({ status }) => {
   );
 
   const { data: recieptsFromReceipts } = useFetchAsync(
-    financeEndpoints.getReceipts,
+    financeEndpoints.getAllReceipts,
     apiService
   );
 
@@ -390,18 +435,13 @@ const Returns = ({ status }) => {
       label: 'Voucher Date',
       type: 'date',
       required: true,
+      disabled: true,
     },
     {
       name: 'remarks',
       label: 'Remarks',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'accountNumber',
-      label: 'Account Number',
-      type: 'text',
-      // required: true,
     },
   ];
 

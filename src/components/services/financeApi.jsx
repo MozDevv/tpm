@@ -273,6 +273,7 @@ const financeEndpoints = {
   matchBankDetails: '/Posting/MatchBankDetails',
 
   getReceipts: '/Posting/GetReceipts',
+  getAllReceipts: '/Posting/GetReceipts?paging.PageSize=100000',
   getReceiptsById: (id) => `/Posting/GetReceipts?id=${id}`,
   addReceipt: '/Posting/AddReceipt',
   updateReceipt: '/Posting/UpdateReceipt',
@@ -461,7 +462,7 @@ const financeEndpoints = {
   getGeneratedReceiptLines: (id) =>
     `Revenue/GetReceiptNoGeneratorLine?ReceiptNoGeneratorHeaderId=${id}&paging.pageNumber=1&paging.pageSize=100000 `,
   getAllReceiptNoGeneratorLine:
-    'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000&isUsed=false',
+    'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000&status=2',
 
   getAllGeneratedLines:
     'Revenue/GetReceiptNoGeneratorLine?paging.pageNumber=1&paging.pageSize=100000',

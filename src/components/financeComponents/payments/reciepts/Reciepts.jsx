@@ -339,6 +339,7 @@ const Reciepts = ({ status }) => {
       label: 'Receipt No',
       type: 'autocomplete',
       required: true,
+      disabled: true,
       // disabled: clickedItem ? true : false,
       options:
         (allNoLines &&

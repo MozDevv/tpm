@@ -279,27 +279,7 @@ export const menuItems = [
           },
         ],
       },
-      {
-        title: 'Receipts',
-        subChildren: [
-          {
-            title: 'New Receipts',
-            path: '/pensions/finance/recievables/receipts',
-          },
-          {
-            title: 'Pending Receipts',
-            path: '/pensions/finance/recievables/receipts/pending',
-          },
-          {
-            title: 'Approved Receipts',
-            path: '/pensions/finance/recievables/receipts/approved',
-          },
-          {
-            title: 'Posted Receipts',
-            path: '/pensions/finance/recievables/receipts/posted',
-          },
-        ],
-      },
+
       {
         title: 'Payables',
         subChildren: [
@@ -378,6 +358,27 @@ export const menuItems = [
           {
             title: 'Rejected Scheduled Payments',
             path: '/pensions/finance/scheduled-payments/payments/rejected',
+          },
+        ],
+      },
+      {
+        title: 'Receipts',
+        subChildren: [
+          {
+            title: 'New Receipts',
+            path: '/pensions/finance/recievables/receipts',
+          },
+          {
+            title: 'Pending Receipts',
+            path: '/pensions/finance/recievables/receipts/pending',
+          },
+          {
+            title: 'Approved Receipts',
+            path: '/pensions/finance/recievables/receipts/approved',
+          },
+          {
+            title: 'Posted Receipts',
+            path: '/pensions/finance/recievables/receipts/posted',
           },
         ],
       },
