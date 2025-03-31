@@ -530,7 +530,7 @@ const IgcListing = ({ status }) => {
           item?.prospectivePensioner?.first_name +
           ' ' +
           item?.prospectivePensioner?.surname, */
-                  id: item.id,
+                  id: item.prospectivePensioner?.id,
                   name: item?.claim_id,
                   accountNo:
                     item?.prospectivePensioner?.first_name +
