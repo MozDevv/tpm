@@ -620,7 +620,7 @@ const ListNavigation = ({
       requiredPermissions: [],
     },
     {
-      name: "Initiate Dependent's Enrollment",
+      name: 'Add New Beneficiary',
       action: 'initiateDependentEnrollment',
       icon: PostAdd,
       requiredPermissions: [],

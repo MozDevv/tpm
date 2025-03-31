@@ -32,6 +32,8 @@ import {
 } from '@mui/icons-material';
 import MuiPhoneNumber from 'mui-phone-number';
 import financeEndpoints, { apiService } from '../services/financeApi';
+import { useFilteredDataStore } from '@/zustand/store';
+import { BASE_CORE_API } from '@/utils/constants';
 
 const BaseInputCard = ({
   handlePreview,
@@ -458,6 +460,7 @@ const BaseInputCard = ({
   const handlePreviewInBaseInputCard = (file) => {
     handlePreview(file);
   };
+  const { setFilteredData } = useFilteredDataStore();
 
   const handleOnBlur = async (name) => {
     try {
@@ -693,6 +696,59 @@ const BaseInputCard = ({
                   ))}
                 </TextField>
               )
+            ) : field.type === 'searchInput' ? (
+              <TextField
+                type="text"
+                name={field.name}
+                variant="outlined"
+                size="small"
+                value={formData[field.name] || ''}
+                onChange={handleInputChange}
+                error={!!errors[field.name]}
+                helperText={errors[field.name]}
+                required={field.required}
+                disabled={field.disabled || disableAll}
+                fullWidth
+                onBlur={async () => {
+                  if (field.name !== 'searchInput') {
+                    return;
+                  }
+                  if (!formData.searchInput) {
+                    setErrors({ searchInput: 'Search input is required' });
+                    return;
+                  }
+
+                  // Manually construct the query string
+                  const queryString = `search_input=${
+                    formData.searchInput
+                  }&claim_id=${
+                    formData.searchType === 'claim_id'
+                  }&national_id=${
+                    formData.searchType === 'national_id'
+                  }&personal_number=${
+                    formData.searchType === 'personal_number'
+                  }`;
+
+                  try {
+                    const response = await apiService.get(
+                      `${BASE_CORE_API}api/claims/SearchClaims?${queryString}&paging.pageSize=100000`
+                    );
+                    if (response.status === 200) {
+                      if (response.data.data.length === 0) {
+                        message.error('No results found');
+                        return;
+                      }
+                      setFilteredData(response.data.data || []);
+                      message.success('Search completed successfully');
+                    } else {
+                      message.error('No results found');
+                    }
+                  } catch (error) {
+                    console.error(error);
+                    message.error('An error occurred while searching');
+                  }
+                }}
+              />
             ) : field.type === 'radio' ? (
               <FormControlLabel
                 control={

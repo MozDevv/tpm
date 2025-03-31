@@ -18,3 +18,4 @@ export const useRevisionPayloadFetchedStore = stateFactory(
   'revisionPayloadFetched'
 );
 export const useRefreshDataStore = stateFactory('refreshData');
+export const useFilteredDataStore = stateFactory('filteredData');

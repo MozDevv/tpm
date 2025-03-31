@@ -19,10 +19,11 @@ import { apiService as preApiservice } from '@/components/services/preclaimsApi'
 import AssessmentCard from '@/components/financeComponents/payments/PensionerDetailsTabs';
 import IgcRevisedInputCard from './IgcRevisedInputCard';
 import { message } from 'antd';
-import { useIgcIdStore } from '@/zustand/store';
+import { useFilteredDataStore, useIgcIdStore } from '@/zustand/store';
 import { mapRowData } from '../ClaimsTable';
 import IGCSummaryComponent from './IGCSummaryComponent';
 import ChangesView from './ChangesView';
+import { toProperCase } from '@/utils/numberFormatters';
 
 const IgcListing = ({ status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
@@ -472,14 +473,75 @@ const IgcListing = ({ status }) => {
     }
   }, [formData?.prospective_pensioner_id]);
 
+  const { filteredData } = useFilteredDataStore();
+
   const uploadFields = [
     {
-      name: 'prospective_pensioner_id',
-      label: 'Retiree',
+      name: 'searchType',
+      label: 'Search Claim By',
       type: 'select',
-      options: claims && claims,
-      table: true,
+      options: [
+        {
+          id: 'claim_id',
+          name: 'Claim No',
+        },
+        {
+          id: 'national_id',
+          name: 'National Id',
+        },
+        {
+          id: 'personal_number',
+          name: 'Personal Number',
+        },
+      ],
     },
+
+    ...(formData?.searchType
+      ? [
+          {
+            name: 'searchInput',
+            label: toProperCase(
+              formData.searchType.replace('_', ' ').toUpperCase()
+            ),
+            type: 'searchInput',
+          },
+        ]
+      : []),
+    ...(formData &&
+    formData.searchInput &&
+    filteredData &&
+    filteredData.length > 0
+      ? [
+          {
+            name: 'prospective_pensioner_id',
+            label: 'Retiree',
+            type: 'select',
+            options:
+              filteredData &&
+              filteredData.map((item) => {
+                return {
+                  /**id: item?.prospectivePensioner?.id,
+        name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+          ?.pension_award?.prefix
+          ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+              ?.pension_award?.prefix + item?.pensioner_number
+          : item?.pensioner_number ?? 'N/A',
+        accountNo:
+          item?.prospectivePensioner?.first_name +
+          ' ' +
+          item?.prospectivePensioner?.surname, */
+                  id: item.id,
+                  name: item?.claim_id,
+                  accountNo:
+                    item?.prospectivePensioner?.first_name +
+                    ' ' +
+                    item?.prospectivePensioner?.surname,
+                };
+              }),
+            table: true,
+          },
+        ]
+      : []),
     {
       name: 'relationship_id',
       label: 'Relationship',
