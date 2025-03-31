@@ -8,7 +8,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import { apiService } from '@/components/services/financeApi';
 
 import financeEndpoints from '@/components/services/financeApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
 
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
 import { Dialog } from '@mui/material';
@@ -310,6 +310,13 @@ const Reciepts = ({ status }) => {
             {formatNumber(params.value)}
           </div>
         );
+      },
+    },
+    {
+      field: 'created_date',
+      headerName: 'Created Date',
+      cellRenderer: (params) => {
+        return <p className=" text-center">{parseDate(params.value)}</p>;
       },
     },
   ];
