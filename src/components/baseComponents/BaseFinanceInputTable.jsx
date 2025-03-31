@@ -33,6 +33,7 @@ import { de } from '@faker-js/faker';
 import { formatNumber } from '@/utils/numberFormatters';
 import CustomSelectCellEditor from './CustomSelectCellEditor';
 import AmountCellEditor from './AmountCellEditor';
+import { useRefreshDataStore } from '@/zustand/store';
 
 const BaseFinanceInputTable = ({
   fields = [],
@@ -304,6 +305,8 @@ const BaseFinanceInputTable = ({
   };
 
   const mdaId = localStorage.getItem('mdaId');
+
+  const { setRefreshData } = useRefreshDataStore();
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
@@ -1120,6 +1123,8 @@ const BaseFinanceInputTable = ({
   const refreshData = async () => {
     try {
       await fetchData();
+
+      setRefreshData((prev) => !prev);
     } catch (error) {
       message.error('Error refreshing data: ' + error.message);
     }

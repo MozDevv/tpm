@@ -33,6 +33,7 @@ import { truncateMessage } from '@/utils/handyFuncs';
 import MuiPhoneNumber from 'mui-phone-number';
 import { Button as AntButton } from 'antd';
 import { Upload as MuiUpload } from '@mui/icons-material';
+import { useRefreshDataStore } from '@/zustand/store';
 
 const BaseAutoSaveInputCard = ({
   fields,
@@ -481,6 +482,15 @@ const BaseAutoSaveInputCard = ({
       console.error('Error fetching data:', error);
     }
   };
+
+  const { refreshData } = useRefreshDataStore();
+
+  useEffect(() => {
+    if (clickedItem?.id) {
+      getInitialData(clickedItem?.id);
+    }
+  }, [refreshData]);
+
   const handleFileUpload = (file, fieldName) => {
     setFormData({
       ...formData,

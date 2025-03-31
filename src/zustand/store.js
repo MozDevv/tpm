@@ -17,3 +17,4 @@ export const useIgEditedStore = stateFactory('igcEdited');
 export const useRevisionPayloadFetchedStore = stateFactory(
   'revisionPayloadFetched'
 );
+export const useRefreshDataStore = stateFactory('refreshData');

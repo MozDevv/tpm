@@ -1,20 +1,20 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
 
-import { API_BASE_URL } from "@/components/services/setupsApi";
+import { API_BASE_URL } from '@/components/services/setupsApi';
 
-import axios from "axios";
-import BaseAutoSaveInputCard from "@/components/baseComponents/BaseAutoSaveInputCard";
-import { formatNumber } from "@/utils/numberFormatters";
+import axios from 'axios';
+import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import { formatNumber } from '@/utils/numberFormatters';
 
 const PaymentMethods = () => {
   const transformString = (str) => {
@@ -45,10 +45,10 @@ const PaymentMethods = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -69,7 +69,7 @@ const PaymentMethods = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? clickedItem?.code : "Create New Payment Method";
+  const title = clickedItem ? clickedItem?.code : 'Create New Payment Method';
 
   const [allOptions, setAllOptions] = useState(null);
   const [filteredOptions, setFilteredOptions] = useState(null);
@@ -77,7 +77,7 @@ const PaymentMethods = () => {
   const fetchNewOptions = async () => {
     try {
       const res = await apiService.get(financeEndpoints.getAllAccounts, {
-        "paging.pageSize": 2000,
+        'paging.pageSize': 2000,
       }); // Pass accountTypeId to the endpoint
       if (res.status === 200) {
         setAllOptions(
@@ -94,7 +94,7 @@ const PaymentMethods = () => {
       }
 
       console.log(
-        "All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️",
+        'All Options ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️❤️❤️❤️',
         res.data.data.map((acc) => {
           return {
             id: acc.id,
@@ -116,129 +116,129 @@ const PaymentMethods = () => {
 
   const columnDefs = [
     {
-      field: "code",
-      headerName: "Code",
-      headerClass: "prefix-header",
+      field: 'code',
+      headerName: 'Code',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
     },
     {
-      field: "description",
-      headerName: "Description",
-      headerClass: "prefix-header",
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
     },
     {
-      field: "accountTypeId",
-      headerName: "Account Type",
-      headerClass: "prefix-header",
+      field: 'accountTypeId',
+      headerName: 'Account Type',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
       valueFormatter: (params) => {
         const options = [
           {
             id: 0,
-            name: "General_Ledger",
+            name: 'General_Ledger',
           },
           {
             id: 1,
-            name: "Vendor",
+            name: 'Vendor',
           },
           {
             id: 2,
-            name: "Customer",
+            name: 'Customer',
           },
           {
             id: 3,
-            name: "Bank",
+            name: 'Bank',
           },
         ];
         const accountType = options.find((acc) => acc.id === params.value);
-        return accountType ? accountType.name : "";
+        return accountType ? accountType.name : '';
       },
     },
     {
-      field: "accountId",
-      headerName: "Account Name",
-      headerClass: "prefix-header",
+      field: 'accountId',
+      headerName: 'Account Name',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
       valueFormatter: (params) => {
         const account =
           allOptions && allOptions.find((acc) => acc.id === params.value);
-        return account ? account.name : "";
+        return account ? account.name : '';
       },
     },
     {
-      field: "accountId",
-      headerName: "Account No",
-      headerClass: "prefix-header",
+      field: 'accountId',
+      headerName: 'Account No',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
       valueFormatter: (params) => {
         const account =
           allOptions && allOptions.find((acc) => acc.id === params.value);
-        return account ? account.accountNo : "";
+        return account ? account.accountNo : '';
       },
     },
 
     {
-      field: "isDirectDebit",
-      headerName: "Is Direct Debit",
-      headerClass: "prefix-header",
+      field: 'isDirectDebit',
+      headerName: 'Is Direct Debit',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
     },
     {
-      field: "isForInvoicing",
-      headerName: "Is For Invoicing",
-      headerClass: "prefix-header",
+      field: 'isForInvoicing',
+      headerName: 'Is For Invoicing',
+      headerClass: 'prefix-header',
       flex: 1,
       filter: true,
     },
   ];
   const fields = [
     {
-      name: "code",
-      label: "Code",
-      type: "text",
+      name: 'code',
+      label: 'Code',
+      type: 'text',
       required: true,
     },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
     {
-      name: "accountTypeId",
-      label: "Account Type",
-      type: "select",
+      name: 'accountTypeId',
+      label: 'Account Type',
+      type: 'select',
       required: true,
       options: [
         {
           id: 0,
-          name: "General_Ledger",
+          name: 'General_Ledger',
         },
         {
           id: 1,
-          name: "Vendor",
+          name: 'Vendor',
         },
         {
           id: 2,
-          name: "Customer",
+          name: 'Customer',
         },
         {
           id: 3,
-          name: "Bank",
+          name: 'Bank',
         },
       ],
     },
     {
-      name: "accountId",
-      label: "Account",
-      type: "select",
+      name: 'accountId',
+      label: 'Account',
+      type: 'select',
       required: true,
       table: true,
       options:
@@ -248,21 +248,15 @@ const PaymentMethods = () => {
     },
 
     {
-      name: "directDebitPaymentTerms",
-      label: "Direct Debit Payment Terms",
-      type: "text",
-      required: false,
-    },
-    {
-      name: "isDirectDebit",
-      label: "Is Direct Debit",
-      type: "switch",
+      name: 'isDirectDebit',
+      label: 'Is Direct Debit',
+      type: 'switch',
       required: true,
     },
     {
-      name: "isForInvoicing",
-      label: "Is For Invoicing",
-      type: "switch",
+      name: 'isForInvoicing',
+      label: 'Is For Invoicing',
+      type: 'switch',
       required: true,
     },
   ];
