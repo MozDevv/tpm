@@ -60,7 +60,9 @@ function ReceiptActions({
           successMessage = 'Receipt(s) Posted to Ledger successfully';
           errorMessage = 'Failed to post Receipt to Ledger';
           requestData = {
-            receiptList: selectedIds.map((item) => ({ receiptId: item.id })),
+            receiptList: selectedIds.map((item) => ({
+              receiptId: item.receiptId,
+            })),
           };
 
           // Make the API call for scheduling

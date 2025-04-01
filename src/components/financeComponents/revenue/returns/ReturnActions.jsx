@@ -14,6 +14,7 @@ import { Alert, message } from 'antd';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import { truncateMessage } from '@/utils/handyFuncs';
 import { parseDate } from '@/utils/dateFormatter';
+import { formatNumber } from '@/utils/numberFormatters';
 
 function ReturnActions({
   selectedRows,
@@ -109,9 +110,9 @@ function ReturnActions({
                       >
                         {doc.documentNo}
                       </TableCell>
-                      <TableCell>{doc.totalAmount}</TableCell>
+                      <TableCell>{formatNumber(doc.receiptAmount)}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                        {parseDate(doc.returnDate)}
+                        {parseDate(doc.receiptDate)}
                       </TableCell>
                     </TableRow>
                   ))}

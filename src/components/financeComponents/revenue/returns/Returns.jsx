@@ -224,6 +224,14 @@ const Returns = ({ status }) => {
         if (openBaseCard) {
           setOpenBaseCard(false);
         }
+      } else if (
+        response.data.succeeded === false &&
+        response.data.messages &&
+        response.data.messages.length > 0
+      ) {
+        message.error(response.data.messages[0]); // Fixed variable name
+      } else {
+        message.error('Failed to submit return for approval');
       }
     } catch (error) {
       console.error('Error submitting budget for approval:', error);
@@ -444,7 +452,25 @@ const Returns = ({ status }) => {
       type: 'text',
       required: true,
     },
+    ...(clickedItem
+      ? [
+          {
+            name: 'isPosted',
+            label: 'Is Posted',
+            type: 'switch',
+            disabled: true,
+          },
+          {
+            name: 'postingDate',
+            label: 'Posting Date',
+            type: 'date',
+            disabled: true,
+          },
+        ]
+      : []),
   ];
+
+  const token = localStorage.getItem('token');
 
   const generateBudgetUploadTemplate = async () => {
     try {
@@ -453,6 +479,9 @@ const Returns = ({ status }) => {
         `${BASE_CORE_API}api/Revenue/GenerateReturnUploadTemplate`,
         {
           responseType: 'blob', // Specify that the response is a binary Blob
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
         }
       );
 
@@ -951,6 +980,10 @@ const Returns = ({ status }) => {
     console.log('inputData', inputData);
   }, [inputData]);
   const reportItems = ['Receipt Voucher'];
+
+  useEffect(() => {
+    console.log('clicked Item has been changed to:', clickedItem);
+  }, [clickedItem]);
   return (
     <div className="">
       <Dialog
@@ -1020,6 +1053,7 @@ const Returns = ({ status }) => {
         isUserComponent={false}
         reportItems={reportItems}
       >
+        {/* {JSON.stringify(clickedItem)} */}
         {clickedItem ? (
           <>
             <div>
