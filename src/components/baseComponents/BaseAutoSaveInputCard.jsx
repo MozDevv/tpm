@@ -697,6 +697,7 @@ const BaseAutoSaveInputCard = ({
                             scheduleDate: data.scheduleDate,
                             accountNo: data.accountNo,
                             paymentVoucherDate: data.paymentVoucherDate,
+                            eftNo: data.eftNo,
                           }));
                           message.success(
                             'Pensioner details loaded successfully.'
