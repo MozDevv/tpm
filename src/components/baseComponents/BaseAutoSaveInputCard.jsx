@@ -36,6 +36,7 @@ import { Upload as MuiUpload } from '@mui/icons-material';
 import { useRefreshDataStore } from '@/zustand/store';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import financeEndpoints, { apiService } from '../services/financeApi';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -644,6 +645,85 @@ const BaseAutoSaveInputCard = ({
                   </div>
                 )}
               </div>
+            ) : field.name === 'pensionerNo' ? (
+              <Autocomplete
+                options={field.options}
+                disabled={field.disabled || disableAll}
+                getOptionLabel={(option) => option.name.toString()} // Ensure the label is a string
+                onChange={(event, newValue) => {
+                  handleInputChange({
+                    target: {
+                      name: field.name,
+                      value: newValue ? newValue.id : '',
+                    },
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name={field.name}
+                    error={!!errors[field.name]}
+                    onBlur={async () => {
+                      if (!formData[field.name]) {
+                        message.error('Please enter a valid Pensioner No.');
+                        return;
+                      }
+
+                      try {
+                        // Call the API with the pensionerNo value
+                        const response = await apiService.get(
+                          financeEndpoints.getPensionerUncollected(
+                            formData[field.name]
+                          )
+                        );
+
+                        if (
+                          response.data.succeeded &&
+                          response.data.data.length > 0
+                        ) {
+                          const data = response.data.data[0];
+                          setFormData((prev) => ({
+                            ...prev,
+                            paymentVoucherNo: data.paymentVoucherNo,
+                            pensionerNo: data.pensionerNo,
+                            pensionerName: data.pensionerName,
+                            nationalIdNo: data.nationalIdNo,
+                            bankAccountName: data.bankAccountName,
+                            scheduleNo: data.scheduleNo,
+                            netAmount: data.netAmount,
+                            scheduleDate: data.scheduleDate,
+                            accountNo: data.accountNo,
+                            paymentVoucherDate: data.paymentVoucherDate,
+                          }));
+                          message.success(
+                            'Pensioner details loaded successfully.'
+                          );
+                        } else {
+                          message.error(
+                            'No data found for the provided Pensioner No.'
+                          );
+                        }
+                      } catch (error) {
+                        console.error(error);
+                        message.error(
+                          'An error occurred while fetching pensioner details.'
+                        );
+                      }
+                    }}
+                    disabled={field.disabled}
+                  />
+                )}
+                value={
+                  (field.options &&
+                    field.options.find(
+                      (option) => option.id === formData[field.name]
+                    )) ||
+                  null
+                }
+              />
             ) : field.type === 'select' ? (
               field.multiple ? (
                 <Select

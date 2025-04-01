@@ -382,6 +382,7 @@ export const menuItems = [
           },
         ],
       },
+
       {
         title: 'Receipt Voucher',
         subChildren: [
@@ -410,6 +411,10 @@ export const menuItems = [
             path: '/pensions/finance/revenue/rejected',
           },
         ],
+      },
+      {
+        title: 'Uncollected Payments',
+        path: '/pensions/finance/uncollected-payments',
       },
       {
         title: 'Returns',

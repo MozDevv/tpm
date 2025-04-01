@@ -486,6 +486,9 @@ const financeEndpoints = {
   deleteReceiptPostingGroup: (id) =>
     `/PostingSetUp/DeleteReceiptPostingGroup?id=${id}`,
   getReceiptTypeSelect: 'AccountsSetup/GetReceiptTypesSelect',
+
+  getPensionerUncollected: (no) =>
+    `Revenue/GetPensionerPaymentVouchers?PensionerNo=${no}`,
 };
 
 export const apiService = {
