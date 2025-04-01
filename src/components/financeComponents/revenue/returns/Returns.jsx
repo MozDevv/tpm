@@ -924,7 +924,7 @@ const Returns = ({ status }) => {
     },
     {
       label: 'Return Reason',
-      value: 'returnReason',
+      value: 'paymentReturnReasonId',
       type: 'select',
       required: true,
       options:
