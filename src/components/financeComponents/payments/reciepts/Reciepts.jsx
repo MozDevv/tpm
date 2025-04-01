@@ -374,25 +374,35 @@ const Reciepts = ({ status }) => {
           },
         ]
       : []),
-
-    {
-      name: 'receiptNoGeneratorLineId',
-      label: 'Receipt No',
-      type: 'autocomplete',
-      required: true,
-      disabled: true,
-      // disabled: clickedItem ? true : false,
-      options:
-        (allNoLines &&
-          allNoLines?.map((item) => {
-            return {
-              id: item.id,
-              name: item.receiptNo,
-              recieptNo: item.receiptNo,
-            };
-          })) ||
-        [],
-    },
+    ...(clickedItem
+      ? [
+          {
+            label: 'Receipt No',
+            name: 'recieptNo',
+            type: 'text',
+            disabled: true,
+          },
+        ]
+      : [
+          {
+            name: 'receiptNoGeneratorLineId',
+            label: 'Receipt No',
+            type: 'autocomplete',
+            required: true,
+            disabled: true,
+            // disabled: clickedItem ? true : false,
+            options:
+              (allNoLines &&
+                allNoLines?.map((item) => {
+                  return {
+                    id: item.id,
+                    name: item.receiptNo,
+                    recieptNo: item.receiptNo,
+                  };
+                })) ||
+              [],
+          },
+        ]),
     /**{
     "RecieptNo": "4567847",
     "ReceiptDate": "2024-03-25T00:00:00Z",
