@@ -134,12 +134,12 @@ const Returns = ({ status }) => {
 
   const baseCardHandlers = {
     'Receipt Voucher': () => setOpenReceiptReport(true),
-    ...(clickedItem &&
-      status === 2 && {
-        createReturnReceipt: () => {
-          setOpenAction(true);
-        },
-      }),
+    // ...(clickedItem &&
+    //   status === 2 && {
+    //     createReturnReceipt: () => {
+    //       setOpenAction(true);
+    //     },
+    //   }),
     ...(status === 0 &&
       clickedItem && {
         generateReturnTemplate: () => generateBudgetUploadTemplate(),
@@ -348,6 +348,7 @@ const Returns = ({ status }) => {
             name: 'recieptNo',
             label: 'Receipt No',
             type: 'text',
+            disabled: true,
             // required: true,
           },
         ]
@@ -1063,7 +1064,11 @@ const Returns = ({ status }) => {
                 putApiFunction={apiService.post}
                 updateApiEndpoint={financeEndpoints.updateReturn}
                 postApiFunction={apiService.post}
-                getApiEndpoint={financeEndpoints.getReturnsById}
+                getApiEndpoint={
+                  status
+                    ? financeEndpoints.getReturnsBystageAndId(status)
+                    : financeEndpoints.getReturnsById
+                }
                 getApiFunction={apiService.get}
                 transformData={(data) => data}
                 useRequestBody={true}

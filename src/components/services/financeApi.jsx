@@ -417,6 +417,8 @@ const financeEndpoints = {
   createPayrollPv: '/Posting/PostPayrollLiabilityToLedger',
   getReturns: '/Revenue/GetReturns',
   getReturnsById: (id) => `Revenue/GetReturns?id=${id}`,
+  getReturnsBystageAndId: (stage, id) =>
+    `/Revenue/GetReturns?stage=${stage}&id=${id}`,
   getReturnsByStage: (stage) => `/Revenue/GetReturns?stage=${stage}`,
   uploadReturn: '/Revenue/UploadReturn',
   revertPv: '/Posting/RevertPaymentToClaim',

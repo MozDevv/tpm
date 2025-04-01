@@ -398,6 +398,10 @@ export const menuItems = [
             path: '/pensions/finance/revenue/approved',
           },
           {
+            title: 'Posted Receipt Voucher',
+            path: '/pensions/finance/revenue/posted',
+          },
+          {
             title: 'Paid Receipt Voucher',
             path: '/pensions/finance/revenue/paid',
           },
