@@ -68,13 +68,20 @@ function DependantsEnrollment() {
   };
 
   const renderUploadFields = () => {
+    console.log('FormData:', formData); // Log the current formData
+
     const selectedDocument =
       documentTypes &&
       documentTypes.find(
         (doc) => doc.document_type_id === formData.documentType
       );
 
-    if (!selectedDocument) return null;
+    console.log('Selected Document:', selectedDocument); // Log the selected document
+
+    if (!selectedDocument) {
+      console.log('No selected document found.'); // Log if no document is selected
+      return null;
+    }
 
     const uploadFields = [];
     if (selectedDocument.front) {
@@ -93,6 +100,16 @@ function DependantsEnrollment() {
         documentTypesSetupId: selectedDocument.document_type_id,
       });
     }
+    if (!selectedDocument.front && !selectedDocument.back) {
+      uploadFields.push({
+        name: 'single',
+        description: `${selectedDocument.documentTypeSetup.name}`,
+        required: selectedDocument.required,
+        documentTypesSetupId: selectedDocument.document_type_id,
+      });
+    }
+
+    console.log('Upload Fields:', uploadFields); // Log the upload fields
 
     return (
       <>
@@ -571,7 +588,7 @@ function DependantsEnrollment() {
         }}
       />
       <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
-        Upload Other Documents
+        Upload atleast one other document:
       </p>
 
       {fields.map((field, index) => (

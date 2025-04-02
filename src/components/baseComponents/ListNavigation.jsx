@@ -101,6 +101,8 @@ const ListNavigation = ({
       //TODO - uncomment this line when the API is ready
       documentNo: clickedItem?.no_series
         ? clickedItem?.no_series
+        : clickedItem?.no
+        ? clickedItem?.no
         : clickedItem?.documentNo
         ? clickedItem?.documentNo
         : clickedItem?.document_no

@@ -688,6 +688,38 @@ export const menuItems = [
 
         path: '/pensions/customer-relations/dependants-enrollment',
       },
+      {
+        title: 'Complaints',
+        path: '/pensions/customer-relations/complaints',
+        /**    {
+        OPEN,
+        ASSIGNED,
+        ESCALATED,
+        CLOSED
+    } */
+        subChildren: [
+          {
+            title: 'Complaints List',
+            path: '/pensions/customer-relations/complaints',
+          },
+          {
+            title: 'Open Complaints',
+            path: '/pensions/customer-relations/complaints/open',
+          },
+          {
+            title: 'Assigned Complaints',
+            path: '/pensions/customer-relations/complaints/assigned',
+          },
+          {
+            title: 'Escalated Complaints',
+            path: '/pensions/customer-relations/complaints/escalated',
+          },
+          {
+            title: 'Closed Complaints',
+            path: '/pensions/customer-relations/complaints/closed',
+          },
+        ],
+      },
     ],
   },
 ];
@@ -862,6 +894,15 @@ export const adminItems = [
         ],
       },
 
+      {
+        title: 'CRM Setups',
+        subChildren: [
+          {
+            title: 'Service Categories',
+            path: '/pensions/setups/service-categories',
+          },
+        ],
+      },
       {
         title: 'Payroll Setups',
         subChildren: [

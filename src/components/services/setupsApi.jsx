@@ -510,6 +510,16 @@ const endpoints = {
   moveIgcStatus: '/api/RevisedClaim/MoveIGCRecord',
   verifyBeneficiary: (id) =>
     `/api/DeathInService/VerifyBeneficiary?beneficiaryId=${id}`,
+
+  createServiceCategory: 'api/Setups/CreateCRMServiceCategory',
+  /**DELETE
+/api/Setups/DeleteCRMServiceCategoriesGET
+/api/Setups/GetCRMServiceCategories */
+  getServiceCategories: '/api/Setups/GetCRMServiceCategories',
+  deleteServiceCategory: (id) =>
+    `/api/Setups/DeleteCRMServiceCategoriesGET?id=${id}`,
+  getComplaints: '/api/CRM/complaints',
+  createComplaint: '/api/CRM/complaints',
 };
 
 export const apiService = {

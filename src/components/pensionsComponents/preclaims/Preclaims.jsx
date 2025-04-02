@@ -527,7 +527,7 @@ const Preclaims = ({
 
     console.log(
       `This is the retireee Id for ${selectedData[0].first_name}🟢🟢🟢🟢 =>`,
-      selectedData[0].retiree
+      selectedData
     );
   };
 

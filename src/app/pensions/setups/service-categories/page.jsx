@@ -1,12 +1,11 @@
-'use client';
-import Departments from '@/components/pensionsComponents/setups/departmentsSetups/Departments';
+import EditableTable from '@/components/baseComponents/EditableTable';
 import ServiceCategories from '@/components/pensionsComponents/setups/ServiceCategories';
 import React from 'react';
 
 function page() {
   return (
     <div>
-      <Departments />
+      <ServiceCategories />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 // Assume this is your transformation function
@@ -7,54 +8,84 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import { Button } from '@mui/material';
 
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'description',
-    headerName: 'Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-  {
-    field: 'isMDA',
-    headerName: 'Is Mda',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'isCustomerCare',
-    headerName: 'Is Customer Care',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
+const ServiceCategories = () => {
+  const { data } = useFetchAsync(endpoints.getNumberSeries, apiService);
+  const priorityMap = {
+    0: { name: 'Low', color: '#1976d2' }, // Blue
+    1: { name: 'Normal', color: '#fbc02d' }, // Yellow
+    2: { name: 'High', color: '#2e7d32' }, // Green
+    3: { name: 'Urgent', color: '#d32f2f' }, // Red
+  };
+  const columnDefs = [
+    /**const columnDefs = [
+ {
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "string",
+  "description": "string",
+  "numberSeriesId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "priority": 0
+}
 
-const Departments = () => {
+]; */
+    {
+      field: 'name',
+      headerName: 'Name',
+      headerClass: 'prefix-header',
+      width: 90,
+      filter: true,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'numberSeriesId',
+      headerName: 'Number Series Id',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      cellRenderer: (params) => {
+        const numberSeries = data?.find((item) => item.id === params.value);
+        if (!numberSeries) return null;
+
+        return <span style={{}}>{numberSeries.code}</span>;
+      },
+    },
+
+    {
+      field: 'priority',
+      headerName: 'Priority',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      cellRenderer: (params) => {
+        const status = priorityMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 3,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name.toLowerCase()}
+          </Button>
+        );
+      },
+    },
+  ];
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -64,12 +95,7 @@ const Departments = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      id: item.departmentId,
-      name: item.name,
-      description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
-      isCustomerCare: item.isCustomerCare,
+      ...item,
       // roles: item.roles,
     }));
   };
@@ -115,12 +141,41 @@ const Departments = () => {
       type: 'text',
       required: true,
     },
-    { name: 'isMDA', label: 'Is Mda', type: 'switch', required: true },
     {
-      name: 'isCustomerCare',
-      label: 'Is Customer Care',
-      type: 'switch',
+      name: 'numberSeriesId',
+      label: 'Number Series Id',
+      type: 'autocomplete',
       required: true,
+      options:
+        data &&
+        data?.map((item) => ({
+          id: item.id,
+          name: item.code,
+        })),
+    },
+    {
+      name: 'priority',
+      label: 'Priority',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          id: 0,
+          name: 'Low',
+        },
+        {
+          id: 1,
+          name: 'Normal',
+        },
+        {
+          id: 2,
+          name: 'High',
+        },
+        {
+          id: 3,
+          name: 'Urgent',
+        },
+      ],
     },
   ];
 
@@ -133,8 +188,8 @@ const Departments = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
+        deleteApiEndpoint={endpoints.deleteServiceCategory(clickedItem?.id)}
+        deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BaseInputCard
@@ -148,7 +203,7 @@ const Departments = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createServiceCategory}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -162,16 +217,16 @@ const Departments = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
+        fetchApiEndpoint={endpoints.getServiceCategories}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
+        breadcrumbTitle="Service Categories"
+        currentTitle="Service Categories"
       />
     </div>
   );
 };
 
-export default Departments;
+export default ServiceCategories;

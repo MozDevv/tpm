@@ -1,29 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import { apiService } from "@/components/services/financeApi";
-import { formatDate } from "@/utils/dateFormatter";
-import financeEndpoints from "@/components/services/financeApi";
-import { AgGridReact } from "ag-grid-react";
-import { Button } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import { apiService } from '@/components/services/financeApi';
+import { formatDate } from '@/utils/dateFormatter';
+import financeEndpoints from '@/components/services/financeApi';
+import { AgGridReact } from 'ag-grid-react';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "No",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'No',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
   },
   {
-    field: "groupName",
-    headerName: "Name",
-    headerClass: "prefix-header",
+    field: 'groupName',
+    headerName: 'Name',
+    headerClass: 'prefix-header',
     filter: true,
     width: 250,
   },
@@ -58,10 +58,10 @@ const AccountCategory = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log("Edit clicked"),
-    delete: () => console.log("Delete clicked"),
-    reports: () => console.log("Reports clicked"),
-    notify: () => console.log("Notify clicked"),
+    edit: () => console.log('Edit clicked'),
+    delete: () => console.log('Delete clicked'),
+    reports: () => console.log('Reports clicked'),
+    notify: () => console.log('Notify clicked'),
   };
 
   const baseCardHandlers = {
@@ -87,14 +87,14 @@ const AccountCategory = () => {
 
   const title = clickedItem
     ? clickedItem?.groupName
-    : "Create New Account Category";
+    : 'Create New Account Category';
 
   const fields = [
-    { name: "groupName", label: "Name", type: "text", required: true },
+    { name: 'groupName', label: 'Name', type: 'text', required: true },
     {
-      name: "description",
-      label: "Description",
-      type: "text",
+      name: 'description',
+      label: 'Description',
+      type: 'text',
       required: true,
     },
   ];
@@ -102,11 +102,11 @@ const AccountCategory = () => {
   const [subGroups, setSubGroups] = React.useState([]);
 
   const subgroupFields = [
-    { name: "subGroupName", label: "Name", type: "text", required: true },
+    { name: 'subGroupName', label: 'Name', type: 'text', required: true },
     {
-      name: "groupOrder",
-      label: "Group Order",
-      type: "number",
+      name: 'groupOrder',
+      label: 'Group Order',
+      type: 'number',
       required: true,
     },
   ];
@@ -120,16 +120,16 @@ const AccountCategory = () => {
     //   filter: true,
     // },
     {
-      field: "subGroupName",
-      headerName: "SubGroup Name",
-      headerClass: "prefix-header",
+      field: 'subGroupName',
+      headerName: 'SubGroup Name',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
     {
-      field: "groupOrder",
-      headerName: "Group Order",
-      headerClass: "prefix-header",
+      field: 'groupOrder',
+      headerName: 'Group Order',
+      headerClass: 'prefix-header',
       filter: true,
       width: 250,
     },
@@ -149,7 +149,7 @@ const AccountCategory = () => {
         <BaseCard
           openBaseCard={openSubGroup}
           setOpenBaseCard={setOpenSubGroup}
-          title={clickedSubGroup ? "Edit SubGroup" : "Create New SubGroup"}
+          title={clickedSubGroup ? 'Edit SubGroup' : 'Create New SubGroup'}
           clickedItem={clickedSubGroup}
           isUserComponent={false}
           deleteApiEndpoint={financeEndpoints.deleteAccountSubGroup(
@@ -221,12 +221,12 @@ const AccountCategory = () => {
             <div
               className="ag-theme-quartz"
               style={{
-                height: "60vh",
+                height: '60vh',
 
-                mt: "20px",
-                px: "10px",
+                mt: '20px',
+                px: '10px',
 
-                overflowY: "auto",
+                overflowY: 'auto',
               }}
             >
               <AgGridReact
@@ -239,7 +239,7 @@ const AccountCategory = () => {
                   params.api.sizeColumnsToFit();
                 }}
                 onRowClicked={(e) => {
-                  console.log("Row clicked", e.data);
+                  console.log('Row clicked', e.data);
                   setClickedSubGroup(e.data);
                   setOpenSubGroup(true);
                 }}

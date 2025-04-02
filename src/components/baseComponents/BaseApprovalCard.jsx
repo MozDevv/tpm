@@ -1,6 +1,6 @@
 import { useAlert } from '@/context/AlertContext';
 import { Button, TextareaAutosize, Dialog } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import { message } from 'antd';
@@ -23,6 +23,10 @@ function BaseApprovalCard({
   const { auth } = useAuth();
   const userId = auth.user ? auth.user.userId : null;
   const { workFlowChange, setWorkFlowChange } = useStatus();
+
+  useEffect(() => {
+    console.log('documentNo', documentNo);
+  }, [openApprove]);
 
   const handleApprove = async () => {
     if (!comments || comments.length < 10) {

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 // Assume this is your transformation function
@@ -8,53 +9,53 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
 
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'description',
-    headerName: 'Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-  {
-    field: 'isMDA',
-    headerName: 'Is Mda',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'isCustomerCare',
-    headerName: 'Is Customer Care',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
+const Complaints = () => {
+  const columnDefs = [
+    {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      width: 90,
+      filter: true,
+    },
+    {
+      field: 'name',
+      headerName: 'Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'created_date',
+      headerName: 'Created Date',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => formatDate(params.value),
+    },
+    {
+      field: 'isMDA',
+      headerName: 'Is Mda',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
+      field: 'isCustomerCare',
+      headerName: 'Is Customer Care',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+  ];
 
-const Departments = () => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -108,19 +109,66 @@ const Departments = () => {
   const title = clickedItem ? 'Department' : 'Create New Department';
 
   const fields = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
     {
-      name: 'description',
-      label: 'Description',
+      name: 'NationalId',
+      label: 'National ID',
       type: 'text',
       required: true,
     },
-    { name: 'isMDA', label: 'Is Mda', type: 'switch', required: true },
     {
-      name: 'isCustomerCare',
-      label: 'Is Customer Care',
-      type: 'switch',
+      name: 'PensionerNumber',
+      label: 'Pensioner Number',
+      type: 'text',
       required: true,
+    },
+    {
+      name: 'EmployeeNumber',
+      label: 'Employee Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'PhoneNumber',
+      label: 'Phone Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'EmailAddress',
+      label: 'Email Address',
+      type: 'email',
+      required: true,
+    },
+    {
+      name: 'Name',
+      label: 'Name',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'Header',
+      label: 'Header',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'Message',
+      label: 'Message',
+      type: 'textarea',
+      required: true,
+    },
+    {
+      name: 'ReferenceId',
+      label: 'Reference ID',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'Attachments',
+      label: 'Attachments',
+      type: 'file',
+      multiple: true,
+      required: false,
     },
   ];
 
@@ -148,7 +196,7 @@ const Departments = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createComplaint}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={true}
@@ -162,16 +210,16 @@ const Departments = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
+        fetchApiEndpoint={endpoints.getComplaints}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
+        breadcrumbTitle="Complaints"
+        currentTitle="Complaints"
       />
     </div>
   );
 };
 
-export default Departments;
+export default Complaints;
