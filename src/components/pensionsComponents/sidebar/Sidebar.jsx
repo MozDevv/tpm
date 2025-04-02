@@ -88,6 +88,10 @@ export const menuItems = [
         title: 'Internally Generated Claims',
         subChildren: [
           {
+            title: 'Dependants Enrollment',
+            path: '/pensions/claims/igc/dependants-enrollment',
+          },
+          {
             title: 'IGC List',
             path: '/pensions/claims/igc/igc-beneficiaries-list',
           },
@@ -680,7 +684,7 @@ export const menuItems = [
     icon: <SupportAgent />,
     children: [
       {
-        title: 'Dependants Enrollment',
+        title: 'Report Deceased Case',
 
         path: '/pensions/customer-relations/dependants-enrollment',
       },

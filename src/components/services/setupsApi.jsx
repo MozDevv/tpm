@@ -494,6 +494,7 @@ const endpoints = {
 
   getIgcInitiation: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
   igcBeneficiaries: '/api/IGCClaimInitiation/GetIGCs',
+  igcBeneficiariesTrack: '/api/IGCClaimInitiation/GetIGCBeneficiaryTrack',
 
   getIgcByStatus: (id) => `/api/IGCClaimInitiation/GetIGCs?type=${id}`,
 
