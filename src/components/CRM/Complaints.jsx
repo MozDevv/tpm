@@ -12,50 +12,129 @@ import { formatDate } from '@/utils/dateFormatter';
 const Complaints = () => {
   const columnDefs = [
     {
-      field: 'no',
-      headerName: 'No',
+      field: 'nationalId',
+      headerName: 'National ID',
       headerClass: 'prefix-header',
-      width: 90,
       filter: true,
     },
     {
-      field: 'name',
-      headerName: 'Name',
+      field: 'pensionerNumber',
+      headerName: 'Pensioner Number',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
-      field: 'description',
-      headerName: 'Description',
+      field: 'personalNumber',
+      headerName: 'Personal Number',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
-      field: 'created_date',
-      headerName: 'Created Date',
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
+    },
+    {
+      field: 'emailAddress',
+      headerName: 'Email Address',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'requesterName',
+      headerName: 'Requester Name',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'header',
+      headerName: 'Header',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'message',
+      headerName: 'Message',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+
+      cellRenderer: (params) => {
+        const statusMap = {
+          0: { name: 'Open', color: '#1976d2' },
+          1: { name: 'Assigned', color: '#fbc02d' },
+          2: { name: 'Escalated', color: '#2e7d32' },
+          3: { name: 'Closed', color: '#d32f2f' },
+        };
+        const status = statusMap[params.value];
+        return status ? (
+          <span style={{ color: status.color, fontWeight: 'bold' }}>
+            {status.name}
+          </span>
+        ) : null;
+      },
+    },
+    {
+      field: 'portalReferenceId',
+      headerName: 'Portal Reference ID',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'closedById',
+      headerName: 'Closed By ID',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'currentlyVisibleById',
+      headerName: 'Currently Visible By ID',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+    {
+      field: 'closedAt',
+      headerName: 'Closed At',
+      headerClass: 'prefix-header',
+      filter: true,
+
       valueFormatter: (params) => formatDate(params.value),
     },
     {
-      field: 'isMDA',
-      headerName: 'Is Mda',
+      field: 'closingComments',
+      headerName: 'Closing Comments',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
     },
     {
-      field: 'isCustomerCare',
-      headerName: 'Is Customer Care',
+      field: 'lastEscalationTime',
+      headerName: 'Last Escalation Time',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
+
+      valueFormatter: (params) => formatDate(params.value),
+    },
+    {
+      field: 'wasEscalated',
+      headerName: 'Was Escalated',
+      headerClass: 'prefix-header',
+      filter: true,
+
+      cellRenderer: (params) => (params.value ? 'Yes' : 'No'),
+    },
+    {
+      field: 'taskId',
+      headerName: 'Task ID',
+      headerClass: 'prefix-header',
+      filter: true,
     },
   ];
-
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -65,12 +144,7 @@ const Complaints = () => {
   const transformData = (data) => {
     return data.map((item, index) => ({
       no: index + 1,
-      id: item.departmentId,
-      name: item.name,
-      description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
-      isCustomerCare: item.isCustomerCare,
+      ...item,
       // roles: item.roles,
     }));
   };
@@ -199,7 +273,7 @@ const Complaints = () => {
             apiEndpoint={endpoints.createComplaint}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         )}

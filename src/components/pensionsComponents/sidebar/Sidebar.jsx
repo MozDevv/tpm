@@ -689,6 +689,38 @@ export const menuItems = [
         path: '/pensions/customer-relations/dependants-enrollment',
       },
       {
+        title: 'Tickets',
+        path: '/pensions/customer-relations/tickets',
+        /**    {
+        OPEN,
+        ASSIGNED,
+        ESCALATED,
+        CLOSED
+    } */
+        subChildren: [
+          {
+            title: 'Tickets List',
+            path: '/pensions/customer-relations/tickets',
+          },
+          {
+            title: 'Open Tickets',
+            path: '/pensions/customer-relations/tickets/open',
+          },
+          {
+            title: 'Pending Tickets',
+            path: '/pensions/customer-relations/tickets/assigned',
+          },
+          {
+            title: 'ReAssigned Tickets',
+            path: '/pensions/customer-relations/tickets/escalated',
+          },
+          {
+            title: 'Closed Tickets',
+            path: '/pensions/customer-relations/tickets/closed',
+          },
+        ],
+      },
+      {
         title: 'Complaints',
         path: '/pensions/customer-relations/complaints',
         /**    {

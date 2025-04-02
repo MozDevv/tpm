@@ -34,6 +34,7 @@ import MuiPhoneNumber from 'mui-phone-number';
 import financeEndpoints, { apiService } from '../services/financeApi';
 import { useFilteredDataStore } from '@/zustand/store';
 import { BASE_CORE_API } from '@/utils/constants';
+import { baseInputValidator } from './BaseInputValidator';
 
 const BaseInputCard = ({
   handlePreview,
@@ -204,6 +205,21 @@ const BaseInputCard = ({
         ...prev,
         [name]: type === 'checkbox' ? checked : value,
       }));
+    }
+    const field = fields.find((f) => f.name === name);
+    if (field) {
+      const fieldErrors = baseInputValidator(field, value, formData);
+
+      setErrors((prev) => {
+        const updatedErrors = { ...prev, ...fieldErrors };
+
+        // Remove the error for the current field if validation passes
+        if (!fieldErrors[field.name]) {
+          delete updatedErrors[field.name];
+        }
+
+        return updatedErrors;
+      });
     }
     setIsEditing(true);
     // validateForm();
@@ -853,6 +869,61 @@ const BaseInputCard = ({
                     horizontal: 'left',
                   },
                 }}
+              />
+            ) : field.type === 'phone_number' ? (
+              <MuiPhoneNumber
+                defaultCountry="ke" // Kenya as the default country
+                name={field.name}
+                value={formData[field.name] || ''}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: {
+                      name: field.name,
+                      value,
+                    },
+                  })
+                }
+                error={!!errors[field.name]}
+                helperText={errors[field.name]}
+                disabled={field.disabled || disableAll}
+                variant="outlined"
+                size="small"
+                fullWidth
+                dropdownClass="custom-dropdown" // Custom class for the dropdown
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: '120px', // Set max height for the dropdown
+                      overflowY: 'auto',
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                }}
+              />
+            ) : field.type === 'datetime' ? (
+              <TextField
+                name={field.name}
+                type="datetime-local"
+                variant="outlined"
+                size="small"
+                error={!!errors[field.name]}
+                value={
+                  formData[field.name]
+                    ? dayjs(formData[field.name]).format('YYYY-MM-DDTHH:mm')
+                    : ''
+                }
+                defaultValue={''}
+                helperText={errors[field.name]}
+                onChange={handleInputChange}
+                disabled={field.disabled || disableAll}
+                fullWidth
               />
             ) : field.type === 'date' ? (
               <TextField

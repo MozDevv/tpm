@@ -520,6 +520,11 @@ const endpoints = {
     `/api/Setups/DeleteCRMServiceCategoriesGET?id=${id}`,
   getComplaints: '/api/CRM/complaints',
   createComplaint: '/api/CRM/complaints',
+
+  getTickets: '/api/CRM/tickets',
+  createTicket: '/api/CRM/tickets',
+  updateTicket: `/api/CRM/tickets`,
+  deleteTicket: (id) => `/api/CRM/tickets?id=${id}`,
 };
 
 export const apiService = {
@@ -527,6 +532,14 @@ export const apiService = {
     try {
       //  // Set Authorization header before making the request
       const response = await api.get(endpoint, { params });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  patch: async (endpoint, data) => {
+    try {
+      const response = await api.patch(endpoint, data);
       return response;
     } catch (error) {
       throw error;
