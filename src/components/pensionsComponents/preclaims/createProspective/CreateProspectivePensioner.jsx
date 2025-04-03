@@ -218,7 +218,10 @@ function CreateProspectivePensioner({
                       key="8"
                       style={{ zIndex: 1 }}
                     >
-                      <Deductions id={clickedItem?.id} clickedItem2={retiree} />
+                      <Deductions
+                        id={clickedItem?.id}
+                        clickedItem2={clickedItem}
+                      />
                     </TabPane>
 
                     {retiree?.is_wcps === 0 && (

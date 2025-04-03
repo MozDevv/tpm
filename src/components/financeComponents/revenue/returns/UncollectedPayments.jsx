@@ -320,6 +320,10 @@ const UncollectedPayments = ({ status }) => {
     financeEndpoints.getPaymentReturnReasons,
     apiService
   );
+  const { data: scheduledClaims } = useFetchAsync(
+    financeEndpoints.getScheduledPensioners,
+    apiService
+  );
 
   // const { rowData, setRowData } = useRowDataSore();
   const fields = [
@@ -356,6 +360,7 @@ const UncollectedPayments = ({ status }) => {
       name: 'checkSubType',
       label: 'Cheque Sub Type',
       type: 'select',
+      required: true,
       options: [
         { id: 0, name: 'Net' },
         { id: 1, name: 'Deductions' },
@@ -366,6 +371,7 @@ const UncollectedPayments = ({ status }) => {
       name: 'penDepType',
       label: 'Pensioner/Dependant',
       type: 'select',
+      required: true,
       options: [
         { id: 0, name: 'Pensioner' },
         { id: 1, name: 'Dependant' },
@@ -373,10 +379,28 @@ const UncollectedPayments = ({ status }) => {
     },
     {
       name: 'pensionerNo',
-      label: 'Pensioner No',
-      type: 'autocomplete',
+      label: 'Amount Paid',
+      type: 'select',
+      table: true,
       // disabled: true,
-      options: claims && claims,
+      options:
+        scheduledClaims &&
+        scheduledClaims.map((data) => ({
+          id: data?.pensionerNo,
+          name: data?.netAmount,
+          accountNo: parseDate(data?.scheduleDate),
+          paymentVoucherNo: data.paymentVoucherNo,
+          pensionerName: data.pensionerName,
+          nationalIdNo: data.nationalIdNo,
+          bankAccountName: data.bankAccountName,
+          scheduleNo: data.scheduleNo,
+          netAmount: data.netAmount,
+          scheduleDate: data.scheduleDate,
+          accountNo: data.accountNo,
+          paymentVoucherDate: data.paymentVoucherDate,
+          eftNo: data.eftNo,
+        })),
+      required: true,
     },
     {
       name: 'paymentVoucherNo',
@@ -403,12 +427,7 @@ const UncollectedPayments = ({ status }) => {
       type: 'text',
       disabled: true,
     },
-    {
-      name: 'bankAccountName',
-      label: 'Bank Account Name',
-      type: 'text',
-      disabled: true,
-    },
+
     {
       name: 'scheduleNo',
       label: 'Schedule No',
@@ -423,9 +442,40 @@ const UncollectedPayments = ({ status }) => {
     },
 
     {
-      name: 'accountNo',
-      label: 'Account No',
-      type: 'text',
+      name: 'drAccountId',
+      label: 'Debit Account',
+      type: 'autocomplete',
+      options: drAccounts,
+      disabled: true,
+    },
+    {
+      name: 'bankId',
+      label: 'Bank',
+      type: 'autocomplete',
+      disabled: true,
+      required: true,
+      options: banks.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+      })),
+    },
+    {
+      name: 'bankBranchId',
+      label: 'Branch',
+      type: 'autocomplete',
+      disabled: true,
+      required: true,
+      options: branches.map((branch) => ({
+        id: branch.id,
+        name: branch.name,
+        bankId: branch.bankId,
+      })),
+    },
+    {
+      name: 'crAccountId',
+      label: 'Credit Account',
+      type: 'autocomplete',
+      options: crAccounts,
       disabled: true,
     },
     {
@@ -466,6 +516,7 @@ const UncollectedPayments = ({ status }) => {
       name: 'remarks',
       label: 'Remarks',
       type: 'text',
+      required: true,
     },
   ];
   const token = localStorage.getItem('token');
@@ -860,7 +911,7 @@ const UncollectedPayments = ({ status }) => {
           uploadExcel={uploadExcel}
           pageSize={30}
           handlers={handlers}
-          breadcrumbTitle="Uncollected Payments"
+          breadcrumbTitle="Failed Payments"
           currentTitle="Uncollected Payments"
           selectedRows={selectedRows}
           onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}

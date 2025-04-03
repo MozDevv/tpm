@@ -11,6 +11,21 @@ import { formatDate } from '@/utils/dateFormatter';
 import BaseCRMTable from '../baseComponents/BaseCRMTable';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import dayjs from 'dayjs';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
+import { message } from 'antd';
+import { useRefreshDataStore } from '@/zustand/store';
 
 const Tickets = () => {
   const transformString = (str) => {
@@ -66,13 +81,7 @@ const Tickets = () => {
       filter: true,
       flex: 1,
     },
-    {
-      field: 'sourceDetail',
-      headerName: 'Source Detail',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
+
     {
       field: 'ticketType',
       headerName: 'Ticket Type',
@@ -195,10 +204,58 @@ const Tickets = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
+  const [openEditCard, setOpenEditCard] = React.useState(false);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const { setRefreshData } = useRefreshDataStore();
+
+  const handleSelectedRows = () => {
+    //loop selected rows change status to 3 data to send per req is /**{
+    /*"ticketId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "ticketNumber": "string",
+  "status": 0
+} */
+
+    const updatedRows = selectedRows.map((row) => ({
+      ticketId: row.id,
+      ticketNumber: row.ticketNumber,
+      status: 3,
+    }));
+
+    try {
+      const promises = updatedRows.map((row) => {
+        return apiService.patch(endpoints.updateTicket, row);
+      });
+
+      Promise.all(promises)
+        .then((responses) => {
+          message.success('Tickets closed successfully!');
+          console.log('All tickets closed successfully:', responses);
+          setRefreshData((prev) => !prev); // Trigger a refresh of the data
+          // Optionally, refresh the table data or show a success message
+        })
+        .catch((error) => {
+          message.error('Error closing tickets. Please try again.');
+          console.error('Error closing tickets:', error);
+          // Optionally, show an error message to the user
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const title = clickedItem ? 'Ticket' : 'Create New Ticket';
 
   const fields = [
+    ...(clickedItem
+      ? [
+          {
+            name: 'ticketNumber',
+            label: 'Ticket Number',
+            type: 'text',
+            disabled: true,
+          },
+        ]
+      : []),
     {
       name: 'initiator',
       label: 'Initiator',
@@ -229,12 +286,7 @@ const Tickets = () => {
       type: 'phone_number',
       required: true,
     },
-    {
-      name: 'sourceDetail',
-      label: 'Source Detail',
-      type: 'text',
-      required: true,
-    },
+
     {
       name: 'categoryId',
       label: 'Category',
@@ -287,8 +339,147 @@ const Tickets = () => {
     },
   ];
 
+  const assignFields = [
+    /**{
+  "mode": 0,
+  "ticketId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "ticketNumber": "string",
+  "toUserId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+} */
+    {
+      name: 'mode',
+      label: 'Mode',
+      type: 'select',
+      required: true,
+      options: [
+        { id: 0, name: 'Re-assign' },
+        { id: 1, name: 'Assign' },
+      ],
+    },
+    {
+      name: 'ticketId',
+      label: 'Ticket ID',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'ticketNumber',
+      label: 'Ticket Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'toUserId',
+      label: 'To User ID',
+      type: 'text',
+      required: true,
+    },
+  ];
+
   return (
     <div className="">
+      <Dialog
+        open={openEditCard}
+        onClose={() => setOpenEditCard(false)}
+        maxWidth="sm"
+        fullWidth
+        //add padding to the dialog
+        PaperProps={{
+          style: {
+            padding: '12px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          },
+        }}
+      >
+        <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
+          Close Selected Tickets
+        </h5>
+        <h5 className="text-[13px] text-gray-500 font-semibold ml-5 mt-2 mb-2">
+          These tickets will be closed and cannot be reopened.
+        </h5>
+        <TableContainer
+          sx={{ maxHeight: '400px', padding: '20px', mb: '20px' }}
+        >
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>Ticket Number</TableCell>
+                <TableCell align="center">Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {selectedRows.map((doc, index) => (
+                <TableRow
+                  key={doc.id}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  {/* Ticket Number */}
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: '#006990',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    {doc.ticketNumber}
+                  </TableCell>
+
+                  <TableCell
+                    sx={{
+                      fontWeight: 'bold',
+                      color: '#006990',
+
+                      textAlign: 'right',
+                    }}
+                  >
+                    {dayjs(doc.created_date).format('YYYY-MM-DD HH:mm')}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <DialogActions
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '20px',
+            px: '25px',
+            mt: '20px',
+          }}
+        >
+          <Button
+            onClick={() => setOpenEditCard(false)}
+            color="error"
+            size="small"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleSelectedRows();
+              console.log('Updated Rows:', selectedRows);
+              setOpenEditCard(false);
+            }}
+            color="primary"
+            variant="contained"
+            size="small"
+          >
+            Close Ticket(s)
+          </Button>
+        </DialogActions>
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -302,6 +493,7 @@ const Tickets = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
+            disableAll={true}
             apiEndpoint={endpoints.updateTicket}
             postApiFunction={apiService.patch}
             clickedItem={clickedItem}
@@ -331,6 +523,8 @@ const Tickets = () => {
         pageSize={30}
         handlers={handlers}
         title="Tickets"
+        setOpenEditCard={setOpenEditCard}
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
       />
     </div>
   );

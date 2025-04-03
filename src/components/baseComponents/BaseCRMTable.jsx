@@ -18,6 +18,9 @@ import {
   Search,
   CallMade,
   MoreHoriz,
+  Edit,
+  Verified,
+  DoneAll,
 } from '@mui/icons-material';
 import BaseDrawer from './BaseDrawer';
 import BaseInputCard from '../baseComponents/BaseInputCard';
@@ -40,6 +43,7 @@ import BaseLoadingOverlay from './BaseLoadingOverlay';
 import { apiService } from '../services/api';
 import './crm.css';
 import BaseEmptyComponent from './BaseEmptyComponent';
+import { useRefreshDataStore } from '@/zustand/store';
 
 function BaseCRMTable({
   columnDefs,
@@ -62,17 +66,23 @@ function BaseCRMTable({
   reportItems = [],
   scrollable = true,
   setClickedItem,
-  onSelectionChanged,
+  onSelectionChange,
+  setOpenEditCard,
 }) {
   const theme = useTheme();
   const [rowData, setRowData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState();
   const [searchText, setSearchText] = useState('');
+
+  const { refreshData } = useRefreshDataStore();
 
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    fetchData();
+  }, [refreshData]);
 
   useEffect(() => {
     fetchData();
@@ -88,24 +98,91 @@ function BaseCRMTable({
     }
   };
 
-  const filterData = () => {
-    let data = rowData;
-    if (selectedCategory !== 'All') {
-      data = data.filter((row) => row[selectedCategory.toLowerCase()]);
-    }
-    if (searchText) {
-      data = data.filter((row) =>
-        Object.values(row).some((value) =>
-          String(value).toLowerCase().includes(searchText.toLowerCase())
-        )
-      );
-    }
-    setRowData(data);
-  };
+  //   const filterData = () => {
+  //     let data = rowData;
+  //     if (selectedCategory !== 'All') {
+  //       data = data.filter((row) => row[selectedCategory.toLowerCase()]);
+  //     }
+  //     if (searchText) {
+  //       data = data.filter((row) =>
+  //         Object.values(row).some((value) =>
+  //           String(value).toLowerCase().includes(searchText.toLowerCase())
+  //         )
+  //       );
+  //     }
+  //     setRowData(data);
+  //   };
 
-  useEffect(() => {
-    filterData();
-  }, [selectedCategory, searchText]);
+  //   useEffect(() => {
+  //     filterData();
+  //   }, [selectedCategory, searchText]);
+
+  const [selectedColumn, setSelectedColumn] = useState('ticketNumber');
+
+  const handleSearchColumns = () => {
+    const filterCriteria = {};
+    let criterionIndex = 0;
+
+    // Collect Search filter
+    if (searchText && selectedColumn) {
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyName`
+      ] = selectedColumn; // Column selected by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyValue`
+      ] = searchText; // Value entered by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].criterionType`
+      ] = 2; // Default to 'Includes'
+      criterionIndex++;
+    }
+
+    console.log('Filter Criteria:', filterCriteria);
+
+    // Pass the filter criteria to the API or use it to filter the data
+    fetchDataWithFilters(filterCriteria);
+  };
+  const handleSearchByPriority = () => {
+    const filterCriteria = {};
+    let criterionIndex = 0;
+
+    // Collect Search filter
+    if (selectedCategory) {
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyName`
+      ] = 'priority'; // Column selected by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyValue`
+      ] = String(selectedCategory); // Value entered by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].criterionType`
+      ] = 2; // Default to 'Includes'
+      criterionIndex++;
+    }
+
+    console.log('Filter Criteria:', filterCriteria);
+
+    // Pass the filter criteria to the API or use it to filter the data
+    fetchDataWithFilters(filterCriteria);
+  };
+  const serializeFilterCriteria = (filterCriteria) => {
+    const params = new URLSearchParams();
+    Object.keys(filterCriteria).forEach((key) => {
+      params.append(key, filterCriteria[key]);
+    });
+    return params.toString();
+  };
+  const fetchDataWithFilters = async (filterCriteria) => {
+    try {
+      const queryString = serializeFilterCriteria(filterCriteria);
+      const res = await fetchApiService(`${fetchApiEndpoint}?${queryString}`);
+
+      const { data } = res.data;
+      setRowData(transformData(data));
+    } catch (error) {
+      console.error('Error fetching filtered data:', error.response);
+    }
+  };
 
   const [clickedRow, setClickedRow] = useState(null);
   const [gridApi, setGridApi] = useState(null);
@@ -130,7 +207,24 @@ function BaseCRMTable({
     ...menuHandlers, // Allow adding custom handlers
   };
 
-  const categories = ['Low', 'Normal', 'High', 'Urgent'];
+  const categories = [
+    {
+      id: 0,
+      name: 'Low',
+    },
+    {
+      id: 1,
+      name: 'Normal',
+    },
+    {
+      id: 2,
+      name: 'High',
+    },
+    {
+      id: 3,
+      name: 'Critical',
+    },
+  ];
   const ticketTypes = [
     /** */
     /**{
@@ -178,6 +272,15 @@ function BaseCRMTable({
       icon: <CheckCircle className="text-teal-500" />,
     },
   ];
+  const onSelectionChanged = (event) => {
+    const selectedData = event.api.getSelectedRows();
+    if (onSelectionChange) {
+      onSelectionChange(selectedData);
+    }
+    if (!clickedItem && selectedData.length > 0) {
+      setClickedItem(selectedData[0]);
+    }
+  };
 
   const ticketInitiators = [
     /**  {
@@ -204,9 +307,6 @@ function BaseCRMTable({
       name: 'Agent Assisted',
     },
   ];
-  useEffect(() => {
-    filterData();
-  }, [selectedCategory, searchText]);
 
   const customIcons = {
     menu: `
@@ -290,7 +390,7 @@ function BaseCRMTable({
                 theme.palette.mode === 'dark' ? 'bg-dark-light' : 'bg-white'
               } p-6 shadow rounded-lg`}
             >
-              <form className="flex items-center gap-8">
+              <form className="flex items-center gap-6">
                 {/* Search Input */}
                 <div className="flex-1">
                   <label
@@ -319,6 +419,48 @@ function BaseCRMTable({
                   />
                 </div>
 
+                <div>
+                  <label
+                    htmlFor="columns"
+                    className={`block text-sm font-medium ${
+                      theme.palette.mode === 'dark'
+                        ? 'text-gray-300'
+                        : 'text-gray-700'
+                    }`}
+                  >
+                    Columns
+                  </label>
+                  <select
+                    id="columns"
+                    className={`mt-1 block w-full px-4 py-2 border ${
+                      theme.palette.mode === 'dark'
+                        ? 'border-gray-600 bg-dark-light text-gray-300'
+                        : 'border-gray-300 bg-white text-gray-700'
+                    } rounded-full focus:ring-blue-500 focus:border-blue-500`}
+                    onChange={(e) => setSelectedColumn(e.target.value)}
+                  >
+                    {columnDefs.map((col, index) => (
+                      <option key={index} value={col.field}>
+                        {col.headerName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<Search />}
+                  onClick={() => {
+                    handleSearchColumns();
+                  }}
+                  sx={{
+                    mt: 3,
+                  }}
+                >
+                  Search by Columns
+                </Button>
+
                 {/* Category Filter */}
                 <div>
                   <label
@@ -338,11 +480,16 @@ function BaseCRMTable({
                         ? 'border-gray-600 bg-dark-light text-gray-300'
                         : 'border-gray-300 bg-white text-gray-700'
                     } rounded-full focus:ring-blue-500 focus:border-blue-500`}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedCategory(e.target.value);
+                    }}
+                    onBlur={() => {
+                      handleSearchByPriority();
+                    }}
                   >
                     {categories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
+                      <option key={index} value={category.id}>
+                        {category.name}
                       </option>
                     ))}
                   </select>
@@ -375,32 +522,21 @@ function BaseCRMTable({
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label
-                    htmlFor="status"
-                    className={`block text-sm font-medium ${
-                      theme.palette.mode === 'dark'
-                        ? 'text-gray-300'
-                        : 'text-gray-700'
-                    }`}
-                  >
-                    Ticket Initiator
-                  </label>
-                  <select
-                    id="status"
-                    className={`mt-1 block w-full px-4 py-2 border ${
-                      theme.palette.mode === 'dark'
-                        ? 'border-gray-600 bg-dark-light text-gray-300'
-                        : 'border-gray-300 bg-white text-gray-700'
-                    } rounded-full focus:ring-blue-500 focus:border-blue-500`}
-                  >
-                    {ticketTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+
+                {/** */}
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<DoneAll />}
+                  onClick={() => {
+                    setOpenEditCard(true);
+                  }}
+                  sx={{
+                    mt: 3,
+                  }}
+                >
+                  Close Ticket
+                </Button>
 
                 {/* Search Button */}
                 <Button
@@ -411,7 +547,6 @@ function BaseCRMTable({
                     setOpenBaseCard(true);
                     setClickedItem(null);
                   }}
-                  size="large"
                   variant="contained"
                   startIcon={<Add />}
                 >

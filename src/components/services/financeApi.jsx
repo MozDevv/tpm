@@ -489,6 +489,8 @@ const financeEndpoints = {
 
   getPensionerUncollected: (no) =>
     `Revenue/GetPensionerPaymentVouchers?PensionerNo=${no}`,
+  getScheduledPensioners:
+    'Revenue/GetPensionerPaymentVouchers?paging.PageSize=100000',
 };
 
 export const apiService = {

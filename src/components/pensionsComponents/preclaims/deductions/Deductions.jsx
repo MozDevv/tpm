@@ -142,6 +142,10 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
     fetchMdas();
   }, []);
 
+  useEffect(() => {
+    console.log('clickedItem2', clickedItem2);
+  }, [clickedItem]);
+
   return (
     <div className="">
       <BaseInputTable
@@ -168,6 +172,7 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
         sectionIndex={sectionIndex}
         enabled={enabled}
       />{' '}
+      {JSON.stringify(clickedItem2.notification_status)}
     </div>
   );
 };

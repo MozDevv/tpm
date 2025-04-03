@@ -417,7 +417,7 @@ export const menuItems = [
         ],
       },
       {
-        title: 'Uncollected Payments',
+        title: 'Failed Payments',
         path: '/pensions/finance/uncollected-payments',
       },
       {
@@ -689,14 +689,13 @@ export const menuItems = [
         path: '/pensions/customer-relations/dependants-enrollment',
       },
       {
+        title: 'Claim Inquiry',
+        path: '/pensions/customer-relations/claim-inquiry',
+      },
+      {
         title: 'Tickets',
         path: '/pensions/customer-relations/tickets',
-        /**    {
-        OPEN,
-        ASSIGNED,
-        ESCALATED,
-        CLOSED
-    } */
+
         subChildren: [
           {
             title: 'Tickets List',

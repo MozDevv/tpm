@@ -533,7 +533,7 @@ const BaseInputCard = ({
           />
         </div>
       )}
-      {!fields.every((field) => field.disabled) && (
+      {(!fields.every((field) => field.disabled) || disableAll) && (
         <div className="flex justify-end gap-2 mr-5">
           {!isEditing && clickedItem ? (
             <Button variant="contained" onClick={handleEdit}>

@@ -648,15 +648,41 @@ const BaseAutoSaveInputCard = ({
             ) : field.name === 'pensionerNo' ? (
               <Autocomplete
                 options={field.options}
-                disabled={field.disabled || disableAll}
-                getOptionLabel={(option) => option.name.toString()} // Ensure the label is a string
+                getOptionLabel={(option) => option.name}
                 onChange={(event, newValue) => {
-                  handleInputChange({
-                    target: {
-                      name: field.name,
-                      value: newValue ? newValue.id : '',
-                    },
-                  });
+                  if (newValue) {
+                    // Autopopulate form fields based on the selected option
+                    setFormData((prev) => ({
+                      ...prev,
+                      pensionerNo: newValue.id,
+                      paymentVoucherNo: newValue.paymentVoucherNo,
+                      pensionerName: newValue.pensionerName,
+                      nationalIdNo: newValue.nationalIdNo,
+                      bankAccountName: newValue.bankAccountName,
+                      scheduleNo: newValue.scheduleNo,
+                      netAmount: newValue.netAmount,
+                      scheduleDate: newValue.scheduleDate,
+                      accountNo: newValue.accountNo,
+                      paymentVoucherDate: newValue.paymentVoucherDate,
+                      eftNo: newValue.eftNo,
+                    }));
+                  } else {
+                    // Clear the fields if no value is selected
+                    setFormData((prev) => ({
+                      ...prev,
+                      pensionerNo: '',
+                      paymentVoucherNo: '',
+                      pensionerName: '',
+                      nationalIdNo: '',
+                      bankAccountName: '',
+                      scheduleNo: '',
+                      netAmount: '',
+                      scheduleDate: '',
+                      accountNo: '',
+                      paymentVoucherDate: '',
+                      eftNo: '',
+                    }));
+                  }
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -666,64 +692,78 @@ const BaseAutoSaveInputCard = ({
                     fullWidth
                     name={field.name}
                     error={!!errors[field.name]}
-                    onBlur={async () => {
-                      if (!formData[field.name]) {
-                        message.error('Please enter a valid Pensioner No.');
-                        return;
-                      }
-
-                      try {
-                        // Call the API with the pensionerNo value
-                        const response = await apiService.get(
-                          financeEndpoints.getPensionerUncollected(
-                            formData[field.name]
-                          )
-                        );
-
-                        if (
-                          response.data.succeeded &&
-                          response.data.data.length > 0
-                        ) {
-                          const data = response.data.data[0];
-                          setFormData((prev) => ({
-                            ...prev,
-                            paymentVoucherNo: data.paymentVoucherNo,
-                            pensionerNo: data.pensionerNo,
-                            pensionerName: data.pensionerName,
-                            nationalIdNo: data.nationalIdNo,
-                            bankAccountName: data.bankAccountName,
-                            scheduleNo: data.scheduleNo,
-                            netAmount: data.netAmount,
-                            scheduleDate: data.scheduleDate,
-                            accountNo: data.accountNo,
-                            paymentVoucherDate: data.paymentVoucherDate,
-                            eftNo: data.eftNo,
-                          }));
-                          message.success(
-                            'Pensioner details loaded successfully.'
-                          );
-                        } else {
-                          message.error(
-                            'No data found for the provided Pensioner No.'
-                          );
-                        }
-                      } catch (error) {
-                        console.error(error);
-                        message.error(
-                          'An error occurred while fetching pensioner details.'
-                        );
-                      }
-                    }}
+                    helperText={errors[field.name]}
                     disabled={field.disabled}
+                    onBlur={async () => {
+                      // Prevent overwriting the selected value
+                    }}
                   />
                 )}
                 value={
-                  (field.options &&
-                    field.options.find(
-                      (option) => option.id === formData[field.name]
-                    )) ||
-                  null
+                  field.options.find(
+                    (option) => option.id === formData[field.name]
+                  ) || null
                 }
+                renderOption={(props, option, { selected }) => (
+                  <div className="">
+                    <li
+                      {...props}
+                      style={{
+                        border: 'none',
+                        boxShadow: 'none',
+                        backgroundColor: selected ? '#B2E9ED' : 'white',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '100%',
+                          pr: '40px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 3,
+                          }}
+                        >
+                          <p className="text-primary font-normal text-[12px]">
+                            {option.accountNo}
+                          </p>
+                          <Typography variant="body2" fontSize={12}>
+                            {option.name}
+                          </Typography>
+                          <Typography variant="body2" fontSize={12}>
+                            {option.eftNo}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </li>
+                  </div>
+                )}
+                ListboxProps={{
+                  sx: {
+                    padding: 0,
+                    '& ul': {
+                      padding: 0,
+                      margin: 0,
+                    },
+                  },
+                }}
+                PopperComponent={(props) => (
+                  <Popper {...props}>
+                    {/* Header */}
+                    <li className="flex items-center gap-[70px] px-3 py-2 bg-gray-100">
+                      <p className="text-xs font-normal">Date.</p>
+                      <p className="text-xs font-normal">Amount</p>
+                      <p className="text-xs font-normal">Eft No</p>
+                    </li>
+
+                    {props.children}
+                  </Popper>
+                )}
               />
             ) : field.type === 'select' ? (
               field.multiple ? (
