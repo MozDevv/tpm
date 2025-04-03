@@ -40,10 +40,12 @@ import {
 import ListNavigation from './ListNavigation';
 // import { Divide } from 'feather-icons-react/build/IconComponents';
 import BaseLoadingOverlay from './BaseLoadingOverlay';
-import { apiService } from '../services/api';
+
 import './crm.css';
 import BaseEmptyComponent from './BaseEmptyComponent';
 import { useRefreshDataStore } from '@/zustand/store';
+import useFetchAsync, { useFetchAsyncV2 } from '../hooks/DynamicFetchHook';
+import endpoints, { apiService } from '../services/setupsApi';
 
 function BaseCRMTable({
   columnDefs,
@@ -156,7 +158,7 @@ function BaseCRMTable({
       ] = parseInt(selectedCategory); // Value entered by the user
       filterCriteria[
         `filterCriterion.criterions[${criterionIndex}].criterionType`
-      ] = 2; // Default to 'Includes'
+      ] = 0; // Default to 'Includes'
       criterionIndex++;
     }
 
@@ -250,6 +252,12 @@ function BaseCRMTable({
       name: 'Follow Up',
     },
   ];
+
+  const { data: statsFromaPI } = useFetchAsyncV2(
+    endpoints.getStats,
+    apiService
+  );
+
   const stats = [
     {
       value: '3.2k',
@@ -368,7 +376,28 @@ function BaseCRMTable({
         </Typography>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
-          {stats.map((stat, index) => (
+          {[
+            {
+              value: statsFromaPI?.OPEN || 0,
+              label: 'Open',
+              icon: <LockOpen className="text-purple-500" />,
+            },
+            {
+              value: statsFromaPI?.PENDING || 0,
+              label: 'Pending',
+              icon: <HourglassEmpty className="text-orange-500" />,
+            },
+            {
+              value: statsFromaPI?.RE_ASSIGNED || 0,
+              label: 'Re-assigned',
+              icon: <Loop className="text-green-500" />,
+            },
+            {
+              value: statsFromaPI?.CLOSED || 0,
+              label: 'Closed',
+              icon: <CheckCircle className="text-teal-500" />,
+            },
+          ].map((stat, index) => (
             <div
               key={index}
               className="flex items-center justify-between bg-white shadow rounded-xl p-6"

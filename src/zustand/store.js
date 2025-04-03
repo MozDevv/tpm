@@ -21,3 +21,5 @@ export const useRefreshDataStore = stateFactory('refreshData');
 export const useFilteredDataStore = stateFactory('filteredData');
 
 export const useRowDataSore = stateFactory('rowData');
+
+export const useCapNameStore = stateFactory('capName');

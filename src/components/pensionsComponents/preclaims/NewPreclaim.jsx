@@ -53,6 +53,7 @@ import { toProperCase } from '@/utils/numberFormatters';
 import AddBeneficiaries from './AddBeneficiaries';
 import { validateField } from './PreclaimsValidator';
 import { FieldDocuments } from '../FieldDocuments';
+import { useCapNameStore } from '@/zustand/store';
 
 dayjs.extend(isSameOrBefore);
 
@@ -273,7 +274,7 @@ function NewPreclaim({
         death_certificate_number: retiree?.death_certificate_number ?? '',
         date_of_death: retiree?.date_of_death
           ? new Date(retiree?.date_of_death).toISOString().split('T')[0]
-          : '',
+          : null,
         has_wcps_proforma_recovery:
           retiree?.has_wcps_proforma_recovery ?? false,
         killed_on_duty: retiree?.killed_on_duty ?? false,
@@ -1262,9 +1263,11 @@ function NewPreclaim({
 
   const [openFieldDocs, setOpenFieldDocs] = useState(false);
 
+  const { capName: zustandCapName } = useCapNameStore();
+
   useEffect(() => {
-    console.log('This is the Cap Name', activeCapName);
-  }, [active]);
+    console.log('This is the Cap Name', zustandCapName);
+  }, []);
 
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
@@ -1447,7 +1450,11 @@ function NewPreclaim({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
                             .filter((field) => {
-                              const capName = activeCapName;
+                              const capName =
+                                zustandCapName ||
+                                (clickedItem &&
+                                  clickedItem.mda_pensionCap_name) ||
+                                '';
 
                               return (
                                 !capName || field?.pensionCap.includes(capName)
