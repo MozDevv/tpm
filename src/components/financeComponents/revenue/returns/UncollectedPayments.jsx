@@ -337,46 +337,46 @@ const UncollectedPayments = ({ status }) => {
           },
         ]
       : []),
-    {
-      name: 'chequeType',
-      label: 'Cheque Type',
-      type: 'select',
-      options: [
-        { id: 0, name: 'Own Cheque' },
-        { id: 1, name: 'Bankers Cheque' },
-        { id: 2, name: 'Cash' },
-      ],
-    },
-    {
-      name: 'depType',
-      label: 'Pen/Deposit Type',
-      type: 'select',
-      options: [
-        { id: 0, name: 'Pensioner' },
-        { id: 1, name: 'Dependant' },
-      ],
-    },
-    {
-      name: 'checkSubType',
-      label: 'Cheque Sub Type',
-      type: 'select',
-      required: true,
-      options: [
-        { id: 0, name: 'Net' },
-        { id: 1, name: 'Deductions' },
-        { id: 2, name: 'Return' },
-      ],
-    },
-    {
-      name: 'penDepType',
-      label: 'Pensioner/Dependant',
-      type: 'select',
-      required: true,
-      options: [
-        { id: 0, name: 'Pensioner' },
-        { id: 1, name: 'Dependant' },
-      ],
-    },
+    // {
+    //   name: 'chequeType',
+    //   label: 'Cheque Type',
+    //   type: 'select',
+    //   options: [
+    //     { id: 0, name: 'Own Cheque' },
+    //     { id: 1, name: 'Bankers Cheque' },
+    //     { id: 2, name: 'Cash' },
+    //   ],
+    // },
+    // {
+    //   name: 'depType',
+    //   label: 'Pen/Deposit Type',
+    //   type: 'select',
+    //   options: [
+    //     { id: 0, name: 'Pensioner' },
+    //     { id: 1, name: 'Dependant' },
+    //   ],
+    // },
+    // {
+    //   name: 'checkSubType',
+    //   label: 'Cheque Sub Type',
+    //   type: 'select',
+    //   required: true,
+    //   options: [
+    //     { id: 0, name: 'Net' },
+    //     { id: 1, name: 'Deductions' },
+    //     { id: 2, name: 'Return' },
+    //   ],
+    // },
+    // {
+    //   name: 'penDepType',
+    //   label: 'Pensioner/Dependant',
+    //   type: 'select',
+    //   required: true,
+    //   options: [
+    //     { id: 0, name: 'Pensioner' },
+    //     { id: 1, name: 'Dependant' },
+    //   ],
+    // },
     {
       name: 'pensionerNo',
       label: 'Amount Paid',
@@ -388,7 +388,7 @@ const UncollectedPayments = ({ status }) => {
         scheduledClaims.map((data) => ({
           id: data?.pensionerNo,
           name: data?.netAmount,
-          accountNo: parseDate(data?.scheduleDate),
+
           paymentVoucherNo: data.paymentVoucherNo,
           pensionerName: data.pensionerName,
           nationalIdNo: data.nationalIdNo,
@@ -399,6 +399,10 @@ const UncollectedPayments = ({ status }) => {
           accountNo: data.accountNo,
           paymentVoucherDate: data.paymentVoucherDate,
           eftNo: data.eftNo,
+          bankId: data.bankId,
+          bankBranchId: data.bankBranchId,
+          crAccountId: data.crAccountId,
+          drAccountId: data.drAccountId,
         })),
       required: true,
     },
@@ -491,12 +495,12 @@ const UncollectedPayments = ({ status }) => {
       disabled: true,
     },
     {
-      name: 'returnChequeNo',
+      name: 'returnChequeOrEftNo',
       label: 'Return Cheque No',
       type: 'text',
     },
     {
-      name: 'returnChequeDate',
+      name: 'returnChequeOrEftDate',
       label: 'Return Cheque Date',
       type: 'date',
     },
@@ -595,15 +599,7 @@ const UncollectedPayments = ({ status }) => {
         return <p>{params.value}</p>;
       },
     },
-    {
-      field: 'bankAccountName',
-      headerName: 'Bank Account Name',
-      headerClass: 'prefix-header',
-      flex: 1,
-      cellRenderer: (params) => {
-        return <p>{params.value}</p>;
-      },
-    },
+
     {
       field: 'scheduleNo',
       headerName: 'Schedule No',
@@ -631,15 +627,7 @@ const UncollectedPayments = ({ status }) => {
         return parseDate(params.value);
       },
     },
-    {
-      field: 'accountNo',
-      headerName: 'Account No',
-      headerClass: 'prefix-header',
-      flex: 1,
-      cellRenderer: (params) => {
-        return <p>{params.value}</p>;
-      },
-    },
+
     {
       field: 'paymentVoucherDate',
       headerName: 'Payment Voucher Date',
@@ -830,14 +818,14 @@ const UncollectedPayments = ({ status }) => {
             <div>
               <BaseAutoSaveInputCard
                 fields={fields}
-                apiEndpoint={financeEndpoints.addReturn}
+                apiEndpoint={financeEndpoints.createFailedPayment}
                 putApiFunction={apiService.post}
                 updateApiEndpoint={financeEndpoints.updateReturn}
                 postApiFunction={apiService.post}
                 getApiEndpoint={
                   status
-                    ? financeEndpoints.getReturnsBystageAndId(status)
-                    : financeEndpoints.getReturnsById
+                    ? financeEndpoints.getFailedPayments
+                    : financeEndpoints.getFailedPayments
                 }
                 getApiFunction={apiService.get}
                 transformData={(data) => data}
@@ -879,11 +867,11 @@ const UncollectedPayments = ({ status }) => {
         ) : (
           <BaseAutoSaveInputCard
             fields={fields}
-            apiEndpoint={financeEndpoints.addAccountingPeriod}
+            apiEndpoint={financeEndpoints.createFailedPayment}
             putApiFunction={apiService.post}
             updateApiEndpoint={financeEndpoints.updateReturn}
             postApiFunction={apiService.post}
-            getApiEndpoint={financeEndpoints.getReturnsById}
+            getApiEndpoint={financeEndpoints.getFailedPayments}
             getApiFunction={apiService.get}
             transformData={(data) => data}
             useRequestBody={true}
@@ -905,14 +893,14 @@ const UncollectedPayments = ({ status }) => {
           setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getReturnsByStage(9)}
+          fetchApiEndpoint={financeEndpoints.getFailedPayments}
           fetchApiService={apiService.get}
           transformData={transformData}
           uploadExcel={uploadExcel}
           pageSize={30}
           handlers={handlers}
           breadcrumbTitle="Failed Payments"
-          currentTitle="Uncollected Payments"
+          currentTitle="Failed Payments"
           selectedRows={selectedRows}
           onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           openApproveDialog={openApprove}

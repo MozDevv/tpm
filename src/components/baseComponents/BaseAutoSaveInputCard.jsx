@@ -37,6 +37,7 @@ import { useRefreshDataStore } from '@/zustand/store';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import financeEndpoints, { apiService } from '../services/financeApi';
+import { parseDate } from '@/utils/dateFormatter';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -665,6 +666,10 @@ const BaseAutoSaveInputCard = ({
                       accountNo: newValue.accountNo,
                       paymentVoucherDate: newValue.paymentVoucherDate,
                       eftNo: newValue.eftNo,
+                      bankId: newValue.bankId,
+                      bankBranchId: newValue.bankBranchId,
+                      crAccountId: newValue.crAccountId,
+                      drAccountId: newValue.drAccountId,
                     }));
                   } else {
                     // Clear the fields if no value is selected
@@ -730,14 +735,16 @@ const BaseAutoSaveInputCard = ({
                           }}
                         >
                           <p className="text-primary font-normal text-[12px]">
-                            {option.accountNo}
+                            {parseDate(option.scheduleDate)}
                           </p>
                           <Typography variant="body2" fontSize={12}>
                             {option.name}
                           </Typography>
-                          <Typography variant="body2" fontSize={12}>
-                            {option.eftNo}
-                          </Typography>
+                          <div className="ml-10">
+                            <Typography variant="body2" fontSize={12}>
+                              {option.eftNo}
+                            </Typography>
+                          </div>
                         </Box>
                       </Box>
                     </li>
