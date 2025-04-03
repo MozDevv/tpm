@@ -1262,6 +1262,10 @@ function NewPreclaim({
 
   const [openFieldDocs, setOpenFieldDocs] = useState(false);
 
+  useEffect(() => {
+    console.log('This is the Cap Name', activeCapName);
+  }, [active]);
+
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
@@ -1443,11 +1447,7 @@ function NewPreclaim({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 p-6 ">
                           {section.fields
                             .filter((field) => {
-                              const capName =
-                                activeCapName ||
-                                (clickedItem &&
-                                  clickedItem.mda_pensionCap_name) ||
-                                '';
+                              const capName = activeCapName;
 
                               return (
                                 !capName || field?.pensionCap.includes(capName)
