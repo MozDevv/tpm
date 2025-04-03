@@ -525,6 +525,7 @@ const endpoints = {
   createTicket: '/api/CRM/tickets',
   updateTicket: `/api/CRM/tickets`,
   deleteTicket: (id) => `/api/CRM/tickets?id=${id}`,
+  getClaimInquiry: '/api/CRM/enquiries',
 };
 
 export const apiService = {

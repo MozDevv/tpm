@@ -8,152 +8,120 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
-
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'description',
-    headerName: 'Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-  {
-    field: 'isMDA',
-    headerName: 'Is Mda',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'isCustomerCare',
-    headerName: 'Is Customer Care',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
+import BaseCollapse from '../baseComponents/BaseCollapse';
+import { MenuItem, TextField, Button, Typography, Box } from '@mui/material';
+import { Alert, message } from 'antd';
 
 const ClaimInquiry = () => {
-  const transformString = (str) => {
-    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
-      return a.toUpperCase();
-    });
+  const [formData, setFormData] = React.useState({
+    searchType: '',
+    searchInput: '',
+  });
+
+  const handleSearch = () => {
+    if (!formData.searchType || !formData.searchInput) {
+      message.error('Please select a filter and provide a value to search.');
+      return;
+    }
+    try {
+      const response = apiService.post(endpoints.getClaimInquiry, {
+        [formData.searchType]: formData.searchInput,
+      });
+      console.log('Response:', response.data);
+      message.success('Search completed successfully!');
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  const transformData = (data) => {
-    return data.map((item, index) => ({
-      no: index + 1,
-      id: item.departmentId,
-      name: item.name,
-      description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
-      isCustomerCare: item.isCustomerCare,
-      // roles: item.roles,
-    }));
-  };
-
-  const handlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
-  };
-
-  const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
-  };
-
-  const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
-
-  const title = clickedItem ? 'Department' : 'Create New Department';
-
-  const fields = [
-    // {
-    //   "personalNumber": "string",
-    //   "pensionerNationalId": "string",
-    //   "dependantNationalId": "string",
-    //   "pensionerNumber": "string",
-    //   "dependantNumber": "string"
-    // }
-    {
-      name: 'pensionerNumber',
-      type: 'text',
-      label: 'Pensioner Number',
-    },
-    {
-      name: 'personalNumber',
-      type: 'text',
-      label: 'Personal Number',
-    },
-    {
-      name: 'pensionerNationalId',
-      type: 'text',
-      label: 'Pensioner National ID',
-    },
-    {
-      name: 'dependantNationalId',
-      type: 'text',
-      label: 'Dependant National ID',
-    },
-
-    {
-      name: 'dependantNumber',
-      type: 'text',
-      label: 'Dependant Number',
-    },
-  ];
 
   return (
-    <div className="bg-white mt-8 px-5">
-      <BaseInputCard
-        fields={fields}
-        apiEndpoint={endpoints.createDepartment}
-        postApiFunction={apiService.post}
-        clickedItem={clickedItem}
-        useRequestBody={true}
-        setOpenBaseCard={setOpenBaseCard}
-      />
+    <div className="bg-white mt-8 px-10 py-10">
+      {/* Title and Subtitle */}
+
+      <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
+        Select a filter and provide the required details to search for a claim.
+      </p>
+
+      <div className="mt-5">
+        <Alert
+          message="Ensure the information provided is accurate to get
+          the correct results."
+          type="info"
+          showIcon
+        />
+      </div>
+
+      <div className="py-3">
+        <div className=" py-3">
+          {/* Search Type Dropdown */}
+          <div className="mb-4">
+            <label className="text-[14px] mb-2 font-semibold text-primary">
+              Search Claim By:
+            </label>
+            <TextField
+              select
+              value={formData.searchType || ''}
+              onChange={(event) =>
+                setFormData((prevData) => ({
+                  ...prevData,
+                  searchType: event.target.value,
+                  searchInput: '', // Reset search input when type changes
+                }))
+              }
+              variant="outlined"
+              size="small"
+              fullWidth
+            >
+              <MenuItem value="pensionerNumber">Pensioner Number</MenuItem>
+              <MenuItem value="personalNumber">Personal Number</MenuItem>
+              <MenuItem value="pensionerNationalId">
+                Pensioner National ID
+              </MenuItem>
+              <MenuItem value="dependantNationalId">
+                Dependant National ID
+              </MenuItem>
+              <MenuItem value="dependantNumber">Dependant Number</MenuItem>
+            </TextField>
+          </div>
+
+          {/* Input Field for Search */}
+          {formData.searchType && (
+            <div className="mb-4 mt-5">
+              <label className="text-[14px] mb-2 font-semibold text-primary">
+                Enter {formData.searchType.replace(/([A-Z])/g, ' $1')}:
+              </label>
+              <TextField
+                value={formData.searchInput || ''}
+                onChange={(event) =>
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    searchInput: event.target.value,
+                  }))
+                }
+                variant="outlined"
+                size="small"
+                fullWidth
+                placeholder={`Enter ${formData.searchType.replace(
+                  /([A-Z])/g,
+                  ' $1'
+                )}`}
+              />
+            </div>
+          )}
+
+          {/* Search Button */}
+          <div className="mt-10">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSearch}
+              fullWidth
+            >
+              Search
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
