@@ -92,6 +92,27 @@ function AssessmentCard({
                     <TabPane
                       tab={
                         <span className="text-primary font-montserrat">
+                          Pensioner Information
+                        </span>
+                      }
+                      key="15"
+                      style={{ zIndex: 1 }}
+                    >
+                      <div className="">
+                        <NewPreclaim
+                          status={clickedItem?.notification_status}
+                          setRetireeId={setRetireeId}
+                          retireeId={activeRetireeId}
+                          moveToNextTab={moveToNextTab}
+                          moveToPreviousTab={moveToPreviousTab}
+                          clickedItem={clickedItem}
+                          // setOnCloseWarnings={setOnCloseWarnings}
+                        />
+                      </div>
+                    </TabPane>
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
                           Bank Details
                         </span>
                       }

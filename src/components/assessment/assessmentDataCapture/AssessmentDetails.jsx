@@ -80,12 +80,12 @@ function AssessmentDetails({
             />
           </BaseCollapse>
         )}
-        {!isPayment && (
+        {/* {!isPayment && (
           <PensionerDetails
             clickedItem={clickedItem}
             retireeId={clickedItem?.retiree}
           />
-        )}
+        )} */}
         <BaseCollapse
           name="Qualifying Service"
           expandHandler={() =>

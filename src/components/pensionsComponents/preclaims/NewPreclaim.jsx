@@ -250,6 +250,8 @@ function NewPreclaim({
         was_injured: retiree?.was_injured ? 1 : 0,
         date_of_injury_for_cap189:
           parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? '',
+        date_of_injury_for_cap189:
+          parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? '',
 
         salary_at_injury_for_cap189:
           retiree?.injury_details_for_cap189?.salary_at_injury ?? '',
@@ -258,17 +260,15 @@ function NewPreclaim({
           retiree?.injury_details_for_cap189?.rate_of_injury_id || '', // CAP 189 specific
 
         degree_of_disablement_for_cap199:
-          retiree?.degree_of_disablement_details_for_cap199
-            ?.degree_of_disablement || 0,
+          retiree?.injury_details_for_cap189?.degree_of_disablement || 0,
 
         date_of_injury_for_cap199:
           parseDate(
-            retiree?.degree_of_disablement_details_for_cap199?.date_of_injury
+            retiree?.injury_details_for_cap189?.rate_of_injury.rate_code
           ) ?? '',
 
         salary_at_injury_for_cap199:
-          retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
-          '',
+          retiree?.injury_details_for_cap189?.salary_at_injury ?? '',
         was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
         death_certificate_number: retiree?.death_certificate_number ?? '',
         date_of_death: retiree?.date_of_death
@@ -417,6 +417,36 @@ function NewPreclaim({
       pension_cap: retiree?.mda?.pensionCap?.id,
       was_injured: retiree?.was_injured ? 1 : 0,
 
+      /**{
+	"injury_details_for_cap189": {
+		"prospective_pensioner_id": "a286994a-2f53-4576-88a8-e1f27aaeb44b",
+		"date_of_injury": "1996-10-23T00:00:00Z",
+		"salary_at_injury": 4827,
+		"rate_of_injury_id": "75ce2185-3b98-46f7-a13f-e390543afb55",
+		"status": 0,
+		"rate_of_injury": {
+			"rate_code": 2,
+			"name": "MATERIALLY/IMPARED",
+			"description": "MATERIALLY/IMPARED",
+			"numerator": 15,
+			"denominator": 60,
+			"effective_start_date": "0001-01-01T00:00:00",
+			"effective_end_date": null,
+			"id": "75ce2185-3b98-46f7-a13f-e390543afb55",
+			"created_by": null,
+			"created_date": null,
+			"updated_by": null,
+			"updated_date": null
+		},
+		"id": "83e6e12e-d33b-4ac5-87ef-02d539a30e21",
+		"created_by": "7c0de51d-750f-4dc9-8df9-420de1a8d313",
+		"created_date": "2025-03-28T11:41:28.226158Z",
+		"updated_by": null,
+		"updated_date": null
+	}
+} */
+      // degree_of_disablement_for_cap199
+
       date_of_injury_for_cap189:
         parseDate(retiree?.injury_details_for_cap189?.date_of_injury) ?? '',
 
@@ -427,17 +457,15 @@ function NewPreclaim({
         retiree?.injury_details_for_cap189?.rate_of_injury_id || '', // CAP 189 specific
 
       degree_of_disablement_for_cap199:
-        retiree?.degree_of_disablement_details_for_cap199
-          ?.degree_of_disablement || 0,
+        retiree?.injury_details_for_cap189?.degree_of_disablement || 0,
 
       date_of_injury_for_cap199:
         parseDate(
-          retiree?.degree_of_disablement_details_for_cap199?.date_of_injury
+          retiree?.injury_details_for_cap189?.rate_of_injury.rate_code
         ) ?? '',
 
       salary_at_injury_for_cap199:
-        retiree?.degree_of_disablement_details_for_cap199?.salary_at_injury ??
-        '',
+        retiree?.injury_details_for_cap189?.salary_at_injury ?? '',
       was_in_mixed_service: retiree?.was_in_mixed_service ?? false,
       has_wcps_proforma_recovery: retiree?.has_wcps_proforma_recovery ?? false,
       date_of_death: retiree?.date_of_death
