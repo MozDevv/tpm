@@ -153,7 +153,7 @@ function BaseCRMTable({
       ] = 'priority'; // Column selected by the user
       filterCriteria[
         `filterCriterion.criterions[${criterionIndex}].propertyValue`
-      ] = String(selectedCategory); // Value entered by the user
+      ] = parseInt(selectedCategory); // Value entered by the user
       filterCriteria[
         `filterCriterion.criterions[${criterionIndex}].criterionType`
       ] = 2; // Default to 'Includes'
