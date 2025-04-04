@@ -404,7 +404,7 @@ function BaseCRMTable({
           {title}
         </Typography>
 
-        {status === null && status !== 0 && (
+        {status === undefined && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
             {[
               {
@@ -622,22 +622,21 @@ function BaseCRMTable({
                     </Button>
                   </>
                 )}
-                {status === 1 ||
-                  (status === 2 && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<DoneAll />}
-                      onClick={() => {
-                        setOpenEditCard('close');
-                      }}
-                      sx={{
-                        mt: 3,
-                      }}
-                    >
-                      Close Ticket
-                    </Button>
-                  ))}
+                {(status === 1 || status === 2 || status === null) && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<DoneAll />}
+                    onClick={() => {
+                      setOpenEditCard('close');
+                    }}
+                    sx={{
+                      mt: 3,
+                    }}
+                  >
+                    Close Ticket
+                  </Button>
+                )}
 
                 {/* Search Button */}
                 {!status && (
