@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Collapse, IconButton, Tooltip } from '@mui/material';
 import { KeyboardArrowRight, ExpandLess, Launch } from '@mui/icons-material';
 
-const BaseCollapse = ({ name, children, titleFontSize, expandHandler }) => {
+const BaseCollapse = ({
+  name,
+  children,
+  titleFontSize,
+  expandHandler,
+  className,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleToggleSection = () => {
@@ -10,7 +16,7 @@ const BaseCollapse = ({ name, children, titleFontSize, expandHandler }) => {
   };
 
   return (
-    <>
+    <div className={`${className}`}>
       <div className="flex items-center ml-4">
         <p
           className={`font-semibold text-primary ${
@@ -50,7 +56,7 @@ const BaseCollapse = ({ name, children, titleFontSize, expandHandler }) => {
       <Collapse in={isOpen} timeout="auto" unmountOnExit>
         {children}
       </Collapse>
-    </>
+    </div>
   );
 };
 

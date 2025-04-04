@@ -632,8 +632,13 @@ const IgcListing = ({ status }) => {
       ? new Date().getFullYear() - new Date(formData.dob).getFullYear()
       : null;
 
+    // Always include the first 5 fields
+    const alwaysIncludedFields = uploadFields.slice(0, 5);
+
+    let filteredFields;
+
     if (age !== null && age < 18) {
-      return uploadFields.filter((field) =>
+      filteredFields = uploadFields.filter((field) =>
         [
           'prospective_pensioner_id',
           'relationship',
@@ -644,17 +649,26 @@ const IgcListing = ({ status }) => {
           'first_name',
           'other_name',
           'birth_certificate_no',
-          'guardianId',
           'supporting_document_number',
         ].includes(field.name)
       );
     } else if (age !== null && age >= 18) {
-      return uploadFields.filter(
+      filteredFields = uploadFields.filter(
         (field) => !['guardianId', 'birth_certificate_no'].includes(field.name)
       );
     } else {
-      return uploadFields.slice(0, 4); // Show the first 4 fields by default
+      filteredFields = uploadFields.slice(0, 6); // Default fields
     }
+
+    // Combine always included fields with filtered fields, avoiding duplicates
+    const combinedFields = [
+      ...alwaysIncludedFields,
+      ...filteredFields.filter(
+        (field) => !alwaysIncludedFields.some((f) => f.name === field.name)
+      ),
+    ];
+
+    return combinedFields;
   };
 
   //cont initiate Change of Paypoint

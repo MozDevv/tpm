@@ -533,18 +533,23 @@ const BaseInputCard = ({
           />
         </div>
       )}
-      {(!fields.every((field) => field.disabled) || disableAll) && (
-        <div className="flex justify-end gap-2 mr-5">
-          {!isEditing && clickedItem ? (
-            <Button variant="contained" onClick={handleEdit}>
-              Edit
-            </Button>
-          ) : (
-            <Button variant="contained" onClick={handleSave}>
-              Save
-            </Button>
+      {!disableAll && (
+        <>
+          {' '}
+          {(!fields.every((field) => field.disabled) || disableAll) && (
+            <div className="flex justify-end gap-2 mr-5">
+              {!isEditing && clickedItem ? (
+                <Button variant="contained" onClick={handleEdit}>
+                  Edit
+                </Button>
+              ) : (
+                <Button variant="contained" onClick={handleSave}>
+                  Save
+                </Button>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
@@ -982,9 +987,11 @@ const BaseInputCard = ({
                   />
                 )}
                 value={
-                  field?.options?.find(
-                    (option) => option.id === formData[field.name]
-                  ) || null
+                  (field.options &&
+                    field?.options?.find(
+                      (option) => option.id === formData[field.name]
+                    )) ||
+                  null
                 }
               />
             ) : field.type === 'amount' ? (

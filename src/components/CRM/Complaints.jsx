@@ -7,63 +7,60 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
+import BaseComplaintsTable from '../baseComponents/BaseComplaintsTable';
+import { Alert, Card, Result, Table } from 'antd';
+import { Button, Snackbar } from '@mui/material';
+import { DownloadOutlined, Launch } from '@mui/icons-material';
+import BaseCollapse from '../baseComponents/BaseCollapse';
 
 const Complaints = () => {
   const columnDefs = [
+    {
+      field: 'created_date',
+      headerName: 'Created Date',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      pinned: 'left', // Pinning to the left ensures it's the first column
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">
+            {parseDate(params.value)}
+          </p>
+        );
+      },
+    },
     {
       field: 'nationalId',
       headerName: 'National ID',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
     {
       field: 'pensionerNumber',
       headerName: 'Pensioner Number',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
     {
       field: 'personalNumber',
       headerName: 'Personal Number',
       headerClass: 'prefix-header',
       filter: true,
-    },
-    {
-      field: 'phoneNumber',
-      headerName: 'Phone Number',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'emailAddress',
-      headerName: 'Email Address',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'requesterName',
-      headerName: 'Requester Name',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'header',
-      headerName: 'Header',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'message',
-      headerName: 'Message',
-      headerClass: 'prefix-header',
-      filter: true,
+      width: 200,
     },
     {
       field: 'status',
       headerName: 'Status',
       headerClass: 'prefix-header',
       filter: true,
+      width: 150,
 
       cellRenderer: (params) => {
         const statusMap = {
@@ -81,28 +78,40 @@ const Complaints = () => {
       },
     },
     {
-      field: 'portalReferenceId',
-      headerName: 'Portal Reference ID',
+      field: 'header',
+      headerName: 'Header',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
     {
-      field: 'closedById',
-      headerName: 'Closed By ID',
+      field: 'message',
+      headerName: 'Message',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
     {
-      field: 'currentlyVisibleById',
-      headerName: 'Currently Visible By ID',
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
+    {
+      field: 'emailAddress',
+      headerName: 'Email Address',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+
     {
       field: 'closedAt',
       headerName: 'Closed At',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
 
       valueFormatter: (params) => formatDate(params.value),
     },
@@ -111,12 +120,14 @@ const Complaints = () => {
       headerName: 'Closing Comments',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
     {
       field: 'lastEscalationTime',
       headerName: 'Last Escalation Time',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
 
       valueFormatter: (params) => formatDate(params.value),
     },
@@ -125,14 +136,9 @@ const Complaints = () => {
       headerName: 'Was Escalated',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
 
       cellRenderer: (params) => (params.value ? 'Yes' : 'No'),
-    },
-    {
-      field: 'taskId',
-      headerName: 'Task ID',
-      headerClass: 'prefix-header',
-      filter: true,
     },
   ];
   const transformString = (str) => {
@@ -140,6 +146,7 @@ const Complaints = () => {
       return a.toUpperCase();
     });
   };
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -162,87 +169,121 @@ const Complaints = () => {
     notify: () => console.log('Notify clicked'),
   };
 
-  const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
-  };
+  const baseCardHandlers = {};
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Department' : 'Create New Department';
+  const title = clickedItem ? 'Complaint' : 'Create New Complaint';
 
   const fields = [
     {
-      name: 'NationalId',
+      name: 'nationalId',
       label: 'National ID',
       type: 'text',
       required: true,
     },
     {
-      name: 'PensionerNumber',
+      name: 'pensionerNumber',
       label: 'Pensioner Number',
       type: 'text',
       required: true,
     },
+
     {
-      name: 'EmployeeNumber',
-      label: 'Employee Number',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'PhoneNumber',
+      name: 'phoneNumber',
       label: 'Phone Number',
       type: 'text',
       required: true,
     },
     {
-      name: 'EmailAddress',
+      name: 'emailAddress',
       label: 'Email Address',
       type: 'email',
       required: true,
     },
+
     {
-      name: 'Name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'Header',
+      name: 'header',
       label: 'Header',
       type: 'text',
       required: true,
     },
     {
-      name: 'Message',
+      name: 'message',
       label: 'Message',
       type: 'textarea',
       required: true,
     },
+  ];
+  const fileColumns = [
     {
-      name: 'ReferenceId',
-      label: 'Reference ID',
-      type: 'text',
-      required: true,
+      title: 'File Name',
+      dataIndex: 'fileName',
+      key: 'fileName',
+      width: '50%',
+    },
+    //upload date
+    {
+      title: 'Upload Date',
+      dataIndex: 'created_date',
+      key: 'created_date',
+      width: '25%',
+      render: (text) => {
+        return <p>{parseDate(text)}</p>;
+      },
     },
     {
-      name: 'Attachments',
-      label: 'Attachments',
-      type: 'file',
-      multiple: true,
-      required: false,
+      title: 'Preview',
+      key: 'preview',
+      width: '25%',
+      render: (_, record) => (
+        <Button
+          icon={<Launch />}
+          style={{
+            backgroundColor: '#006990',
+            color: 'white',
+            border: 'none',
+            maxHeight: '26px',
+            fontSize: '12px',
+          }}
+          onClick={() => {
+            setPreviewContent(
+              <embed
+                src={record.edmsFileUrl}
+                type={record.mimeType}
+                width="100%"
+                height="1000px"
+              />
+            );
+            setPreviewOpen(true);
+          }}
+        >
+          Preview
+        </Button>
+      ),
+    },
+    {
+      title: 'Download',
+      key: 'download',
+      width: '25%',
+      render: (_, record) => (
+        <Button
+          icon={<DownloadOutlined />}
+          style={{
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            maxHeight: '26px',
+            fontSize: '12px',
+          }}
+          onClick={() => {
+            window.open(record.edmsDownloadUrl, '_blank');
+          }}
+        >
+          Download
+        </Button>
+      ),
     },
   ];
 
@@ -255,18 +296,109 @@ const Complaints = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <div className="pt-5">
+            <BaseCollapse name="Complaint Details">
+              <div className="  rounded-lg p-3 shadow-sm mx-2">
+                <Card
+                  style={{
+                    borderColor: '#91d5ff',
+                    borderRadius: 10,
+                    background: '#f0faff',
+                    padding: '6px',
+                  }}
+                  bodyStyle={{ padding: '6px 12px' }}
+                >
+                  <div className="text-blue-800 font-semibold text-base">
+                    {clickedItem?.header}
+                  </div>
+
+                  <p className="text-blue-700 text-sm mt-2">
+                    {clickedItem?.message}
+                  </p>
+                </Card>
+              </div>
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+                postApiFunction={apiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+                disableAll={true}
+              />
+            </BaseCollapse>
+
+            <BaseCollapse className="mt-[-10px]" name="Complaint Attachments">
+              <div className="px-6 pt-2">
+                {clickedItem?.attachments &&
+                  clickedItem.attachments.length > 0 && (
+                    <Table
+                      columns={fileColumns}
+                      dataSource={clickedItem?.attachments}
+                      pagination={false}
+                      rowKey="id"
+                      className="antcustom-table"
+                      rowClassName={() => 'px-4'} // Add padding to rows
+                      onHeaderRow={() => {
+                        return {
+                          className: 'px-4', // Add padding to headers
+                        };
+                      }}
+                    />
+                  )}
+              </div>
+            </BaseCollapse>
+            <BaseCollapse name="Task Details" className="mt-6">
+              <div className="px-6 pt-2">
+                {clickedItem?.task ? (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="flex flex-wrap gap-4">
+                      {/* Left Column */}
+                      <div className="flex-1 min-w-[200px] gap-2">
+                        <p className="text-[12px] text-gray-700">
+                          <strong>Type:</strong> {clickedItem.task.type}
+                        </p>
+                        <p className="text-[12px] text-gray-700">
+                          <strong>Status:</strong>{' '}
+                          {clickedItem.task.status === 1
+                            ? 'Active'
+                            : 'Inactive'}
+                        </p>
+                        <p className="text-[12px] text-gray-700">
+                          <strong>CRM Related:</strong>{' '}
+                          {clickedItem.task.is_crm_related ? 'Yes' : 'No'}
+                        </p>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="flex-1 min-w-[200px]">
+                        <p className="text-[12px] text-gray-700">
+                          <strong>Assigned To:</strong>{' '}
+                          {clickedItem.task.current_user
+                            ? `${clickedItem.task.current_user.firstName} ${clickedItem.task.current_user.lastName}`
+                            : 'N/A'}
+                        </p>
+                        <p className="text-[12px] text-gray-700">
+                          <strong>Assigned User Email:</strong>{' '}
+                          {clickedItem.task.current_user?.email || 'N/A'}
+                        </p>
+                        <p className="text-[12px] text-gray-700">
+                          <strong>Phone Number:</strong>{' '}
+                          {clickedItem.task.current_user?.phoneNumber || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-[12px] text-gray-500">
+                    No task details available.
+                  </p>
+                )}
+              </div>
+            </BaseCollapse>
+          </div>
         ) : (
           <BaseInputCard
             fields={fields}
@@ -278,7 +410,7 @@ const Complaints = () => {
           />
         )}
       </BaseCard>
-      <BaseTable
+      <BaseComplaintsTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
@@ -289,8 +421,9 @@ const Complaints = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
+        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
         breadcrumbTitle="Complaints"
-        currentTitle="Complaints"
+        title="Complaints"
       />
     </div>
   );
