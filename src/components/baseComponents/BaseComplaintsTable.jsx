@@ -48,9 +48,10 @@ import BaseEmptyComponent from './BaseEmptyComponent';
 import { useRefreshDataStore } from '@/zustand/store';
 import useFetchAsync, { useFetchAsyncV2 } from '../hooks/DynamicFetchHook';
 import endpoints, { apiService } from '../services/setupsApi';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-function BaseCRMTable({
+function BaseComplaintsTable({
   columnDefs,
   fetchApiEndpoint,
   handlers,
@@ -383,6 +384,7 @@ function BaseCRMTable({
   const loadingOverlayComponentParams = useMemo(() => {
     return { loadingMessage: 'Loading...' };
   }, []);
+
   const router = useRouter();
 
   return (
@@ -629,7 +631,7 @@ function BaseCRMTable({
                     </Button>
                   </>
                 )}
-                {(status === 1 || status === 2 || status === undefined) && (
+                {(status === 1 || status === 2 || status === null) && (
                   <Button
                     variant="outlined"
                     color="primary"
@@ -700,4 +702,4 @@ function BaseCRMTable({
   );
 }
 
-export default BaseCRMTable;
+export default BaseComplaintsTable;
