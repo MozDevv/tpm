@@ -600,37 +600,6 @@ function BaseComplaintsTable({
                 </div>
 
                 {/** */}
-                {!status && (
-                  <>
-                    {' '}
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<PublishedWithChanges />}
-                      onClick={() => {
-                        handleAutoAssign();
-                      }}
-                      sx={{
-                        mt: 3,
-                      }}
-                    >
-                      Auto Assign
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<IosShare />}
-                      onClick={() => {
-                        setOpenEditCard('assign');
-                      }}
-                      sx={{
-                        mt: 3,
-                      }}
-                    >
-                      Assign Ticket(s)
-                    </Button>
-                  </>
-                )}
 
                 {/* Search Button */}
                 {!status && (

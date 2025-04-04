@@ -28,7 +28,7 @@ import {
 import BaseCollapse from '../baseComponents/BaseCollapse';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 
-const Complaints = () => {
+const Complaints = ({ status }) => {
   const columnDefs = [
     {
       field: 'created_date',
@@ -221,7 +221,6 @@ const Complaints = () => {
       type: 'text',
       required: true,
     },
-
     {
       name: 'phoneNumber',
       label: 'Phone Number',
@@ -234,7 +233,6 @@ const Complaints = () => {
       type: 'email',
       required: true,
     },
-
     {
       name: 'header',
       label: 'Header',
@@ -247,6 +245,38 @@ const Complaints = () => {
       type: 'textarea',
       required: true,
     },
+    ...(clickedItem?.status === 3
+      ? [
+          {
+            name: 'closedAt',
+            label: 'Closed At',
+            type: 'datetime',
+            required: false,
+          },
+          {
+            name: 'closingComments',
+            label: 'Closing Comments',
+            type: 'textarea',
+            required: false,
+          },
+          {
+            name: 'lastEscalationTime',
+            label: 'Last Escalation Time',
+            type: 'text',
+            required: false,
+          },
+          {
+            name: 'wasEscalated',
+            label: 'Was Escalated',
+            type: 'select',
+            options: [
+              { id: true, name: 'Yes' },
+              { id: false, name: 'No' },
+            ],
+            required: false,
+          },
+        ]
+      : []),
   ];
   const fileColumns = [
     {
@@ -659,12 +689,17 @@ const Complaints = () => {
         )}
       </BaseCard>
       <BaseComplaintsTable
+        status={status}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getComplaints}
+        fetchApiEndpoint={
+          status || status === 0
+            ? endpoints.getComplaintByStatus(status)
+            : endpoints.getComplaints
+        }
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}

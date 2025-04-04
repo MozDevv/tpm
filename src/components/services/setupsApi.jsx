@@ -533,6 +533,8 @@ const endpoints = {
   closeComplaint: '/api/CRM/complaints/close',
   getComplaintStats: 'api/CRM/complaints/stats',
   esclateComplaint: '/api/CRM/complaints/escalate',
+  getComplaintByStatus: (status) =>
+    `/api/CRM/complaints?filterCriterion.criterions[0].propertyName=status&filterCriterion.criterions[0].propertyValue=${status}&filterCriterion.criterions[0].criterionType=0`,
 };
 
 export const apiService = {

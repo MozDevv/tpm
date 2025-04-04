@@ -4,7 +4,7 @@ import React from 'react';
 function page() {
   return (
     <div>
-      <Complaints status={0} />
+      <Complaints status={2} />
     </div>
   );
 }
