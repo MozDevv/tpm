@@ -296,3 +296,27 @@ a:hover {
 .custom-grid1 .ag-cell {
   font-family: 'Montserrat', sans-serif;
 }
+.customSegmented {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #ccc;
+}
+
+.customSegmented :global(.ant-segmented-item) {
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.customSegmented :global(.ant-segmented-item-selected) {
+  background-color: #006990 !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.customSegmented :global(.ant-segmented-thumb) {
+  background-color: #006990 !important;
+}

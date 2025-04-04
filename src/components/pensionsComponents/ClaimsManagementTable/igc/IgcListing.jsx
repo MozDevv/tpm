@@ -937,6 +937,7 @@ const IgcListing = ({ status }) => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
+        isIgc={true}
         breadcrumbTitle="Igc List"
         currentTitle="Igc List"
         onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}

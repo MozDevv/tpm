@@ -548,7 +548,7 @@ function DependantsEnrollment() {
           onClick={handleSave}
           sx={{}}
         >
-          Initiate IGC Claim
+          Report Deceased Case
         </MuiButton>
       </div>
 

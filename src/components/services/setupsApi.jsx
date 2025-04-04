@@ -536,6 +536,8 @@ const endpoints = {
   getComplaintByStatus: (status) =>
     `/api/CRM/complaints?filterCriterion.criterions[0].propertyName=status&filterCriterion.criterions[0].propertyValue=${status}&filterCriterion.criterions[0].criterionType=0`,
   getReportedDeaths: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
+  getIgcByStage: (id) =>
+    `/api/IGCClaimInitiation/GetIGCs?filterCriterion.criterions[0].propertyName=igc_submission_status&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].criterionType=0`,
 };
 
 export const apiService = {
