@@ -12,6 +12,7 @@ import BaseCRMTable from '../baseComponents/BaseCRMTable';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import dayjs from 'dayjs';
 import {
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -23,11 +24,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from '@mui/material';
 import { message } from 'antd';
 import { useRefreshDataStore } from '@/zustand/store';
 
-const Tickets = () => {
+const Tickets = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -376,12 +378,60 @@ const Tickets = () => {
     },
   ];
 
+  const { data: users } = useFetchAsync(endpoints.getUsers, apiService);
+
+  const assignPerUser = async () => {
+    const payload = selectedRows.map((row) => ({
+      mode: 1, // Assign mode
+      ticketId: row.id,
+      ticketNumber: row.ticketNumber,
+      toUserId: row.assignedTo, // The selected user ID
+    }));
+
+    try {
+      // Send the payload to the API
+      const promises = payload.map((data) =>
+        apiService.post(endpoints.assignPerPerson, data)
+      );
+
+      await Promise.all(promises);
+
+      message.success('Tickets assigned successfully!');
+      console.log('Assigned Tickets:', payload);
+      setRefreshData((prev) => !prev);
+      setOpenEditCard(false);
+    } catch (error) {
+      message.error('Error assigning tickets. Please try again.');
+      console.error('Error:', error);
+    }
+  };
+  const assignAuto = async () => {
+    try {
+      // Send the payload to the API
+      const promises = apiService.post(endpoints.assignPerPerson, {
+        mode: 0,
+      });
+      if (promises.status === 200) {
+        message.success('Tickets assigned successfully!');
+        console.log('Assigned Tickets:', payload);
+        setRefreshData((prev) => !prev);
+        // setOpenEditCard(false);
+      } else {
+        message.error('Error assigning tickets. Please try again.');
+        console.error('Error:', error);
+      }
+    } catch (error) {
+      message.error('Error assigning tickets. Please try again.');
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div className="">
       <Dialog
         open={openEditCard}
         onClose={() => setOpenEditCard(false)}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
         //add padding to the dialog
         PaperProps={{
@@ -392,93 +442,323 @@ const Tickets = () => {
           },
         }}
       >
-        <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
-          Close Selected Tickets
-        </h5>
-        <h5 className="text-[13px] text-gray-500 font-semibold ml-5 mt-2 mb-2">
-          These tickets will be closed and cannot be reopened.
-        </h5>
-        <TableContainer
-          sx={{ maxHeight: '400px', padding: '20px', mb: '20px' }}
-        >
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Ticket Number</TableCell>
-                <TableCell align="center">Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {selectedRows.map((doc, index) => (
-                <TableRow
-                  key={doc.id}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    width: '100%',
-                  }}
-                >
-                  {/* Ticket Number */}
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    sx={{
-                      fontWeight: 'bold',
-                      color: '#006990',
-                      textDecoration: 'underline',
-                    }}
-                  >
-                    {doc.ticketNumber}
-                  </TableCell>
+        {openEditCard === 'assign' ? (
+          <>
+            <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
+              Assign Selected Tickets
+            </h5>
+            <h5 className="text-[13px] text-gray-500 font-semibold ml-5 mt-2 mb-2">
+              These tickets will be assigned to the selected user.
+            </h5>
+            <TableContainer
+              sx={{ maxHeight: '400px', padding: '20px', mb: '20px' }}
+            >
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Ticket Number</TableCell>
+                    <TableCell align="center">Status</TableCell>
+                    <TableCell align="center">Actioned By</TableCell>
+                    <TableCell align="center">Priority</TableCell>
+                    <TableCell align="center">Created Date</TableCell>
+                    <TableCell align="center">Assign To</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedRows.map((doc, index) => (
+                    <TableRow key={doc.id}>
+                      {/* Ticket Number */}
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {doc.ticketNumber}
+                      </TableCell>
 
-                  <TableCell
-                    sx={{
-                      fontWeight: 'bold',
-                      color: '#006990',
+                      {/* Status */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {doc.status === 0
+                          ? 'Open'
+                          : doc.status === 1
+                          ? 'Pending'
+                          : doc.status === 2
+                          ? 'Re-assigned'
+                          : 'Closed'}
+                      </TableCell>
 
-                      textAlign: 'right',
-                    }}
-                  >
-                    {dayjs(doc.created_date).format('YYYY-MM-DD HH:mm')}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <DialogActions
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '20px',
-            px: '25px',
-            mt: '20px',
-          }}
-        >
-          <Button
-            onClick={() => setOpenEditCard(false)}
-            color="error"
-            size="small"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              handleSelectedRows();
-              console.log('Updated Rows:', selectedRows);
-              setOpenEditCard(false);
-            }}
-            color="primary"
-            variant="contained"
-            size="small"
-          >
-            Close Ticket(s)
-          </Button>
-        </DialogActions>
+                      {/* Initiator Name */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {`${doc.actionedBy?.firstName || ''} ${
+                          doc.actionedBy?.lastName || ''
+                        }`.trim() || 'N/A'}
+                      </TableCell>
+
+                      {/* Priority */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color:
+                            doc.priority === 0
+                              ? '#1976d2'
+                              : doc.priority === 1
+                              ? '#fbc02d'
+                              : doc.priority === 2
+                              ? '#ff5722'
+                              : '#d32f2f',
+                        }}
+                      >
+                        {doc.priority === 0
+                          ? 'Low'
+                          : doc.priority === 1
+                          ? 'Normal'
+                          : doc.priority === 2
+                          ? 'High'
+                          : 'Urgent'}
+                      </TableCell>
+
+                      {/* Created Date */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {dayjs(doc.created_date).format('YYYY-MM-DD HH:mm')}
+                      </TableCell>
+
+                      {/* Assign To */}
+                      <TableCell align="center" sx={{ width: '250px' }}>
+                        <Autocomplete
+                          options={
+                            users.filter(
+                              (user) => user.department.isCustomerCare
+                            ) || []
+                          } // List of users fetched from the API
+                          getOptionLabel={(option) =>
+                            `${option.firstName || ''} ${
+                              option.lastName || ''
+                            }`.trim()
+                          }
+                          onChange={(event, newValue) => {
+                            // Update the selected user for this ticket
+                            const updatedRows = [...selectedRows];
+                            updatedRows[index] = {
+                              ...doc,
+                              assignedTo: newValue ? newValue.id : null,
+                            };
+                            setSelectedRows(updatedRows);
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant="outlined"
+                              size="small"
+                              placeholder="Select User"
+                            />
+                          )}
+                          value={
+                            users.find((user) => user.id === doc.assignedTo) ||
+                            null
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <DialogActions
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '20px',
+                px: '25px',
+                mt: '20px',
+              }}
+            >
+              <Button
+                onClick={() => setOpenEditCard(false)}
+                color="error"
+                size="small"
+                variant="outlined"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  assignPerUser();
+                  console.log('Updated Rows:', selectedRows);
+                  setOpenEditCard(false);
+                }}
+                color="primary"
+                variant="contained"
+                size="small"
+              >
+                Assign Ticket(s)
+              </Button>
+            </DialogActions>
+          </>
+        ) : openEditCard === 'close' ? (
+          <>
+            {' '}
+            <h5 className="text-[19px] text-primary font-semibold ml-5 mt-5">
+              Close Selected Tickets
+            </h5>
+            <h5 className="text-[13px] text-gray-500 font-semibold ml-5 mt-2 mb-2">
+              These tickets will be closed and cannot be reopened.
+            </h5>
+            <TableContainer
+              sx={{ maxHeight: '400px', padding: '20px', mb: '20px' }}
+            >
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Ticket Number</TableCell>
+                    <TableCell align="center">Status</TableCell>
+                    <TableCell align="center">Actioned By</TableCell>
+                    <TableCell align="center">Priority</TableCell>
+                    <TableCell align="center">Created Date</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedRows.map((doc, index) => (
+                    <TableRow key={doc.id}>
+                      {/* Ticket Number */}
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {doc.ticketNumber}
+                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {doc.status === 0
+                          ? 'Open'
+                          : doc.status === 1
+                          ? 'Pending'
+                          : doc.status === 2
+                          ? 'Re-assigned'
+                          : 'Closed'}
+                      </TableCell>
+
+                      {/* Initiator Name */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {`${doc.actionedBy?.firstName || ''} ${
+                          doc.actionedBy?.lastName || ''
+                        }`.trim() || 'N/A'}
+                      </TableCell>
+                      {/* Priority */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color:
+                            doc.priority === 0
+                              ? '#1976d2'
+                              : doc.priority === 1
+                              ? '#fbc02d'
+                              : doc.priority === 2
+                              ? '#ff5722'
+                              : '#d32f2f',
+                        }}
+                      >
+                        {doc.priority === 0
+                          ? 'Low'
+                          : doc.priority === 1
+                          ? 'Normal'
+                          : doc.priority === 2
+                          ? 'High'
+                          : 'Urgent'}
+                      </TableCell>
+
+                      {/* Created Date */}
+                      <TableCell
+                        align="center"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#006990',
+                        }}
+                      >
+                        {dayjs(doc.created_date).format('YYYY-MM-DD HH:mm')}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <DialogActions
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '20px',
+                px: '25px',
+                mt: '20px',
+              }}
+            >
+              <Button
+                onClick={() => setOpenEditCard(false)}
+                color="error"
+                size="small"
+                variant="outlined"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  handleSelectedRows();
+                  console.log('Updated Rows:', selectedRows);
+                  setOpenEditCard(false);
+                }}
+                color="primary"
+                variant="contained"
+                size="small"
+              >
+                Close Ticket(s)
+              </Button>
+            </DialogActions>
+          </>
+        ) : (
+          <></>
+        )}
       </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
@@ -512,12 +792,17 @@ const Tickets = () => {
         )}
       </BaseCard>
       <BaseCRMTable
+        status={status}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getTickets}
+        fetchApiEndpoint={
+          status || status === 0
+            ? endpoints.getTicketsByStatus(status)
+            : endpoints.getTickets
+        }
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
@@ -525,6 +810,7 @@ const Tickets = () => {
         title="Tickets"
         setOpenEditCard={setOpenEditCard}
         onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+        handleAutoAssign={assignAuto}
       />
     </div>
   );

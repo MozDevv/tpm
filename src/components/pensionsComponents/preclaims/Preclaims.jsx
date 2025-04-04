@@ -879,6 +879,7 @@ const Preclaims = ({
                 activeStep={clickedItem?.notification_status}
                 onCloseWarnings={onCloseWarnings}
                 setOnCloseWarnings={setOnCloseWarnings}
+                retireeId={clickedItem?.id}
                 steps={[
                   'Data Capture',
                   'Notification Scheduling',

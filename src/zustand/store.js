@@ -23,3 +23,7 @@ export const useFilteredDataStore = stateFactory('filteredData');
 export const useRowDataSore = stateFactory('rowData');
 
 export const useCapNameStore = stateFactory('capName');
+
+export const useLoadedRetireeDetailsStore = stateFactory(
+  'loadedRetireeDetails'
+);

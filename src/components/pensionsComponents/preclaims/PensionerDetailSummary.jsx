@@ -21,6 +21,7 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
         preClaimsEndpoints.getProspectivePensioner(retireeId)
       );
       const retiree = res.data.data[0];
+      console.log('retiree fethced👌', retiree);
       setRetiree(retiree);
     } catch (error) {}
   };
@@ -113,7 +114,7 @@ function PensionerDetailSummary({ clickedItem, retireeId }) {
 
         <div className="flex items-center">
           <h6 className="font-medium text-primary text-xs">MDA: </h6>
-          <span className="text-xs pl-1">{clickedItem?.mda_description}</span>
+          <span className="text-xs pl-1">{clickedItem?.mda?.name}</span>
         </div>
 
         <div className="flex items-center gap-2">

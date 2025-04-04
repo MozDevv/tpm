@@ -21,6 +21,8 @@ import {
   Edit,
   Verified,
   DoneAll,
+  IosShare,
+  PublishedWithChanges,
 } from '@mui/icons-material';
 import BaseDrawer from './BaseDrawer';
 import BaseInputCard from '../baseComponents/BaseInputCard';
@@ -70,6 +72,8 @@ function BaseCRMTable({
   setClickedItem,
   onSelectionChange,
   setOpenEditCard,
+  handleAutoAssign,
+  status,
 }) {
   const theme = useTheme();
   const [rowData, setRowData] = useState([]);
@@ -120,6 +124,7 @@ function BaseCRMTable({
   //   }, [selectedCategory, searchText]);
 
   const [selectedColumn, setSelectedColumn] = useState('ticketNumber');
+  const [selectedTicketType, setSelectedTicketType] = useState('');
 
   const handleSearchColumns = () => {
     const filterCriteria = {};
@@ -156,6 +161,30 @@ function BaseCRMTable({
       filterCriteria[
         `filterCriterion.criterions[${criterionIndex}].propertyValue`
       ] = parseInt(selectedCategory); // Value entered by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].criterionType`
+      ] = 0; // Default to 'Includes'
+      criterionIndex++;
+    }
+
+    console.log('Filter Criteria:', filterCriteria);
+
+    // Pass the filter criteria to the API or use it to filter the data
+    fetchDataWithFilters(filterCriteria);
+  };
+
+  const handleSearchByTicketType = () => {
+    const filterCriteria = {};
+    let criterionIndex = 0;
+
+    // Collect Search filter
+    if (selectedTicketType) {
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyName`
+      ] = 'ticketType'; // Column selected by the user
+      filterCriteria[
+        `filterCriterion.criterions[${criterionIndex}].propertyValue`
+      ] = selectedTicketType; // Value entered by the user
       filterCriteria[
         `filterCriterion.criterions[${criterionIndex}].criterionType`
       ] = 0; // Default to 'Includes'
@@ -375,42 +404,45 @@ function BaseCRMTable({
           {title}
         </Typography>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
-          {[
-            {
-              value: statsFromaPI?.OPEN || 0,
-              label: 'Open',
-              icon: <LockOpen className="text-purple-500" />,
-            },
-            {
-              value: statsFromaPI?.PENDING || 0,
-              label: 'Pending',
-              icon: <HourglassEmpty className="text-orange-500" />,
-            },
-            {
-              value: statsFromaPI?.RE_ASSIGNED || 0,
-              label: 'Re-assigned',
-              icon: <Loop className="text-green-500" />,
-            },
-            {
-              value: statsFromaPI?.CLOSED || 0,
-              label: 'Closed',
-              icon: <CheckCircle className="text-teal-500" />,
-            },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-white shadow rounded-xl p-6"
-            >
-              <div>
-                <h3 className="text-xl font-bold text-primary">{stat.value}</h3>
-                <p className="text-gray-500 text-lg mt-2">{stat.label}</p>
+        {status === null && status !== 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
+            {[
+              {
+                value: statsFromaPI?.OPEN || 0,
+                label: 'Open',
+                icon: <LockOpen className="text-purple-500" />,
+              },
+              {
+                value: statsFromaPI?.PENDING || 0,
+                label: 'Pending',
+                icon: <HourglassEmpty className="text-orange-500" />,
+              },
+              {
+                value: statsFromaPI?.RE_ASSIGNED || 0,
+                label: 'Re-assigned',
+                icon: <Loop className="text-green-500" />,
+              },
+              {
+                value: statsFromaPI?.CLOSED || 0,
+                label: 'Closed',
+                icon: <CheckCircle className="text-teal-500" />,
+              },
+            ].map((stat, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between bg-white shadow rounded-xl p-6"
+              >
+                <div>
+                  <h3 className="text-xl font-bold text-primary">
+                    {stat.value}
+                  </h3>
+                  <p className="text-gray-500 text-lg mt-2">{stat.label}</p>
+                </div>
+                <div className="text-2xl">{stat.icon}</div>
               </div>
-              <div className="text-2xl">{stat.icon}</div>
-            </div>
-          ))}
-        </div>
-
+            ))}
+          </div>
+        )}
         {/* Search and Filters Section */}
         {hasFilters && (
           <div>
@@ -538,6 +570,12 @@ function BaseCRMTable({
                   </label>
                   <select
                     id="status"
+                    onChange={(e) => {
+                      setSelectedTicketType(e.target.value);
+                    }}
+                    onBlur={() => {
+                      handleSearchByTicketType();
+                    }}
                     className={`mt-1 block w-full px-4 py-2 border ${
                       theme.palette.mode === 'dark'
                         ? 'border-gray-600 bg-dark-light text-gray-300'
@@ -553,34 +591,70 @@ function BaseCRMTable({
                 </div>
 
                 {/** */}
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<DoneAll />}
-                  onClick={() => {
-                    setOpenEditCard(true);
-                  }}
-                  sx={{
-                    mt: 3,
-                  }}
-                >
-                  Close Ticket
-                </Button>
+                {!status && (
+                  <>
+                    {' '}
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<PublishedWithChanges />}
+                      onClick={() => {
+                        handleAutoAssign();
+                      }}
+                      sx={{
+                        mt: 3,
+                      }}
+                    >
+                      Auto Assign
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<IosShare />}
+                      onClick={() => {
+                        setOpenEditCard('assign');
+                      }}
+                      sx={{
+                        mt: 3,
+                      }}
+                    >
+                      Assign Ticket(s)
+                    </Button>
+                  </>
+                )}
+                {status === 1 ||
+                  (status === 2 && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<DoneAll />}
+                      onClick={() => {
+                        setOpenEditCard('close');
+                      }}
+                      sx={{
+                        mt: 3,
+                      }}
+                    >
+                      Close Ticket
+                    </Button>
+                  ))}
 
                 {/* Search Button */}
-                <Button
-                  sx={{
-                    mt: 3,
-                  }}
-                  onClick={() => {
-                    setOpenBaseCard(true);
-                    setClickedItem(null);
-                  }}
-                  variant="contained"
-                  startIcon={<Add />}
-                >
-                  New
-                </Button>
+                {!status && (
+                  <Button
+                    sx={{
+                      mt: 3,
+                    }}
+                    onClick={() => {
+                      setOpenBaseCard(true);
+                      setClickedItem(null);
+                    }}
+                    variant="contained"
+                    startIcon={<Add />}
+                  >
+                    New
+                  </Button>
+                )}
               </form>
             </div>
           </div>

@@ -527,6 +527,9 @@ const endpoints = {
   deleteTicket: (id) => `/api/CRM/tickets?id=${id}`,
   getClaimInquiry: '/api/CRM/enquiries',
   getStats: '/api/CRM/tickets/stats',
+  getTicketsByStatus: (status) =>
+    `/api/CRM/tickets?filterCriterion.criterions[0].propertyName=status&filterCriterion.criterions[0].propertyValue=${status}&filterCriterion.criterions[0].criterionType=0`,
+  assignPerPerson: '/api/CRM/tickets/assign',
 };
 
 export const apiService = {

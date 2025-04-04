@@ -1,10 +1,11 @@
 import Complaints from '@/components/CRM/Complaints';
+import Tickets from '@/components/CRM/Tickets';
 import React from 'react';
 
 function page() {
   return (
     <div>
-      <Complaints status={0} />
+      <Tickets status={2} />
     </div>
   );
 }

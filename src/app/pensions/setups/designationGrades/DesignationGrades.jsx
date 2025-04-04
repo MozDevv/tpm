@@ -164,21 +164,29 @@ const DesignationGrades = () => {
         name: m.name,
       })),
     },
-    ...(mdas &&
-    mdas.length > 0 &&
-    mdas
-      .find((m) => m.id === inputData?.mda_id)
-      ?.name.toLowerCase()
-      .includes('defence')
-      ? [
-          {
-            name: 'is_officer',
-            label: 'Is Officer',
-            type: 'switch',
-            required: true,
-          },
-        ]
-      : []),
+    // ...(mdas &&
+    // mdas.length > 0 &&
+    // mdas
+    //   .find((m) => m.id === inputData?.mda_id)
+    //   ?.name.toLowerCase()
+    //   .includes('defence')
+    //   ? [
+    //       {
+    //         name: 'is_officer',
+    //         label: 'Is Officer',
+    //         type: 'switch',
+    //         required: true,
+    //       },
+    //     ]
+
+    //   : []),
+
+    {
+      name: 'is_officer',
+      label: 'Is Officer',
+      type: 'switch',
+      required: true,
+    },
   ];
 
   const updatedFields = [

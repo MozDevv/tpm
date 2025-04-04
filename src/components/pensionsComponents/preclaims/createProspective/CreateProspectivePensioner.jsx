@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 
 import NewPreclaim from '../NewPreclaim';
@@ -19,6 +19,7 @@ import preClaimsEndpoints, {
   apiService,
 } from '@/components/services/preclaimsApi';
 import { mapRowData } from '../Preclaims';
+import { useLoadedRetireeDetailsStore } from '@/zustand/store';
 
 const { TabPane } = Tabs;
 
@@ -32,7 +33,9 @@ function CreateProspectivePensioner({
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
   const [retiree, setRetiree] = useState({});
+  const [loading, setLoading] = useState(true);
 
+  const { setLoadedRetireeDetails } = useLoadedRetireeDetailsStore();
   const activeRetireeId =
     retireeId !== null ? retireeId : clickedItem ? clickedItem.id : undefined;
 
@@ -50,10 +53,17 @@ function CreateProspectivePensioner({
       const mappedRetiree = mapRowData(res.data.data);
 
       setRetiree(mappedRetiree[0]);
+      setLoadedRetireeDetails(mappedRetiree[0]);
     } catch (e) {
       console.log(e);
     }
   };
+
+  useEffect(() => {
+    if (activeRetireeId) {
+      fetchRetiree();
+    }
+  }, []);
   const moveToNextTab = () => {
     const nextTab = (parseInt(activeKey, 10) + 1).toString();
     //setActiveKey(nextTab);
