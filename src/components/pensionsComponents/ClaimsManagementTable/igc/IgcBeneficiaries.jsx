@@ -39,19 +39,33 @@ const IgcBeneficiaries = () => {
         );
       },
     },
-    {
-      field: 'surname',
-      headerName: 'Surname',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'first_name',
-      headerName: 'First Name',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
+    // {
+    //   field: 'surname',
+    //   headerName: 'Surname',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    // },
+    // {
+    //   field: 'first_name',
+    //   headerName: 'First Name',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    // },
 
+    {
+      field: 'name',
+      headerName: 'Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      cellRenderer: (params) => {
+        const { surname, first_name, other_name } = params.data;
+        return (
+          <p className="">
+            {surname || ''} {first_name || ''} {other_name || ''}
+          </p>
+        );
+      },
+    },
     {
       field: 'identifier',
       headerName: 'Identifier',
@@ -61,52 +75,6 @@ const IgcBeneficiaries = () => {
     {
       field: 'relationship',
       headerName: 'Relationship',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'mobile_number',
-      headerName: 'Mobile Number',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
-    {
-      field: 'email_address',
-      headerName: 'Email Address',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
-    {
-      field: 'dob',
-      headerName: 'Date of Birth',
-      headerClass: 'prefix-header',
-      filter: true,
-
-      valueFormatter: (params) => parseDate(params.value),
-    },
-    {
-      field: 'age',
-      headerName: 'Age',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'address',
-      headerName: 'Address',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'birth_certificate_no',
-      headerName: 'Birth Certificate No',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
-    {
-      field: 'supporting_document_number',
-      headerName: 'Supporting Document Number',
       headerClass: 'prefix-header',
       filter: true,
     },
@@ -171,14 +139,51 @@ const IgcBeneficiaries = () => {
         );
       },
     },
+    // {
+    //   field: 'mobile_number',
+    //   headerName: 'Mobile Number',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   width: 200,
+    // },
     {
-      field: 'created_date',
-      headerName: 'Created Date',
+      field: 'email_address',
+      headerName: 'Email Address',
       headerClass: 'prefix-header',
       filter: true,
-      flex: 1,
-      valueFormatter: (params) => parseDate(params.value),
     },
+    // {
+    //   field: 'dob',
+    //   headerName: 'Date of Birth',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+
+    //   valueFormatter: (params) => parseDate(params.value),
+    // },
+    {
+      field: 'age',
+      headerName: 'Age',
+      headerClass: 'prefix-header',
+      filter: true,
+    },
+
+    //   field: 'address',
+    //   headerName: 'Address',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    // },
+    // {
+    //   field: 'birth_certificate_no',
+    //   headerName: 'Birth Certificate No',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    // },
+    // {
+    //   field: 'supporting_document_number',
+    //   headerName: 'Supporting Document Number',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    // },
   ];
 
   const transformData = (data) => {

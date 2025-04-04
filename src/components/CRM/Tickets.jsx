@@ -190,18 +190,7 @@ const Tickets = ({ status }) => {
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+    closeTicket: () => {},
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);

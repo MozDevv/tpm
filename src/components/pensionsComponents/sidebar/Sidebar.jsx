@@ -85,12 +85,21 @@ export const menuItems = [
     icon: <ArticleOutlinedIcon />,
     children: [
       {
-        title: 'Internally Generated Claims',
+        title: 'Reported Deceased',
         subChildren: [
           {
-            title: 'Dependants Enrollment',
+            title: 'Reported Deceased List',
+            path: '/pensions/claims/reported-deceased',
+          },
+          {
+            title: 'Beneficiary Tracking',
             path: '/pensions/claims/igc/dependants-enrollment',
           },
+        ],
+      },
+      {
+        title: 'Internally Generated Claims',
+        subChildren: [
           {
             title: 'IGC List',
             path: '/pensions/claims/igc/igc-beneficiaries-list',
@@ -724,7 +733,7 @@ export const menuItems = [
         path: '/pensions/customer-relations/complaints',
         /**    {
         OPEN,
-        ASSIGNED,
+        ASSIGNED,lai
         ESCALATED,
         CLOSED
     } */

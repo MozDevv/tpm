@@ -671,6 +671,12 @@ const ListNavigation = ({
       action: 'escalateComplaint',
       requiredPermissions: [],
     },
+    {
+      name: 'Close Ticket',
+      icon: AssignmentTurnedInOutlined,
+      action: 'closeTicket',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
