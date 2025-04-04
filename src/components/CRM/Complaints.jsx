@@ -10,9 +10,23 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate, parseDate } from '@/utils/dateFormatter';
 import BaseComplaintsTable from '../baseComponents/BaseComplaintsTable';
 import { Alert, Card, Result, Table } from 'antd';
-import { Button, Snackbar } from '@mui/material';
-import { DownloadOutlined, Launch } from '@mui/icons-material';
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  IconButton,
+  Snackbar,
+  TextareaAutosize,
+  TextField,
+} from '@mui/material';
+import {
+  ArrowBack,
+  Close,
+  DownloadOutlined,
+  Launch,
+} from '@mui/icons-material';
 import BaseCollapse from '../baseComponents/BaseCollapse';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 const Complaints = () => {
   const columnDefs = [
@@ -35,6 +49,20 @@ const Complaints = () => {
       },
     },
     {
+      field: 'header',
+      headerName: 'Header',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'message',
+      headerName: 'Message',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
       field: 'nationalId',
       headerName: 'National ID',
       headerClass: 'prefix-header',
@@ -48,13 +76,7 @@ const Complaints = () => {
       filter: true,
       width: 200,
     },
-    {
-      field: 'personalNumber',
-      headerName: 'Personal Number',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
+
     {
       field: 'status',
       headerName: 'Status',
@@ -78,19 +100,13 @@ const Complaints = () => {
       },
     },
     {
-      field: 'header',
-      headerName: 'Header',
+      field: 'personalNumber',
+      headerName: 'Personal Number',
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
     },
-    {
-      field: 'message',
-      headerName: 'Message',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
+
     {
       field: 'phoneNumber',
       headerName: 'Phone Number',
@@ -156,6 +172,9 @@ const Complaints = () => {
     }));
   };
 
+  const [openComplaintDialog, setOpenComplaintDialog] = React.useState(false);
+  const [clickedItem, setClickedItem] = React.useState(null);
+  const [openEscalate, setOpenEscalate] = React.useState(false);
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -169,10 +188,23 @@ const Complaints = () => {
     notify: () => console.log('Notify clicked'),
   };
 
-  const baseCardHandlers = {};
+  const baseCardHandlers = {
+    ...(clickedItem &&
+    (clickedItem.status === 0 ||
+      clickedItem.status === 1 ||
+      clickedItem?.status === 2)
+      ? {
+          closeComplaint: () => {
+            setOpenComplaintDialog(true);
+          },
+          escalateComplaint: () => {
+            setOpenEscalate(true);
+          },
+        }
+      : {}),
+  };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem ? 'Complaint' : 'Create New Complaint';
 
@@ -287,8 +319,224 @@ const Complaints = () => {
     },
   ];
 
+  const [previewOpen, setPreviewOpen] = React.useState(false);
+  const [previewContent, setPreviewContent] = React.useState(null);
+  const [comments, setComments] = React.useState('');
+  const [errors, setErrors] = React.useState({});
+  const [openEditCard, setOpenEditCard] = React.useState(false);
+  const { data: users } = useFetchAsync(endpoints.getUsers, apiService);
+
+  const handleCloseComplaint = async () => {
+    try {
+      const response = await apiService.post(endpoints.closeComplaint, {
+        requestId: clickedItem.id,
+        comments: comments,
+      });
+      if (response.status === 200) {
+        setOpenComplaintDialog(false);
+        setComments('');
+        setOpenBaseCard(false);
+        setClickedItem(null);
+      } else {
+        console.error('Error closing complaint:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error closing complaint:', error);
+    }
+  };
+
+  const [openEscalateDialog, setOpenEscalateDialog] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState(null);
+
+  const handleEscalateComplaint = async () => {
+    try {
+      const response = await apiService.post(endpoints.esclateComplaint, {
+        requestId: clickedItem.id,
+        comments: comments,
+        escalatedTo: selectedUser?.id,
+      });
+      if (response.status === 200) {
+        setOpenEscalateDialog(false);
+        setComments('');
+        setSelectedUser(null);
+        setClickedItem(null);
+      } else {
+        console.error('Error escalating complaint:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error escalating complaint:', error);
+    }
+  };
+
   return (
     <div className="">
+      <Dialog
+        open={openEscalate}
+        onClose={() => setOpenEscalate(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          style: {
+            padding: '32px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          },
+        }}
+      >
+        <div className="flex items-center mb-5">
+          <p className="text-primary relative font-semibold text-lg">
+            Escalate Complaint
+          </p>
+          <IconButton
+            sx={{
+              position: 'absolute',
+              right: '10px',
+              top: '10px',
+              backgroundColor: 'white',
+
+              borderRadius: '50%',
+              padding: '3px',
+              marginRight: '10px',
+              color: '#006990',
+            }}
+            onClick={() => setOpenEscalateDialog(false)}
+          >
+            <Close sx={{ color: '#006990' }} />
+          </IconButton>
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="escalateTo"
+            className="text-xs font-medium text-gray-700"
+          >
+            Escalate To
+          </label>
+          <Autocomplete
+            options={
+              (users &&
+                users.filter((user) => user.department.isCustomerCare)) ||
+              []
+            }
+            getOptionLabel={(option) =>
+              `${option.firstName || ''} ${option.lastName || ''}`.trim()
+            }
+            onChange={(event, newValue) => setSelectedUser(newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                size="small"
+                placeholder="Select User"
+              />
+            )}
+            value={selectedUser}
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="comments"
+            className="text-xs font-medium text-gray-700"
+          >
+            Add Comments
+          </label>
+          <TextareaAutosize
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            required
+            minRows={3}
+            style={{
+              fontSize: '13px',
+              width: '100%',
+              padding: '9px',
+              borderRadius: '4px',
+              border: '1px solid gray',
+            }}
+          />
+        </div>
+
+        <div className="mt-5">
+          <Button
+            onClick={handleEscalateComplaint}
+            variant="contained"
+            fullWidth
+            color="primary"
+          >
+            Escalate Complaint
+          </Button>
+        </div>
+      </Dialog>
+
+      <Dialog
+        open={openComplaintDialog}
+        onClose={() => setOpenComplaintDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        //add padding to the dialog
+        PaperProps={{
+          style: {
+            padding: '32px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          },
+        }}
+      >
+        <div className="flex items-center mb-5">
+          <p className="text-primary relative font-semibold text-lg ">
+            Close Complaint
+          </p>
+          <IconButton
+            sx={{
+              position: 'absolute',
+              right: '10px',
+              top: '10px',
+              backgroundColor: 'white',
+
+              borderRadius: '50%',
+              padding: '3px',
+              marginRight: '10px',
+              color: '#006990',
+            }}
+            onClick={() => setOpenComplaintDialog(false)}
+          >
+            <Close sx={{ color: '#006990' }} />
+          </IconButton>
+        </div>
+
+        <div>
+          <label
+            htmlFor="comments"
+            className=" text-xs font-medium text-gray-700"
+          >
+            Add Comments
+          </label>
+          <TextareaAutosize
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            required
+            error={errors.status}
+            minRows={3}
+            style={{
+              fontSize: '13px',
+              width: '100%',
+              padding: '9px',
+              borderRadius: '4px',
+              border: '1px solid gray',
+            }}
+          />
+        </div>
+        <div className="mt-5">
+          <Button
+            onClick={handleCloseComplaint}
+            variant="contained"
+            fullWidth
+            color="primary"
+          >
+            Close Complaint
+          </Button>
+        </div>
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}

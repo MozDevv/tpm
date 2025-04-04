@@ -285,7 +285,7 @@ function BaseComplaintsTable({
   ];
 
   const { data: statsFromaPI } = useFetchAsyncV2(
-    endpoints.getStats,
+    endpoints.getComplaintStats,
     apiService
   );
 
@@ -302,7 +302,7 @@ function BaseComplaintsTable({
     },
     {
       value: '970',
-      label: 'Re-assigned',
+      label: 'Escalated',
       icon: <Loop className="text-green-500" />,
     },
     {
@@ -630,21 +630,6 @@ function BaseComplaintsTable({
                       Assign Ticket(s)
                     </Button>
                   </>
-                )}
-                {(status === 1 || status === 2 || status === null) && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<DoneAll />}
-                    onClick={() => {
-                      setOpenEditCard('close');
-                    }}
-                    sx={{
-                      mt: 3,
-                    }}
-                  >
-                    Close Ticket
-                  </Button>
                 )}
 
                 {/* Search Button */}

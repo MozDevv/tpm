@@ -530,7 +530,9 @@ const endpoints = {
   getTicketsByStatus: (status) =>
     `/api/CRM/tickets?filterCriterion.criterions[0].propertyName=status&filterCriterion.criterions[0].propertyValue=${status}&filterCriterion.criterions[0].criterionType=0`,
   assignPerPerson: '/api/CRM/tickets/assign',
+  closeComplaint: '/api/CRM/complaints/close',
   getComplaintStats: 'api/CRM/complaints/stats',
+  esclateComplaint: '/api/CRM/complaints/escalate',
 };
 
 export const apiService = {

@@ -45,6 +45,8 @@ import {
   Search,
   LockOpen,
   AddCard,
+  AssignmentTurnedInOutlined,
+  OutboxOutlined,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import workflowsEndpoints, {
@@ -655,6 +657,18 @@ const ListNavigation = ({
       name: 'Create Dependants Claims',
       icon: Add,
       action: 'createDependantClaims',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Close Complaint',
+      icon: AssignmentTurnedInOutlined,
+      action: 'closeComplaint',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Escalate Complaint',
+      icon: OutboxOutlined,
+      action: 'escalateComplaint',
       requiredPermissions: [],
     },
   ];
