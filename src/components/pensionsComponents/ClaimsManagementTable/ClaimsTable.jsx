@@ -951,7 +951,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
             />
           </motion.div>
         </BaseCard>
-        <div className="h-full w-full ml-3 mt-2">
+        <div className="h-full w-full ml-3 mt-2 ">
           <ListNavigation
             handlers={handlers}
             reportItems={['Claims Verification Register']}
