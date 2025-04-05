@@ -629,7 +629,10 @@ function BaseCRMTable({
                     </Button>
                   </>
                 )}
-                {(status === 1 || status === 2 || status === undefined) && (
+                {(status === 1 ||
+                  status === 2 ||
+                  status === undefined ||
+                  status === 0) && (
                   <Button
                     variant="outlined"
                     color="primary"
