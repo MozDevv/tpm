@@ -1487,6 +1487,7 @@ function NewPreclaim({
                               }
                               return true;
                             })
+
                             .map((field, fieldIndex) => (
                               <div
                                 key={fieldIndex}
