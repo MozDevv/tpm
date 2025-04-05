@@ -1439,7 +1439,7 @@ function NewPreclaim({
                             />
                           )}
                         </IconButton>
-                        <hr className="flex-grow border-blue-500 border-opacity-20" />
+                        <hr className="flex-grow border-blue-500 border-opacity-20 " />
                       </div>
 
                       <Collapse
