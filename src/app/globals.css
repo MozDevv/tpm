@@ -309,7 +309,6 @@ a:hover {
   border-radius: 8px;
   transition: all 0.3s ease;
 }
-
 .customSegmented :global(.ant-segmented-item-selected) {
   background-color: #006990 !important;
   color: #ffffff !important;
