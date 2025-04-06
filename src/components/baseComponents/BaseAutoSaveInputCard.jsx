@@ -667,9 +667,27 @@ const BaseAutoSaveInputCard = ({
                       paymentVoucherDate: newValue.paymentVoucherDate,
                       eftNo: newValue.eftNo,
                       bankId: newValue.bankId,
+                      bankName: (() => {
+                        const bankField = fields?.find(
+                          (f) => f.name === 'bankId'
+                        );
+                        if (bankField && bankField.options) {
+                          const bank = bankField.options.find(
+                            (bank) => bank.id === newValue.bankId
+                          );
+                          return bank ? bank.name : null; // Return the bank name if found, otherwise null
+                        }
+                        return null; // Return null if bankField or bankField.options is undefined
+                      })(),
                       bankBranchId: newValue.bankBranchId,
                       crAccountId: newValue.crAccountId,
                       drAccountId: newValue.drAccountId,
+                      drAccountNo: newValue.drAccountNo,
+                      crAccountNo: newValue.crAccountNo,
+                      paymentMethodId: newValue.paymentMethodId,
+                      paymentId: newValue.paymentId,
+                      paymentReturnReasonId: newValue.paymentReturnReasonId,
+                      paymentScheduleId: newValue.paymentScheduleId,
                     }));
                   } else {
                     // Clear the fields if no value is selected
