@@ -188,14 +188,33 @@ const IncreamentMaster = () => {
         // deleteApiService={payrollApiService.post}
       >
         {clickedItem ? (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={payrollEndpoints.updatePayrollPeriod}
-            postApiFunction={payrollApiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
-            setOpenBaseCard={setOpenBaseCard}
-          />
+          <>
+            <BaseInputCard
+              fields={fields}
+              apiEndpoint={payrollEndpoints.updatePayrollPeriod}
+              postApiFunction={payrollApiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />{' '}
+            <BaseInputTable
+              title="Increament Range"
+              fields={tableFields}
+              getApiService={payrollApiService.get}
+              postApiService={apiService.post}
+              putApiService={apiService.put}
+              getEndpoint={payrollEndpoints.getIncreamentMasterById(
+                clickedItem?.masterId
+              )}
+              postEndpoint={endpoints.createDeductions}
+              putEndpoint={endpoints.updateGovernmentSalary}
+              passProspectivePensionerId={true}
+              isAddMoreFields={true}
+              setTableInputData={setTableInputData}
+              fetchChildren="ranges"
+              isPayroll={true}
+            />
+          </>
         ) : (
           <div className="flex flex-col gap-4">
             <BaseInputCard
@@ -210,12 +229,16 @@ const IncreamentMaster = () => {
               isAddMoreFields={true}
             />
             <BaseInputTable
+              isPayroll={true}
+              fetchChildren="ranges"
               title="Increament Range"
               fields={tableFields}
-              getApiService={apiService.get}
+              getApiService={payrollApiService.get}
               postApiService={apiService.post}
               putApiService={apiService.put}
-              getEndpoint={endpoints.getDeductions('id')}
+              getEndpoint={payrollEndpoints.getIncreamentMasterById(
+                clickedItem?.masterId
+              )}
               postEndpoint={endpoints.createDeductions}
               putEndpoint={endpoints.updateGovernmentSalary}
               passProspectivePensionerId={true}

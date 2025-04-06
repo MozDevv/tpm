@@ -29,6 +29,8 @@ const payrollEndpoints = {
   createIncreamentMaster: '/api/Setups/increment-masters',
   getIncreamentMasters: '/api/Setups/increment-masters',
   runPayrollIncrements: (id) => `/api/Application/run-increments/${id}`,
+  getIncreamentMasterById: (id) =>
+    `/api/Setups/increment-masters?masterId=${id}`,
 
   createPayrollTypes: '/api/Setups/payroll-types',
   getPayrollTypes: '/api/Setups/payroll-types',

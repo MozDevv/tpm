@@ -109,6 +109,7 @@ const BaseInputTable = ({
   useFormData,
   useRequestBody,
   uploadFile,
+  isPayroll,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -139,6 +140,11 @@ const BaseInputTable = ({
   };
 
   const sortData = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      // Return an empty array if data is undefined, null, or not an array
+      return [];
+    }
+
     const dateField = data[0]?.date
       ? 'date'
       : data[0]?.startDate
@@ -206,7 +212,12 @@ const BaseInputTable = ({
               }, {})
             );
 
-            const sortedData = sortData(res.data.data);
+            const sortedData =
+              fetchChildren && isPayroll
+                ? res.data
+                : fetchChildren
+                ? res.data.data
+                : sortData(res.data.data);
 
             setOnCloseWarnings && setOnCloseWarnings(false);
 
@@ -273,9 +284,9 @@ const BaseInputTable = ({
 
             // Determine if we should fetch and append children
             if (fetchChildren) {
-              const childrenData = res.data.data
-                .map((item) => item[fetchChildren])
-                .flat();
+              const childrenData = isPayroll
+                ? [res.data].map((item) => item[fetchChildren]).flat()
+                : res.data.data.map((item) => item[fetchChildren]).flat();
 
               const lastRow = childrenData[childrenData.length - 1];
 
@@ -364,10 +375,12 @@ const BaseInputTable = ({
             }
             // Determine if we should fetch and append children
             if (fetchChildren) {
-              const childrenData = res.data.data
-                .map((item) => item[fetchChildren])
-                .flat();
-
+              // const childrenData = res.data.data
+              //   .map((item) => item[fetchChildren])
+              //   .flat();
+              const childrenData = isPayroll
+                ? [res.data].map((item) => item[fetchChildren]).flat()
+                : res.data.data.map((item) => item[fetchChildren]).flat();
               // Merge sortedData with childrenData
               return [...childrenData, ...defaultRows];
             } else {
