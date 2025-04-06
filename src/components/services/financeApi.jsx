@@ -494,6 +494,7 @@ const financeEndpoints = {
 
   createFailedPayment: 'Revenue/CreateFailedPayment',
   getFailedPayments: 'Revenue/GetFailedPayments',
+  updateFailedPayments: 'Revenue/UpdateFailedPayment',
 };
 
 export const apiService = {

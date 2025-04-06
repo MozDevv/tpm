@@ -843,7 +843,7 @@ const UncollectedPayments = ({ status }) => {
                 fields={fields}
                 apiEndpoint={financeEndpoints.createFailedPayment}
                 putApiFunction={apiService.post}
-                updateApiEndpoint={financeEndpoints.updateReturn}
+                updateApiEndpoint={financeEndpoints.updateFailedPayments}
                 postApiFunction={apiService.post}
                 getApiEndpoint={
                   status
@@ -892,7 +892,7 @@ const UncollectedPayments = ({ status }) => {
             fields={fields}
             apiEndpoint={financeEndpoints.createFailedPayment}
             putApiFunction={apiService.post}
-            updateApiEndpoint={financeEndpoints.updateReturn}
+            updateApiEndpoint={financeEndpoints.updateFailedPayments}
             postApiFunction={apiService.post}
             getApiEndpoint={financeEndpoints.getFailedPayments}
             getApiFunction={apiService.get}
