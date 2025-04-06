@@ -684,9 +684,9 @@ const BaseAutoSaveInputCard = ({
                       drAccountId: newValue.drAccountId,
                       drAccountNo: newValue.drAccountNo,
                       crAccountNo: newValue.crAccountNo,
-                      paymentMethodId: newValue.paymentMethodId,
+                      // paymentMethodId: '69e90a4a-7eb1-4c40-a92e-9d3d489334ac',
                       paymentId: newValue.paymentId,
-                      paymentReturnReasonId: newValue.paymentReturnReasonId,
+                      // paymentReturnReasonId: newValue.paymentReturnReasonId,
                       paymentScheduleId: newValue.paymentScheduleId,
                     }));
                   } else {

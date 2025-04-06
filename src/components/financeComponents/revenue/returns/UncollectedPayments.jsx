@@ -511,13 +511,24 @@ const UncollectedPayments = ({ status }) => {
       type: 'date',
     },
     {
-      name: 'reason',
+      name: 'paymentReturnReasonId',
       label: 'Reason',
       type: 'select',
       options:
         // paymentReasons &&
         paymentReasons &&
         paymentReasons.map((item) => ({
+          id: item.id,
+          name: item.description,
+        })),
+    },
+    {
+      name: 'paymentMethodId',
+      label: 'Payment Method',
+      type: 'autocomplete',
+      options:
+        paymentMethods &&
+        paymentMethods.map((item) => ({
           id: item.id,
           name: item.description,
         })),
