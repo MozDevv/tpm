@@ -1,11 +1,14 @@
-import EditableTable from "@/components/baseComponents/EditableTable";
-import Test from "@/components/test/Test";
-import React from "react";
+'use client';
+import DisabilityInjuryReport from '@/components/assessment/reports/DisabilityInjuryReport';
+import MaintenanceAppendix from '@/components/assessment/reports/MaintenanceAppendix';
+
+import React from 'react';
 
 function page() {
   return (
     <div>
-      <EditableTable />
+      {/* <DisabilityInjuryReport /> */}
+      <div className=""></div>
     </div>
   );
 }
