@@ -109,17 +109,27 @@ const notificationStatusMap = {
 
 const colDefs = [
   {
-    headerName: 'Claim No.',
-    field: 'claim_id',
+    headerName: 'Pensioner No.',
+    field: 'pensioner_number',
     width: 150,
     checkboxSelection: true,
     headerCheckboxSelection: true,
-    pinned: 'left',
     filter: true,
     cellRenderer: (params) => {
       return (
         <p className="text-primary font-semibold underline ">{params.value}</p>
       );
+    },
+    pinned: 'left',
+  },
+  {
+    headerName: 'Claim No.',
+    field: 'claim_id',
+    width: 150,
+
+    filter: true,
+    cellRenderer: (params) => {
+      return <p className="text-primary font-normal ">{params.value}</p>;
     },
   },
   {
@@ -286,7 +296,7 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [filterType, setFilterType] = useState(null);
   const [sortColumn, setSortColumn] = useState(null);
 
-  const handleFilters = async () => {
+  const handleFilters = async (filters) => {
     const filter =
       filterColumn && filterValue && (status || status === 0)
         ? {
@@ -322,7 +332,7 @@ const AssessmentTable = ({ status, statusArr }) => {
       }),
     };
 
-    await fetchAllPreclaims(sort, filter);
+    await fetchAllPreclaims(sort, filters);
   };
 
   const fetchAllPreclaims = async (sort, filter) => {
