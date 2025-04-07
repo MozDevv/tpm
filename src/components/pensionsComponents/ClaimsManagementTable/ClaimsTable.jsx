@@ -401,6 +401,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
       const mapSomeRequiredData = rawData.map((item) => ({
         ...item,
         id: item?.prospectivePensioner?.id,
+        id_claim: item?.id,
         notification_status: item?.prospectivePensioner?.notification_status,
       }));
 
@@ -620,7 +621,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
           <GP178Report
             clickedItem={clickedItem}
             setOpenGP178Report={setOpenGP178Report}
-            retireeId={clickedItem?.retiree}
+            retireeId={clickedItem?.id}
           />
         </div>
       </Dialog>

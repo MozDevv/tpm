@@ -109,13 +109,13 @@ const notificationStatusMap = {
 
 const colDefs = [
   {
-    headerName: 'Pensioner Number',
-    field: 'pensioner_number',
-    width: 200,
-    filter: true,
+    headerName: 'Claim No.',
+    field: 'claim_id',
+    width: 150,
     checkboxSelection: true,
     headerCheckboxSelection: true,
     pinned: 'left',
+    filter: true,
     cellRenderer: (params) => {
       return (
         <p className="text-primary font-semibold underline ">{params.value}</p>
@@ -123,26 +123,14 @@ const colDefs = [
     },
   },
   {
-    headerName: 'Claim No.',
-    field: 'claim_id',
-    width: 150,
-
-    filter: true,
-    cellRenderer: (params) => {
-      return <p className="text-primary ">{params.value}</p>;
-    },
-  },
-  {
     headerName: 'First Name',
-    field: 'first_name',
+    field: 'prospectivePensioner.first_name',
     width: 150,
-
     filter: true,
   },
-
   {
     headerName: 'Surname',
-    field: 'surname',
+    field: 'prospectivePensioner.surname',
     width: 150,
   },
   {
@@ -172,7 +160,7 @@ const colDefs = [
   },
   {
     headerName: 'Approval Status',
-    field: 'approval_status',
+    field: 'document_status',
     width: 150,
     filter: true,
     cellRenderer: (params) => {
@@ -203,58 +191,40 @@ const colDefs = [
       );
     },
   },
-
   {
     headerName: 'Email Address',
-    field: 'email_address',
+    field: 'prospectivePensioner.email_address',
     width: 200,
     filter: true,
   },
   {
-    headerName: 'Retiree ID',
-    field: 'retiree',
-    width: 150,
-    hide: true,
-  },
-
-  {
     headerName: 'Gender',
-    field: 'gender',
+    field: 'prospectivePensioner.gender',
     width: 120,
     cellRenderer: (params) => {
-      return params.value === 1 ? 'Male' : 'Female';
+      return params.value === 0 ? 'Male' : 'Female';
     },
   },
   {
     headerName: 'Phone Number',
-    field: 'phone_number',
+    field: 'prospectivePensioner.phone_number',
     width: 180,
   },
   {
     headerName: 'Personal Number',
-    field: 'personal_number',
+    field: 'prospectivePensioner.personal_number',
     width: 180,
   },
 
   {
-    headerName: 'Other Name(s)',
-    field: 'other_name',
+    headerName: 'National ID',
+    field: 'prospectivePensioner.national_id',
     width: 150,
   },
 
   {
-    headerName: 'National ID',
-    field: 'national_id',
-    width: 150,
-  },
-  {
-    headerName: 'KRA PIN',
-    field: 'kra_pin',
-    width: 150,
-  },
-  {
     headerName: 'Retirement Date',
-    field: 'retirement_date',
+    field: 'prospectivePensioner.retirement_date',
     width: 180,
     cellRenderer: function (params) {
       return params.value ? new Date(params.value).toLocaleDateString() : '';
@@ -262,46 +232,12 @@ const colDefs = [
   },
   {
     headerName: 'Date of Birth',
-    field: 'dob',
+    field: 'prospectivePensioner.dob',
     width: 180,
     cellRenderer: function (params) {
       return params.value ? new Date(params.value).toLocaleDateString() : '';
     },
   },
-  {
-    headerName: 'Date of Confirmation',
-    field: 'date_of_confirmation',
-    width: 200,
-    cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
-    },
-  },
-  {
-    headerName: 'Last Basic Salary Amount',
-    field: 'last_basic_salary_amount',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Code',
-    field: 'mda_code',
-    width: 150,
-  },
-  {
-    headerName: 'MDA Description',
-    field: 'mda_description',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Pension Cap Code',
-    field: 'mda_pensionCap_code',
-    width: 200,
-  },
-  {
-    headerName: 'MDA Pension Cap Name',
-    field: 'mda_pensionCap_name',
-    width: 200,
-  },
-
   {
     headerName: 'Comments',
     field: 'comments',
@@ -411,7 +347,7 @@ const AssessmentTable = ({ status, statusArr }) => {
     setLoading(true);
     try {
       const res = await assessApiService.get(
-        assessEndpoints.getAssessmentClaims,
+        assessEndpoints.getClaimsListings,
         {
           'paging.pageNumber': pageNumber,
           'paging.pageSize': pageSize,
@@ -429,104 +365,111 @@ const AssessmentTable = ({ status, statusArr }) => {
 
       setTotalRecords(res.data.totalCount);
 
-      const mappedData = rawData.map((item) => ({
-        retiree: item?.prospectivePensioner?.id,
-        //  id: item?.claim_id,
-        claim_id: item?.claim_id,
+      // const mappedData = rawData.map((item) => ({
+      //   retiree: item?.prospectivePensioner?.id,
+      //   //  id: item?.claim_id,
+      //   claim_id: item?.claim_id,
 
+      //   id_claim: item?.id,
+      //   stage: item?.stage,
+      //   comments: item?.comments,
+      //   maintenance_case: item?.prospectivePensioner?.maintenance_case,
+      //   is_wcps: item?.prospectivePensioner?.is_wcps,
+
+      //   notification_status: item?.prospectivePensioner?.notification_status,
+      //   gender: item?.prospectivePensioner?.gender,
+      //   phone_number: item?.prospectivePensioner?.phone_number,
+      //   personal_number: item?.prospectivePensioner?.personal_number,
+      //   claim_type: item?.claim_type,
+      //   first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
+      //     ? item?.igc_beneficiary_track?.beneficiary?.first_name
+      //     : item?.prospectivePensioner?.first_name,
+      //   surname: item?.igc_beneficiary_track?.beneficiary?.surname
+      //     ? item?.igc_beneficiary_track?.beneficiary?.surname
+      //     : item?.prospectivePensioner?.surname,
+      //   other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
+      //     ? item?.igc_beneficiary_track?.beneficiary?.other_name
+      //     : item?.prospectivePensioner?.other_name,
+      //   email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
+      //     ? item?.igc_beneficiary_track?.beneficiary?.email_address
+      //     : item?.prospectivePensioner?.email_address,
+      //   pension_award: item?.prospectivePensioner?.mda?.name,
+      //   name: item?.prospectivePensioner?.pension_award?.name,
+      //   national_id: item?.prospectivePensioner?.national_id,
+      //   kra_pin: item?.prospectivePensioner?.kra_pin,
+      //   retirement_date: item?.prospectivePensioner?.retirement_date,
+      //   dob: item?.prospectivePensioner?.dob,
+      //   date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
+      //   last_basic_salary_amount:
+      //     item?.prospectivePensioner?.last_basic_salary_amount,
+      //   mda_code: item?.prospectivePensioner?.mda?.code,
+      //   mda_description: item?.prospectivePensioner?.mda?.description,
+      //   mda_id: item?.prospectivePensioner?.mda?.id,
+      //   mda_pensionCap_code: item?.prospectivePensioner?.mda?.pensionCap?.code,
+      //   mda_pensionCap_name: item?.prospectivePensioner?.mda?.pensionCap?.name,
+      //   mda_pensionCap_description:
+      //     item?.prospectivePensioner?.mda?.pensionCap?.description,
+      //   workHistories_length: item?.prospectivePensioner?.workHistories?.length,
+      //   bankDetails_length: item?.prospectivePensioner?.bankDetails?.length,
+      //   pensionAward_prefix: item?.prospectivePensioner?.pensionAward?.prefix,
+      //   pensionAward_code: item?.prospectivePensioner?.pensionAward?.code,
+      //   pensionAward_description:
+      //     item?.prospectivePensioner?.pensionAward?.description,
+      //   pensionAward_start_date:
+      //     item?.prospectivePensioner?.pensionAward?.start_date,
+      //   pensionAward_end_date:
+      //     item?.prospectivePensioner?.pensionAward?.end_date,
+      //   pensionAward_pensionCap_code:
+      //     item?.prospectivePensioner?.pensionAward?.pensionCap?.code,
+      //   pensionAward_pensionCap_name:
+      //     item?.prospectivePensioner?.pensionAward?.pensionCap?.name,
+      //   pensionAward_pensionCap_description:
+      //     item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
+      //   pensionAward_pensionCap_id:
+      //     item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
+      //   approval_status: item?.document_status,
+      //   //////
+
+      //   retirement_date: item?.prospectivePensioner?.retirement_date,
+      //   date_from_which_pension_will_commence:
+      //     item?.prospectivePensioner?.date_from_which_pension_will_commence,
+      //   authority_for_retirement_dated:
+      //     item?.prospectivePensioner?.authority_for_retirement_dated,
+      //   authority_for_retirement_reference:
+      //     item?.prospectivePensioner?.authority_for_retirement_reference,
+      //   date_of_first_appointment:
+      //     item?.prospectivePensioner?.date_of_first_appointment,
+      //   date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
+      //   country: item?.prospectivePensioner?.country,
+      //   city_town: item?.prospectivePensioner?.city_town,
+      //   pension_commencement_date:
+      //     item?.prospectivePensioner?.pension_commencement_date,
+      //   postal_address: item?.prospectivePensioner?.postal_address,
+      //   id: item.prospectivePensioner?.id,
+      //   exit_grounds: item?.prospectivePensioner?.exitGround.name,
+
+      //   prospectivePensionerAwards:
+      //     item?.prospectivePensioner?.prospectivePensionerAwards,
+
+      //   pensioner_number: item?.prospectivePensioner
+      //     ?.prospectivePensionerAwards[0]?.pension_award?.prefix
+      //     ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+      //         ?.pension_award?.prefix + item?.pensioner_number
+      //     : item?.pensioner_number,
+      //   createdBy: item?.created_by,
+      //   date_of_death: item?.prospectivePensioner?.date_of_death,
+      //   mortality_status: item?.prospectivePensioner?.mortality_status ?? '',
+      // }));
+
+      const mapSomeRequiredData = rawData.map((item) => ({
+        ...item,
+        id: item?.prospectivePensioner?.id,
         id_claim: item?.id,
-        stage: item?.stage,
-        comments: item?.comments,
-        maintenance_case: item?.prospectivePensioner?.maintenance_case,
-        is_wcps: item?.prospectivePensioner?.is_wcps,
-
         notification_status: item?.prospectivePensioner?.notification_status,
-        gender: item?.prospectivePensioner?.gender,
-        phone_number: item?.prospectivePensioner?.phone_number,
-        personal_number: item?.prospectivePensioner?.personal_number,
-        claim_type: item?.claim_type,
-        first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
-          ? item?.igc_beneficiary_track?.beneficiary?.first_name
-          : item?.prospectivePensioner?.first_name,
-        surname: item?.igc_beneficiary_track?.beneficiary?.surname
-          ? item?.igc_beneficiary_track?.beneficiary?.surname
-          : item?.prospectivePensioner?.surname,
-        other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
-          ? item?.igc_beneficiary_track?.beneficiary?.other_name
-          : item?.prospectivePensioner?.other_name,
-        email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
-          ? item?.igc_beneficiary_track?.beneficiary?.email_address
-          : item?.prospectivePensioner?.email_address,
-        pension_award: item?.prospectivePensioner?.mda?.name,
-        name: item?.prospectivePensioner?.pension_award?.name,
-        national_id: item?.prospectivePensioner?.national_id,
-        kra_pin: item?.prospectivePensioner?.kra_pin,
-        retirement_date: item?.prospectivePensioner?.retirement_date,
-        dob: item?.prospectivePensioner?.dob,
-        date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
-        last_basic_salary_amount:
-          item?.prospectivePensioner?.last_basic_salary_amount,
-        mda_code: item?.prospectivePensioner?.mda?.code,
-        mda_description: item?.prospectivePensioner?.mda?.description,
-        mda_id: item?.prospectivePensioner?.mda?.id,
-        mda_pensionCap_code: item?.prospectivePensioner?.mda?.pensionCap?.code,
-        mda_pensionCap_name: item?.prospectivePensioner?.mda?.pensionCap?.name,
-        mda_pensionCap_description:
-          item?.prospectivePensioner?.mda?.pensionCap?.description,
-        workHistories_length: item?.prospectivePensioner?.workHistories?.length,
-        bankDetails_length: item?.prospectivePensioner?.bankDetails?.length,
-        pensionAward_prefix: item?.prospectivePensioner?.pensionAward?.prefix,
-        pensionAward_code: item?.prospectivePensioner?.pensionAward?.code,
-        pensionAward_description:
-          item?.prospectivePensioner?.pensionAward?.description,
-        pensionAward_start_date:
-          item?.prospectivePensioner?.pensionAward?.start_date,
-        pensionAward_end_date:
-          item?.prospectivePensioner?.pensionAward?.end_date,
-        pensionAward_pensionCap_code:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.code,
-        pensionAward_pensionCap_name:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.name,
-        pensionAward_pensionCap_description:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.description,
-        pensionAward_pensionCap_id:
-          item?.prospectivePensioner?.pensionAward?.pensionCap?.id,
-        approval_status: item?.document_status,
-        //////
-
-        retirement_date: item?.prospectivePensioner?.retirement_date,
-        date_from_which_pension_will_commence:
-          item?.prospectivePensioner?.date_from_which_pension_will_commence,
-        authority_for_retirement_dated:
-          item?.prospectivePensioner?.authority_for_retirement_dated,
-        authority_for_retirement_reference:
-          item?.prospectivePensioner?.authority_for_retirement_reference,
-        date_of_first_appointment:
-          item?.prospectivePensioner?.date_of_first_appointment,
-        date_of_confirmation: item?.prospectivePensioner?.date_of_confirmation,
-        country: item?.prospectivePensioner?.country,
-        city_town: item?.prospectivePensioner?.city_town,
-        pension_commencement_date:
-          item?.prospectivePensioner?.pension_commencement_date,
-        postal_address: item?.prospectivePensioner?.postal_address,
-        id: item.prospectivePensioner?.id,
-        exit_grounds: item?.prospectivePensioner?.exitGround.name,
-
-        prospectivePensionerAwards:
-          item?.prospectivePensioner?.prospectivePensionerAwards,
-
-        pensioner_number: item?.prospectivePensioner
-          ?.prospectivePensionerAwards[0]?.pension_award?.prefix
-          ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
-              ?.pension_award?.prefix + item?.pensioner_number
-          : item?.pensioner_number,
-        createdBy: item?.created_by,
-        date_of_death: item?.prospectivePensioner?.date_of_death,
-        mortality_status: item?.prospectivePensioner?.mortality_status ?? '',
       }));
 
-      setRowData(mappedData);
-      console.log('mappedData', mappedData);
+      setRowData([...mapSomeRequiredData]);
+      // console.log('mappedData', mappedData);
     } catch (error) {
       console.error('Error fetching preclaims:', error);
       return []; // Return an empty array or handle error as needed

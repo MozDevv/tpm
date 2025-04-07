@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, TextField, Grid, Collapse, IconButton } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Grid,
+  Collapse,
+  IconButton,
+  Chip,
+} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/context/AlertContext';
 import endpoints, { apiService } from '@/components/services/setupsApi';
@@ -8,7 +15,7 @@ import { message } from 'antd';
 import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
 import { parseDate } from '@/utils/dateFormatter';
 
-function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
+function AddBankDetails({ id, moveToNextTab, moveToPreviousTab, isIgc }) {
   const [banks, setBanks] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBank, setSelectedBank] = useState('');
@@ -17,6 +24,7 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
     branchId: '',
     accountNumber: '',
     accountName: '',
+    deactivated: false,
   });
   const [errors, setErrors] = useState({});
   const { alert, setAlert } = useAlert();
@@ -56,6 +64,7 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
           branchName: detail.bankBranch?.name || '', // Add branch name
           accountNumber: detail.account_number || '',
           accountName: detail.account_name || '',
+          deactivated: detail.deactivated || false,
           createdDate: parseDate(detail.created_date) || '', // Add created date
         }));
 
@@ -216,63 +225,93 @@ function AddBankDetails({ id, moveToNextTab, moveToPreviousTab }) {
     <form className="w-full p-2" onSubmit={handleSubmit}>
       {formData &&
         formData.length > 0 &&
-        formData?.map((bankDetail, index) => {
-          const sectionKey = `bankDetails-${index}`;
-          return (
-            <div key={index}>
-              <div className="flex items-center">
-                <p className="mt-3 ml-4 mb-5 text-primary text-[16px] font-montserrat font-semibold">
-                  Bank Details {index + 1}
-                </p>
-                <IconButton
-                  sx={{ ml: '5px', zIndex: 1, mt: '-6px' }}
-                  onClick={() => handleToggleSection(sectionKey)}
-                >
-                  {!openSections[sectionKey] ? (
-                    <KeyboardArrowRight
-                      sx={{ color: 'primary.main', fontSize: '14px' }}
-                    />
-                  ) : (
-                    <ExpandLess
-                      sx={{ color: 'primary.main', fontSize: '14px' }}
-                    />
-                  )}
-                </IconButton>
-                <hr className="flex-grow border-blue-500 border-opacity-20 mt-[-6px]" />
-              </div>
-              <Collapse
-                in={!openSections[sectionKey]}
-                timeout="auto"
-                unmountOnExit
-              >
-                <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
-                    {fields.map((field) => (
-                      <div key={field.name} className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-600">
-                          {field.label}
-                        </label>
-                        <TextField
-                          type={field.type}
-                          name={field.name}
-                          variant="outlined"
-                          size="small"
-                          value={bankDetail[field.name] || ''}
-                          onChange={(e) => handleInputChange(e, index)}
-                          error={!!errors[field.name]}
-                          helperText={errors[field.name]}
-                          required={field.required}
-                          fullWidth
-                          disabled={hasBankDetails}
-                        />
-                      </div>
-                    ))}
-                  </div>
+        formData
+          .filter((bank) => isIgc || !bank.deactivated)
+          .sort((a, b) => {
+            // Sort active banks first if isIgc is true
+            if (isIgc) {
+              return a.deactivated === b.deactivated
+                ? 0
+                : a.deactivated
+                ? 1
+                : -1;
+            }
+            return 0; // No sorting if not isIgc
+          })
+          .map((bankDetail, index) => {
+            const sectionKey = `bankDetails-${index}`;
+            return (
+              <div key={index}>
+                <div className="flex items-center">
+                  <p className="mt-3 ml-4 mb-5 text-primary text-[16px] font-montserrat font-semibold">
+                    Bank Details{' '}
+                    {isIgc && bankDetail.deactivated === false && (
+                      <Chip
+                        label="updated"
+                        size="small"
+                        style={{
+                          backgroundColor: '#4caf50', // Green color for active bank
+                          color: '#fff',
+                          fontWeight: 'normal',
+                          fontFamily: 'Montserrat',
+                          fontSize: '12px',
+                          marginTop: '-10px',
+                          height: '24px', // Reduce height
+                          fontSize: '12px', // Reduce font size
+                          lineHeight: '20px', // Align text vertically
+                        }}
+                      />
+                    )}
+                  </p>
+                  <IconButton
+                    sx={{ ml: '5px', zIndex: 1, mt: '-6px' }}
+                    onClick={() => handleToggleSection(sectionKey)}
+                  >
+                    {!openSections[sectionKey] ? (
+                      <KeyboardArrowRight
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
+                      />
+                    ) : (
+                      <ExpandLess
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
+                      />
+                    )}
+                  </IconButton>
+                  <hr className="flex-grow border-blue-500 border-opacity-20 mt-[-6px]" />
                 </div>
-              </Collapse>
-            </div>
-          );
-        })}
+                <Collapse
+                  in={!openSections[sectionKey]}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <div className="col-span-12 max-h-[100%] overflow-y-auto bg-white shadow-sm rounded-2xl pb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
+                      {fields.map((field) => (
+                        <div key={field.name} className="flex flex-col">
+                          <label className="text-xs font-semibold text-gray-600">
+                            {field.label}
+                          </label>
+                          <TextField
+                            type={field.type}
+                            name={field.name}
+                            variant="outlined"
+                            size="small"
+                            value={bankDetail[field.name] || ''}
+                            onChange={(e) => handleInputChange(e, index)}
+                            error={!!errors[field.name]}
+                            helperText={errors[field.name]}
+                            required={field.required}
+                            fullWidth
+                            disabled={hasBankDetails}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Collapse>
+              </div>
+            );
+          })}
     </form>
   );
 }

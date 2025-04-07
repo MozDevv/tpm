@@ -250,6 +250,7 @@ function AssessmentCard({
                   <AddBankDetails
                     id={activeRetireeId}
                     moveToNextTab={moveToNextTab}
+                    isIgc={isIgc}
                     moveToPreviousTab={moveToPreviousTab}
                   />
                 </TabPane>
