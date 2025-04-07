@@ -20,6 +20,7 @@ const claimsEndpoints = {
 
   mdas: '/api/Setups/Getmdas',
   createPayrollRecord: '/api/Payroll/CreatePayrollRecord',
+  getClaimsListings: '/api/Claims/claimsList',
 };
 api.interceptors.request.use(
   (config) => {

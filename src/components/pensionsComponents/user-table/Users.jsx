@@ -43,6 +43,7 @@ const Users = () => {
       capName: mdas.find((m) => m.id === item.mdaId)?.pensionCap.name,
       mdaName: mdas.find((m) => m.id === item.mdaId)?.description,
       is_at_work: item.is_at_work,
+      is_department_head: item.is_department_head,
     }));
   };
 
@@ -291,6 +292,11 @@ const Users = () => {
           },
         ]
       : []),
+    {
+      name: 'is_department_head',
+      label: 'Department Head',
+      type: 'switch',
+    },
 
     {
       name: 'lockoutEnabled',

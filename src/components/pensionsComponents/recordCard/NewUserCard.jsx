@@ -45,6 +45,7 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
     email: '',
     id_number: '',
     passportNumber: '',
+    is_department_head: false,
   });
 
   const handleInputChange = (event) => {
@@ -486,6 +487,32 @@ function NewUserCard({ data, setSuccess, setOpenBaseCard }) {
                                   {role.name}
                                 </option>
                               ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="flex justify-evenly w-1/3 px-5 pr-4">
+                        <div className="flex flex-col flex-1">
+                          <label className="text-xs font-semibold text-gray-600 flex items-center gap-[4px]">
+                            Is Department Head
+                            <div className="text-red-600 text-base mt-[3px]">
+                              *
+                            </div>
+                          </label>
+                          <select
+                            name="is_department_head"
+                            value={formData.is_department_head}
+                            onChange={(e) =>
+                              setFormData((prevFormData) => ({
+                                ...prevFormData,
+                                is_department_head: e.target.value === 'true',
+                              }))
+                            }
+                            className="border border-gray-300 text-gray-600 rounded-md p-2 text-sm bg-white"
+                            required
+                          >
+                            <option value="">Select Option</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
                           </select>
                         </div>
                       </div>

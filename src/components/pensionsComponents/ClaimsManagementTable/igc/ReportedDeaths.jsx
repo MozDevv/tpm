@@ -14,6 +14,37 @@ import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import { Table } from 'antd';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+
+/**
+ * public enum DocumentStatuses
+
+{
+
+     OPEN,
+
+     PENDING,
+
+     APPROVED,
+
+     REJECTED
+
+}
+ 
+public enum IGCSubmissionStatuses
+
+{
+
+     OPEN,
+
+     PENDING_PAYROLL_APPROVAL,
+
+		PAYROLL_SUSPENDED,
+
+		PAYROLL_RESUMED
+
+	}
+ 
+ */
 const statusIcons = {
   0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
   1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
@@ -23,9 +54,9 @@ const statusIcons = {
 
 const notificationStatusMap = {
   0: { name: 'Open', color: '#1976d2' },
-  1: { name: 'Pending', color: '#fbc02d' },
-  2: { name: 'Approved', color: '#2e7d32' },
-  3: { name: 'Rejected', color: '#d32f2f' },
+  1: { name: 'Pending Payroll Approval', color: '#fbc02d' },
+  2: { name: 'Payroll Suspended', color: '#2e7d32' },
+  3: { name: 'Payroll Resumed', color: '#d32f2f' },
 };
 
 const columnDefs = [
@@ -242,14 +273,26 @@ const ReportedDeaths = () => {
     {
       name: 'doumet_status',
       label: 'Doumet Status',
-      type: 'text',
+      type: 'select',
       required: true,
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Rejected' },
+      ],
     },
     {
       name: 'iGCSubmissionStatuses',
       label: 'IGC Submission Statuses',
-      type: 'text',
+      type: 'select',
       required: true,
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending Payroll Approval' },
+        { id: 2, name: 'Payroll Suspended' },
+        { id: 3, name: 'Payroll Resumed' },
+      ],
     },
     {
       name: 'created_date',
