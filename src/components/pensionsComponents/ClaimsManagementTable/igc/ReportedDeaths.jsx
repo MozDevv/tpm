@@ -14,6 +14,7 @@ import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 import { Table } from 'antd';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
+import AssessmentCard from '@/components/financeComponents/payments/PensionerDetailsTabs';
 
 /**
  * public enum DocumentStatuses
@@ -60,62 +61,13 @@ const notificationStatusMap = {
 };
 
 const columnDefs = [
-  /**    "data": [
-        {
-            "principal_pensioner_id_card_number": "3641968012",
-            "no": "IGDE000032",
-            "supporting_document_number": "989898",
-            "doumet_status": 1,
-            "iGCSubmissionStatuses": 1,
-            "supporting_documents": [
-                {
-                    "igC_dependants_initiation_id": "02dd0d07-1758-4eef-bbbf-245a031fd801",
-                    "igc_beneficiary_track_id": null,
-                    "igc_beneficiary_track": null,
-                    "document_type_id": "09625201-d19f-4b0e-b615-eb01011b5141",
-                    "igc_document_id": "0ae1a849-52c3-4d4a-9d18-a3fb674f12e5",
-                    "iGCDependantsInitiation": null,
-                    "documentType": null,
-                    "igcDocument": null,
-                    "side": "Back",
-                    "edms_id": null,
-                    "edms_latest_url": null,
-                    "downloadUrl": null,
-                    "fileId": null,
-                    "mimeType": null,
-                    "fileName": null,
-                    "fileUrl": null,
-                    "url": null,
-                    "upload_date": null,
-                    "uploadedDocumentDetails": null,
-                    "id": "aad02979-b59b-42d5-ac69-9f125697e23e",
-                    "created_by": "fa2d588b-d2e4-4eb8-a69b-f61991e7b33d",
-                    "created_date": "2025-04-02T09:32:48.412673Z",
-                    "updated_by": null,
-                    "updated_date": null,
-                    "deleted": false,
-                    "deleted_by": null,
-                    "deleted_date": null,
-                    "approved_by": null,
-                    "approved_at": null,
-                    "domainEvents": []
-                }
-            ],
-            "igC_beneficiary_track": [],
-            "id": "02dd0d07-1758-4eef-bbbf-245a031fd801",
-            "created_by": "fa2d588b-d2e4-4eb8-a69b-f61991e7b33d",
-            "created_date": "2025-04-02T09:32:48.412646Z",
-            "updated_by": null,
-            "updated_date": null
-        }, */
   {
     field: 'no',
-    headerName: 'No',
+    headerName: 'Document No',
     headerClass: 'prefix-header',
-    flex: 1,
+    width: 150,
     filter: true,
     pinned: 'left',
-    filter: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
     cellRenderer: (params) => {
@@ -125,27 +77,40 @@ const columnDefs = [
     },
   },
   {
-    field: 'principal_pensioner_id_card_number',
-    headerName: 'Principal Pensioner ID Card Number',
+    field: 'prospectivePensioner.no',
+    headerName: 'Claim No',
     headerClass: 'prefix-header',
-    flex: 1,
+    width: 150,
     filter: true,
+    cellRenderer: (params) => {
+      return <p className=" text-primary font-normal">{params.value}</p>;
+    },
   },
 
   {
-    field: 'supporting_document_number',
-    headerName: 'Supporting Document Number',
+    field: 'prospectivePensioner.surname',
+    headerName: 'Surname',
     headerClass: 'prefix-header',
+    width: 150,
     filter: true,
-    flex: 1,
+    valueGetter: (params) => params.data.prospectivePensioner?.surname || 'N/A',
   },
+  {
+    field: 'prospectivePensioner.first_name',
+    headerName: 'First Name',
+    headerClass: 'prefix-header',
+    width: 150,
+    filter: true,
+    valueGetter: (params) =>
+      params.data.prospectivePensioner?.first_name || 'N/A',
+  },
+
   {
     field: 'doumet_status',
     headerName: 'Doumet Status',
     headerClass: 'prefix-header',
     filter: true,
-    flex: 1,
-
+    width: 200,
     cellRenderer: (params) => {
       const status = statusIcons[params.value];
       if (!status) return null;
@@ -179,7 +144,6 @@ const columnDefs = [
     headerName: 'IGC Submission Status',
     headerClass: 'prefix-header',
     filter: true,
-
     cellRenderer: (params) => {
       const status = notificationStatusMap[params.value];
       if (!status) return null;
@@ -201,13 +165,27 @@ const columnDefs = [
       );
     },
   },
+  {
+    field: 'supporting_document_number',
+    headerName: 'Supporting Document Number',
+    headerClass: 'prefix-header',
+    filter: true,
+    width: 150,
+  },
+  {
+    field: 'principal_pensioner_id_card_number',
+    headerName: 'Principal Pensioner ID Card Number',
+    headerClass: 'prefix-header',
+    width: 150,
+    filter: true,
+  },
 
   {
     field: 'created_date',
     headerName: 'Created Date',
     headerClass: 'prefix-header',
     filter: true,
-    flex: 1,
+    width: 150,
     cellRenderer: (params) => parseDate(params.value),
   },
 ];
@@ -466,53 +444,77 @@ const ReportedDeaths = () => {
       >
         {clickedItem ? (
           <>
-            <BaseCollapse name="Provider Details">
-              <BaseInputCard
-                fields={fields}
-                // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-                disableAll={true}
-                postApiFunction={apiService.post}
-                clickedItem={clickedItem}
-                useRequestBody={true}
+            <div className="">
+              <AssessmentCard
+                claim={
+                  clickedItem
+                    ? [
+                        {
+                          ...clickedItem,
+                          prospectivePensionerId:
+                            clickedItem?.prospective_pensioner_id,
+                        },
+                      ]
+                    : null
+                }
+                clickedItem={clickedItem?.prospectivePensioner}
                 setOpenBaseCard={setOpenBaseCard}
-              />
-            </BaseCollapse>
-            <BaseCollapse className="mt-[-10px]" name="Supporting Documents">
-              <div className="px-6 pt-2">
-                {clickedItem?.supporting_documents &&
-                  clickedItem.supporting_documents.length > 0 && (
-                    <Table
-                      columns={fileColumns}
-                      dataSource={clickedItem?.supporting_documents}
-                      pagination={false}
-                      rowKey="id"
-                      className="antcustom-table"
-                      rowClassName={() => 'px-4'} // Add padding to rows
-                      onHeaderRow={() => {
-                        return {
-                          className: 'px-4', // Add padding to headers
-                        };
-                      }}
-                    />
-                  )}
-              </div>
-            </BaseCollapse>{' '}
-            {clickedItem?.iGC_beneficiary_track &&
-              clickedItem.iGC_beneficiary_track.length > 0 && (
-                <BaseCollapse name="Beneficiary Track">
+                childTitle="Details"
+                isIgc={false}
+                isNormalPreclaims={true}
+              >
+                <BaseCollapse name="Provided Details">
                   <BaseInputCard
-                    fields={fields2}
+                    fields={fields}
                     // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
                     disableAll={true}
                     postApiFunction={apiService.post}
-                    clickedItem={
-                      clickedItem?.igC_beneficiary_track?.beneficiary
-                    }
+                    clickedItem={clickedItem}
                     useRequestBody={true}
                     setOpenBaseCard={setOpenBaseCard}
                   />
                 </BaseCollapse>
-              )}
+                <BaseCollapse
+                  className="mt-[-10px]"
+                  name="Supporting Documents"
+                >
+                  <div className="px-6 pt-2">
+                    {clickedItem?.supporting_documents &&
+                      clickedItem.supporting_documents.length > 0 && (
+                        <Table
+                          columns={fileColumns}
+                          dataSource={clickedItem?.supporting_documents}
+                          pagination={false}
+                          rowKey="id"
+                          className="antcustom-table"
+                          rowClassName={() => 'px-4'} // Add padding to rows
+                          onHeaderRow={() => {
+                            return {
+                              className: 'px-4', // Add padding to headers
+                            };
+                          }}
+                        />
+                      )}
+                  </div>
+                </BaseCollapse>{' '}
+                {clickedItem?.iGC_beneficiary_track &&
+                  clickedItem.iGC_beneficiary_track.length > 0 && (
+                    <BaseCollapse name="Beneficiary Track">
+                      <BaseInputCard
+                        fields={fields2}
+                        // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+                        disableAll={true}
+                        postApiFunction={apiService.post}
+                        clickedItem={
+                          clickedItem?.igC_beneficiary_track?.beneficiary
+                        }
+                        useRequestBody={true}
+                        setOpenBaseCard={setOpenBaseCard}
+                      />
+                    </BaseCollapse>
+                  )}
+              </AssessmentCard>
+            </div>
           </>
         ) : (
           <BaseInputCard

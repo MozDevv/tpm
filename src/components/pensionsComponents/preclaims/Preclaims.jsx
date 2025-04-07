@@ -36,6 +36,8 @@ import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 import { parseDate } from '@/utils/dateFormatter';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import endpoints from '@/components/services/setupsApi';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -728,6 +730,12 @@ const Preclaims = ({
   const [onCloseWarnings, setOnCloseWarnings] = useState(null);
 
   const [excelLoading, setExcelLoading] = useState(false);
+
+  const { data: igcDeathDcouments } = useFetchAsync(
+    endpoints.igcDocuments,
+    apiService
+  );
+
   return (
     <div className="">
       {openApprovalBase && isApproval ? (
@@ -912,6 +920,8 @@ const Preclaims = ({
                 selectedRows={selectedRows}
                 openNotification={openNotification}
                 setOpenNotification={setOpenNotification}
+                clickedItem={clickedItem}
+                igcDeathDcouments={igcDeathDcouments}
               />
 
               {/* <PreclaimDialog

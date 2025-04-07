@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import {
   Button,
   Chip,
@@ -18,12 +18,14 @@ import { useMda } from '@/context/MdaContext';
 import { Checkbox, List, message } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
   fetchAllPreclaims,
   openNotification,
   setOpenNotification,
+  igcDeathDcouments,
 
   selectedRows,
 }) {
@@ -130,23 +132,37 @@ function PreclaimsNotifications({
         );
         const retireeDetails = res.data?.data[0];
 
+        console.log('retireeDetails', retireeDetails);
+
         if (retireeDetails) {
           const retireeKey = retireeDetails?.personal_number; // Using personal number as the unique key
 
+          // Use igcDeathDocuments if mortality_status === 1
           const documents =
-            retireeDetails?.prospectivePensionerDocumentSelections?.map(
-              (selection) => ({
-                id: selection.id,
-                name: selection.documentType.name,
-                description: selection.documentType.description,
-                required: selection.required,
-                pensioner_upload: selection.pensioner_upload,
-                side: selection.side,
-                has_two_sides: selection.documentType.has_two_sides,
-              })
-            ) || [];
+            retireeDetails.mortality_status === 1
+              ? igcDeathDcouments.map((doc) => ({
+                  id: doc.id,
+                  name: doc.documentTypeSetup.name,
+                  description: doc.documentTypeSetup.description,
+                  required: doc.required,
+                  pensioner_upload: doc.front || doc.back,
+                  side: doc.front ? 'Front' : doc.back ? 'Back' : null,
+                  has_two_sides: doc.documentTypeSetup.has_two_sides,
+                }))
+              : retireeDetails?.prospectivePensionerDocumentSelections?.map(
+                  (selection) => ({
+                    id: selection.id,
+                    name: selection.documentType.name,
+                    description: selection.documentType.description,
+                    required: selection.required,
+                    pensioner_upload: selection.pensioner_upload,
+                    side: selection.side,
+                    has_two_sides: selection.documentType.has_two_sides,
+                  })
+                ) || [];
 
           documentsByRetiree[retireeKey] = {
+            isDeceased: retireeDetails.mortality_status === 1,
             retireeName:
               retireeDetails?.first_name + ' ' + retireeDetails?.surname,
             retireePersonalNumber: retireeDetails?.personal_number,
@@ -183,6 +199,10 @@ function PreclaimsNotifications({
     }));
   };
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    console.log('awardDocuments', awardDocuments);
+  }, [selectedRows]);
   return (
     <Dialog
       open={
@@ -204,6 +224,8 @@ function PreclaimsNotifications({
             </h5>
           </div>
         </div>
+
+        {/* {JSON.stringify(awardDocuments)} */}
 
         {Object.keys(awardDocuments).length > 0 && (
           <div className="py-3 mx-5">
@@ -237,9 +259,14 @@ function PreclaimsNotifications({
                     overflowY: 'auto',
                     mx: '20px',
                   }}
-                  dataSource={retiree.documents.filter(
-                    (doc) => doc.pensioner_upload
-                  )}
+                  // dataSource={retiree.documents.filter(
+                  //   (doc) => doc.pensioner_upload
+                  // )}
+                  dataSource={
+                    retiree.isDeceased
+                      ? retiree.documents
+                      : retiree.documents.filter((doc) => doc.pensioner_upload)
+                  }
                   renderItem={(doc) => (
                     <List.Item>
                       <div className="flex gap-2 items-center">

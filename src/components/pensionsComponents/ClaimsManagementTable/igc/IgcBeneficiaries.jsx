@@ -9,6 +9,7 @@ import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import { notificationStatusMap } from '../../preclaims/Preclaims';
 
 const IgcBeneficiaries = () => {
   const statusIcons = {
@@ -18,106 +19,45 @@ const IgcBeneficiaries = () => {
     3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
   };
 
-  const notificationStatusMap = {
-    0: { name: 'Open', color: '#1976d2' },
-    1: { name: 'Pending', color: '#fbc02d' },
-    2: { name: 'Approved', color: '#2e7d32' },
-    3: { name: 'Rejected', color: '#d32f2f' },
-  };
-
   const columnDefs = [
-    {
-      field: 'igc_no',
-      headerName: 'IGC No',
-      headerClass: 'prefix-header',
-      flex: 1,
-      pinned: 'left',
-      filter: true,
-      cellRenderer: (params) => {
-        return (
-          <p className="underline text-primary font-semibold">{params.value}</p>
-        );
-      },
-    },
     // {
-    //   field: 'surname',
-    //   headerName: 'Surname',
+    //   field: 'igc_no',
+    //   headerName: 'IGC No',
     //   headerClass: 'prefix-header',
-    //   filter: true,
-    // },
-    // {
-    //   field: 'first_name',
-    //   headerName: 'First Name',
-    //   headerClass: 'prefix-header',
-    //   filter: true,
-    // },
+    //   flex: 1,
 
-    {
-      field: 'name',
-      headerName: 'Name',
-      headerClass: 'prefix-header',
-      filter: true,
-      cellRenderer: (params) => {
-        const { surname, first_name, other_name } = params.data;
-        return (
-          <p className="">
-            {surname || ''} {first_name || ''} {other_name || ''}
-          </p>
-        );
-      },
-    },
-    {
-      field: 'identifier',
-      headerName: 'Identifier',
-      headerClass: 'prefix-header',
-      filter: true,
-    },
+    // },
     {
       field: 'relationship',
       headerName: 'Relationship',
       headerClass: 'prefix-header',
       filter: true,
-    },
-    {
-      field: 'document_status',
-      headerName: 'Document Status',
-      headerClass: 'prefix-header',
-      filter: true,
+      width: 150,
+      pinned: 'left',
 
       cellRenderer: (params) => {
-        const status = statusIcons[params.value];
-        if (!status) return null;
-
-        const IconComponent = status.icon;
-
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconComponent
-              style={{
-                color: status.color,
-                marginRight: '6px',
-                fontSize: '17px',
-              }}
-            />
-            <span
-              style={{
-                color: status.color,
-                fontWeight: 'semibold',
-                fontSize: '13px',
-              }}
-            >
-              {status.name}
-            </span>
-          </div>
-        );
+        return <p className=" text-primary font-semibold">{params.value}</p>;
       },
     },
     {
-      field: 'submission_status',
-      headerName: 'IGC Submission Status',
+      field: 'surname',
+      headerName: 'Surname',
       headerClass: 'prefix-header',
       filter: true,
-
+      width: 180,
+    },
+    {
+      field: 'first_name',
+      headerName: 'First Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 180,
+    },
+    {
+      headerName: 'Preclaim Status',
+      field: 'status',
+      width: 180,
+      filter: true,
       cellRenderer: (params) => {
         const status = notificationStatusMap[params.value];
         if (!status) return null;
@@ -127,6 +67,7 @@ const IgcBeneficiaries = () => {
             variant="text"
             sx={{
               ml: 3,
+
               maxHeight: '22px',
               cursor: 'pointer',
               color: status.color,
@@ -139,51 +80,79 @@ const IgcBeneficiaries = () => {
         );
       },
     },
+
     // {
-    //   field: 'mobile_number',
-    //   headerName: 'Mobile Number',
+    //   field: 'name',
+    //   headerName: 'Name',
     //   headerClass: 'prefix-header',
     //   filter: true,
-    //   width: 200,
+    //   cellRenderer: (params) => {
+    //     const { surname, first_name, other_name } = params.data;
+    //     return (
+    //       <p className="">
+    //         {surname || ''} {first_name || ''} {other_name || ''}
+    //       </p>
+    //     );
+    //   },
     // },
+    {
+      field: 'identifier',
+      headerName: 'Identifier',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+
+    {
+      field: 'mobile_number',
+      headerName: 'Mobile Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
     {
       field: 'email_address',
       headerName: 'Email Address',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
-    // {
-    //   field: 'dob',
-    //   headerName: 'Date of Birth',
-    //   headerClass: 'prefix-header',
-    //   filter: true,
+    {
+      field: 'dob',
+      headerName: 'Date of Birth',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
 
-    //   valueFormatter: (params) => parseDate(params.value),
-    // },
+      valueFormatter: (params) => parseDate(params.value),
+    },
     {
       field: 'age',
       headerName: 'Age',
       headerClass: 'prefix-header',
       filter: true,
+      width: 200,
     },
 
-    //   field: 'address',
-    //   headerName: 'Address',
-    //   headerClass: 'prefix-header',
-    //   filter: true,
-    // },
-    // {
-    //   field: 'birth_certificate_no',
-    //   headerName: 'Birth Certificate No',
-    //   headerClass: 'prefix-header',
-    //   filter: true,
-    // },
-    // {
-    //   field: 'supporting_document_number',
-    //   headerName: 'Supporting Document Number',
-    //   headerClass: 'prefix-header',
-    //   filter: true,
-    // },
+    //   {
+    //     field: 'address',
+    //     headerName: 'Address',
+    //     headerClass: 'prefix-header',
+    //     filter: true,
+    //   },
+    //   {
+    //     field: 'birth_certificate_no',
+    //     headerName: 'Birth Certificate No',
+    //     headerClass: 'prefix-header',
+    //     filter: true,
+    //   },
+    //   {
+    //     field: 'supporting_document_number',
+    //     headerName: 'Supporting Document Number',
+    //     headerClass: 'prefix-header',
+    //     filter: true,
+    //   },
+    // ];
   ];
 
   const transformData = (data) => {
@@ -208,6 +177,7 @@ const IgcBeneficiaries = () => {
 
       principal_pensioner_id_card_number:
         item?.igcEnrolment?.principal_pensioner_id_card_number ?? 'N/A',
+      status: item?.status ?? 'N/A',
       /**  "principal_pensioner_id_card_number": "67398299",
     "no": "IGDE000029",
     "supporting_document_number": "1475582825",

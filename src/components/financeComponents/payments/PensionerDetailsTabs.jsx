@@ -51,6 +51,7 @@ function AssessmentCard({
   openBaseCard,
   setChildRevisedData,
   clickedIgc,
+  isNormalPreclaims,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -233,6 +234,18 @@ function AssessmentCard({
                       clickedItem={clickedItem}
                       openBaseCard={openBaseCard}
                     />
+                  ) : isNormalPreclaims ? (
+                    <>
+                      {' '}
+                      <NewPreclaim
+                        setRetireeId={setRetireeId}
+                        retireeId={clickedItem?.id}
+                        moveToNextTab={moveToNextTab}
+                        moveToPreviousTab={moveToPreviousTab}
+                        clickedItem={clickedItem}
+                        // setOnCloseWarnings={setOnCloseWarnings}
+                      />
+                    </>
                   ) : (
                     <></>
                   )}
@@ -255,7 +268,7 @@ function AssessmentCard({
                   />
                 </TabPane>
               )}
-              {clickedIgc?.igc_type !== 7 && (
+              {clickedIgc?.igc_type !== 7 && !isNormalPreclaims && (
                 <TabPane
                   tab={
                     <span className="text-primary font-montserrat">
@@ -330,7 +343,7 @@ function AssessmentCard({
                       <AddPensionersWorkHistory
                         enabled={isSectionEnabled('WORK_HISTORY')}
                         status={clickedItem.notification_status}
-                        id={activeRetireeId}
+                        id={activeRetireeId || clickedItem?.id}
                         name={clickedItem ? clickedItem.first_name : undefined}
                         moveToNextTab={moveToNextTab}
                         moveToPreviousTab={moveToPreviousTab}

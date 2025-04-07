@@ -538,6 +538,8 @@ const endpoints = {
   getReportedDeaths: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
   getIgcByStage: (id) =>
     `/api/IGCClaimInitiation/GetIGCs?filterCriterion.criterions[0].propertyName=igc_submission_status&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].criterionType=0`,
+  getDependantPensioNiGCDocuments:
+    'api/Setups/GetIGCDocuments?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=igC_Type&filterCriterion.criterions[0].propertyValue=0&paging.pageNumber=1&paging.pageSize=1000',
 };
 
 export const apiService = {

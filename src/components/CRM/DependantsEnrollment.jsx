@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Backdrop,
   Box,
+  CircularProgress,
   Dialog,
   DialogContent,
   Divider,
@@ -26,8 +27,10 @@ function DependantsEnrollment() {
   const [details, setDetails] = useState([]);
   const [previewContent, setPreviewContent] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const { data: documentTypes } = useFetchAsync(
-    endpoints.igcDocuments,
+    endpoints.getDependantPensioNiGCDocuments,
     apiService
   );
 
@@ -36,10 +39,11 @@ function DependantsEnrollment() {
     { id: 1, name: 'Killed On Duty' },
     { id: 2, name: 'Injury or Disability Pension' },
     { id: 3, name: 'Revised Disability' },
-    { id: 4, name: 'RevisedCases Erroneous Deductions' },
-    { id: 5, name: 'RevisedCases Court Order' },
-    { id: 6, name: 'RevisedCases Salary Change' },
-    { id: 7, name: 'RevisedCases Erroneous Awards' },
+    { id: 4, name: 'Revised Cases Court Order' },
+    { id: 5, name: 'Add Beneficiary Alive' },
+    { id: 6, name: 'Add Beneficiary Deceased' },
+    { id: 7, name: 'Change of Pay Point' },
+    { id: 8, name: 'Revised Computation' },
   ];
 
   const handleDocumentTypeChange = (value) => {
@@ -522,34 +526,52 @@ function DependantsEnrollment() {
             >
               Cancel
             </MuiButton>{' '}
+            {/* import {CircularProgress} from '@mui/material'; */}
             <MuiButton
               variant="contained"
               type="primary"
-              onClick={() => setOpenPensionerDetails(false)}
+              onClick={() => {
+                setBtnLoading(true); // Start loading
+                setTimeout(() => {
+                  setBtnLoading(false); // Stop loading after 2 seconds
+                  setOpenPensionerDetails(false); // Close the dialog
+                  setConfirmed(true); // Set confirmed to true
+                }, 2500); // 2 seconds delay
+              }}
               sx={{}}
             >
-              Confirm
+              {btnLoading ? (
+                <CircularProgress
+                  size={20}
+                  sx={{ color: '#fff', marginRight: '8px' }}
+                />
+              ) : (
+                'Confirm'
+              )}
             </MuiButton>
           </div>
         </DialogContent>
       </Dialog>
       <div className="flex gap-2 justify-end">
-        <MuiButton
-          variant="outlined"
-          type="primary"
-          onClick={handleConfirmPensionerDetails}
-          sx={{}}
-        >
-          Confirm Pensioner Details
-        </MuiButton>{' '}
-        <MuiButton
-          variant="contained"
-          type="primary"
-          onClick={handleSave}
-          sx={{}}
-        >
-          Report Deceased Case
-        </MuiButton>
+        {!confirmed ? (
+          <MuiButton
+            variant="outlined"
+            type="primary"
+            onClick={handleConfirmPensionerDetails}
+            sx={{}}
+          >
+            Confirm Pensioner Details
+          </MuiButton>
+        ) : (
+          <MuiButton
+            variant="contained"
+            type="primary"
+            onClick={handleSave}
+            sx={{}}
+          >
+            Report Deceased Case
+          </MuiButton>
+        )}
       </div>
 
       <div className="flex flex-col mb-3">
@@ -572,141 +594,146 @@ function DependantsEnrollment() {
           fullWidth
         />
       </div>
-      <div className="my-2">
-        <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
-          These are the required documents:
-          <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
-            *
+
+      {confirmed && (
+        <>
+          <div className="my-2">
+            <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
+              These are the required documents:
+              <div className="text-red-600 text-[18px] mt-[1px] font-semibold">
+                *
+              </div>
+            </p>
+            {renderRequiredDocumentsTable()}
           </div>
-        </p>
-        {renderRequiredDocumentsTable()}
-      </div>
 
-      <Divider
-        sx={{
-          my: 4,
-        }}
-      />
-      <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
-        Upload atleast one other document:
-      </p>
+          <Divider
+            sx={{
+              my: 4,
+            }}
+          />
+          <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
+            Upload atleast one other document:
+          </p>
 
-      {fields.map((field, index) => (
-        <div key={index} style={{ marginBottom: '16px' }}>
-          <label className="text-xs font-semibold text-gray-600">
-            {field.label}
-          </label>
-          {field.type === 'text' ? (
-            <TextField
-              type={field.type}
-              name={field.name}
-              variant="outlined"
-              size="small"
-              value={formData[field.name] || ''}
-              onChange={(e) => {
-                handleInputChange(e);
-              }}
-              error={!!errors[field.name]}
-              helperText={errors[field.name]}
-              required={field.required}
-              fullWidth
-            />
-          ) : (
-            <Autocomplete
-              options={field.options}
-              getOptionLabel={(option) =>
-                field.searchByAccountNo ? option.accountNo : option.name
-              }
-              onChange={(event, newValue) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [field.name]: newValue ? newValue.id : '', // Ensure empty value if nothing is selected
-                }));
-              }}
-              renderInput={(params) => (
+          {fields.map((field, index) => (
+            <div key={index} style={{ marginBottom: '16px' }}>
+              <label className="text-xs font-semibold text-gray-600">
+                {field.label}
+              </label>
+              {field.type === 'text' ? (
                 <TextField
-                  {...params}
+                  type={field.type}
+                  name={field.name}
                   variant="outlined"
                   size="small"
+                  value={formData[field.name] || ''}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                  }}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  required={field.required}
                   fullWidth
-                  name={field.name}
                 />
-              )}
-              value={
-                (field.options.length > 0 &&
-                  field.options.find(
-                    (option) => option.id === formData[field.name]
-                  )) ||
-                null
-              }
-              renderOption={(props, option, { selected }) => (
-                <div className="">
-                  <li
-                    {...props}
-                    style={{
-                      border: 'none',
-                      boxShadow: 'none',
-                      backgroundColor: selected ? '#B2E9ED' : 'white',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: '100%',
-                        pr: '40px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          gap: 3,
+              ) : (
+                <Autocomplete
+                  options={field.options}
+                  getOptionLabel={(option) =>
+                    field.searchByAccountNo ? option.accountNo : option.name
+                  }
+                  onChange={(event, newValue) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      [field.name]: newValue ? newValue.id : '', // Ensure empty value if nothing is selected
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name={field.name}
+                    />
+                  )}
+                  value={
+                    (field.options.length > 0 &&
+                      field.options.find(
+                        (option) => option.id === formData[field.name]
+                      )) ||
+                    null
+                  }
+                  renderOption={(props, option, { selected }) => (
+                    <div className="">
+                      <li
+                        {...props}
+                        style={{
+                          border: 'none',
+                          boxShadow: 'none',
+                          backgroundColor: selected ? '#B2E9ED' : 'white',
                         }}
                       >
-                        <p
-                          className="text-primary font-normal text-[12px] items-start"
-                          style={{ alignSelf: 'flex-start' }}
+                        <Box
+                          sx={{
+                            width: '100%',
+                            pr: '40px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                          }}
                         >
-                          {option.igcType}
-                        </p>
-                        <p
-                          className="text-[12px] items-center"
-                          style={{ alignSelf: 'flex-center' }}
-                        >
-                          {option.name}
-                        </p>
-                      </Box>
-                    </Box>
-                  </li>
-                </div>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              gap: 3,
+                            }}
+                          >
+                            <p
+                              className="text-primary font-normal text-[12px] items-start"
+                              style={{ alignSelf: 'flex-start' }}
+                            >
+                              {option.igcType}
+                            </p>
+                            <p
+                              className="text-[12px] items-center"
+                              style={{ alignSelf: 'flex-center' }}
+                            >
+                              {option.name}
+                            </p>
+                          </Box>
+                        </Box>
+                      </li>
+                    </div>
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      padding: 0,
+                      '& ul': {
+                        padding: 0,
+                        margin: 0,
+                      },
+                      // Additional styling for the listbox
+                    },
+                  }}
+                  PopperComponent={(props) => (
+                    <Popper {...props}>
+                      {/* Header */}
+                      <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                        <p className="text-xs font-normal">Igc Type</p>
+                        <p className="text-xs font-normal">Name</p>
+                      </li>
+                      {props.children}
+                    </Popper>
+                  )}
+                />
               )}
-              ListboxProps={{
-                sx: {
-                  padding: 0,
-                  '& ul': {
-                    padding: 0,
-                    margin: 0,
-                  },
-                  // Additional styling for the listbox
-                },
-              }}
-              PopperComponent={(props) => (
-                <Popper {...props}>
-                  {/* Header */}
-                  <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
-                    <p className="text-xs font-normal">Igc Type</p>
-                    <p className="text-xs font-normal">Name</p>
-                  </li>
-                  {props.children}
-                </Popper>
-              )}
-            />
-          )}
-        </div>
-      ))}
+            </div>
+          ))}
 
-      {renderUploadFields()}
+          {renderUploadFields()}
+        </>
+      )}
 
       <Dialog
         open={previewOpen}
