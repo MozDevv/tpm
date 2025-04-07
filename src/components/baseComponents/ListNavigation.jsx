@@ -677,6 +677,12 @@ const ListNavigation = ({
       action: 'closeTicket',
       requiredPermissions: [],
     },
+    {
+      name: 'Generate Report',
+      icon: FileDownload,
+      action: 'generateReport',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

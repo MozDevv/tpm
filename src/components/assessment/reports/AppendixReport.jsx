@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop, Button } from '@mui/material';
+import { Backdrop, Button, IconButton } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Cancel, GetApp } from '@mui/icons-material';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { Empty } from 'antd';
 import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
-const Page5Report = ({ setOpenGratuity, clickedItem }) => {
+const Page5Report = ({ setOpenGratuity, clickedItem, clickedBenefit }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
@@ -242,7 +242,14 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
             className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
           >
             Download PDF
-          </Button>
+          </Button>{' '}
+          <IconButton
+            onClick={() => {
+              generatePdfBlob();
+            }}
+          >
+            <Refresh />
+          </IconButton>
           <Button
             onClick={() => setOpenGratuity(false)}
             variant="outlined"
@@ -314,7 +321,7 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
 
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-2 font-semibold ">
-                {pensionerBenefits
+                {/* {pensionerBenefits
                   ?.filter((item) => !item.beneficiary && !item.maintenance)
                   .map((item, index) => (
                     <p>
@@ -323,21 +330,33 @@ const Page5Report = ({ setOpenGratuity, clickedItem }) => {
                         {item?.pensioner_award_code}
                       </strong>
                     </p>
-                  ))}
+                  ))} */}
+                <p>
+                  Pension Number:{' '}
+                  <strong className="font-normal ml-3">
+                    {clickedBenefit?.pensioner_number}
+                  </strong>
+                </p>
                 <p>
                   Ministry/Department:{' '}
                   <strong className="font-normal ml-3">
                     {clickedItem?.mda_description}
                   </strong>
                 </p>
-                {clickedItem?.prospectivePensionerAwards?.map((item, index) => (
+                {/* {clickedItem?.prospectivePensionerAwards?.map((item, index) => (
                   <p key={index}>
                     Claim Type:
                     <strong className="font-normal ml-3">
                       {item.pension_award?.name}
                     </strong>
                   </p>
-                ))}
+                ))} */}
+                <p>
+                  Claim Type:
+                  <strong className="font-normal ml-3">
+                    {clickedBenefit?.pensionAward}
+                  </strong>
+                </p>
               </div>
               <div className="font-semibold">
                 <p>

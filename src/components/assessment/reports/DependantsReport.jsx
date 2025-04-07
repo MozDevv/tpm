@@ -12,7 +12,7 @@ import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 import { parseDate } from '@/utils/dateFormatter';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
-const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
+const DependantsReport = ({ setOpenGratuity, clickedItem, clickedBenefit }) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
@@ -167,51 +167,22 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
     console.log('this is the clicked item', clickedItem);
   }, [report, pensionableService]);
 
-  const tableData = [
-    {
-      dependantNo: '5PN/PC0000362834_1',
-      dependantName: 'Stella Kananu Bundi',
-      relationship: 'Wife',
-      dob: '10-NOV-80',
-      effDate: '23-JUL-20',
-      deletionDate: '23-JUL-20',
-      cessationDate: '22-JUL-35',
-      monthlyPension: '15,728.00',
-    },
-    {
-      dependantNo: '5PN/PC0000362834_1',
-      dependantName: 'Alponsus Muthomi',
-      relationship: 'Son',
-      dob: '04-AUG-09',
-      effDate: '23-JUL-20',
-      deletionDate: '23-JUL-20',
-      cessationDate: '04-AUG-33',
-      monthlyPension: '0.00',
-    },
-    {
-      dependantNo: 'BPN/FC0000362834_1',
-      dependantName: 'Stella Kananu Bundi',
-      relationship: 'Wife',
-      dob: '10-NOV-80',
-      effDate: '23-JUL-20',
-      deletionDate: '23-JUL-20',
-      cessationDate: '22-JUL-35',
-      monthlyPension: '9,388.00',
-    },
-    {
-      dependantNo: 'BPN/FC0000362834_1',
-      dependantName: 'Alponsus Muthomi',
-      relationship: 'Son',
-      dob: '04-AUG-09',
-      effDate: '23-JUL-20',
-      deletionDate: '23-JUL-20',
-      cessationDate: '04-AUG-33',
-      monthlyPension: '4,194.20',
-    },
-  ];
   useEffect(() => {
     console.log('clickedItem', clickedItem);
   }, [clickedItem]);
+  /***
+   *
+   * Pensioner Number =>
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   */
 
   return (
     <div
@@ -227,7 +198,7 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
         style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
       >
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
             Dependants Report
           </h2>
           <p className="text-sm text-gray-500">
@@ -297,62 +268,67 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
           display: 'none',
         }}
       >
-        <div ref={contentRef} className="  px-4  mx-auto courier-font ">
-          <h2 className="text-xl font-bold mb-6 text-center">
+        <div ref={contentRef} className="  px-4  mx-auto font-sans ">
+          <h2 className="text-center text-xl font-bold mb-4">
+            PENSIONS DEPARTMENT
+          </h2>
+
+          <h2 className="font-bold text-base text-center mb-5">
             DEPENDANT COMPUTATION
           </h2>
+
           <div className="border border-gray-800 pb-4">
             <div className="grid grid-cols-3 pb-3 ml-3">
               <div className="">
-                <p className="font-bold">Pensioner Name</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Pensioner Name</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {clickedItem?.first_name} {clickedItem?.other_name}{' '}
                   {clickedItem?.surname}
                 </p>
               </div>
               <div className="">
-                <p className="font-bold">Personal Number</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Personal Number</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {clickedItem?.personal_number}
                 </p>
               </div>
               <div className="">
-                <p className="font-bold">Retirement Date</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Retirement Date</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {parseDate(clickedItem?.retirement_date)}
                 </p>
               </div>
               <div className="">
-                <p className="font-bold">Monthly Pension</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Monthly Pension</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {report?.monthly_pension}
                 </p>
               </div>
 
               <div className="">
-                <p className="font-bold">Unreduced Pension</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Unreduced Pension</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {formatNumber(report?.unreduced_pension)}
                 </p>
               </div>
               <div className="">
-                <p className="font-bold">Death Date</p>
-                <p className="text-gray-400 font-semibold">
+                <p className="font-semibold text-[12px]">Death Date</p>
+                <p className="text-gray-500 text-[12px] font-semibold">
                   {parseDate(clickedItem?.death_date)} {/*  */}
                 </p>
               </div>
             </div>
             <div className="w-full pb-1">
               {/* Header */}
-              <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] border-t border-b border-black font-bold pb-1">
-                <div className=" text-start pl-1">Dependant No</div>
-                <div className=" text-center">Dependant Name</div>
-                <div className=" text-center">Relationship</div>
-                <div className=" text-center">D.O.B</div>
-                <div className=" text-center">Eff Date</div>
-                <div className=" text-center">Deletion Date</div>
-                <div className=" text-center">Cessation Date</div>
-                <div className=" text-center">Monthly Pension</div>
+              <div className="grid grid-cols-[2fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] border-t border-b border-black font-semibold pb-1">
+                <div className=" text-start text-[12px] pl-1">Dependant No</div>
+                <div className=" text-center text-[12px]">Dependant Name</div>
+                <div className=" text-center text-[12px]">Relationship</div>
+                <div className=" text-center text-[12px]">D.O.B</div>
+                <div className=" text-center text-[12px]">Eff Date</div>
+                <div className=" text-center text-[12px]">Deletion Date</div>
+                <div className=" text-center text-[12px]">Cessation Date</div>
+                <div className=" text-center text-[12px]">Monthly Pension</div>
               </div>
 
               {/* Data Rows */}
@@ -364,7 +340,7 @@ const DependantsReport = ({ setOpenGratuity, clickedItem }) => {
                     className="grid grid-cols-[1fr,2fr,1fr,1fr,1fr,1fr,1fr,1fr] text-center  text-[12px]"
                   >
                     <div className="p-1 whitespace-nowrap">
-                      {benefit.pensioner_award_code}
+                      {clickedBenefit.pensioner_number}
                     </div>
                     <div className="p-1 whitespace-nowrap">
                       {benefit.beneficiary?.first_name}{' '}

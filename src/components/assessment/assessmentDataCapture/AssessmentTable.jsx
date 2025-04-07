@@ -631,9 +631,12 @@ const AssessmentTable = ({ status, statusArr }) => {
   const [openReport, setOpenReport] = useState(false);
   const [openGP178Report, setOpenGP178Report] = useState(false);
   const [openDependantsReport, setOpenDependantsReport] = useState(false);
+  // const [open]
+  // const []
+  // const [open]
 
   const baseCardHandlers = {
-    reports: () => console.log('Reports clicked'),
+    reports: () => {},
 
     submit: () => setOpenAction(true),
     //createClaim: () => setOpenAction(true),
@@ -676,23 +679,25 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenMoveStatus(true);
     },
 
-    Appendix: () => {
-      setOpenReport(1);
-    },
+    // Appendix: () => {
+    //   setOpenReport(1);
+    // },
 
     'Page 5 Report': () => {
       setOpenReport(2);
     },
-    'Dependants Computations': () => {
-      setOpenDependantsReport(true);
-    },
+    // 'Dependants Computations': () => {
+    //   setOpenDependantsReport(true);
+    // },
     'Detailed Report': () => {
       setOpenGP178Report(true);
     },
-    returnToCOB: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
+    // 'Maintenance Report': () => {},
+    // returnToCOB: () => {
+    //   setOpenAction(1);
+    //   setOpenMoveStatus(true);
+    // },
+    'Maintenance Report': () => {},
     ...(status === 5
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
@@ -1044,10 +1049,10 @@ const AssessmentTable = ({ status, statusArr }) => {
           setOpenAction={setOpenAction}
           isClaim={true}
           reportItems={[
-            'Appendix',
+            // 'Appendix',
             'Page 5 Report',
             'Detailed Report',
-            'Dependants Computations',
+            // 'Dependants Computations',
           ]}
           isClaimManagement={true}
           activeStep={clickedItem?.stage}

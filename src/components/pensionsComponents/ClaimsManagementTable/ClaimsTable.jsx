@@ -104,7 +104,7 @@ export const claimTypesMap = {
 
   0: { name: 'Principal', color: '#2ecc71' }, // Light Red
   1: { name: 'Dependant', color: '#f39c12' }, // Bright Orange
-  2: { name: 'KOD', color: '#3498db' }, // Light Blue
+  2: { name: 'Death in Service', color: '#3498db' }, // Light Blue
 };
 
 export const mapRowData = (items) =>

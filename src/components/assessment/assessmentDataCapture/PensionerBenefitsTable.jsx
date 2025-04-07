@@ -14,6 +14,11 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints from '@/components/services/setupsApi';
 import { apiService } from '@/components/services/api';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
+import { Dialog, IconButton } from '@mui/material';
+import { AttachFile } from '@mui/icons-material';
+import AppendixReport from '../reports/AppendixReport';
+import MaintenanceAppendix from '../reports/MaintenanceAppendix';
+import DependantsReport from '../reports/DependantsReport';
 
 function PensionerBenefitsTable({
   clickedItem,
@@ -28,7 +33,7 @@ function PensionerBenefitsTable({
       headerName: 'Pension Award',
       headerClass: 'prefix-header',
       filter: true,
-
+      width: 250,
       pinned: 'left',
     },
     {
@@ -157,6 +162,7 @@ function PensionerBenefitsTable({
       const data = res.data.data.map((item) => {
         return {
           ...item,
+          pensionAwardObj: item?.pensionAward,
           pensionAward: item?.pensionAward.name,
           pensioner_number: item?.pensioner_award_code,
         };
@@ -190,6 +196,7 @@ function PensionerBenefitsTable({
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [clickedRow, setClickedRow] = React.useState(null);
+  const [openReport, setOpenReport] = React.useState(false);
 
   const fields = [
     {
@@ -287,9 +294,13 @@ function PensionerBenefitsTable({
 
   const handlers = {
     viewComputationBreakdown: () => setViewBreakDown(true),
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
+    generateReport: () => {
+      clickedRow && clickedRow.pensionAwardObj?.code === 52
+        ? setOpenReport('maintenance')
+        : clickedRow && clickedRow.pensionAwardObj?.code === 47
+        ? setOpenReport('dependant')
+        : setOpenReport('pensioner');
+    },
   };
 
   return (
@@ -297,8 +308,49 @@ function PensionerBenefitsTable({
       style={{
         height: isExpanded ? '60vh' : '150px',
       }}
-      className="ag-theme-quartz mt-5 px-9"
+      className="ag-theme-quartz mt-5 px-9 relative"
     >
+      <Dialog
+        open={openReport}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '85vh',
+            minWidth: '45vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        {openReport === 'maintenance' ? (
+          <div className="flex-grow overflow-hidden">
+            <MaintenanceAppendix
+              setOpenGratuity={setOpenReport}
+              clickedItem={clickedItem}
+              clickedBenefit={clickedRow}
+            />
+          </div>
+        ) : openReport === 'pensioner' ? (
+          <div className="flex-grow overflow-hidden">
+            <AppendixReport
+              setOpenGratuity={setOpenReport}
+              clickedItem={clickedItem}
+              clickedBenefit={clickedRow}
+            />
+          </div>
+        ) : openReport === 'dependant' ? (
+          <>
+            <DependantsReport
+              setOpenGratuity={setOpenReport}
+              clickedItem={clickedItem}
+              clickedBenefit={clickedRow}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </Dialog>
       <BaseCard
         openBaseCard={openBaseCard}
         isSecondaryCard2={true}
@@ -308,8 +360,6 @@ function PensionerBenefitsTable({
         clickedItem={clickedRow}
         status={4}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
         handlers={handlers}
       >
         <BaseInputCard
@@ -321,6 +371,7 @@ function PensionerBenefitsTable({
           setOpenBaseCard={setOpenBaseCard}
         />
       </BaseCard>
+
       <AgGridReact
         columnDefs={columnDefs}
         rowData={qualifyingService}
@@ -333,7 +384,7 @@ function PensionerBenefitsTable({
           onGridReady(params);
           //  gridApiRef.current.api.showLoadingOverlay();
         }}
-        className="custom-grid ag-theme-quartz"
+        className="custom-grid ag-theme-quartz pr-2"
         rowSelection="multiple"
         // onSelectionChanged={onSelectionChanged}
         onRowClicked={(e) => {
@@ -343,6 +394,22 @@ function PensionerBenefitsTable({
           setClickedRow(e.data);
         }}
       />
+
+      {/* <div className="mt-4 absolute left-0 top-10">
+        {qualifyingService.map((row, index) => (
+          <div key={index} className="flex justify-end mb-1">
+       
+            <IconButton>
+              <AttachFile
+                sx={{
+                  color: '#006990',
+                  fontSize: '1.5rem',
+                }}
+              />
+            </IconButton>
+          </div>
+        ))}
+      </div> */}
     </div>
   );
 }

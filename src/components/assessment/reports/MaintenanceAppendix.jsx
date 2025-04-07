@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Backdrop, Button } from '@mui/material';
+import { Backdrop, Button, IconButton } from '@mui/material';
 import financeEndpoints, { apiService } from '@/components/services/financeApi';
 import assessEndpoints, {
   assessApiService,
 } from '@/components/services/assessmentApi';
 import { useAuth } from '@/context/AuthContext';
 import { formatNumber } from '@/utils/numberFormatters';
-import { Cancel, GetApp } from '@mui/icons-material';
+import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 import { Empty } from 'antd';
 import authEndpoints, { AuthApiService } from '@/components/services/authApi';
 //const html2pdf = dynamic(() => import('html2pdf.js'), { ssr: false });
 
-const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
+const MaintenanceAppendix = ({
+  setOpenGratuity,
+  clickedItem,
+  clickedBenefit,
+}) => {
   const contentRef = useRef();
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
@@ -212,6 +216,12 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
   ],
    */
 
+  /**
+   * FOR MAINTENANCE REPORT CHANGE MONTHLY PENSION AND GRATUIT
+   *
+   *
+   */
+
   return (
     <div
       className="flex-grow"
@@ -243,6 +253,13 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
           >
             Download PDF
           </Button>
+          <IconButton
+            onClick={() => {
+              generatePdfBlob();
+            }}
+          >
+            <Refresh />
+          </IconButton>
           <Button
             onClick={() => setOpenGratuity(false)}
             variant="outlined"
@@ -293,8 +310,8 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
           display: 'none',
         }}
       >
-        <div ref={contentRef} className="  p-4 max-w-3xl mx-auto ">
-          <div className="flex flex-col min-h-screen p-8 font-sans word-spacing  text-[11px] bg-white text-black max-w-4xl mx-auto ">
+        <div ref={contentRef} className="  max-w-3xl mx-auto ">
+          <div className="flex flex-col min-h-screen  font-sans word-spacing  text-[11px] bg-white text-black max-w-4xl mx-auto ">
             <div className="text-center mx-auto flex flex-col items-center font-sans mb-4">
               <h1 className="font-bold text-base">MINISTRY OF FINANCE</h1>
               <img
@@ -320,7 +337,7 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
                     <p>
                       Pension Number:{' '}
                       <strong className="font-normal ml-3">
-                        {item?.pensioner_award_code}
+                        {clickedBenefit?.pensioner_number}
                       </strong>
                     </p>
                   ))}
@@ -329,7 +346,7 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
                 <p>
                   Pensioner Name:{' '}
                   <strong className="font-normal ml-3">
-                    {clickedItem?.first_name} {clickedItem?.surname}
+                    {clickedBenefit?.maintenance?.maintainee_name}
                   </strong>
                 </p>
               </div>
@@ -360,7 +377,7 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
                   <div className="flex justify-between">
                     <strong className="w-1/2">Gratuity/Lumpsum:</strong>
                     <span className="w-1/2 text-right">
-                      {formatNumber(report?.lumpsum_amount)}
+                      {formatNumber(clickedBenefit?.lumpsum_amount)}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -372,7 +389,7 @@ const MaintenanceAppendix = ({ setOpenGratuity, clickedItem }) => {
                   <div className="flex justify-between">
                     <strong className="w-1/2">Monthly Pension:</strong>
                     <span className="w-1/2 text-right">
-                      {formatNumber(report?.monthly_pension)}
+                      {formatNumber(clickedBenefit?.monthly_pension)}
                     </span>
                   </div>{' '}
                   <div className="flex justify-between">
