@@ -271,7 +271,7 @@ const BaseTable = ({
         ? {} // No filter for "All"
         : {
             'filterCriterion.criterions[0].propertyName':
-              'igc_submission_status',
+              'igc_stage_type_map.igc_stage',
             'filterCriterion.criterions[0].propertyValue': activeSegment,
             'filterCriterion.criterions[0].criterionType': 0,
           };
