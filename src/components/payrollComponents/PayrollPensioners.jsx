@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -11,6 +11,11 @@ import payrollEndpoints, {
 } from '@/components/services/payrollApi';
 import { formatNumber } from '@/utils/numberFormatters';
 import { message } from 'antd';
+import BaseCollapse from '../baseComponents/BaseCollapse';
+import PensionerBenefitsTable from '../assessment/assessmentDataCapture/PensionerBenefitsTable';
+import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
+import endpoints, { apiService } from '../services/setupsApi';
+// import AssessmentCard from '../assessment/assessmentDataCapture/AssessmentCard';
 
 const PayrollPensioners = ({ stage, status }) => {
   const columnDefs = [
@@ -34,6 +39,15 @@ const PayrollPensioners = ({ stage, status }) => {
       },
     },
 
+    {
+      field: 'pensionerCode',
+      headerName: 'Pensioner Code',
+      headerClass: 'prefix-header',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className="text-primary">{params.value}</p>;
+      },
+    },
     {
       field: 'PensionerName',
       headerName: 'Pensioner Name',
@@ -92,10 +106,13 @@ const PayrollPensioners = ({ stage, status }) => {
     return data.map((item, index) => ({
       no: index + 1,
       ...item,
+      id_claim: item?.coreClaimId,
     }));
   };
 
   const [selectedRows, setSelectedRows] = React.useState([]);
+
+  const [openAction, setOpenAction] = React.useState(12);
 
   const baseCardHandlers = {
     admit: async () => {
@@ -131,6 +148,8 @@ const PayrollPensioners = ({ stage, status }) => {
           console.log(response);
         } catch (error) {
           console.log(error);
+        } finally {
+          setOpenAction((prev) => prev + 1);
         }
       }
     },
@@ -140,7 +159,7 @@ const PayrollPensioners = ({ stage, status }) => {
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
-    ? 'Payroll - ' + clickedItem.period
+    ? clickedItem.corePayrollNo
     : 'Create New Main Payroll';
 
   const fields = [
@@ -187,12 +206,7 @@ const PayrollPensioners = ({ stage, status }) => {
       type: 'amount',
       disabled: true,
     },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'text',
-      disabled: true,
-    },
+
     {
       name: 'startDate',
       label: 'Start Date',
@@ -229,21 +243,40 @@ const PayrollPensioners = ({ stage, status }) => {
       type: 'date',
       disabled: true,
     },
-    {
-      name: 'lastPayGrossAmount',
-      label: 'Last Pay Gross Amount',
-      type: 'amount',
-      disabled: true,
-    },
-    {
-      name: 'lastPayNetAmount',
-      label: 'Last Pay Net Amount',
-      type: 'amount',
-      disabled: true,
-    },
+    // {
+    //   name: 'lastPayGrossAmount',
+    //   label: 'Last Pay Gross Amount',
+    //   type: 'amount',
+    //   disabled: true,
+    // },
+    // {
+    //   name: 'lastPayNetAmount',
+    //   label: 'Last Pay Net Amount',
+    //   type: 'amount',
+    //   disabled: true,
+    // },
   ];
 
   const [openViewAll, setOpenViewAll] = React.useState(false);
+  const [viewBreakDown, setViewBreakDown] = React.useState(false);
+  const [clickedClaim, setClickedClaim] = React.useState(null);
+
+  const fetchProspectivePensionerDetils = async (id) => {
+    try {
+      const response = await apiService.get(endpoints.getClaimById(id));
+      if (response.status === 200) {
+        setClickedClaim(response.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (clickedItem) {
+      fetchProspectivePensionerDetils(clickedItem.coreClaimId);
+    }
+  }, [clickedItem]);
 
   return (
     <div className="">
@@ -257,17 +290,58 @@ const PayrollPensioners = ({ stage, status }) => {
         isClaim={true}
       >
         {clickedItem ? (
-          <div className="flex flex-col gap-2">
-            <div className=" overflow-y-auto ">
-              <BaseInputCard
-                fields={fields}
-                apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
-                postApiFunction={payrollApiService.post}
-                clickedItem={clickedItem}
-                useRequestBody={true}
-                setOpenBaseCard={setOpenBaseCard}
-              />
-            </div>
+          <div className="">
+            <AssessmentCard
+              claim={
+                clickedClaim
+                  ? {
+                      ...clickedClaim,
+                      prospectivePensionerId:
+                        clickedItem?.prospective_pensioner_id,
+                      id_claim: clickedItem?.id_claim ?? null,
+                    }
+                  : null
+              }
+              clickedItem={clickedClaim?.prospectivePensioner}
+              setOpenBaseCard={setOpenBaseCard}
+              childTitle="Payroll Details"
+              isIgc={false}
+              isPayroll={true}
+            >
+              <BaseCollapse
+                name="Pensioner Benefits"
+                expandHandler={() =>
+                  handleExpand(
+                    <PensionerBenefitsTable
+                      clickedItem={clickedItem}
+                      setViewBreakDown={setViewBreakDown}
+                      isExpanded={true}
+                    />,
+                    'Pensioner Benefits'
+                  )
+                }
+              >
+                <PensionerBenefitsTable
+                  coreBenefitId={clickedItem?.coreBenefitId}
+                  clickedItem={clickedItem}
+                  setViewBreakDown={setViewBreakDown}
+                />
+              </BaseCollapse>
+              <BaseCollapse className="mt-4" name="Payroll Details">
+                <div className="flex flex-col gap-2 px-4">
+                  <div className=" overflow-y-auto ">
+                    <BaseInputCard
+                      fields={fields}
+                      apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
+                      postApiFunction={payrollApiService.post}
+                      clickedItem={clickedItem}
+                      useRequestBody={true}
+                      setOpenBaseCard={setOpenBaseCard}
+                    />
+                  </div>
+                </div>
+              </BaseCollapse>
+            </AssessmentCard>
           </div>
         ) : (
           <BaseInputCard
@@ -281,6 +355,7 @@ const PayrollPensioners = ({ stage, status }) => {
         )}
       </BaseCard>
       <BaseTable
+        openAction={openAction}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}

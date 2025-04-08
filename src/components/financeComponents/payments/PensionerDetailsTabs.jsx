@@ -52,6 +52,7 @@ function AssessmentCard({
   setChildRevisedData,
   clickedIgc,
   isNormalPreclaims,
+  isPayroll,
 }) {
   const [retireeId, setRetireeId] = useState(null);
   const [activeKey, setActiveKey] = useState('1');
@@ -157,6 +158,10 @@ function AssessmentCard({
   useEffect(() => {
     console.log('IGC Has Been Edited:', igcEdited);
   }, [igcEdited]);
+
+  useEffect(() => {
+    console.log('Here is the clicked item 💥💥', claim);
+  }, [clickedItem]);
   return (
     <div className="p-2  overflow-auto">
       <div>
@@ -234,7 +239,7 @@ function AssessmentCard({
                       clickedItem={clickedItem}
                       openBaseCard={openBaseCard}
                     />
-                  ) : isNormalPreclaims ? (
+                  ) : isNormalPreclaims || isPayroll ? (
                     <>
                       {' '}
                       <NewPreclaim
@@ -341,9 +346,14 @@ function AssessmentCard({
                       key="3"
                     >
                       <AddPensionersWorkHistory
-                        enabled={isSectionEnabled('WORK_HISTORY')}
+                        enabled={isSectionEnabled('WORK_HISTORY') && isIgc}
                         status={clickedItem.notification_status}
-                        id={activeRetireeId || clickedItem?.id}
+                        id={
+                          isPayroll
+                            ? claim?.prospective_pensioner_id
+                            : activeRetireeId ||
+                              clickedItem?.prospectivePensionerId
+                        }
                         name={clickedItem ? clickedItem.first_name : undefined}
                         moveToNextTab={moveToNextTab}
                         moveToPreviousTab={moveToPreviousTab}

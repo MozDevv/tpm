@@ -25,6 +25,7 @@ function PensionerBenefitsTable({
   computed,
   setViewBreakDown,
   isExpanded,
+  coreBenefitId,
 }) {
   const [qualifyingService, setQualifyingService] = useState([]);
   const columnDefs = [
@@ -374,7 +375,11 @@ function PensionerBenefitsTable({
 
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={qualifyingService}
+        rowData={
+          coreBenefitId
+            ? qualifyingService.filter((item) => item.id === coreBenefitId)
+            : qualifyingService
+        }
         pagination={false}
         domLayout="normal"
         alwaysShowHorizontalScroll={true}

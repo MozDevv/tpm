@@ -9,7 +9,6 @@ import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
-import { notificationStatusMap } from '../../preclaims/Preclaims';
 
 const IgcBeneficiaries = () => {
   const statusIcons = {
@@ -17,6 +16,23 @@ const IgcBeneficiaries = () => {
     1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
     2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
     3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  };
+  /**{
+    UNNOTIFIED,
+    NOTIFIED,
+    SUBMITTED,
+    PENDING_CLAIM_CREATION,
+    CLAIM_CREATED,
+} */
+  const notificationStatusMap = {
+    0: { name: 'UNNOTIFIED', color: '#e74c3c' }, // Light Red
+
+    1: { name: 'NOTIFIED', color: '#3498db' }, // Light Blue
+    2: { name: 'SUBMITTED', color: '#970FF2' }, // Amethyst
+    // 4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
+    3: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
+    4: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
+    // 7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
   };
 
   const columnDefs = [

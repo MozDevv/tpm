@@ -1654,6 +1654,51 @@ function NewPreclaim({
                                           </MenuItem>
                                         ))}
                                       </TextField>
+                                    ) : field.type === 'autocomplete' &&
+                                      field.addNew ? (
+                                      <Autocomplete
+                                        options={field.children}
+                                        getOptionLabel={(option) => option.name}
+                                        onChange={(event, newValue) => {
+                                          handleInputChange({
+                                            target: {
+                                              name: field.name,
+                                              value: newValue
+                                                ? newValue.id
+                                                : '',
+                                            },
+                                          });
+                                        }}
+                                        PaperComponent={(props) => (
+                                          <Paper
+                                            {...props}
+                                            style={{
+                                              maxHeight: 300,
+                                              overflow: 'auto',
+                                            }}
+                                          />
+                                        )}
+                                        disabled={!canEdit}
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            size="small"
+                                            fullWidth
+                                            onBlur={handleSubmit}
+                                            name={field.name}
+                                            disabled={!canEdit}
+                                            error={!!errors[field.name]}
+                                            helperText={errors[field.name]}
+                                          />
+                                        )}
+                                        value={
+                                          field.children.find(
+                                            (option) =>
+                                              option.id === formData[field.name]
+                                          ) || null
+                                        }
+                                      />
                                     ) : field.type === 'autocomplete' ? (
                                       <Autocomplete
                                         options={field.children}

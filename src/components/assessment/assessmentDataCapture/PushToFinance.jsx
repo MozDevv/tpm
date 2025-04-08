@@ -148,15 +148,14 @@ function PushToFinance({
                       </TableCell>
 
                       <TableCell>
-                        {doc.first_name} {doc.surname}
+                        {doc.prospectivePensioner?.first_name}{' '}
+                        {doc?.prospectivePensioner?.surname}
                       </TableCell>
 
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                        {
-                          doc?.prospectivePensionerAwards[0]?.pension_award
-                            ?.prefix
-                        }
-                        {doc?.pensioner_number}
+                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                          {doc?.pensioner_number ?? ''}
+                        </TableCell>
                       </TableCell>
                     </TableRow>
                   ))}
