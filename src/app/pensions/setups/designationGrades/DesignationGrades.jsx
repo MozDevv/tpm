@@ -60,7 +60,7 @@ const columnDefs = [
   },
 ];
 
-const DesignationGrades = () => {
+const DesignationGrades = ({ isImported, setImportOpen }) => {
   const [inputData, setInputData] = React.useState({});
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -142,7 +142,15 @@ const DesignationGrades = () => {
     },
   };
 
-  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+  const [openBaseCard, setOpenBaseCard] = React.useState(
+    isImported ? true : false
+  );
+
+  useEffect(() => {
+    if (!openBaseCard && setImportOpen) {
+      setImportOpen(false);
+    }
+  }, [openBaseCard]);
   const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem ? clickedItem?.name : 'Create New Designation';
@@ -243,6 +251,7 @@ const DesignationGrades = () => {
         isUserComponent={false}
         deleteApiEndpoint={endpoints.deleteDesignation(clickedItem?.id)}
         deleteApiService={apiService.delete}
+        isSecondaryCard2={isImported}
       >
         {clickedItem ? (
           <DesignationGradesCard
@@ -255,30 +264,36 @@ const DesignationGrades = () => {
           />
         ) : (
           <BaseInputCard
+            isImported={isImported}
+            setImportOpen={setImportOpen}
             fields={fields}
             apiEndpoint={endpoints.createDesignation}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
+            setClickedItem={setClickedItem}
             setOpenBaseCard={setOpenBaseCard}
+            openBaseCard={openBaseCard}
             useRequestBody={true}
             setInputData={setInputData}
           />
         )}
       </BaseCard>
-      <BaseTable
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDesignations}
-        fetchApiService={apiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="Designation & Grades"
-        currentTitle="Designation & Grades"
-      />
+      {!isImported && (
+        <BaseTable
+          openBaseCard={openBaseCard}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          setOpenBaseCard={setOpenBaseCard}
+          columnDefs={columnDefs}
+          fetchApiEndpoint={endpoints.getDesignations}
+          fetchApiService={apiService.get}
+          transformData={transformData}
+          pageSize={30}
+          handlers={handlers}
+          breadcrumbTitle="Designation & Grades"
+          currentTitle="Designation & Grades"
+        />
+      )}
     </div>
   );
 };

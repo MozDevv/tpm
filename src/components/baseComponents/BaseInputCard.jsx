@@ -32,7 +32,10 @@ import {
 } from '@mui/icons-material';
 import MuiPhoneNumber from 'mui-phone-number';
 import financeEndpoints, { apiService } from '../services/financeApi';
-import { useFilteredDataStore } from '@/zustand/store';
+import {
+  useAutopopulateNameStore,
+  useFilteredDataStore,
+} from '@/zustand/store';
 import { BASE_CORE_API } from '@/utils/constants';
 import { baseInputValidator } from './BaseInputValidator';
 
@@ -40,7 +43,7 @@ const BaseInputCard = ({
   handlePreview,
   fields,
   apiEndpoint,
-
+  setImportOpen,
   postApiFunction,
   clickedItem,
   setOpenBaseCard,
@@ -65,6 +68,8 @@ const BaseInputCard = ({
   setCloseProp,
   setClickedItem,
   setReFetchData,
+  openBaseCard,
+  isImported,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     acc[field.name] = field.default !== undefined ? field.default : '';
@@ -77,6 +82,12 @@ const BaseInputCard = ({
   const [formData, setFormData] = useState(initialFormData);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (!openBaseCard) {
+      setImportOpen && setImportOpen(false);
+    }
+  }, [openBaseCard]);
 
   useEffect(() => {
     if (clickedItem) {
@@ -452,6 +463,12 @@ const BaseInputCard = ({
         ) {
           setClickedItem &&
             setClickedItem({ ...formattedFormData, id: res.data.data });
+
+          // if (isImported) {
+          //   // setImportOpen(false);
+          //   return; // Properly terminate execution here
+          // }
+
           refreshData && refreshData(res.data.data.id);
           setReFetchData && setReFetchData((prev) => prev + 1);
           fetchData && fetchData();
@@ -505,6 +522,7 @@ const BaseInputCard = ({
       console.log(error);
     }
   };
+
   return (
     <div className="py-6 px-15">
       {inputTitle && (

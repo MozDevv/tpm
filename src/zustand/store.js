@@ -27,3 +27,5 @@ export const useCapNameStore = stateFactory('capName');
 export const useLoadedRetireeDetailsStore = stateFactory(
   'loadedRetireeDetails'
 );
+
+export const useAutopopulateNameStore = stateFactory('autopopulateName');

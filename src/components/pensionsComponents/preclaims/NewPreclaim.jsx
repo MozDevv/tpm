@@ -53,7 +53,10 @@ import { toProperCase } from '@/utils/numberFormatters';
 import AddBeneficiaries from './AddBeneficiaries';
 import { validateField } from './PreclaimsValidator';
 import { FieldDocuments } from '../FieldDocuments';
-import { useCapNameStore } from '@/zustand/store';
+import { useAutopopulateNameStore, useCapNameStore } from '@/zustand/store';
+import DesignationGradesCard from '@/app/pensions/setups/designationGrades/DesignationGradesCard';
+import DesignationGrades from '@/app/pensions/setups/designationGrades/DesignationGrades';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
 dayjs.extend(isSameOrBefore);
 
@@ -561,6 +564,7 @@ function NewPreclaim({
   const [designations, setDesignations] = useState([]);
   const [postalAddress, setPostalAddress] = useState([]);
   const [exitGrounds, setExitGrounds] = useState([]);
+  const [openAddNew, setOpenAddNew] = useState(false);
   const fetchCountiesAndContituencies = async () => {
     try {
       const res = await apiService.get(endpoints.getCounties, {
@@ -616,6 +620,10 @@ function NewPreclaim({
       console.error('Error fetching Designations:', error);
     }
   };
+
+  useEffect(() => {
+    fetchDesignations();
+  }, [openAddNew]);
 
   const fetchExitGrounds = async () => {
     try {
@@ -1265,12 +1273,22 @@ function NewPreclaim({
 
   const { capName: zustandCapName } = useCapNameStore();
 
+  const { autopopulateName, setAutopopulateName } = useAutopopulateNameStore();
+
   useEffect(() => {
     console.log('This is the Cap Name', zustandCapName);
   }, []);
 
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
+      {openAddNew && (
+        <DesignationGrades
+          isImported={true}
+          // importOpen={openBaseCard}
+          setImportOpen={setOpenAddNew}
+        />
+      )}
+
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
         <IconButton
           sx={{
@@ -1655,30 +1673,71 @@ function NewPreclaim({
                                         ))}
                                       </TextField>
                                     ) : field.type === 'autocomplete' &&
-                                      field.addNew ? (
+                                      field.isAddNew ? (
                                       <Autocomplete
+                                        freeSolo
                                         options={field.children}
-                                        getOptionLabel={(option) => option.name}
+                                        getOptionLabel={(option) =>
+                                          typeof option === 'string'
+                                            ? option
+                                            : option.name
+                                        }
                                         onChange={(event, newValue) => {
-                                          handleInputChange({
-                                            target: {
-                                              name: field.name,
-                                              value: newValue
-                                                ? newValue.id
-                                                : '',
-                                            },
-                                          });
+                                          if (typeof newValue === 'string') {
+                                            // User typed a new value
+                                            handleInputChange({
+                                              target: {
+                                                name: field.name,
+                                                value: newValue, // Set the typed value
+                                              },
+                                            });
+                                          } else if (
+                                            newValue &&
+                                            newValue.inputValue
+                                          ) {
+                                            // User clicked "Add New"
+                                            setAutopopulateName({
+                                              name: newValue.inputValue,
+                                            });
+                                            setOpenAddNew(true); // Open the "Add New" dialog
+                                          } else {
+                                            // User selected an existing option
+                                            handleInputChange({
+                                              target: {
+                                                name: field.name,
+                                                value: newValue
+                                                  ? newValue.id
+                                                  : '', // Set the selected option's ID
+                                              },
+                                            });
+                                          }
                                         }}
-                                        PaperComponent={(props) => (
-                                          <Paper
-                                            {...props}
-                                            style={{
-                                              maxHeight: 300,
-                                              overflow: 'auto',
-                                            }}
-                                          />
-                                        )}
-                                        disabled={!canEdit}
+                                        filterOptions={(options, params) => {
+                                          const filtered = options.filter(
+                                            (option) =>
+                                              option.name
+                                                .toLowerCase()
+                                                .includes(
+                                                  params.inputValue.toLowerCase()
+                                                )
+                                          );
+
+                                          if (
+                                            params.inputValue !== '' &&
+                                            !filtered.some(
+                                              (option) =>
+                                                option.name ===
+                                                params.inputValue
+                                            )
+                                          ) {
+                                            filtered.push({
+                                              inputValue: params.inputValue,
+                                              name: `+ Add "${params.inputValue}"`,
+                                            });
+                                          }
+
+                                          return filtered;
+                                        }}
                                         renderInput={(params) => (
                                           <TextField
                                             {...params}
@@ -1691,6 +1750,27 @@ function NewPreclaim({
                                             error={!!errors[field.name]}
                                             helperText={errors[field.name]}
                                           />
+                                        )}
+                                        renderOption={(props, option) => (
+                                          <li
+                                            {...props}
+                                            style={{
+                                              backgroundColor: option.inputValue
+                                                ? '#f0f0f0'
+                                                : 'white', // Style for the "Add New" option
+                                              fontWeight: option.inputValue
+                                                ? 'normal'
+                                                : 'normal',
+                                              color: option.inputValue
+                                                ? '#006990'
+                                                : 'black',
+                                              cursor: 'pointer', // Change cursor for "Add New" option
+                                            }}
+                                          >
+                                            {typeof option === 'string'
+                                              ? option
+                                              : option.name}
+                                          </li>
                                         )}
                                         value={
                                           field.children.find(

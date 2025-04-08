@@ -356,6 +356,7 @@ export const createSections = (
         name: 'designation_id',
         type: 'autocomplete',
         children: filteredDesignations,
+        isAddNew: true,
         pensionCap: [
           'CAP189',
           'CAP199',
