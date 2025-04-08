@@ -117,9 +117,9 @@ const PayrollPensioners = ({ stage, status }) => {
   const baseCardHandlers = {
     admit: async () => {
       try {
-        const response = await payrollApiService.post(payrollEndpoints.admit, {
-          id: clickedItem.payrollId,
-        });
+        const response = await payrollApiService.post(
+          payrollEndpoints.admit(clickedItem.payrollId)
+        );
         if (response.status === 200) {
           message.success('Admitted successfully');
         }
