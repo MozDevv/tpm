@@ -464,11 +464,6 @@ const BaseInputCard = ({
           setClickedItem &&
             setClickedItem({ ...formattedFormData, id: res.data.data });
 
-          // if (isImported) {
-          //   // setImportOpen(false);
-          //   return; // Properly terminate execution here
-          // }
-
           refreshData && refreshData(res.data.data.id);
           setReFetchData && setReFetchData((prev) => prev + 1);
           fetchData && fetchData();
