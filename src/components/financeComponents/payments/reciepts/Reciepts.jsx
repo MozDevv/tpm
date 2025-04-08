@@ -273,6 +273,14 @@ const Reciepts = ({ status }) => {
       },
     },
     {
+      headerName: 'Receipt No',
+      field: 'recieptNo',
+
+      cellRenderer: (params) => {
+        return <p className=" text-primary ">{params.value}</p>;
+      },
+    },
+    {
       headerName: 'Reciept Date',
       field: 'recieptDate',
 

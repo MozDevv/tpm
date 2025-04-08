@@ -79,6 +79,13 @@ const PayrollPensioners = ({ stage, status }) => {
       headerName: 'Status',
       headerClass: 'prefix-header',
       flex: 1,
+
+      cellRenderer: (params) => {
+        //Admitted0, Not Admitted1
+        const status = params.data?.status === 0 ? 'Admitted' : 'Not Admitted';
+        const statusClass = params.data?.status === 0 ? 'text-green-500' : '';
+        return <p className={`text-center ${statusClass}`}>{status}</p>;
+      },
     },
 
     {
