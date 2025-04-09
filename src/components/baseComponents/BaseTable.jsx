@@ -66,6 +66,8 @@ const BaseTable = ({
   isPayroll,
   excelTitle,
   isIgc,
+  segmentFilterParameter = null,
+  segmentOptions,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -116,16 +118,48 @@ const BaseTable = ({
   const router = useRouter();
   const gridApiRef = useRef(null);
   const [gridApi, setGridApi] = useState(null);
+  const [activeSegment, setActiveSegment] = useState(0);
 
   useEffect(() => {
-    fetchData();
-  }, [pageNumber, openBaseCard, openAction]);
+    // Check if segment filtering is enabled
+    if (segmentFilterParameter && activeSegment !== -1) {
+      const filter = isIgc
+        ? {
+            'filterCriterion.criterions[0].propertyName':
+              'igc_stage_type_map.igc_stage',
+            'filterCriterion.criterions[0].propertyValue': activeSegment,
+            'filterCriterion.criterions[0].criterionType': 0,
+          }
+        : segmentFilterParameter
+        ? {
+            [segmentFilterParameter]: activeSegment,
+          }
+        : {};
 
-  useEffect(() => {
-    if (!openPostToGL) {
+      console.log('filter', filter);
+      console.log('activeSegment', activeSegment);
+
+      fetchData(filter);
+    } else if (!openPostToGL || !openApproveDialog || openSubGroup) {
+      // Fetch data when specific states change
+      fetchData();
+    } else {
+      // Default fetch without filters
       fetchData();
     }
-  }, [openPostToGL]);
+  }, [
+    pageNumber,
+    openBaseCard,
+    openAction,
+    activeSegment,
+    uploadExcel,
+    refreshData,
+    openPostToGL,
+    openApproveDialog,
+    openSubGroup,
+    segmentFilterParameter,
+    isIgc,
+  ]);
 
   const handleApplyFilters = async (filterParams) => {
     await fetchData(filterParams);
@@ -169,15 +203,6 @@ const BaseTable = ({
       console.error('Error fetching data:', error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [uploadExcel, refreshData]);
-  useEffect(() => {
-    if (!openApproveDialog) {
-      fetchData();
-    }
-  }, [openApproveDialog]);
 
   const resetFilters = () => {
     setFilterColumn('');
@@ -246,38 +271,11 @@ const BaseTable = ({
     applyKeywordFilter();
   }, [rowData, searchedKeyword]);
 
-  useEffect(() => {
-    if (openSubGroup) {
-      fetchData();
-    }
-  }, [openSubGroup]);
-
   const loadingOverlayComponentParams = useMemo(() => {
     return { loadingMessage: 'Loading...' };
   }, []);
 
   const [excelLoading, setExcelLoading] = useState(false);
-
-  const [activeSegment, setActiveSegment] = useState(() => {
-    // Initialize from localStorage or default to -1 (All)
-    return parseInt(localStorage.getItem('activeSegment')) || -1;
-  });
-  useEffect(() => {
-    localStorage.setItem('activeSegment', activeSegment);
-
-    // Construct the filter conditionally
-    const filter =
-      activeSegment === -1
-        ? {} // No filter for "All"
-        : {
-            'filterCriterion.criterions[0].propertyName':
-              'igc_stage_type_map.igc_stage',
-            'filterCriterion.criterions[0].propertyValue': activeSegment,
-            'filterCriterion.criterions[0].criterionType': 0,
-          };
-
-    fetchData(filter);
-  }, [activeSegment]);
 
   setTimeout(() => {
     if (gridApiRef.current.api) {
@@ -368,7 +366,7 @@ const BaseTable = ({
           />
         </Collapse>
         <div className="flex justify-around flex-col">
-          {isIgc && (
+          {isIgc ? (
             <div className="pl-2">
               <Segmented
                 options={[
@@ -438,7 +436,67 @@ const BaseTable = ({
       }
     `}</style>
             </div>
-          )}
+          ) : segmentFilterParameter && segmentOptions ? (
+            <div className="pl-2">
+              <Segmented
+                options={segmentOptions}
+                value={activeSegment}
+                onChange={(value) => setActiveSegment(value)}
+                className="custom-segmented"
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px',
+                  padding: '4px',
+                  border: '1px solid #ccc',
+                }}
+              />
+              <style>{`
+    .custom-segmented {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .custom-segmented .ant-segmented-item {
+      padding: 3px 16px;
+      font-size: 13px;
+      color: #000000;
+      background-color: transparent !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      z-index: 1;
+      position: relative;
+    }
+    
+    .custom-segmented .ant-segmented-item-selected {
+      color: #006990 !important;
+      font-weight: 600;
+      background-color: transparent !important;
+    }
+    
+    .custom-segmented .ant-segmented-item:hover:not(.ant-segmented-item-selected) {
+      color: #006990;
+    }
+    
+    .custom-segmented .ant-segmented-thumb {
+      background-color: rgba(0, 105, 144, 0.2) !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    
+    /* Fix for the active item's background */
+    .custom-segmented .ant-segmented-item-selected::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 105, 144, 0.2);
+      border-radius: 6px;
+      z-index: -1;
+    }
+  `}</style>
+            </div>
+          ) : null}
           <div
             className="ag-theme-quartz"
             style={{

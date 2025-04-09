@@ -31,14 +31,20 @@ function PayrollPensionerDetails({ clickedItem }) {
   const columnDefs = [
     {
       field: 'pensionerNo',
-      headerName: 'Pensioner Number',
-      headerClass: 'prefix-header',
-      flex: 1,
-      // valueFormatter : if award Prefix append to pensionerNo
-      valueFormatter: (params) => {
-        return params.data.awardPrefix
-          ? params.data.awardPrefix + params.data.pensionerNo
-          : params.data.pensionerNo;
+      headerName: 'Pensioner No',
+      width: 200,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      pinned: 'left',
+      cellRenderer: (params) => {
+        return (
+          <p className="text-primary font-semibold underline ">
+            {params.data.awardPrefix
+              ? params.data.awardPrefix + params.data.pensionerNo
+              : params.data.pensionerNo}
+          </p>
+        );
       },
     },
 
@@ -69,6 +75,38 @@ function PayrollPensionerDetails({ clickedItem }) {
       headerName: 'Status',
       headerClass: 'prefix-header',
       flex: 1,
+      cellRenderer: (params) => {
+        const statusMap = {
+          0: { label: 'Unadmitted', color: '#007bff' }, // Blue
+          1: { label: 'Active', color: '#28a745' }, // Bright Green
+          2: { label: 'Suspended', color: '#ffc107' }, // Yellow
+          3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
+          4: { label: 'Stopped', color: '#6f42c1' }, // Violet
+          5: { label: 'Deleted', color: '#343a40' }, // Dark Gray
+        };
+
+        const status = statusMap[params.value] || {
+          label: 'Unknown',
+          color: 'gray',
+        };
+
+        return (
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              display: 'inline-flex', // Use inline-flex for alignment
+              alignItems: 'center', // Vertically center the text
+              justifyContent: 'center', // Horizontally center the text
+              width: '100%', // Ensure it takes the full width of the cell
+              height: '100%', // Ensure it takes the full height of the cell
+            }}
+          >
+            {status.label}
+          </span>
+        );
+      },
     },
     {
       field: 'netAmount',

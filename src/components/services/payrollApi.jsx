@@ -50,6 +50,7 @@ const payrollEndpoints = {
   sendPeriodForApproval: (id) =>
     `/api/Application/SendForApproval?periodId=${id}`,
   getAllPayrollPensinoers: '/api/Pensioner/All',
+  getAllPayrollPensinoersPgd: '/api/Pensioner/AllPgd',
   admit: (id) => '/api/Pensioner/Admit?id=' + id,
   getEligiblePensioners: (id) =>
     `/api/Pensioner/PayrollEligiblePensioners?payrollTypeId=${id}`,

@@ -84,12 +84,37 @@ const PayrollPensioners = ({
       headerName: 'Status',
       headerClass: 'prefix-header',
       flex: 1,
-
       cellRenderer: (params) => {
-        //Admitted0, Not Admitted1
-        const status = params.data?.status === 0 ? 'Admitted' : 'Not Admitted';
-        const statusClass = params.data?.status === 0 ? 'text-green-500' : '';
-        return <p className={`text-center ${statusClass}`}>{status}</p>;
+        const statusMap = {
+          0: { label: 'Unadmitted', color: '#007bff' }, // Blue
+          1: { label: 'Active', color: '#28a745' }, // Bright Green
+          2: { label: 'Suspended', color: '#ffc107' }, // Yellow
+          3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
+          4: { label: 'Stopped', color: '#6f42c1' }, // Violet
+          5: { label: 'Deleted', color: '#343a40' }, // Dark Gray
+        };
+
+        const status = statusMap[params.value] || {
+          label: 'Unknown',
+          color: 'gray',
+        };
+
+        return (
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              display: 'inline-flex', // Use inline-flex for alignment
+              alignItems: 'center', // Vertically center the text
+              justifyContent: 'center', // Horizontally center the text
+              width: '100%', // Ensure it takes the full width of the cell
+              height: '100%', // Ensure it takes the full height of the cell
+            }}
+          >
+            {status.label}
+          </span>
+        );
       },
     },
 
@@ -296,6 +321,13 @@ const PayrollPensioners = ({
       fetchProspectivePensionerDetils(clickedItemParent?.coreClaimId);
     }
   }, [clickedItemParent]);
+
+  const segmentOptions = [
+    { label: 'Main Payroll', value: 0 },
+    { label: 'Injury Payroll', value: 1 },
+    { label: 'Dependent Payroll', value: 2 },
+    { label: 'Agency Payroll', value: 3 },
+  ];
   return (
     <div className="">
       {isImported ? (
@@ -464,15 +496,18 @@ const PayrollPensioners = ({
             setClickedItem={setClickedItem}
             setOpenBaseCard={setOpenBaseCard}
             columnDefs={columnDefs}
-            fetchApiEndpoint={payrollEndpoints.getAllPayrollPensinoers}
+            fetchApiEndpoint={payrollEndpoints.getAllPayrollPensinoersPgd}
             fetchApiService={payrollApiService.get}
             transformData={transformData}
             pageSize={30}
             handlers={handlers}
             breadcrumbTitle="Pensioners Listing"
             currentTitle="Pensioners List"
-            isPayroll={true}
+            // isPayroll={true}
             onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+            segmentOptions={segmentOptions}
+            segmentFilterParameter="types"
+            // segmentFilterValue={0}
           />
         </>
       )}
