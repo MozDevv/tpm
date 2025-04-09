@@ -29,3 +29,5 @@ export const useLoadedRetireeDetailsStore = stateFactory(
 );
 
 export const useAutopopulateNameStore = stateFactory('autopopulateName');
+
+export const useStatusStore = stateFactory('status');

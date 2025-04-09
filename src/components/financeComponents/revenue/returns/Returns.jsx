@@ -899,6 +899,17 @@ const Returns = ({ status }) => {
   "chequeOrEftDate": "2025-03-26T10:17:58.991Z",
   "chequeOrEftNo": "string"
 } */
+    /**{
+  "pensionerName": "string",
+  "pensionerNo": "string",
+  "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "paymentDate": "2025-04-09T14:21:35.661Z",
+  "monthId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "paymentReturnReasonId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "amount": 0,
+  "chequeOrEftNo": "string",
+  "returnOwnertType": 0
+} */
     {
       label: 'Pensioner No',
       value: 'pensionerNo',
@@ -942,28 +953,21 @@ const Returns = ({ status }) => {
     },
 
     {
-      label: 'Payment Method',
-      value: 'paymentMethodId',
-      type: 'select',
-      required: true,
-      options:
-        paymentMethods &&
-        paymentMethods.map((method) => ({
-          id: method.id,
-          name: method.description,
-        })),
-    },
-    {
-      label: 'Cheque/EFT Date',
-      value: 'chequeOrEftDate',
-      type: 'date',
-      required: true,
-    },
-    {
       label: 'Cheque/EFT No',
       value: 'chequeOrEftNo',
       type: 'text',
       required: true,
+    },
+    {
+      label: 'Return Owner Type',
+      value: 'returnOwnerType',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Pensioner' },
+        { id: 1, name: 'Dependant' },
+        { id: 2, name: 'WCPS' },
+        { id: 3, name: 'Secondment' },
+      ],
     },
   ];
 

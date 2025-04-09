@@ -35,6 +35,7 @@ import { Checkbox, message, Segmented } from 'antd';
 import axios from 'axios';
 import FilterComponent from './FilterComponent';
 import BaseExcelComponent from './BaseExcelComponent';
+import { useStatusStore } from '@/zustand/store';
 
 const BaseTable = ({
   columnDefs,
@@ -119,8 +120,10 @@ const BaseTable = ({
   const gridApiRef = useRef(null);
   const [gridApi, setGridApi] = useState(null);
   const [activeSegment, setActiveSegment] = useState(0);
+  const { setStatus } = useStatusStore();
 
   useEffect(() => {
+    setStatus(activeSegment);
     // Check if segment filtering is enabled
     if (segmentFilterParameter && activeSegment !== -1) {
       const filter = isIgc
@@ -168,11 +171,15 @@ const BaseTable = ({
   const fetchData = async (filter) => {
     console.log('fetchData called', fetchApiEndpoint);
     console.log('isPayroll', isPayroll);
+    console.log('filter receieved', filter);
     try {
       let res;
       if (isPayroll) {
-        const res = await fetchApiService(fetchApiEndpoint);
+        const res = await fetchApiService(fetchApiEndpoint, { ...filter });
         console.log('res', res);
+        console.log('full api url', fetchApiEndpoint, {
+          ...filter,
+        });
         if (res && res.data) {
           const transformedData = transformData(res.data);
           setRowData(transformedData);
@@ -182,6 +189,12 @@ const BaseTable = ({
         }
       } else {
         const res = await fetchApiService(fetchApiEndpoint, {
+          'paging.pageNumber': pageNumber,
+          'paging.pageSize': 10,
+          ...filter,
+        });
+
+        console.log('full api url', fetchApiEndpoint, {
           'paging.pageNumber': pageNumber,
           'paging.pageSize': 10,
           ...filter,

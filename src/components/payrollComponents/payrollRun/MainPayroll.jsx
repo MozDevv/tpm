@@ -24,8 +24,10 @@ import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { message } from 'antd';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
+import { useStageStore, useStatusStore } from '@/zustand/store';
 
-const MainPayroll = ({ stage, status }) => {
+const MainPayroll = ({ stage }) => {
+  const { status } = useStatusStore();
   const columnDefs = [
     {
       field: 'period',
@@ -520,10 +522,7 @@ const MainPayroll = ({ stage, status }) => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={payrollEndpoints.getPayrollSummaryByStage(
-          stage,
-          status
-        )}
+        fetchApiEndpoint={payrollEndpoints.getPayrollSummaryByStageOnly(stage)}
         fetchApiService={payrollApiService.get}
         transformData={transformData}
         pageSize={30}
@@ -533,6 +532,13 @@ const MainPayroll = ({ stage, status }) => {
         isPayroll={true}
         refreshData={refreshData}
         onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+        segmentFilterParameter="Stage"
+        segmentOptions={[
+          { value: 0, label: 'Open' },
+          { value: 1, label: 'Pending Approval' },
+          { value: 2, label: 'Review' },
+          { value: 3, label: 'Closed' },
+        ]}
       />
     </div>
   );
