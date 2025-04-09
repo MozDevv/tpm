@@ -54,6 +54,15 @@ const Approvers = () => {
 
     fetchMdas();
   }, []);
+  const { data: departments } = useFetchAsync(
+    endpoints.getDepartments,
+    apiService
+  );
+  const mdaMap = new Map(mdas.map((mda) => [mda.id, mda.name]));
+  const departmentMap = new Map(
+    departments &&
+      departments?.map((department) => [department.id, department.name])
+  );
 
   const columnDefs = [
     {
@@ -82,12 +91,21 @@ const Approvers = () => {
       headerClass: 'prefix-header',
       filter: true,
       valueFormatter: (params) => {
+        if (!params?.value) {
+          return '-';
+        }
+
         const user = users.find((user) => user.id === params.value);
-        const mda = mdas.find((mda) => mda.id === user?.mdaId);
-        return mda?.name || '-';
+        if (!user) {
+          return '-';
+        }
+
+        const mdaName = mdaMap.get(user.mdaId);
+        const departmentName = departmentMap.get(user.departmentId);
+
+        return mdaName || user.department?.name || departmentName || '-';
       },
     },
-
     {
       field: 'primary_approver_id',
       headerName: 'Primary Approver',
@@ -130,11 +148,6 @@ const Approvers = () => {
       return a.toUpperCase();
     });
   };
-
-  const { data: departments } = useFetchAsync(
-    endpoints.getDepartments,
-    apiService
-  );
 
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -247,10 +260,12 @@ const Approvers = () => {
                   name: 'departmentId',
                   label: 'Department',
                   type: 'autocomplete',
-                  options: departments.map((item) => ({
-                    id: item.departmentId,
-                    name: item.name,
-                  })),
+                  options:
+                    departments &&
+                    departments.map((item) => ({
+                      id: item.departmentId,
+                      name: item.name,
+                    })),
                 },
               ]),
           {
