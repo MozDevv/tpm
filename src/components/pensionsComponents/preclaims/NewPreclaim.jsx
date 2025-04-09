@@ -57,6 +57,8 @@ import { useAutopopulateNameStore, useCapNameStore } from '@/zustand/store';
 import DesignationGradesCard from '@/app/pensions/setups/designationGrades/DesignationGradesCard';
 import DesignationGrades from '@/app/pensions/setups/designationGrades/DesignationGrades';
 import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+// import BaseInputCard from '@/components/baseComponents/BaseInputCard copy';
 
 dayjs.extend(isSameOrBefore);
 
@@ -620,9 +622,21 @@ function NewPreclaim({
       console.error('Error fetching Designations:', error);
     }
   };
+  const [grades, setGrades] = useState([]);
+  const fetchGrades = async () => {
+    try {
+      const res = await apiService.get(endpoints.getAllGrades);
+      if (res.status === 200) {
+        setGrades(res.data.data);
+      }
+    } catch (e) {
+      console.error('Error fetching data:', e);
+    }
+  };
 
   useEffect(() => {
     fetchDesignations();
+    fetchGrades();
   }, [openAddNew]);
 
   const fetchExitGrounds = async () => {
@@ -647,17 +661,6 @@ function NewPreclaim({
     }
   };
 
-  const [grades, setGrades] = useState([]);
-  const fetchGrades = async () => {
-    try {
-      const res = await apiService.get(endpoints.getAllGrades);
-      if (res.status === 200) {
-        setGrades(res.data.data);
-      }
-    } catch (e) {
-      console.error('Error fetching data:', e);
-    }
-  };
   const [rateOfInjury, setRateOfInjury] = useState([]);
 
   const fetchRateOfInjury = async () => {
@@ -1281,13 +1284,42 @@ function NewPreclaim({
 
   return (
     <div className="max-h-[85vh]  overflow-y-auto pb-[250px]">
-      {openAddNew && (
+      {openAddNew === 'des' && (
         <DesignationGrades
           isImported={true}
           // importOpen={openBaseCard}
           setImportOpen={setOpenAddNew}
         />
       )}
+
+      <BaseCard
+        openBaseCard={openAddNew === 'grade'}
+        setOpenBaseCard={setOpenAddNew}
+        handlers={{}}
+        title={'New Grade'}
+        isUserComponent={false}
+        isSecondaryCard2={true}
+      >
+        <div className="">
+          {JSON.stringify(formData)}
+          <BaseInputCard
+            fields={[
+              {
+                name: 'grade',
+                type: 'text',
+                label: 'Grade Name',
+              },
+            ]}
+            apiEndpoint={endpoints.createGrade}
+            postApiFunction={apiService.post}
+            id={formData?.designation_id}
+            isBranch={true}
+            idLabel="designation_id"
+            setOpenBaseCard={setOpenAddNew}
+            useRequestBody={true}
+          />
+        </div>
+      </BaseCard>
 
       <div className="w-full p-2  mr-1 h-full grid grid-cols-12 gap-2 mt-[-20px] ">
         <IconButton
@@ -1699,7 +1731,9 @@ function NewPreclaim({
                                             setAutopopulateName({
                                               name: newValue.inputValue,
                                             });
-                                            setOpenAddNew(true); // Open the "Add New" dialog
+                                            field.name === 'designation_id'
+                                              ? setOpenAddNew('des')
+                                              : setOpenAddNew('grade'); // Open the "Add New" dialog
                                           } else {
                                             // User selected an existing option
                                             handleInputChange({

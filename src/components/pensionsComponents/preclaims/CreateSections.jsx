@@ -371,7 +371,8 @@ export const createSections = (
       {
         label: 'Grade',
         name: 'grade_id',
-        type: 'select',
+        type: 'autocomplete',
+        isAddNew: true,
         children: filteredGrades,
         pensionCap: [
           'CAP189',
@@ -386,7 +387,7 @@ export const createSections = (
       {
         label: 'Ranks',
         name: 'grade_id',
-        type: 'select',
+        type: 'autocomplete',
         children: filteredGrades,
         pensionCap: ['CAP199'],
       },
