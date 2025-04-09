@@ -880,6 +880,7 @@ function NewPreclaim({
     const newErrors = {};
     for (const key of Object.keys(formData)) {
       if (
+        key !== 'middle_name' &&
         key !== 'other_name' &&
         key !== 'postal_code' &&
         key !== 'notification_status' &&
