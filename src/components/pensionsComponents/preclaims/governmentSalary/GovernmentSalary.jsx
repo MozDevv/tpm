@@ -13,6 +13,7 @@ function GovernmentSalary({
   clickedIgc,
   igcId,
   sectionIndex,
+  isNotDataCapture,
 }) {
   const [designations, setDesignations] = useState([]);
   const [grades, setGrades] = useState([]);

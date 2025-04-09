@@ -392,9 +392,13 @@ function AssessmentCard({
                       key="9"
                     >
                       <GovernmentSalary
-                        enabled={isSectionEnabled('GOVERNMENT_SALARY')}
-                        id={clickedItem?.id}
-                        clickedItem={clickedItem}
+                        enabled={isIgc && isSectionEnabled('GOVERNMENT_SALARY')}
+                        id={
+                          isPayroll
+                            ? claim?.prospective_pensioner_id
+                            : activeRetireeId || clickedItem?.id
+                        }
+                        clickedItem={isPayroll ? claim : clickedItem}
                         igcId={igcId}
                         sectionIndex={sectionIndexof('GOVERNMENT_SALARY')}
                       />
@@ -408,6 +412,7 @@ function AssessmentCard({
                       key="4"
                     >
                       <AddDocuments
+                        isNotDataCapture={true}
                         clickedItem2={clickedItem}
                         status={clickedItem.notification_status}
                         id={activeRetireeId}
@@ -464,7 +469,7 @@ function AssessmentCard({
                       key="7"
                     >
                       <Deductions
-                        enabled={isSectionEnabled('DEDUCTIONS')}
+                        enabled={isIgc && isSectionEnabled('DEDUCTIONS')}
                         id={clickedItem?.id}
                         clickedItem2={clickedItem}
                         sectionIndex={sectionIndexof('DEDUCTIONS')}
@@ -565,7 +570,10 @@ function AssessmentCard({
                       }
                       key="11"
                     >
-                      <Liabilities id={clickedItem?.id} />
+                      <Liabilities
+                        id={clickedItem?.id}
+                        isNotDataCapture={true}
+                      />
                     </TabPane>
                   </>
                 )}

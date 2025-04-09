@@ -12,7 +12,7 @@ import { BASE_CORE_API } from '@/utils/constants';
 import BaseLoadingBackdrop from '@/components/baseComponents/BaseLoadingBackdrop';
 import { Cancel, GetApp, Refresh } from '@mui/icons-material';
 
-const AddDocuments = ({ id, moveToPreviousTab, status }) => {
+const AddDocuments = ({ id, moveToPreviousTab, status, isNotDataCapture }) => {
   const [awardDocuments, setAwardDocuments] = useState([]);
 
   //const [awardDocumentsFromPortal, setAwardDocumentsFromPortal] = useState([]);
@@ -219,7 +219,7 @@ const AddDocuments = ({ id, moveToPreviousTab, status }) => {
       key: 'extensions',
     },
 
-    status !== 5
+    status !== 5 && !isNotDataCapture
       ? {
           title: 'Select File',
           dataIndex: 'select',

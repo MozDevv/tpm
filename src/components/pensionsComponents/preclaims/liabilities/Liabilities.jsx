@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
-import BaseTable from "@/components/baseComponents/BaseTable";
-import BaseCard from "@/components/baseComponents/BaseCard";
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
 
-import BaseInputCard from "@/components/baseComponents/BaseInputCard";
-import endpoints, { apiService } from "@/components/services/setupsApi";
-import { formatDate } from "@/utils/dateFormatter";
-import { Button } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate } from '@/utils/dateFormatter';
+import { Button } from '@mui/material';
+import { AgGridReact } from 'ag-grid-react';
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useMda } from "@/context/MdaContext";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { useMda } from '@/context/MdaContext';
+import BaseCollapse from '@/components/baseComponents/BaseCollapse';
 
 const getOptionNameById = (options, id) => {
   const option = options.find((opt) => opt.id === id);
@@ -21,29 +22,29 @@ const getOptionNameById = (options, id) => {
 
 const columnDefs = [
   {
-    field: "no",
-    headerName: "Code",
-    headerClass: "prefix-header",
+    field: 'no',
+    headerName: 'Code',
+    headerClass: 'prefix-header',
     width: 90,
     filter: true,
-    pinned: "left",
+    pinned: 'left',
   },
 
   {
-    field: "liability_name",
-    headerName: "Liability Name",
+    field: 'liability_name',
+    headerName: 'Liability Name',
     width: 150,
     filter: true,
   },
   {
-    field: "amount_in_ksh",
-    headerName: "Amount in Ksh",
+    field: 'amount_in_ksh',
+    headerName: 'Amount in Ksh',
     width: 150,
     filter: true,
   },
 ];
 
-const Liabilities = (id) => {
+const Liabilities = (id, isNotDataCapture) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -73,24 +74,24 @@ const Liabilities = (id) => {
       const { data, totalCount } = res.data;
       setMdas(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
-  const title = clickedItem ? "Liabilities" : "Add a New Liability";
+  const title = clickedItem ? 'Liabilities' : 'Add a New Liability';
 
   const { mdaId } = useMda();
 
   const fields = [
     {
-      label: "Liability Name",
-      name: "liability_name",
-      type: "text",
+      label: 'Liability Name',
+      name: 'liability_name',
+      type: 'text',
     },
     {
-      label: "Amount in Ksh",
-      name: "amount_in_ksh",
-      type: "number",
+      label: 'Amount in Ksh',
+      name: 'amount_in_ksh',
+      type: 'number',
     },
   ];
 
@@ -106,7 +107,7 @@ const Liabilities = (id) => {
       const data = res.data.data;
       setFilteredData(transformData(data));
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -156,45 +157,50 @@ const Liabilities = (id) => {
           />
         )}
       </BaseCard>
+      <BaseCollapse name="Liabilities" titleFontSize={18} className="px-2 mt-3">
+        <div className="px-3 pt-4">
+          {!isNotDataCapture && (
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpenBaseCard(true);
+                setClickedItem(null);
+              }}
+              sx={{
+                my: 2,
+              }}
+            >
+              Add Liability
+            </Button>
+          )}
 
-      <Button
-        variant="contained"
-        onClick={() => {
-          setOpenBaseCard(true);
-          setClickedItem(null);
-        }}
-        sx={{
-          my: 2,
-        }}
-      >
-        Add Liability
-      </Button>
+          <div
+            className="ag-theme-quartz"
+            style={{
+              height: '60vh',
 
-      <div
-        className="ag-theme-quartz"
-        style={{
-          height: "60vh",
+              mt: '20px',
 
-          mt: "20px",
-
-          overflowY: "auto",
-        }}
-      >
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={filteredData}
-          pagination={false}
-          domLayout="autoHeight"
-          alwaysShowHorizontalScroll={true}
-          onGridReady={(params) => {
-            params.api.sizeColumnsToFit();
-          }}
-          onRowClicked={(e) => {
-            setOpenBaseCard(true);
-            setClickedItem(e.data);
-          }}
-        />
-      </div>
+              overflowY: 'auto',
+            }}
+          >
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={filteredData}
+              pagination={false}
+              domLayout="autoHeight"
+              alwaysShowHorizontalScroll={true}
+              onGridReady={(params) => {
+                params.api.sizeColumnsToFit();
+              }}
+              onRowClicked={(e) => {
+                setOpenBaseCard(true);
+                setClickedItem(e.data);
+              }}
+            />
+          </div>
+        </div>
+      </BaseCollapse>
     </div>
   );
 };
