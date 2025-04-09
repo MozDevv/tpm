@@ -890,6 +890,10 @@ export const adminItems = [
             path: '/pensions/setups/payment-methods',
           },
           {
+            title: 'Payment Reasons',
+            path: '/pensions/setups/payment-reasons',
+          },
+          {
             title: 'Award Posting Groups',
             path: '/pensions/setups/award-posting-groups',
           },

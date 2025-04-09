@@ -549,6 +549,11 @@ const endpoints = {
     'api/Setups/GetIGCDocuments?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=igC_Type&filterCriterion.criterions[0].propertyValue=0&paging.pageNumber=1&paging.pageSize=1000',
 
   getClaimById: (id) => `api/Claims/claimsList?id=${id}`,
+  addPaymentReasons: '/api/AccountsSetup/AddPaymentReturnReason',
+  getPaymentReasons: '/api/AccountsSetup/GetPaymentReturnReasons',
+  updatePaymentReasons: '/api/AccountsSetup/UpdatePaymentReturnReason',
+  deletePaymentReasons: (id) =>
+    `/api/AccountsSetup/DeletePaymentReturnReason?id=${id}`,
 };
 
 export const apiService = {
