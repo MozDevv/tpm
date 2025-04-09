@@ -109,6 +109,8 @@ const ListNavigation = ({
         ? clickedItem?.documentNo
         : clickedItem?.document_no
         ? clickedItem?.document_no
+        : clickedItem?.document_number
+        ? clickedItem?.document_number
         : 'TEST00001',
     };
     try {

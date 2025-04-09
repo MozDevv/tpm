@@ -31,3 +31,9 @@ export const useLoadedRetireeDetailsStore = stateFactory(
 export const useAutopopulateNameStore = stateFactory('autopopulateName');
 
 export const useStatusStore = stateFactory('status');
+
+export const useHideBaseTableHeader = stateFactory('hideBaseTableHeader');
+
+export const useSelectedIgcsStore = stateFactory('selectedIgcs');
+
+export const useClickedIgcStore = stateFactory('clickedIgc');

@@ -494,6 +494,13 @@ const endpoints = {
 
   getIgcInitiation: '/api/IGCClaimInitiation/GetIGCClaimInitiations',
   igcBeneficiaries: '/api/IGCClaimInitiation/GetIGCs',
+
+  //for getIgcListingsByClaimStage use  'filterCriterion.criterions[0].propertyName':
+  // 'igc_stage_type_map.igc_stage',
+  // 'filterCriterion.criterions[0].propertyValue': activeSegment,
+  // 'filterCriterion.criterions[0].criterionType': 0
+  getIgcListingsByClaimStage: (id) =>
+    `/api/IGCClaimInitiation/GetIGCs?filterCriterion.criterions[0].propertyName=igc_stage_type_map.igc_stage&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].criterionType=0`,
   igcBeneficiariesTrack: '/api/IGCClaimInitiation/GetIGCBeneficiaryTrack',
 
   getIgcByStatus: (id) => `/api/IGCClaimInitiation/GetIGCs?type=${id}`,

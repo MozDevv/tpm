@@ -56,6 +56,13 @@ import BaseTaskDetails from '@/components/baseComponents/BaseTaskDetails';
 import { motion } from 'framer-motion';
 import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import endpoints from '@/components/services/setupsApi';
+import { message, Segmented } from 'antd';
+import IgcForUseInClaims from './igc/IgcForUseInClaims';
+import {
+  useClickedIgcStore,
+  useRefreshDataStore,
+  useSelectedIgcsStore,
+} from '@/zustand/store';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -439,58 +446,214 @@ const ClaimsTable = ({ status, isDashboard }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
+  const [activeSegment, setActiveSegment] = useState(0);
   const [openClaimVerification, setOpenClaimVerification] = useState(false);
   const [openExcel, setOpenExcel] = useState(false);
+  const [openIgcApprove, setOpenIgcApprove] = useState(false);
+  const { clickedIgc } = useClickedIgcStore();
+  // const [openApprove, setOpenApprove] = useState(false);
+
   const handlers = {
     filter: () => setOpenFilter((prevOpenFilter) => !prevOpenFilter),
     openInExcel: () => setOpenExcel(true),
 
     reports: () => console.log('Reports clicked'),
 
-    movetoValidation: () => {
-      setOpenAction(0);
-      setOpenMoveStatus(true);
-    },
-    movetoVerification: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-    moveToApproval: () => {
-      setOpenAction(0);
-      setOpenMoveStatus(true);
-    },
-    movetoMDA: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-    returnToApproval: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-    moveToAssessment: () => {
-      setOpenAction(0);
-      setOpenMoveStatus(true);
-    },
-
-    returnToClaimsApprovals: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-    moveToAssessmentApproval: () => {
-      setOpenAction(0);
-      setOpenMoveStatus(true);
-    },
-    returnToClaimsApproval: () => {
-      setOpenAction(1);
-      setOpenMoveStatus(true);
-    },
-
     'Claims Verification Register': () => setOpenClaimVerification(true),
+    ...(activeSegment === 1
+      ? {
+          sendIGCForApproval: () => handleSendForApproval(),
+          moveStatusIgc: () => {
+            handleMovestatus();
+          },
+          approvalRequest: () => console.log('Approval Request clicked'),
+          sendApprovalRequest: () => setOpenIgcApprove(1),
+          cancelApprovalRequest: () => setOpenIgcApprove(2),
+          approveDocument: () => setOpenIgcApprove(3),
+          rejectDocumentApproval: () => setOpenIgcApprove(4),
+          delegateApproval: () => {
+            setOpenIgcApprove(5);
+            // setWorkFlowChange(Date.now());
+          },
+        }
+      : {
+          movetoValidation: () => {
+            setOpenAction(0);
+            setOpenMoveStatus(true);
+          },
+          movetoVerification: () => {
+            setOpenAction(1);
+            setOpenMoveStatus(true);
+          },
+          moveToApproval: () => {
+            setOpenAction(0);
+            setOpenMoveStatus(true);
+          },
+          movetoMDA: () => {
+            setOpenAction(1);
+            setOpenMoveStatus(true);
+          },
+          returnToApproval: () => {
+            setOpenAction(1);
+            setOpenMoveStatus(true);
+          },
+          moveToAssessment: () => {
+            setOpenAction(0);
+            setOpenMoveStatus(true);
+          },
+
+          returnToClaimsApprovals: () => {
+            setOpenAction(1);
+            setOpenMoveStatus(true);
+          },
+          moveToAssessmentApproval: () => {
+            setOpenAction(0);
+            setOpenMoveStatus(true);
+          },
+          returnToClaimsApproval: () => {
+            setOpenAction(1);
+            setOpenMoveStatus(true);
+          },
+        }),
   };
 
   const [openApprove, setOpenApprove] = useState(0);
   const [openGP178Report, setOpenGP178Report] = useState(false);
+  const { selectedIgcs, setSelectedIgcs } = useSelectedIgcsStore();
+  const { setRefreshData } = useRefreshDataStore();
 
+  const handleMovestatus = async () => {
+    if (selectedIgcs.length === 0) {
+      message.error(
+        'Please select at least one IGC to move to the next status.'
+      );
+      return;
+    }
+
+    const promises = selectedIgcs.map((item) => {
+      return apiService.post(endpoints.moveIgcStatus, {
+        id: item.id, // Send each ID individually
+      });
+    });
+
+    try {
+      const res = await Promise.all(promises);
+
+      // Separate successful and failed responses
+      const failedResponses = [];
+      const successResponses = [];
+
+      res.forEach((response, index) => {
+        if (response.succeeded) {
+          successResponses.push({
+            documentNo: selectedIgcs[index]?.document_number,
+            message:
+              response.data.messages?.[0] ||
+              'IGC moved to the next status successfully.',
+          });
+        } else {
+          failedResponses.push({
+            documentNo: selectedIgcs[index]?.document_number,
+            message: response.data.messages?.[0] || 'An error occurred.',
+          });
+        }
+      });
+
+      // Display success messages
+      if (successResponses.length > 0) {
+        successResponses.forEach((success) => {
+          message.success(
+            `Document No: ${success.documentNo} - ${success.message}`
+          );
+        });
+      }
+
+      // Display error messages
+      if (failedResponses.length > 0) {
+        failedResponses.forEach((failure) => {
+          message.error(
+            `Document No: ${failure.documentNo} - ${failure.message}`
+          );
+        });
+      }
+
+      // Clear selected IGCs if all succeeded
+      if (failedResponses.length === 0) {
+        setSelectedIgcs([]);
+      }
+    } catch (error) {
+      console.error('Error moving IGCs to the next status:', error);
+      message.error('An unexpected error occurred while moving IGCs.');
+    } finally {
+      setRefreshData((prev) => prev + 1); // Refresh data
+    }
+  };
+  const handleSendForApproval = async () => {
+    if (selectedIgcs && selectedIgcs.length === 0) {
+      message.error('Please select at least one IGC to send for approval.');
+      return;
+    }
+
+    const promises = selectedIgcs.map((item) => {
+      return apiService.post(endpoints.sendIgcForApproval, {
+        id: item.id,
+      });
+    });
+
+    try {
+      const res = await Promise.all(promises);
+
+      // Separate successful and failed responses
+      const failedResponses = [];
+      const successResponses = [];
+
+      res.forEach((response, index) => {
+        if (response.succeeded) {
+          successResponses.push({
+            documentNo: selectedIgcs[index]?.document_number,
+            message:
+              response.data.messages?.[0] ||
+              'IGC sent for approval successfully.',
+          });
+        } else {
+          failedResponses.push({
+            documentNo: selectedIgcs[index]?.document_number,
+            message: response.data.messages?.[0] || 'An error occurred.',
+          });
+        }
+      });
+
+      // Display success messages
+      if (successResponses.length > 0) {
+        successResponses.forEach((success) => {
+          message.success(
+            `Document No: ${success.documentNo} - ${success.message}`
+          );
+        });
+      }
+
+      // Display error messages
+      if (failedResponses.length > 0) {
+        failedResponses.forEach((failure) => {
+          message.error(
+            `Document No: ${failure.documentNo} - ${failure.message}`
+          );
+        });
+      }
+
+      // Clear selected IGCs if all succeeded
+      if (failedResponses.length === 0) {
+        selectedIgcs([]);
+      }
+    } catch (error) {
+      console.error('Error sending IGCs for approval:', error);
+      message.error(
+        'An unexpected error occurred while sending IGCs for approval.'
+      );
+    } finally {
+      setRefreshData((prev) => prev + 1);
+    }
+  };
   const baseCardHandlers = {
     edit: () => console.log('Edit clicked'),
     delete: () => console.log('Delete clicked'),
@@ -632,6 +795,12 @@ const ClaimsTable = ({ status, isDashboard }) => {
           setOpenApprove={setOpenApprove}
           documentNo={clickedItem?.claim_id}
         />
+        <BaseApprovalCard
+          clickedItem={clickedIgc}
+          openApprove={openIgcApprove}
+          setOpenApprove={setOpenApprove}
+          documentNo={clickedIgc?.document_number}
+        />
         <ClaimDialog
           clickedItem={clickedItem}
           setOpenPreclaimDialog={setOpenPreclaimDialog}
@@ -750,6 +919,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
             handlers={handlers}
             reportItems={['Claims Verification Register']}
             status={status}
+            clickedItem={activeSegment === 1 && clickedIgc}
           />
           <Divider sx={{ mt: 2, mb: 1, ml: 2 }} />
 
@@ -783,39 +953,65 @@ const ClaimsTable = ({ status, isDashboard }) => {
                 width: openFilter ? 'calc(100vw - 300px)' : '100vw',
               }}
             >
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                rowSelection="multiple"
-                onSelectionChanged={onSelectionChanged}
-                loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
-                loadingOverlayComponentParams={loadingOverlayComponentParams}
-                domLayout="autoHeight"
-                onGridReady={onGridReady}
-                rowHeight={36}
-                onCellDoubleClicked={(event) => {
-                  setClickedItem(event.data); // Update selected item
-                  setOpenPreclaimDialog(true); // Open dialog
-                }}
-              />{' '}
-              {totalPages > 1 && (
-                <Box
-                  sx={{
-                    mt: '50px',
-                    display: 'flex',
-                    justifyContent: 'center',
+              <div className="mb-2 mt-[-20px]">
+                <Segmented
+                  options={[
+                    { label: 'Normal Claims', value: 0 },
+                    { label: 'Internally Generated Claims', value: 1 },
+                  ]}
+                  value={activeSegment}
+                  onChange={(value) => setActiveSegment(value)}
+                  className="custom-segmented"
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    padding: '4px',
+                    border: '1px solid #ccc',
                   }}
-                >
-                  <Pagination
-                    count={totalPages}
-                    page={pageNumber}
-                    onChange={handlePageChange}
-                    color="primary"
-                    variant="outlined"
-                    shape="rounded"
+                />
+              </div>
+              {activeSegment === 0 ? (
+                <>
+                  {' '}
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    rowSelection="multiple"
+                    onSelectionChanged={onSelectionChanged}
+                    loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+                    loadingOverlayComponentParams={
+                      loadingOverlayComponentParams
+                    }
+                    domLayout="autoHeight"
+                    onGridReady={onGridReady}
+                    rowHeight={36}
+                    onCellDoubleClicked={(event) => {
+                      setClickedItem(event.data); // Update selected item
+                      setOpenPreclaimDialog(true); // Open dialog
+                    }}
                   />
-                </Box>
-              )}
+                  {totalPages > 1 && (
+                    <Box
+                      sx={{
+                        mt: '50px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Pagination
+                        count={totalPages}
+                        page={pageNumber}
+                        onChange={handlePageChange}
+                        color="primary"
+                        variant="outlined"
+                        shape="rounded"
+                      />
+                    </Box>
+                  )}
+                </>
+              ) : activeSegment === 1 ? (
+                <IgcForUseInClaims status={status} />
+              ) : null}
             </div>
           </div>
         </div>

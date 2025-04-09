@@ -55,6 +55,8 @@ import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import BaseExcelComponent from '@/components/baseComponents/BaseExcelComponent';
 import FilterComponent from '@/components/baseComponents/FilterComponent';
 import DependantsReport from '../reports/DependantsReport';
+import { Segmented } from 'antd';
+import IgcForUseInClaims from '@/components/pensionsComponents/ClaimsManagementTable/igc/IgcForUseInClaims';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -754,6 +756,7 @@ const AssessmentTable = ({ status, statusArr }) => {
   }, []);
 
   const [excelLoading, setExcelLoading] = useState(false);
+  const [activeSegment, setActiveSegment] = useState(0);
   return (
     <>
       {excelLoading && (
@@ -1103,39 +1106,67 @@ const AssessmentTable = ({ status, statusArr }) => {
                 width: openFilter ? 'calc(100vw - 300px)' : '100vw',
               }}
             >
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                rowSelection="multiple"
-                onSelectionChanged={onSelectionChanged}
-                loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
-                loadingOverlayComponentParams={loadingOverlayComponentParams}
-                domLayout="autoHeight"
-                onGridReady={onGridReady}
-                rowHeight={36}
-                onCellDoubleClicked={(event) => {
-                  setClickedItem(event.data); // Update selected item
-                  setOpenPreclaimDialog(true); // Open dialog
-                }}
-              />{' '}
-              {totalPages > 1 && (
-                <Box
-                  sx={{
-                    mt: '50px',
-                    display: 'flex',
-                    justifyContent: 'center',
+              <div className="mb-2 mt-[-20px]">
+                <Segmented
+                  options={[
+                    { label: 'Normal Claims', value: 0 },
+                    { label: 'Internally Generated Claims', value: 1 },
+                  ]}
+                  value={activeSegment}
+                  onChange={(value) => setActiveSegment(value)}
+                  className="custom-segmented"
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    padding: '4px',
+                    border: '1px solid #ccc',
                   }}
-                >
-                  <Pagination
-                    count={totalPages}
-                    page={pageNumber}
-                    onChange={handlePageChange}
-                    color="primary"
-                    variant="outlined"
-                    shape="rounded"
-                  />
-                </Box>
-              )}
+                />
+              </div>
+              {activeSegment === 0 ? (
+                <>
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    rowSelection="multiple"
+                    onSelectionChanged={onSelectionChanged}
+                    loadingOverlayComponent={BaseLoadingOverlay} // Use your custom loader
+                    loadingOverlayComponentParams={
+                      loadingOverlayComponentParams
+                    }
+                    domLayout="autoHeight"
+                    onGridReady={onGridReady}
+                    rowHeight={36}
+                    onCellDoubleClicked={(event) => {
+                      setClickedItem(event.data); // Update selected item
+                      setOpenPreclaimDialog(true); // Open dialog
+                    }}
+                  />{' '}
+                  {totalPages > 1 && (
+                    <Box
+                      sx={{
+                        mt: '50px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Pagination
+                        count={totalPages}
+                        page={pageNumber}
+                        onChange={handlePageChange}
+                        color="primary"
+                        variant="outlined"
+                        shape="rounded"
+                      />
+                    </Box>
+                  )}
+                </>
+              ) : activeSegment === 1 ? (
+                <IgcForUseInClaims
+                  status={status}
+                  setClickedItem={setClickedItem}
+                />
+              ) : null}
             </div>
           </div>
         </div>

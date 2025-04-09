@@ -35,7 +35,7 @@ import { Checkbox, message, Segmented } from 'antd';
 import axios from 'axios';
 import FilterComponent from './FilterComponent';
 import BaseExcelComponent from './BaseExcelComponent';
-import { useStatusStore } from '@/zustand/store';
+import { useClickedIgcStore, useStatusStore } from '@/zustand/store';
 
 const BaseTable = ({
   columnDefs,
@@ -69,6 +69,7 @@ const BaseTable = ({
   isIgc,
   segmentFilterParameter = null,
   segmentOptions,
+  hideTableHeader,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -296,6 +297,7 @@ const BaseTable = ({
     }
   }, 50000);
 
+  const { setClickedIgc } = useClickedIgcStore();
   return (
     <div>
       {excelLoading && (
@@ -330,32 +332,34 @@ const BaseTable = ({
           excelTitle={excelTitle}
         />
       </Dialog>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Box sx={{ display: 'flex', gap: '1px', flexDirection: 'column' }}>
-          <h6
-            style={{
-              fontSize: '20px',
-              color: '#006990',
-              fontWeight: 700,
-              marginTop: '20px',
-              marginLeft: '15px',
-              marginBottom: '-10px',
-            }}
-          >
-            {breadcrumbTitle}
-          </h6>
-          <CustomBreadcrumbsList currentTitle={currentTitle} />
-          <div className="w-[80vw] ml-3 mt-2">
-            <ListNavigation
-              handlers={!isSecondaryTable ? adjustedHandlers : handlers}
-              selectedRows={selectedRows}
-              reportItems={reportItems}
-              clickedItem={clickedItem}
-            />
-            <Divider sx={{ mt: 2, mb: '-8px' }} />
-          </div>
+      {!hideTableHeader && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Box sx={{ display: 'flex', gap: '1px', flexDirection: 'column' }}>
+            <h6
+              style={{
+                fontSize: '20px',
+                color: '#006990',
+                fontWeight: 700,
+                marginTop: '20px',
+                marginLeft: '15px',
+                marginBottom: '-10px',
+              }}
+            >
+              {breadcrumbTitle}
+            </h6>
+            <CustomBreadcrumbsList currentTitle={currentTitle} />
+            <div className="w-[80vw] ml-3 mt-2">
+              <ListNavigation
+                handlers={!isSecondaryTable ? adjustedHandlers : handlers}
+                selectedRows={selectedRows}
+                reportItems={reportItems}
+                clickedItem={clickedItem}
+              />
+              <Divider sx={{ mt: 2, mb: '-8px' }} />
+            </div>
+          </Box>
         </Box>
-      </Box>
+      )}
       <div className="flex gap-2">
         {' '}
         <Collapse
@@ -565,6 +569,7 @@ const BaseTable = ({
               onSelectionChanged={onSelectionChanged}
               onRowClicked={(e) => {
                 setClickedItem(e.data);
+                setClickedIgc(e.data);
               }}
               onCellDoubleClicked={(e) => {
                 console.log('e.data', e.data);

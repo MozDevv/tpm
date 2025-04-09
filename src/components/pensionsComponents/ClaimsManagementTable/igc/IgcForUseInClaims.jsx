@@ -1,0 +1,957 @@
+'use client';
+import React, { use, useEffect, useState } from 'react';
+import BaseTable from '@/components/baseComponents/BaseTable';
+import BaseCard from '@/components/baseComponents/BaseCard';
+import BaseInputCard from '@/components/baseComponents/BaseInputCard';
+import endpoints, { apiService } from '@/components/services/setupsApi';
+import { formatDate, parseDate } from '@/utils/dateFormatter';
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { name } from 'dayjs/locale/en-au';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import assessEndpoints, {
+  assessApiService,
+} from '@/components/services/assessmentApi';
+import { PORTAL_BASE_URL } from '@/utils/constants';
+
+import preClaimsEndpoints from '@/components/services/preclaimsApi';
+import { apiService as preApiservice } from '@/components/services/preclaimsApi';
+import AssessmentCard from '@/components/financeComponents/payments/PensionerDetailsTabs';
+import IgcRevisedInputCard from './IgcRevisedInputCard';
+import { message } from 'antd';
+import {
+  useFilteredDataStore,
+  useIgcIdStore,
+  useSelectedIgcsStore,
+} from '@/zustand/store';
+import { mapRowData } from '../ClaimsTable';
+import IGCSummaryComponent from './IGCSummaryComponent';
+import ChangesView from './ChangesView';
+import { toProperCase } from '@/utils/numberFormatters';
+
+const IgcForUseInClaims = ({ status }) => {
+  const [clickedItem, setClickedItem] = React.useState(null);
+
+  const isRevisedType = (igcType) => {
+    const revisedTypes = [3, 4, 8]; // Enum values for revised types
+    return revisedTypes.includes(igcType);
+  };
+  const statusIcons = {
+    0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+    1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+    3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+    4: { icon: Cancel, name: 'Cancelled', color: '#d32f2f' }, // Red
+  };
+  const pensionStatusMap = {
+    0: { name: 'Dependant Pension', color: '#1976d2' }, // Blue
+    1: { name: 'Killed On Duty', color: '#fbc02d' }, // Yellow
+    2: { name: 'Injury or Disability Pension', color: '#2e7d32' }, // Green
+    3: { name: 'Revised Disability', color: '#d32f2f' }, // Red
+    4: { name: 'Revised Cases Court Order', color: '#ff7043' }, // Orange
+    5: { name: 'Add Beneficiary Alive', color: '#c2185b' }, // Pink
+    6: { name: 'Add Beneficiary Deceased', color: '#7b1fa2' }, // Brown
+    7: { name: 'Change of Pay Point', color: '#009688' }, // Teal
+    8: { name: 'Revised Computation', color: '#0288d1' }, // Deep Orange
+  };
+  const notificationStatusMap = {
+    0: { name: 'VERIFICATION', color: '#3498db' }, // Light Red
+    1: { name: 'VALIDATION', color: '#f39c12' }, // Bright Orange
+    2: { name: 'APPROVAL', color: '#2ecc71' }, // Light Blue
+    3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' }, // Bright Orange
+    4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' }, // Light Blue
+    5: { name: 'DIRECTORATE', color: '#f39c12' }, // Bright Orange
+    6: { name: 'Controller of Budget', color: '#f39c12' }, // Bright Orange
+    7: { name: 'Finance', color: '#2ecc71' }, // Light Blue
+    8: { name: 'Voucher Preparation', color: '#f39c12' }, // Bright Orange
+    9: { name: 'Voucher Approval', color: '#3498db' }, // Light Blue
+    10: { name: 'Voucher Scheduled', color: '#f39c12' }, // Bright Orange
+    11: { name: 'Voucher Paid', color: '#8b4513' }, // Light Blue
+  };
+
+  const columnDefs = [
+    {
+      field: 'document_number',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      pinned: 'left',
+      filter: true,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+      width: 160,
+    },
+    {
+      field: 'retireeName',
+      headerName: 'Retiree Name',
+      filter: true,
+      width: 200,
+      valueGetter: (params) => {
+        const firstName = params.data.prospective_pensioner?.first_name || '';
+        const surname = params.data.prospective_pensioner?.surname || '';
+        return `${firstName} ${surname}`;
+      },
+    },
+    {
+      field: 'personal_number',
+      headerName: 'Personal Number',
+      filter: true,
+      width: 200,
+      valueGetter: (params) => {
+        return params.data.prospective_pensioner?.personal_number;
+      },
+    },
+    {
+      headerName: 'Stage',
+      field: 'stage',
+      width: 150,
+      cellRenderer: (params) => {
+        const status = notificationStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              borderColor: status.color,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name.toLowerCase()}
+          </Button>
+        );
+      },
+    },
+    {
+      field: 'igc_submission_status',
+      headerName: 'Submission Status',
+      filter: true,
+      width: 200,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'igc_type',
+      headerName: 'IGC Type',
+      filter: true,
+      width: 200,
+      cellRenderer: (params) => {
+        const status = pensionStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 3,
+
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name}
+          </Button>
+        );
+      },
+    },
+    {
+      field: 'stopped',
+      headerName: 'Stopped',
+      filter: true,
+    },
+  ];
+
+  const transformData = (data) => {
+    return data.map((item) => ({
+      ...item,
+      ...item?.json_payload,
+      stage: item?.igc_stage_type_map?.igc_stage,
+      id_claim: item?.json_payload?.claim_id,
+    }));
+  };
+  const [openInitiate, setOpenInitiate] = useState(false);
+  const [openChangePaypoint, setOpenChangePaypoint] = useState(false);
+
+  const [initiateRevisedCase, setInitiateRevisedCase] = useState(false);
+  const handlers = {
+    ...((!status || status === 0) && {
+      initiateDependentEnrollment: () => {
+        setOpenInitiate(true);
+        setOpenBaseCard(true);
+      },
+    }),
+    // ...((!status || (status === 7 && status !== 0)) && {
+    //   initiateChangeOfPayPoint: () => {
+    //     setOpenChangePaypoint(true);
+    //     setOpenBaseCard(true);
+    //   },
+    // }),
+    ...((!status || status === 3 || status === 8 || status === 4) &&
+      status !== 0 && {
+        initiateRevisedCase: () => {
+          setInitiateRevisedCase(true);
+          setOpenBaseCard(true);
+        },
+      }),
+    sendIGCForApproval: () => handleSendForApproval(),
+  };
+  const baseCardHandlers = {
+    ...(clickedItem &&
+    // isRevisedType(clickedItem?.igc_type) &&
+    clickedItem?.igc_submission_status === 2
+      ? {
+          moveStatusIgc: () => {
+            handleMovestatus();
+          },
+        }
+      : {}),
+  };
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [refreshData, setRefreshData] = React.useState(1);
+
+  //loop the selectedRows
+  const handleSendForApproval = async () => {
+    const promises = selectedRows.map((item) => {
+      return apiService.post(endpoints.sendIgcForApproval, {
+        id: item.id,
+      });
+    });
+
+    try {
+      const res = await Promise.all(promises);
+      if (res.length > 0) {
+        message.success('IGC sent for approval successfully');
+        setSelectedRows([]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshData((prev) => prev + 1);
+    }
+  };
+  const handleMovestatus = async () => {
+    try {
+      const res = await apiService.post(endpoints.moveIgcStatus, {
+        id: clickedItem?.id,
+      });
+      if (res.status === 200 && res.data.succeeded === true) {
+        message.success('IGC moved to the next status successfully');
+        setSelectedRows([]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshData((prev) => prev + 1);
+    }
+  };
+
+  const title = clickedItem
+    ? clickedItem?.document_number
+    : openInitiate
+    ? 'Initiate Dependent Enrollment'
+    : openChangePaypoint
+    ? 'Initiate Change of Paypoint'
+    : 'Create New Beneficiary';
+
+  const { data: beneficiaries } = useFetchAsync(
+    endpoints.getRelationships,
+    apiService
+  );
+  const [claims, setClaims] = useState([]);
+  const [igcClaims, setIgcClaims] = useState([]);
+
+  const fetchPensioners = async () => {
+    let filters = {};
+    let statusArr = [7, 8, 9, 10, 11];
+
+    if (statusArr && statusArr.length > 0) {
+      // When statusArr is provided, loop through it and populate criterions array
+      statusArr.forEach((status, index) => {
+        filters[`filterCriterion.criterions[${index}].propertyName`] = 'stage';
+        filters[`filterCriterion.criterions[${index}].propertyValue`] = status;
+        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+      });
+    }
+    try {
+      const res = await assessApiService.get(
+        assessEndpoints.getAssessmentClaims,
+        {
+          'paging.pageSize': 100000,
+          'paging.pageNumber': 1,
+          ...filters,
+          'filterCriterion.compositionType': 1,
+        }
+      );
+      if (res.status === 200) {
+        const mappedData2 = mapRowData(res.data.data);
+        setIgcClaims(mappedData2);
+
+        const mappedData = res.data.data.map((item) => ({
+          id: item?.prospectivePensioner?.id,
+          name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+            ?.pension_award?.prefix
+            ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+                ?.pension_award?.prefix + item?.pensioner_number
+            : item?.pensioner_number ?? 'N/A',
+          accountNo:
+            item?.prospectivePensioner?.first_name +
+            ' ' +
+            item?.prospectivePensioner?.surname,
+        }));
+        console.log('mappedData', mappedData);
+        setClaims(mappedData);
+      } // Handle the response as needed
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPensioners();
+    // fetchBanksAndBranches();
+  }, []);
+
+  const fields = [
+    { name: 'igc_no', label: 'IGC No', type: 'text', disabled: true },
+    { name: 'surname', label: 'Surname', type: 'text', disabled: true },
+    { name: 'first_name', label: 'First Name', type: 'text', disabled: true },
+    { name: 'other_name', label: 'Other Name', type: 'text', disabled: true },
+    { name: 'identifier', label: 'Identifier', type: 'text', disabled: true },
+    {
+      name: 'relationship',
+      label: 'Relationship',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'mobile_number',
+      label: 'Mobile Number',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'email_address',
+      label: 'Email Address',
+      type: 'text',
+      disabled: true,
+    },
+    { name: 'dob', label: 'Date of Birth', type: 'date', disabled: true },
+    { name: 'age', label: 'Age', type: 'text', disabled: true },
+    { name: 'address', label: 'Address', type: 'text', disabled: true },
+    {
+      name: 'birth_certificate_no',
+      label: 'Birth Certificate No',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'supporting_document_number',
+      label: 'Supporting Document Number',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'document_status',
+      label: 'Document Status',
+      type: 'select',
+      disabled: true,
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Rejected' },
+      ],
+    },
+    {
+      name: 'submission_status',
+      label: 'IGC Submission Status',
+      type: 'select',
+      disabled: true,
+      options: [
+        { id: 0, name: 'Open' },
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Rejected' },
+      ],
+    },
+    {
+      name: 'created_date',
+      label: 'Created Date',
+      type: 'date',
+      disabled: true,
+    },
+  ];
+
+  const [formData, setFormData] = useState({});
+  const [retireeBeneficiaries, setRetireeBeneficiaries] = useState([]);
+  const [guardians, setGuardians] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [selectedBank, setSelectedBank] = useState(null);
+
+  const fetchRetireesBeneficiaries = async (id) => {
+    try {
+      const res = await assessApiService.get(
+        `${PORTAL_BASE_URL}/portal/getBeneficiaries/${id}`
+      );
+      setGuardians([...res.data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchBanksAndBranches = async () => {
+    try {
+      const res = await apiService.get(endpoints.getBanks, {
+        'paging.pageSize': 1000,
+      });
+      const rawData = res.data.data;
+
+      const banksData = rawData.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+        branches: bank.branches,
+      }));
+
+      const branchesData = rawData.flatMap((bank) =>
+        bank.branches.map((branch) => ({
+          ...branch,
+          bankId: bank.id,
+        }))
+      );
+      console.log('banksData', banksData);
+      console.log('branchesData', branchesData);
+
+      setBanks(banksData);
+      setBranches(branchesData);
+    } catch (error) {
+      console.log('Error fetching banks and branches:', error);
+    }
+  };
+  useEffect(() => {
+    fetchBanksAndBranches();
+  }, []);
+
+  useEffect(() => {
+    if (formData?.prospective_pensioner_id) {
+      fetchRetireesBeneficiaries(formData.prospective_pensioner_id);
+    }
+  }, [formData?.prospective_pensioner_id]);
+
+  const { filteredData } = useFilteredDataStore();
+
+  const uploadFields = [
+    {
+      name: 'searchType',
+      label: 'Search Claim By',
+      type: 'select',
+      options: [
+        {
+          id: 'claim_id',
+          name: 'Claim No',
+        },
+        {
+          id: 'national_id',
+          name: 'National Id',
+        },
+        {
+          id: 'personal_number',
+          name: 'Personal Number',
+        },
+      ],
+    },
+
+    ...(formData?.searchType
+      ? [
+          {
+            name: 'searchInput',
+            label: toProperCase(
+              formData.searchType.replace('_', ' ').toUpperCase()
+            ),
+            type: 'searchInput',
+          },
+        ]
+      : []),
+    ...(formData &&
+    formData.searchInput &&
+    filteredData &&
+    filteredData.length > 0
+      ? [
+          {
+            name: 'prospective_pensioner_id',
+            label: 'Retiree',
+            type: 'select',
+            options:
+              filteredData &&
+              filteredData.map((item) => {
+                return {
+                  /**id: item?.prospectivePensioner?.id,
+        name: item?.prospectivePensioner?.prospectivePensionerAwards[0]
+          ?.pension_award?.prefix
+          ? item?.prospectivePensioner?.prospectivePensionerAwards[0]
+              ?.pension_award?.prefix + item?.pensioner_number
+          : item?.pensioner_number ?? 'N/A',
+        accountNo:
+          item?.prospectivePensioner?.first_name +
+          ' ' +
+          item?.prospectivePensioner?.surname, */
+                  id: item.prospectivePensioner?.id,
+                  name: item?.claim_id,
+                  accountNo:
+                    item?.prospectivePensioner?.first_name +
+                    ' ' +
+                    item?.prospectivePensioner?.surname,
+                };
+              }),
+            table: true,
+          },
+        ]
+      : []),
+    {
+      name: 'relationship_id',
+      label: 'Relationship',
+      type: 'autocomplete',
+      options:
+        beneficiaries &&
+        beneficiaries?.map((item) => ({
+          id: item.id,
+          name: item.name,
+        })),
+    },
+    { name: 'reason', label: 'Reason', type: 'text' },
+    { name: 'dob', label: 'Date of Birth', type: 'date' },
+
+    {
+      name: 'guardianId',
+      label: 'Guardian',
+      type: 'autocomplete',
+      options:
+        guardians &&
+        guardians.length > 0 &&
+        guardians.map((guardian) => ({
+          id: guardian.id,
+          name: guardian.display_name,
+        })),
+    },
+    {
+      name: 'is_spouse',
+      label: 'Is Spouse',
+      type: 'select',
+      disabled: false,
+      options: [
+        { id: true, name: 'No' },
+        { id: false, name: 'Yes' },
+      ],
+    },
+    {
+      name: 'is_guardian',
+      label: 'Is Guardian',
+      type: 'select',
+      disabled: false,
+      options: [
+        { id: true, name: 'No' },
+        { id: false, name: 'Yes' },
+      ],
+    },
+
+    { name: 'surname', label: 'Surname', type: 'text' },
+    { name: 'first_name', label: 'First Name', type: 'text' },
+    { name: 'other_name', label: 'Other Name', type: 'text' },
+    {
+      label: 'Type Of Identification',
+      name: 'identifier_type',
+      type: 'select',
+      options: [
+        { id: 0, name: 'National ID' },
+        { id: 1, name: 'Passport No' },
+      ],
+    },
+    { name: 'identifier', label: 'Identifier', type: 'text' },
+
+    {
+      name: 'mobile_number',
+      label: 'Mobile Number',
+      type: 'phone_number',
+    },
+    {
+      name: 'email_address',
+      label: 'Email Address',
+      type: 'text',
+    },
+
+    { name: 'address', label: 'Address', type: 'text' },
+    {
+      name: 'birth_certificate_no',
+      label: 'Birth Certificate No',
+      type: 'text',
+    },
+    {
+      name: 'supporting_document_number',
+      label: 'Supporting Document Number',
+      type: 'text',
+    },
+  ];
+
+  const filteredFields = (formData) => {
+    const age = formData?.dob
+      ? new Date().getFullYear() - new Date(formData.dob).getFullYear()
+      : null;
+
+    // Always include the first 5 fields
+    const alwaysIncludedFields = uploadFields.slice(0, 5);
+
+    let filteredFields;
+
+    if (age !== null && age < 18) {
+      filteredFields = uploadFields.filter((field) =>
+        [
+          'prospective_pensioner_id',
+          'relationship',
+          'reason',
+          'dob',
+          'guardianId',
+          'surname',
+          'first_name',
+          'other_name',
+          'birth_certificate_no',
+          'supporting_document_number',
+        ].includes(field.name)
+      );
+    } else if (age !== null && age >= 18) {
+      filteredFields = uploadFields.filter(
+        (field) => !['guardianId', 'birth_certificate_no'].includes(field.name)
+      );
+    } else {
+      filteredFields = uploadFields.slice(0, 6); // Default fields
+    }
+
+    // Combine always included fields with filtered fields, avoiding duplicates
+    const combinedFields = [
+      ...alwaysIncludedFields,
+      ...filteredFields.filter(
+        (field) => !alwaysIncludedFields.some((f) => f.name === field.name)
+      ),
+    ];
+
+    return combinedFields;
+  };
+
+  //cont initiate Change of Paypoint
+
+  const paypointFields = [
+    {
+      name: 'prospective_pensioner_id',
+      label: 'Retiree',
+      type: 'autocomplete',
+      options: claims && claims,
+      required: true,
+    },
+    {
+      name: 'bankId',
+      label: 'Bank',
+      type: 'autocomplete',
+      required: true,
+      options: banks.map((bank) => ({
+        id: bank.id,
+        name: bank.name,
+      })),
+    },
+    {
+      name: 'bank_branch_id',
+      label: 'Branch',
+      type: 'autocomplete',
+      required: true,
+      options: branches
+        .filter((branch) => branch.bankId === selectedBank)
+        .map((branch) => ({
+          id: branch.id,
+          name: branch.name,
+          bankId: branch.bankId,
+        })),
+    },
+    {
+      name: 'account_number',
+      label: 'Account Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'account_name',
+      label: 'Account Name',
+      type: 'text',
+      required: true,
+    },
+
+    {
+      name: 'reason',
+      label: 'Reason',
+      type: 'text',
+      required: true,
+    },
+  ];
+
+  const [retiree, setRetiree] = React.useState(null);
+
+  const fetchRetiree = async (prospectivePensionerId) => {
+    try {
+      const res = await preApiservice.get(
+        preClaimsEndpoints.getProspectivePensioner(prospectivePensionerId)
+      );
+      if (res.status === 200) {
+        setRetiree(res.data.data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (clickedItem) {
+      fetchRetiree(clickedItem?.prospective_pensioner_id);
+    }
+  }, [clickedItem]);
+
+  const generateFieldsFromJsonPayload = (jsonPayload, parentKey = '') => {
+    const excludedFields = [
+      'id',
+      'prospective_pensioner_id',
+      'beneficiary_id',
+      'stage_id',
+      'igc_type_id',
+      'parent_id',
+      'guardian_id',
+    ];
+
+    const fields = [];
+
+    Object.keys(jsonPayload).forEach((key) => {
+      const value = jsonPayload[key];
+      const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handle nested keys
+
+      if (excludedFields.includes(key)) {
+        return; // Skip excluded fields
+      }
+
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        // Recursively process nested objects
+        fields.push(...generateFieldsFromJsonPayload(value, fullKey));
+      } else {
+        let type = 'text';
+
+        if (typeof value === 'boolean') {
+          type = 'select';
+        } else if (typeof value === 'string' && value.includes('@')) {
+          type = 'email';
+        } else if (
+          typeof value === 'string' &&
+          value.match(/^\d{4}-\d{2}-\d{2}T/)
+        ) {
+          type = 'date';
+        } else if (
+          typeof value === 'string' &&
+          value.match(/^\+\d{1,3}\s?\(?\d{1,4}\)?[\d\s-]{7,}$/)
+        ) {
+          type = 'phone_number';
+        }
+
+        fields.push({
+          name: fullKey,
+          label: fullKey
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
+          type,
+          value,
+          disabled: true,
+        });
+      }
+    });
+
+    return fields;
+  };
+
+  useEffect(() => {
+    if (!openBaseCard) {
+      setOpenInitiate(false);
+      setOpenChangePaypoint(false);
+      setClickedItem(null);
+      setInitiateRevisedCase(false);
+    }
+  }, [openBaseCard]);
+
+  const { igcId, setIgcId } = useIgcIdStore();
+
+  useEffect(() => {
+    if (clickedItem) {
+      setIgcId(clickedItem.id);
+    }
+  }, [clickedItem]);
+
+  useEffect(() => {
+    console.log('Here are the seletcedRows', selectedRows);
+  }, [selectedRows]);
+
+  const [childRevisedData, setChildRevisedData] = useState([]);
+  const { setSelectedIgcs } = useSelectedIgcsStore();
+
+  return (
+    <div className="">
+      <BaseCard
+        openBaseCard={openBaseCard}
+        setOpenBaseCard={setOpenBaseCard}
+        handlers={baseCardHandlers}
+        title={title}
+        clickedItem={clickedItem}
+        isUserComponent={false}
+      >
+        {clickedItem && isRevisedType(clickedItem?.igc_type) ? (
+          <AssessmentCard
+            claim={
+              clickedItem
+                ? [
+                    {
+                      ...clickedItem,
+                      prospectivePensionerId:
+                        clickedItem?.prospective_pensioner_id,
+                    },
+                  ]
+                : null
+            }
+            clickedIgc={clickedItem}
+            igcId={clickedItem?.id}
+            setClickedItem={setClickedItem}
+            clickedItem={retiree}
+            claimId={null}
+            setOpenBaseCard={setOpenBaseCard}
+            openBaseCard={openBaseCard}
+            isIgc={true}
+            childTitle="IGC Details"
+            jsonPayload={clickedItem?.json_payload}
+            setChildRevisedData={setChildRevisedData}
+          >
+            <ChangesView data={childRevisedData} />
+          </AssessmentCard>
+        ) : clickedItem && !isRevisedType(clickedItem?.igc_type) ? (
+          <>
+            <AssessmentCard
+              claim={
+                clickedItem
+                  ? [
+                      {
+                        ...clickedItem,
+                        prospectivePensionerId:
+                          clickedItem?.prospective_pensioner_id,
+                      },
+                    ]
+                  : null
+              }
+              clickedItem={retiree}
+              clickedIgc={clickedItem}
+              claimId={null}
+              setOpenBaseCard={setOpenBaseCard}
+              isIgc={true}
+              childTitle="IGC Details"
+            >
+              <IGCSummaryComponent clickedItem={clickedItem} />
+            </AssessmentCard>
+          </>
+        ) : openInitiate ? (
+          <>
+            <BaseInputCard
+              fields={[...filteredFields(formData)]}
+              apiEndpoint={endpoints.initiateIgcBeneficiary}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              setInputData={setFormData}
+              useRequestBody={true}
+            />
+          </>
+        ) : openChangePaypoint ? (
+          <BaseInputCard
+            fields={paypointFields}
+            apiEndpoint={endpoints.initiateChangeOfPaypoint}
+            postApiFunction={apiService.post}
+            clickedItem={clickedItem}
+            useRequestBody={true}
+            setOpenBaseCard={setOpenBaseCard}
+            setSelectedBank={setSelectedBank}
+          />
+        ) : initiateRevisedCase ? (
+          <IgcRevisedInputCard
+            setOpenBaseCard={setOpenBaseCard}
+            claims={igcClaims}
+          />
+        ) : (
+          <></>
+        )}
+      </BaseCard>
+      <div className="mt-[-20px]">
+        <BaseTable
+          openBaseCard={openBaseCard}
+          clickedItem={clickedItem}
+          setClickedItem={setClickedItem}
+          setOpenBaseCard={setOpenBaseCard}
+          columnDefs={columnDefs}
+          fetchApiEndpoint={endpoints.getIgcListingsByClaimStage(status)}
+          fetchApiService={apiService.get}
+          transformData={transformData}
+          pageSize={30}
+          handlers={handlers}
+          // isIgc={true}
+          breadcrumbTitle="Igc List"
+          currentTitle="Igc List"
+          onSelectionChange={(selectedRows) => {
+            setSelectedIgcs(selectedRows);
+            setSelectedRows(selectedRows);
+          }}
+          refreshData={refreshData}
+          hideTableHeader={true}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default IgcForUseInClaims;
