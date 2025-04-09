@@ -17,7 +17,12 @@ import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
 import endpoints, { apiService } from '../services/setupsApi';
 // import AssessmentCard from '../assessment/assessmentDataCapture/AssessmentCard';
 
-const PayrollPensioners = ({ stage, status }) => {
+const PayrollPensioners = ({
+  isImported,
+  clickedItemParent,
+  openClickedPensioner,
+  setOpenClickedPensioner,
+}) => {
   const columnDefs = [
     {
       field: 'pensionerNo',
@@ -285,99 +290,192 @@ const PayrollPensioners = ({ stage, status }) => {
     }
   }, [clickedItem]);
 
+  useEffect(() => {
+    if (clickedItemParent) {
+      setClickedItem(clickedItemParent);
+      fetchProspectivePensionerDetils(clickedItemParent?.coreClaimId);
+    }
+  }, [clickedItemParent]);
   return (
     <div className="">
-      <BaseCard
-        openBaseCard={openBaseCard}
-        setOpenBaseCard={setOpenBaseCard}
-        handlers={baseCardHandlers}
-        title={title}
-        clickedItem={clickedItem}
-        isUserComponent={false}
-        isClaim={true}
-      >
-        {clickedItem ? (
-          <div className="">
-            <AssessmentCard
-              claim={
-                clickedClaim
-                  ? {
-                      ...clickedClaim,
-                      prospectivePensionerId:
-                        clickedItem?.prospective_pensioner_id,
-                      id_claim: clickedItem?.id_claim ?? null,
+      {isImported ? (
+        <>
+          <BaseCard
+            openBaseCard={openClickedPensioner}
+            setOpenBaseCard={setOpenClickedPensioner}
+            handlers={baseCardHandlers}
+            title={title}
+            clickedItem={clickedItem}
+            isUserComponent={false}
+            isClaim={true}
+            isSecondaryCard2={true}
+          >
+            {clickedItem ? (
+              <div className="h-[60vh] overflow-y-auto">
+                <AssessmentCard
+                  claim={
+                    clickedClaim
+                      ? {
+                          ...clickedClaim,
+                          prospectivePensionerId:
+                            clickedItem?.prospective_pensioner_id,
+                          id_claim: clickedItem?.id_claim ?? null,
+                        }
+                      : null
+                  }
+                  clickedItem={clickedClaim?.prospectivePensioner}
+                  setOpenBaseCard={setOpenBaseCard}
+                  childTitle="Payroll Details"
+                  isIgc={false}
+                  isPayroll={true}
+                >
+                  <BaseCollapse
+                    name="Pensioner Benefits"
+                    expandHandler={() =>
+                      handleExpand(
+                        <PensionerBenefitsTable
+                          clickedItem={clickedItem}
+                          setViewBreakDown={setViewBreakDown}
+                          isExpanded={true}
+                        />,
+                        'Pensioner Benefits'
+                      )
                     }
-                  : null
-              }
-              clickedItem={clickedClaim?.prospectivePensioner}
-              setOpenBaseCard={setOpenBaseCard}
-              childTitle="Payroll Details"
-              isIgc={false}
-              isPayroll={true}
-            >
-              <BaseCollapse
-                name="Pensioner Benefits"
-                expandHandler={() =>
-                  handleExpand(
+                  >
                     <PensionerBenefitsTable
+                      coreBenefitId={clickedItem?.coreBenefitId}
                       clickedItem={clickedItem}
                       setViewBreakDown={setViewBreakDown}
-                      isExpanded={true}
-                    />,
-                    'Pensioner Benefits'
-                  )
-                }
-              >
-                <PensionerBenefitsTable
-                  coreBenefitId={clickedItem?.coreBenefitId}
-                  clickedItem={clickedItem}
-                  setViewBreakDown={setViewBreakDown}
-                />
-              </BaseCollapse>
-              <BaseCollapse className="mt-4" name="Payroll Details">
-                <div className="flex flex-col gap-2 px-4">
-                  <div className=" overflow-y-auto ">
-                    <BaseInputCard
-                      fields={fields}
-                      apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
-                      postApiFunction={payrollApiService.post}
-                      clickedItem={clickedItem}
-                      useRequestBody={true}
-                      setOpenBaseCard={setOpenBaseCard}
                     />
-                  </div>
-                </div>
-              </BaseCollapse>
-            </AssessmentCard>
-          </div>
-        ) : (
-          <BaseInputCard
-            fields={fields}
-            apiEndpoint={payrollEndpoints.addVendorPostingGroup}
-            postApiFunction={payrollApiService.post}
-            clickedItem={clickedItem}
-            useRequestBody={true}
+                  </BaseCollapse>
+                  <BaseCollapse className="mt-4" name="Payroll Details">
+                    <div className="flex flex-col gap-2 px-4">
+                      <div className=" overflow-y-auto ">
+                        <BaseInputCard
+                          fields={fields}
+                          apiEndpoint={
+                            payrollEndpoints.updateVendorPostingGroup
+                          }
+                          postApiFunction={payrollApiService.post}
+                          clickedItem={clickedItem}
+                          useRequestBody={true}
+                          setOpenBaseCard={setOpenBaseCard}
+                        />
+                      </div>
+                    </div>
+                  </BaseCollapse>
+                </AssessmentCard>
+              </div>
+            ) : (
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={payrollEndpoints.addVendorPostingGroup}
+                postApiFunction={payrollApiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+            )}
+          </BaseCard>
+        </>
+      ) : (
+        <>
+          {' '}
+          <BaseCard
+            openBaseCard={openBaseCard}
             setOpenBaseCard={setOpenBaseCard}
+            handlers={baseCardHandlers}
+            title={title}
+            clickedItem={clickedItem}
+            isUserComponent={false}
+            isClaim={true}
+          >
+            {clickedItem ? (
+              <div className="">
+                <AssessmentCard
+                  claim={
+                    clickedClaim
+                      ? {
+                          ...clickedClaim,
+                          prospectivePensionerId:
+                            clickedItem?.prospective_pensioner_id,
+                          id_claim: clickedItem?.id_claim ?? null,
+                        }
+                      : null
+                  }
+                  clickedItem={clickedClaim?.prospectivePensioner}
+                  setOpenBaseCard={setOpenBaseCard}
+                  childTitle="Payroll Details"
+                  isIgc={false}
+                  isPayroll={true}
+                >
+                  <BaseCollapse
+                    name="Pensioner Benefits"
+                    expandHandler={() =>
+                      handleExpand(
+                        <PensionerBenefitsTable
+                          clickedItem={clickedItem}
+                          setViewBreakDown={setViewBreakDown}
+                          isExpanded={true}
+                        />,
+                        'Pensioner Benefits'
+                      )
+                    }
+                  >
+                    <PensionerBenefitsTable
+                      coreBenefitId={clickedItem?.coreBenefitId}
+                      clickedItem={clickedItem}
+                      setViewBreakDown={setViewBreakDown}
+                    />
+                  </BaseCollapse>
+                  <BaseCollapse className="mt-4" name="Payroll Details">
+                    <div className="flex flex-col gap-2 px-4">
+                      <div className=" overflow-y-auto ">
+                        <BaseInputCard
+                          fields={fields}
+                          apiEndpoint={
+                            payrollEndpoints.updateVendorPostingGroup
+                          }
+                          postApiFunction={payrollApiService.post}
+                          clickedItem={clickedItem}
+                          useRequestBody={true}
+                          setOpenBaseCard={setOpenBaseCard}
+                        />
+                      </div>
+                    </div>
+                  </BaseCollapse>
+                </AssessmentCard>
+              </div>
+            ) : (
+              <BaseInputCard
+                fields={fields}
+                apiEndpoint={payrollEndpoints.addVendorPostingGroup}
+                postApiFunction={payrollApiService.post}
+                clickedItem={clickedItem}
+                useRequestBody={true}
+                setOpenBaseCard={setOpenBaseCard}
+              />
+            )}
+          </BaseCard>
+          <BaseTable
+            openAction={openAction}
+            openBaseCard={openBaseCard}
+            clickedItem={clickedItem}
+            setClickedItem={setClickedItem}
+            setOpenBaseCard={setOpenBaseCard}
+            columnDefs={columnDefs}
+            fetchApiEndpoint={payrollEndpoints.getAllPayrollPensinoers}
+            fetchApiService={payrollApiService.get}
+            transformData={transformData}
+            pageSize={30}
+            handlers={handlers}
+            breadcrumbTitle="Pensioners Listing"
+            currentTitle="Pensioners List"
+            isPayroll={true}
+            onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           />
-        )}
-      </BaseCard>
-      <BaseTable
-        openAction={openAction}
-        openBaseCard={openBaseCard}
-        clickedItem={clickedItem}
-        setClickedItem={setClickedItem}
-        setOpenBaseCard={setOpenBaseCard}
-        columnDefs={columnDefs}
-        fetchApiEndpoint={payrollEndpoints.getAllPayrollPensinoers}
-        fetchApiService={payrollApiService.get}
-        transformData={transformData}
-        pageSize={30}
-        handlers={handlers}
-        breadcrumbTitle="Pensioners Listing"
-        currentTitle="Pensioners List"
-        isPayroll={true}
-        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
-      />
+        </>
+      )}
     </div>
   );
 };

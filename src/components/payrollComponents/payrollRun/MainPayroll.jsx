@@ -277,7 +277,7 @@ const MainPayroll = ({ stage, status }) => {
         payrollEndpoints.getPeriodSchedule(id)
       );
       if (res.status === 200) {
-        setPayrollDetails(res.data);
+        setPayrollDetails(res.data.data);
       }
     } catch (error) {
       console.log('Error fetching payroll details', error);
@@ -397,14 +397,12 @@ const MainPayroll = ({ stage, status }) => {
       title: 'Earnings',
       content: (
         <BaseCollapse name="Earnings">
-          <IconButton
-            onClick={() => setOpenViewAll(true)}
-            sx={{ position: 'absolute', right: '40px', top: '20px' }}
-          >
-            <Launch />
-          </IconButton>
           <div className="pt-2">
-            <PayrollPensionerDetails payrollDetails={payrollDetails} />
+            <PayrollPensionerDetails
+              clickedItem={clickedItem}
+              setPayrollDetails={setPayrollDetails}
+              payrollDetails={payrollDetails}
+            />
           </div>
         </BaseCollapse>
       ),

@@ -16,14 +16,17 @@ import { apiService } from '@/components/services/api';
 import BaseEmptyComponent from '@/components/baseComponents/BaseEmptyComponent';
 import PayrollDeductionDetails from './PayrollDeductionDetails';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
-import { Dialog } from '@mui/material';
+import { Box, Dialog, Pagination } from '@mui/material';
 import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
 import payrollEndpoints, {
   payrollApiService,
 } from '@/components/services/payrollApi';
+import { ExpandedPayrollDetails } from './ExpandedPayrollDetails';
+import { useTheme } from '@emotion/react';
 
-function PayrollPensionerDetails({ payrollDetails }) {
+function PayrollPensionerDetails({ clickedItem }) {
   const [qualifyingService, setQualifyingService] = useState([]);
+  const [payrollDetails, setPayrollDetails] = useState([]);
   const [openRunIncrement, setOpenRunIncrement] = useState(false);
   const columnDefs = [
     {
@@ -40,7 +43,7 @@ function PayrollPensionerDetails({ payrollDetails }) {
     },
 
     {
-      field: 'PensionerName',
+      field: 'pensionerName',
       headerName: 'Pensioner Name',
       headerClass: 'prefix-header',
       flex: 1,
@@ -67,7 +70,31 @@ function PayrollPensionerDetails({ payrollDetails }) {
       headerClass: 'prefix-header',
       flex: 1,
     },
-
+    {
+      field: 'netAmount',
+      headerName: 'Net Amount',
+      headerClass: 'prefix-header',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className="text-right">{formatNumber(params.value)}</p>;
+      },
+    },
+    {
+      field: 'totalGrossArrears',
+      headerName: 'Total Gross Arrears',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className="text-right">{formatNumber(params.value)}</p>;
+      },
+    },
+    {
+      field: 'totalNetArrears',
+      headerName: 'Total Net Arrears',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className="text-right">{formatNumber(params.value)}</p>;
+      },
+    },
     {
       field: 'lastPayGrossAmount',
 
@@ -201,6 +228,18 @@ function PayrollPensionerDetails({ payrollDetails }) {
       type: 'amount',
       disabled: true,
     },
+    {
+      name: 'totalGrossArrears',
+      label: 'Total Gross Arrears',
+      type: 'amount',
+      disabled: true,
+    },
+    {
+      name: 'totalNetArrears',
+      label: 'Total Net Arrears',
+      type: 'amount',
+      disabled: true,
+    },
   ];
 
   const handlers = {
@@ -277,6 +316,62 @@ function PayrollPensionerDetails({ payrollDetails }) {
       ),
     },
   ];
+
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const fetchPayrollDetails = async (id, pageNumber, filters = {}) => {
+    try {
+      const res = await payrollApiService.get(
+        payrollEndpoints.getPeriodSchedule(id),
+        {
+          'paging.pageNumber': pageNumber,
+          'paging.pageSize': 10,
+
+          ...filters,
+        }
+      );
+      if (res.status === 200) {
+        const { totalCount, totalPages } = res.data;
+        setTotalPages(totalPages);
+        setPayrollDetails(res.data.data);
+      }
+    } catch (error) {
+      console.log('Error fetching payroll details', error);
+    }
+  };
+
+  useEffect(() => {
+    if (pageNumber) {
+      fetchPayrollDetails(clickedItem.periodId, pageNumber);
+    }
+  }, [pageNumber]);
+  useEffect(() => {
+    if (clickedItem) {
+      fetchPayrollDetails(clickedItem.periodId);
+    }
+  }, [clickedItem]);
+
+  const handlePaginationChange = (e, newPage) => {
+    console.log('newPage', newPage);
+    console.log('***********************');
+    console.log('e', e);
+    setPageNumber(newPage);
+  };
+
+  const [searchText, setSearchText] = useState('');
+  const [selectedColumn, setSelectedColumn] = useState('pensionerNo');
+  const handleSearchColumns = () => {
+    const filters = {
+      'filterCriterion.criterions[0].propertyName': selectedColumn,
+      'filterCriterion.criterions[0].propertyValue': searchText,
+      'filterCriterion.criterions[0].criterionType': 2,
+    };
+    fetchPayrollDetails(clickedItem.periodId, 1, filters);
+  };
+  const theme = useTheme();
+
   return (
     <>
       <BaseCard
@@ -304,7 +399,7 @@ function PayrollPensionerDetails({ payrollDetails }) {
           setOpenBaseCard={setOpenRunIncrement}
         />
       </BaseCard>
-      <div className="ag-theme-quartz mt-5 px-5 h-[150px]">
+      <div className="ag-theme-quartz mt-5 px-5  relative">
         <BaseCard
           openBaseCard={openBaseCard}
           isSecondaryCard={true}
@@ -319,17 +414,41 @@ function PayrollPensionerDetails({ payrollDetails }) {
           <BaseTabs tabPanes={tabPanes} />
         </BaseCard>
 
-        <div className="min-h-[600px] max-h-[600px] h-[200px]">
+        <div className="h-[63vh] flex flex-col gap-3">
+          <div className="mt-[-20px]">
+            <ExpandedPayrollDetails
+              eligibleColDefs={columnDefs}
+              elgiblePensioners={payrollDetails}
+              totalPages={totalPages}
+              pageNumber={pageNumber}
+              handlePaginationChange={handlePaginationChange}
+              handleSearchColumns={handleSearchColumns}
+              setSearchText={setSearchText}
+              setSelectedColumn={setSelectedColumn}
+              theme={theme}
+              handleResetFilters={() => {
+                setSearchText('');
+                setSelectedColumn('pensionerNo');
+                fetchPayrollDetails(clickedItem?.periodId, 1, {});
+              }}
+              notTable={true}
+            />
+          </div>
           <AgGridReact
             columnDefs={columnDefs}
-            rowData={
-              payrollDetails &&
-              payrollDetails.map((detail) => detail.pensionerDetail)
-            }
+            rowData={[
+              ...(payrollDetails &&
+                payrollDetails.map((detail) => ({
+                  ...detail.pensionerDetail, // Spread the existing pensionerDetail fields
+                  totalNetArrears: detail.totalNetArrears, // Add totalNetArrears from payrollDetails
+                  totalGrossArrears: detail.totalGrossArrears, // Add grossAmount from payrollDetails
+                  netAmount: detail.netAmount, // Add netAmount from payrollDetails
+                }))),
+            ]}
             pagination={false}
             domLayout="normal"
             alwaysShowHorizontalScroll={true}
-            className="custom-grid ag-theme-quartz"
+            className="custom-grid ag-theme-quartz px-2"
             rowSelection="multiple"
             // onSelectionChanged={onSelectionChanged}
             onRowClicked={(e) => {
@@ -338,6 +457,28 @@ function PayrollPensionerDetails({ payrollDetails }) {
               setClickedRow(e.data);
             }}
           />
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              // position: 'absolute',
+              // bottom: '-20px', // Adjust this value to position the pagination vertically
+
+              // left: '50%', // Move to the center of the parent
+              // transform: 'translateX(-50%)', // Adjust to center horizontally
+            }}
+          >
+            <Pagination
+              showFirstButton
+              showLastButton
+              count={totalPages}
+              page={pageNumber}
+              onChange={handlePaginationChange}
+              color="primary"
+              variant="outlined"
+              shape="rounded"
+            />
+          </Box>
         </div>
       </div>
     </>
