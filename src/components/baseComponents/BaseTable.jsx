@@ -71,6 +71,7 @@ const BaseTable = ({
   segmentOptions,
   hideTableHeader,
   stage,
+  display,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -308,7 +309,11 @@ const BaseTable = ({
 
   const { setClickedIgc } = useClickedIgcStore();
   return (
-    <div>
+    <div
+      style={{
+        display: display && display === 'none' ? 'none' : 'block',
+      }}
+    >
       {excelLoading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: 999999 }}

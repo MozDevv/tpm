@@ -21,7 +21,7 @@ const payrollEndpoints = {
   getPayrollSummaryByStage: (type, stage) =>
     `/api/Application/payroll-summaries?type=${type}&Stage=${stage}`,
   getPayrollSummaryByStageOnly: (id) =>
-    `/api/Application/payroll-summaries?type=${id}`,
+    `/api/Application/payroll-summaries-pgd?type=${id}`,
 
   getPeriodSchedule: (periodId) =>
     `api/Application/schedule-pgd?periodId=${periodId}`,
@@ -56,6 +56,9 @@ const payrollEndpoints = {
   admit: (id) => '/api/Pensioner/Admit?id=' + id,
   getEligiblePensioners: (id) =>
     `/api/Pensioner/PayrollEligiblePensioners?payrollTypeId=${id}`,
+
+  getPayrollPeriodByDocNo: (docNo) =>
+    `/api/Application/payroll-summaries-pgd?filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=2&filterCriterion.criterions[0].propertyName=payrollPeriod.documentNo&filterCriterion.criterions[0].propertyValue=${docNo}`,
 };
 api.interceptors.request.use(
   (config) => {

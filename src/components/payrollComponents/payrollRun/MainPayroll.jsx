@@ -26,12 +26,18 @@ import { message } from 'antd';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
 import { useStageStore, useStatusStore } from '@/zustand/store';
 
-const MainPayroll = ({ stage }) => {
+const MainPayroll = ({
+  stage,
+  isApproval,
+  openApprovalBase,
+  setOpenApprovalBase,
+  clickedApproval,
+}) => {
   const { status } = useStatusStore();
   const columnDefs = [
     {
-      field: 'period',
-      headerName: 'Period',
+      field: 'payrollPeriod.documentNo',
+      headerName: 'Document No',
       headerClass: 'prefix-header',
       filter: true,
       width: 150,
@@ -44,6 +50,16 @@ const MainPayroll = ({ stage }) => {
             {params.value}
           </p>
         );
+      },
+    },
+    {
+      field: 'payrollPeriod.period',
+      headerName: 'Period',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 130,
+      cellRenderer: (params) => {
+        return <p className="text-primary font-semibold  ">{params.value}</p>;
       },
     },
     {
@@ -88,6 +104,42 @@ const MainPayroll = ({ stage }) => {
       },
       cellRenderer: (params) => {
         return <p className="text-right">{formatNumber(params.value)}</p>;
+      },
+    },
+    {
+      field: 'payrollPeriod.stage',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      width: 180,
+      cellRenderer: (params) => {
+        const statusMap = {
+          0: { label: 'Open', color: '#007bff' }, // Blue
+          1: { label: 'Pending Approval', color: '#ffc107' }, // Yellow
+          2: { label: 'Review', color: '#28a745' }, // Green
+          3: { label: 'Closed', color: '#dc3545' }, // Red
+        };
+
+        const status = statusMap[params.value] || {
+          label: 'Unknown',
+          color: 'gray',
+        };
+
+        return (
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              display: 'inline-flex', // Use inline-flex for alignment
+              alignItems: 'center', // Vertically center the text
+              justifyContent: 'center', // Horizontally center the text
+              width: '100%', // Ensure it takes the full width of the cell
+              height: '100%', // Ensure it takes the full height of the cell
+            }}
+          >
+            {status.label}
+          </span>
+        );
       },
     },
     {
@@ -162,6 +214,8 @@ const MainPayroll = ({ stage }) => {
     return data.map((item, index) => ({
       no: index + 1,
       ...item,
+      documentNo: item.payrollPeriod.documentNo,
+      no_series: item.payrollPeriod.documentNo,
     }));
   };
 
@@ -410,6 +464,16 @@ const MainPayroll = ({ stage }) => {
     },
   ];
 
+  useEffect(() => {
+    if (clickedApproval) {
+      setClickedItem({
+        ...clickedApproval,
+        documentNo: clickedApproval.payrollPeriod?.documentNo,
+        no_series: clickedApproval.payrollPeriod?.documentNo,
+      });
+    }
+  }, [clickedApproval]);
+
   return (
     <div className="">
       {computing && (
@@ -463,7 +527,32 @@ const MainPayroll = ({ stage }) => {
       >
         <PayrollPensionerDetails payrollDetails={payrollDetails} />
       </ViewAllEarningsDialog>
-
+      {isApproval && (
+        <BaseCard
+          openBaseCard={openApprovalBase}
+          setOpenBaseCard={setOpenApprovalBase}
+          handlers={baseCardHandlers}
+          title={title}
+          clickedItem={clickedItem}
+          isUserComponent={false}
+          isClaim={true}
+        >
+          {clickedItem ? (
+            <>
+              <BaseTabs tabPanes={tabPanes} />
+            </>
+          ) : (
+            <BaseInputCard
+              fields={fields}
+              apiEndpoint={payrollEndpoints.addVendorPostingGroup}
+              postApiFunction={payrollApiService.post}
+              clickedItem={clickedItem}
+              useRequestBody={true}
+              setOpenBaseCard={setOpenBaseCard}
+            />
+          )}
+        </BaseCard>
+      )}
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -474,33 +563,6 @@ const MainPayroll = ({ stage }) => {
         isClaim={true}
       >
         {clickedItem ? (
-          // <div className="flex flex-col gap-2">
-          //   <div className=" overflow-y-auto ">
-          //     <BaseCollapse name="Summary">
-          //       <BaseInputCard
-          //         fields={fields}
-          //         apiEndpoint={payrollEndpoints.updateVendorPostingGroup}
-          //         postApiFunction={payrollApiService.post}
-          //         clickedItem={clickedItem}
-          //         useRequestBody={true}
-          //         setOpenBaseCard={setOpenBaseCard}
-          //       />
-          //     </BaseCollapse>
-          //     <div className="relative">
-          //       <BaseCollapse name="Earnings">
-          //         <IconButton
-          //           onClick={() => setOpenViewAll(true)}
-          //           sx={{ position: 'absolute', right: '40px', top: '20px' }}
-          //         >
-          //           <Launch />
-          //         </IconButton>
-          //         <div className="pt-2">
-          //           <PayrollPensionerDetails payrollDetails={payrollDetails} />
-          //         </div>
-          //       </BaseCollapse>
-          //     </div>
-          //   </div>
-          // </div>
           <>
             <BaseTabs tabPanes={tabPanes} />
           </>
@@ -516,6 +578,7 @@ const MainPayroll = ({ stage }) => {
         )}
       </BaseCard>
       <BaseTable
+        display={isApproval ? 'none' : 'block'}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
@@ -544,10 +607,14 @@ const MainPayroll = ({ stage }) => {
             ? 'Dependent Review'
             : 'Agency Payroll'
         }
-        isPayroll={true}
+        // isPayroll={true}
         stage={stage}
         refreshData={refreshData}
-        onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
+        onSelectionChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+
+          console.log('Selected Rows:', selectedRows);
+        }}
         segmentFilterParameter="Stage"
         segmentOptions={[
           { value: 0, label: 'Open' },

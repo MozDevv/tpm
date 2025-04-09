@@ -35,6 +35,12 @@ import endpoints, {
 import Preclaims from '../../preclaims/Preclaims';
 import ListNavigation from '@/components/baseComponents/ListNavigation';
 import Payments from '@/components/financeComponents/payments/Payments';
+import MainPayroll from '@/components/payrollComponents/payrollRun/MainPayroll';
+import payrollEndpoints, {
+  payrollApiService,
+} from '@/components/services/payrollApi';
+import { useStatusStore } from '@/zustand/store';
+// import MainPayroll from '@/components/payrollComponents/payrollRun/MainPayroll copy';
 
 function DueForApproval() {
   const [rowData, setRowData] = React.useState([]);
@@ -152,13 +158,29 @@ function DueForApproval() {
           fetchClickedRowEnpoint: financeEndpoints.getPaymentByDocNo,
           fetchClickedRowApiService: apiService,
         };
+      case 'PAYROLL':
+        return {
+          component: (
+            <MainPayroll
+              stage={1}
+              isApproval={true}
+              openApprovalBase={openApprovalBase}
+              setOpenApprovalBase={setOpenApprovalBase}
+              clickedApproval={fetchedDoc}
+            />
+          ),
+          fetchClickedRowEnpoint: payrollEndpoints.getPayrollPeriodByDocNo,
+          fetchClickedRowApiService: payrollApiService,
+        };
       // Add more cases here for different section names
       default:
         return { component: <Empty /> };
     }
   };
 
+  const { setStatus } = useStatusStore();
   const fetchClickedRow = async (item) => {
+    setStatus?.(1);
     let fetchClickedRowEnpoint, fetchClickedRowApiService;
 
     for (const section of numberingSections) {
