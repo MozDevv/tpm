@@ -204,6 +204,7 @@ const IgcForUseInClaims = ({ status }) => {
       ...item?.json_payload,
       stage: item?.igc_stage_type_map?.igc_stage,
       id_claim: item?.json_payload?.claim_id,
+      id: item?.id,
     }));
   };
   const [openInitiate, setOpenInitiate] = useState(false);

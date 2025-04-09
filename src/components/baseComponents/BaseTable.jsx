@@ -125,29 +125,36 @@ const BaseTable = ({
   const { setStatus } = useStatusStore();
 
   useEffect(() => {
-    setStatus(activeSegment);
-    // Check if segment filtering is enabled
-    if (segmentFilterParameter && activeSegment !== -1) {
-      const filter = isIgc
-        ? {
-            'filterCriterion.criterions[0].propertyName':
-              'igc_stage_type_map.igc_stage',
-            'filterCriterion.criterions[0].propertyValue': activeSegment,
-            'filterCriterion.criterions[0].criterionType': 0,
-          }
-        : segmentFilterParameter
-        ? {
-            [segmentFilterParameter]: activeSegment,
-          }
-        : {};
+    const applyFiltersAndFetchData = () => {
+      setStatus?.(activeSegment);
 
-      console.log('filter', filter);
-      console.log('activeSegment', activeSegment);
+      let filter = {};
 
+      if (isIgc && activeSegment !== -1) {
+        // Apply IGC-specific filtering
+        filter = {
+          'filterCriterion.criterions[0].propertyName':
+            'igc_stage_type_map.igc_stage',
+          'filterCriterion.criterions[0].propertyValue': activeSegment,
+          'filterCriterion.criterions[0].criterionType': 0,
+        };
+      } else if (segmentFilterParameter && activeSegment !== -1) {
+        // Apply segment-specific filtering
+        filter = {
+          [segmentFilterParameter]: activeSegment,
+        };
+      }
+
+      console.log('Filter applied:', filter);
+      console.log('Active Segment:', activeSegment);
+
+      // Fetch data based on the filter
       fetchData(filter);
-    } else if (!openPostToGL || !openApproveDialog || openSubGroup) {
-      // Fetch data when specific states change
-      fetchData();
+    };
+
+    // Fetch data when specific states change
+    if (!openPostToGL && !openApproveDialog && !openSubGroup) {
+      applyFiltersAndFetchData();
     } else {
       // Default fetch without filters
       fetchData();
