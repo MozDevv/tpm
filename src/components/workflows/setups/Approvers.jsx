@@ -8,6 +8,7 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
+import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 
 const Approvers = () => {
   const [users, setUsers] = useState([]);
@@ -24,6 +25,7 @@ const Approvers = () => {
           name: item.email,
           ...item,
           mdaId: item.mdaId,
+          departmentId: item.departmentId,
         }));
         setUsers(data);
       } catch (error) {
@@ -121,13 +123,18 @@ const Approvers = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 10; // Number of records per page
-  const [departments, setDepartments] = useState([]); // [1]
+  // const [departments, setDepartments] = useState([]); // [1]
 
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
     });
   };
+
+  const { data: departments } = useFetchAsync(
+    endpoints.getDepartments,
+    apiService
+  );
 
   const transformData = (data) => {
     return data.map((item, index) => ({
@@ -170,8 +177,26 @@ const Approvers = () => {
   const [inputData, setInputData] = React.useState({});
   ``;
   const [clickedItem, setClickedItem] = React.useState(null);
+  // const [inputData, ]
 
   const title = clickedItem ? 'Approver' : 'Create a New Approver';
+  const getFilteredUsers = () => {
+    if (!inputData?.userType) {
+      return users; // Return all users if userType is not set
+    }
+
+    if (inputData.userType === 1) {
+      if (inputData?.mdaId) {
+        return users.filter((user) => user.mdaId === inputData.mdaId);
+      }
+    } else if (inputData?.departmentId && inputData.userType === 2) {
+      return users.filter(
+        (user) => user.departmentId === inputData.departmentId
+      );
+    }
+
+    return users; // Default to all users if no valid filter is applied
+  };
 
   const fields = [
     ...(clickedItem
@@ -198,35 +223,53 @@ const Approvers = () => {
           },
         ]
       : [
-          { name: 'mdaId', label: 'MDA', type: 'autocomplete', options: mdas },
+          {
+            name: 'userType',
+            label: 'User Type',
+            type: 'select',
+            options: [
+              { id: 1, name: 'MDA User' },
+
+              { id: 2, name: 'Other User' },
+            ],
+          },
+          ...(inputData && inputData.userType === 1
+            ? [
+                {
+                  name: 'mdaId',
+                  label: 'MDA',
+                  type: 'autocomplete',
+                  options: mdas,
+                },
+              ]
+            : [
+                {
+                  name: 'departmentId',
+                  label: 'Department',
+                  type: 'autocomplete',
+                  options: departments.map((item) => ({
+                    id: item.departmentId,
+                    name: item.name,
+                  })),
+                },
+              ]),
           {
             name: 'primary_approver_id',
             label: 'Primary Approver',
             type: 'autocomplete',
-            options:
-              inputData && inputData.mdaId
-                ? users.filter((user) => user.mdaId === inputData.mdaId)
-                : users,
+            options: getFilteredUsers(),
           },
-
           {
             name: 'secondary_approver_id',
             label: 'Secondary Approver',
             type: 'autocomplete',
-            options:
-              inputData && inputData.mdaId
-                ? users.filter((user) => user.mdaId === inputData.mdaId)
-                : users,
+            options: getFilteredUsers(),
           },
-
           {
             name: 'direct_approver_id',
             label: 'Direct Approver',
             type: 'autocomplete',
-            options:
-              inputData && inputData
-                ? users.filter((user) => user.mdaId === inputData.mdaId)
-                : users,
+            options: getFilteredUsers(),
           },
         ]),
   ];
@@ -253,15 +296,18 @@ const Approvers = () => {
             useRequestBody={true}
           />
         ) : (
-          <BaseInputCard
-            setInputData={setInputData}
-            fields={fields}
-            apiEndpoint={endpoints.createApprovalUser}
-            postApiFunction={apiService.post}
-            clickedItem={clickedItem}
-            setOpenBaseCard={setOpenBaseCard}
-            useRequestBody={true}
-          />
+          <>
+            {' '}
+            <BaseInputCard
+              setInputData={setInputData}
+              fields={fields}
+              apiEndpoint={endpoints.createApprovalUser}
+              postApiFunction={apiService.post}
+              clickedItem={clickedItem}
+              setOpenBaseCard={setOpenBaseCard}
+              useRequestBody={true}
+            />{' '}
+          </>
         )}
       </BaseCard>
       <BaseTable

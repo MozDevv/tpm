@@ -300,9 +300,9 @@ const MainPayroll = ({ stage }) => {
   const getTitle = (stage, status) => {
     const stageTitles = ['Main', 'Injury', 'Dependent', 'Agency'];
     const statusTitles = [
-      'Open Payroll',
-      'Pending Approval',
-      'Payroll Review',
+      'Main Payroll',
+      'Injury Approval',
+      'Depen Review',
       'Closed Payroll',
     ];
 
@@ -310,7 +310,6 @@ const MainPayroll = ({ stage }) => {
     const statusTitle = statusTitles[status] || 'Unknown Status';
 
     return {
-      breadcrumbTitle: statusTitle,
       currentTitle: statusTitle,
     };
   };
@@ -527,9 +526,26 @@ const MainPayroll = ({ stage }) => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle={breadcrumbTitle}
-        currentTitle={currentTitle}
+        breadcrumbTitle={
+          stage === 0
+            ? 'Main Payroll'
+            : stage === 1
+            ? 'Injury Approval'
+            : stage === 2
+            ? 'Dependent Review'
+            : 'Agency Payroll'
+        }
+        currentTitle={
+          stage === 0
+            ? 'Main Payroll'
+            : stage === 1
+            ? 'Injury Approval'
+            : stage === 2
+            ? 'Dependent Review'
+            : 'Agency Payroll'
+        }
         isPayroll={true}
+        stage={stage}
         refreshData={refreshData}
         onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
         segmentFilterParameter="Stage"
@@ -540,6 +556,7 @@ const MainPayroll = ({ stage }) => {
           { value: 3, label: 'Closed' },
         ]}
       />
+      {stage}
     </div>
   );
 };

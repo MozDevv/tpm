@@ -476,7 +476,7 @@ export const menuItems = [
       },
       {
         title: 'Injury Payroll',
-        path: '/pensions/payroll/main-payroll/payroll-run',
+        path: '/pensions/payroll/injury/payroll-run',
         // subChildren: [
         //   {
         //     title: 'Open Payroll',
@@ -502,7 +502,7 @@ export const menuItems = [
       },
       {
         title: 'Dependent Payroll',
-        path: '/pensions/payroll/main-payroll/payroll-run',
+        path: '/pensions/payroll/dependent/payroll-run',
         // subChildren: [
         //   {
         //     title: 'Open Payroll',
@@ -528,7 +528,7 @@ export const menuItems = [
       },
       {
         title: 'Agency Payroll',
-        path: '/pensions/payroll/main-payroll/payroll-run',
+        path: '/pensions/payroll/agency/payroll-run',
         // subChildren: [
         //   {
         //     title: 'Open Payroll',

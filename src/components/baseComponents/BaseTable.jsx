@@ -70,6 +70,7 @@ const BaseTable = ({
   segmentFilterParameter = null,
   segmentOptions,
   hideTableHeader,
+  stage,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -163,6 +164,7 @@ const BaseTable = ({
     openSubGroup,
     segmentFilterParameter,
     isIgc,
+    stage,
   ]);
 
   const handleApplyFilters = async (filterParams) => {
