@@ -320,8 +320,8 @@ function ScheduledPvActions({
                   <TableHead>
                     <TableRow>
                       <TableCell>Document No</TableCell>
-                      <TableCell>On Behalf Of</TableCell>
-                      <TableCell align="right">Payee</TableCell>
+                      <TableCell>Schedule Date</TableCell>
+                      <TableCell align="right">Total Amount</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -339,10 +339,10 @@ function ScheduledPvActions({
                           {doc.documentNo}
                         </TableCell>
 
-                        <TableCell>{doc.onBehalfOf}</TableCell>
+                        <TableCell>{parseDate(doc.scheduleDate)}</TableCell>
 
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                          {doc.payee}
+                          {formatNumber(doc.totalAmount)}
                         </TableCell>
                       </TableRow>
                     ))}

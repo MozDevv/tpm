@@ -579,7 +579,8 @@ const ScheduledPayments = ({
             setOpenDialog={setOpenDialog}
           />
           <Dialog
-            open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
+            open={openPV}
+            // open={openBaseCard ? openPV : openPV && selectedRows.length > 0}
             onClose={() => {
               setOpenPV(false);
               setIsSchedule(false);
@@ -653,7 +654,7 @@ const ScheduledPayments = ({
             )}
           </BaseCard>
           <BaseTable
-            openPostToGL={openPV}
+            // openPostToGL={openPV}
             openAction={openAction}
             openBaseCard={openBaseCard}
             onSelectionChange={handleSelectionChange}

@@ -508,7 +508,7 @@ const Returns = ({ status }) => {
   const columnDefs = [
     {
       field: 'documentNo',
-      headerName: 'Document No',
+      headerName: 'Receipt Voucher No',
       headerClass: 'prefix-header',
       width: 90,
       filter: true,
@@ -886,43 +886,40 @@ const Returns = ({ status }) => {
     financeEndpoints.getPaymentReturnReasons,
     apiService
   );
+
+  const [inputDataTable, setInputDataTable] = useState(null);
   const returnLineFields = [
-    /**{
-  "pensionerName": "string",
-  "pensionerNo": "string",
-  "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "paymentDate": "2025-03-26T10:17:58.991Z",
-  "monthId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "paymentReturnReasonId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "amount": 0,
-  "paymentMethodId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "chequeOrEftDate": "2025-03-26T10:17:58.991Z",
-  "chequeOrEftNo": "string"
-} */
-    /**{
-  "pensionerName": "string",
-  "pensionerNo": "string",
-  "returnId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "paymentDate": "2025-04-09T14:21:35.661Z",
-  "monthId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "paymentReturnReasonId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "amount": 0,
-  "chequeOrEftNo": "string",
-  "returnOwnertType": 0
-} */
+    {
+      label: 'Return Owner Type',
+      value: 'returnOwnerType',
+      type: 'select',
+      options: [
+        { id: 0, name: 'Pensioner' },
+        { id: 1, name: 'Dependant' },
+        { id: 2, name: 'WCPS' },
+        { id: 3, name: 'Secondment' },
+      ],
+    },
     {
       label: 'Pensioner No',
       value: 'pensionerNo',
-      type: 'select',
+      type:
+        inputDataTable?.returnOwnerType === 2 ||
+        inputDataTable?.returnOwnerType === 3
+          ? 'text'
+          : 'select',
       required: true,
-      options: claims && claims,
+      options: claims || [], // Ensure options fallback to an empty array if claims is null
     },
     {
       label: 'Pensioner Name',
       value: 'pensionerName',
       type: 'text',
       required: true,
-      disabled: true,
+      disabled: !(
+        inputDataTable?.returnOwnerType === 2 ||
+        inputDataTable?.returnOwnerType === 3
+      ),
     },
     {
       label: 'Month',
@@ -957,17 +954,6 @@ const Returns = ({ status }) => {
       value: 'chequeOrEftNo',
       type: 'text',
       required: true,
-    },
-    {
-      label: 'Return Owner Type',
-      value: 'returnOwnerType',
-      type: 'select',
-      options: [
-        { id: 0, name: 'Pensioner' },
-        { id: 1, name: 'Dependant' },
-        { id: 2, name: 'WCPS' },
-        { id: 3, name: 'Secondment' },
-      ],
     },
   ];
 
@@ -1105,6 +1091,7 @@ const Returns = ({ status }) => {
                 passProspectivePensionerId={true}
                 allOptions={claims}
                 refetchData={clickedItem}
+                setInputData={setInputDataTable}
               />
 
               {/* {Do not confuse  } */}

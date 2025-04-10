@@ -273,7 +273,7 @@ const PaymentMethods = () => {
         deleteApiEndpoint={financeEndpoints.deletePaymentMethod(
           clickedItem?.id
         )}
-        deleteApiService={apiService.post}
+        deleteApiService={apiService.delete}
       >
         {clickedItem ? (
           <BaseAutoSaveInputCard

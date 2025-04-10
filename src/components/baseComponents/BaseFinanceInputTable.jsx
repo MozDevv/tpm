@@ -61,6 +61,8 @@ const BaseFinanceInputTable = ({
   disableAll,
   fetchChildren,
   refetchData,
+  inputData,
+  setInputData,
 }) => {
   const [rowData, setRowData] = useState(() => {
     const defaultRows = Array.from({ length: 2 }, () =>
@@ -390,6 +392,14 @@ const BaseFinanceInputTable = ({
             });
           });
           throw new Error('An error occurred while submitting the data.');
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.messages.length > 0
+        ) {
+          message.error(res.data.messages[0]);
+          setCellError(data.id, null, res.data.message[0]);
+          throw new Error(res.data.message[0]);
         }
       }
     } catch (error) {
@@ -397,6 +407,11 @@ const BaseFinanceInputTable = ({
       setCellError(data.id, null, error.message || 'An unknown error occurred');
       console.log(error);
       throw error;
+    } finally {
+      let changingVal =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+      setRefreshData(changingVal);
     }
   };
   const setCellError = (rowId, field, error) => {
@@ -734,6 +749,13 @@ const BaseFinanceInputTable = ({
       columnDef.onCellValueChanged = async (params) => {
         const { colDef, data, newValue, api } = params;
         const field = colDef.field;
+        setInputData &&
+          setInputData((prev) => {
+            return {
+              ...prev, // Preserve existing fields in inputData
+              [field]: newValue, // Update the specific field with the new value
+            };
+          });
 
         setDataAdded(true);
 
