@@ -15,6 +15,7 @@ import BaseCollapse from '../baseComponents/BaseCollapse';
 import PensionerBenefitsTable from '../assessment/assessmentDataCapture/PensionerBenefitsTable';
 import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
 import endpoints, { apiService } from '../services/setupsApi';
+import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
 // import AssessmentCard from '../assessment/assessmentDataCapture/AssessmentCard';
 
 const PayrollPensioners = ({
@@ -91,7 +92,9 @@ const PayrollPensioners = ({
           2: { label: 'Suspended', color: '#ffc107' }, // Yellow
           3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
           4: { label: 'Stopped', color: '#6f42c1' }, // Violet
-          5: { label: 'Deleted', color: '#343a40' }, // Dark Gray
+          5: { label: 'Deleted', color: '#000000' }, // Black
+          6: { label: 'Pending Admission', color: '#17a2b8' }, // Cyan
+          7: { label: 'Admission Rejected', color: '#ff6347' }, // Tomato Red
         };
 
         const status = statusMap[params.value] || {
@@ -150,21 +153,37 @@ const PayrollPensioners = ({
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   const [openAction, setOpenAction] = React.useState(12);
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [clickedItem, setClickedItem] = React.useState(null);
+  const [workFlowChange, setWorkFlowChange] = React.useState(0);
 
   const baseCardHandlers = {
-    admit: async () => {
-      try {
-        const response = await payrollApiService.post(
-          payrollEndpoints.admit(clickedItem.payrollId)
-        );
-        if (response.status === 200) {
-          message.success('Admitted successfully');
+    ...(clickedItem?.status === 0 && {
+      admit: async () => {
+        try {
+          const response = await payrollApiService.post(
+            payrollEndpoints.admit(clickedItem.payrollId)
+          );
+          if (response.status === 200) {
+            message.success('Admitted successfully');
+          }
+          console.log(response);
+        } catch (error) {
+          console.log(error);
         }
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    },
+      },
+    }),
+    ...(clickedItem?.status === 6 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
   };
 
   const handlers = {
@@ -193,7 +212,6 @@ const PayrollPensioners = ({
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
 
   const title = clickedItem
     ? clickedItem.corePayrollNo
@@ -330,6 +348,17 @@ const PayrollPensioners = ({
   ];
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       {isImported ? (
         <>
           <BaseCard

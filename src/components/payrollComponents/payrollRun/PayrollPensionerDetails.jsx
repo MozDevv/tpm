@@ -82,7 +82,9 @@ function PayrollPensionerDetails({ clickedItem }) {
           2: { label: 'Suspended', color: '#ffc107' }, // Yellow
           3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
           4: { label: 'Stopped', color: '#6f42c1' }, // Violet
-          5: { label: 'Deleted', color: '#343a40' }, // Dark Gray
+          5: { label: 'Deleted', color: '#000000' }, // Black
+          6: { label: 'Pending Admission', color: '#17a2b8' }, // Cyan
+          7: { label: 'Admission Rejected', color: '#ff6347' }, // Tomato Red
         };
 
         const status = statusMap[params.value] || {

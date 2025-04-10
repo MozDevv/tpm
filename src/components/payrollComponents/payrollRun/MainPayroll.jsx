@@ -225,15 +225,6 @@ const MainPayroll = ({
   const [openApprove, setOpenApprove] = React.useState(0);
 
   const baseCardHandlers = {
-    edit: () => {},
-
-    // ...(status !== 3
-    //   ? {
-    //       trialRun: () => {
-    //         trialRun();
-    //       },
-    //     }
-    //   : {}),
     ...(status === 0
       ? {
           sendPayrollForApproval: () => {
