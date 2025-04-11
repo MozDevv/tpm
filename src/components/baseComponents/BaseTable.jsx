@@ -130,6 +130,7 @@ const BaseTable = ({
   const gridApiRef = useRef(null);
   const [gridApi, setGridApi] = useState(null);
   const [activeSegment, setActiveSegment] = useState(0);
+  const [activeSegment2, setActiveSegment2] = useState(0);
   const { setStatus } = useStatusStore();
 
   useEffect(() => {
@@ -138,23 +139,40 @@ const BaseTable = ({
 
       let filter = {};
 
+      // Handle IGC-specific filtering
       if (isIgc && activeSegment !== -1) {
-        // Apply IGC-specific filtering
         filter = {
           'filterCriterion.criterions[0].propertyName':
             'igc_stage_type_map.igc_stage',
           'filterCriterion.criterions[0].propertyValue': activeSegment,
           'filterCriterion.criterions[0].criterionType': 0,
         };
-      } else if (segmentFilterParameter && activeSegment !== -1) {
-        // Apply segment-specific filtering
+      }
+      // Handle segmentOptions filtering
+      else if (segmentFilterParameter && activeSegment !== -1) {
         filter = {
           [segmentFilterParameter]: activeSegment,
         };
       }
 
+      // Handle segmentOptions2 filtering
+      if (segmentFilterParameter2 && activeSegment2 !== -1) {
+        filter = {
+          ...filter,
+          'filterCriterion.criterions[0].propertyName': 'status',
+          'filterCriterion.criterions[0].propertyValue': activeSegment2,
+          'filterCriterion.criterions[0].criterionType': 0,
+        };
+      }
+
+      // Remove filters if both activeSegment and activeSegment2 are -1
+      if (activeSegment === -1 && activeSegment2 === -1) {
+        filter = {};
+      }
+
       console.log('Filter applied:', filter);
       console.log('Active Segment:', activeSegment);
+      console.log('Active Segment 2:', activeSegment2);
 
       // Fetch data based on the filter
       fetchData(filter);
@@ -172,12 +190,14 @@ const BaseTable = ({
     openBaseCard,
     openAction,
     activeSegment,
+    activeSegment2, // Added dependency for activeSegment2
     uploadExcel,
     refreshData,
     openPostToGL,
     openApproveDialog,
     openSubGroup,
     segmentFilterParameter,
+    segmentFilterParameter2, // Added dependency for segmentFilterParameter2
     isIgc,
     stage,
   ]);
@@ -477,7 +497,7 @@ const BaseTable = ({
     `}</style>
             </div>
           ) : segmentFilterParameter && segmentOptions ? (
-            <div className="pl-2">
+            <div className="">
               <Segmented
                 options={segmentOptions}
                 value={activeSegment}
@@ -540,7 +560,7 @@ const BaseTable = ({
   `}</style>
             </div>
           ) : segmentFilterParameter2 && segmentOptions2 ? (
-            <div className="pl-2">
+            <div className="">
               <Segmented
                 options={segmentOptions2}
                 value={activeSegment}
@@ -607,12 +627,12 @@ const BaseTable = ({
           {/*************************************** */}
 
           {segmentFilterParameter2 && segmentOptions2 ? (
-            <div className="">
+            <div className="mt-2">
               <Segmented
                 options={segmentOptions2}
-                value={activeSegment}
+                value={activeSegment2}
                 onChange={(value) => {
-                  setActiveSegment(value);
+                  setActiveSegment2(value);
                   setSelectedSegment(value);
                 }}
                 className="custom-segmented"

@@ -16,6 +16,7 @@ import PensionerBenefitsTable from '../assessment/assessmentDataCapture/Pensione
 import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
 import endpoints, { apiService } from '../services/setupsApi';
 import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
+import { useSelectedSegmentStore } from '@/zustand/store';
 // import AssessmentCard from '../assessment/assessmentDataCapture/AssessmentCard';
 
 const PayrollPensioners = ({
@@ -157,8 +158,10 @@ const PayrollPensioners = ({
   const [clickedItem, setClickedItem] = React.useState(null);
   const [workFlowChange, setWorkFlowChange] = React.useState(0);
 
+  const { selectedSegment } = useSelectedSegmentStore();
+
   const baseCardHandlers = {
-    ...(clickedItem?.status === 0 && {
+    ...(selectedSegment === 0 && {
       admit: async () => {
         try {
           const response = await payrollApiService.post(
@@ -187,28 +190,30 @@ const PayrollPensioners = ({
   };
 
   const handlers = {
-    admit: async () => {
-      if (!selectedRows || selectedRows.length === 0) {
-        message.warning('No rows selected');
-        return;
-      }
-
-      for (const row of selectedRows) {
-        try {
-          const response = await payrollApiService.post(
-            payrollEndpoints.admit(row.payrollId)
-          );
-          if (response.status === 200) {
-            message.success('Admitted successfully');
-          }
-          console.log(response);
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setOpenAction((prev) => prev + 1);
+    ...(selectedSegment === 0 && {
+      admit: async () => {
+        if (!selectedRows || selectedRows.length === 0) {
+          message.warning('No rows selected');
+          return;
         }
-      }
-    },
+
+        for (const row of selectedRows) {
+          try {
+            const response = await payrollApiService.post(
+              payrollEndpoints.admit(row.payrollId)
+            );
+            if (response.status === 200) {
+              message.success('Admitted successfully');
+            }
+            console.log(response);
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setOpenAction((prev) => prev + 1);
+          }
+        }
+      },
+    }),
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -341,6 +346,7 @@ const PayrollPensioners = ({
   }, [clickedItemParent]);
 
   const segmentOptions = [
+    // { label: 'All', value: -1 },
     { label: 'Main Payroll', value: 0 },
     { label: 'Injury Payroll', value: 1 },
     { label: 'Dependent Payroll', value: 2 },
@@ -546,8 +552,8 @@ const PayrollPensioners = ({
             // isPayroll={true}
             onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
             segmentOptions={segmentOptions}
-            // segmentOptions2={segmentOptions}
-            // segmentFilterParameter2="status"
+            segmentOptions2={segmentOptions2}
+            segmentFilterParameter2="status"
             segmentFilterParameter="types"
             // segmentFilterValue={0}
           />
