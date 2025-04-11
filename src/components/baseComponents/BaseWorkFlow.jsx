@@ -16,6 +16,8 @@ import { formatDate } from '@/utils/dateFormatter';
 import authEndpoints, { AuthApiService } from '../services/authApi';
 import { useAuth } from '@/context/AuthContext';
 import endpoints, { apiService } from '../services/setupsApi';
+import { Empty } from 'antd';
+import BaseEmptyComponent from './BaseEmptyComponent';
 
 // Define a mapping of statuses to icon paths
 const statusIcons = {
@@ -27,7 +29,7 @@ const statusIcons = {
   Null: '/null.png',
 };
 
-function BaseWorkFlow({ steps, activeStep, clickedItem }) {
+function BaseWorkFlow({ steps = [], activeStep, clickedItem }) {
   const [currentStatus, setCurrentStatus] = useState(null);
   const [approver, setApprover] = useState(null);
   const [openWorkflowDetails, setOpenWorkflowDetails] = useState(false);
@@ -118,152 +120,161 @@ function BaseWorkFlow({ steps, activeStep, clickedItem }) {
 
   return (
     <Box p={1} sx={{ width: '100%' }}>
-      <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5">
+      <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5 text-center">
         Document Workflows
       </p>
 
-      <Stepper orientation="vertical" pt={0} activeStep={activeStep}>
-        {steps.map((step, index) => (
-          <Step key={index}>
-            <StepLabel
-              sx={{
-                color: index > activeStep ? 'gray' : 'inherit',
-                display: 'flex',
-                flexDirection: 'row', // Ensure the label stays next to the step number horizontally
-                alignItems: 'center', // Stick the step number and label together
-                gap: 1, // Add small gap between step number and label
-              }}
-            >
-              <Typography
+      {steps?.length !== 0 ? (
+        <Stepper orientation="vertical" pt={0} activeStep={activeStep}>
+          {steps.map((step, index) => (
+            <Step key={index}>
+              <StepLabel
                 sx={{
-                  textDecoration: index > activeStep ? 'none' : 'underline',
                   color: index > activeStep ? 'gray' : 'inherit',
+                  display: 'flex',
+                  flexDirection: 'row', // Ensure the label stays next to the step number horizontally
+                  alignItems: 'center', // Stick the step number and label together
+                  gap: 1, // Add small gap between step number and label
                 }}
-                fontSize={12}
               >
-                {step}
-              </Typography>
+                <Typography
+                  sx={{
+                    textDecoration: index > activeStep ? 'none' : 'underline',
+                    color: index > activeStep ? 'gray' : 'inherit',
+                  }}
+                  fontSize={12}
+                >
+                  {step}
+                </Typography>
 
-              {/* Status and details for the current step */}
-              {index === activeStep && currentStatus && (
-                <>
-                  <Tooltip
-                    title={
-                      <Box
-                        sx={{
-                          marginTop: '16px',
-                          width: '300px', // Adjusted width to fit content better
-                          backgroundColor: '#fff', // Clean white background
-                          borderRadius: '12px', // Rounded corners for a smooth look
-                          padding: '16px', // Padding for a more spacious layout
-                          boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)', // Softer shadow for elevation
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 'bold',
-                            marginBottom: '8px', // Space between title and content
-                            color: '#333', // Dark color for the header
-                          }}
-                        >
-                          Workflow Details
-                        </Typography>
+                {/* Status and details for the current step */}
+                {index === activeStep && currentStatus && (
+                  <>
+                    <Tooltip
+                      title={
                         <Box
                           sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
+                            marginTop: '16px',
+                            width: '300px', // Adjusted width to fit content better
+                            backgroundColor: '#fff', // Clean white background
+                            borderRadius: '12px', // Rounded corners for a smooth look
+                            padding: '16px', // Padding for a more spacious layout
+                            boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)', // Softer shadow for elevation
                           }}
                         >
-                          <Typography variant="body1">
-                            <strong>Approval Status:</strong>{' '}
-                            {currentStatus.status}
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: 'bold',
+                              marginBottom: '8px', // Space between title and content
+                              color: '#333', // Dark color for the header
+                            }}
+                          >
+                            Workflow Details
                           </Typography>
-                          <Typography variant="body1">
-                            <strong>Document Number:</strong>{' '}
-                            {currentStatus.documentNo}
-                          </Typography>
-                          <Typography variant="body1">
-                            <strong>Approved By:</strong>{' '}
-                            {currentStatus.senderId || 'N/A'}
-                          </Typography>
-                          <Typography variant="body1">
-                            <strong>Comment:</strong>{' '}
-                            {currentStatus.approvalComment}
-                          </Typography>
-                          <Typography variant="body1">
-                            <strong>Approved At:</strong>{' '}
-                            {formatDate(currentStatus.approvedAt)}
-                          </Typography>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '8px',
+                            }}
+                          >
+                            <Typography variant="body1">
+                              <strong>Approval Status:</strong>{' '}
+                              {currentStatus.status}
+                            </Typography>
+                            <Typography variant="body1">
+                              <strong>Document Number:</strong>{' '}
+                              {currentStatus.documentNo}
+                            </Typography>
+                            <Typography variant="body1">
+                              <strong>Approved By:</strong>{' '}
+                              {currentStatus.senderId || 'N/A'}
+                            </Typography>
+                            <Typography variant="body1">
+                              <strong>Comment:</strong>{' '}
+                              {currentStatus.approvalComment}
+                            </Typography>
+                            <Typography variant="body1">
+                              <strong>Approved At:</strong>{' '}
+                              {formatDate(currentStatus.approvedAt)}
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    }
-                    arrow
-                    PopperProps={{
-                      sx: {
-                        '& .MuiTooltip-tooltip': {
-                          backgroundColor: '#fff', // Tooltip background white for contrast
-                          color: '#333', // Darker text for better readability
-                          fontSize: '0.875rem', // Slightly larger text
-                          padding: '16px', // More spacious padding
-                          borderRadius: '12px', // Rounded corners for the tooltip
-                          maxWidth: '350px', // Increased width for better layout
-                          transition: 'opacity 0.3s ease-in-out', // Smooth fade transition
-                          wordWrap: 'break-word', // Prevent long words from breaking layout
+                      }
+                      arrow
+                      PopperProps={{
+                        sx: {
+                          '& .MuiTooltip-tooltip': {
+                            backgroundColor: '#fff', // Tooltip background white for contrast
+                            color: '#333', // Darker text for better readability
+                            fontSize: '0.875rem', // Slightly larger text
+                            padding: '16px', // More spacious padding
+                            borderRadius: '12px', // Rounded corners for the tooltip
+                            maxWidth: '350px', // Increased width for better layout
+                            transition: 'opacity 0.3s ease-in-out', // Smooth fade transition
+                            wordWrap: 'break-word', // Prevent long words from breaking layout
+                          },
+                          '& .MuiTooltip-arrow': {
+                            color: '#fff', // Matching arrow color to background
+                          },
                         },
-                        '& .MuiTooltip-arrow': {
-                          color: '#fff', // Matching arrow color to background
-                        },
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        mt: 1,
-                        position: 'relative',
-                        mb: '-20px',
                       }}
                     >
-                      <Button
+                      <Box
                         sx={{
-                          p: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          mt: 1,
+                          position: 'relative',
+                          mb: '-20px',
                         }}
-                        onClick={() =>
-                          setOpenWorkflowDetails(!openWorkflowDetails)
-                        }
                       >
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <img
-                            src={
-                              statusIcons[currentStatus.status] ||
-                              statusIcons['Null']
-                            }
-                            alt={`${currentStatus.status} icon`}
-                            style={{
-                              width: '22px',
-                              height: '22px',
-                              marginRight: '8px', // Added space for better alignment
-                            }}
-                          />
-                          <Typography
-                            variant="body2"
-                            sx={{ fontWeight: 'bold' }}
-                          >
-                            {currentStatus.status}
-                          </Typography>
-                        </Box>
-                      </Button>
-                    </Box>
-                  </Tooltip>
-                </>
-              )}
-            </StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+                        <Button
+                          sx={{
+                            p: 0,
+                          }}
+                          onClick={() =>
+                            setOpenWorkflowDetails(!openWorkflowDetails)
+                          }
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <img
+                              src={
+                                statusIcons[currentStatus.status] ||
+                                statusIcons['Null']
+                              }
+                              alt={`${currentStatus.status} icon`}
+                              style={{
+                                width: '22px',
+                                height: '22px',
+                                marginRight: '8px', // Added space for better alignment
+                              }}
+                            />
+                            <Typography
+                              variant="body2"
+                              sx={{ fontWeight: 'bold' }}
+                            >
+                              {currentStatus.status}
+                            </Typography>
+                          </Box>
+                        </Button>
+                      </Box>
+                    </Tooltip>
+                  </>
+                )}
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      ) : (
+        <div
+          className="flex justify-center items-center h-full"
+          style={{ height: '40vh' }} // Ensure it takes the full viewport height
+        >
+          <BaseEmptyComponent scale={1.2} title="No Workflow Available" />
+        </div>
+      )}
 
       {approver && (
         <div className="mt-7 p-4 bg-gray-100 border-l-4 border-primary text-gray-800 rounded-l">

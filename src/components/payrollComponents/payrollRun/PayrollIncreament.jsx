@@ -300,6 +300,12 @@ const PayrollIncreament = () => {
       disabled: true,
     },
   ];
+  const segmentOptions = [
+    { label: 'Open Suspensions', value: 0 },
+    { label: 'Suspensions Pending Approval', value: 1 },
+    { label: 'Approved Suspensions', value: 2 },
+    { label: 'Rejected Suspensions', value: 3 },
+  ];
 
   return (
     <div className="">
@@ -384,9 +390,11 @@ const PayrollIncreament = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Main Payroll"
-        currentTitle="Main Payroll"
+        breadcrumbTitle="Payroll Increament"
+        currentTitle="Payroll Increament"
         isPayroll={true}
+        segmentOptions2={segmentOptions}
+        segmentFilterParameter2="documentStatus"
       />
     </div>
   );

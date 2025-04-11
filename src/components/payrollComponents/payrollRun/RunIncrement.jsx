@@ -49,23 +49,22 @@ const RunIncrement = ({ incrementMaster }) => {
           variant="outlined"
           size="small"
           sx={{
-            mt: 5,
+            mt: 3,
           }}
         >
-          <InputLabel id="increment-master-label">
+          <p className="text-primary font-semibold font-sans">
             Select Increment Master
-          </InputLabel>
+          </p>
           <Select
-            labelId="increment-master-label"
             value={selectedIncrementMaster}
             onChange={handleIncrementMasterChange}
-            label="Select Increment Master"
+            // label="Select Increment Master"
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
             {incrementMaster.map((master) => (
-              <MenuItem key={master.id} value={master.id}>
+              <MenuItem key={master.masterId} value={master.id}>
                 {master.financialYear}
               </MenuItem>
             ))}
