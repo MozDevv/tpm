@@ -470,6 +470,7 @@ const PayrollPensioners = ({
             clickedItem={clickedItem}
             isUserComponent={false}
             isClaim={true}
+            retireeId={clickedItem?.prospectivePensionerId}
           >
             {clickedItem ? (
               <div className="">

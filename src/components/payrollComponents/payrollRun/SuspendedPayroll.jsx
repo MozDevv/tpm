@@ -370,10 +370,10 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
     },
   ];
   const segmentOptions2 = [
-    { label: 'Open', value: 0 },
-    { label: 'Pending Approval', value: 1 },
-    { label: 'Approved', value: 2 },
-    { label: 'Rejected', value: 3 },
+    { label: 'Open Suspensions', value: 0 },
+    { label: 'Suspensions Pending Approval', value: 1 },
+    { label: 'Approved Suspensions', value: 2 },
+    { label: 'Rejected Suspensions', value: 3 },
   ];
   return (
     <div className="">

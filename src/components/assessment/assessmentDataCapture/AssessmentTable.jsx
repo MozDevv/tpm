@@ -995,6 +995,7 @@ const AssessmentTable = ({ status, statusArr }) => {
         <BaseCard
           documentNo={clickedItem && clickedItem?.no_series}
           openBaseCard={openPreclaimDialog}
+          retireeId={clickedItem?.prospectivePensioner?.id}
           setOpenBaseCard={setOpenPreclaimDialog}
           handlers={baseCardHandlers}
           title={clickedItem ? clickedItem?.claim_id : 'Create Claim'}

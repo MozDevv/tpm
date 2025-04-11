@@ -554,24 +554,25 @@ export const menuItems = [
       },
       {
         title: 'Payroll Increment',
-        subChildren: [
-          {
-            title: 'Payroll Increment',
-            path: '/pensions/payroll/payroll-increment',
-          },
-          {
-            title: 'Pending Increment Approval',
-            path: '/pensions/payroll/payroll-increment/pending-approval',
-          },
-          {
-            title: 'Approved Increment',
-            path: '/pensions/payroll/payroll-increment/approved-increment',
-          },
-          {
-            title: 'Rejected Increment',
-            path: '/pensions/payroll/payroll-increment/rejected-increment',
-          },
-        ],
+        path: '/pensions/payroll/payroll-increment',
+        // subChildren: [
+        //   {
+        //     title: 'Payroll Increment',
+        //     path: '/pensions/payroll/payroll-increment',
+        //   },
+        //   {
+        //     title: 'Pending Increment Approval',
+        //     path: '/pensions/payroll/payroll-increment/pending-approval',
+        //   },
+        //   {
+        //     title: 'Approved Increment',
+        //     path: '/pensions/payroll/payroll-increment/approved-increment',
+        //   },
+        //   {
+        //     title: 'Rejected Increment',
+        //     path: '/pensions/payroll/payroll-increment/rejected-increment',
+        //   },
+        // ],
       },
     ],
   },
