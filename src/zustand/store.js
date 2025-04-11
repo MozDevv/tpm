@@ -39,3 +39,4 @@ export const useSelectedIgcsStore = stateFactory('selectedIgcs');
 export const useClickedIgcStore = stateFactory('clickedIgc');
 
 export const useSelectedSegmentStore = stateFactory('selectedSegment');
+export const useSelectedSegmentStore2 = stateFactory('selectedSegment2');

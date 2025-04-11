@@ -16,7 +16,10 @@ import PensionerBenefitsTable from '../assessment/assessmentDataCapture/Pensione
 import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
 import endpoints, { apiService } from '../services/setupsApi';
 import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
-import { useSelectedSegmentStore } from '@/zustand/store';
+import {
+  useSelectedSegmentStore,
+  useSelectedSegmentStore2,
+} from '@/zustand/store';
 // import AssessmentCard from '../assessment/assessmentDataCapture/AssessmentCard';
 
 const PayrollPensioners = ({
@@ -158,10 +161,10 @@ const PayrollPensioners = ({
   const [clickedItem, setClickedItem] = React.useState(null);
   const [workFlowChange, setWorkFlowChange] = React.useState(0);
 
-  const { selectedSegment } = useSelectedSegmentStore();
+  const { selectedSegment2 } = useSelectedSegmentStore2();
 
   const baseCardHandlers = {
-    ...(selectedSegment === 0 && {
+    ...(selectedSegment2 === 0 && {
       admit: async () => {
         try {
           const response = await payrollApiService.post(
@@ -190,7 +193,7 @@ const PayrollPensioners = ({
   };
 
   const handlers = {
-    ...(selectedSegment === 0 && {
+    ...(selectedSegment2 === 0 && {
       admit: async () => {
         if (!selectedRows || selectedRows.length === 0) {
           message.warning('No rows selected');
