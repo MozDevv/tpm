@@ -160,7 +160,7 @@ const BaseTable = ({
       if (segmentFilterParameter2 && activeSegment2 !== -1) {
         filter = {
           ...filter,
-          'filterCriterion.criterions[0].propertyName': 'status',
+          'filterCriterion.criterions[0].propertyName': segmentFilterParameter2,
           'filterCriterion.criterions[0].propertyValue': activeSegment2,
           'filterCriterion.criterions[0].criterionType': 0,
         };
@@ -371,10 +371,17 @@ const BaseTable = ({
             headerName: col.headerName,
             field: col.field,
           }))}
+          segmentFilters={{
+            segmentFilterParameter,
+            segmentFilterParameter2,
+            activeSegment,
+            activeSegment2,
+          }}
           transformData={transformData}
           fileName={currentTitle}
           setLoading={setExcelLoading}
           excelTitle={excelTitle}
+          isIgc={isIgc}
         />
       </Dialog>
       {!hideTableHeader && (

@@ -24,9 +24,17 @@ import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 import { message } from 'antd';
 import axios from 'axios';
 import { PAYROLL_BASE_URL } from '@/utils/constants';
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 
 const SuspendedPayroll = ({ hideTableHeader }) => {
   const [refreshData, setRefreshData] = React.useState(false);
+
+  const statusIcons = {
+    0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+    1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    2: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+    3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  };
   const columnDefs = [
     {
       headerName: 'Pensioner No',
@@ -47,6 +55,14 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
           <p className="underline text-primary font-semibold">{params.value}</p>
         );
       },
+    },
+
+    {
+      headerName: 'Reason',
+      field: 'reason.description',
+      sortable: true,
+      filter: true,
+      width: 250,
     },
     {
       headerName: 'Period',
@@ -70,11 +86,37 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
       valueFormatter: (params) => parseDate(params.value),
     },
     {
-      headerName: 'Suspension Period',
-      field: 'suspensionPeriod',
-      sortable: true,
+      headerName: 'Approval Status',
+      field: 'documentStatus',
+      width: 150,
       filter: true,
-      valueFormatter: (params) => parseDate(params.value),
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       headerName: 'Gross Amount',
@@ -137,12 +179,6 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
       sortable: true,
       filter: true,
       valueFormatter: (params) => formatNumber(params.value),
-    },
-    {
-      headerName: 'Reason',
-      field: 'reason.description',
-      sortable: true,
-      filter: true,
     },
   ];
 
@@ -333,6 +369,12 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
         }),
     },
   ];
+  const segmentOptions2 = [
+    { label: 'Open', value: 0 },
+    { label: 'Pending Approval', value: 1 },
+    { label: 'Approved', value: 2 },
+    { label: 'Rejected', value: 3 },
+  ];
   return (
     <div className="">
       <BaseCard
@@ -382,6 +424,8 @@ const SuspendedPayroll = ({ hideTableHeader }) => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
+        segmentOptions2={segmentOptions2}
+        segmentFilterParameter2="documentStatus"
         breadcrumbTitle="Suspended Payroll"
         currentTitle="Suspended Payroll"
         isPayroll={true}

@@ -14,6 +14,8 @@ const BaseExcelComponent = ({
   filters,
   setLoading,
   excelTitle,
+  segmentFilters,
+  isIgc = false,
 }) => {
   // Initialize selectedColumns with all columns by default
   const [selectedColumns, setSelectedColumns] = useState(columns);
@@ -50,11 +52,56 @@ const BaseExcelComponent = ({
     }
   };
 
+  let segFilter = {};
   const exportToExcel = () => {
     if (selectedColumns.length === 0) {
       message.error('Please select at least one column to export.');
       return;
     }
+
+    // Construct segFilter dynamically
+    let segFilter = {};
+
+    // Handle IGC-specific filtering
+    if (isIgc && segmentFilters.activeSegment !== -1) {
+      segFilter = {
+        'filterCriterion.criterions[0].propertyName':
+          'igc_stage_type_map.igc_stage',
+        'filterCriterion.criterions[0].propertyValue':
+          segmentFilters.activeSegment,
+        'filterCriterion.criterions[0].criterionType': 0,
+      };
+    }
+    // Handle segmentOptions filtering
+    else if (
+      segmentFilters.segmentFilterParameter &&
+      segmentFilters.activeSegment !== -1
+    ) {
+      segFilter = {
+        [segmentFilters.segmentFilterParameter]: segmentFilters.activeSegment,
+      };
+    }
+
+    // Handle segmentOptions2 filtering
+    if (
+      segmentFilters.segmentFilterParameter2 &&
+      segmentFilters.activeSegment2 !== -1
+    ) {
+      segFilter = {
+        ...segFilter,
+        [segmentFilters.segmentFilterParameter2]: segmentFilters.activeSegment2,
+      };
+    }
+
+    // Remove filters if both activeSegment and activeSegment2 are -1
+    if (
+      segmentFilters.activeSegment === -1 &&
+      segmentFilters.activeSegment2 === -1
+    ) {
+      segFilter = {};
+    }
+
+    console.log('Filter applied:', segFilter);
 
     generateExcelTemplateWithApiService(
       fetchApiEndpoint,
@@ -68,6 +115,7 @@ const BaseExcelComponent = ({
       skipBlankEntries,
       setLoading,
       filters,
+      segFilter,
       excelTitle
     );
   };

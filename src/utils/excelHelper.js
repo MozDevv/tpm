@@ -112,6 +112,7 @@ export const generateExcelTemplateWithApiService = async (
   skipBlankEntries = false,
   setLoading,
   filters = {},
+  segFilter = {},
   excelTitle
 ) => {
   try {
@@ -125,6 +126,7 @@ export const generateExcelTemplateWithApiService = async (
     const response = await fetchApiService(fetchApiEndpoint, {
       'paging.pageSize': pageSize,
       ...filters,
+      ...segFilter,
     });
     const { data } = response.data;
 
