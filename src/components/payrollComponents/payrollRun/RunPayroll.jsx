@@ -63,12 +63,42 @@ const RunPayroll = () => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 130,
+      headerClass: 'prefix-header',
+      width: 150,
+
       cellRenderer: (params) => {
-        //Admitted0, Not Admitted1
-        const status = params.data?.status === 0 ? 'Admitted' : 'Not Admitted';
-        const statusClass = params.data?.status === 0 ? 'text-green-500' : '';
-        return <p className={`text-center ${statusClass}`}>{status}</p>;
+        const statusMap = {
+          0: { label: 'Unadmitted', color: '#007bff' }, // Blue
+          1: { label: 'Active', color: '#28a745' }, // Bright Green
+          2: { label: 'Suspended', color: '#ffc107' }, // Yellow
+          3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
+          4: { label: 'Stopped', color: '#6f42c1' }, // Violet
+          5: { label: 'Deleted', color: '#000000' }, // Black
+          6: { label: 'Pending Admission', color: '#17a2b8' }, // Cyan
+          7: { label: 'Admission Rejected', color: '#ff6347' }, // Tomato Red
+        };
+
+        const status = statusMap[params.value] || {
+          label: 'Unknown',
+          color: 'gray',
+        };
+
+        return (
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              display: 'inline-flex', // Use inline-flex for alignment
+              alignItems: 'center', // Vertically center the text
+              justifyContent: 'center', // Horizontally center the text
+              width: '100%', // Ensure it takes the full width of the cell
+              height: '100%', // Ensure it takes the full height of the cell
+            }}
+          >
+            {status.label}
+          </span>
+        );
       },
     },
     {
@@ -102,21 +132,13 @@ const RunPayroll = () => {
       field: 'lastPayGrossAmount',
       headerName: 'Last Pay Gross Amount',
       width: 200,
-      valueFormatter: (params) =>
-        params.value?.toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }), // Format as currency
+      valueFormatter: (params) => params.value?.toLocaleString('en-US', {}), // Format as currency
     },
     {
       field: 'lastPayNetAmount',
       headerName: 'Last Pay Net Amount',
       width: 200,
-      valueFormatter: (params) =>
-        params.value?.toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        }), // Format as currency
+      valueFormatter: (params) => params.value?.toLocaleString('en-US', {}), // Format as currency
     },
 
     {

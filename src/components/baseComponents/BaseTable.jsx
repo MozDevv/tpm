@@ -77,6 +77,8 @@ const BaseTable = ({
   hideTableHeader,
   stage,
   display,
+  segmentOptions2,
+  segmentFilterParameter2,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -537,7 +539,139 @@ const BaseTable = ({
     }
   `}</style>
             </div>
+          ) : segmentFilterParameter2 && segmentOptions2 ? (
+            <div className="pl-2">
+              <Segmented
+                options={segmentOptions2}
+                value={activeSegment}
+                onChange={(value) => {
+                  setActiveSegment(value);
+                  setSelectedSegment(value);
+                }}
+                className="custom-segmented"
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px',
+                  padding: '4px',
+                  border: '1px solid #ccc',
+                }}
+              />
+              <style>{`
+    .custom-segmented {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .custom-segmented .ant-segmented-item {
+      padding: 3px 16px;
+      font-size: 13px;
+      color: #000000;
+      background-color: transparent !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      z-index: 1;
+      position: relative;
+    }
+    
+    .custom-segmented .ant-segmented-item-selected {
+      color: #006990 !important;
+      font-weight: 600;
+      background-color: transparent !important;
+    }
+    
+    .custom-segmented .ant-segmented-item:hover:not(.ant-segmented-item-selected) {
+      color: #006990;
+    }
+    
+    .custom-segmented .ant-segmented-thumb {
+      background-color: rgba(0, 105, 144, 0.2) !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    
+    /* Fix for the active item's background */
+    .custom-segmented .ant-segmented-item-selected::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 105, 144, 0.2);
+      border-radius: 6px;
+      z-index: -1;
+    }
+  `}</style>
+            </div>
           ) : null}
+
+          {/*************************************** */}
+
+          {segmentFilterParameter2 && segmentOptions2 ? (
+            <div className="">
+              <Segmented
+                options={segmentOptions2}
+                value={activeSegment}
+                onChange={(value) => {
+                  setActiveSegment(value);
+                  setSelectedSegment(value);
+                }}
+                className="custom-segmented"
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px',
+                  padding: '4px',
+                  border: '1px solid #ccc',
+                }}
+              />
+              <style>{`
+    .custom-segmented {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .custom-segmented .ant-segmented-item {
+      padding: 3px 16px;
+      font-size: 13px;
+      color: #000000;
+      background-color: transparent !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      z-index: 1;
+      position: relative;
+    }
+    
+    .custom-segmented .ant-segmented-item-selected {
+      color: #006990 !important;
+      font-weight: 600;
+      background-color: transparent !important;
+    }
+    
+    .custom-segmented .ant-segmented-item:hover:not(.ant-segmented-item-selected) {
+      color: #006990;
+    }
+    
+    .custom-segmented .ant-segmented-thumb {
+      background-color: rgba(0, 105, 144, 0.2) !important;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    
+    /* Fix for the active item's background */
+    .custom-segmented .ant-segmented-item-selected::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 105, 144, 0.2);
+      border-radius: 6px;
+      z-index: -1;
+    }
+  `}</style>
+            </div>
+          ) : null}
+
+          {/*************************************** */}
           {selectedSegment === 4 && segmentFilterParameter === 'Stage' ? (
             <SuspendedPayroll hideTableHeader={true} />
           ) : (

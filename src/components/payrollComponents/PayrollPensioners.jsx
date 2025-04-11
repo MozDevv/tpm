@@ -346,6 +346,17 @@ const PayrollPensioners = ({
     { label: 'Dependent Payroll', value: 2 },
     { label: 'Agency Payroll', value: 3 },
   ];
+  const segmentOptions2 = [
+    { label: 'All', value: -1 },
+    { label: 'Unadmitted', value: 0 },
+    { label: 'Active', value: 1 },
+    { label: 'Suspended', value: 2 },
+    { label: 'Inactive', value: 3 },
+    { label: 'Stopped', value: 4 },
+    { label: 'Deleted', value: 5 },
+    { label: 'Pending Admission', value: 6 },
+    { label: 'Admission Rejected', value: 7 },
+  ];
   return (
     <div className="">
       <BaseApprovalCard
@@ -535,6 +546,8 @@ const PayrollPensioners = ({
             // isPayroll={true}
             onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
             segmentOptions={segmentOptions}
+            // segmentOptions2={segmentOptions}
+            // segmentFilterParameter2="status"
             segmentFilterParameter="types"
             // segmentFilterValue={0}
           />
