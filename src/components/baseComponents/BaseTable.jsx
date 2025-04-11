@@ -35,7 +35,12 @@ import { Checkbox, message, Segmented } from 'antd';
 import axios from 'axios';
 import FilterComponent from './FilterComponent';
 import BaseExcelComponent from './BaseExcelComponent';
-import { useClickedIgcStore, useStatusStore } from '@/zustand/store';
+import {
+  useClickedIgcStore,
+  useSelectedSegmentStore,
+  useStatusStore,
+} from '@/zustand/store';
+import SuspendedPayroll from '../payrollComponents/payrollRun/SuspendedPayroll';
 
 const BaseTable = ({
   columnDefs,
@@ -308,6 +313,8 @@ const BaseTable = ({
   }, 50000);
 
   const { setClickedIgc } = useClickedIgcStore();
+  const { selectedSegment, setSelectedSegment } = useSelectedSegmentStore();
+
   return (
     <div
       style={{
@@ -472,7 +479,10 @@ const BaseTable = ({
               <Segmented
                 options={segmentOptions}
                 value={activeSegment}
-                onChange={(value) => setActiveSegment(value)}
+                onChange={(value) => {
+                  setActiveSegment(value);
+                  setSelectedSegment(value);
+                }}
                 className="custom-segmented"
                 style={{
                   backgroundColor: '#ffffff',
@@ -528,89 +538,95 @@ const BaseTable = ({
   `}</style>
             </div>
           ) : null}
-          <div
-            className="ag-theme-quartz"
-            style={{
-              height: '65vh',
+          {selectedSegment === 4 && segmentFilterParameter === 'Stage' ? (
+            <SuspendedPayroll hideTableHeader={true} />
+          ) : (
+            <div className="mt-2">
+              <div
+                className="ag-theme-quartz"
+                style={{
+                  height: '65vh',
 
-              maxHeight: '85%',
-              overflowY: 'auto',
-              width: openFilter ? 'calc(100vw - 500px)' : '80vw',
-            }}
-          >
-            <AgGridReact
-              columnDefs={columnDefs.map((col) => ({
-                ...col,
-                headerTooltip: col.headerName,
-                // cellRenderer:
-                //   col.cellRenderer || col.valueFormatter
-                //     ? undefined
-                //     : (params) => {
-                //         if (typeof params.data[col.field] === 'boolean') {
-                //           return (
-                //             <div className="ml-11">
-                //               <Checkbox
-                //                 checked={params.data[col.field]}
-                //                 className="custom-checkbox"
-                //                 onChange={(e) => {
-                //                   // Prevent the checkbox state from changing
-                //                   params.node.setDataValue(
-                //                     params.colDef.field,
-                //                     params.value
-                //                   );
-                //                 }}
-                //               />
-                //             </div>
-                //           );
-                //         }
-                //         return params.value; // Default renderer for non-boolean columns
-                //       },
-              }))}
-              rowData={filteredData}
-              pagination={false}
-              domLayout={scrollable ? 'normal' : 'autoHeight'}
-              alwaysShowHorizontalScroll={true}
-              loadingOverlayComponent={BaseLoadingOverlay}
-              loadingOverlayComponentParams={loadingOverlayComponentParams}
-              noRowsOverlayComponent={BaseEmptyComponent}
-              onGridReady={(params) => {
-                params.api.sizeColumnsToFit();
-                onGridReady(params);
-                gridApiRef.current.api.showLoadingOverlay();
-              }}
-              rowSelection="multiple"
-              className=""
-              onSelectionChanged={onSelectionChanged}
-              onRowClicked={(e) => {
-                setClickedItem(e.data);
-                setClickedIgc(e.data);
-              }}
-              onCellDoubleClicked={(e) => {
-                console.log('e.data', e.data);
-                setOpenBaseCard(true);
-                setClickedItem(e.data);
-              }}
-            />
-          </div>
-          {/* PAGINATION */}
+                  maxHeight: '85%',
+                  overflowY: 'auto',
+                  width: openFilter ? 'calc(100vw - 500px)' : '80vw',
+                }}
+              >
+                <AgGridReact
+                  columnDefs={columnDefs.map((col) => ({
+                    ...col,
+                    headerTooltip: col.headerName,
+                    // cellRenderer:
+                    //   col.cellRenderer || col.valueFormatter
+                    //     ? undefined
+                    //     : (params) => {
+                    //         if (typeof params.data[col.field] === 'boolean') {
+                    //           return (
+                    //             <div className="ml-11">
+                    //               <Checkbox
+                    //                 checked={params.data[col.field]}
+                    //                 className="custom-checkbox"
+                    //                 onChange={(e) => {
+                    //                   // Prevent the checkbox state from changing
+                    //                   params.node.setDataValue(
+                    //                     params.colDef.field,
+                    //                     params.value
+                    //                   );
+                    //                 }}
+                    //               />
+                    //             </div>
+                    //           );
+                    //         }
+                    //         return params.value; // Default renderer for non-boolean columns
+                    //       },
+                  }))}
+                  rowData={filteredData}
+                  pagination={false}
+                  domLayout={scrollable ? 'normal' : 'autoHeight'}
+                  alwaysShowHorizontalScroll={true}
+                  loadingOverlayComponent={BaseLoadingOverlay}
+                  loadingOverlayComponentParams={loadingOverlayComponentParams}
+                  noRowsOverlayComponent={BaseEmptyComponent}
+                  onGridReady={(params) => {
+                    params.api.sizeColumnsToFit();
+                    onGridReady(params);
+                    gridApiRef.current.api.showLoadingOverlay();
+                  }}
+                  rowSelection="multiple"
+                  className=""
+                  onSelectionChanged={onSelectionChanged}
+                  onRowClicked={(e) => {
+                    setClickedItem(e.data);
+                    setClickedIgc(e.data);
+                  }}
+                  onCellDoubleClicked={(e) => {
+                    console.log('e.data', e.data);
+                    setOpenBaseCard(true);
+                    setClickedItem(e.data);
+                  }}
+                />
+              </div>
+              {/* PAGINATION */}
 
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            <Pagination
-              showFirstButton
-              showLastButton
-              count={totalPages}
-              page={pageNumber}
-              onChange={handlePaginationChange}
-              color="primary"
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <Pagination
+                  showFirstButton
+                  showLastButton
+                  count={totalPages}
+                  page={pageNumber}
+                  onChange={handlePaginationChange}
+                  color="primary"
+                  variant="outlined"
+                  shape="rounded"
+                />
+              </Box>
+            </div>
+          )}
         </div>
       </div>
     </div>

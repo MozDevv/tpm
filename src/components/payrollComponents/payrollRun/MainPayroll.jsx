@@ -24,7 +24,12 @@ import ViewAllEarningsDialog from './ViewAllEarningsDialog';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 import { message } from 'antd';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
-import { useStageStore, useStatusStore } from '@/zustand/store';
+import {
+  useSelectedSegmentStore,
+  useStageStore,
+  useStatusStore,
+} from '@/zustand/store';
+import SuspendedPayroll from './SuspendedPayroll';
 
 const MainPayroll = ({
   stage,
@@ -465,6 +470,8 @@ const MainPayroll = ({
     }
   }, [clickedApproval]);
 
+  const { selectedSegment } = useSelectedSegmentStore();
+
   return (
     <div className="">
       {computing && (
@@ -568,6 +575,7 @@ const MainPayroll = ({
           />
         )}
       </BaseCard>
+
       <BaseTable
         display={isApproval ? 'none' : 'block'}
         openBaseCard={openBaseCard}
@@ -612,9 +620,9 @@ const MainPayroll = ({
           { value: 1, label: 'Pending Approval' },
           { value: 2, label: 'Review' },
           { value: 3, label: 'Closed' },
+          { value: 4, label: 'Suspensions' },
         ]}
       />
-      {stage}
     </div>
   );
 };

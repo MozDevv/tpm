@@ -37,3 +37,5 @@ export const useHideBaseTableHeader = stateFactory('hideBaseTableHeader');
 export const useSelectedIgcsStore = stateFactory('selectedIgcs');
 
 export const useClickedIgcStore = stateFactory('clickedIgc');
+
+export const useSelectedSegmentStore = stateFactory('selectedSegment');

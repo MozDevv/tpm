@@ -25,7 +25,7 @@ import { message } from 'antd';
 import axios from 'axios';
 import { PAYROLL_BASE_URL } from '@/utils/constants';
 
-const SuspendedPayroll = () => {
+const SuspendedPayroll = ({ hideTableHeader }) => {
   const [refreshData, setRefreshData] = React.useState(false);
   const columnDefs = [
     {
@@ -33,6 +33,7 @@ const SuspendedPayroll = () => {
       field: 'pensionerNo',
       sortable: true,
       filter: true,
+      width: 200,
       pinned: 'left',
       checkboxSelection: true,
       headerCheckboxSelection: true,
@@ -83,10 +84,44 @@ const SuspendedPayroll = () => {
       valueFormatter: (params) => formatNumber(params.value),
     },
     {
-      headerName: 'Status',
       field: 'status',
-      sortable: true,
-      filter: true,
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+
+      cellRenderer: (params) => {
+        const statusMap = {
+          0: { label: 'Unadmitted', color: '#007bff' }, // Blue
+          1: { label: 'Active', color: '#28a745' }, // Bright Green
+          2: { label: 'Suspended', color: '#ffc107' }, // Yellow
+          3: { label: 'Inactive', color: '#dc3545' }, // Bright Red
+          4: { label: 'Stopped', color: '#6f42c1' }, // Violet
+          5: { label: 'Deleted', color: '#000000' }, // Black
+          6: { label: 'Pending Admission', color: '#17a2b8' }, // Cyan
+          7: { label: 'Admission Rejected', color: '#ff6347' }, // Tomato Red
+        };
+
+        const status = statusMap[params.value] || {
+          label: 'Unknown',
+          color: 'gray',
+        };
+
+        return (
+          <span
+            style={{
+              color: status.color,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              display: 'inline-flex', // Use inline-flex for alignment
+              alignItems: 'center', // Vertically center the text
+              justifyContent: 'center', // Horizontally center the text
+              width: '100%', // Ensure it takes the full width of the cell
+              height: '100%', // Ensure it takes the full height of the cell
+            }}
+          >
+            {status.label}
+          </span>
+        );
+      },
     },
 
     {
@@ -336,6 +371,7 @@ const SuspendedPayroll = () => {
         )}
       </BaseCard>
       <BaseTable
+        hideTableHeader={hideTableHeader}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
