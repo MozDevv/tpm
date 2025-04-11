@@ -120,7 +120,7 @@ function BaseWorkFlow({ steps = [], activeStep, clickedItem }) {
 
   return (
     <Box p={1} sx={{ width: '100%' }}>
-      <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5 text-center">
+      <p className="py-2 text-primary text-base font-semibold font-montserrat mb-5">
         Document Workflows
       </p>
 

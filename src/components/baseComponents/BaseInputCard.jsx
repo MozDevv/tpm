@@ -72,14 +72,24 @@ const BaseInputCard = ({
   isImported,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
-    acc[field.name] = field.default !== undefined ? field.default : '';
-    if (field.type === 'switch') {
-      acc[field.name] = field.default !== undefined ? field.default : false;
+    if (field.name === 'suspensionDate') {
+      // Set the suspensionDate to the last day of the current month
+      acc[field.name] = dayjs().endOf('month').format('YYYY-MM-DD');
+    } else {
+      acc[field.name] = field.default !== undefined ? field.default : '';
+      if (field.type === 'switch') {
+        acc[field.name] = field.default !== undefined ? field.default : false;
+      }
     }
     return acc;
   }, {});
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({ ...initialFormData });
+
+  useEffect(() => {
+    console.log("Base Input Card: formData', formData,", formData);
+    console.log('Form Data type: ', formData.suspensionDate);
+  }, [formData]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -91,10 +101,13 @@ const BaseInputCard = ({
 
   useEffect(() => {
     if (clickedItem) {
-      setFormData(clickedItem);
+      setFormData((prev) => ({
+        ...prev,
+        ...clickedItem,
+      }));
     } else {
       // Reset form data if no clickedItem
-      setFormData({});
+      setFormData(initialFormData);
     }
   }, [clickedItem]);
 

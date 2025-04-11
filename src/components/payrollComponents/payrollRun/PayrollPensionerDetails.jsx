@@ -313,6 +313,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       name: 'suspensionDate',
       label: 'Suspension Date',
       type: 'date',
+      disabled: true,
     },
     // {
     //   name: 'suspensionPeriod',
