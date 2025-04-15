@@ -18,6 +18,8 @@ import TabPane from 'antd/es/tabs/TabPane';
 import BaseInputTable from '../baseComponents/BaseInputTable';
 import BaseFinanceInputTable from '../baseComponents/BaseFinanceInputTable';
 import { Button } from '@mui/material';
+import { formatNumber } from '@/utils/numberFormatters';
+import BaseDrilldown from '../baseComponents/BaseDrilldown';
 
 const Members = ({ status }) => {
   const transformString = (str) => {
@@ -188,6 +190,8 @@ const Members = ({ status }) => {
     fetchCountiesAndContituencies();
     fetchDesignations();
   }, []);
+  const [openDrilldown, setOpenDrilldown] = useState(false);
+  const [statusId, setStatusId] = useState(null);
 
   const fields = {
     personalDetails: [
@@ -303,6 +307,13 @@ const Members = ({ status }) => {
           },
         ],
       },
+      {
+        name: 'totalContribution',
+        label: 'Contribution Amount',
+        type: 'drillDown',
+        required: false,
+        disabled: true,
+      },
 
       {
         name: 'sponsorId',
@@ -413,12 +424,30 @@ const Members = ({ status }) => {
       width: 150,
       filter: true,
     },
+    //add totalContribution	0
     {
-      field: 'lastName',
-      headerName: 'Last Name',
+      field: 'totalContribution',
+      headerName: 'Total Contribution',
       headerClass: 'prefix-header',
       width: 150,
       filter: true,
+
+      valueFormatter: (params) => {
+        return formatNumber(params.value);
+      },
+      cellRenderer: (params) => {
+        return (
+          <p
+            className="cursor-pointer underline text-primary font-bold text-[14px]"
+            onClick={() => {
+              setOpenDrilldown(true);
+              setClickedItem(params.data);
+            }}
+          >
+            {formatNumber(params.value)}
+          </p>
+        );
+      },
     },
 
     {
@@ -497,13 +526,6 @@ const Members = ({ status }) => {
       valueFormatter: (params) => {
         return mdas.find((sponsor) => sponsor.id === params.value)?.name;
       },
-    },
-    {
-      field: 'memberUploadBatchId',
-      headerName: 'Member Upload Batch ID',
-      headerClass: 'prefix-header',
-      width: 150,
-      filter: true,
     },
   ];
 
@@ -586,8 +608,46 @@ const Members = ({ status }) => {
     },
   ];
 
+  //create this coldefs   "data": [
+
+  const drillDownColumnDefs = [
+    {
+      field: 'monthName',
+      headerName: 'Month',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    {
+      field: 'employeeContribution',
+      headerName: 'Employee Contribution',
+      headerClass: 'prefix-header',
+      flex: 1,
+      filter: true,
+    },
+
+    {
+      field: 'totalContribution',
+      headerName: 'Total Contribution',
+      headerClass: 'prefix-header',
+      flex: 1,
+      filter: true,
+    },
+  ];
+
   return (
     <div className="">
+      <BaseDrilldown
+        setOpenDrilldown={setOpenDrilldown}
+        openDrilldown={openDrilldown}
+        clickedItem={clickedItem}
+        setClickedItem={setClickedItem}
+        columnDefs={drillDownColumnDefs}
+        fetchApiEndpoint={financeEndpoints.getMemberContibutionByMemberId(
+          clickedItem?.id
+        )}
+        fetchApiService={apiService.get}
+        title={clickedItem?.payrollNumber}
+      />
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}
@@ -637,6 +697,7 @@ const Members = ({ status }) => {
                     openBaseCard={openBaseCard}
                     setClickedItem={setClickedItem}
                     clickedItem={clickedItem}
+                    setOpenDrilldown={setOpenDrilldown}
                   />
                 </div>
               </TabPane>

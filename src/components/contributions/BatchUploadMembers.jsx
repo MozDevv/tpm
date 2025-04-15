@@ -34,6 +34,7 @@ import {
 import { Alert, message } from 'antd';
 import BatchActions from './BatchActions';
 import BaseSubmitForApproval from './BatchActions';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 const BatchUploadMembers = ({ status }) => {
   const transformString = (str) => {
@@ -61,12 +62,17 @@ const BatchUploadMembers = ({ status }) => {
   const [sponsors, setSponsors] = React.useState([]);
 
   const generateMembersTemplate = async () => {
+    const token = localStorage.getItem('token'); // Replace 'token' with the actual key used in your app
+
     try {
       // Fetch the file as a blob
       const response = await axios.get(
         `${BASE_CORE_API}api/Contribution/DownloadMemberTemplate`,
         {
           responseType: 'blob', // Specify that the response is a binary Blob
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
         }
       );
 
@@ -145,6 +151,10 @@ const BatchUploadMembers = ({ status }) => {
     : 'Create Batch Member Upload';
 
   const [vendorPG, setVendorPG] = React.useState([]);
+  const { data: contributionTypes } = useFetchAsync(
+    financeEndpoints.getContributionType,
+    apiService
+  );
 
   const fields = [
     {
@@ -182,6 +192,18 @@ const BatchUploadMembers = ({ status }) => {
             fileName: 'Upload Members Excel',
           },
         ]),
+    {
+      name: 'memberTypeId',
+      label: 'Member Type',
+      type: 'select',
+      options:
+        contributionTypes &&
+        contributionTypes.map((item) => ({
+          id: item.id,
+          name: item.contributionTypeName,
+        })),
+      required: true,
+    },
   ];
   const statusIcons = {
     /**  {
@@ -274,6 +296,19 @@ const BatchUploadMembers = ({ status }) => {
       flex: 1,
       valueFormatter: (params) => {
         return params.value ? parseDate(params.value) : '';
+      },
+    },
+    //add memberTypeId
+    {
+      field: 'memberTypeId',
+      headerName: 'Member Type',
+      headerClass: 'prefix-header',
+      flex: 1,
+      valueFormatter: (params) => {
+        return params.value
+          ? contributionTypes.find((item) => item.id === params.value)
+              ?.contributionTypeName
+          : '';
       },
     },
   ];

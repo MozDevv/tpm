@@ -436,7 +436,7 @@ const financeEndpoints = {
   addReturn: 'Revenue/AddReturn',
   updateReturn: 'Revenue/UpdateReturn',
 
-  getMonths: 'AccountsSetup/GetMonths',
+  getMonths: 'AccountsSetup/GetMonths?Paging.PageSize=1000',
   getReturnById: (id) => `/Revenue/GetReturns?id=${id}`,
   postReturnToLedger: 'Posting/CreateReturnReceipt',
   addReturnToIGC: 'Revenue/AddReturnToIGC',
@@ -495,6 +495,8 @@ const financeEndpoints = {
   createFailedPayment: 'Revenue/CreateFailedPayment',
   getFailedPayments: 'Revenue/GetFailedPayments',
   updateFailedPayments: 'Revenue/UpdateFailedPayment',
+  getMemberContibutionByMemberId: (id) =>
+    `/Contribution/GetContributions?MemberId=${id}`,
 };
 
 export const apiService = {

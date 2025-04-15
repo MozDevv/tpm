@@ -25,6 +25,9 @@ import { ArrowBack, Close, IosShare, Launch } from '@mui/icons-material';
 import ContirbutionsActions from './ContirbutionsActions';
 import { message } from 'antd';
 import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
+import useFetchAsync from '../hooks/DynamicFetchHook';
+import { BASE_CORE_API } from '@/utils/constants';
+import axios from 'axios';
 const BatchContributions = ({ status }) => {
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
@@ -51,34 +54,35 @@ const BatchContributions = ({ status }) => {
     }));
   };
 
-  const generateMembersTemplate = () => {
-    const mapDataFunction = (data) => [
-      [
-        'Payroll Number',
-        'KRA Pin',
-        'National ID',
-        'Employee Contribution',
-        'Employer Contribution',
-        'Period Reference',
-        'MDA Code',
-      ], // Headers
-      ...data.map((item) => [
-        item.payrollNumber, // Payroll Number
-        item.kraPin, // KRA Pin
-        item.nationalId, // National ID
-        item.employeeContribution, // Employee Contribution
-        item.employerContribution, // Employer Contribution
-        new Date(item.periodReference).toLocaleDateString('en-GB'), // Period Reference
-        item.mdaCode, // MDA Code
-      ]),
-    ];
+  const generateMembersTemplate = async () => {
+    const token = localStorage.getItem('token'); // Replace 'token' with the actual key used in your app
 
-    generateExcelTemplate(
-      financeEndpoints.generateContributionTemplate,
-      mapDataFunction,
-      'contribution_upload_template.xlsx',
-      'Contributions Template'
-    );
+    try {
+      // Fetch the file as a blob
+      const response = await axios.get(
+        `${BASE_CORE_API}api/Contribution/GetContributionUploadTemplate`,
+        {
+          responseType: 'blob', // Specify that the response is a binary Blob
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+          },
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Template.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove(); // Clean up
+      window.URL.revokeObjectURL(url); // Release memory
+    } catch (error) {
+      console.error('Error downloading te file:', error);
+    }
   };
 
   const handlers = {
@@ -187,6 +191,11 @@ const BatchContributions = ({ status }) => {
     }
   };
 
+  const { data: months } = useFetchAsync(
+    financeEndpoints.getMonths,
+    apiService
+  );
+
   useEffect(() => {
     fetchContributionBatches();
     fetchContributionsTypes();
@@ -198,12 +207,7 @@ const BatchContributions = ({ status }) => {
       type: 'text',
       required: true,
     },
-    {
-      name: 'periodReference',
-      label: 'Period Reference',
-      type: 'date',
-      required: true,
-    },
+
     {
       name: 'contributionTypeId',
       label: 'Contribution Type',
@@ -212,6 +216,18 @@ const BatchContributions = ({ status }) => {
         id: item.id,
         name: item.contributionTypeName,
       })),
+      required: true,
+    },
+    {
+      name: 'monthId',
+      label: 'Month',
+      type: 'autocomplete',
+      options:
+        months &&
+        months.map((item) => ({
+          id: item.id,
+          name: item.description,
+        })),
       required: true,
     },
     {
@@ -231,13 +247,7 @@ const BatchContributions = ({ status }) => {
       required: true,
       disabled: true,
     },
-    {
-      name: 'periodReference',
-      label: 'Period Reference',
-      type: 'date',
-      required: true,
-      disabled: true,
-    },
+
     {
       name: 'contributionTypeId',
       label: 'Contribution Type',
