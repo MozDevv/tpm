@@ -646,7 +646,7 @@ export const menuItems = [
           // },
           // {
           //   title: 'Fully Paid Members',
-          //   path: '/pensions/contributions/members/fully-paid',
+          // path: '/pensions/contributions/members/fully-paid',
           // },
         ],
       },
