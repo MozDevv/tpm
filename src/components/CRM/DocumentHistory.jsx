@@ -12,7 +12,7 @@ const notificationStatusMap = {
   3: { name: 'ASSESSMENT DATA CAPTURE', color: '#f39c12' },
   4: { name: 'ASSESSMENT APPROVAL', color: '#2ecc71' },
   5: { name: 'DIRECTORATE', color: '#f39c12' },
-  6: { name: 'Controller of Budget', color: '#f39c12' },
+  6: { name: 'COB', color: '#f39c12' },
   7: { name: 'Finance', color: '#2ecc71' },
   8: { name: 'Voucher Preparation', color: '#f39c12' },
   9: { name: 'Voucher Approval', color: '#3498db' },
@@ -93,12 +93,12 @@ const DocumentHistory = ({ data }) => {
           ['Current Document No', record.current_document_no],
           // ['Previous Document No', record.previous_document_no || 'N/A'],
           // ['Stage', record.stage],
-          [
-            'Closed Date',
-            record.closed_date
-              ? dayjs(record.closed_date).format('YYYY-MM-DD HH:mm:ss')
-              : 'N/A',
-          ],
+          // [
+          //   'Closed Date',
+          //   record.closed_date
+          //     ? dayjs(record.closed_date).format('YYYY-MM-DD HH:mm:ss')
+          //     : 'N/A',
+          // ],
           ['Is Closed', record.is_closed ? 'Yes' : 'No'],
           [
             'Actioned By',
