@@ -22,6 +22,7 @@ import {
 import { Alert, message } from 'antd';
 import DocumentHistory from './DocumentHistory';
 import { ArrowBack, OpenInFull } from '@mui/icons-material';
+import BaseExpandCard from '../baseComponents/BaseExpandCard';
 
 const ClaimInquiry = () => {
   const [formData, setFormData] = React.useState({
@@ -71,57 +72,16 @@ const ClaimInquiry = () => {
   return (
     <div className="bg-white mt-8 px-10 py-10">
       {/* Title and Subtitle */}
-      <Dialog
-        maxWidth="lg"
-        sx={{
-          '& .MuiDialog-paper': {
-            minHeight: '250px',
-            minWidth: '800px',
-          },
-        }}
+      <BaseExpandCard
         open={openClaimInquiryDialpog}
-        onClose={() => setOpenClaimInquiryDialog(false)} // Fixed function name
-        aria-labelledby="alert-dialog-title" // Removed stray backtick
+        onClose={() => setOpenClaimInquiryDialog(false)}
+        title="Claim Inquiry"
       >
-        <div className="px-8">
-          <div className="flex items-center px-2 justify-between w-full sticky top-0 z-[99999999] bg-white pt-12">
-            <div className="flex items-center gap-1 ">
-              <IconButton
-                sx={{
-                  border: '1px solid #006990',
-                  borderRadius: '50%',
-                  padding: '3px',
-                  marginRight: '10px',
-                  color: '#006990',
-                }}
-                onClick={() => setOpenClaimInquiryDialog(false)}
-              >
-                <ArrowBack sx={{ color: '#006990' }} />
-              </IconButton>
-              <p className="text-lg text-primary font-semibold">
-                Claim Inquiry Details
-              </p>
-            </div>
-            <div className="flex items-center">
-              <IconButton>
-                <Tooltip>
-                  <OpenInFull
-                    color="primary"
-                    sx={{
-                      fontSize: '18px',
-                      mt: '4px',
-                    }}
-                  />
-                </Tooltip>
-              </IconButton>
-            </div>
-          </div>
-          <DocumentHistory
-            setOpenClaimInquiryDialog={setOpenClaimInquiryDialog}
-            data={fetchedData}
-          />
-        </div>
-      </Dialog>
+        <DocumentHistory
+          setOpenClaimInquiryDialog={setOpenClaimInquiryDialog}
+          data={fetchedData}
+        />
+      </BaseExpandCard>
 
       <p className="italic text-primary font-semibold text-[13px] mb-1 flex items-center gap-1">
         Select a filter and provide the required details to search for a claim.

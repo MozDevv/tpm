@@ -24,12 +24,15 @@ const DocumentHistory = ({ data }) => {
   const [userDetails, setUserDetails] = useState({});
 
   const sortedData = [...data].sort((a, b) => {
+    const formatStage = (stage) => stage.replace(/_/g, ' ').toLowerCase(); // Replace underscores and convert to lowercase
+
     const indexA = Object.values(notificationStatusMap).findIndex(
-      (item) => item.name === a.stage
+      (item) => item.name.toLowerCase() === formatStage(a.stage)
     );
     const indexB = Object.values(notificationStatusMap).findIndex(
-      (item) => item.name === b.stage
+      (item) => item.name.toLowerCase() === formatStage(b.stage)
     );
+
     return indexA - indexB;
   });
 
@@ -88,8 +91,8 @@ const DocumentHistory = ({ data }) => {
       >
         {[
           ['Current Document No', record.current_document_no],
-          ['Previous Document No', record.previous_document_no || 'N/A'],
-          ['Stage', record.stage],
+          // ['Previous Document No', record.previous_document_no || 'N/A'],
+          // ['Stage', record.stage],
           [
             'Closed Date',
             record.closed_date
@@ -97,23 +100,27 @@ const DocumentHistory = ({ data }) => {
               : 'N/A',
           ],
           ['Is Closed', record.is_closed ? 'Yes' : 'No'],
-          ['Created By', createdBy.email || 'N/A'],
+          [
+            'Actioned By',
+            createdBy.firstName + createdBy.middleName + createdBy.lastName ||
+              'N/A',
+          ],
           ['Department', createdBy.department?.name || 'N/A'],
           [
-            'Created Date',
+            'Actioned Date',
             dayjs(record.created_date).format('YYYY-MM-DD HH:mm:ss'),
           ],
 
-          [
-            'Updated Date',
-            record.updated_date
-              ? dayjs(record.updated_date).format('YYYY-MM-DD HH:mm:ss')
-              : 'N/A',
-          ],
-          [
-            'Approved By',
-            approvedBy ? approvedBy.email || 'Loading...' : 'N/A',
-          ],
+          // [
+          //   'Updated Date',
+          //   record.updated_date
+          //     ? dayjs(record.updated_date).format('YYYY-MM-DD HH:mm:ss')
+          //     : 'N/A',
+          // ],
+          // [
+          //   'Approved By',
+          //   approvedBy ? approvedBy.email || 'Loading...' : 'N/A',
+          // ],
         ].map(([label, value], i) => (
           <Box key={i} sx={{ display: 'flex', gap: 1 }}>
             <Typography sx={{ fontWeight: 600, minWidth: 180 }}>
@@ -162,22 +169,24 @@ const DocumentHistory = ({ data }) => {
         })}
       </Stepper>
 
-      {sortedData.length >= 2
-        ? sortedData.map((record) => (
-            <BaseCollapse
-              key={record.id}
-              name={record.stage}
-              titleFontSize="16"
-              className="mb-4"
-            >
-              {renderDetails(record)}
-            </BaseCollapse>
-          ))
-        : sortedData.map((record) => (
-            <Box key={record.id} sx={{ mb: 2 }}>
-              {renderDetails(record)}
-            </Box>
-          ))}
+      <div className="overflow-y-auto max-h-[65vh]">
+        {sortedData.length >= 2
+          ? sortedData.map((record) => (
+              <BaseCollapse
+                key={record.id}
+                name={record.stage}
+                titleFontSize="16"
+                className="mb-4"
+              >
+                <div className="px-8">{renderDetails(record)}</div>
+              </BaseCollapse>
+            ))
+          : sortedData.map((record) => (
+              <Box key={record.id} sx={{ mb: 2 }}>
+                <div className="">{renderDetails(record)}</div>
+              </Box>
+            ))}
+      </div>
     </Box>
   );
 };
