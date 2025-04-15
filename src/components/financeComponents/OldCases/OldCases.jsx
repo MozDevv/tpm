@@ -66,6 +66,7 @@ const OldCases = () => {
       return a.toUpperCase();
     });
   };
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
   // const []
 
@@ -77,11 +78,83 @@ const OldCases = () => {
     }));
   };
 
-  const handlers = {};
+  const handlers = {
+    notifyUser: async () => {
+      try {
+        if (selectedRows.length === 0) {
+          message.warning('Please select at least one row to notify.');
+          return;
+        }
+
+        // Prepare the payload using selected rows
+        const payload = {
+          paymentReturnNotificationDetail: selectedRows.map((row) => ({
+            prospectivePensionerId: row.prospectivePensionerId,
+            beneficiaryId: row.beneficiaryId || null, // Use null if not available
+            reason: row.returnReasonEnum || 0, // Default to 0 if not provided
+            returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
+          })),
+        };
+
+        // Send the API request
+        const res = await apiService.post(financeEndpoints.notifyUser, payload);
+
+        // Handle the response
+        if (res.status === 200 && res.data.succeeded) {
+          message.success('Notification sent successfully');
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.messages[0]
+        ) {
+          message.error(res.data.messages[0]);
+        } else {
+          message.error('An error occurred');
+        }
+      } catch (error) {
+        console.error('Error sending notification:', error);
+        message.error('An error occurred while sending the notification.');
+      }
+    },
+  };
 
   const baseCardHandlers = {
     addReturnToIGC: () => {
       handleReturnToIgc();
+    },
+    notifyUser: async () => {
+      try {
+        // Prepare the payload using clickedItem details
+        const payload = {
+          paymentReturnNotificationDetail: [
+            {
+              prospectivePensionerId: clickedItem?.prospectivePensionerId,
+              beneficiaryId: clickedItem?.beneficiaryId || null, // Use null if not available
+              reason: clickedItem?.returnReasonEnum || 0, // Default to 0 if not provided
+              returnOwnertType: clickedItem?.returnOwnertType || 0, // Default to 0 if not provided
+            },
+          ],
+        };
+
+        // Send the API request
+        const res = await apiService.post(financeEndpoints.notifyUser, payload);
+
+        // Handle the response
+        if (res.status === 200 && res.data.succeeded) {
+          message.success('Notification sent successfully');
+        } else if (
+          res.status === 200 &&
+          !res.data.succeeded &&
+          res.data.messages[0]
+        ) {
+          message.error(res.data.messages[0]);
+        } else {
+          message.error('An error occurred');
+        }
+      } catch (error) {
+        console.error('Error sending notification:', error);
+        message.error('An error occurred while sending the notification.');
+      }
     },
   };
 
@@ -330,6 +403,10 @@ const OldCases = () => {
         handlers={handlers}
         breadcrumbTitle="Returns"
         currentTitle="Returns"
+        onSelectionChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+          console.log('Selected Rows:', selectedRows);
+        }}
       />
     </div>
   );

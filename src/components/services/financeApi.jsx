@@ -457,6 +457,7 @@ const financeEndpoints = {
     'Revenue/GetReceiptNoGeneratorHeader?status=2',
   getUsedNoGeneratorHeader: 'Revenue/GetReceiptNoGeneratorHeader?status=1',
   generateReceiptNo: 'Revenue/GenerateReceiptNo',
+  notifyUser: 'Revenue/NotifyAboutPaymentReturn',
   /**"sortProperties": {
     "propertyName": "created_date",
     "sortCriteria": 0

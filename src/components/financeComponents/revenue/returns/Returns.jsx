@@ -79,7 +79,7 @@ const Returns = ({ status }) => {
 
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1,
+      // no: index + 1,
       ...item,
       receiptNo: item?.recieptNo,
     }));

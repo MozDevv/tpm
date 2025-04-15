@@ -97,22 +97,29 @@ const ListNavigation = ({
   const userId = auth.user ? auth.user.userId : null;
 
   const getApprovalActionsForUser = async () => {
-    const data = {
-      userId: userId,
+    const possibleKeys = [
+      'no_series',
+      'no',
+      'documentNo',
+      'document_no',
+      'document_number',
+    ];
 
-      //TODO - uncomment this line when the API is ready
-      documentNo: clickedItem?.no_series
-        ? clickedItem?.no_series
-        : clickedItem?.no
-        ? clickedItem?.no
-        : clickedItem?.documentNo
-        ? clickedItem?.documentNo
-        : clickedItem?.document_no
-        ? clickedItem?.document_no
-        : clickedItem?.document_number
-        ? clickedItem?.document_number
-        : 'TEST00001',
+    const documentNo = possibleKeys
+      .map((key) => clickedItem?.[key])
+      .find(Boolean);
+
+    // Exit early if documentNo is not found
+    if (!documentNo) {
+      console.warn('No valid document number found. Skipping API call.');
+      return;
+    }
+
+    const data = {
+      userId,
+      documentNo,
     };
+
     try {
       const res = await workflowsApiService.post(
         workflowsEndpoints.getApprovalActions,
@@ -122,8 +129,7 @@ const ListNavigation = ({
         setApprovalActions(res.data);
       }
     } catch (error) {
-      console.log('clickedItem?.no_series', clickedItem?.no_series);
-      console.error('Error fetching data:', error);
+      console.error('Error fetching approval actions:', error);
     }
   };
 
@@ -683,6 +689,12 @@ const ListNavigation = ({
       name: 'Generate Report',
       icon: FileDownload,
       action: 'generateReport',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Notify',
+      icon: Send,
+      action: 'notifyUser',
       requiredPermissions: [],
     },
   ];
