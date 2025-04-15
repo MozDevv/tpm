@@ -281,6 +281,10 @@ const BatchContributions = ({ status }) => {
       required: true,
       disabled: true,
     },
+    //  $$$
+    //  $$
+    //  $
+    // $
     {
       name: 'totalDormant',
       label: 'Total Dormant',

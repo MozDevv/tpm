@@ -624,45 +624,45 @@ export const menuItems = [
             title: 'Active Members',
             path: '/pensions/contributions/members/active',
           },
-          {
-            title: 'Deferred Members',
-            path: '/pensions/contributions/members/deferred',
-          },
-          {
-            title: 'Dead Members',
-            path: '/pensions/contributions/members/dead',
-          },
-          {
-            title: 'Retired Members',
-            path: '/pensions/contributions/members/retired',
-          },
-          {
-            title: 'Leave of Absence Members',
-            path: '/pensions/contributions/members/leave-of-absence',
-          },
-          {
-            title: 'Secondment Members',
-            path: '/pensions/contributions/members/secondment',
-          },
-          {
-            title: 'Fully Paid Members',
-            path: '/pensions/contributions/members/fully-paid',
-          },
+          // {
+          //   title: 'Deferred Members',
+          //   path: '/pensions/contributions/members/deferred',
+          // },
+          // {
+          //   title: 'Dead Members',
+          //   path: '/pensions/contributions/members/dead',
+          // },
+          // {
+          //   title: 'Retired Members',
+          //   path: '/pensions/contributions/members/retired',
+          // },
+          // {
+          //   title: 'Leave of Absence Members',
+          //   path: '/pensions/contributions/members/leave-of-absence',
+          // },
+          // {
+          //   title: 'Secondment Members',
+          //   path: '/pensions/contributions/members/secondment',
+          // },
+          // {
+          //   title: 'Fully Paid Members',
+          //   path: '/pensions/contributions/members/fully-paid',
+          // },
         ],
       },
-      {
-        title: 'Change Requests',
-        subChildren: [
-          {
-            title: 'Member Change Requests',
-            path: '/pensions/contributions/change-requests',
-          },
-          {
-            title: 'Next of Kin Change Requests',
-            path: '/pensions/contributions/change-requests/next-of-kin',
-          },
-        ],
-      },
+      // {
+      //   title: 'Change Requests',
+      //   subChildren: [
+      //     {
+      //       title: 'Member Change Requests',
+      //       path: '/pensions/contributions/change-requests',
+      //     },
+      //     {
+      //       title: 'Next of Kin Change Requests',
+      //       path: '/pensions/contributions/change-requests/next-of-kin',
+      //     },
+      //   ],
+      // },
       /**Under Contribution Menu 1 Contribution Processing 2 Contribution Approval 3 Contribution Posting 4 Contribution Reverse */
       {
         title: 'Contributions',
