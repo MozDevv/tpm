@@ -683,6 +683,22 @@ export const menuItems = [
             title: 'Rejected Contributions',
             path: '/pensions/contributions/contribution-reverse',
           },
+          /*  {
+        Cont_Open,
+        Cont_Pending_Approval,
+        Cont_Approved,
+        Cont_Rejected,
+        Cont_Pv_Created,
+        Cont_paid,
+    } */
+          {
+            title: 'Created Contribution Payment Vouchers',
+            path: '/pensions/contributions/contribution-payment-vouchers',
+          },
+          {
+            title: 'Paid Contributions',
+            path: '/pensions/contributions/paid-contributions',
+          },
         ],
       },
     ],

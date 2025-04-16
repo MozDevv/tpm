@@ -378,6 +378,20 @@ const ClaimsTable = ({ status, isDashboard }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [activeSegment, setActiveSegment] = useState(0);
+
+  useEffect(() => {
+    if (activeSegment !== 3) {
+      const filters = {
+        'filterCriterion.criterions[0].propertyName': 'claimType',
+        'filterCriterion.criterions[0].propertyValue': activeSegment,
+        'filterCriterion.criterions[0].criterionType': 0, // Exact match
+      };
+
+      fetchAllPreclaims(filters);
+    }
+  }, [activeSegment]);
+
   const handleFilters = async (filter) => {
     await fetchAllPreclaims(filter);
   };
@@ -446,7 +460,6 @@ const ClaimsTable = ({ status, isDashboard }) => {
 
   const [openPreclaimDialog, setOpenPreclaimDialog] = useState(false);
   const [openMoveStatus, setOpenMoveStatus] = useState(false);
-  const [activeSegment, setActiveSegment] = useState(0);
   const [openClaimVerification, setOpenClaimVerification] = useState(false);
   const [openExcel, setOpenExcel] = useState(false);
   const [openIgcApprove, setOpenIgcApprove] = useState(false);
@@ -460,7 +473,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
     reports: () => console.log('Reports clicked'),
 
     'Claims Verification Register': () => setOpenClaimVerification(true),
-    ...(activeSegment === 1
+    ...(activeSegment === 3
       ? {
           sendIGCForApproval: () => handleSendForApproval(),
           moveStatusIgc: () => {
@@ -956,8 +969,16 @@ const ClaimsTable = ({ status, isDashboard }) => {
               <div className="mb-2 mt-[-20px]">
                 <Segmented
                   options={[
+                    /**   options={[
                     { label: 'Normal Claims', value: 0 },
                     { label: 'Internally Generated Claims', value: 1 },
+                  ]} 0: { name: 'Principal', color: '#2ecc71' }, // Light Red
+  1: { name: 'Dependant', color: '#f39c12' }, // Bright Orange
+  2: { name: 'Death in Service', color: '#3498db' }, // Light Blue */
+                    { label: 'Principal Claims', value: 0 },
+                    { label: 'Dependant Claims', value: 1 },
+                    { label: 'Death in Service Claims', value: 2 },
+                    { label: 'Internally Generated Claims', value: 3 },
                   ]}
                   value={activeSegment}
                   onChange={(value) => setActiveSegment(value)}
@@ -970,7 +991,9 @@ const ClaimsTable = ({ status, isDashboard }) => {
                   }}
                 />
               </div>
-              {activeSegment === 0 ? (
+              {activeSegment === 0 ||
+              activeSegment === 1 ||
+              activeSegment === 2 ? (
                 <>
                   {' '}
                   <AgGridReact
@@ -1009,7 +1032,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
                     </Box>
                   )}
                 </>
-              ) : activeSegment === 1 ? (
+              ) : activeSegment === 3 ? (
                 <IgcForUseInClaims status={status} />
               ) : null}
             </div>

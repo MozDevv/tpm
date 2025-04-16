@@ -352,10 +352,18 @@ const BatchContributions = ({ status }) => {
       label: 'Batch Status',
       type: 'select',
       options: [
+        /**    Cont_Open,
+        Cont_Pending_Approval,
+        Cont_Approved,
+        Cont_Rejected,
+        Cont_Pv_Created,
+        Cont_paid, */
         { id: 0, name: 'Pending' },
         { id: 1, name: 'Approved' },
         { id: 2, name: 'Posted' },
         { id: 3, name: 'Reversed' },
+        { id: 4, name: 'Pv Created' },
+        { id: 5, name: 'Paid' },
       ],
       required: true,
       disabled: true,
@@ -363,12 +371,18 @@ const BatchContributions = ({ status }) => {
   ];
 
   const notificationStatusMap = {
+    /**  /**    Cont_Open,
+        Cont_Pending_Approval,
+        Cont_Approved,
+        Cont_Rejected,
+        Cont_Pv_Created,
+        Cont_paid,  */
     0: { name: 'New', color: '#f39c12' }, // Light Red
     1: { name: 'Pending Approval', color: '#49D907' }, // Bright Orange
     2: { name: 'Approved', color: '#3498db' }, // Light Blue
-    3: { name: 'Reversed', color: '#970FF2' }, // Amethyst
-    4: { name: 'IN REVIEW', color: '#970FF2' }, // Carrot Orange
-    5: { name: 'PENDING APPROVAL', color: '#1abc9c' }, // Light Turquoise
+    3: { name: 'Rejected', color: '#970FF2' }, // Amethyst
+    4: { name: 'PV Created', color: '#970FF2' }, // Carrot Orange
+    5: { name: 'Paid Contributions', color: '#1abc9c' }, // Light Turquoise
     6: { name: 'CLAIM CREATED', color: '#49D907' }, // Belize Hole Blue
     7: { name: 'RETURNED FOR CLARIFICATION', color: '#E4A11B' }, // Light Green
   };
