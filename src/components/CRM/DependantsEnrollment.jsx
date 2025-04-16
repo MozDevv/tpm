@@ -57,18 +57,33 @@ function DependantsEnrollment() {
     }));
   };
 
+  const validationRules = {
+    id_number: (value) => {
+      const idNumberRegex = /^[0-9]{6,10}$/; // Example: 6-10 digit ID number
+      if (!idNumberRegex.test(value)) return 'Enter a valid ID number';
+      return null;
+    },
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Perform validation
+    let errorMessage = null;
+    if (name === 'principal_pensioner_id_card_number') {
+      errorMessage = validationRules.id_number(value);
+    }
+
+    // Update formData and errors
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: errorMessage,
+    }));
   };
 
   const renderUploadFields = () => {
@@ -165,7 +180,15 @@ function DependantsEnrollment() {
             handleFileChange(info, record.name, record.documentTypesSetupId)
           }
           fileList={fileList.filter((file) => file.name === record.name)}
-          beforeUpload={() => false}
+          beforeUpload={(file) => {
+            const isLt2MB = file.size / 1024 / 1024 < 2; // Check if file size is less than 2MB
+            if (!isLt2MB) {
+              message.error(
+                `${file.name} is larger than 2MB. Please upload a smaller file.`
+              );
+            }
+            return isLt2MB; // Only allow upload if file size is less than 2MB
+          }}
         >
           <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
@@ -504,7 +527,7 @@ function DependantsEnrollment() {
                 {pensionerDetails.surname}
               </p>
               <p className="text-sm">
-                <strong className="text-primary">Pensioner Number:</strong>{' '}
+                <strong className="text-primary">Personal Number:</strong>{' '}
                 {pensionerDetails.pensioner_number}
               </p>
               <p className="text-sm">
