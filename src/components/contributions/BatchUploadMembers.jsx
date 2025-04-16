@@ -54,6 +54,7 @@ const BatchUploadMembers = ({ status }) => {
       uploadDate: item.uploadDate,
       members: item.members,
       batchUploadStatus: item.batchUploadStatus,
+      ...item,
 
       // roles: item.roles,
     }));
@@ -246,11 +247,10 @@ const BatchUploadMembers = ({ status }) => {
 
   const columnDefs = [
     {
-      field: 'batchNo',
-      headerName: 'Batch No',
+      field: 'documentNo',
+      headerName: 'Document No',
       headerClass: 'prefix-header',
       flex: 1,
-
       pinned: 'left',
       checkboxSelection: true,
       headerCheckboxSelection: true,
@@ -259,6 +259,12 @@ const BatchUploadMembers = ({ status }) => {
           <p className="underline text-primary font-semibold">{params.value}</p>
         );
       },
+    },
+    {
+      field: 'batchNo',
+      headerName: 'Batch No',
+      headerClass: 'prefix-header',
+      flex: 1,
     },
 
     {
