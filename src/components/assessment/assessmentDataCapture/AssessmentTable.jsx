@@ -575,9 +575,13 @@ const AssessmentTable = ({ status, statusArr }) => {
       setOpenAction(0);
       setOpenMoveStatus(true);
     },
-    createPaymentVoucher: () => {
-      setOpenPushToFinance(true);
-    },
+    ...(statusArr && statusArr.length > 0
+      ? {
+          createPaymentVoucher: () => {
+            setOpenPushToFinance(true);
+          },
+        }
+      : {}),
     returnToDirectorate: () => {
       setOpenAction(1);
       setOpenMoveStatus(true);
