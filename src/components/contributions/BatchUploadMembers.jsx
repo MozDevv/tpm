@@ -1143,9 +1143,9 @@ const BatchUploadMembers = ({ status }) => {
         setOpenApprove={setOpenApprove}
         documentNo={
           selectedRows.length > 0
-            ? selectedRows.map((item) => item.batchNo)
+            ? selectedRows.map((item) => item.documentNo)
             : clickedItem
-            ? [clickedItem.batchNo]
+            ? [clickedItem.documentNo]
             : []
         }
       />
