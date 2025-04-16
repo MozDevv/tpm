@@ -328,7 +328,7 @@ const financeEndpoints = {
 
   uploadMembersExcel: '/Contribution/UploadMembers',
   getUploadBatchByStatus: (status) =>
-    `/Contribution/GetMemberUploadBatches?MembershipStatus=${status}`,
+    `/Contribution/GetMemberUploadBatches?Stage=${status}`,
 
   getMemberUploadTemplate: 'Contribution/GetMemberUploadTemplate',
 
