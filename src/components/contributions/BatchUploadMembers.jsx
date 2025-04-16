@@ -35,6 +35,7 @@ import { Alert, message } from 'antd';
 import BatchActions from './BatchActions';
 import BaseSubmitForApproval from './BatchActions';
 import useFetchAsync from '../hooks/DynamicFetchHook';
+import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
 
 const BatchUploadMembers = ({ status }) => {
   const transformString = (str) => {
@@ -94,19 +95,33 @@ const BatchUploadMembers = ({ status }) => {
 
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [openPV, setOpenPV] = React.useState(false);
+  const [openApprove, setOpenApprove] = React.useState(false);
+  const [workFlowChange, setWorkFlowChange] = React.useState(false);
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
     ...(status === 0 && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
+
+      edit: () => console.log('Edit clicked'),
+      delete: () => console.log('Delete clicked'),
+      reports: () => console.log('Reports clicked'),
+      notify: () => console.log('Notify clicked'),
       submitPaymentForApproval: () => {
         setSelectedRows([clickedItem]);
         setOpenPV(true);
@@ -116,31 +131,34 @@ const BatchUploadMembers = ({ status }) => {
   };
 
   const baseCardHandlers = {
-    create: () => {
-      setOpenBaseCard(true);
-      setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
     ...(status === 0 && {
+      create: () => {
+        setOpenBaseCard(true);
+        setClickedItem(null);
+      },
       submitPaymentForApproval: () => {
         setSelectedRows([clickedItem]);
         setOpenPV(true);
         console.log('Submit Payment For Approval');
       },
     }),
+    ...(status === 1 && {
+      approvalRequest: () => console.log('Approval Request clicked'),
+      sendApprovalRequest: () => setOpenApprove(1),
+      cancelApprovalRequest: () => setOpenApprove(2),
+      approveDocument: () => setOpenApprove(3),
+      rejectDocumentApproval: () => setOpenApprove(4),
+      delegateApproval: () => {
+        setOpenApprove(5);
+        setWorkFlowChange(Date.now());
+      },
+    }),
     generateMembersTemplate: () => {
       generateMembersTemplate();
     },
-    uploadMembers: () => {
-      setUploadExcel(true);
-    },
+    // uploadMembers: () => {
+    //   setUploadExcel(true);
+    // },
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
@@ -169,17 +187,23 @@ const BatchUploadMembers = ({ status }) => {
       type: 'text',
       required: true,
     },
-    {
-      name: 'numberOfMembers',
-      label: 'Number of Members',
-      type: 'number',
-      required: true,
-    },
+    ...(clickedItem
+      ? [
+          {
+            name: 'numberOfMembers',
+            label: 'Number of Members',
+            type: 'number',
+            required: true,
+            disabled: true,
+          },
+        ]
+      : []),
     {
       name: 'uploadDate',
       label: 'Upload Date',
       type: 'date',
       required: true,
+      disabled: true,
     },
     ...(clickedItem
       ? []
@@ -1107,6 +1131,18 @@ const BatchUploadMembers = ({ status }) => {
           </div>
         )}
       </BaseCard>
+
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.batchNo)
+            : clickedItem
+            ? [clickedItem.batchNo]
+            : []
+        }
+      />
       <BaseTable
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
@@ -1116,6 +1152,7 @@ const BatchUploadMembers = ({ status }) => {
         columnDefs={columnDefs}
         fetchApiEndpoint={financeEndpoints.getUploadBatchByStatus(status)}
         fetchApiService={apiService.get}
+        // onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
         transformData={transformData}
         openApproveDialog={openPV}
         pageSize={30}

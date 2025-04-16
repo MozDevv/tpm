@@ -313,7 +313,7 @@ const Returns = ({ status }) => {
   );
 
   const { data: recieptsFromReceipts } = useFetchAsync(
-    financeEndpoints.getAllReceipts,
+    financeEndpoints.getReceiptsForVoucher,
     apiService
   );
 

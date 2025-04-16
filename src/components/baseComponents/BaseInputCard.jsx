@@ -75,6 +75,9 @@ const BaseInputCard = ({
     if (field.name === 'suspensionDate') {
       // Set the suspensionDate to the last day of the current month
       acc[field.name] = dayjs().endOf('month').format('YYYY-MM-DD');
+    } else if (field.name === 'uploadDate') {
+      // Set the uploadDate to the current date
+      acc[field.name] = dayjs().format('YYYY-MM-DD'); // Format as needed
     } else {
       acc[field.name] = field.default !== undefined ? field.default : '';
       if (field.type === 'switch') {

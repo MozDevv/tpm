@@ -121,6 +121,54 @@ const BatchContributions = ({ status }) => {
   };
 
   const baseCardHandlers = {
+    ...(clickedItem && status === 1
+      ? {
+          createPaymentVoucher: async () => {
+            if (!clickedItem) {
+              message.warning(
+                'Please select a batch to create a payment voucher.'
+              );
+              return;
+            }
+
+            try {
+              // Prepare the payload
+              const payload = {
+                contributionBatchId:
+                  clickedItem?.contributions[0]?.contributionBatchId, // Use the selected batch's ID
+                contributionTypeId:
+                  clickedItem?.contributions[0]?.contributionTypeId, // Use the selected batch's contribution type ID
+              };
+
+              // Send the API request
+              const response = await apiService.post(
+                financeEndpoints.createContributionPv, // Replace with the correct endpoint
+                payload
+              );
+
+              // Handle the response
+              if (response.status === 200 && response.data.succeeded) {
+                message.success('Payment voucher created successfully.');
+                // Optionally refresh data or perform other actions
+              } else if (response.status === 200 && !response.data.succeeded) {
+                message.error(
+                  response.data.messages[0] ||
+                    'Failed to create payment voucher.'
+                );
+              } else {
+                message.error(
+                  'An error occurred while creating the payment voucher.'
+                );
+              }
+            } catch (error) {
+              console.error('Error creating payment voucher:', error);
+              message.error(
+                'An error occurred while creating the payment voucher.'
+              );
+            }
+          },
+        }
+      : {}),
     ...(status === 0
       ? {
           create: () => {

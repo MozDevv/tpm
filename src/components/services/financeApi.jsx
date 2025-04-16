@@ -274,6 +274,8 @@ const financeEndpoints = {
 
   getReceipts: '/Posting/GetReceipts',
   getAllReceipts: '/Posting/GetReceipts?paging.PageSize=100000',
+  getReceiptsForVoucher:
+    '/Posting/GetReceipts?IsVoucherCreation=true&paging.PageSize=100000',
   getReceiptsById: (id) => `/Posting/GetReceipts?id=${id}`,
   addReceipt: '/Posting/AddReceipt',
   updateReceipt: '/Posting/UpdateReceipt',
@@ -498,6 +500,8 @@ const financeEndpoints = {
   updateFailedPayments: 'Revenue/UpdateFailedPayment',
   getMemberContibutionByMemberId: (id) =>
     `/Contribution/GetContributions?MemberId=${id}`,
+
+  createContributionPv: '/Posting/PostContributionPIToledger',
 };
 
 export const apiService = {

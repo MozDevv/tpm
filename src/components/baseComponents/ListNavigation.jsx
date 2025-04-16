@@ -697,6 +697,21 @@ const ListNavigation = ({
       action: 'notifyUser',
       requiredPermissions: [],
     },
+    {
+      name: 'Generate Members Template',
+      icon: Launch,
+      action: 'generateMembersTemplate',
+
+      disabled: true,
+      // parent: 'uploadMembers',
+      requiredPermissions: [],
+    },
+    {
+      name: 'Create Payment Voucher',
+      icon: PostAdd,
+      action: 'createPaymentVoucher',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [
@@ -837,15 +852,6 @@ const ListNavigation = ({
       parent: 'approvalRequest',
     },
 
-    {
-      name: 'Generate Members Template',
-      icon: Launch,
-      action: 'generateMembersTemplate',
-
-      disabled: true,
-      parent: 'uploadMembers',
-      requiredPermissions: [],
-    },
     {
       name: 'Upload Members(xlsx)',
       icon: Upload,
