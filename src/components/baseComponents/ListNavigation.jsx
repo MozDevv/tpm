@@ -701,8 +701,6 @@ const ListNavigation = ({
       name: 'Generate Members Template',
       icon: Launch,
       action: 'generateMembersTemplate',
-
-      disabled: true,
       // parent: 'uploadMembers',
       requiredPermissions: [],
     },

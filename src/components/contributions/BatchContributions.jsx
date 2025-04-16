@@ -75,7 +75,7 @@ const BatchContributions = ({ status }) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'Template.xlsx');
+      link.setAttribute('download', 'Contribution Upload Template.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove(); // Clean up
@@ -121,7 +121,7 @@ const BatchContributions = ({ status }) => {
   };
 
   const baseCardHandlers = {
-    ...(clickedItem && status === 1
+    ...(clickedItem && status === 2
       ? {
           createPaymentVoucher: async () => {
             if (!clickedItem) {
@@ -799,8 +799,6 @@ const BatchContributions = ({ status }) => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={financeEndpoints.deleteVendor(clickedItem?.id)}
-        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <>
