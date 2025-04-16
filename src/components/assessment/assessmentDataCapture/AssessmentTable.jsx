@@ -336,7 +336,13 @@ const AssessmentTable = ({ status, statusArr }) => {
 
     await fetchAllPreclaims(sort, filters);
   };
+  const [activeSegment, setActiveSegment] = useState(0);
 
+  useEffect(() => {
+    if (activeSegment !== 3) {
+      fetchAllPreclaims();
+    }
+  }, [activeSegment]);
   const fetchAllPreclaims = async (sort, filter) => {
     let filters = {};
 
@@ -345,15 +351,33 @@ const AssessmentTable = ({ status, statusArr }) => {
       filters = {
         'filterCriterion.criterions[0].propertyName': 'stage',
         'filterCriterion.criterions[0].propertyValue': status,
-        'filterCriterion.criterions[0].criterionType': 0,
+        'filterCriterion.criterions[0].criterionType': 0, // Exact match
       };
+
+      if (activeSegment !== null && activeSegment !== undefined) {
+        filters['filterCriterion.criterions[1].propertyName'] = 'claim_type';
+        filters['filterCriterion.criterions[1].propertyValue'] = activeSegment; // Assuming activeSegment represents claimType
+        filters['filterCriterion.criterions[1].criterionType'] = 0; // Exact match
+      }
     } else if (statusArr && statusArr.length > 0) {
       // When statusArr is provided, loop through it and populate criterions array
       statusArr.forEach((status, index) => {
         filters[`filterCriterion.criterions[${index}].propertyName`] = 'stage';
         filters[`filterCriterion.criterions[${index}].propertyValue`] = status;
-        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Adjust criterionType if necessary
+        filters[`filterCriterion.criterions[${index}].criterionType`] = 0; // Exact match
       });
+
+      // Add claimType filter after statusArr filters
+      if (activeSegment !== null && activeSegment !== undefined) {
+        const claimTypeIndex = statusArr.length; // Next available index
+        filters[`filterCriterion.criterions[${claimTypeIndex}].propertyName`] =
+          'claim_type';
+        filters[`filterCriterion.criterions[${claimTypeIndex}].propertyValue`] =
+          activeSegment; // Assuming activeSegment represents claimType
+        filters[
+          `filterCriterion.criterions[${claimTypeIndex}].criterionType`
+        ] = 0; // Exact match
+      }
     }
 
     setLoading(true);
@@ -756,7 +780,6 @@ const AssessmentTable = ({ status, statusArr }) => {
   }, []);
 
   const [excelLoading, setExcelLoading] = useState(false);
-  const [activeSegment, setActiveSegment] = useState(0);
   return (
     <>
       {excelLoading && (
@@ -1110,8 +1133,10 @@ const AssessmentTable = ({ status, statusArr }) => {
               <div className="mb-2 mt-[-20px]">
                 <Segmented
                   options={[
-                    { label: 'Normal Claims', value: 0 },
-                    { label: 'Internally Generated Claims', value: 1 },
+                    { label: 'Principal Claims', value: 0 },
+                    { label: 'Dependant Claims', value: 1 },
+                    { label: 'Death in Service Claims', value: 2 },
+                    { label: 'Internally Generated Claims', value: 3 },
                   ]}
                   value={activeSegment}
                   onChange={(value) => setActiveSegment(value)}
@@ -1124,7 +1149,9 @@ const AssessmentTable = ({ status, statusArr }) => {
                   }}
                 />
               </div>
-              {activeSegment === 0 ? (
+              {activeSegment === 0 ||
+              activeSegment === 1 ||
+              activeSegment === 2 ? (
                 <>
                   <AgGridReact
                     rowData={rowData}
@@ -1162,7 +1189,7 @@ const AssessmentTable = ({ status, statusArr }) => {
                     </Box>
                   )}
                 </>
-              ) : activeSegment === 1 ? (
+              ) : activeSegment === 3 ? (
                 <IgcForUseInClaims
                   status={status}
                   setClickedItem={setClickedItem}

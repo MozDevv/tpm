@@ -383,14 +383,20 @@ const ClaimsTable = ({ status, isDashboard }) => {
   useEffect(() => {
     if (activeSegment !== 3) {
       const filters = {
-        'filterCriterion.criterions[0].propertyName': 'claimType',
+        'filterCriterion.criterions[0].propertyName': 'claim_type',
         'filterCriterion.criterions[0].propertyValue': activeSegment,
         'filterCriterion.criterions[0].criterionType': 0, // Exact match
       };
 
+      if (status !== null && status !== undefined) {
+        filters['filterCriterion.criterions[1].propertyName'] = 'stage';
+        filters['filterCriterion.criterions[1].propertyValue'] = status;
+        filters['filterCriterion.criterions[1].criterionType'] = 0; // Exact match
+      }
+
       fetchAllPreclaims(filters);
     }
-  }, [activeSegment]);
+  }, [activeSegment, status]);
 
   const handleFilters = async (filter) => {
     await fetchAllPreclaims(filter);
