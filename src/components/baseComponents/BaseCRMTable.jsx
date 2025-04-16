@@ -133,16 +133,31 @@ function BaseCRMTable({
 
     // Collect Search filter
     if (searchText && selectedColumn) {
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyName`
-      ] = selectedColumn; // Column selected by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyValue`
-      ] = searchText; // Value entered by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].criterionType`
-      ] = 2; // Default to 'Includes'
-      criterionIndex++;
+      if (status !== null && status !== undefined) {
+        criterionIndex = 1;
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].propertyName`
+        ] = selectedColumn; // Column selected by the user
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].propertyValue`
+        ] = searchText; // Value entered by the user
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].criterionType`
+        ] = 2; // Default to 'Includes'
+        // criterionIndex++;
+        criterionIndex++; // Increment the index for the next filter
+      } else {
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].propertyName`
+        ] = selectedColumn; // Column selected by the user
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].propertyValue`
+        ] = searchText; // Value entered by the user
+        filterCriteria[
+          `filterCriterion.criterions[${criterionIndex}].criterionType`
+        ] = 2; // Default to 'Includes'
+        criterionIndex++;
+      }
     }
 
     console.log('Filter Criteria:', filterCriteria);
@@ -207,7 +222,13 @@ function BaseCRMTable({
   const fetchDataWithFilters = async (filterCriteria) => {
     try {
       const queryString = serializeFilterCriteria(filterCriteria);
-      const res = await fetchApiService(`${fetchApiEndpoint}?${queryString}`);
+
+      // Check if the endpoint already contains a "?"
+      const separator = fetchApiEndpoint.includes('?') ? '&' : '?';
+
+      const res = await fetchApiService(
+        `${fetchApiEndpoint}${separator}${queryString}`
+      );
 
       const { data } = res.data;
       setRowData(transformData(data));

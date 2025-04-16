@@ -58,6 +58,7 @@ const Members = ({ status }) => {
       county: item.county,
       maritalStatus: item.maritalStatus,
       memberId: item.id,
+      totalContribution: item.totalContribution,
 
       // roles: item.roles,
     }));
