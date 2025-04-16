@@ -668,19 +668,19 @@ export const menuItems = [
         title: 'Contributions',
         subChildren: [
           {
-            title: 'Contribution Processing',
+            title: 'Open Contributions',
             path: '/pensions/contributions/contribution-processing',
           },
           {
-            title: 'Contribution Approval',
+            title: 'Contribution Pending Approval',
             path: '/pensions/contributions/contribution-approval',
           },
           {
-            title: 'Contribution Posting',
+            title: 'Approved Contributions',
             path: '/pensions/contributions/contribution-posting',
           },
           {
-            title: 'Contribution Reverse',
+            title: 'Rejected Contributions',
             path: '/pensions/contributions/contribution-reverse',
           },
         ],

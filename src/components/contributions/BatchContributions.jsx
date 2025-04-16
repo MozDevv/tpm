@@ -832,8 +832,8 @@ const BatchContributions = ({ status }) => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Contribution Processing"
-        currentTitle="Contribution Processing"
+        breadcrumbTitle="Contributions"
+        currentTitle="Contributions"
         onSelectionChange={(selectedRows) => {
           setSelectedRows(selectedRows);
         }}
