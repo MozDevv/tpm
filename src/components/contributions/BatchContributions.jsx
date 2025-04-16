@@ -375,23 +375,29 @@ const BatchContributions = ({ status }) => {
 
   const columnDefs = [
     {
+      field: 'documentNo',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      flex: 1,
+      filter: true,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
       field: 'periodReference',
       headerName: 'Period Reference',
       headerClass: 'prefix-header',
       flex: 1,
       filter: true,
-      pinned: 'left',
+
       valueFormatter: (params) => {
         return params.value ? parseDate(params.value) : '';
-      },
-      checkboxSelection: true,
-      headerCheckboxSelection: true,
-      cellRenderer: (params) => {
-        return (
-          <p className="underline text-primary font-semibold">
-            {parseDate(params.value)}
-          </p>
-        );
       },
     },
 
