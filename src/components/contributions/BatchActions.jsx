@@ -70,12 +70,12 @@ function BaseSubmitForApproval({
       const allSucceeded = results.every((result) => result.success);
 
       if (allSucceeded) {
-        message.success('All Payment Vouchers submitted successfully');
+        message.success('Batches submitted successfully');
         setSelectedRows([]); // Clear selected rows
         setOpenPostGL(false); // Close any open dialogs if needed
         setOpenBaseCard && setOpenBaseCard(false); // Close the BaseCard if necessary
       } else {
-        message.warning('Some Payment Vouchers failed to submit.');
+        message.warning('Some Batches failed to submit.');
       }
     } catch (error) {
       // Global error handling for unexpected issues

@@ -364,6 +364,8 @@ const financeEndpoints = {
 
   getContributionType: '/Contribution/GetContributionType',
   createContributionType: '/Contribution/AddContributionType',
+  //POST
+  // /api/Contribution/UpdateContributionType
   updateContributionType: '/Contribution/UpdateContributionType',
   deleteContributionType: (id) => `/Contribution/DeleteContributionType/${id}`,
 
@@ -502,6 +504,7 @@ const financeEndpoints = {
     `/Contribution/GetContributions?MemberId=${id}`,
 
   createContributionPv: '/Posting/PostContributionPIToledger',
+  // updateContributionType
 };
 
 export const apiService = {

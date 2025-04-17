@@ -148,6 +148,7 @@ const BatchContributions = ({ status }) => {
 
               // Handle the response
               if (response.status === 200 && response.data.succeeded) {
+                setOpenBaseCard(false); // Close the card
                 message.success('Payment voucher created successfully.');
                 // Optionally refresh data or perform other actions
               } else if (response.status === 200 && !response.data.succeeded) {
@@ -404,14 +405,14 @@ const BatchContributions = ({ status }) => {
       },
     },
     {
-      field: 'periodReference',
-      headerName: 'Period Reference',
+      field: 'periodNarration',
+      headerName: 'Period',
       headerClass: 'prefix-header',
       flex: 1,
       filter: true,
 
       valueFormatter: (params) => {
-        return params.value ? parseDate(params.value) : '';
+        return params.value ? params.value : '';
       },
     },
 
@@ -666,6 +667,8 @@ const BatchContributions = ({ status }) => {
     params.api.sizeColumnsToFit();
   };
 
+  const [refreshData, setRefreshData] = useState(12);
+
   const handleSubmitBatchForApproval = async () => {
     selectedRows.forEach(async (row) => {
       try {
@@ -677,6 +680,7 @@ const BatchContributions = ({ status }) => {
           message.success('Contributions submitted for approval successfully');
           fetchContributionBatches();
           setOpenContirbutionsActions(false);
+          setRefreshData((prev) => prev + 1);
         } else {
           message.error('Failed to submit contributions for approval');
         }
@@ -832,6 +836,7 @@ const BatchContributions = ({ status }) => {
         )}
       </BaseCard>
       <BaseTable
+        refreshData={refreshData}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}

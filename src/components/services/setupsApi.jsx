@@ -554,6 +554,8 @@ const endpoints = {
   updatePaymentReasons: '/api/AccountsSetup/UpdatePaymentReturnReason',
   deletePaymentReasons: (id) =>
     `/api/AccountsSetup/DeletePaymentReturnReason?id=${id}`,
+  getGeneralPolicy: '/api/Policy/general',
+  createGeneralPolicy: '/api/Policy/general',
 };
 
 export const apiService = {

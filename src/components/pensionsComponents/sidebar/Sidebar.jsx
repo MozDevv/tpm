@@ -718,6 +718,25 @@ export const menuItems = [
         title: 'Claim Inquiry',
         path: '/pensions/customer-relations/claim-inquiry',
       },
+
+      {
+        title: 'Policy   ',
+        path: '/pensions/customer-relations/policy',
+        subChildren: [
+          {
+            title: 'General',
+            path: '/pensions/customer-relations/policy/general',
+          },
+          {
+            title: 'Ombudsman Case',
+            path: '/pensions/customer-relations/policy/ombudsman-case',
+          },
+          {
+            title: 'Court Case',
+            path: '/pensions/customer-relations/policy/court-case',
+          },
+        ],
+      },
       {
         title: 'Tickets',
         path: '/pensions/customer-relations/tickets',
