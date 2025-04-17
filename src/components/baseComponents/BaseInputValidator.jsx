@@ -53,5 +53,52 @@ export const baseInputValidator = (field, value, formData) => {
     }
   }
 
+  // Additional validations for specific fields
+  if (field.name === 'referenceNo' && value) {
+    if (value.trim().length < 5) {
+      newErrors[
+        field.name
+      ] = `${field.label} must be at least 5 characters long`;
+    }
+  }
+
+  if (field.name === 'receivedAt' && value) {
+    const receivedDate = dayjs(value);
+    if (!receivedDate.isValid()) {
+      newErrors[field.name] = `${field.label} must be a valid date`;
+    } else if (receivedDate.isAfter(dayjs())) {
+      newErrors[field.name] = `${field.label} cannot be in the future`;
+    }
+  }
+
+  if (field.name === 'pensionerNumber' && value) {
+    if (!/^\d+$/.test(value)) {
+      newErrors[field.name] = `${field.label} must contain only numbers`;
+    }
+  }
+
+  if (field.name === 'pensionerNationalID' && value) {
+    if (!/^\d{6,10}$/.test(value)) {
+      newErrors[
+        field.name
+      ] = `${field.label} must be a valid National ID (6-10 digits)`;
+    }
+  }
+
+  if (field.name === 'partyEmail' && value) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(value)) {
+      newErrors[field.name] = `${field.label} is not a valid email`;
+    }
+  }
+
+  // Validation for phone number fields
+  if (field.name === 'partyPhone' && value) {
+    const phonePattern = /^\+?[0-9]{10,13}$/; // Adjust pattern for your locale
+    if (!phonePattern.test(value)) {
+      newErrors[field.name] = `${field.label} is not a valid phone number`;
+    }
+  }
+
   return newErrors;
 };

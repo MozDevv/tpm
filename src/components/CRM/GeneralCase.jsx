@@ -150,7 +150,12 @@ const GeneralCase = () => {
     },
     { name: 'partyName', label: 'Party Name', type: 'text', required: true },
     { name: 'partyEmail', label: 'Party Email', type: 'text', required: true },
-    { name: 'partyPhone', label: 'Party Phone', type: 'text', required: true },
+    {
+      name: 'partyPhone',
+      label: 'Party Phone',
+      type: 'phone_number',
+      required: true,
+    },
     { name: 'nature', label: 'Nature', type: 'text', required: true },
     { name: 'source', label: 'Source', type: 'text', required: true },
     { name: 'remarks', label: 'Remarks', type: 'text', required: true },

@@ -256,7 +256,12 @@ const CourtCase = () => {
       required: false,
     },
     { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
-    { name: 'partyPhone', label: 'Party Phone', type: 'text', required: false },
+    {
+      name: 'partyPhone',
+      label: 'Party Phone',
+      type: 'phone_number',
+      required: false,
+    },
     { name: 'nature', label: 'Nature', type: 'text', required: false },
     { name: 'parties', label: 'Parties', type: 'text', required: false },
     { name: 'region', label: 'Region', type: 'text', required: false },

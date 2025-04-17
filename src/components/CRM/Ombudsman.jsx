@@ -266,7 +266,12 @@ const Ombudsman = () => {
       required: false,
     },
     { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
-    { name: 'partyPhone', label: 'Party Phone', type: 'text', required: false },
+    {
+      name: 'partyPhone',
+      label: 'Party Phone',
+      type: 'phone_number',
+      required: false,
+    },
     {
       name: 'pensionerNationalID',
       label: 'Pensioner National ID',
