@@ -175,6 +175,8 @@ const OperationsSetups = () => {
       defaultVatPostingGroup: item.defaultVatPostingGroup,
       defaultPaymentMethod: item.defaultPaymentMethod,
       deductionToCapMda: item.deductionToCapMda,
+      isAutomaticSchedulling: item.isAutomaticSchedulling,
+      maxNoOfPaymentVouchers: item.maxNoOfPaymentVouchers,
     }));
   };
 
@@ -310,6 +312,20 @@ const OperationsSetups = () => {
           name: m.name,
         };
       }),
+    },
+    /**
+     * add these two fields    public bool isAutomaticSchedulling { get; set; };
+        public long MaxNoOfPaymentVouchers { get; set; };  on operation setup
+     */
+    {
+      name: 'isAutomaticSchedulling',
+      label: 'Is Automatic Scheduling',
+      type: 'switch',
+    },
+    {
+      name: 'maxNoOfPaymentVouchers',
+      label: 'Max No Of Payment Vouchers',
+      type: 'number',
     },
   ];
 
