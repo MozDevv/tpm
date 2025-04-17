@@ -7,8 +7,15 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 
 const Ombudsman = () => {
+  const statusIcons = {
+    0: { icon: Visibility, name: 'On Going', color: '#1976d2' }, // Blue
+    // 1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    1: { icon: Verified, name: 'Resolved', color: '#2e7d32' }, // Green
+    // 3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+  };
   const columnDefs = [
     {
       field: 'seriesNo',
@@ -33,6 +40,7 @@ const Ombudsman = () => {
       filter: true,
       width: 200,
     },
+
     {
       field: 'complaintChannel',
       headerName: 'Complaint Channel',
@@ -47,6 +55,41 @@ const Ombudsman = () => {
       filter: true,
       width: 200,
     },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
+
     {
       field: 'pensionerNumber',
       headerName: 'Pensioner Number',
@@ -96,6 +139,33 @@ const Ombudsman = () => {
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       field: 'remarks',
@@ -178,6 +248,16 @@ const Ombudsman = () => {
       type: 'text',
       required: true,
     },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      required: true,
+      options: [
+        { id: 0, name: 'On Going' },
+        { id: 1, name: 'Resolved' },
+      ],
+    },
     { name: 'partyName', label: 'Party Name', type: 'text', required: true },
     {
       name: 'pensionerNumber',
@@ -206,10 +286,16 @@ const Ombudsman = () => {
       required: true,
     },
     { name: 'rootCause', label: 'Root Cause', type: 'text', required: true },
-    { name: 'status', label: 'Status', type: 'number', required: false },
+    // { name: 'status', label: 'Status', type: 'number', required: false },
     { name: 'remarks', label: 'Remarks', type: 'text', required: false },
     { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
     // { name: 'attachments', label: 'Attachments', type: 'file', required: false },
+    {
+      name: 'attachments',
+      label: 'Attachments',
+      type: 'attachments',
+      required: false,
+    },
   ];
 
   return (
@@ -257,6 +343,13 @@ const Ombudsman = () => {
         handlers={handlers}
         breadcrumbTitle="Ombudsman Cases"
         currentTitle="Ombudsman Cases"
+        segmentFilterParameter2="status"
+        // excelTitle="Ombudsman Cases"
+        isOmbudsman={true}
+        segmentOptions2={[
+          { value: 0, label: 'On Going' },
+          { value: 1, label: 'Resolved' },
+        ]}
       />
     </div>
   );

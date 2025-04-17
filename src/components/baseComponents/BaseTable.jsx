@@ -79,7 +79,7 @@ const BaseTable = ({
   stage,
   display,
   segmentOptions2,
-  segmentFilterParameter2,
+  segmentFilterParameter2,isOmbudsman
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -364,6 +364,7 @@ const BaseTable = ({
       )}
       <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
+        isOmbudsman={isOmbudsman}
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}

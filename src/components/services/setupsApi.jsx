@@ -558,6 +558,8 @@ const endpoints = {
   createGeneralPolicy: '/api/Policy/general',
   getOmbudsman: '/api/Policy/ombudsman-case',
   createOmbudsman: '/api/Policy/ombudsman-case',
+  createCourtCase: '/api/Policy/court-case',
+  getCourtCase: '/api/Policy/court-case',
 };
 
 export const apiService = {

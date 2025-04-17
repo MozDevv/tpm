@@ -16,7 +16,9 @@ import {
   Addchart,
   AssuredWorkload,
   AutoGraph,
+  DocumentScanner,
   DragIndicator,
+  GavelOutlined,
   KeyboardArrowRight,
   PeopleAltOutlined,
   Person,
@@ -703,7 +705,25 @@ export const menuItems = [
       },
     ],
   },
+  {
+    title: 'Policy',
+    icon: <GavelOutlined />,
 
+    children: [
+      {
+        title: 'General Policies',
+        path: '/pensions/customer-relations/policy/general',
+      },
+      {
+        title: 'Ombudsman Cases',
+        path: '/pensions/customer-relations/policy/ombudsman-case',
+      },
+      {
+        title: 'Court Cases',
+        path: '/pensions/customer-relations/policy/court-case',
+      },
+    ],
+  },
   {
     title: 'Customer Relations',
 
@@ -719,24 +739,6 @@ export const menuItems = [
         path: '/pensions/customer-relations/claim-inquiry',
       },
 
-      {
-        title: 'Policy   ',
-        path: '/pensions/customer-relations/policy',
-        subChildren: [
-          {
-            title: 'General',
-            path: '/pensions/customer-relations/policy/general',
-          },
-          {
-            title: 'Ombudsman Case',
-            path: '/pensions/customer-relations/policy/ombudsman-case',
-          },
-          {
-            title: 'Court Case',
-            path: '/pensions/customer-relations/policy/court-case',
-          },
-        ],
-      },
       {
         title: 'Tickets',
         path: '/pensions/customer-relations/tickets',

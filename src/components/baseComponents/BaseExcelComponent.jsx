@@ -16,6 +16,7 @@ const BaseExcelComponent = ({
   excelTitle,
   segmentFilters,
   isIgc = false,
+  isOmbudsman,
 }) => {
   // Initialize selectedColumns with all columns by default
   const [selectedColumns, setSelectedColumns] = useState(columns);
@@ -116,7 +117,8 @@ const BaseExcelComponent = ({
       setLoading,
       filters,
       segFilter,
-      excelTitle
+      excelTitle,
+      isOmbudsman
     );
   };
 

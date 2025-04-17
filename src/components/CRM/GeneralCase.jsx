@@ -155,12 +155,12 @@ const GeneralCase = () => {
     { name: 'source', label: 'Source', type: 'text', required: true },
     { name: 'remarks', label: 'Remarks', type: 'text', required: true },
     { name: 'receivedAt', label: 'Received At', type: 'date', required: true },
-    // {
-    //   name: 'attachments',
-    //   label: 'Attachments',
-    //   type: 'file',
-    //   required: false,
-    // },
+    {
+      name: 'attachments',
+      label: 'Attachments',
+      type: 'attachments',
+      required: false,
+    },
   ];
 
   return (

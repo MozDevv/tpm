@@ -101,6 +101,13 @@ import dayjs from 'dayjs';
 import ExcelJS from 'exceljs';
 import { message } from 'antd';
 
+export async function fetchImageAsBase64(url) {
+  const response = await fetch(url);
+  const buffer = await response.arrayBuffer();
+  const base64 = Buffer.from(buffer).toString('base64');
+  return base64;
+}
+
 export const generateExcelTemplateWithApiService = async (
   fetchApiEndpoint,
   fetchApiService,
@@ -113,7 +120,8 @@ export const generateExcelTemplateWithApiService = async (
   setLoading,
   filters = {},
   segFilter = {},
-  excelTitle
+  excelTitle,
+  isOmbudsman = false
 ) => {
   try {
     if (!Array.isArray(selectedColumns) || selectedColumns.length === 0) {
@@ -218,6 +226,83 @@ export const generateExcelTemplateWithApiService = async (
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
+    if (isOmbudsman) {
+      try {
+        const imageWidth = 100; // in pixels
+        const imageHeight = 80; // in pixels
+        const totalCols = selectedColumns.length;
+
+        // Calculate center column position
+        const centerCol = Math.max(0, Math.floor((totalCols - 3) / 2)); // Center with 3 column span
+
+        // Add Kenya logo image
+        const kenyaLogoId = workbook.addImage({
+          base64: await fetchImageAsBase64(
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqIdCvBls-7c66qNf16_K4l_PA1_S7WFHIlw&s'
+          ),
+          extension: 'png',
+        });
+
+        // Add image with defined dimensions
+        worksheet.addImage(kenyaLogoId, {
+          tl: { col: centerCol, row: 0 },
+          ext: { width: imageWidth, height: imageHeight },
+          editAs: 'oneCell',
+        });
+
+        // Adjust row heights (logo rows)
+        worksheet.getRow(1).height = imageHeight * 0.75;
+        worksheet.getRow(2).height = 5; // Small spacer
+
+        // Function to create perfectly centered rows
+        const addCenteredRow = (
+          rowNum,
+          text,
+          fontSize = 14,
+          isBold = true,
+          height = 25
+        ) => {
+          const row = worksheet.addRow([text]);
+          row.font = { bold: isBold, size: fontSize };
+          row.alignment = {
+            horizontal: 'center',
+            vertical: 'middle',
+            wrapText: true, // Ensure text wraps if needed
+          };
+          worksheet.mergeCells(
+            `A${rowNum}:${String.fromCharCode(65 + totalCols - 1)}${rowNum}`
+          );
+          worksheet.getRow(rowNum).height = height;
+          return row;
+        };
+
+        // Add all rows with consistent centering
+        addCenteredRow(3, 'REPUBLIC OF KENYA');
+        addCenteredRow(4, 'THE NATIONAL TREASURY & ECONOMIC PLANNING');
+        addCenteredRow(
+          5,
+          'Name of Public Institution: The National Treasury & Economic Planning',
+          12,
+          false,
+          20
+        );
+        addCenteredRow(6, 'Financial Year: 2023/2024', 12, false, 20);
+        addCenteredRow(
+          7,
+          'Resolution of Public Complaints Received from CAJ - Report for the 3rd Quarter Ending 30th April, 2024'
+        );
+
+        // Add empty spacer row
+        worksheet.addRow([]);
+        worksheet.getRow(8).height = 15;
+
+        // Update header row position
+        headerRowNumber = 9;
+      } catch (error) {
+        console.error('Error adding Kenya logo:', error);
+        // Fallback implementation here
+      }
+    }
     if (excelTitle && Array.isArray(excelTitle)) {
       excelTitle.forEach((title, index) => {
         const titleRow = worksheet.addRow([title]);

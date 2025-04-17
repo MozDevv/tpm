@@ -14,8 +14,9 @@ import {
   Typography,
   ListItem,
   Popper,
+  Dialog,
 } from '@mui/material';
-import { Alert, message, Upload } from 'antd';
+import { Alert, message, Table, Upload } from 'antd';
 import dayjs from 'dayjs';
 import { Button as AntButton } from 'antd';
 
@@ -29,6 +30,8 @@ import {
   UploadOutlined,
   Upload as MuiUpload,
   Launch,
+  Add,
+  Delete,
 } from '@mui/icons-material';
 import MuiPhoneNumber from 'mui-phone-number';
 import financeEndpoints, { apiService } from '../services/financeApi';
@@ -38,6 +41,7 @@ import {
 } from '@/zustand/store';
 import { BASE_CORE_API } from '@/utils/constants';
 import { baseInputValidator } from './BaseInputValidator';
+import BaseCollapse from './BaseCollapse';
 
 const BaseInputCard = ({
   handlePreview,
@@ -534,6 +538,10 @@ const BaseInputCard = ({
     }
   };
 
+  const [selectedRows, setSelectedRows] = useState([]); // Tracks selected rows for deletion
+  const [previewContent, setPreviewContent] = useState(null); // Content for the preview modal
+  const [previewOpen, setPreviewOpen] = useState(false); // Controls the preview modal visibility
+
   return (
     <div className="py-6 px-15">
       {inputTitle && (
@@ -596,6 +604,8 @@ const BaseInputCard = ({
                   {field.label}
                 </label>
               </>
+            ) : field.type === 'attachments' ? (
+              <></>
             ) : (
               <label className="text-xs font-semibold text-gray-600">
                 {field.label}
@@ -1148,6 +1158,8 @@ const BaseInputCard = ({
                   </Popper>
                 )}
               />
+            ) : field.type === 'attachments' ? (
+              <></>
             ) : (
               <TextField
                 type={field.type}
@@ -1166,8 +1178,172 @@ const BaseInputCard = ({
           </div>
         ))}
       </div>
+      <Dialog
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '90vh',
+            maxHeight: '90vh',
+            minWidth: '55vw',
+            maxWidth: '55vw',
+          },
+          zIndex: 99999,
+        }}
+      >
+        {previewContent}
+      </Dialog>
 
       <Divider sx={{ my: 2 }} />
+
+      <div className="px-2">
+        {fields.map((field, index) =>
+          field.type === 'attachments' ? (
+            <BaseCollapse name="Attachments">
+              <div className="px-5" key={index}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      const newAttachment = {
+                        name: `File ${formData.attachments?.length + 1 || 1}`,
+                        description: '',
+                        file: null,
+                      };
+                      setFormData((prev) => ({
+                        ...prev,
+                        attachments: [
+                          ...(prev.attachments || []),
+                          newAttachment,
+                        ],
+                      }));
+                    }}
+                    variant="text"
+                    startIcon={<Add />}
+                    style={{ marginRight: '10px' }}
+                  >
+                    New Document
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const updatedAttachments = formData.attachments.filter(
+                        (_, index) => !selectedRows.includes(index)
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        attachments: updatedAttachments,
+                      }));
+                      setSelectedRows([]);
+                    }}
+                    variant="text"
+                    startIcon={<Delete />}
+                  >
+                    Delete Document
+                  </Button>
+                </div>
+
+                {/* Attachments Table */}
+                <Table
+                  columns={[
+                    {
+                      title: 'File Name',
+                      dataIndex: 'name',
+                      key: 'name',
+                      width: '40%',
+                    },
+                    {
+                      title: 'Upload',
+                      key: 'upload',
+                      width: '30%',
+                      render: (_, record, index) => (
+                        <Upload
+                          name={record.name}
+                          onChange={(info) => {
+                            const updatedAttachments = [
+                              ...formData.attachments,
+                            ];
+                            updatedAttachments[index].file = info.file;
+                            setFormData((prev) => ({
+                              ...prev,
+                              attachments: updatedAttachments,
+                            }));
+                          }}
+                          fileList={record.file ? [record.file] : []}
+                          beforeUpload={(file) => {
+                            const isLt2MB = file.size / 1024 / 1024 < 2;
+                            if (!isLt2MB) {
+                              message.error(
+                                `${file.name} is larger than 2MB. Please upload a smaller file.`
+                              );
+                            }
+                            return isLt2MB;
+                          }}
+                        >
+                          <Button startIcon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
+                      ),
+                    },
+                    {
+                      title: 'Preview',
+                      key: 'preview',
+                      width: '30%',
+                      render: (_, record) => {
+                        const file = record.file;
+                        return file ? (
+                          <Button
+                            style={{
+                              backgroundColor: '#006990',
+                              color: 'white',
+                              border: 'none',
+                            }}
+                            onClick={() => {
+                              const file =
+                                record.file?.originFileObj || record.file; // Use originFileObj if available
+                              if (!file) {
+                                message.error('No file available for preview.');
+                                return;
+                              }
+
+                              setPreviewContent(
+                                <embed
+                                  src={URL.createObjectURL(file)}
+                                  type="application/pdf"
+                                  width="100%"
+                                  height="1000px"
+                                />
+                              );
+                              setPreviewOpen(true);
+                            }}
+                          >
+                            Preview
+                          </Button>
+                        ) : (
+                          <Button disabled>Preview</Button>
+                        );
+                      },
+                    },
+                  ]}
+                  dataSource={formData.attachments}
+                  pagination={false}
+                  rowKey={(record, index) => index} // Use index as the key
+                  rowSelection={{
+                    type: 'checkbox',
+                    onChange: (selectedRowKeys) => {
+                      setSelectedRows(selectedRowKeys);
+                    },
+                  }}
+                  className="antcustom-table"
+                />
+              </div>
+            </BaseCollapse>
+          ) : null
+        )}
+      </div>
     </div>
   );
 };

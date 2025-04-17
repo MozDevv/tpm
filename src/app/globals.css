@@ -270,7 +270,7 @@ a:hover {
 }
 
 .antcustom-table .ant-table-thead > tr > th {
-  padding: 4px; /* Adjust the padding as needed */
+  padding: 10px; /* Adjust the padding as needed */
   background-color: #eaeaea; /* Grayish background color */
 }
 

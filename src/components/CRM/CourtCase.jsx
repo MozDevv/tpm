@@ -7,69 +7,178 @@ import BaseCard from '@/components/baseComponents/BaseCard';
 import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
-
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'description',
-    headerName: 'Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-  {
-    field: 'isMDA',
-    headerName: 'Is Mda',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'isCustomerCare',
-    headerName: 'Is Customer Care',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 
 const CourtCase = () => {
-  const transformString = (str) => {
-    return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
-      return a.toUpperCase();
-    });
+  const statusIcons = {
+    0: { icon: Visibility, name: 'On Going', color: '#1976d2' }, // Blue
+    // 1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+    1: { icon: Verified, name: 'Resolved', color: '#2e7d32' }, // Green
+    // 3: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
   };
+  const columnDefs = [
+    {
+      field: 'seriesNo',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      pinned: 'left', // Pinning to the left ensures it's the first column
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
+      field: 'caseNo',
+      headerName: 'Case No',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'subject',
+      headerName: 'Subject',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    // {
+    //   field: 'referenceNo',
+    //   headerName: 'Reference No',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   width: 200,
+    // },
+    {
+      field: 'partyName',
+      headerName: 'Party Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'pensionerNumber',
+      headerName: 'Pensioner Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'pensionerNationalID',
+      headerName: 'Pensioner National ID',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'pensionerPersonalNo',
+      headerName: 'Pensioner Personal No',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+
+    {
+      field: 'partyEmail',
+      headerName: 'Party Email',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'partyPhone',
+      headerName: 'Party Phone',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'nature',
+      headerName: 'Nature',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'parties',
+      headerName: 'Parties',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'region',
+      headerName: 'Region',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'remarks',
+      headerName: 'Remarks',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'receivedAt',
+      headerName: 'Received At',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      valueFormatter: (params) => formatDate(params.value),
+    },
+  ];
 
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1,
-      id: item.departmentId,
-      name: item.name,
-      description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
-      isCustomerCare: item.isCustomerCare,
+      ...item,
       // roles: item.roles,
     }));
   };
@@ -105,22 +214,60 @@ const CourtCase = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Department' : 'Create New Department';
+  const title = clickedItem ? 'Court Case' : 'Create New Court Case';
 
   const fields = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
+    // { name: 'id', label: 'ID', type: 'text', required: false },
+    { name: 'caseNo', label: 'Case No', type: 'text', required: true },
+    { name: 'subject', label: 'Subject', type: 'text', required: false },
     {
-      name: 'description',
-      label: 'Description',
+      name: 'referenceNo',
+      label: 'Reference No',
+      type: 'text',
+      required: false,
+    },
+    { name: 'partyName', label: 'Party Name', type: 'text', required: true },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      required: true,
+      options: [
+        { id: 0, name: 'On Going' },
+        { id: 1, name: 'Resolved' },
+      ],
+    },
+    {
+      name: 'pensionerNumber',
+      label: 'Pensioner Number',
       type: 'text',
       required: true,
     },
-    { name: 'isMDA', label: 'Is Mda', type: 'switch', required: true },
     {
-      name: 'isCustomerCare',
-      label: 'Is Customer Care',
-      type: 'switch',
-      required: true,
+      name: 'pensionerNationalID',
+      label: 'Pensioner National ID',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'pensionerPersonalNo',
+      label: 'Pensioner Personal No',
+      type: 'text',
+      required: false,
+    },
+    { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
+    { name: 'partyPhone', label: 'Party Phone', type: 'text', required: false },
+    { name: 'nature', label: 'Nature', type: 'text', required: false },
+    { name: 'parties', label: 'Parties', type: 'text', required: false },
+    { name: 'region', label: 'Region', type: 'text', required: false },
+    // { name: 'status', label: 'Status', type: 'number', required: false },
+    { name: 'remarks', label: 'Remarks', type: 'text', required: false },
+    { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
+    {
+      name: 'attachments',
+      label: 'Attachments',
+      type: 'attachments',
+      required: false,
     },
   ];
 
@@ -133,25 +280,25 @@ const CourtCase = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
+        // deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+        // deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            postApiFunction={apiService.post}
+            // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+            // postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createCourtCase}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         )}
@@ -162,13 +309,19 @@ const CourtCase = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
+        fetchApiEndpoint={endpoints.getCourtCase}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
+        breadcrumbTitle="Court Case"
+        currentTitle="Court Case"
+        segmentFilterParameter2="status"
+        segmentOptions2={[
+          { value: 0, label: 'On Going' },
+          { value: 1, label: 'Resolved' },
+        ]}
+        // currentTitle="Departments Setups"
       />
     </div>
   );

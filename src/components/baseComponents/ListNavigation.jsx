@@ -169,12 +169,12 @@ const ListNavigation = ({
       requiredPermissions: [],
     },
 
-    {
-      name: 'Edit',
-      icon: Edit,
-      action: 'edit',
-      requiredPermissions: ['update'],
-    },
+    // {
+    //   name: 'Edit',
+    //   icon: Edit,
+    //   action: 'edit',
+    //   requiredPermissions: ['update'],
+    // },
     {
       name: 'Delete',
       icon: Delete,
