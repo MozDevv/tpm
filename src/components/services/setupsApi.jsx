@@ -556,6 +556,8 @@ const endpoints = {
     `/api/AccountsSetup/DeletePaymentReturnReason?id=${id}`,
   getGeneralPolicy: '/api/Policy/general',
   createGeneralPolicy: '/api/Policy/general',
+  getOmbudsman: '/api/Policy/ombudsman-case',
+  createOmbudsman: '/api/Policy/ombudsman-case',
 };
 
 export const apiService = {

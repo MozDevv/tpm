@@ -12,18 +12,30 @@ const GeneralCase = () => {
   const columnDefs = [
     {
       field: 'seriesNo',
-      headerName: 'Series No',
+      headerName: 'Document No',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+      pinned: 'left', // Pinning to the left ensures it's the first column
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      // valueGetter: (params) => {
+      //   const rowIndex = params.node.rowIndex + 1;
+      //   return `PC${rowIndex.toString().padStart(4, "0")}`; // Ensure 4 digits with leading zeros
+      // },
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
     },
-    {
-      field: 'referenceNo',
-      headerName: 'Reference No',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
+    // {
+    //   field: 'referenceNo',
+    //   headerName: 'Reference No',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   flex: 1,
+    // },
     {
       field: 'subject',
       headerName: 'Subject',
@@ -81,13 +93,13 @@ const GeneralCase = () => {
       flex: 1,
       valueFormatter: (params) => formatDate(params.value),
     },
-    {
-      field: 'attachments',
-      headerName: 'Attachments',
-      headerClass: 'prefix-header',
-      filter: false,
-      flex: 1,
-    },
+    // {
+    //   field: 'attachments',
+    //   headerName: 'Attachments',
+    //   headerClass: 'prefix-header',
+    //   filter: false,
+    //   flex: 1,
+    // },
   ];
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {

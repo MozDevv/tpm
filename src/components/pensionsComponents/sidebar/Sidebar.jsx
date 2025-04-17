@@ -578,7 +578,7 @@ export const menuItems = [
   },
 
   {
-    title: 'PSSF Contributions',
+    title: 'Contributions',
     icon: <Addchart />,
     children: [
       {
@@ -665,7 +665,7 @@ export const menuItems = [
       // },
       /**Under Contribution Menu 1 Contribution Processing 2 Contribution Approval 3 Contribution Posting 4 Contribution Reverse */
       {
-        title: 'Contributions',
+        title: 'Member Contributions',
         subChildren: [
           {
             title: 'Open Contributions',

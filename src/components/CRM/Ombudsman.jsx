@@ -8,53 +8,111 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
 
-const columnDefs = [
-  {
-    field: 'no',
-    headerName: 'No',
-    headerClass: 'prefix-header',
-    width: 90,
-    filter: true,
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'description',
-    headerName: 'Description',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'created_date',
-    headerName: 'Created Date',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-  {
-    field: 'isMDA',
-    headerName: 'Is Mda',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-  {
-    field: 'isCustomerCare',
-    headerName: 'Is Customer Care',
-    headerClass: 'prefix-header',
-    filter: true,
-    flex: 1,
-  },
-];
-
 const Ombudsman = () => {
+  const columnDefs = [
+    {
+      field: 'seriesNo',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      pinned: 'left', // Pinning to the left ensures it's the first column
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+
+      cellRenderer: (params) => {
+        return (
+          <p className="underline text-primary font-semibold">{params.value}</p>
+        );
+      },
+    },
+    {
+      field: 'ombudsmanBranch',
+      headerName: 'Ombudsman Branch',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'complaintChannel',
+      headerName: 'Complaint Channel',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'partyName',
+      headerName: 'Party Name',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'pensionerNumber',
+      headerName: 'Pensioner Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'partyEmail',
+      headerName: 'Party Email',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'partyPhone',
+      headerName: 'Party Phone',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'pensionerNationalID',
+      headerName: 'Pensioner National ID',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+
+    {
+      field: 'complaintIssue',
+      headerName: 'Complaint Issue',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'rootCause',
+      headerName: 'Root Cause',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'remarks',
+      headerName: 'Remarks',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+    {
+      field: 'receivedAt',
+      headerName: 'Received At',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+      valueFormatter: (params) => formatDate(params.value),
+    },
+  ];
   const transformString = (str) => {
     return str.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
       return a.toUpperCase();
@@ -63,14 +121,7 @@ const Ombudsman = () => {
 
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1,
-      id: item.departmentId,
-      name: item.name,
-      description: transformString(item.description),
-      created_date: item.created_date,
-      isMDA: item.isMDA,
-      isCustomerCare: item.isCustomerCare,
-      // roles: item.roles,
+      ...item,
     }));
   };
 
@@ -105,23 +156,60 @@ const Ombudsman = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'Department' : 'Create New Department';
+  const title = clickedItem ? 'Ombusdman Case' : 'Create New Ombusdman Case';
 
   const fields = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
+    // { name: 'id', label: 'ID', type: 'text', required: false },
     {
-      name: 'description',
-      label: 'Description',
+      name: 'referecenceNo',
+      label: 'Reference No',
       type: 'text',
       required: true,
     },
-    { name: 'isMDA', label: 'Is Mda', type: 'switch', required: true },
     {
-      name: 'isCustomerCare',
-      label: 'Is Customer Care',
-      type: 'switch',
+      name: 'ombudsmanBranch',
+      label: 'Ombudsman Branch',
+      type: 'text',
       required: true,
     },
+    {
+      name: 'complaintChannel',
+      label: 'Complaint Channel',
+      type: 'text',
+      required: true,
+    },
+    { name: 'partyName', label: 'Party Name', type: 'text', required: true },
+    {
+      name: 'pensionerNumber',
+      label: 'Pensioner Number',
+      type: 'text',
+      required: false,
+    },
+    { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
+    { name: 'partyPhone', label: 'Party Phone', type: 'text', required: false },
+    {
+      name: 'pensionerNationalID',
+      label: 'Pensioner National ID',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'pensionerPersonalNo',
+      label: 'Pensioner Personal No',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'complaintIssue',
+      label: 'Complaint Issue',
+      type: 'text',
+      required: true,
+    },
+    { name: 'rootCause', label: 'Root Cause', type: 'text', required: true },
+    { name: 'status', label: 'Status', type: 'number', required: false },
+    { name: 'remarks', label: 'Remarks', type: 'text', required: false },
+    { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
+    // { name: 'attachments', label: 'Attachments', type: 'file', required: false },
   ];
 
   return (
@@ -133,25 +221,25 @@ const Ombudsman = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
+        // deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
+        // deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            postApiFunction={apiService.post}
+            // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
+            // postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createDepartment}
+            apiEndpoint={endpoints.createOmbudsman}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
-            useRequestBody={true}
+            useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
           />
         )}
@@ -162,13 +250,13 @@ const Ombudsman = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getDepartments}
+        fetchApiEndpoint={endpoints.getOmbudsman}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Departments Setups"
-        currentTitle="Departments Setups"
+        breadcrumbTitle="Ombudsman Cases"
+        currentTitle="Ombudsman Cases"
       />
     </div>
   );
