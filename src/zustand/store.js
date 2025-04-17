@@ -40,3 +40,35 @@ export const useClickedIgcStore = stateFactory('clickedIgc');
 
 export const useSelectedSegmentStore = stateFactory('selectedSegment');
 export const useSelectedSegmentStore2 = stateFactory('selectedSegment2');
+export const useStageStore = stateFactory('stage');
+
+/** const [stage, setStage] = useState('');
+  const [description, setDescription] = useState('');
+  const [percentage, setPercentage] = useState(0);
+  const [messages, setMessages] = useState([]); */
+
+// import { create } from 'zustand';
+
+export const usePayrollProgressStore = create((set) => ({
+  stage: '',
+  description: '',
+  percentage: 0,
+  messages: [],
+  notifications: [], // Store notifications
+  unreadNotifications: [], // Track unread notifications
+  setStage: (stage) => set({ stage }),
+  setDescription: (description) => set({ description }),
+  setPercentage: (percentage) => set({ percentage }),
+  setMessages: (messages) => set({ messages }),
+  addNotification: (notification) =>
+    set((state) => ({
+      notifications: [...state.notifications, notification],
+      unreadNotifications: [...state.unreadNotifications, notification],
+    })),
+  markAsRead: (notification) =>
+    set((state) => ({
+      unreadNotifications: state.unreadNotifications.filter(
+        (n) => n !== notification
+      ),
+    })),
+}));

@@ -26,7 +26,7 @@ const payrollEndpoints = {
   getPeriodSchedule: (periodId) =>
     `api/Application/schedule-pgd?periodId=${periodId}`,
 
-  trialRun: (id) => '/api/Application/trial-run?periodTypeId=' + id,
+  trialRun: (id) => '/api/Pensioner/BatchedPayrollTrialRun?PayrollTypeId=' + id,
 
   createIncreamentMaster: '/api/Setups/increment-masters',
   getIncreamentMasters: '/api/Setups/increment-masters',

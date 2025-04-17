@@ -1,0 +1,80 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">   
+
+    
+    <ul id='messageList'>
+    </div>
+
+    <div id="payrollStage"></div>
+    <div id="description"></div>
+    <div id="payrollPercentage"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5242/chathub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+        
+        const connection2 = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5242/payrollProcessing")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.on("ReceiveMessage", (user, message) => {
+            const li = document.createElement("li");
+            li.textContent = `${user}: ${message}`;
+            document.getElementById("messageList").appendChild(li);
+        });
+        
+        const stages = {
+            0: "Preparing",
+            1: "Fetching Pensioners",
+            2: "Processing Earnings",
+            3: "Saving"
+        }
+        
+        connection2.on("ReceivePayrollUpdate", (stage, processingPercentage, description) => {
+            console.log('received')
+            document.getElementById("payrollStage").innerHTML = stages[stage];
+            document.getElementById("description").innerHTML=`${description}`;
+            document.getElementById("payrollPercentage").innerHTML = `${processingPercentage} %`;
+            
+        });
+
+        async function start() {
+            try {
+                await connection.start();
+                await connection2.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 2000);
+            }
+        };
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        async function showMessage() {
+            try {
+                const user = "kip"
+                const message = "Test"
+                alert(user)
+                await connection.invoke("SendMessage", user, message);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Start the connection.
+        start();
+    </script>
+</div>
