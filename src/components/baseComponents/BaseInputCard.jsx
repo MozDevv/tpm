@@ -1225,7 +1225,7 @@ const BaseInputCard = ({
                     }}
                     variant="text"
                     startIcon={<Add />}
-                    style={{ marginRight: '10px' }}
+                    style={{ marginRight: '20px' }}
                   >
                     New Document
                   </Button>
@@ -1254,7 +1254,25 @@ const BaseInputCard = ({
                       title: 'File Name',
                       dataIndex: 'name',
                       key: 'name',
-                      width: '40%',
+                      width: '30%',
+                      render: (text, record, index) => (
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          size="small"
+                          value={record.name}
+                          onChange={(e) => {
+                            const updatedAttachments = [
+                              ...formData.attachments,
+                            ];
+                            updatedAttachments[index].name = e.target.value; // Update the name
+                            setFormData((prev) => ({
+                              ...prev,
+                              attachments: updatedAttachments,
+                            }));
+                          }}
+                        />
+                      ),
                     },
                     {
                       title: 'Upload',
@@ -1273,7 +1291,8 @@ const BaseInputCard = ({
                               attachments: updatedAttachments,
                             }));
                           }}
-                          fileList={record.file ? [record.file] : []}
+                          fileList={[]}
+                          // fileList={record.file ? [record.file] : []}
                           beforeUpload={(file) => {
                             const isLt2MB = file.size / 1024 / 1024 < 2;
                             if (!isLt2MB) {
@@ -1289,6 +1308,19 @@ const BaseInputCard = ({
                       ),
                     },
                     {
+                      title: 'File(s)',
+                      key: 'files',
+                      width: '30%',
+                      render: (_, record) =>
+                        record.file ? (
+                          <span>{record.file.name}</span> // Display the uploaded file name
+                        ) : (
+                          <span style={{ color: 'gray' }}>
+                            No file uploaded
+                          </span> // Placeholder if no file is uploaded
+                        ),
+                    },
+                    {
                       title: 'Preview',
                       key: 'preview',
                       width: '30%',
@@ -1300,10 +1332,18 @@ const BaseInputCard = ({
                               backgroundColor: '#006990',
                               color: 'white',
                               border: 'none',
+                              padding: '2px 10px',
                             }}
+                            startIcon={
+                              <Launch
+                                sx={{
+                                  fontSize: '14px',
+                                }}
+                              />
+                            }
                             onClick={() => {
                               const file =
-                                record.file?.originFileObj || record.file; // Use originFileObj if available
+                                record.file?.originFileObj || record.file;
                               if (!file) {
                                 message.error('No file available for preview.');
                                 return;
@@ -1330,7 +1370,7 @@ const BaseInputCard = ({
                   ]}
                   dataSource={formData.attachments}
                   pagination={false}
-                  rowKey={(record, index) => index} // Use index as the key
+                  rowKey={(record, index) => index}
                   rowSelection={{
                     type: 'checkbox',
                     onChange: (selectedRowKeys) => {
