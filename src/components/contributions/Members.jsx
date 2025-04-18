@@ -625,6 +625,12 @@ const Members = ({ status }) => {
       flex: 1,
       filter: true,
     },
+    {
+      headerName: 'Employer Contributions',
+      field: 'employerContribution',
+      flex: 1,
+      filter: true,
+    },
 
     {
       field: 'totalContribution',
