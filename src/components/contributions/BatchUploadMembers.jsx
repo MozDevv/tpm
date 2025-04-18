@@ -36,6 +36,7 @@ import BatchActions from './BatchActions';
 import BaseSubmitForApproval from './BatchActions';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
+import * as XLSX from 'xlsx';
 
 const BatchUploadMembers = ({ status }) => {
   const transformString = (str) => {
@@ -436,72 +437,12 @@ const BatchUploadMembers = ({ status }) => {
       headerClass: 'prefix-header',
       width: 100,
       valueFormatter: (params) => {
-        return (params.node.rowIndex + 1).toString(); // Convert to string explicitly
+        if (params.node) {
+          return (params.node.rowIndex + 1).toString(); // Convert to string explicitly
+        }
+        return ''; // Return an empty string if params.node is undefined
       },
       pinned: 'left',
-
-      cellRenderer: (params) => {
-        // Ensure errorMessage exists before accessing it
-        const errorMessage = params.data.errorMessage || {};
-
-        const hasError = Object.keys(errorMessage).length > 0;
-
-        if (hasError) {
-          const fieldsWithErrors = Object.keys(errorMessage);
-          const errorTooltip = `
-              <div>
-                <strong style="display: block; margin-bottom: 8px; padding-left: 15px;">
-                  <span style="font-size: 1.5em;">⚠️</span> Validation Error
-                </strong>
-                <div style="color: #d9534f;">
-                  Error in the following fields: ${fieldsWithErrors.join(', ')}
-                </div>
-              </div>
-            `;
-
-          // If there’s an error, return the tooltip and the value in a styled div
-          return (
-            <Tooltip
-              title={<div dangerouslySetInnerHTML={{ __html: errorTooltip }} />}
-              arrow
-              PopperProps={{
-                sx: {
-                  '& .MuiTooltip-tooltip': {
-                    backgroundColor: '#f5f5f5',
-                    color: '#333',
-                    fontSize: '0.875rem',
-                    padding: '8px',
-                    borderRadius: '8px',
-                    maxWidth: '250px',
-                    wordWrap: 'break-word',
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'opacity 0.3s ease-in-out',
-                  },
-                  '& .MuiTooltip-arrow': {
-                    color: '#f5f5f5',
-                  },
-                },
-              }}
-            >
-              <div
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <HighlightOff fontSize="large" sx={{ color: '#d9534f' }} />
-
-                {(params.node.rowIndex + 1).toString()}
-              </div>
-            </Tooltip>
-          );
-        }
-
-        return (params.node.rowIndex + 1).toString(); // Return value when no error
-      },
     },
     {
       field: 'payrollNumber',
@@ -747,7 +688,38 @@ const BatchUploadMembers = ({ status }) => {
       headerName: 'Date of Birth',
       headerClass: 'prefix-header',
       width: 200,
-      cellRenderer: (params) => generateErrorTooltip(params),
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
       cellStyle: (params) => {
         const fieldName = params.colDef.field;
         const capitalizedFieldName =
@@ -769,40 +741,44 @@ const BatchUploadMembers = ({ status }) => {
         return new Date(params.value).toLocaleDateString('en-GB');
       },
     },
-    {
-      field: 'sponsorId',
-      headerName: 'Sponsor ID',
-      headerClass: 'prefix-header',
-      width: 200,
-      cellRenderer: (params) => generateErrorTooltip(params),
-      cellStyle: (params) => {
-        const fieldName = params.colDef.field;
-        const capitalizedFieldName =
-          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-
-        if (params.data.errorMessage?.[capitalizedFieldName]) {
-          return {
-            border: '2px solid red',
-          };
-        }
-
-        return {
-          fontFamily: 'Montserrat',
-          borderRight: '1px solid #f0f0f0',
-          fontSize: '13px',
-        };
-      },
-      valueFormatter: (params) => {
-        return mdas.find((sponsor) => sponsor.id === params.value)?.name;
-      },
-    },
 
     {
       field: 'dateOfJoiningScheme',
       headerName: 'Date of Joining Scheme',
       headerClass: 'prefix-header',
       width: 200,
-      cellRenderer: (params) => generateErrorTooltip(params),
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
       cellStyle: (params) => {
         const fieldName = params.colDef.field;
         const capitalizedFieldName =
@@ -827,7 +803,38 @@ const BatchUploadMembers = ({ status }) => {
       headerName: 'Date of Employment',
       headerClass: 'prefix-header',
       width: 200,
-      cellRenderer: (params) => generateErrorTooltip(params),
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
       cellStyle: (params) => {
         const fieldName = params.colDef.field;
         const capitalizedFieldName =
@@ -852,7 +859,38 @@ const BatchUploadMembers = ({ status }) => {
       headerName: 'Date of Leaving',
       headerClass: 'prefix-header',
       width: 200,
-      cellRenderer: (params) => generateErrorTooltip(params),
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
       cellStyle: (params) => {
         const fieldName = params.colDef.field;
         const capitalizedFieldName =
@@ -956,9 +994,646 @@ const BatchUploadMembers = ({ status }) => {
       },
     },
   ];
+  const previewColdefs2 = [
+    {
+      field: 'no',
+      headerName: 'No',
+      headerClass: 'prefix-header',
+      width: 100,
+      valueFormatter: (params) => {
+        if (params.node) {
+          return (params.node.rowIndex + 1).toString(); // Convert to string explicitly
+        }
+        return ''; // Return an empty string if params.node is undefined
+      },
+      pinned: 'left',
+    },
+    {
+      field: 'payrollNumber',
+      headerName: 'Payroll Number',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.hasError?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'surname',
+      headerName: 'Surname',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'firstName',
+      headerName: 'First Name',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'lastName',
+      headerName: 'Last Name',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+
+    {
+      field: 'membershipStatus',
+      headerName: 'Membership Status',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+
+      cellRenderer: (params) => {
+        const status = membershipStatusMap[params.value];
+        if (!status) return null;
+
+        return (
+          <Button
+            variant="text"
+            sx={{
+              ml: 1,
+              // borderColor: status.color,
+              maxHeight: '22px',
+              cursor: 'pointer',
+              color: status.color,
+              fontSize: '10px',
+              fontWeight: 'bold',
+            }}
+          >
+            {status.name}
+          </Button>
+        );
+      },
+    },
+    {
+      field: 'kraPin',
+      headerName: 'KRA Pin',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'nationalId',
+      headerName: 'National ID',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'pssfNumber',
+      headerName: 'PSSF Number',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'gender',
+      headerName: 'Gender',
+      headerClass: 'prefix-header',
+      width: 100,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'dateOfBirth',
+      headerName: 'Date of Birth',
+      headerClass: 'prefix-header',
+      width: 200,
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+      valueFormatter: (params) => {
+        return new Date(params.value).toLocaleDateString('en-GB');
+      },
+    },
+
+    {
+      field: 'dateOfJoiningScheme',
+      headerName: 'Date of Joining Scheme',
+      headerClass: 'prefix-header',
+      width: 200,
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'dateOfEmployment',
+      headerName: 'Date of Employment',
+      headerClass: 'prefix-header',
+      width: 200,
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'dateOfLeaving',
+      headerName: 'Date of Leaving',
+      headerClass: 'prefix-header',
+      width: 200,
+      cellRenderer: (params) => {
+        const parsedDate = parseDate(params.value); // Parse the date
+        const tooltipContent = generateErrorTooltip(params); // Generate the tooltip
+
+        // Return the parsed date along with the tooltip
+        return (
+          <Tooltip
+            title={tooltipContent}
+            arrow
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  fontSize: '0.875rem',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  maxWidth: '250px',
+                  wordWrap: 'break-word',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transition: 'opacity 0.3s ease-in-out',
+                },
+                '& .MuiTooltip-arrow': {
+                  color: '#f5f5f5',
+                },
+              },
+            }}
+          >
+            <span>{parsedDate || ''}</span> {/* Display the parsed date */}
+          </Tooltip>
+        );
+      },
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+      valueFormatter: (params) => parseDate(params.value),
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+    {
+      field: 'emailAdress',
+      headerName: 'Email Address',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+    },
+
+    {
+      field: 'maritalStatus',
+      headerName: 'Marital Status',
+      headerClass: 'prefix-header',
+      width: 200,
+
+      cellStyle: (params) => {
+        const fieldName = params.colDef.field;
+        const capitalizedFieldName =
+          fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+        if (params.data.errorMessage?.[capitalizedFieldName]) {
+          return {
+            border: '2px solid red',
+          };
+        }
+
+        return {
+          fontFamily: 'Montserrat',
+          borderRight: '1px solid #f0f0f0',
+          fontSize: '13px',
+        };
+      },
+      valueFormatter: (params) => {
+        const options = [
+          { id: 0, name: 'Single' },
+          { id: 1, name: 'Married' },
+          { id: 2, name: 'Divorced' },
+          { id: 3, name: 'Widowed' },
+        ];
+        const option = options.find((opt) => opt.id === params.value);
+        return option ? option.name : '';
+      },
+    },
+  ];
 
   const fetchMembers = async () => {};
 
+  const [gridApi, setGridApi] = React.useState(null);
+
+  const exportDataToExcel = () => {
+    if (!gridApi) {
+      console.error('Grid API is not ready');
+      return;
+    }
+
+    // Check if there are any rows in the grid
+    const rowData = [];
+    gridApi.forEachNode((node) => {
+      if (!node.data) {
+        console.warn('Skipping empty row');
+        return; // Skip rows with no data
+      }
+
+      const transformedRow = {};
+      previewColdefs2.forEach((colDef) => {
+        if (!colDef || !colDef.field) {
+          console.warn('Skipping invalid column definition:', colDef);
+          return; // Skip invalid column definitions
+        }
+
+        const field = colDef.field;
+        const value = node.data[field];
+
+        try {
+          // Apply value formatters or custom renderers if defined
+          if (colDef.valueFormatter) {
+            transformedRow[colDef.headerName || field] = colDef.valueFormatter({
+              value,
+              data: node.data,
+            });
+          } else if (colDef.cellRenderer) {
+            // Handle custom cell renderers (if applicable)
+            transformedRow[colDef.headerName || field] =
+              typeof colDef.cellRenderer === 'function'
+                ? colDef.cellRenderer({ value, data: node.data })
+                : value;
+          } else {
+            transformedRow[colDef.headerName || field] = value || ''; // Fallback to empty string
+          }
+        } catch (error) {
+          console.error(
+            `Error processing column "${colDef.headerName || field}":`,
+            error
+          );
+          transformedRow[colDef.headerName || field] = 'Error'; // Mark as error
+        }
+      });
+      rowData.push(transformedRow);
+    });
+
+    if (rowData.length === 0) {
+      console.warn('No data available to export');
+      return; // Exit if no data is available
+    }
+
+    try {
+      // Convert the transformed row data to a worksheet
+      const worksheet = XLSX.utils.json_to_sheet(rowData);
+
+      // Create a workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Batch Members');
+
+      // Export the workbook to an Excel file
+      XLSX.writeFile(workbook, 'BatchMembers.xlsx');
+      console.log('Export successful');
+    } catch (error) {
+      console.error('Error exporting data to Excel:', error);
+    }
+  };
   const tabPanes = [
     {
       key: '1',
@@ -990,7 +1665,7 @@ const BatchUploadMembers = ({ status }) => {
         <div className="ag-theme-quartz min-h-[600px] max-h-[600px] h-[200px]  gap-3">
           <Button
             variant="text"
-            // onClick={exportData}
+            onClick={exportDataToExcel}
             startIcon={
               <img
                 src="/excel.png"
@@ -1012,13 +1687,13 @@ const BatchUploadMembers = ({ status }) => {
             Export to Excel
           </Button>
           <AgGridReact
-            columnDefs={previewColdefs}
+            columnDefs={previewColdefs2}
             rowData={clickedItem?.members}
             pagination={false}
             domLayout="normal"
             alwaysShowHorizontalScroll={true}
             onGridReady={(params) => {
-              // onGridReady(params);
+              setGridApi(params.api); // Save the grid API for later use
             }}
             animateRows={true}
             rowSelection="multiple"
