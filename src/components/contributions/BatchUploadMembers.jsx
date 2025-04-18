@@ -337,8 +337,9 @@ const BatchUploadMembers = ({ status }) => {
       flex: 1,
       valueFormatter: (params) => {
         return params.value
-          ? contributionTypes.find((item) => item.id === params.value)
-              ?.contributionTypeName
+          ? contributionTypes &&
+              contributionTypes.find((item) => item.id === params.value)
+                ?.contributionTypeName
           : '';
       },
     },
