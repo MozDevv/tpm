@@ -19,15 +19,17 @@ export const baseValidatorFn = {
   },
 
   kra_pin: (value) => {
-    const kraPinRegex = /^[A-Z0-9]{13}$/; // Example: 13-character KRA PIN
-    if (!kraPinRegex.test(value))
-      return ' KRA pin should have a format of A1234567890A';
+    const kraPinRegex = /^[A-Z]\d{9}[A-Z]$/; // Format: 1 uppercase letter, 9 digits, 1 uppercase letter
+    if (!kraPinRegex.test(value)) {
+      return 'KRA pin should have a format of A1234567890A';
+    }
     return null;
   },
   kraPin: (value) => {
-    const kraPinRegex = /^[A-Z0-9]{13}$/; // Example: 13-character KRA PIN
-    if (!kraPinRegex.test(value))
-      return ' KRA pin should have a format of A1234567890A';
+    const kraPinRegex = /^[A-Z]\d{9}[A-Z]$/; // Format: 1 uppercase letter, 9 digits, 1 uppercase letter
+    if (!kraPinRegex.test(value)) {
+      return 'KRA pin should have a format of A1234567890A';
+    }
     return null;
   },
   id_number: (value) => {
