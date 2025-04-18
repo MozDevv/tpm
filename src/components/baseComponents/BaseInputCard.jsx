@@ -1160,6 +1160,21 @@ const BaseInputCard = ({
               />
             ) : field.type === 'attachments' ? (
               <></>
+            ) : field.type === 'textarea' ? (
+              <TextField
+                name={field.name}
+                variant="outlined"
+                size="small"
+                multiline
+                rows={4} // Adjust the number of rows as needed
+                value={formData[field.name] || ''}
+                onChange={handleInputChange}
+                error={!!errors[field.name]}
+                helperText={errors[field.name]}
+                required={field.required}
+                disabled={field.disabled || disableAll}
+                fullWidth
+              />
             ) : (
               <TextField
                 type={field.type}

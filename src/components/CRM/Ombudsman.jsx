@@ -292,9 +292,10 @@ const Ombudsman = () => {
     },
     { name: 'rootCause', label: 'Root Cause', type: 'text', required: true },
     // { name: 'status', label: 'Status', type: 'number', required: false },
-    { name: 'remarks', label: 'Remarks', type: 'text', required: false },
     { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
     // { name: 'attachments', label: 'Attachments', type: 'file', required: false },
+    { name: 'remarks', label: 'Remarks', type: 'textarea', required: false },
+
     {
       name: 'attachments',
       label: 'Attachments',

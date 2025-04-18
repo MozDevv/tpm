@@ -266,7 +266,6 @@ const CourtCase = () => {
     { name: 'parties', label: 'Parties', type: 'text', required: false },
     { name: 'region', label: 'Region', type: 'text', required: false },
     // { name: 'status', label: 'Status', type: 'number', required: false },
-    { name: 'remarks', label: 'Remarks', type: 'text', required: false },
     { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
     {
       name: 'attachments',
@@ -274,6 +273,7 @@ const CourtCase = () => {
       type: 'attachments',
       required: false,
     },
+    { name: 'remarks', label: 'Remarks', type: 'textarea', required: false },
   ];
 
   return (

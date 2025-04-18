@@ -157,9 +157,9 @@ const GeneralCase = () => {
       required: true,
     },
     { name: 'nature', label: 'Nature', type: 'text', required: true },
-    { name: 'source', label: 'Source', type: 'text', required: true },
-    { name: 'remarks', label: 'Remarks', type: 'text', required: true },
     { name: 'receivedAt', label: 'Received At', type: 'date', required: true },
+    { name: 'remarks', label: 'Remarks', type: 'textarea', required: true },
+    { name: 'source', label: 'Source', type: 'textarea', required: true },
     {
       name: 'attachments',
       label: 'Attachments',
