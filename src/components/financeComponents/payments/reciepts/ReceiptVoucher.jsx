@@ -5,6 +5,7 @@ import html2pdf from 'html2pdf.js';
 import { Empty } from 'antd';
 import { Backdrop, Button } from '@mui/material';
 import { Cancel, GetApp } from '@mui/icons-material';
+import { parseDate } from '@/utils/dateFormatter';
 
 const ReceiptVoucher = ({
   clickedItem,
@@ -255,7 +256,8 @@ const ReceiptVoucher = ({
                     {clickedItem?.receiptTypeName}
                   </p>
                   <p className="px-4">
-                    RECEIPTED VIDE OUR MR-NO: 6148751 OF 13-FEB-25
+                    RECEIPTED VIDE OUR MR-NO: {clickedItem?.recieptNo} OF{' '}
+                    {parseDate(clickedItem?.receiptDate)}
                   </p>
 
                   <div className="pl-4 pt-2">
