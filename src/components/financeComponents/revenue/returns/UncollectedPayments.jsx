@@ -502,12 +502,12 @@ const UncollectedPayments = ({ status }) => {
     },
     {
       name: 'returnChequeOrEftNo',
-      label: 'Return Cheque No',
+      label: 'Return EFT No',
       type: 'text',
     },
     {
       name: 'returnChequeOrEftDate',
-      label: 'Return Cheque Date',
+      label: 'Return Date',
       type: 'date',
     },
     {
