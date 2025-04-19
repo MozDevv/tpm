@@ -199,34 +199,15 @@ const GeneralJournals = () => {
       name: 'postingDate',
       label: 'Posting Date',
       type: 'date',
-      required: true,
+      disabled: true,
     },
     {
       name: 'vatDate',
       label: 'VAT Date',
       type: 'date',
-      required: true,
+      // required: true,
     },
 
-    {
-      name: 'currency',
-      label: 'Currency',
-      type: 'select',
-      options: [
-        {
-          id: 'usd',
-          name: 'USD',
-        },
-        {
-          id: 'kes',
-          name: 'KES',
-        },
-        {
-          id: 'eur',
-          name: 'EUR',
-        },
-      ],
-    },
     {
       name: 'amount',
       label: 'Amount',

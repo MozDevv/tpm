@@ -733,7 +733,7 @@ const Preclaims = ({
   const [excelLoading, setExcelLoading] = useState(false);
 
   const { data: igcDeathDcouments } = useFetchAsync(
-    endpoints.igcDocuments,
+    endpoints.getKilledOnDutyIgcDocs,
     apiService
   );
 

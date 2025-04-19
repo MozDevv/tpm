@@ -481,6 +481,9 @@ const endpoints = {
     `api/Setups/GetExitGround?paging.pageNumber=1&paging.pageSize=1000&filterCriterion.compositionType=0&filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=id&filterCriterion.criterions[0].propertyValue=${id}`,
   verifyPensionerDocument: '/api/ProspectivePensioners/VerifyPensionerDocument',
   igcDocuments: '/api/Setups/GetIGCDocuments',
+  //getIgcDocumentTypeFor "igC_Type": 0, using filtercrite
+
+  getKilledOnDutyIgcDocs: `/api/Setups/GetIGCDocuments?filterCriterion.compositionType=0&filterCriterion.criterions[0].propertyName=igC_Type&filterCriterion.criterions[0].propertyValue=0&paging.pageSize=1000`,
 
   createIgcDocument: '/api/Setups/CreateIGCDocuments',
   updateIGCDoc: '/api/Setups/UpdateIGCDocuments',

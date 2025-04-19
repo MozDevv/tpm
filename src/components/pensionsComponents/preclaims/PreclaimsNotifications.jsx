@@ -19,6 +19,7 @@ import { Checkbox, List, message } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { ExpandLess, KeyboardArrowRight } from '@mui/icons-material';
 import useFetchAsync from '@/components/hooks/DynamicFetchHook';
+import BaseExpandCard from '@/components/baseComponents/BaseExpandCard';
 
 function PreclaimsNotifications({
   isSendNotificationEnabled,
@@ -32,6 +33,8 @@ function PreclaimsNotifications({
   const [scheduleStartDate, setScheduleStartDate] = useState('');
   const [periodEndDate, setPeriodEndDate] = useState('');
   const [comments, setComments] = useState('');
+
+  const [selectedDocumentsPerId, setSelectedDocumentsPerId] = useState([]);
 
   const { mdaId } = useMda();
 
@@ -60,6 +63,7 @@ function PreclaimsNotifications({
   }, []); // [2]
 
   const { auth } = useAuth();
+  const [selectedDocuments, setSelectedDocuments] = useState({});
 
   const handleSend = async () => {
     setComments(
@@ -79,13 +83,21 @@ function PreclaimsNotifications({
       message.error('Login as an MDA user to send notifications');
       return;
     }
+    const lines = Object.entries(selectedDocuments).map(
+      ([retireeKey, documents]) => ({
+        prospective_pensioner_id: retireeKey,
+        document_ids: Object.keys(documents).filter(
+          (docId) => documents[docId]
+        ), // Only include selected document IDs
+      })
+    );
 
     const data = {
       mda_id: mdaId,
       schedule_start_date: formatDateToISOString(currentDate),
       period_end_date: formatDateToISOString(oneMinuteLater),
       comments: comments,
-      lines: ids.map((id) => ({ prospective_pensioner_id: id })),
+      lines,
     };
 
     try {
@@ -135,13 +147,13 @@ function PreclaimsNotifications({
         console.log('retireeDetails', retireeDetails);
 
         if (retireeDetails) {
-          const retireeKey = retireeDetails?.personal_number; // Using personal number as the unique key
+          const retireeKey = retireeDetails?.id; // Using personal number as the unique key
 
           // Use igcDeathDocuments if mortality_status === 1
           const documents =
             retireeDetails.mortality_status === 1
               ? igcDeathDcouments.map((doc) => ({
-                  id: doc.id,
+                  id: doc.document_type_id,
                   name: doc.documentTypeSetup.name,
                   description: doc.documentTypeSetup.description,
                   required: doc.required,
@@ -151,7 +163,7 @@ function PreclaimsNotifications({
                 }))
               : retireeDetails?.prospectivePensionerDocumentSelections?.map(
                   (selection) => ({
-                    id: selection.id,
+                    id: selection.document_type_id,
                     name: selection.documentType.name,
                     description: selection.documentType.description,
                     required: selection.required,
@@ -165,7 +177,7 @@ function PreclaimsNotifications({
             isDeceased: retireeDetails.mortality_status === 1,
             retireeName:
               retireeDetails?.first_name + ' ' + retireeDetails?.surname,
-            retireePersonalNumber: retireeDetails?.personal_number,
+            retireePersonalNumber: retireeDetails?.id,
             documents,
           };
         }
@@ -187,8 +199,6 @@ function PreclaimsNotifications({
     }
   }, [selectedRows]);
 
-  const [selectedDocuments, setSelectedDocuments] = useState({});
-
   const handleCheckboxChange = (retireeKey, docId, checked) => {
     setSelectedDocuments((prev) => ({
       ...prev,
@@ -204,147 +214,122 @@ function PreclaimsNotifications({
     console.log('awardDocuments', awardDocuments);
   }, [selectedRows]);
   return (
-    <Dialog
+    <BaseExpandCard
       open={
         openNotification && isSendNotificationEnabled && selectedRows.length > 0
       }
       onClose={() => setOpenNotification(false)}
-      fullWidth
-      maxWidth="sm"
-      sx={{
-        padding: '20px',
-      }}
+      title="Schedule Prospective Retiree(s) for Notification"
     >
       {/* {JSON.stringify(awardDocuments)} */}
-      <div className="p-8">
-        <div className="flex items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <h5 className="text-[19px] text-primary font-semibold">
-              Notify Prospective Retiree(s)
-            </h5>
-          </div>
-        </div>
-
-        {/* {JSON.stringify(awardDocuments)} */}
-
+      <div className="space-y-6 px-6">
         {Object.keys(awardDocuments).length > 0 && (
-          <div className="py-3 mx-5">
-            <div className="text-primary mt-3 text-[15px] font-normal mb-4">
-              List of documents to be uploaded by the retiree(s)
-            </div>
-            {Object.entries(awardDocuments).map(([retireeKey, retiree]) => (
-              <div key={retireeKey} className="mb-4">
-                <h6 className="text-[16px] font-semibold text-primary flex items-center ">
-                  {retiree.retireeName}
-                  <IconButton
-                    sx={{ zIndex: 1 }}
-                    onClick={() => setIsOpen((prevState) => !prevState)}
-                  >
-                    {isOpen ? (
-                      <ExpandLess
-                        sx={{ color: 'primary.main', fontSize: '14px' }}
-                      />
-                    ) : (
-                      <KeyboardArrowRight
-                        sx={{ color: 'primary.main', fontSize: '14px' }}
-                      />
-                    )}
-                  </IconButton>
-                </h6>
-                <List
-                  size="small"
-                  bordered
-                  style={{
-                    maxHeight: '250px',
-                    overflowY: 'auto',
-                    mx: '20px',
-                  }}
-                  // dataSource={retiree.documents.filter(
-                  //   (doc) => doc.pensioner_upload
-                  // )}
-                  dataSource={
-                    retiree.isDeceased
-                      ? retiree.documents
-                      : retiree.documents.filter((doc) => doc.pensioner_upload)
-                  }
-                  renderItem={(doc) => (
-                    <List.Item>
-                      <div className="flex gap-2 items-center">
-                        <Checkbox
-                          checked={
-                            selectedDocuments[retireeKey]?.[doc.id] ?? true
-                          }
-                          onChange={(e) =>
-                            handleCheckboxChange(
-                              retireeKey,
-                              doc.id,
-                              e.target.checked
-                            )
-                          }
-                        />
-                        <p className="font-sans flex gap-2 cursor-pointer">
-                          {doc.name}{' '}
-                          {doc.has_two_sides && doc.side && (
-                            <Chip
-                              label={doc.side}
-                              size="small"
-                              variant="contained"
-                              sx={{
-                                maxHeight: '20px',
-                                fontSize: '9px',
-                                mb: '10px',
-                                borderWidth: '2px',
-                              }}
-                              color={
-                                doc.side === 'Front' ? 'primary' : 'secondary'
-                              }
-                            />
-                          )}
-                        </p>
-                      </div>
-                    </List.Item>
-                  )}
-                />
+          <>
+            <div className="flex justify-between items-center w-full mt-3">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-primary">
+                  Required Documents
+                </h3>
+                <p className="text-sm text-primary">
+                  Select documents each retiree needs to submit
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSend}
+                disabled={Object.keys(selectedDocuments).length === 0}
+              >
+                Schedule Notification(s)
+              </Button>
+            </div>
 
-        {/* <div className="p-6">
-          <div>
-            <label
-              htmlFor="comments"
-              className=" text-xs font-medium text-gray-70mo0"
-            >
-              Comments
-            </label>
-            <TextareaAutosize
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-              required
-              minRows={3}
-              style={{
-                width: "100%",
-                padding: "8px",
-                borderRadius: "4px",
-                border: "1px solid gray",
-              }}
-            />
-          </div>
-        </div> */}
-        <div
-          style={{ boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.1)' }}
-          className="flex gap-8 w-full justify-between  sticky bottom-0 pb-6  bg-white pt-6 z-30"
-        >
-          <Button variant="outlined" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSend}>
-            Notify
-          </Button>
-        </div>
+            <div className="space-y-4 overflow-y-auto max-h-[60vh]">
+              {Object.entries(awardDocuments).map(([retireeKey, retiree]) => (
+                <div
+                  key={retireeKey}
+                  className="overflow-hidden rounded-lg border border-gray-200"
+                >
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="flex w-full items-center justify-between bg-white px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <h4 className="font-medium text-gray-900">
+                      {retiree.retireeName}
+                      <span className="ml-2 text-sm font-normal text-gray-500">
+                        ({retiree.documents.length} documents)
+                      </span>
+                      <span className="ml-2 text-sm font-normal text-green-600">
+                        {
+                          Object.values(
+                            selectedDocuments[retireeKey] || {}
+                          ).filter(Boolean).length
+                        }{' '}
+                        selected
+                      </span>
+                    </h4>
+                    <IconButton>
+                      {isOpen ? (
+                        <ExpandLess
+                          sx={{ color: 'primary.main', fontSize: '20px' }}
+                        />
+                      ) : (
+                        <KeyboardArrowRight
+                          sx={{ color: 'primary.main', fontSize: '20px' }}
+                        />
+                      )}
+                    </IconButton>
+                  </button>
+
+                  {isOpen && (
+                    <div className="border-t border-gray-200 bg-gray-50 p-4">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {retiree.documents.map((doc) => (
+                          <label
+                            key={doc.id}
+                            className="flex items-start space-x-3 rounded p-2 hover:bg-gray-100"
+                          >
+                            <Checkbox
+                              checked={
+                                selectedDocuments[retireeKey]?.[doc.id] ?? false
+                              }
+                              onChange={(e) =>
+                                handleCheckboxChange(
+                                  retireeKey,
+                                  doc.id,
+                                  e.target.checked
+                                )
+                              }
+                              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            />
+                            <div className="flex flex-1 items-center">
+                              <span className="text-sm font-medium text-gray-700">
+                                {doc.name}
+                              </span>
+                              {doc.has_two_sides && doc.side && (
+                                <span
+                                  className={`ml-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                    doc.side === 'Front'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-purple-100 text-purple-800'
+                                  }`}
+                                >
+                                  {doc.side}
+                                </span>
+                              )}
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-    </Dialog>
+    </BaseExpandCard>
   );
 }
 
