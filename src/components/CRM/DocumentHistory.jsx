@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Box, Chip, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Badge, Table, Tag } from 'antd';
 import dayjs from 'dayjs';
 import endpoints, { apiService } from '../services/setupsApi';
 import BaseCollapse from '../baseComponents/BaseCollapse';
 import { toProperCase } from '@/utils/numberFormatters';
+import { ErrorOutline, Verified } from '@mui/icons-material';
 
 const notificationStatusMap = {
   0: { name: 'VERIFICATION', color: '#3498db' },
@@ -24,7 +26,7 @@ const DocumentHistory = ({ data }) => {
   const [userDetails, setUserDetails] = useState({});
 
   const sortedData = [...data].sort((a, b) => {
-    const formatStage = (stage) => stage.replace(/_/g, ' ').toLowerCase(); // Replace underscores and convert to lowercase
+    const formatStage = (stage) => stage.replace(/_/g, ' ').toLowerCase();
 
     const indexA = Object.values(notificationStatusMap).findIndex(
       (item) => item.name.toLowerCase() === formatStage(a.stage)
@@ -67,85 +69,85 @@ const DocumentHistory = ({ data }) => {
     });
   }, [sortedData]);
 
-  const renderDetails = (record) => {
-    const stageInfo =
-      Object.values(notificationStatusMap).find(
-        (item) => item.name === record.stage
-      ) || {};
+  const getActionedBy = (record) => {
     const createdBy = userDetails[record.created_by] || {};
-    const approvedBy = record.approved_by
-      ? userDetails[record.approved_by]
-      : null;
-
     return (
-      <Box
-        sx={{
-          p: 2,
-          borderLeft: `6px solid ${stageInfo.color || '#ccc'}`,
-          backgroundColor: sortedData.length === 1 ? 'grey.100' : 'transparent',
-          borderRadius: sortedData.length === 1 ? 2 : 0,
-          display: 'grid',
-          rowGap: 1,
-          columnGap: 2,
-        }}
-      >
-        {[
-          ['Current Document No', record.current_document_no],
-          // ['Previous Document No', record.previous_document_no || 'N/A'],
-          // ['Stage', record.stage],
-          // [
-          //   'Closed Date',
-          //   record.closed_date
-          //     ? dayjs(record.closed_date).format('YYYY-MM-DD HH:mm:ss')
-          //     : 'N/A',
-          // ],
-          ['Is Closed', record.is_closed ? 'Yes' : 'No'],
-          [
-            'Actioned By',
-            createdBy.firstName + createdBy.middleName + createdBy.lastName ||
-              'N/A',
-          ],
-          ['Department', createdBy.department?.name || 'N/A'],
-          [
-            'Actioned Date',
-            dayjs(record.created_date).format('YYYY-MM-DD HH:mm:ss'),
-          ],
-
-          // [
-          //   'Updated Date',
-          //   record.updated_date
-          //     ? dayjs(record.updated_date).format('YYYY-MM-DD HH:mm:ss')
-          //     : 'N/A',
-          // ],
-          // [
-          //   'Approved By',
-          //   approvedBy ? approvedBy.email || 'Loading...' : 'N/A',
-          // ],
-        ].map(([label, value], i) => (
-          <Box key={i} sx={{ display: 'flex', gap: 1 }}>
-            <Typography sx={{ fontWeight: 600, minWidth: 180 }}>
-              {label}:
-            </Typography>
-            <Typography
-              sx={{
-                color:
-                  value === 'N/A' || value === 'Loading...'
-                    ? 'text.secondary'
-                    : 'text.primary',
-              }}
-            >
-              {value}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
+      createdBy.firstName + createdBy.middleName + createdBy.lastName || 'N/A'
     );
   };
+
+  const getDepartment = (record) => {
+    const createdBy = userDetails[record.created_by] || {};
+    return createdBy.department?.name || 'N/A';
+  };
+
+  const columns = [
+    {
+      title: 'Stage',
+      dataIndex: 'stage',
+      key: 'stage',
+      render: (text, record) => (
+        <span
+          style={{
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {text}
+          {!record.is_closed && (
+            <span
+              style={{
+                width: '10px',
+                height: '10px',
+                backgroundColor: '#e74c3c',
+                borderRadius: '50%',
+                display: 'inline-block',
+              }}
+            ></span>
+          )}
+        </span>
+      ),
+    },
+    {
+      title: 'Document No',
+      dataIndex: 'current_document_no',
+      key: 'current_document_no',
+    },
+
+    {
+      title: 'Status',
+      dataIndex: 'is_closed',
+      key: 'is_closed',
+      render: (is_closed) => (
+        <Tag color={is_closed ? 'green' : 'red'}>
+          {is_closed ? 'Closed' : 'Open'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Actioned By',
+      key: 'actioned_by',
+      render: (_, record) => getActionedBy(record),
+    },
+    {
+      title: 'Department',
+      key: 'department',
+      render: (_, record) => getDepartment(record),
+    },
+    {
+      title: 'Actioned Date',
+      key: 'created_date',
+      render: (_, record) =>
+        dayjs(record.created_date).format('MMM DD, YYYY [at] hh:mm A'),
+    },
+  ];
 
   const steps = Object.values(notificationStatusMap);
   const activeStep = sortedData.notification_status ?? 0;
   const formatStage = (stage) => {
-    return stage.replace(/_/g, ' ').toLowerCase(); // Replace underscores with spaces and convert to lowercase
+    return stage.replace(/_/g, ' ').toLowerCase();
   };
 
   return (
@@ -169,23 +171,26 @@ const DocumentHistory = ({ data }) => {
         })}
       </Stepper>
 
-      <div className="overflow-y-auto max-h-[65vh]">
-        {sortedData.length >= 2
-          ? sortedData.map((record) => (
-              <BaseCollapse
-                key={record.id}
-                name={record.stage}
-                titleFontSize="16"
-                className="mb-4"
-              >
-                <div className="px-8">{renderDetails(record)}</div>
-              </BaseCollapse>
-            ))
-          : sortedData.map((record) => (
-              <Box key={record.id} sx={{ mb: 2 }}>
-                <div className="">{renderDetails(record)}</div>
-              </Box>
-            ))}
+      <div className="overflow-y-auto max-h-[75vh] mt-10">
+        <Table
+          dataSource={sortedData}
+          columns={columns}
+          rowKey="id"
+          pagination={false}
+          bordered
+          size="small"
+          onRow={(record) => {
+            const stageInfo =
+              Object.values(notificationStatusMap).find(
+                (item) => item.name === record.stage
+              ) || {};
+            return {
+              style: {
+                borderLeft: `4px solid ${stageInfo.color || '#ccc'}`,
+              },
+            };
+          }}
+        />
       </div>
     </Box>
   );

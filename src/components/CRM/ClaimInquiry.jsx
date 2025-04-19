@@ -58,7 +58,7 @@ const ClaimInquiry = () => {
         // Handle case where no data is found
         setFetchedData([]); // Clear any previous data
         message.error(
-          'Pensioner not found. Please try again with valid details.'
+          'No document history found for the claim. Please verify the details and try again.'
         );
       }
     } catch (error) {
