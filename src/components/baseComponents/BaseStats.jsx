@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 const BaseStats = ({
@@ -57,21 +57,49 @@ const BaseStats = ({
   const hoverClasses = {
     shadow: 'hover:shadow-lg',
     scale: 'hover:scale-[1.02]',
-    both: 'hover:shadow-lg hover:scale-[1.02]',
+    both: 'hover:shadow-md hover:scale-[1.02]',
     none: '',
   }[hoverEffect];
 
+  const createRipple = (event) => {
+    const button = event.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${
+      event.clientX - button.getBoundingClientRect().left - radius
+    }px`;
+    circle.style.top = `${
+      event.clientY - button.getBoundingClientRect().top - radius
+    }px`;
+    circle.style.backgroundColor = 'rgba(0, 105, 144, 0.1)';
+    circle.style.position = 'absolute';
+    circle.style.borderRadius = '50%';
+    circle.style.transform = 'scale(0)';
+    circle.style.animation = 'ripple 600ms linear';
+    circle.style.pointerEvents = 'none';
+
+    const ripple = button.getElementsByClassName('ripple')[0];
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  };
+
   return (
-    <div
-      className={` mx-4 pr-4 grid ${gridColumns} ${gapClasses} ${className}`}
-    >
+    <div className={`mx-4 pr-4 grid ${gridColumns} ${gapClasses} ${className}`}>
       {stats.map((stat, index) => (
         <div
           key={index}
-          onClick={() =>
-            stat.handler ? stat.handler() : stat.path && router.push(stat.path)
-          }
-          className={`flex items-center justify-between bg-white ${shadowClasses} ${roundedClasses} ${paddingClasses} ${
+          onClick={(e) => {
+            createRipple(e);
+            stat.handler ? stat.handler() : stat.path && router.push(stat.path);
+          }}
+          className={`relative overflow-hidden flex items-center justify-between bg-white ${shadowClasses} ${roundedClasses} ${paddingClasses} ${
             stat.path || stat.handler ? 'cursor-pointer' : ''
           } transition-all duration-300 ${hoverClasses} ${
             stat.className || ''
@@ -82,6 +110,16 @@ const BaseStats = ({
             <p className="text-gray-500 text-[14px] mt-3">{stat.label}</p>
           </div>
           <div className="text-2xl">{stat.icon}</div>
+
+          {/* Add CSS for the ripple animation */}
+          <style jsx global>{`
+            @keyframes ripple {
+              to {
+                transform: scale(4);
+                opacity: 0;
+              }
+            }
+          `}</style>
         </div>
       ))}
     </div>
