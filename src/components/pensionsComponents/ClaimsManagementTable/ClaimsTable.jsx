@@ -23,12 +23,19 @@ import {
   AccessTime,
   Add,
   Cancel,
+  ContentPaste,
   DeleteOutlineOutlined,
   Edit,
+  EscalatorWarning,
   FilterAlt,
   FilterList,
   ForwardToInbox,
+  Group,
+  GroupRemove,
+  HourglassEmpty,
+  LockOpen,
   SortByAlpha,
+  TextSnippet,
   Verified,
   Visibility,
 } from '@mui/icons-material';
@@ -63,6 +70,7 @@ import {
   useRefreshDataStore,
   useSelectedIgcsStore,
 } from '@/zustand/store';
+import BaseStats from '@/components/baseComponents/BaseStats';
 
 const SchemaCellRenderer = ({ value }) => {
   return (
@@ -934,13 +942,56 @@ const ClaimsTable = ({ status, isDashboard }) => {
           </motion.div>
         </BaseCard>
         <div className="h-full w-full ml-3 mt-2 ">
-          <ListNavigation
-            handlers={handlers}
-            reportItems={['Claims Verification Register']}
-            status={status}
-            clickedItem={activeSegment === 1 && clickedIgc}
-          />
-          <Divider sx={{ mt: 2, mb: 1, ml: 2 }} />
+          {status === null || status === undefined ? (
+            <>
+              <BaseStats
+                stats={[
+                  {
+                    value: 248,
+                    label: 'Principal Claims',
+                    icon: <Group className="text-green-600" />,
+                    handler: () => setActiveSegment(0), // Custom handler for Principal Claims
+                  },
+                  {
+                    value: 5,
+                    label: 'Dependant Claims',
+                    icon: <EscalatorWarning className="text-orange-500" />,
+                    handler: () => setActiveSegment(1), // Custom handler for Dependant Claims
+                  },
+                  {
+                    value: 9,
+                    label: 'Death in Service Claims',
+                    icon: <GroupRemove className="text-red-600" />,
+                    handler: () => setActiveSegment(2), // Custom handler for Death in Service Claims
+                  },
+                  {
+                    value: 17,
+                    label: 'Internally Generated Claims',
+                    icon: <TextSnippet className="text-purple-500" />,
+                    handler: () => setActiveSegment(3), // Custom handler for IGC
+                  },
+                ]}
+                columns={4}
+                shadow="sm"
+                rounded="xl"
+                hoverEffect="both"
+                padding="md"
+                gap="sm"
+                className="py-4"
+              />
+            </>
+          ) : (
+            <>
+              {' '}
+              <ListNavigation
+                handlers={handlers}
+                reportItems={['Claims Verification Register']}
+                status={status}
+                clickedItem={activeSegment === 1 && clickedIgc}
+              />
+              <Divider sx={{ mt: 2, mb: 1, ml: 2 }} />
+            </>
+          )}
 
           <div className="flex">
             {/* Custom Drawer */}
