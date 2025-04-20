@@ -79,7 +79,8 @@ const BaseTable = ({
   stage,
   display,
   segmentOptions2,
-  segmentFilterParameter2,isOmbudsman
+  segmentFilterParameter2,
+  isOmbudsman,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -364,7 +365,7 @@ const BaseTable = ({
       )}
       <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
         <BaseExcelComponent
-        isOmbudsman={isOmbudsman}
+          isOmbudsman={isOmbudsman}
           setOpenExcel={setOpenExcel}
           fetchApiService={fetchApiService}
           fetchApiEndpoint={fetchApiEndpoint}
@@ -654,6 +655,9 @@ const BaseTable = ({
                 }}
               >
                 <AgGridReact
+                  enableCellTextSelection={true} // Explicitly enable text selection (true by default)
+                  ensureDomOrder={true} // Helps with accessibility and text selection
+                  suppressCellFocus={false}
                   columnDefs={columnDefs.map((col) => ({
                     ...col,
                     headerTooltip: col.headerName,

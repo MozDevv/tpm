@@ -30,7 +30,7 @@ const PayrollPensioners = ({
 }) => {
   const columnDefs = [
     {
-      field: 'pensionerNo',
+      field: 'corePayrollNo',
       headerName: 'Pensioner Number',
       headerClass: 'prefix-header',
       flex: 1,
@@ -41,9 +41,7 @@ const PayrollPensioners = ({
       cellRenderer: (params) => {
         return (
           <p className="text-primary font-semibold underline ">
-            {params.data.awardPrefix
-              ? params.data.awardPrefix + params.data.pensionerNo
-              : params.data.pensionerNo}
+            {params.value}
           </p>
         );
       },
@@ -59,17 +57,29 @@ const PayrollPensioners = ({
       },
     },
     {
-      field: 'PensionerName',
-      headerName: 'Pensioner Name',
+      field: 'firstName',
+      headerName: 'First Name',
       headerClass: 'prefix-header',
       flex: 1,
-      valueGetter: (params) => {
-        const firstName = params.data?.firstName || '';
-        const surname = params.data?.surname || '';
-        const otherName = params.data?.otherName || '';
-        return `${firstName} ${surname} ${otherName}`.trim();
-      },
     },
+    {
+      field: 'surname',
+      headerName: 'Surname',
+      headerClass: 'prefix-header',
+      flex: 1,
+    },
+    // {
+    //   field: 'pensionerName',
+    //   headerName: 'Pensioner Name',
+    //   headerClass: 'prefix-header',
+    //   flex: 1,
+    //   valueGetter: (params) => {
+    //     const firstName = params.data?.firstName || '';
+    //     const surname = params.data?.surname || '';
+    //     const otherName = params.data?.otherName || '';
+    //     return `${firstName} ${surname} ${otherName}`.trim();
+    //   },
+    // },
 
     {
       field: 'grossAmount',
@@ -151,6 +161,9 @@ const PayrollPensioners = ({
       no: index + 1,
       ...item,
       id_claim: item?.coreClaimId,
+
+      pensionerName: `${item.firstName} ${item.surname} ${item.otherName}`,
+      //do same for status map to enums
     }));
   };
 
