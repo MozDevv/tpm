@@ -6,6 +6,10 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Box,
+  TextField,
+  Autocomplete,
+  Popper,
 } from '@mui/material';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 
@@ -56,6 +60,15 @@ function NumberingSections() {
       });
       if (response.status === 200 && response.data.succeeded) {
         message.success('Changes saved successfully');
+      } else if (
+        response.status === 200 &&
+        !response.data.succeeded &&
+        response.data.messages
+      ) {
+        //truncate the message to 100 characters
+        const truncatedMessage = response.data.messages[0].substring(0, 100);
+        message.error(truncatedMessage);
+        // message.error(response.data.messages[0]);
       }
     } catch (error) {
       console.log(error);
@@ -84,24 +97,92 @@ function NumberingSections() {
   };
 
   const renderSelect = (text, record) => (
-    <FormControl variant="outlined" fullWidth>
-      <Select
-        value={editableRows[record.id] || text?.id || ''}
-        onChange={(event) =>
-          handleNumberSeriesChange(event.target.value, record)
-        }
-        size="small"
-        sx={{ width: '200px' }}
-      >
-        {numberSeriesOptions.map((option) => (
-          <MenuItem key={option.id} value={option.id}>
-            {option.code}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      options={numberSeriesOptions} // Use the number series options
+      getOptionLabel={(option) => `${option.code} - ${option.description}`} // Display name and description
+      filterOptions={(options, { inputValue }) =>
+        options.filter(
+          (option) =>
+            option.code.toLowerCase().includes(inputValue.toLowerCase()) ||
+            option.description.toLowerCase().includes(inputValue.toLowerCase())
+        )
+      } // Allow searching by code or description
+      onChange={(event, newValue) => {
+        handleNumberSeriesChange(newValue ? newValue.id : '', record); // Update the selected value
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          size="small"
+          fullWidth
+          placeholder="--------------------------------------------------------"
+        />
+      )}
+      value={
+        numberSeriesOptions.find(
+          (option) => option.id === (editableRows[record.id] || text?.id)
+        ) || null
+      }
+      renderOption={(props, option, { selected }) => (
+        <li
+          {...props}
+          style={{
+            backgroundColor: selected ? '#B2E9ED' : 'white', // Highlight selected option
+          }}
+        >
+          <Box
+            sx={{
+              width: '100%',
+              pr: '40px',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 3,
+              }}
+            >
+              <p
+                className="text-primary font-normal text-[12px] items-start"
+                style={{ alignSelf: 'flex-start' }}
+              >
+                {option.code}
+              </p>
+              <p
+                className="text-[12px] items-center"
+                style={{ alignSelf: 'flex-center' }}
+              >
+                {option.description}
+              </p>
+            </Box>
+          </Box>
+        </li>
+      )}
+      PopperComponent={(props) => (
+        <Popper {...props}>
+          {/* Header */}
+          <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+            <p className="text-xs font-normal">Code</p>
+            <p className="text-xs font-normal">Description</p>
+          </li>
+          {props.children}
+        </Popper>
+      )}
+      ListboxProps={{
+        sx: {
+          padding: 0,
+          '& ul': {
+            padding: 0,
+            margin: 0,
+          },
+        },
+      }}
+    />
   );
-
   const columns = [
     {
       title: 'Section',
@@ -123,7 +204,7 @@ function NumberingSections() {
   ];
 
   return (
-    <div className="pt-4">
+    <div className="pt-4 px-3">
       <Table
         rowKey="id"
         columns={columns}
