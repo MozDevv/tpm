@@ -14,7 +14,7 @@ function BaseWorkFlow2({ clickedItem }) {
   const getDocumentStatus = async () => {
     const possibleKeys = [
       'no_series',
-      'no',
+      'pensionerCode',
       'documentNo',
       'document_no',
       'document_number',
