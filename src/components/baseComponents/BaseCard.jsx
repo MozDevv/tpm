@@ -24,6 +24,7 @@ import workflowsEndpoints, {
 } from '../services/workflowsApi';
 import BaseWarningDialog from './BaseWarningDialog';
 import { claimTypesMap } from '../pensionsComponents/ClaimsManagementTable/ClaimsTable';
+import BaseWorkFlow2 from './BaseWorkFlow copy';
 
 function BaseCard({
   openBaseCard,
@@ -560,7 +561,7 @@ function BaseCard({
                         key="2"
                       >
                         <div className="max-h-[65vh] overflow-y-auto">
-                          <BaseWorkFlow
+                          <BaseWorkFlow2
                             steps={steps}
                             activeStep={activeStep}
                             clickedItem={clickedItem}

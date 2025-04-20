@@ -861,6 +861,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
         </Dialog>
 
         <BaseCard
+          retireeId={clickedItem?.id}
           documentNo={clickedItem && clickedItem?.claim_id}
           openBaseCard={openPreclaimDialog}
           setOpenBaseCard={setOpenPreclaimDialog}

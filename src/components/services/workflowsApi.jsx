@@ -67,6 +67,8 @@ const workflowsEndpoints = {
   getApprovalEntries: '/api/Approvals/GetApprovalEntries',
   getApprovalActions: '/api/Approvals/GetApproverActions',
   getUserApprovals: '/api/Approvals/GetUsersRequestToApprove',
+  getDocumentHistoryByCurrentDocNo: (id) =>
+    `/api/Claims/GetDocumentHistory?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].propertyName=current_document_no`,
 };
 
 export const workflowsApiService = {
