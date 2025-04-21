@@ -233,17 +233,31 @@ function CreateProspectivePensioner({
                         clickedItem2={clickedItem}
                       />
                     </TabPane>
-
-                    {retiree?.is_wcps === 0 && (
+                    {retiree.is_wcps && (
                       <TabPane
                         tab={
                           <span className="text-primary font-montserrat">
-                            {retiree?.has_wcps_proforma_recovery
-                              ? 'Women & Children Contributions Scheme Proforma'
-                              : 'Women & Children Contributions Scheme'}
+                            Women & Children Contributions Scheme
                           </span>
                         }
-                        key="9"
+                        key=""
+                        style={{ zIndex: 1 }}
+                      >
+                        <WcpsCard
+                          // isWcpsProforma={retiree?.has_wcps_proforma_recovery}
+                          id={clickedItem?.id}
+                          clickedItem2={retiree}
+                        />
+                      </TabPane>
+                    )}
+                    {retiree.has_wcps_proforma_recovery && (
+                      <TabPane
+                        tab={
+                          <span className="text-primary font-montserrat">
+                            Women & Children Contributions Scheme Proforma
+                          </span>
+                        }
+                        key="15"
                         style={{ zIndex: 1 }}
                       >
                         <WcpsCard
@@ -253,7 +267,6 @@ function CreateProspectivePensioner({
                         />
                       </TabPane>
                     )}
-
                     {(activeCapName === 'CAP196' ||
                       retiree?.mda_pensionCap_name === 'CAP196') && (
                       <TabPane

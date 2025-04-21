@@ -132,7 +132,11 @@ const BaseTable = ({
   const gridApiRef = useRef(null);
   const [gridApi, setGridApi] = useState(null);
   const [activeSegment, setActiveSegment] = useState(0);
-  const [activeSegment2, setActiveSegment2] = useState(0);
+  const [activeSegment2, setActiveSegment2] = useState(
+    segmentOptions2 && segmentOptions2.some((option) => option.value === -1)
+      ? -1
+      : 0
+  );
   const { setStatus } = useStatusStore();
 
   useEffect(() => {

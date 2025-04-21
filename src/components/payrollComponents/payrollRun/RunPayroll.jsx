@@ -20,6 +20,7 @@ import PayrollPensioners from '../PayrollPensioners';
 import { Search } from '@mui/icons-material';
 import { useTheme } from '@emotion/react';
 import { ExpandedPayrollDetails } from './ExpandedPayrollDetails';
+import { message } from 'antd';
 
 const RunPayroll = () => {
   const [computing, setComputing] = React.useState(false);
@@ -233,6 +234,7 @@ const RunPayroll = () => {
       }
     } catch (error) {
       console.log('Error computing payroll >>>>>>>>>>>:', error);
+      message.error(error.reponse.data);
     } finally {
       setComputing(false);
     }

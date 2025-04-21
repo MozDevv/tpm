@@ -30,7 +30,7 @@ function PayrollPensionerDetails({ clickedItem }) {
   const [openRunIncrement, setOpenRunIncrement] = useState(false);
   const columnDefs = [
     {
-      field: 'pensionerNo',
+      field: 'pensionerDetail.corePayrollNo',
       headerName: 'Pensioner No',
       width: 200,
       checkboxSelection: true,
@@ -40,29 +40,29 @@ function PayrollPensionerDetails({ clickedItem }) {
       cellRenderer: (params) => {
         return (
           <p className="text-primary font-semibold underline ">
-            {params.data.awardPrefix
-              ? params.data.awardPrefix + params.data.pensionerNo
-              : params.data.pensionerNo}
+            {params.value}
           </p>
         );
       },
     },
-
     {
-      field: 'pensionerName',
-      headerName: 'Pensioner Name',
-      headerClass: 'prefix-header',
+      field: 'pensionerDetail.firstName',
+      headerName: 'First Name',
       flex: 1,
-      valueGetter: (params) => {
-        const firstName = params.data?.firstName || '';
-        const surname = params.data?.surname || '';
-        const otherName = params.data?.otherName || '';
-        return `${firstName} ${surname} ${otherName}`.trim();
-      },
+    },
+    {
+      field: 'pensionerDetail.surname',
+      headerName: 'Surname',
+      flex: 1,
+    },
+    {
+      field: 'pensionerDetail.otherName',
+      headerName: 'Other Name',
+      flex: 1,
     },
 
     {
-      field: 'grossAmount',
+      field: 'pensionerDetail.grossAmount',
       headerName: 'Gross Amount',
       headerClass: 'prefix-header',
       flex: 1,
@@ -71,7 +71,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'status',
+      field: 'pensionerDetail.status',
       headerName: 'Status',
       headerClass: 'prefix-header',
       flex: 1,
@@ -111,7 +111,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'netAmount',
+      field: 'pensionerDetail.netAmount',
       headerName: 'Net Amount',
       headerClass: 'prefix-header',
       flex: 1,
@@ -120,7 +120,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'totalGrossArrears',
+      field: 'pensionerDetail.totalGrossArrears',
       headerName: 'Total Gross Arrears',
       flex: 1,
       cellRenderer: (params) => {
@@ -128,7 +128,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'totalNetArrears',
+      field: 'pensionerDetail.totalNetArrears',
       headerName: 'Total Net Arrears',
       flex: 1,
       cellRenderer: (params) => {
@@ -136,7 +136,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'lastPayGrossAmount',
+      field: 'pensionerDetail.lastPayGrossAmount',
 
       headerName: 'Last Pay Gross Amount',
       headerClass: 'prefix-header',
@@ -146,7 +146,7 @@ function PayrollPensionerDetails({ clickedItem }) {
       },
     },
     {
-      field: 'lastPayNetAmount',
+      field: 'pensionerDetail.lastPayNetAmount',
       headerName: 'Last Pay Net Amount',
       headerClass: 'prefix-header',
       flex: 1,
@@ -480,10 +480,7 @@ function PayrollPensionerDetails({ clickedItem }) {
             rowData={[
               ...(payrollDetails &&
                 payrollDetails.map((detail) => ({
-                  ...detail.pensionerDetail, // Spread the existing pensionerDetail fields
-                  totalNetArrears: detail.totalNetArrears, // Add totalNetArrears from payrollDetails
-                  totalGrossArrears: detail.totalGrossArrears, // Add grossAmount from payrollDetails
-                  netAmount: detail.netAmount, // Add netAmount from payrollDetails
+                  ...detail,
                 }))),
             ]}
             pagination={false}

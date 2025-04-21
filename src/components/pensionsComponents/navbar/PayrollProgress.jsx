@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { LinearProgress, Typography, Box } from '@mui/material';
+import { LinearProgress, Typography, Box, Fade, Chip } from '@mui/material';
 import * as signalR from '@microsoft/signalr';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { PAYROLL_BASE_URL } from '@/utils/constants';
 import { usePayrollProgressStore } from '@/zustand/store';
+import { notification } from 'antd'; // Import Ant Design notification
+import { useFetchAsyncV2 } from '@/components/hooks/DynamicFetchHook';
+import payrollEndpoints, {
+  payrollApiService,
+} from '@/components/services/payrollApi';
+import { CheckCircleOutline, Verified } from '@mui/icons-material';
 
 const PayrollProgress = () => {
   const {
     stage,
     description,
     percentage,
-    messages,
     setStage,
     setDescription,
     setPercentage,
-    setMessages,
     addNotification,
   } = usePayrollProgressStore();
 
@@ -25,6 +29,14 @@ const PayrollProgress = () => {
     3: 'Saving',
   };
 
+  const { data: payrollTypes } = useFetchAsyncV2(
+    payrollEndpoints.getPayrollTypes,
+    payrollApiService
+  );
+  // Track previous stage and description
+  const previousStageRef = React.useRef('');
+  const previousDescriptionRef = React.useRef('');
+
   useEffect(() => {
     const connection2 = new signalR.HubConnectionBuilder()
       .withUrl(`${PAYROLL_BASE_URL}/payrollProcessing`)
@@ -33,13 +45,53 @@ const PayrollProgress = () => {
 
     connection2.on(
       'ReceivePayrollUpdate',
-      (stage, processingPercentage, description) => {
+      (payrollTypeId, stage, processingPercentage, description, errMsg) => {
         const currentStage = stages[stage] || '';
-        setStage(stages[stage] || '');
+        setStage(currentStage);
         setPercentage(processingPercentage);
         setDescription(description);
-        addNotification({ stage: currentStage, description });
-        console.log('notifications', [{ stage: currentStage, description }]);
+
+        const playNotificationSound = () => {
+          const sound = new Audio('/notification.wav'); // Path to the sound file
+          sound.play().catch((error) => {
+            console.error('Error playing notification sound:', error);
+          });
+        };
+
+        // Show success notification if stage is 3 and description is "Done"
+        if (currentStage === 'Saving' && description === 'Done') {
+          playNotificationSound(); // Play sound
+          notification.success({
+            message: `Payroll Completed`,
+            description: `Stage: ${currentStage} - ${description}`,
+            placement: 'topRight',
+          });
+        }
+        // Show error notification if description is "Failed"
+        else if (description === 'Failed') {
+          playNotificationSound(); // Play sound
+          notification.error({
+            message: `Payroll Error`,
+            description: `Stage: ${currentStage} - ${description}`,
+            placement: 'topRight',
+          });
+        }
+
+        if (
+          previousStageRef.current !== currentStage ||
+          previousDescriptionRef.current !== description
+        ) {
+          addNotification({
+            payrollTypeId,
+            stage: currentStage,
+            description,
+            errMsg: errMsg ?? '', // Handle nullable errMsg
+          });
+
+          // Update previous values
+          previousStageRef.current = currentStage;
+          previousDescriptionRef.current = description;
+        }
       }
     );
 
@@ -66,35 +118,66 @@ const PayrollProgress = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (stage && description) {
-      addNotification({ stage, description });
-      console.log('notifications', [{ stage, description }]);
-    }
-  }, [stage, description, addNotification]);
-
   return (
-    <div className="flex flex-row justify-between items-center">
-      <div className="font-semibold text-[12px] text-primary mr-3">{stage}</div>
-
-      <Box sx={{ mt: 4 }}>
-        {/* <div className="font-semibold text-base text-primary"> </div>
-        <Typography variant="body1" sx={{ mb: 2 }}>
-          {description}
-        </Typography> */}
-        <div className="mt-[-30px]">
-          <CircularProgressWithLabel value={percentage} />
-        </div>{' '}
-      </Box>
-
-      {/* <Box sx={{ mt: 4 }}>
-        <Typography variant="h6">Messages</Typography>
-        <ul>
-          {messages.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </Box> */}
+    <div className="">
+      {stage === 'Saving' && description === 'Done' ? (
+        <Box
+          sx={{
+            display: 'inline-flex',
+            mx: 'auto',
+            px: 2.5,
+            py: 1,
+            borderRadius: 50,
+            bgcolor: 'background.paper',
+            // boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            alignItems: 'center',
+            gap: 1.5,
+            border: '1px solid rgba(76, 175, 80, 0.2)',
+            width: '230px',
+          }}
+        >
+          <Box
+            sx={{
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+              bgcolor: 'rgba(76, 175, 80, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Verified
+              sx={{
+                fontSize: '16px',
+                color: 'success.main',
+              }}
+            />
+          </Box>
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'primary',
+              fontWeight: '500',
+              fontSize: '12px',
+              // mt: -1
+            }}
+          >
+            Payroll Run Completed
+          </Typography>
+        </Box>
+      ) : stage ? (
+        <div className="flex flex-row justify-between items-center">
+          <div className="font-semibold text-[12px] text-primary mr-4">
+            {stage}
+          </div>
+          <div className="">
+            <CircularProgressWithLabel value={percentage} />
+          </div>{' '}
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
