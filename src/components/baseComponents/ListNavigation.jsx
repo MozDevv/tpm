@@ -710,6 +710,12 @@ const ListNavigation = ({
       action: 'createPaymentVoucher',
       requiredPermissions: [],
     },
+    {
+      name: 'Claim Lookup',
+      icon: IosShare,
+      action: 'claimLookup',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

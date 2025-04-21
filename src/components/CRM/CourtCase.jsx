@@ -8,6 +8,8 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
+import BaseExpandCard from '../baseComponents/BaseExpandCard';
+import ClaimLookupPolicy from './ClaimLookupPolicy';
 
 const CourtCase = () => {
   const statusIcons = {
@@ -182,6 +184,7 @@ const CourtCase = () => {
       // roles: item.roles,
     }));
   };
+  const [claimLookup, setClaimLookup] = React.useState(false);
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -194,6 +197,7 @@ const CourtCase = () => {
     delete: () => console.log('Delete clicked'),
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
+    claimLookup: () => setClaimLookup(true),
   };
 
   const baseCardHandlers = {
@@ -278,6 +282,15 @@ const CourtCase = () => {
 
   return (
     <div className="">
+      {' '}
+      <BaseExpandCard
+        open={claimLookup}
+        onClose={() => setClaimLookup(false)}
+        title="Claim Lookup"
+        // handlers={handlers}
+      >
+        <ClaimLookupPolicy />
+      </BaseExpandCard>
       <BaseCard
         openBaseCard={openBaseCard}
         setOpenBaseCard={setOpenBaseCard}

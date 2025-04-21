@@ -62,7 +62,7 @@ const PayrollProgress = () => {
         if (currentStage === 'Saving' && description === 'Done') {
           playNotificationSound(); // Play sound
           notification.success({
-            message: `Payroll Completed`,
+            message: `Payroll Run Completed`,
             description: `Stage: ${currentStage} - ${description}`,
             placement: 'topRight',
           });

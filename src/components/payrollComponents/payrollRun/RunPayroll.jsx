@@ -222,13 +222,15 @@ const RunPayroll = () => {
   };
 
   const trialRun = async () => {
-    setComputing(true);
+    // setComputing(true);
     try {
       const res = await payrollApiService.get(
         payrollEndpoints.trialRun(clickedItem.id)
       );
       if (res.status === 200) {
-        setComputing(false);
+        message.success(
+          'Payroll Run initiated successfully. View progress in the Navigation Menu.'
+        );
       } else {
         message.error('Error running payroll');
       }
@@ -236,7 +238,7 @@ const RunPayroll = () => {
       console.log('Error computing payroll >>>>>>>>>>>:', error);
       message.error(error.reponse.data);
     } finally {
-      setComputing(false);
+      // setComputing(false);
     }
   };
 

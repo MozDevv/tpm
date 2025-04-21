@@ -48,11 +48,7 @@ import BaseExpandCard from '@/components/baseComponents/BaseExpandCard';
 dayjs.extend(isSameOrBefore);
 
 function PensionerDetails({
-  openCreate,
-  setOpenCreate,
   moveToNextTab,
-  fetchAllPreclaims,
-  permissions,
   retireeId,
   setRetireeId,
   setOpenBaseCard,
@@ -374,7 +370,6 @@ function PensionerDetails({
   useEffect(() => {
     console.log('Form Data: ', formData);
   }, [formData]);
-  const router = useRouter();
 
   const validateField = (name, value, formData) => {
     let error = '';
@@ -528,7 +523,7 @@ function PensionerDetails({
   const [countries, setCountries] = useState([]);
 
   const [constituencies, setConstituencies] = useState([]);
-  const { alert, setAlert } = useAlert();
+  const { setAlert } = useAlert();
   const [designations, setDesignations] = useState([]);
   const [postalAddress, setPostalAddress] = useState([]);
   const [exitGrounds, setExitGrounds] = useState([]);
@@ -1134,13 +1129,6 @@ function PensionerDetails({
   }, []);
 
   const [selectedCountryCode, setSelectedCountryCode] = useState('+254');
-  const handleCountryChange = (event) => {
-    setSelectedCountryCode(event.target.value);
-    setFormData({
-      ...formData,
-      phone_number: event.target.value + formData.phone_number,
-    });
-  };
 
   useEffect(() => {
     validateRetirementDate();
