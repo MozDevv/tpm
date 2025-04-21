@@ -20,7 +20,7 @@ import {
   Launch,
   TaskAlt,
 } from '@mui/icons-material';
-import { message, Modal } from 'antd';
+import { message, Modal, Table } from 'antd';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import axios from 'axios';
 import { PORTAL_BASE_URL } from '@/utils/constants';
@@ -174,6 +174,42 @@ function EditBeneficiaryDialog({
     }
   };
 
+  const columns = [
+    {
+      title: 'Relationship',
+      dataIndex: ['relationship', 'name'],
+      key: 'relationship',
+    },
+    {
+      title: 'Surname',
+      dataIndex: 'surname',
+      key: 'surname',
+    },
+    {
+      title: 'First Name',
+      dataIndex: 'first_name',
+      key: 'first_name',
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Birth Certificate No',
+      dataIndex: 'birth_certificate_no',
+      key: 'birth_certificate_no',
+    },
+
+    {
+      title: 'Date of Birth',
+      dataIndex: 'dob',
+      key: 'dob',
+      render: (dob) => (dob ? new Date(dob).toLocaleDateString() : '-'),
+    },
+  ];
+  const childrenData = beneficiary?.children || [];
+
   return (
     <>
       <Dialog
@@ -204,7 +240,11 @@ function EditBeneficiaryDialog({
               </p>
             </div>
           </DialogTitle>
-          <DialogContent>
+          <DialogContent
+            sx={{
+              pb: 4,
+            }}
+          >
             {clickedItem?.mortality_status === 1 && (
               <div className="mt-[-10px]">
                 <Button startIcon={<TaskAlt />}>Approve Beneficiary</Button>
@@ -294,6 +334,46 @@ function EditBeneficiaryDialog({
                 </Collapse>
               </div>
             ))}
+            {childrenData.length > 0 && (
+              <div className="p-2">
+                <div className="flex items-center gap-2">
+                  <h6 className="font-semibold text-primary text-sm">
+                    BENEFICIARY CHILDREN
+                  </h6>
+                  <IconButton
+                    sx={{ ml: '-5px', zIndex: 1 }}
+                    onClick={() => handleToggleSection('beneficiaryChildren')}
+                  >
+                    {!openSections['beneficiaryChildren'] ? (
+                      <KeyboardArrowRight
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
+                      />
+                    ) : (
+                      <ExpandLess
+                        sx={{ color: 'primary.main', fontSize: '14px' }}
+                      />
+                    )}
+                  </IconButton>
+                  <hr className="flex-grow border-blue-500 border-opacity-20" />
+                </div>
+                <Collapse
+                  in={!openSections['beneficiaryChildren']}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <div className="overflow-y-auto max-h-[75vh] mt-4">
+                    <Table
+                      dataSource={childrenData}
+                      columns={columns}
+                      rowKey="id"
+                      pagination={false}
+                      bordered
+                      size="small"
+                    />
+                  </div>
+                </Collapse>
+              </div>
+            )}
           </DialogContent>
         </div>
       </Dialog>

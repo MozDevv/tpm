@@ -168,7 +168,9 @@ function ViewBeneficiaries({
                 </div>
               )}
               <AgGridReact
-                rowData={beneficiaries}
+                rowData={beneficiaries.filter(
+                  (ben) => ben.relationship.is_spouse
+                )}
                 columnDefs={columnDefs}
                 domLayout="autoHeight"
                 className="custom-grid"
