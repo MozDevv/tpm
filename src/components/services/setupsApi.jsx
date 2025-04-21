@@ -563,6 +563,7 @@ const endpoints = {
   createOmbudsman: '/api/Policy/ombudsman-case',
   createCourtCase: '/api/Policy/court-case',
   getCourtCase: '/api/Policy/court-case',
+  notifyBeneficiary: '/api/IGCClaimInitiation/CreateIGCClaimforBeneficiary',
 };
 
 export const apiService = {

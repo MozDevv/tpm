@@ -716,6 +716,12 @@ const ListNavigation = ({
       action: 'claimLookup',
       requiredPermissions: [],
     },
+    {
+      name: 'Create Beneficiary Claim',
+      icon: Send,
+      action: 'notifyDependant',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

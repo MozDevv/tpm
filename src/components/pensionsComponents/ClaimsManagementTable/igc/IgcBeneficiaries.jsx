@@ -9,6 +9,7 @@ import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import BaseTabs from '@/components/baseComponents/BaseTabs';
 import BaseCollapse from '@/components/baseComponents/BaseCollapse';
+import { message } from 'antd';
 
 const IgcBeneficiaries = () => {
   const statusIcons = {
@@ -173,6 +174,7 @@ const IgcBeneficiaries = () => {
 
   const transformData = (data) => {
     return data.map((item) => ({
+      id: item?.id,
       igc_no: item?.igcEnrolment?.no ?? 'N/A',
       surname: item?.beneficiary?.surname ?? 'N/A',
       first_name: item?.beneficiary?.first_name ?? 'N/A',
@@ -201,11 +203,44 @@ const IgcBeneficiaries = () => {
     "iGCSubmissionStatuses": 2, */
     }));
   };
+  const [clickedItem, setClickedItem] = React.useState(null);
 
   const handlers = {};
-  const baseCardHandlers = {};
+  const baseCardHandlers = {
+    ...(clickedItem && clickedItem.status === 2
+      ? {
+          notifyDependant: async () => {
+            const payload = {
+              igcBeneficiaryTrackId: clickedItem?.id, // Assuming `clickedItem` contains the ID
+            };
+
+            console.log('Payload for notifying beneficiary:', payload);
+            try {
+              const res = await apiService.post(
+                endpoints.notifyBeneficiary,
+                payload
+              );
+
+              if (res.status === 200 && res.data?.succeeded) {
+                message.success(res.data.messages[0]);
+                setOpenBaseCard(false); // Close the BaseCard
+              } else {
+                message.error(
+                  'Failed to notify the beneficiary. Please try again.'
+                );
+              }
+            } catch (error) {
+              console.error('Error notifying beneficiary:', error);
+              message.error(
+                error.response?.data?.message ||
+                  'An unexpected error occurred. Please try again.'
+              );
+            }
+          },
+        }
+      : {}),
+  };
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
-  const [clickedItem, setClickedItem] = React.useState(null);
   const title = clickedItem ? 'Beneficiary' : 'Create New Beneficiary';
 
   const fields = [
@@ -361,8 +396,6 @@ const IgcBeneficiaries = () => {
         title={title}
         clickedItem={clickedItem}
         isUserComponent={false}
-        deleteApiEndpoint={endpoints.deleteDepartment(clickedItem?.id)}
-        deleteApiService={apiService.post}
       >
         {clickedItem ? (
           <BaseTabs tabPanes={tabPanes} defaultActiveKey="1" />
