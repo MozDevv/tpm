@@ -10,6 +10,8 @@ import { formatDate } from '@/utils/dateFormatter';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import ClaimLookupPolicy from './ClaimLookupPolicy';
+import { Dialog } from '@mui/material';
+import OmbudsmanReport from './OmbudsmanReport';
 
 const Ombudsman = () => {
   const statusIcons = {
@@ -197,6 +199,7 @@ const Ombudsman = () => {
     }));
   };
   const [claimLookup, setClaimLookup] = React.useState(false);
+  const [openReport, setOpenReport] = React.useState(false);
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -209,6 +212,7 @@ const Ombudsman = () => {
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
     claimLookup: () => setClaimLookup(true),
+    'Ombudsman Report': () => setOpenReport(true),
   };
 
   const baseCardHandlers = {
@@ -307,8 +311,26 @@ const Ombudsman = () => {
     },
   ];
 
+  const reportItems = ['Ombudsman Report'];
+
   return (
     <div className="">
+      <Dialog
+        open={openReport}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <OmbudsmanReport columnDefs={columnDefs} />
+        </div>
+      </Dialog>
       <BaseExpandCard
         open={claimLookup}
         onClose={() => setClaimLookup(false)}
@@ -348,6 +370,7 @@ const Ombudsman = () => {
         )}
       </BaseCard>
       <BaseTable
+        reportItems={reportItems}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
