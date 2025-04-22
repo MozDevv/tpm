@@ -13,7 +13,7 @@ import { Dialog } from '@mui/material';
 import GeneralCaseReport from './GeneralCaseReport';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 
-const GeneralCase = () => {
+const ParliamentaryBusiness = () => {
   const columnDefs = [
     {
       field: 'seriesNo',
@@ -147,86 +147,17 @@ const GeneralCase = () => {
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
-
-  const { data: senders } = useFetchAsync(
-    endpoints.getGeneralSenders,
-    apiService
-  );
-
-  const title = clickedItem
-    ? 'General Policy'
-    : 'Incoming general policy matters';
   const { data: postalCodes } = useFetchAsync(
     endpoints.getPostalCodes,
     apiService
   );
 
+  const title = clickedItem
+    ? 'General Policy'
+    : 'Create Parliamentary Business';
+
   const fields = [
-    {
-      name: 'pensionerIdentifierType',
-      label: 'Identifier Type',
-      type: 'select',
-
-      required: true,
-      options: [
-        { id: 0, name: 'National Id' },
-        { id: 1, name: 'Passport Number' },
-      ],
-    },
-
-    {
-      name: 'pensionerIdentificationNumber',
-      label: 'Identification Number',
-      type: 'claimSearch',
-      required: true,
-    },
-
-    {
-      name: 'pensionerFirstName',
-      label: 'Pensioner First Name',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      name: 'pensionerMiddleName',
-      label: 'Pensioner Middle Name',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      name: 'pensionerSurname',
-      label: 'Pensioner Surname',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      name: 'pensionerEmail',
-      label: 'Pensioner Email',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      name: 'pensionerPhone',
-      label: 'Pensioner Phone',
-      type: 'text',
-      disabled: true,
-    },
-
-    {
-      name: 'pensionerPersonalNo',
-      label: 'Pensioner Personal No',
-      type: 'text',
-      required: false,
-      disabled: true,
-    },
-    {
-      name: 'pensionerNumber',
-      label: 'Pensioner Number',
-      type: 'text',
-      required: false,
-      disabled: true,
-    },
-
+    // { name: 'id', label: 'ID', type: 'text', required: true },
     { name: 'subject', label: 'Subject', type: 'text', required: true },
     {
       name: 'referenceNo',
@@ -235,33 +166,12 @@ const GeneralCase = () => {
       required: true,
     },
     { name: 'partyName', label: 'Source', type: 'text', required: true },
+    { name: 'partyEmail', label: 'Source Email', type: 'text', required: true },
     {
-      name: 'postalCodeId',
-      label: 'Postal Code',
-      type: 'select',
-      table: true,
+      name: 'partyPhone',
+      label: 'Source Phone Number',
+      type: 'phone_number',
       required: true,
-      options: postalCodes?.map((item) => ({
-        id: item.id,
-        name: item.code,
-        accountNo: item.name,
-      })),
-    },
-    {
-      name: 'postalAddress',
-      label: 'Postal Address',
-      type: 'text',
-    },
-    {
-      name: 'senderId',
-      label: 'Sender',
-      type: 'select',
-      table: true,
-      options: senders?.map((item) => ({
-        id: item.id,
-        name: item.name,
-        accountNo: item?.description,
-      })),
     },
     { name: 'nature', label: 'Nature', type: 'text', required: true },
     {
@@ -283,6 +193,23 @@ const GeneralCase = () => {
       type: 'attachments',
       required: false,
       addName: true,
+    },
+    {
+      name: 'postalCodeId',
+      label: 'Postal Code',
+      type: 'select',
+      table: true,
+      required: true,
+      options: postalCodes?.map((item) => ({
+        id: item.id,
+        name: item.code,
+        accountNo: item.name,
+      })),
+    },
+    {
+      name: 'postalAddress',
+      label: 'Postal Address',
+      type: 'text',
     },
   ];
   const reportItems = ['General Case Report'];
@@ -329,7 +256,7 @@ const GeneralCase = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createGeneralPolicy}
+            apiEndpoint={endpoints.createParliamentaryBusiness}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
@@ -339,7 +266,7 @@ const GeneralCase = () => {
         ) : (
           <BaseInputCard
             fields={fields}
-            apiEndpoint={endpoints.createGeneralPolicy}
+            apiEndpoint={endpoints.createParliamentaryBusiness}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
@@ -355,16 +282,16 @@ const GeneralCase = () => {
         setClickedItem={setClickedItem}
         setOpenBaseCard={setOpenBaseCard}
         columnDefs={columnDefs}
-        fetchApiEndpoint={endpoints.getGeneralPolicy}
+        fetchApiEndpoint={endpoints.getParliamentaryBusinesss}
         fetchApiService={apiService.get}
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="General Policy Matters"
-        currentTitle="General Policy Matters"
+        breadcrumbTitle="Parliament Business"
+        currentTitle="Parliament Business"
       />
     </div>
   );
 };
 
-export default GeneralCase;
+export default ParliamentaryBusiness;

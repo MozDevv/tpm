@@ -570,6 +570,13 @@ const endpoints = {
     `api/Policy/court-case/reports?startDate=${startDate}&endDate=${endDate}`,
   getGeneralPolicyStartDate: (startDate, endDate) =>
     `api/Policy/general/reports?startDate=${startDate}&endDate=${endDate}`,
+  getParliamentaryBusinesss: '/api/Policy/parliament-business',
+  createParliamentaryBusiness: '/api/Policy/parliament-business',
+  getTemplatesLibrary: '/api/Policy/templates-library',
+  createTemplatesLibrary: '/api/Policy/templates-library',
+
+  getGeneralSenders: '/api/Setups/GetGeneralPolicyMatterSenders',
+  createGeneralSenders: '/api/Setups/CreateGeneralPolicyMattersSender',
 };
 
 export const apiService = {

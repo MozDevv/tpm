@@ -1060,6 +1060,16 @@ export const adminItems = [
           },
         ],
       },
+      {
+        title: 'Policy Setups',
+        subChildren: [
+          {
+            title: 'General Policy Matters Senders',
+
+            path: '/pensions/setups/general-policy-matters-senders',
+          },
+        ],
+      },
 
       {
         title: 'No. Series',
