@@ -564,6 +564,8 @@ const endpoints = {
   createCourtCase: '/api/Policy/court-case',
   getCourtCase: '/api/Policy/court-case',
   notifyBeneficiary: '/api/IGCClaimInitiation/CreateIGCClaimforBeneficiary',
+  getOmbumdanByStartDate: (startDate, endDate) =>
+    `api/Policy/ombudsman-case/reports?startDate=${startDate}&endDate=${endDate}`,
 };
 
 export const apiService = {

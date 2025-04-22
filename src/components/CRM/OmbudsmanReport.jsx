@@ -35,17 +35,12 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
 
   const handleGenerateReport = () => {
     if (!startDate || !endDate) {
-      setError('Please select both start and end dates.');
+      setError('Both start and end dates are required');
       return;
     }
-    setError('');
-    const filters = {
-      startDate,
-      endDate,
-      skipBlankEntries,
-      selectedColumns,
-    };
-    onGenerateReport(filters); // Pass filters to the parent component
+
+    setError(''); // Clear any previous error
+    fetchRowData(); // Fetch data and generate report
   };
 
   const [loading, setLoading] = useState(false);
@@ -97,10 +92,12 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
 
   const fetchRowData = async () => {
     try {
-      const res = await apiService.get(endpoints.getOmbudsman);
+      const res = await apiService.get(
+        endpoints.getOmbumdanByStartDate(startDate, endDate)
+      );
       if (res.status === 200) {
         setRowData(
-          res.data.data.map((item) => ({
+          res.data.map((item) => ({
             ...item,
             status: item.status === 1 ? 'Resolved' : 'On Going',
           }))
