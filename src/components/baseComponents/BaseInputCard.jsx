@@ -612,64 +612,489 @@ const BaseInputCard = ({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-5">
-        {fields.map((field, index) => (
-          <div
-            key={index}
-            style={{
-              flexDirection: 'column',
-              display: field.hide === true ? 'none' : 'flex',
-            }}
-          >
-            {field.type === 'file' && field.fileName ? (
-              <>
-                <label className="text-xs font-semibold text-gray-600 mb-2">
+        {fields
+          .sort((a, b) =>
+            a.type === 'textarea' ? 1 : b.type === 'textarea' ? -1 : 0
+          )
+          .map((field, index) => (
+            <div
+              key={index}
+              style={{
+                flexDirection: 'column',
+                display: field.hide === true ? 'none' : 'flex',
+              }}
+            >
+              {field.type === 'file' && field.fileName ? (
+                <>
+                  <label className="text-xs font-semibold text-gray-600 mb-2">
+                    {field.label}
+                  </label>
+                </>
+              ) : field.type === 'attachments' ? (
+                <></>
+              ) : (
+                <label className="text-xs font-semibold text-gray-600">
                   {field.label}
                 </label>
-              </>
-            ) : field.type === 'attachments' ? (
-              <></>
-            ) : (
-              <label className="text-xs font-semibold text-gray-600">
-                {field.label}
-              </label>
-            )}
-            {field.type === 'select' ? (
-              field.multiple ? (
-                <Select
-                  multiple
-                  size="small"
-                  name={field.name}
-                  value={formData[field.name] || []}
-                  onChange={handleInputChange}
-                  renderValue={(selected) => (
-                    <div>
-                      {selected.map((value) => (
-                        <span key={value} style={{ margin: 2 }}>
-                          {
-                            field?.options?.find(
-                              (option) => option.id === value
-                            )?.name
+              )}
+              {field.type === 'select' ? (
+                field.multiple ? (
+                  <Select
+                    multiple
+                    size="small"
+                    name={field.name}
+                    value={formData[field.name] || []}
+                    onChange={handleInputChange}
+                    renderValue={(selected) => (
+                      <div>
+                        {selected.map((value) => (
+                          <span key={value} style={{ margin: 2 }}>
+                            {
+                              field?.options?.find(
+                                (option) => option.id === value
+                              )?.name
+                            }
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  >
+                    {field.options.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        <Checkbox
+                          checked={
+                            formData[field.name]?.indexOf(option.id) > -1
                           }
-                        </span>
-                      ))}
+                        />
+                        <ListItemText primary={option.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : field.table ? (
+                  <Autocomplete
+                    options={field.options}
+                    getOptionLabel={(option) =>
+                      field.searchByAccountNo ? option.accountNo : option.name
+                    }
+                    onChange={(event, newValue) => {
+                      handleInputChange({
+                        target: {
+                          name: field.name,
+                          value: newValue ? newValue.id : '',
+                        },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        name={field.name}
+                        error={!!errors[field.name]}
+                        helperText={errors[field.name]}
+                      />
+                    )}
+                    value={
+                      field?.options?.find(
+                        (option) => option.id === formData[field.name]
+                      ) || null
+                    }
+                    renderOption={(props, option, { selected }) => (
+                      <div className="">
+                        <li
+                          {...props}
+                          style={{
+                            border: 'none',
+                            boxShadow: 'none',
+                            backgroundColor: selected ? '#B2E9ED' : 'white',
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: '100%',
+                              pr: '40px',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                gap: 3,
+                              }}
+                            >
+                              <p
+                                className="text-primary font-normal text-[12px] items-start"
+                                style={{ alignSelf: 'flex-start' }}
+                              >
+                                {option.name}
+                              </p>
+                              <p
+                                className="text-[12px] items-center"
+                                style={{ alignSelf: 'flex-center' }}
+                              >
+                                {option.accountNo}
+                              </p>
+                            </Box>
+                          </Box>
+                        </li>
+                      </div>
+                    )}
+                    ListboxProps={{
+                      sx: {
+                        padding: 0,
+                        '& ul': {
+                          padding: 0,
+                          margin: 0,
+                        },
+                        // Additional styling for the listbox
+                      },
+                    }}
+                    PopperComponent={(props) => (
+                      <Popper {...props}>
+                        {/* Header */}
+                        <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
+                          <p className="text-xs font-normal">No.</p>
+                          <p className="text-xs font-normal">Name</p>
+                        </li>
+                        {props.children}
+                      </Popper>
+                    )}
+                  />
+                ) : (
+                  <TextField
+                    select
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name={field.name}
+                    disabled={field.disabled || disableAll}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
+                    error={!!errors[field.name]}
+                    helperText={errors[field.name]}
+                  >
+                    <MenuItem value="">Select {field.label}</MenuItem>
+                    {field?.options?.map((option) => (
+                      <MenuItem key={option?.id} value={option?.id}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )
+              ) : field.type === 'searchInput' ? (
+                <TextField
+                  type="text"
+                  name={field.name}
+                  variant="outlined"
+                  size="small"
+                  value={formData[field.name] || ''}
+                  onChange={handleInputChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  required={field.required}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                  onBlur={async () => {
+                    if (field.name !== 'searchInput') {
+                      return;
+                    }
+                    if (!formData.searchInput) {
+                      setErrors({ searchInput: 'Search input is required' });
+                      return;
+                    }
+
+                    // Manually construct the query string
+                    const queryString = `search_input=${
+                      formData.searchInput
+                    }&claim_id=${
+                      formData.searchType === 'claim_id'
+                    }&national_id=${
+                      formData.searchType === 'national_id'
+                    }&personal_number=${
+                      formData.searchType === 'personal_number'
+                    }`;
+
+                    try {
+                      const response = await apiService.get(
+                        `${BASE_CORE_API}api/claims/SearchClaims?${queryString}&paging.pageSize=100000`
+                      );
+                      if (response.status === 200) {
+                        if (response.data.data.length === 0) {
+                          message.error('No results found');
+                          return;
+                        }
+                        setFilteredData(response.data.data || []);
+                        message.success('Search completed successfully');
+                      } else {
+                        message.error('No results found');
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      message.error('An error occurred while searching');
+                    }
+                  }}
+                />
+              ) : field.type === 'radio' ? (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData[field.name] === true}
+                      onChange={handleInputChange}
+                      disabled={field.disabled || disableAll}
+                      name={field.name}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    formData[field.name] ? field.switchTrue : field.switchFalse
+                  }
+                />
+              ) : field.type === 'switch' ? (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData[field.name] === true}
+                      onChange={handleInputChange}
+                      disabled={field.disabled || disableAll}
+                      name={field.name}
+                      color="primary"
+                    />
+                  }
+                  label={formData[field.name] ? 'Yes' : 'No'}
+                />
+              ) : field.type === 'file' && field.fileName ? (
+                <div className="flex justify-between ">
+                  <Upload
+                    beforeUpload={(file) => {
+                      handleFileUpload(file, field.name); // Capture the file and store it
+                      handlePreview && handlePreview(file);
+                      return false; // Prevent the auto-upload, we'll handle it manually
+                    }}
+                  >
+                    <AntButton
+                      icon={
+                        <MuiUpload
+                          sx={{
+                            fontSize: '20px',
+                          }}
+                        />
+                      }
+                    >
+                      Click to Upload
+                    </AntButton>
+                  </Upload>
+                  {formData[field.name] && handlePreview && (
+                    <div className="mb-4">
+                      <AntButton
+                        onClick={() =>
+                          handlePreviewInBaseInputCard(formData[field.name])
+                        }
+                        type="primary"
+                        style={{
+                          backgroundColor: '#006990',
+                          borderColor: '#006990',
+                        }}
+                        icon={
+                          <Launch
+                            sx={{
+                              fontSize: '20px',
+                            }}
+                          />
+                        }
+                      >
+                        Preview File
+                      </AntButton>
                     </div>
                   )}
-                >
-                  {field.options.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      <Checkbox
-                        checked={formData[field.name]?.indexOf(option.id) > -1}
-                      />
-                      <ListItemText primary={option.name} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              ) : field.table ? (
+                </div>
+              ) : field.type === 'phone_number' ? (
+                <MuiPhoneNumber
+                  defaultCountry="ke" // Kenya as the default countr
+                  name={field.name}
+                  variant="outlined"
+                  size="small"
+                  error={!!errors[field.name]}
+                  value={formData[field.name] || ''}
+                  defaultValue={''}
+                  helperText={errors[field.name]}
+                  onChange={(e) =>
+                    handleInputChange({
+                      target: { name: field.name, value: e },
+                    })
+                  }
+                  disabled={field.disabled || disableAll}
+                  dropdownClass="custom-dropdown" // Custom class for the dropdown
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: '120px', // Set max height for the dropdown
+                        overflowY: 'auto',
+                      },
+                    },
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                  }}
+                />
+              ) : field.type === 'phone_number' ? (
+                <MuiPhoneNumber
+                  defaultCountry="ke" // Kenya as the default country
+                  name={field.name}
+                  value={formData[field.name] || ''}
+                  onChange={(value) =>
+                    handleInputChange({
+                      target: {
+                        name: field.name,
+                        value,
+                      },
+                    })
+                  }
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  disabled={field.disabled || disableAll}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  dropdownClass="custom-dropdown" // Custom class for the dropdown
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: '120px', // Set max height for the dropdown
+                        overflowY: 'auto',
+                      },
+                    },
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                  }}
+                />
+              ) : field.type === 'datetime' ? (
+                <TextField
+                  name={field.name}
+                  type="datetime-local"
+                  variant="outlined"
+                  size="small"
+                  error={!!errors[field.name]}
+                  value={
+                    formData[field.name]
+                      ? dayjs(formData[field.name]).format('YYYY-MM-DDTHH:mm')
+                      : ''
+                  }
+                  defaultValue={''}
+                  helperText={errors[field.name]}
+                  onChange={handleInputChange}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                />
+              ) : field.type === 'date' ? (
+                <TextField
+                  name={field.name}
+                  type="date"
+                  variant="outlined"
+                  size="small"
+                  error={!!errors[field.name]}
+                  value={
+                    formData[field.name]
+                      ? dayjs(formData[field.name]).format('YYYY-MM-DD')
+                      : ''
+                  }
+                  defaultValue={''}
+                  helperText={errors[field.name]}
+                  onChange={handleInputChange}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                />
+              ) : // <CustomDatePicker
+              //   field={field}
+              //   formData={formData}
+              //   handleInputChange={handleInputChange}
+              //   errors={errors}
+              //
+              field.type === 'autocomplete' ? (
+                <Autocomplete
+                  disabled={field.disabled || disableAll}
+                  options={field.options}
+                  getOptionLabel={(option) => option?.name?.toString()}
+                  onChange={(event, newValue) => {
+                    handleInputChange({
+                      target: {
+                        name: field.name,
+                        value: newValue ? newValue.id : '',
+                      },
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name={field.name}
+                      error={!!errors[field.name]}
+                      helperText={errors[field.name]}
+                      onBlur={(event) => {
+                        if (
+                          field.name === 'receiptNo' ||
+                          field.name === 'recieptNo'
+                        ) {
+                          handleOnBlur(params.inputProps.value);
+                        }
+                      }}
+                    />
+                  )}
+                  value={
+                    (field.options &&
+                      field?.options?.find(
+                        (option) => option.id === formData[field.name]
+                      )) ||
+                    null
+                  }
+                />
+              ) : field.type === 'amount' ? (
+                <TextField
+                  name={field.name}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  value={formData[field.name]}
+                  //value={formData[field.name]}
+                  disabled={field.disabled || disableAll}
+                  onChange={handleAmountChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  required={field.required}
+                  fullWidth
+                  inputProps={{
+                    style: { textAlign: 'right' }, // Aligns the text to the right
+                  }}
+                  InputProps={{
+                    inputComponent: BaseAmountInput,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        border: 'none',
+                        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      },
+                  }}
+                />
+              ) : field.type === 'table' ? (
                 <Autocomplete
                   options={field.options}
-                  getOptionLabel={(option) =>
-                    field.searchByAccountNo ? option.accountNo : option.name
-                  }
+                  getOptionLabel={(option) => option.name}
                   onChange={(event, newValue) => {
                     handleInputChange({
                       target: {
@@ -707,29 +1132,34 @@ const BaseInputCard = ({
                         <Box
                           sx={{
                             width: '100%',
-                            pr: '40px',
+                            pr: '10px',
                             display: 'flex',
                             justifyContent: 'space-between',
+                            alignItems: 'center',
                           }}
                         >
                           <Box
                             sx={{
                               display: 'flex',
-                              flexDirection: 'row',
-                              gap: 3,
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              width: '100%',
+                              '&:hover': {
+                                backgroundColor: '#e0f7fa',
+                              },
                             }}
                           >
                             <p
-                              className="text-primary font-normal text-[12px] items-start"
-                              style={{ alignSelf: 'flex-start' }}
+                              className="text-primary font-normal text-[12px] leading-5"
+                              style={{ margin: 0 }}
                             >
-                              {option.name}
+                              {option.row1}
                             </p>
                             <p
-                              className="text-[12px] items-center"
-                              style={{ alignSelf: 'flex-center' }}
+                              className="text-[12px] text-gray-700"
+                              style={{ margin: 0 }}
                             >
-                              {option.accountNo}
+                              {option.row2}
                             </p>
                           </Box>
                         </Box>
@@ -750,504 +1180,55 @@ const BaseInputCard = ({
                     <Popper {...props}>
                       {/* Header */}
                       <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
-                        <p className="text-xs font-normal">No.</p>
-                        <p className="text-xs font-normal">Name</p>
+                        <p className="text-xs font-normal">{field.row1}</p>
+                        <p className="text-xs font-normal">{field.row2}</p>
                       </li>
+
                       {props.children}
                     </Popper>
                   )}
                 />
-              ) : (
+              ) : field.type === 'attachments' ? (
+                <></>
+              ) : field.type === 'textarea' ? (
                 <TextField
-                  select
+                  name={field.name}
                   variant="outlined"
                   size="small"
-                  fullWidth
-                  name={field.name}
-                  disabled={field.disabled || disableAll}
-                  value={formData[field.name]}
+                  multiline
+                  rows={4} // Adjust the number of rows as needed
+                  value={formData[field.name] || ''}
                   onChange={handleInputChange}
                   error={!!errors[field.name]}
                   helperText={errors[field.name]}
-                >
-                  <MenuItem value="">Select {field.label}</MenuItem>
-                  {field?.options?.map((option) => (
-                    <MenuItem key={option?.id} value={option?.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )
-            ) : field.type === 'searchInput' ? (
-              <TextField
-                type="text"
-                name={field.name}
-                variant="outlined"
-                size="small"
-                value={formData[field.name] || ''}
-                onChange={handleInputChange}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                required={field.required}
-                disabled={field.disabled || disableAll}
-                fullWidth
-                onBlur={async () => {
-                  if (field.name !== 'searchInput') {
-                    return;
-                  }
-                  if (!formData.searchInput) {
-                    setErrors({ searchInput: 'Search input is required' });
-                    return;
-                  }
-
-                  // Manually construct the query string
-                  const queryString = `search_input=${
-                    formData.searchInput
-                  }&claim_id=${
-                    formData.searchType === 'claim_id'
-                  }&national_id=${
-                    formData.searchType === 'national_id'
-                  }&personal_number=${
-                    formData.searchType === 'personal_number'
-                  }`;
-
-                  try {
-                    const response = await apiService.get(
-                      `${BASE_CORE_API}api/claims/SearchClaims?${queryString}&paging.pageSize=100000`
-                    );
-                    if (response.status === 200) {
-                      if (response.data.data.length === 0) {
-                        message.error('No results found');
-                        return;
-                      }
-                      setFilteredData(response.data.data || []);
-                      message.success('Search completed successfully');
-                    } else {
-                      message.error('No results found');
-                    }
-                  } catch (error) {
-                    console.error(error);
-                    message.error('An error occurred while searching');
-                  }
-                }}
-              />
-            ) : field.type === 'radio' ? (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={formData[field.name] === true}
-                    onChange={handleInputChange}
-                    disabled={field.disabled || disableAll}
-                    name={field.name}
-                    color="primary"
-                  />
-                }
-                label={
-                  formData[field.name] ? field.switchTrue : field.switchFalse
-                }
-              />
-            ) : field.type === 'switch' ? (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={formData[field.name] === true}
-                    onChange={handleInputChange}
-                    disabled={field.disabled || disableAll}
-                    name={field.name}
-                    color="primary"
-                  />
-                }
-                label={formData[field.name] ? 'Yes' : 'No'}
-              />
-            ) : field.type === 'file' && field.fileName ? (
-              <div className="flex justify-between ">
-                <Upload
-                  beforeUpload={(file) => {
-                    handleFileUpload(file, field.name); // Capture the file and store it
-                    handlePreview && handlePreview(file);
-                    return false; // Prevent the auto-upload, we'll handle it manually
-                  }}
-                >
-                  <AntButton
-                    icon={
-                      <MuiUpload
-                        sx={{
-                          fontSize: '20px',
-                        }}
-                      />
-                    }
-                  >
-                    Click to Upload
-                  </AntButton>
-                </Upload>
-                {formData[field.name] && handlePreview && (
-                  <div className="mb-4">
-                    <AntButton
-                      onClick={() =>
-                        handlePreviewInBaseInputCard(formData[field.name])
-                      }
-                      type="primary"
-                      style={{
-                        backgroundColor: '#006990',
-                        borderColor: '#006990',
-                      }}
-                      icon={
-                        <Launch
-                          sx={{
-                            fontSize: '20px',
-                          }}
-                        />
-                      }
-                    >
-                      Preview File
-                    </AntButton>
-                  </div>
-                )}
-              </div>
-            ) : field.type === 'phone_number' ? (
-              <MuiPhoneNumber
-                defaultCountry="ke" // Kenya as the default countr
-                name={field.name}
-                variant="outlined"
-                size="small"
-                error={!!errors[field.name]}
-                value={formData[field.name] || ''}
-                defaultValue={''}
-                helperText={errors[field.name]}
-                onChange={(e) =>
-                  handleInputChange({ target: { name: field.name, value: e } })
-                }
-                disabled={field.disabled || disableAll}
-                dropdownClass="custom-dropdown" // Custom class for the dropdown
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: '120px', // Set max height for the dropdown
-                      overflowY: 'auto',
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                }}
-              />
-            ) : field.type === 'phone_number' ? (
-              <MuiPhoneNumber
-                defaultCountry="ke" // Kenya as the default country
-                name={field.name}
-                value={formData[field.name] || ''}
-                onChange={(value) =>
-                  handleInputChange({
-                    target: {
-                      name: field.name,
-                      value,
-                    },
-                  })
-                }
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                disabled={field.disabled || disableAll}
-                variant="outlined"
-                size="small"
-                fullWidth
-                dropdownClass="custom-dropdown" // Custom class for the dropdown
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: '120px', // Set max height for the dropdown
-                      overflowY: 'auto',
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                }}
-              />
-            ) : field.type === 'datetime' ? (
-              <TextField
-                name={field.name}
-                type="datetime-local"
-                variant="outlined"
-                size="small"
-                error={!!errors[field.name]}
-                value={
-                  formData[field.name]
-                    ? dayjs(formData[field.name]).format('YYYY-MM-DDTHH:mm')
-                    : ''
-                }
-                defaultValue={''}
-                helperText={errors[field.name]}
-                onChange={handleInputChange}
-                disabled={field.disabled || disableAll}
-                fullWidth
-              />
-            ) : field.type === 'date' ? (
-              <TextField
-                name={field.name}
-                type="date"
-                variant="outlined"
-                size="small"
-                error={!!errors[field.name]}
-                value={
-                  formData[field.name]
-                    ? dayjs(formData[field.name]).format('YYYY-MM-DD')
-                    : ''
-                }
-                defaultValue={''}
-                helperText={errors[field.name]}
-                onChange={handleInputChange}
-                disabled={field.disabled || disableAll}
-                fullWidth
-              />
-            ) : // <CustomDatePicker
-            //   field={field}
-            //   formData={formData}
-            //   handleInputChange={handleInputChange}
-            //   errors={errors}
-            //
-            field.type === 'autocomplete' ? (
-              <Autocomplete
-                disabled={field.disabled || disableAll}
-                options={field.options}
-                getOptionLabel={(option) => option?.name?.toString()}
-                onChange={(event, newValue) => {
-                  handleInputChange({
-                    target: {
-                      name: field.name,
-                      value: newValue ? newValue.id : '',
-                    },
-                  });
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    name={field.name}
-                    error={!!errors[field.name]}
-                    helperText={errors[field.name]}
-                    onBlur={(event) => {
-                      if (
-                        field.name === 'receiptNo' ||
-                        field.name === 'recieptNo'
-                      ) {
-                        handleOnBlur(params.inputProps.value);
-                      }
-                    }}
-                  />
-                )}
-                value={
-                  (field.options &&
-                    field?.options?.find(
-                      (option) => option.id === formData[field.name]
-                    )) ||
-                  null
-                }
-              />
-            ) : field.type === 'amount' ? (
-              <TextField
-                name={field.name}
-                variant="outlined"
-                size="small"
-                type="text"
-                value={formData[field.name]}
-                //value={formData[field.name]}
-                disabled={field.disabled || disableAll}
-                onChange={handleAmountChange}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                required={field.required}
-                fullWidth
-                inputProps={{
-                  style: { textAlign: 'right' }, // Aligns the text to the right
-                }}
-                InputProps={{
-                  inputComponent: BaseAmountInput,
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                    {
-                      border: 'none',
-                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
-                    },
-                }}
-              />
-            ) : field.type === 'table' ? (
-              <Autocomplete
-                options={field.options}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, newValue) => {
-                  handleInputChange({
-                    target: {
-                      name: field.name,
-                      value: newValue ? newValue.id : '',
-                    },
-                  });
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    name={field.name}
-                    error={!!errors[field.name]}
-                    helperText={errors[field.name]}
-                  />
-                )}
-                value={
-                  field?.options?.find(
-                    (option) => option.id === formData[field.name]
-                  ) || null
-                }
-                renderOption={(props, option, { selected }) => (
-                  <div className="">
-                    <li
-                      {...props}
-                      style={{
-                        border: 'none',
-                        boxShadow: 'none',
-                        backgroundColor: selected ? '#B2E9ED' : 'white',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: '100%',
-                          pr: '10px',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                            '&:hover': {
-                              backgroundColor: '#e0f7fa',
-                            },
-                          }}
-                        >
-                          <p
-                            className="text-primary font-normal text-[12px] leading-5"
-                            style={{ margin: 0 }}
-                          >
-                            {option.row1}
-                          </p>
-                          <p
-                            className="text-[12px] text-gray-700"
-                            style={{ margin: 0 }}
-                          >
-                            {option.row2}
-                          </p>
-                        </Box>
-                      </Box>
-                    </li>
-                  </div>
-                )}
-                ListboxProps={{
-                  sx: {
-                    padding: 0,
-                    '& ul': {
-                      padding: 0,
-                      margin: 0,
-                    },
-                    // Additional styling for the listbox
-                  },
-                }}
-                PopperComponent={(props) => (
-                  <Popper {...props}>
-                    {/* Header */}
-                    <li className="flex items-center gap-[65px] px-3 py-2 bg-gray-100">
-                      <p className="text-xs font-normal">{field.row1}</p>
-                      <p className="text-xs font-normal">{field.row2}</p>
-                    </li>
-
-                    {props.children}
-                  </Popper>
-                )}
-              />
-            ) : field.type === 'attachments' ? (
-              <></>
-            ) : field.type === 'textarea' ? (
-              <TextField
-                name={field.name}
-                variant="outlined"
-                size="small"
-                multiline
-                rows={4} // Adjust the number of rows as needed
-                value={formData[field.name] || ''}
-                onChange={handleInputChange}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                required={field.required}
-                disabled={field.disabled || disableAll}
-                fullWidth
-              />
-            ) : (
-              <TextField
-                type={field.type}
-                name={field.name}
-                variant="outlined"
-                size="small"
-                value={formData[field.name] || ''}
-                onChange={handleInputChange}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                required={field.required}
-                disabled={field.disabled || disableAll}
-                fullWidth
-              />
-            )}
-          </div>
-        ))}
+                  required={field.required}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                />
+              ) : (
+                <TextField
+                  type={field.type}
+                  name={field.name}
+                  variant="outlined"
+                  size="small"
+                  value={formData[field.name] || ''}
+                  onChange={handleInputChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  required={field.required}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                />
+              )}
+            </div>
+          ))}
       </div>
-      <Dialog
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        sx={{
-          '& .MuiDialog-container': {
-            '& .MuiPaper-root': {
-              borderRadius: '8px',
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-              padding: '40px',
-            },
-          },
-          '& .MuiPaper-root': {
-            minHeight: '80vh',
-            maxHeight: '80vh',
-            minWidth: '55vw',
-            maxWidth: '55vw',
-          },
-          zIndex: 99999,
-        }}
-      >
-        <IconButton
-          onClick={() => setPreviewOpen(false)}
-          sx={{
-            position: 'absolute',
-            right: 16,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <Close />
-        </IconButton>
-        {previewContent}
-      </Dialog>
+      {previewOpen && (
+        <BaseEdmsViewer
+          doc={previewContent}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
 
       <Divider sx={{ my: 2 }} />
 
@@ -1335,9 +1316,7 @@ const BaseInputCard = ({
                                 }
                                 onClick={() => {
                                   // Pass the edmsFileId to the ViewerPage component
-                                  setPreviewContent(
-                                    <BaseEdmsViewer docId={record.edmsFileId} />
-                                  );
+                                  setPreviewContent(record);
                                   setPreviewOpen(true);
                                 }}
                               >

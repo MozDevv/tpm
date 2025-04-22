@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import BaseCollapse from '../baseComponents/BaseCollapse';
 import useFetchAsync from '../hooks/DynamicFetchHook';
+import BaseEdmsViewer from '../baseComponents/BaseEdmsViewer';
 
 const Complaints = ({ status }) => {
   const columnDefs = [
@@ -253,12 +254,7 @@ const Complaints = ({ status }) => {
             type: 'datetime',
             required: false,
           },
-          {
-            name: 'closingComments',
-            label: 'Closing Comments',
-            type: 'textarea',
-            required: false,
-          },
+
           {
             name: 'lastEscalationTime',
             label: 'Last Escalation Time',
@@ -273,6 +269,12 @@ const Complaints = ({ status }) => {
               { id: true, name: 'Yes' },
               { id: false, name: 'No' },
             ],
+            required: false,
+          },
+          {
+            name: 'closingComments',
+            label: 'Closing Comments',
+            type: 'textarea',
             required: false,
           },
         ]
@@ -296,6 +298,13 @@ const Complaints = ({ status }) => {
       },
     },
     {
+      title: 'File Type',
+      dataIndex: 'mimeType',
+      key: 'mimeType',
+      width: '25%',
+    },
+
+    {
       title: 'Preview',
       key: 'preview',
       width: '25%',
@@ -310,14 +319,10 @@ const Complaints = ({ status }) => {
             fontSize: '12px',
           }}
           onClick={() => {
-            setPreviewContent(
-              <embed
-                src={record.edmsFileUrl}
-                type={record.mimeType}
-                width="100%"
-                height="1000px"
-              />
-            );
+            setPreviewContent(record);
+            console.log('Previewing file:', record);
+            // Pass the edmsFileId to the ViewerPage component
+            // setPreviewContent(<BaseEdmsViewer docId={record.edmsFileId} />);
             setPreviewOpen(true);
           }}
         >
@@ -325,28 +330,28 @@ const Complaints = ({ status }) => {
         </Button>
       ),
     },
-    {
-      title: 'Download',
-      key: 'download',
-      width: '25%',
-      render: (_, record) => (
-        <Button
-          icon={<DownloadOutlined />}
-          style={{
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            maxHeight: '26px',
-            fontSize: '12px',
-          }}
-          onClick={() => {
-            window.open(record.edmsDownloadUrl, '_blank');
-          }}
-        >
-          Download
-        </Button>
-      ),
-    },
+    // {
+    //   title: 'Download',
+    //   key: 'download',
+    //   width: '25%',
+    //   render: (_, record) => (
+    //     <Button
+    //       icon={<DownloadOutlined />}
+    //       style={{
+    //         backgroundColor: '#28a745',
+    //         color: 'white',
+    //         border: 'none',
+    //         maxHeight: '26px',
+    //         fontSize: '12px',
+    //       }}
+    //       onClick={() => {
+    //         window.open(record.edmsDownloadUrl, '_blank');
+    //       }}
+    //     >
+    //       Download
+    //     </Button>
+    //   ),
+    // },
   ];
 
   const [previewOpen, setPreviewOpen] = React.useState(false);
@@ -378,6 +383,14 @@ const Complaints = ({ status }) => {
   const [openEscalateDialog, setOpenEscalateDialog] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState(null);
 
+  const { data: departments } = useFetchAsync(
+    endpoints.getDepartments,
+    apiService
+  );
+
+  const [filteredUsers, setFilteredUsers] = React.useState([]);
+  const [selectedDepartment, setSelectedDepartment] = React.useState(null);
+
   const handleEscalateComplaint = async () => {
     try {
       const response = await apiService.post(endpoints.esclateComplaint, {
@@ -400,6 +413,12 @@ const Complaints = ({ status }) => {
 
   return (
     <div className="">
+      {previewOpen && (
+        <BaseEdmsViewer
+          doc={previewContent}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
       <Dialog
         open={openEscalate}
         onClose={() => setOpenEscalate(false)}
@@ -429,7 +448,7 @@ const Complaints = ({ status }) => {
               marginRight: '10px',
               color: '#006990',
             }}
-            onClick={() => setOpenEscalateDialog(false)}
+            onClick={() => setOpenEscalate(false)}
           >
             <Close sx={{ color: '#006990' }} />
           </IconButton>
@@ -440,14 +459,40 @@ const Complaints = ({ status }) => {
             htmlFor="escalateTo"
             className="text-xs font-medium text-gray-700"
           >
+            Department
+          </label>
+          <Autocomplete
+            options={departments && departments}
+            getOptionLabel={(option) => option.name}
+            onChange={(event, newValue) => {
+              setSelectedDepartment(newValue); // Set the selected department
+              setFilteredUsers(
+                users.filter(
+                  (user) => user.departmentId === newValue?.departmentId
+                ) // Filter users by department
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                size="small"
+                placeholder="Select Department"
+              />
+            )}
+            value={selectedDepartment}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="escalateTo"
+            className="text-xs font-medium text-gray-700"
+          >
             Escalate To
           </label>
           <Autocomplete
-            options={
-              (users &&
-                users.filter((user) => user.department.isCustomerCare)) ||
-              []
-            }
+            options={filteredUsers || []} // Use the filtered users
             getOptionLabel={(option) =>
               `${option.firstName || ''} ${option.lastName || ''}`.trim()
             }

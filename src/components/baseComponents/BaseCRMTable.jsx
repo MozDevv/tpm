@@ -10,6 +10,7 @@ import {
   useTheme,
   Button,
   Divider,
+  Pagination,
 } from '@mui/material';
 import {
   MoreVert,
@@ -81,12 +82,15 @@ function BaseCRMTable({
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState();
   const [searchText, setSearchText] = useState('');
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
 
   const { refreshData } = useRefreshDataStore();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pageNumber]);
   useEffect(() => {
     fetchData();
   }, [refreshData]);
@@ -97,8 +101,13 @@ function BaseCRMTable({
 
   const fetchData = async () => {
     try {
-      const res = await fetchApiService(fetchApiEndpoint, {});
-      const { data, totalCount } = res.data;
+      const res = await fetchApiService(fetchApiEndpoint, {
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': 10,
+      });
+      const { data, totalCount, totalPages } = res.data;
+      setPageNumber(totalPages);
+      setTotalPages(totalCount);
       setRowData(transformData(data));
     } catch (error) {
       console.error('Error fetching data:', error.response);
@@ -221,22 +230,30 @@ function BaseCRMTable({
   };
   const fetchDataWithFilters = async (filterCriteria) => {
     try {
-      const queryString = serializeFilterCriteria(filterCriteria);
+      const pagingCriteria = {
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': 10,
+      };
 
-      // Check if the endpoint already contains a "?"
+      const combinedCriteria = { ...filterCriteria, ...pagingCriteria };
+
+      const queryString = serializeFilterCriteria(combinedCriteria);
+
       const separator = fetchApiEndpoint.includes('?') ? '&' : '?';
 
       const res = await fetchApiService(
         `${fetchApiEndpoint}${separator}${queryString}`
       );
 
-      const { data } = res.data;
+      const { data, totalCount, totalPages } = res.data;
+
       setRowData(transformData(data));
+      setTotalPages(totalPages);
+      setPageNumber(totalCount);
     } catch (error) {
       console.error('Error fetching filtered data:', error.response);
     }
   };
-
   const [clickedRow, setClickedRow] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const gridApiRef = useRef(null);
@@ -720,6 +737,27 @@ function BaseCRMTable({
           setClickedItem(e.data);
         }}
       />
+
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          pt: 2,
+        }}
+      >
+        <Pagination
+          showFirstButton
+          showLastButton
+          count={totalPages}
+          page={pageNumber}
+          onChange={(e, newPage) => {
+            setPageNumber(newPage);
+          }}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+        />
+      </Box>
     </div>
   );
 }

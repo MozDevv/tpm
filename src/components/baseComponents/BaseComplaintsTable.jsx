@@ -10,6 +10,7 @@ import {
   useTheme,
   Button,
   Divider,
+  Pagination,
 } from '@mui/material';
 import {
   MoreVert,
@@ -84,6 +85,9 @@ function BaseComplaintsTable({
   const [searchText, setSearchText] = useState('');
 
   const { refreshData } = useRefreshDataStore();
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -98,8 +102,13 @@ function BaseComplaintsTable({
 
   const fetchData = async () => {
     try {
-      const res = await fetchApiService(fetchApiEndpoint, {});
-      const { data, totalCount } = res.data;
+      const res = await fetchApiService(fetchApiEndpoint, {
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': 10,
+      });
+      const { data, totalCount, totalPages } = res.data;
+      setPageNumber(totalPages);
+      setTotalPages(totalCount);
       setRowData(transformData(data));
     } catch (error) {
       console.error('Error fetching data:', error.response);
@@ -166,53 +175,7 @@ function BaseComplaintsTable({
     // Pass the filter criteria to the API or use it to filter the data
     fetchDataWithFilters(filterCriteria);
   };
-  const handleSearchByPriority = () => {
-    const filterCriteria = {};
-    let criterionIndex = 0;
 
-    // Collect Search filter
-    if (selectedCategory) {
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyName`
-      ] = 'priority'; // Column selected by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyValue`
-      ] = parseInt(selectedCategory); // Value entered by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].criterionType`
-      ] = 0; // Default to 'Includes'
-      criterionIndex++;
-    }
-
-    console.log('Filter Criteria:', filterCriteria);
-
-    // Pass the filter criteria to the API or use it to filter the data
-    fetchDataWithFilters(filterCriteria);
-  };
-
-  const handleSearchByTicketType = () => {
-    const filterCriteria = {};
-    let criterionIndex = 0;
-
-    // Collect Search filter
-    if (selectedTicketType) {
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyName`
-      ] = 'ticketType'; // Column selected by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].propertyValue`
-      ] = selectedTicketType; // Value entered by the user
-      filterCriteria[
-        `filterCriterion.criterions[${criterionIndex}].criterionType`
-      ] = 0; // Default to 'Includes'
-      criterionIndex++;
-    }
-
-    console.log('Filter Criteria:', filterCriteria);
-
-    // Pass the filter criteria to the API or use it to filter the data
-    fetchDataWithFilters(filterCriteria);
-  };
   const serializeFilterCriteria = (filterCriteria) => {
     const params = new URLSearchParams();
     Object.keys(filterCriteria).forEach((key) => {
@@ -222,17 +185,26 @@ function BaseComplaintsTable({
   };
   const fetchDataWithFilters = async (filterCriteria) => {
     try {
-      const queryString = serializeFilterCriteria(filterCriteria);
+      const pagingCriteria = {
+        'paging.pageNumber': pageNumber,
+        'paging.pageSize': 10,
+      };
 
-      // Check if the endpoint already contains a "?"
+      const combinedCriteria = { ...filterCriteria, ...pagingCriteria };
+
+      const queryString = serializeFilterCriteria(combinedCriteria);
+
       const separator = fetchApiEndpoint.includes('?') ? '&' : '?';
 
       const res = await fetchApiService(
         `${fetchApiEndpoint}${separator}${queryString}`
       );
 
-      const { data } = res.data;
+      const { data, totalCount, totalPages } = res.data;
+
       setRowData(transformData(data));
+      setTotalPages(totalPages);
+      setPageNumber(totalCount);
     } catch (error) {
       console.error('Error fetching filtered data:', error.response);
     }
@@ -673,6 +645,26 @@ function BaseComplaintsTable({
           setClickedItem(e.data);
         }}
       />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          pt: 2,
+        }}
+      >
+        <Pagination
+          showFirstButton
+          showLastButton
+          count={totalPages}
+          page={pageNumber}
+          onChange={(e, newPage) => {
+            setPageNumber(newPage);
+          }}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+        />
+      </Box>
     </div>
   );
 }
