@@ -217,7 +217,7 @@ const CourtCase = () => {
             formData.append('status', 1);
             formData.append('referecenceNo', 'attachments');
 
-            await apiService.post(endpoints.createOmbudsman, formData);
+            await apiService.post(endpoints.createCourtCase, formData);
           }
           setRefreshData((prev) => !prev);
           console.log('All selected items resolved successfully.');
