@@ -11,6 +11,7 @@ import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import ClaimLookupPolicy from './ClaimLookupPolicy';
 import { Dialog } from '@mui/material';
 import GeneralCaseReport from './GeneralCaseReport';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 const GeneralCase = () => {
   const columnDefs = [
@@ -20,13 +21,10 @@ const GeneralCase = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
-      pinned: 'left', // Pinning to the left ensures it's the first column
+      pinned: 'left', // Pinning to the left ensures
       checkboxSelection: true,
       headerCheckboxSelection: true,
-      // valueGetter: (params) => {
-      //   const rowIndex = params.node.rowIndex + 1;
-      //   return `PC${rowIndex.toString().padStart(4, "0")}`; // Ensure 4 digits with leading zeros
-      // },
+
       cellRenderer: (params) => {
         return (
           <p className="underline text-primary font-semibold">{params.value}</p>
@@ -49,21 +47,21 @@ const GeneralCase = () => {
     },
     {
       field: 'partyName',
-      headerName: 'Party Name',
+      headerName: 'Source',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
       field: 'partyEmail',
-      headerName: 'Party Email',
+      headerName: 'Source Email',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
     },
     {
       field: 'partyPhone',
-      headerName: 'Party Phone',
+      headerName: 'Source Phone Number',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
@@ -77,7 +75,7 @@ const GeneralCase = () => {
     },
     {
       field: 'source',
-      headerName: 'Source',
+      headerName: 'Receiving Channel',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
@@ -91,7 +89,7 @@ const GeneralCase = () => {
     },
     {
       field: 'receivedAt',
-      headerName: 'Received At',
+      headerName: 'Date Recieved',
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
@@ -150,10 +148,80 @@ const GeneralCase = () => {
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
-  const title = clickedItem ? 'General Policy' : 'Create New General Policy';
+  const title = clickedItem
+    ? 'General Policy'
+    : 'Incoming general policy matters';
+  const { data: postalCodes } = useFetchAsync(
+    endpoints.getPostalCodes,
+    apiService
+  );
 
   const fields = [
-    // { name: 'id', label: 'ID', type: 'text', required: true },
+    {
+      name: 'pensionerIdentifierType',
+      label: 'Identifier Type',
+      type: 'select',
+
+      required: true,
+      options: [
+        { id: 0, name: 'National Id' },
+        { id: 1, name: 'Passport Number' },
+      ],
+    },
+
+    {
+      name: 'pensionerIdentificationNumber',
+      label: 'Identification Number',
+      type: 'claimSearch',
+      required: true,
+    },
+
+    {
+      name: 'pensionerFirstName',
+      label: 'Pensioner First Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerMiddleName',
+      label: 'Pensioner Middle Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerSurname',
+      label: 'Pensioner Surname',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerEmail',
+      label: 'Pensioner Email',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerPhone',
+      label: 'Pensioner Phone',
+      type: 'text',
+      disabled: true,
+    },
+
+    {
+      name: 'pensionerPersonalNo',
+      label: 'Pensioner Personal No',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+    {
+      name: 'pensionerNumber',
+      label: 'Pensioner Number',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+
     { name: 'subject', label: 'Subject', type: 'text', required: true },
     {
       name: 'referenceNo',
@@ -161,18 +229,38 @@ const GeneralCase = () => {
       type: 'text',
       required: true,
     },
-    { name: 'partyName', label: 'Party Name', type: 'text', required: true },
-    { name: 'partyEmail', label: 'Party Email', type: 'text', required: true },
+    { name: 'partyName', label: 'Source', type: 'text', required: true },
     {
-      name: 'partyPhone',
-      label: 'Party Phone',
-      type: 'phone_number',
+      name: 'postalCodeId',
+      label: 'Postal Code',
+      type: 'select',
+      table: true,
       required: true,
+      options: postalCodes?.map((item) => ({
+        id: item.id,
+        name: item.code,
+        accountNo: item.name,
+      })),
+    },
+    {
+      name: 'postalAddress',
+      label: 'Postal Address',
+      type: 'text',
     },
     { name: 'nature', label: 'Nature', type: 'text', required: true },
-    { name: 'receivedAt', label: 'Received At', type: 'date', required: true },
+    {
+      name: 'receivedAt',
+      label: 'Date Recieved',
+      type: 'date',
+      required: true,
+    },
     { name: 'remarks', label: 'Remarks', type: 'textarea', required: true },
-    { name: 'source', label: 'Source', type: 'textarea', required: true },
+    {
+      name: 'source',
+      label: 'Receiving Channel',
+      type: 'text',
+      required: true,
+    },
     {
       name: 'attachments',
       label: 'Attachments',
@@ -230,6 +318,7 @@ const GeneralCase = () => {
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         ) : (
           <BaseInputCard
@@ -239,6 +328,7 @@ const GeneralCase = () => {
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         )}
       </BaseCard>
@@ -254,8 +344,8 @@ const GeneralCase = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="General Policy"
-        currentTitle="General Policy"
+        breadcrumbTitle="General Policy Matters"
+        currentTitle="General Policy Matters"
       />
     </div>
   );

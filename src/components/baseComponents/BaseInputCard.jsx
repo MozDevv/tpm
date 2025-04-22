@@ -45,6 +45,7 @@ import { BASE_CORE_API } from '@/utils/constants';
 import { baseInputValidator } from './BaseInputValidator';
 import BaseCollapse from './BaseCollapse';
 import BaseEdmsViewer from './BaseEdmsViewer';
+import assessEndpoints, { assessApiService } from '../services/assessmentApi';
 
 const BaseInputCard = ({
   handlePreview,
@@ -77,6 +78,7 @@ const BaseInputCard = ({
   setReFetchData,
   openBaseCard,
   isImported,
+  showRequired = false,
 }) => {
   const initialFormData = fields.reduce((acc, field) => {
     if (field.name === 'suspensionDate') {
@@ -85,6 +87,8 @@ const BaseInputCard = ({
     } else if (field.name === 'uploadDate') {
       // Set the uploadDate to the current date
       acc[field.name] = dayjs().format('YYYY-MM-DD'); // Format as needed
+    } else if (showRequired && field.name === 'status') {
+      acc[field.name] = 0;
     } else {
       acc[field.name] = field.default !== undefined ? field.default : '';
       if (field.type === 'switch') {
@@ -616,6 +620,9 @@ const BaseInputCard = ({
           .sort((a, b) =>
             a.type === 'textarea' ? 1 : b.type === 'textarea' ? -1 : 0
           )
+          .sort((a, b) =>
+            a.type === 'attachments' ? 1 : b.type === 'attachments' ? -1 : 0
+          )
           .map((field, index) => (
             <div
               key={index}
@@ -633,8 +640,13 @@ const BaseInputCard = ({
               ) : field.type === 'attachments' ? (
                 <></>
               ) : (
-                <label className="text-xs font-semibold text-gray-600">
+                <label className="text-xs font-semibold text-gray-600 flex items-center  w-full ">
                   {field.label}
+                  {field.required && showRequired && (
+                    <div className="text-red-600 text-[18px] mt-[1px] font-semibold ml-[3px]">
+                      *
+                    </div>
+                  )}
                 </label>
               )}
               {field.type === 'select' ? (
@@ -784,6 +796,77 @@ const BaseInputCard = ({
                     ))}
                   </TextField>
                 )
+              ) : field.type === 'claimSearch' ? (
+                <TextField
+                  type="text"
+                  name={field.name}
+                  variant="outlined"
+                  size="small"
+                  value={formData[field.name] || ''}
+                  onChange={handleInputChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
+                  required={field.required}
+                  disabled={field.disabled || disableAll}
+                  fullWidth
+                  onBlur={async () => {
+                    if (!formData.pensionerIdentificationNumber) {
+                      setErrors({ searchInput: 'Search input is required' });
+                      return;
+                    }
+                    const searchType =
+                      formData.pensionerIdentifierType === 0
+                        ? 'national_id'
+                        : 'passport_number';
+
+                    const searchInput = formData.pensionerIdentifierType;
+
+                    const filter = {
+                      'filterCriterion.criterions[0].propertyName': `prospectivePensioner.${searchType}`,
+                      'filterCriterion.criterions[0].propertyValue':
+                        searchInput,
+                      'filterCriterion.criterions[0].criterionType': 1,
+                      // formData.searchInput === 'pensioner_number' ? 0 : 2,
+                    };
+                    try {
+                      const response = await assessApiService.get(
+                        assessEndpoints.getAssessmentClaims,
+                        { ...filter }
+                      );
+                      if (response.status === 200) {
+                        if (response.data.data.length === 0) {
+                          message.error('No results found');
+                          return;
+                        }
+
+                        const retiree =
+                          response.data.data[0]?.prospectivePensioner;
+
+                        if (retiree) {
+                          setFormData((prevFormData) => ({
+                            ...prevFormData,
+                            pensionerFirstName: retiree?.first_name || '',
+                            pensionerMiddleName: retiree?.middle_name || '',
+                            pensionerSurname: retiree?.surname || '',
+                            pensionerEmail: retiree?.email_address || '',
+                            pensionerPhone: retiree?.phone_number || '',
+                            pensionerPersonalNo: retiree?.personal_number || '',
+                            pensionerOtherName: retiree?.other_name || '',
+                            pensionerNumber:
+                              response?.data?.data[0]?.pensioner_number || '',
+                          }));
+                        }
+
+                        message.success('Search completed successfully');
+                      } else {
+                        message.error('No results found');
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      message.error('An error occurred while searching');
+                    }
+                  }}
+                />
               ) : field.type === 'searchInput' ? (
                 <TextField
                   type="text"

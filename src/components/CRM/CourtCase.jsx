@@ -13,6 +13,7 @@ import ClaimLookupPolicy from './ClaimLookupPolicy';
 import { Dialog } from '@mui/material';
 import OmbudsmanReport from './OmbudsmanReport';
 import CourtCaseReport from './CourtCaseReport';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 const CourtCase = () => {
   const statusIcons = {
@@ -260,8 +261,77 @@ const CourtCase = () => {
 
   const title = clickedItem ? 'Court Case' : 'Create New Court Case';
 
+  const { data: postalCodes } = useFetchAsync(
+    endpoints.getPostalCodes,
+    apiService
+  );
+
   const fields = [
-    // { name: 'id', label: 'ID', type: 'text', required: false },
+    {
+      name: 'pensionerIdentifierType',
+      label: 'Identifier Type',
+      type: 'select',
+
+      required: true,
+      options: [
+        { id: 0, name: 'National Id' },
+        { id: 1, name: 'Passport Number' },
+      ],
+    },
+
+    {
+      name: 'pensionerIdentificationNumber',
+      label: 'Identification Number',
+      type: 'claimSearch',
+      required: true,
+    },
+
+    {
+      name: 'pensionerFirstName',
+      label: 'Pensioner First Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerMiddleName',
+      label: 'Pensioner Middle Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerSurname',
+      label: 'Pensioner Surname',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerEmail',
+      label: 'Pensioner Email',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerPhone',
+      label: 'Pensioner Phone',
+      type: 'text',
+      disabled: true,
+    },
+
+    {
+      name: 'pensionerPersonalNo',
+      label: 'Pensioner Personal No',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+    {
+      name: 'pensionerNumber',
+      label: 'Pensioner Number',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+
     { name: 'caseNo', label: 'Case No', type: 'text', required: true },
     { name: 'subject', label: 'Subject', type: 'text', required: false },
     {
@@ -270,7 +340,29 @@ const CourtCase = () => {
       type: 'text',
       required: false,
     },
-    { name: 'partyName', label: 'Party Name', type: 'text', required: true },
+    {
+      name: 'partyName',
+      label: 'Represented By',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'postalCodeId',
+      label: 'Postal Code',
+      type: 'select',
+      table: true,
+      required: true,
+      options: postalCodes?.map((item) => ({
+        id: item.id,
+        name: item.code,
+        accountNo: item.name,
+      })),
+    },
+    {
+      name: 'postalAddress',
+      label: 'Postal Address',
+      type: 'text',
+    },
     {
       name: 'status',
       label: 'Status',
@@ -281,31 +373,7 @@ const CourtCase = () => {
         { id: 1, name: 'Resolved' },
       ],
     },
-    {
-      name: 'pensionerNumber',
-      label: 'Pensioner Number',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'pensionerNationalID',
-      label: 'Pensioner National ID',
-      type: 'text',
-      required: false,
-    },
-    {
-      name: 'pensionerPersonalNo',
-      label: 'Pensioner Personal No',
-      type: 'text',
-      required: false,
-    },
-    { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
-    {
-      name: 'partyPhone',
-      label: 'Party Phone',
-      type: 'phone_number',
-      required: false,
-    },
+
     { name: 'nature', label: 'Nature', type: 'text', required: false },
     { name: 'parties', label: 'Parties', type: 'text', required: false },
     { name: 'region', label: 'Region', type: 'text', required: false },
@@ -367,6 +435,7 @@ const CourtCase = () => {
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         ) : (
           <BaseInputCard
@@ -376,6 +445,7 @@ const CourtCase = () => {
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         )}
       </BaseCard>

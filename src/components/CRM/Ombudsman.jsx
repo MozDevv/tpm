@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -12,6 +12,7 @@ import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import ClaimLookupPolicy from './ClaimLookupPolicy';
 import { Dialog } from '@mui/material';
 import OmbudsmanReport from './OmbudsmanReport';
+import useFetchAsync from '../hooks/DynamicFetchHook';
 
 const Ombudsman = () => {
   const statusIcons = {
@@ -54,7 +55,7 @@ const Ombudsman = () => {
     },
     {
       field: 'partyName',
-      headerName: 'Party Name',
+      headerName: 'Represented By',
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
@@ -101,20 +102,20 @@ const Ombudsman = () => {
       filter: true,
       width: 200,
     },
-    {
-      field: 'partyEmail',
-      headerName: 'Party Email',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
-    {
-      field: 'partyPhone',
-      headerName: 'Party Phone',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
+    // {
+    //   field: 'partyEmail',
+    //   headerName: 'Party Email',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   width: 200,
+    // },
+    // {
+    //   field: 'partyPhone',
+    //   headerName: 'Party Phone',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   width: 200,
+    // },
     {
       field: 'pensionerNationalID',
       headerName: 'Pensioner National ID',
@@ -137,50 +138,17 @@ const Ombudsman = () => {
       filter: true,
       width: 200,
     },
-    {
-      field: 'status',
-      headerName: 'Status',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-      cellRenderer: (params) => {
-        const status = statusIcons[params.value];
-        if (!status) return null;
 
-        const IconComponent = status.icon;
-
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconComponent
-              style={{
-                color: status.color,
-                marginRight: '6px',
-                fontSize: '17px',
-              }}
-            />
-            <span
-              style={{
-                color: status.color,
-                fontWeight: 'semibold',
-                fontSize: '13px',
-              }}
-            >
-              {status.name}
-            </span>
-          </div>
-        );
-      },
-    },
     {
       field: 'remarks',
-      headerName: 'Remarks',
+      headerName: 'Corrective Action',
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
     },
     {
       field: 'receivedAt',
-      headerName: 'Received At',
+      headerName: 'Date Recieved',
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
@@ -248,23 +216,86 @@ const Ombudsman = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
   };
 
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const [clickedItem, setClickedItem] = React.useState(null);
 
+  const { data: postalCodes } = useFetchAsync(
+    endpoints.getPostalCodes,
+    apiService
+  );
+
   const title = clickedItem ? 'Ombusdman Case' : 'Create New Ombusdman Case';
+  const [formData, setFormData] = useState();
 
   const fields = [
     // { name: 'id', label: 'ID', type: 'text', required: false },
+    {
+      name: 'pensionerIdentifierType',
+      label: 'Identifier Type',
+      type: 'select',
+
+      required: true,
+      options: [
+        { id: 0, name: 'National Id' },
+        { id: 1, name: 'Passport Number' },
+      ],
+    },
+
+    {
+      name: 'pensionerIdentificationNumber',
+      label: 'Identification Number',
+      type: 'claimSearch',
+      required: true,
+    },
+
+    {
+      name: 'pensionerFirstName',
+      label: 'Pensioner First Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerMiddleName',
+      label: 'Pensioner Middle Name',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerSurname',
+      label: 'Pensioner Surname',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerEmail',
+      label: 'Pensioner Email',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      name: 'pensionerPhone',
+      label: 'Pensioner Phone',
+      type: 'text',
+      disabled: true,
+    },
+
+    {
+      name: 'pensionerPersonalNo',
+      label: 'Pensioner Personal No',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+    {
+      name: 'pensionerNumber',
+      label: 'Pensioner Number',
+      type: 'text',
+      required: false,
+      disabled: true,
+    },
+
     {
       name: 'referenceNo',
       label: 'Reference No',
@@ -276,6 +307,23 @@ const Ombudsman = () => {
       label: 'Ombudsman Branch',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'postalCodeId',
+      label: 'Postal Code',
+      type: 'select',
+      table: true,
+      required: true,
+      options: postalCodes?.map((item) => ({
+        id: item.id,
+        name: item.code,
+        accountNo: item.name,
+      })),
+    },
+    {
+      name: 'postalAddress',
+      label: 'Postal Address',
+      type: 'text',
     },
     {
       name: 'complaintChannel',
@@ -293,43 +341,47 @@ const Ombudsman = () => {
         { id: 1, name: 'Resolved' },
       ],
     },
-    { name: 'partyName', label: 'Party Name', type: 'text', required: true },
     {
-      name: 'pensionerNumber',
-      label: 'Pensioner Number',
+      name: 'partyName',
+      label: 'Represented By',
       type: 'text',
-      required: false,
+      required: true,
     },
-    { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
-    {
-      name: 'partyPhone',
-      label: 'Party Phone',
-      type: 'phone_number',
-      required: false,
-    },
-    {
-      name: 'pensionerNationalID',
-      label: 'Pensioner National ID',
-      type: 'text',
-      required: false,
-    },
-    {
-      name: 'pensionerPersonalNo',
-      label: 'Pensioner Personal No',
-      type: 'text',
-      required: false,
-    },
+
+    // { name: 'partyEmail', label: 'Party Email', type: 'text', required: false },
+    // {
+    //   name: 'partyPhone',
+    //   label: 'Party Phone',
+    //   type: 'phone_number',
+    //   required: false,
+    // },
+
     {
       name: 'complaintIssue',
       label: 'Complaint Issue',
       type: 'text',
       required: true,
     },
-    { name: 'rootCause', label: 'Root Cause', type: 'text', required: true },
+    {
+      name: 'rootCause',
+      label: 'Root Cause',
+      type: 'textarea',
+      required: true,
+    },
     // { name: 'status', label: 'Status', type: 'number', required: false },
-    { name: 'receivedAt', label: 'Received At', type: 'date', required: false },
+    {
+      name: 'receivedAt',
+      label: 'Date Recieved',
+      type: 'date',
+      required: false,
+    },
     // { name: 'attachments', label: 'Attachments', type: 'file', required: false },
-    { name: 'remarks', label: 'Remarks', type: 'textarea', required: false },
+    {
+      name: 'remarks',
+      label: 'Corrective Remarks',
+      type: 'textarea',
+      required: false,
+    },
 
     {
       name: 'attachments',
@@ -388,15 +440,18 @@ const Ombudsman = () => {
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         ) : (
           <BaseInputCard
+            setInputData={setFormData}
             fields={fields}
             apiEndpoint={endpoints.createOmbudsman}
             postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}
+            showRequired={true}
           />
         )}
       </BaseCard>

@@ -71,12 +71,6 @@ export const baseInputValidator = (field, value, formData) => {
     }
   }
 
-  if (field.name === 'pensionerNumber' && value) {
-    if (!/^\d+$/.test(value)) {
-      newErrors[field.name] = `${field.label} must contain only numbers`;
-    }
-  }
-
   if (field.name === 'pensionerNationalID' && value) {
     if (!/^\d{6,10}$/.test(value)) {
       newErrors[
@@ -94,9 +88,37 @@ export const baseInputValidator = (field, value, formData) => {
 
   // Validation for phone number fields
   if (field.name === 'partyPhone' && value) {
-    const phonePattern = /^\+?[0-9]{10,13}$/; // Adjust pattern for your locale
+    const phonePattern = /^\+?[0-9]{10,13}$/; // General phone number pattern
     if (!phonePattern.test(value)) {
       newErrors[field.name] = `${field.label} is not a valid phone number`;
+    } else if (value.startsWith('+254') && value.length !== 13) {
+      newErrors[
+        field.name
+      ] = `${field.label} must be a valid Kenyan phone number`;
+    }
+    if (field.name === 'pensionerNumber' && value) {
+      const pensionerPattern = /^[a-zA-Z0-9/]+$/; // Matches alphanumeric characters and /
+      if (!pensionerPattern.test(value)) {
+        newErrors[
+          field.name
+        ] = `${field.label} must contain only alphanumeric characters or '/'`;
+      }
+    }
+  }
+  if (field.name === 'partyName' && value) {
+    const namePattern = /^[a-zA-Z\s'&-]+$/; // Allows letters, spaces, ', &, and -
+    if (!namePattern.test(value)) {
+      newErrors[
+        field.name
+      ] = `${field.label} must contain only letters, spaces, and the special characters (' - &)`;
+    }
+  }
+  if (field.name === 'nature' && value) {
+    const naturePattern = /^[a-zA-Z\s]+$/; // Allows only letters and spaces
+    if (!naturePattern.test(value)) {
+      newErrors[
+        field.name
+      ] = `${field.label} must contain only letters and spaces`;
     }
   }
 

@@ -711,7 +711,7 @@ export const menuItems = [
 
     children: [
       {
-        title: 'General Policies',
+        title: 'General Policy Matters',
         path: '/pensions/customer-relations/policy/general',
       },
       {
@@ -721,6 +721,14 @@ export const menuItems = [
       {
         title: 'Court Cases',
         path: '/pensions/customer-relations/policy/court-case',
+      },
+      {
+        title: 'Parliament Business',
+        path: '/pensions/customer-relations/policy/parliament-business',
+      },
+      {
+        title: 'Templates Library',
+        path: '/pensions/customer-relations/policy/templates-library',
       },
     ],
   },

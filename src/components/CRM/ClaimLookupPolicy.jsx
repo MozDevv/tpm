@@ -31,6 +31,19 @@ const ClaimLookupPolicy = () => {
     searchType: '',
     searchInput: '',
   });
+  const [errors, setErrors] = React.useState({});
+
+  const validateInput = () => {
+    const newErrors = {};
+    if (formData.searchType === 'national_id' && formData.searchInput) {
+      if (!/^\d{6,10}$/.test(formData.searchInput)) {
+        newErrors.searchInput =
+          'National ID must be a valid number (6-10 digits)';
+      }
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
   const [openClaimInquiryDialpog, setOpenClaimInquiryDialog] =
     React.useState(false);
   const [fetchedData, setFetchedData] = React.useState([]);
@@ -45,11 +58,12 @@ const ClaimLookupPolicy = () => {
     const filter = {
       'filterCriterion.criterions[0].propertyName': `prospectivePensioner.${formData.searchType}`,
       'filterCriterion.criterions[0].propertyValue': formData.searchInput,
-      'filterCriterion.criterions[0].criterionType': 2,
+      'filterCriterion.criterions[0].criterionType': 1,
+      // formData.searchInput === 'pensioner_number' ? 0 : 2,
     };
     try {
       const response = await assessApiService.get(
-        assessEndpoints.getClaimsListings,
+        assessEndpoints.getAssessmentClaims,
         { ...filter }
       );
 
@@ -85,6 +99,7 @@ const ClaimLookupPolicy = () => {
         clickedItem={fetchedData}
         isUserComponent={false}
         retireeId={fetchedData?.prospectivePensionerId}
+        isClaim={true}
       >
         <AssessmentCard
           claim={
@@ -146,12 +161,11 @@ const ClaimLookupPolicy = () => {
               size="small"
               fullWidth
             >
-              <MenuItem value="personal_number">Pensioner Number</MenuItem>
-              <MenuItem value="pensioner_number">Personal Number</MenuItem>
+              <MenuItem value="pensioner_number">Pensioner Number</MenuItem>
+              <MenuItem value="personal_number">Personal Number</MenuItem>
               <MenuItem value="national_id">Pensioner National ID</MenuItem>
             </TextField>
           </div>
-
           {/* Input Field for Search */}
           {formData.searchType && (
             <div className="mb-4 mt-5">
@@ -160,12 +174,44 @@ const ClaimLookupPolicy = () => {
               </label>
               <TextField
                 value={formData.searchInput || ''}
-                onChange={(event) =>
+                onChange={(event) => {
+                  const value = event.target.value;
+                  const searchType = formData.searchType; // Use the current searchType directly
+
                   setFormData((prevData) => ({
                     ...prevData,
-                    searchInput: event.target.value,
-                  }))
-                }
+                    searchInput: value,
+                  }));
+
+                  // Validate input dynamically based on searchType
+                  if (searchType === 'national_id') {
+                    if (!/^\d{6,10}$/.test(value)) {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        searchInput:
+                          'National ID must be a valid number (6-10 digits)',
+                      }));
+                    } else {
+                      setErrors((prevErrors) => {
+                        const { searchInput, ...rest } = prevErrors; // Remove the error if valid
+                        return rest;
+                      });
+                    }
+                  } else if (searchType === 'personal_number') {
+                    if (!/^\d+$/.test(value)) {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        searchInput:
+                          'Personal Number must contain only numeric values',
+                      }));
+                    } else {
+                      setErrors((prevErrors) => {
+                        const { searchInput, ...rest } = prevErrors; // Remove the error if valid
+                        return rest;
+                      });
+                    }
+                  }
+                }}
                 variant="outlined"
                 size="small"
                 fullWidth
@@ -173,17 +219,24 @@ const ClaimLookupPolicy = () => {
                   /([A-Z])/g,
                   ' $1'
                 )}`}
+                error={!!errors.searchInput} // Highlight the field if there's an error
+                helperText={errors.searchInput} // Display the error message
               />
             </div>
           )}
 
-          {/* Search Button */}
           <div className="mt-10">
             <Button
               variant="contained"
               color="primary"
               onClick={handleSearch}
               fullWidth
+              //disable if error
+              disabled={
+                !formData.searchType ||
+                !formData.searchInput ||
+                Object.keys(errors).length > 0
+              }
             >
               Search
             </Button>
