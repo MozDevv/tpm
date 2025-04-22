@@ -352,6 +352,7 @@ const CourtCase = () => {
         )}
       </BaseCard>
       <BaseTable
+        refreshData={refreshData}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}
