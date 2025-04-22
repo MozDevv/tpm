@@ -566,6 +566,10 @@ const endpoints = {
   notifyBeneficiary: '/api/IGCClaimInitiation/CreateIGCClaimforBeneficiary',
   getOmbumdanByStartDate: (startDate, endDate) =>
     `api/Policy/ombudsman-case/reports?startDate=${startDate}&endDate=${endDate}`,
+  getCourtCaseByStartDate: (startDate, endDate) =>
+    `api/Policy/court-case/reports?startDate=${startDate}&endDate=${endDate}`,
+  getGeneralPolicyStartDate: (startDate, endDate) =>
+    `api/Policy/general/reports?startDate=${startDate}&endDate=${endDate}`,
 };
 
 export const apiService = {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Divider, IconButton } from '@mui/material';
+import { Button, Divider, IconButton, TextField } from '@mui/material';
 import { Checkbox, message } from 'antd';
 import { Close } from '@mui/icons-material';
 import { generateExcelTemplateWithApiService } from '@/utils/excelHelper';
@@ -17,6 +17,12 @@ const BaseExcelComponent = ({
   segmentFilters,
   isIgc = false,
   isOmbudsman,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  unnestedData,
+  hasRangeFilter = false,
 }) => {
   // Initialize selectedColumns with all columns by default
   const [selectedColumns, setSelectedColumns] = useState(columns);
@@ -54,6 +60,32 @@ const BaseExcelComponent = ({
   };
 
   let segFilter = {};
+
+    const [financialYear, setFinancialYear] = useState('');
+    const [quarterEndDate, setQuarterEndDate] = useState('');
+  
+    // Calculate financial year and quarter dynamically
+    useEffect(() => {
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1; // Months are 0-indexed
+      const currentYear = now.getFullYear();
+  
+      // Determine financial year
+      const startYear = currentMonth >= 7 ? currentYear : currentYear - 1;
+      const endYear = currentMonth >= 7 ? currentYear + 1 : currentYear;
+      setFinancialYear(`${startYear}/${endYear}`);
+  
+      // Determine quarter end date
+      const quarterEndMonths = [3, 6, 9, 12]; // March, June, September, December
+      const currentQuarterEndMonth =
+        quarterEndMonths.find((month) => month >= currentMonth) || 12; // Default to December if no match
+      const quarterEnd = new Date(currentYear, currentQuarterEndMonth - 1, 0); // Last day of the quarter
+      setQuarterEndDate(
+        `${quarterEnd.getDate()} ${quarterEnd.toLocaleString('default', {
+          month: 'long',
+        })}, ${quarterEnd.getFullYear()}`
+      );
+    }, []);
   const exportToExcel = () => {
     if (selectedColumns.length === 0) {
       message.error('Please select at least one column to export.');
@@ -75,6 +107,7 @@ const BaseExcelComponent = ({
     }
     // Handle segmentOptions filtering
     else if (
+      segmentFilters &&
       segmentFilters.segmentFilterParameter &&
       segmentFilters.activeSegment !== -1
     ) {
@@ -85,6 +118,7 @@ const BaseExcelComponent = ({
 
     // Handle segmentOptions2 filtering
     if (
+      segmentFilters &&
       segmentFilters.segmentFilterParameter2 &&
       segmentFilters.activeSegment2 !== -1
     ) {
@@ -96,6 +130,7 @@ const BaseExcelComponent = ({
 
     // Remove filters if both activeSegment and activeSegment2 are -1
     if (
+      segmentFilters &&
       segmentFilters.activeSegment === -1 &&
       segmentFilters.activeSegment2 === -1
     ) {
@@ -103,6 +138,8 @@ const BaseExcelComponent = ({
     }
 
     console.log('Filter applied:', segFilter);
+
+    
 
     generateExcelTemplateWithApiService(
       fetchApiEndpoint,
@@ -118,7 +155,10 @@ const BaseExcelComponent = ({
       filters,
       segFilter,
       excelTitle,
-      isOmbudsman
+      isOmbudsman,
+      unnestedData, 
+      financialYear,
+      quarterEndDate,
     );
   };
 
@@ -151,6 +191,50 @@ const BaseExcelComponent = ({
           className="w-full p-2 border rounded"
         />
         <Divider sx={{ py: 1 }} />
+
+        {hasRangeFilter && (
+          <div className="mb-4 mt-2 grid grid-cols-2 gap-4 pt-3">
+            <TextField
+              label="Start Date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              className="w-full"
+              sx={{
+                '& .MuiInputBase-root': {
+                  height: '40px',
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#006990',
+                },
+              }}
+            />
+            <TextField
+              label="End Date"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              className="w-full"
+              sx={{
+                '& .MuiInputBase-root': {
+                  height: '40px',
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#006990',
+                },
+              }}
+            />
+            {/* <Button
+               variant="contained"
+               onClick={handleGenerateReport}
+               className="col-span-2 mt-2"
+             >
+               Apply Date Filter
+             </Button> */}
+          </div>
+        )}
         <div className="mb-5 mt-4 py-2">
           <label className="inline-flex items-center">
             <input

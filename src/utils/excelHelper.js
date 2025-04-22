@@ -121,7 +121,10 @@ export const generateExcelTemplateWithApiService = async (
   filters = {},
   segFilter = {},
   excelTitle,
-  isOmbudsman = false
+  isOmbudsman = false,
+  unnestedData = false,
+  financialYear = null,
+  quarterEndDate = null
 ) => {
   try {
     if (!Array.isArray(selectedColumns) || selectedColumns.length === 0) {
@@ -136,7 +139,7 @@ export const generateExcelTemplateWithApiService = async (
       ...filters,
       ...segFilter,
     });
-    const { data } = response.data;
+    const { data } = unnestedData ? response : response.data;
 
     if (typeof mapDataFunction !== 'function') {
       console.error('Invalid mapDataFunction. It must be a function');
@@ -146,40 +149,41 @@ export const generateExcelTemplateWithApiService = async (
 
     const startTime = performance.now();
     const dataWithFormattedDates = await Promise.all(
-      data.map(async (item) => {
-        const formattedItem = await Object.keys(item).reduce(
-          async (accPromise, key) => {
-            const acc = await accPromise;
-            const column = selectedColumns.find((col) => col.field === key);
-            if (column) {
-              const value = item[key];
-              if (column.valueFormatter) {
-                // Use the valueFormatter function if defined
-                acc[key] = column.valueFormatter({ value });
-              } else if (
-                typeof value === 'string' &&
-                dayjs(value, dayjs.ISO_8601, true).isValid() &&
-                column.headerName.toLowerCase().includes('date')
-              ) {
-                const date = dayjs(value);
-                acc[key] = `${date.date().toString().padStart(2, '0')}/${(
-                  date.month() + 1
-                )
-                  .toString()
-                  .padStart(2, '0')}/${date.year()}`;
+      data &&
+        data.map(async (item) => {
+          const formattedItem = await Object.keys(item).reduce(
+            async (accPromise, key) => {
+              const acc = await accPromise;
+              const column = selectedColumns.find((col) => col.field === key);
+              if (column) {
+                const value = item[key];
+                if (column.valueFormatter) {
+                  // Use the valueFormatter function if defined
+                  acc[key] = column.valueFormatter({ value });
+                } else if (
+                  typeof value === 'string' &&
+                  dayjs(value, dayjs.ISO_8601, true).isValid() &&
+                  column.headerName.toLowerCase().includes('date')
+                ) {
+                  const date = dayjs(value);
+                  acc[key] = `${date.date().toString().padStart(2, '0')}/${(
+                    date.month() + 1
+                  )
+                    .toString()
+                    .padStart(2, '0')}/${date.year()}`;
+                } else {
+                  acc[key] = value;
+                }
               } else {
-                acc[key] = value;
+                acc[key] = item[key];
               }
-            } else {
-              acc[key] = item[key];
-            }
-            return acc;
-          },
-          Promise.resolve({})
-        );
+              return acc;
+            },
+            Promise.resolve({})
+          );
 
-        return formattedItem;
-      })
+          return formattedItem;
+        })
     );
 
     console.log('Data with formatted dates:', dataWithFormattedDates);
@@ -245,14 +249,15 @@ export const generateExcelTemplateWithApiService = async (
 
         // Add image with defined dimensions
         worksheet.addImage(kenyaLogoId, {
-          tl: { col: centerCol, row: 0 },
+          tl: { col: centerCol + 2, row: 0 },
           ext: { width: imageWidth, height: imageHeight },
           editAs: 'oneCell',
         });
 
         // Adjust row heights (logo rows)
         worksheet.getRow(1).height = imageHeight * 0.75;
-        worksheet.getRow(2).height = 5; // Small spacer
+
+        worksheet.getRow(2).height = 12; // Small spacer
 
         // Function to create perfectly centered rows
         const addCenteredRow = (
@@ -286,10 +291,10 @@ export const generateExcelTemplateWithApiService = async (
           false,
           20
         );
-        addCenteredRow(6, 'Financial Year: 2023/2024', 12, false, 20);
+        addCenteredRow(6, `Financial Year: ${financialYear}`, 12, false, 20);
         addCenteredRow(
           7,
-          'Resolution of Public Complaints Received from CAJ - Report for the 3rd Quarter Ending 30th April, 2024'
+          `Resolution of Public Complaints Received from CAJ - Report for the 3rd Quarter Ending ${quarterEndDate}`
         );
 
         // Add empty spacer row

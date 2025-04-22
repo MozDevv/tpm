@@ -10,6 +10,9 @@ import { formatDate } from '@/utils/dateFormatter';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import ClaimLookupPolicy from './ClaimLookupPolicy';
+import { Dialog } from '@mui/material';
+import OmbudsmanReport from './OmbudsmanReport';
+import CourtCaseReport from './CourtCaseReport';
 
 const CourtCase = () => {
   const statusIcons = {
@@ -188,6 +191,9 @@ const CourtCase = () => {
 
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [refreshData, setRefreshData] = React.useState(false);
+  const [openReport, setOpenReport] = React.useState(false);
+
+  const reportItems = ['Court Case Report'];
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -227,6 +233,10 @@ const CourtCase = () => {
       } else {
         console.log('No items selected to resolve.');
       }
+    },
+    'Court Case Report': () => {
+      setOpenReport(true);
+      // setClickedItem(null);
     },
   };
 
@@ -312,7 +322,25 @@ const CourtCase = () => {
 
   return (
     <div className="">
-      {' '}
+      <Dialog
+        open={openReport}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <CourtCaseReport
+            columnDefs={columnDefs}
+            setOpenReport={setOpenReport}
+          />
+        </div>
+      </Dialog>{' '}
       <BaseExpandCard
         open={claimLookup}
         onClose={() => setClaimLookup(false)}
@@ -352,6 +380,7 @@ const CourtCase = () => {
         )}
       </BaseCard>
       <BaseTable
+        reportItems={reportItems}
         refreshData={refreshData}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}

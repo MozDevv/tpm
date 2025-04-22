@@ -9,6 +9,8 @@ import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate } from '@/utils/dateFormatter';
 import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import ClaimLookupPolicy from './ClaimLookupPolicy';
+import { Dialog } from '@mui/material';
+import GeneralCaseReport from './GeneralCaseReport';
 
 const GeneralCase = () => {
   const columnDefs = [
@@ -118,6 +120,8 @@ const GeneralCase = () => {
 
   const [claimLookup, setClaimLookup] = React.useState(false);
 
+  const [openReport, setOpenReport] = React.useState(false);
+
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -130,6 +134,10 @@ const GeneralCase = () => {
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
     claimLookup: () => setClaimLookup(true),
+    'General Case Report': () => {
+      setOpenReport(true);
+      // setClickedItem(null);
+    },
   };
 
   const baseCardHandlers = {
@@ -173,9 +181,29 @@ const GeneralCase = () => {
       addName: true,
     },
   ];
+  const reportItems = ['General Case Report'];
 
   return (
     <div className="">
+      <Dialog
+        open={openReport}
+        onClose={() => setOpenReport(false)}
+        sx={{
+          '& .MuiPaper-root': {
+            minHeight: '75vh',
+            maxHeight: '85vh',
+            minWidth: '30vw',
+            maxWidth: '35vw',
+          },
+        }}
+      >
+        <div className="px-6">
+          <GeneralCaseReport
+            columnDefs={columnDefs}
+            setOpenReport={setOpenReport}
+          />
+        </div>
+      </Dialog>{' '}
       <BaseExpandCard
         open={claimLookup}
         onClose={() => setClaimLookup(false)}
@@ -215,6 +243,7 @@ const GeneralCase = () => {
         )}
       </BaseCard>
       <BaseTable
+        reportItems={reportItems}
         openBaseCard={openBaseCard}
         clickedItem={clickedItem}
         setClickedItem={setClickedItem}

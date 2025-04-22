@@ -5,7 +5,7 @@ import { Checkbox, message } from 'antd';
 import endpoints, { apiService } from '../services/setupsApi';
 import BaseExcelComponent from '../baseComponents/BaseExcelComponent';
 
-function OmbudsmanReport({ columnDefs, onGenerateReport }) {
+function GeneralCaseReport({ columnDefs, setOpenReport, onGenerateReport }) {
   // State variables
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -89,7 +89,7 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
 
     const options = {
       margin: 0.5, // Default margin (in inches)
-      filename: 'Ombudsman Report.pdf',
+      filename: 'General Policy Report.pdf',
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
@@ -126,13 +126,13 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
     }
     try {
       const res = await apiService.get(
-        endpoints.getOmbumdanByStartDate(startDate, endDate)
+        endpoints.getGeneralPolicyStartDate(startDate, endDate)
       );
       if (res.status === 200) {
         setRowData(
           res.data.map((item) => ({
             ...item,
-            status: item.status === 1 ? 'Resolved' : 'On Going',
+            // status: item.status === 1 ? 'Resolved' : 'On Going',
           }))
         );
         handleDownload();
@@ -142,15 +142,32 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
     }
   };
   const [openExcel, setOpenExcel] = useState(false);
-  const transformData = (data) => {
-    return data.map((item, index) => ({
-      ...item,
-      status: item.status === 1 ? 'Resolved' : 'On Going',
-      // roles: item.roles,
-    }));
-  };
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
+      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
+        <BaseExcelComponent
+          setLoading={setLoading}
+          isOmbudsman={true}
+          setOpenExcel={setOpenExcel}
+          fetchApiEndpoint={endpoints.getGeneralPolicyStartDate(
+            startDate,
+            endDate
+          )}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          fetchApiService={apiService.get}
+          columns={columnDefs.map((col) => ({
+            headerName: col.headerName,
+            field: col.field,
+          }))}
+          transformData={(data) => data}
+          hasRangeFilter={true}
+          fileName="General Case Report"
+          unnestedData={true}
+        />
+      </Dialog>
       <div
         className=""
         style={{
@@ -184,11 +201,11 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
           </div>
           <table
             style={{
-              transform: 'scale(0.8)',
+              transform: 'scale(1)',
               transformOrigin: 'top left',
               width: '100%',
             }}
-            className=" border-collapse font-sans text-[10px]"
+            className=" border-collapse font-sans text-[11px]"
           >
             <thead>
               <tr className="">
@@ -221,40 +238,11 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
         </div>
       </div>
 
-      <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
-        <BaseExcelComponent
-          setLoading={setLoading}
-          isOmbudsman={true}
-          setOpenExcel={setOpenExcel}
-          fetchApiEndpoint={endpoints.getOmbumdanByStartDate(
-            startDate,
-            endDate
-          )}
-          startDate={startDate}
-          setStartDate={setStartDate}
-          endDate={endDate}
-          setEndDate={setEndDate}
-          fetchApiService={apiService.get}
-          columns={columnDefs.map((col) => ({
-            headerName: col.headerName,
-            field: col.field,
-          }))}
-          // transformData={(rowData) => ({
-          //   ...rowData,
-          //   status: rowData.status === 1 ? 'Resolved' : 'On Going',
-          // })}
-          transformData={transformData}
-          hasRangeFilter={true}
-          fileName="Ombudsman Report"
-          unnestedData={true}
-        />
-      </Dialog>
-
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
-        Ombudsman Report
+        General Case Report
       </h1>
       <IconButton
-        onClick={() => onGenerateReport(null)} // Close the report dialog
+        onClick={() => setOpenReport(false)} // Close the report dialog
         sx={{
           position: 'absolute',
           top: '10px',
@@ -368,4 +356,4 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   );
 }
 
-export default OmbudsmanReport;
+export default GeneralCaseReport;

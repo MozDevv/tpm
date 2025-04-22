@@ -356,7 +356,10 @@ const Ombudsman = () => {
         }}
       >
         <div className="px-6">
-          <OmbudsmanReport columnDefs={columnDefs} />
+          <OmbudsmanReport
+            columnDefs={columnDefs}
+            setOpenReport={setOpenReport}
+          />
         </div>
       </Dialog>
       <BaseExpandCard

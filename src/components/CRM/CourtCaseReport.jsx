@@ -5,7 +5,7 @@ import { Checkbox, message } from 'antd';
 import endpoints, { apiService } from '../services/setupsApi';
 import BaseExcelComponent from '../baseComponents/BaseExcelComponent';
 
-function OmbudsmanReport({ columnDefs, onGenerateReport }) {
+function CourtCaseReport({ columnDefs, setOpenReport }) {
   // State variables
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -27,25 +27,6 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   const [error, setError] = useState('');
 
   // Handlers
-
-  useEffect(() => {
-    setSelectedColumns(columnDefs.map((col) => col.field));
-  }, [columnDefs]);
-  const handleStartDateChange = (event) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event) => {
-    setEndDate(event.target.value);
-  };
-
-  const handleColumnSelection = (column) => {
-    setSelectedColumns((prev) =>
-      prev.includes(column)
-        ? prev.filter((col) => col !== column)
-        : [...prev, column]
-    );
-  };
 
   const [financialYear, setFinancialYear] = useState('');
   const [quarterEndDate, setQuarterEndDate] = useState('');
@@ -72,6 +53,35 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
       })}, ${quarterEnd.getFullYear()}`
     );
   }, []);
+
+  useEffect(() => {
+    setSelectedColumns(columnDefs.map((col) => col.field));
+  }, [columnDefs]);
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event) => {
+    setEndDate(event.target.value);
+  };
+
+  const handleColumnSelection = (column) => {
+    setSelectedColumns((prev) =>
+      prev.includes(column)
+        ? prev.filter((col) => col !== column)
+        : [...prev, column]
+    );
+  };
+
+  const handleGenerateReport = () => {
+    if (!startDate || !endDate) {
+      setError('Both start and end dates are required');
+      return;
+    }
+
+    setError(''); // Clear any previous error
+    fetchRowData(); // Fetch data and generate report
+  };
 
   const [loading, setLoading] = useState(false);
   const [rowData, setRowData] = useState([]);
@@ -123,10 +133,11 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   const fetchRowData = async () => {
     if (!startDate || !endDate) {
       message.error('Both start and end dates are required');
+      return;
     }
     try {
       const res = await apiService.get(
-        endpoints.getOmbumdanByStartDate(startDate, endDate)
+        endpoints.getCourtCaseByStartDate(startDate, endDate)
       );
       if (res.status === 200) {
         setRowData(
@@ -176,6 +187,7 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
               Name of Public Institution: The National Treasury & Economic
               Planning
             </p>
+
             <p className="">Financial Year: {financialYear}</p>
             <p className="font-semibold">
               Resolution of Public Complaints Received from CAJ – Report for the
@@ -226,7 +238,7 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
           setLoading={setLoading}
           isOmbudsman={true}
           setOpenExcel={setOpenExcel}
-          fetchApiEndpoint={endpoints.getOmbumdanByStartDate(
+          fetchApiEndpoint={endpoints.getCourtCaseByStartDate(
             startDate,
             endDate
           )}
@@ -245,16 +257,16 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
           // })}
           transformData={transformData}
           hasRangeFilter={true}
-          fileName="Ombudsman Report"
+          fileName="Court Case Report"
           unnestedData={true}
         />
       </Dialog>
 
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
-        Ombudsman Report
+        Court Case Report
       </h1>
       <IconButton
-        onClick={() => onGenerateReport(null)} // Close the report dialog
+        onClick={() => setOpenReport(false)} // Close the report dialog
         sx={{
           position: 'absolute',
           top: '10px',
@@ -368,4 +380,4 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   );
 }
 
-export default OmbudsmanReport;
+export default CourtCaseReport;
