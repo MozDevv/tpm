@@ -34,5 +34,5 @@ export function useDocumentBase64(id) {
     fetchBase64();
   }, [id]);
 
-  return { base64, loading, error };
+  return { base64, loading, setLoading, error };
 }

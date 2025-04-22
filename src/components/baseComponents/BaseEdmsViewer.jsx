@@ -2,15 +2,15 @@ import { Backdrop } from '@mui/material';
 import { useDocumentBase64 } from '../hooks/useDocumentBase64';
 
 export default function BaseEdmsViewer({ docId }) {
-  const { base64, loading, error } = useDocumentBase64(docId);
+  const { base64, loading, setLoading, error } = useDocumentBase64(docId);
 
   if (loading)
     return (
       <div>
         <Backdrop
           sx={{ color: '#fff', zIndex: 999999 }}
-          open={excelLoading}
-          onClick={() => setExcelLoading(false)}
+          open={loading}
+          onClick={() => setLoading(false)}
         >
           {/* <span class="loader"></span> */}
           <div className="ml-3 font-semibold text-xl flex items-center">

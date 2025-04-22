@@ -15,6 +15,7 @@ import {
   ListItem,
   Popper,
   Dialog,
+  IconButton,
 } from '@mui/material';
 import { Alert, message, Table, Upload } from 'antd';
 import dayjs from 'dayjs';
@@ -32,6 +33,7 @@ import {
   Launch,
   Add,
   Delete,
+  Close,
 } from '@mui/icons-material';
 import MuiPhoneNumber from 'mui-phone-number';
 import financeEndpoints, { apiService } from '../services/financeApi';
@@ -1233,6 +1235,17 @@ const BaseInputCard = ({
           zIndex: 99999,
         }}
       >
+        <IconButton
+          onClick={() => setPreviewOpen(false)}
+          sx={{
+            position: 'absolute',
+            right: 16,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <Close />
+        </IconButton>
         {previewContent}
       </Dialog>
 

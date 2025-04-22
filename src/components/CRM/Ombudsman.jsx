@@ -228,7 +228,7 @@ const Ombudsman = () => {
             });
 
             formData.append('status', 1);
-            formData.append('referecenceNo', 'attachments');
+            formData.append('referenceNo', 'attachments');
 
             await apiService.post(endpoints.createOmbudsman, formData);
           }
@@ -266,7 +266,7 @@ const Ombudsman = () => {
   const fields = [
     // { name: 'id', label: 'ID', type: 'text', required: false },
     {
-      name: 'referecenceNo',
+      name: 'referenceNo',
       label: 'Reference No',
       type: 'text',
       required: true,
