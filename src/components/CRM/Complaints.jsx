@@ -9,21 +9,26 @@ import BaseInputCard from '@/components/baseComponents/BaseInputCard';
 import endpoints, { apiService } from '@/components/services/setupsApi';
 import { formatDate, parseDate } from '@/utils/dateFormatter';
 import BaseComplaintsTable from '../baseComponents/BaseComplaintsTable';
-import { Alert, Card, Result, Table } from 'antd';
+import { Alert, Card, Divider, Empty, message, Result, Table } from 'antd';
 import {
   Autocomplete,
+  Box,
   Button,
+  Chip,
   Dialog,
   IconButton,
   Snackbar,
   TextareaAutosize,
   TextField,
+  Typography,
 } from '@mui/material';
 import {
   ArrowBack,
   Close,
   DownloadOutlined,
   Launch,
+  Task,
+  Verified,
 } from '@mui/icons-material';
 import BaseCollapse from '../baseComponents/BaseCollapse';
 import useFetchAsync from '../hooks/DynamicFetchHook';
@@ -372,6 +377,7 @@ const Complaints = ({ status }) => {
         setComments('');
         setOpenBaseCard(false);
         setClickedItem(null);
+        message.success(response.data);
       } else {
         console.error('Error closing complaint:', response.data.message);
       }
@@ -410,6 +416,13 @@ const Complaints = ({ status }) => {
       console.error('Error escalating complaint:', error);
     }
   };
+
+  const DetailItem = ({ label, value }) => (
+    <div>
+      <p className="text-xs text-gray-500 mb-1">{label}</p>
+      <p className="text-sm font-medium">{value}</p>
+    </div>
+  );
 
   return (
     <div className="">
@@ -621,26 +634,34 @@ const Complaints = ({ status }) => {
         isUserComponent={false}
       >
         {clickedItem ? (
-          <div className="pt-5">
+          <div className="pt-5 h-[75vh] overflow-y-auto">
             <BaseCollapse name="Complaint Details">
-              <div className="  rounded-lg p-3 shadow-sm mx-2">
-                <Card
-                  style={{
-                    borderColor: '#91d5ff',
-                    borderRadius: 10,
-                    background: '#f0faff',
-                    padding: '6px',
+              <div className="px-4">
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    p: 2,
+                    bgcolor: '#f0f9ff', // Very light blue
+                    borderRadius: 1,
+                    borderLeft: '4px solid #006990',
                   }}
-                  bodyStyle={{ padding: '6px 12px' }}
                 >
-                  <div className="text-blue-800 font-semibold text-base">
-                    {clickedItem?.header}
-                  </div>
-
-                  <p className="text-blue-700 text-sm mt-2">
+                  <Chip
+                    label={clickedItem?.header}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#006990',
+                      color: 'white',
+                      fontWeight: 'bold',
+                      alignSelf: 'flex-start',
+                    }}
+                  />
+                  <p className="text-[15px] text-primary font-sans font-semibold">
                     {clickedItem?.message}
                   </p>
-                </Card>
+                </Box>
               </div>
               <BaseInputCard
                 fields={fields}
@@ -676,48 +697,76 @@ const Complaints = ({ status }) => {
             <BaseCollapse name="Task Details" className="mt-6">
               <div className="px-6 pt-2">
                 {clickedItem?.task ? (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                    <div className="flex flex-wrap gap-4">
-                      {/* Left Column */}
-                      <div className="flex-1 min-w-[200px] gap-2">
-                        <p className="text-[12px] text-gray-700">
-                          <strong>Type:</strong> {clickedItem.task.type}
-                        </p>
-                        <p className="text-[12px] text-gray-700">
-                          <strong>Status:</strong>{' '}
-                          {clickedItem.task.status === 1
-                            ? 'Active'
-                            : 'Inactive'}
-                        </p>
-                        <p className="text-[12px] text-gray-700">
-                          <strong>CRM Related:</strong>{' '}
-                          {clickedItem.task.is_crm_related ? 'Yes' : 'No'}
-                        </p>
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 max-w-md flex w-full justify-between relative">
+                    {/* Chip for Closed Status */}
+                    <div className="absolute top-2 right-2">
+                      {clickedItem.task.status === 1 ? (
+                        <Chip
+                          label="Open"
+                          // icon={
+                          //   <Verified
+                          //     sx={{ color: 'white', fontSize: '16px' }}
+                          //   />
+                          // }
+                          size="small"
+                          sx={{
+                            backgroundColor: '#2e7d32', // Green background for Active
+                            color: 'white',
+                            fontWeight: 'bold',
+                          }}
+                        />
+                      ) : (
+                        <Chip
+                          label="Closed"
+                          // icon={
+                          //   <Close sx={{ color: 'white', fontSize: '16px' }} />
+                          // }
+                          size="small"
+                          sx={{
+                            backgroundColor: '#0070f3', // Red background for Inactive
+                            color: 'white',
+                            fontWeight: 'bold',
+                          }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex items-start mb-4 mr-3">
+                      <div className="bg-blue-100 text-blue-800 rounded-lg p-3">
+                        <Task />
                       </div>
+                      {clickedItem.task.current_user && (
+                        <>
+                          <div className="space-y-2 ml-3">
+                            <h5 className="text-sm font-medium">
+                              Assigned User
+                            </h5>
+                            <p className="text-sm">
+                              {clickedItem.task.current_user.firstName}{' '}
+                              {clickedItem.task.current_user.lastName}
+                            </p>
+                            <p className="text-sm text-blue-600">
+                              {clickedItem.task.current_user.email}
+                            </p>
+                            <p className="text-sm">
+                              {clickedItem.task.current_user.phoneNumber ||
+                                'No phone'}
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </div>
 
-                      {/* Right Column */}
-                      <div className="flex-1 min-w-[200px]">
-                        <p className="text-[12px] text-gray-700">
-                          <strong>Assigned To:</strong>{' '}
-                          {clickedItem.task.current_user
-                            ? `${clickedItem.task.current_user.firstName} ${clickedItem.task.current_user.lastName}`
-                            : 'N/A'}
-                        </p>
-                        <p className="text-[12px] text-gray-700">
-                          <strong>Assigned User Email:</strong>{' '}
-                          {clickedItem.task.current_user?.email || 'N/A'}
-                        </p>
-                        <p className="text-[12px] text-gray-700">
-                          <strong>Phone Number:</strong>{' '}
-                          {clickedItem.task.current_user?.phoneNumber || 'N/A'}
-                        </p>
-                      </div>
+                    <div className="">
+                      {/* <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">CRM Related</span>
+                        <span>
+                          {clickedItem.task.is_crm_related ? 'Yes' : 'No'}
+                        </span>
+                      </div> */}
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[12px] text-gray-500">
-                    No task details available.
-                  </p>
+                  <Empty description="No task details available" />
                 )}
               </div>
             </BaseCollapse>
