@@ -83,7 +83,9 @@ const GeneralSendersSetups = () => {
     apiService
   );
 
-  const title = clickedItem ? 'Department' : 'Create New Department';
+  const title = clickedItem
+    ? 'General Matters Sender'
+    : 'Create New General Matters Sender';
 
   const fields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
@@ -93,18 +95,18 @@ const GeneralSendersSetups = () => {
       type: 'text',
       required: true,
     },
-    {
-      name: 'numberSeriesId',
-      label: 'Number Series',
-      type: 'select',
-      required: true,
-      table: true,
-      options: numberSeries?.map((item) => ({
-        id: item.id,
-        name: item.code,
-        accountNo: item?.description,
-      })),
-    },
+    // {
+    //   name: 'numberSeriesId',
+    //   label: 'Number Series',
+    //   type: 'select',
+    //   required: true,
+    //   table: true,
+    //   options: numberSeries?.map((item) => ({
+    //     id: item.id,
+    //     name: item.code,
+    //     accountNo: item?.description,
+    //   })),
+    // },
     /**  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "name": "string",
   "description": "string",

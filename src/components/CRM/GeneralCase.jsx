@@ -52,20 +52,7 @@ const GeneralCase = () => {
       filter: true,
       flex: 1,
     },
-    {
-      field: 'partyEmail',
-      headerName: 'Source Email',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: 'partyPhone',
-      headerName: 'Source Phone Number',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
+
     {
       field: 'nature',
       headerName: 'Nature',
@@ -211,7 +198,6 @@ const GeneralCase = () => {
       type: 'text',
       disabled: true,
     },
-
     {
       name: 'pensionerPersonalNo',
       label: 'Pensioner Personal No',
