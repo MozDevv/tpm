@@ -42,6 +42,7 @@ import {
 import { BASE_CORE_API } from '@/utils/constants';
 import { baseInputValidator } from './BaseInputValidator';
 import BaseCollapse from './BaseCollapse';
+import BaseEdmsViewer from './BaseEdmsViewer';
 
 const BaseInputCard = ({
   handlePreview,
@@ -446,18 +447,37 @@ const BaseInputCard = ({
         }
 
         console.log('DATA TO SEND: ', dataToSend);
-
         if (!useRequestBody) {
           const formDataObj = new FormData();
+
           Object.keys(dataToSend).forEach((key) => {
-            formDataObj.append(key, dataToSend[key]);
+            const value = dataToSend[key];
+
+            // Handle attachments array separately
+            if (key === 'attachments' && Array.isArray(value)) {
+              value.forEach((attachment, index) => {
+                if (attachment.file && attachment.name) {
+                  console.log("'Attachment: ', attachment);", attachment);
+                  formDataObj.append(
+                    `attachments[${index}].Name`,
+                    attachment.name
+                  );
+                  formDataObj.append(
+                    `attachments[${index}].File`,
+                    attachment.file
+                  );
+                }
+              });
+            } else {
+              // Append all other primitive fields
+              formDataObj.append(key, value);
+            }
           });
-          if (formData.file) {
-            formDataObj.append('file', formData.file);
-          }
 
           dataToSend = formDataObj;
         }
+
+        console.log('FormData to be sent: ', dataToSend);
         if (setPostedData) {
           setPostedData(dataToSend);
         }
@@ -1197,9 +1217,16 @@ const BaseInputCard = ({
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
         sx={{
+          '& .MuiDialog-container': {
+            '& .MuiPaper-root': {
+              borderRadius: '8px',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+              padding: '40px',
+            },
+          },
           '& .MuiPaper-root': {
-            minHeight: '90vh',
-            maxHeight: '90vh',
+            minHeight: '80vh',
+            maxHeight: '80vh',
             minWidth: '55vw',
             maxWidth: '55vw',
           },
@@ -1264,125 +1291,175 @@ const BaseInputCard = ({
 
                 {/* Attachments Table */}
                 <Table
-                  columns={[
-                    {
-                      title: 'File Name',
-                      dataIndex: 'name',
-                      key: 'name',
-                      width: '30%',
-                      render: (text, record, index) => (
-                        <TextField
-                          fullWidth
-                          variant="outlined"
-                          size="small"
-                          value={record.name}
-                          onChange={(e) => {
-                            const updatedAttachments = [
-                              ...formData.attachments,
-                            ];
-                            updatedAttachments[index].name = e.target.value; // Update the name
-                            setFormData((prev) => ({
-                              ...prev,
-                              attachments: updatedAttachments,
-                            }));
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      title: 'Upload',
-                      key: 'upload',
-                      width: '30%',
-                      render: (_, record, index) => (
-                        <Upload
-                          name={record.name}
-                          onChange={(info) => {
-                            const updatedAttachments = [
-                              ...formData.attachments,
-                            ];
-                            updatedAttachments[index].file = info.file;
-                            setFormData((prev) => ({
-                              ...prev,
-                              attachments: updatedAttachments,
-                            }));
-                          }}
-                          fileList={[]}
-                          // fileList={record.file ? [record.file] : []}
-                          beforeUpload={(file) => {
-                            const isLt2MB = file.size / 1024 / 1024 < 2;
-                            if (!isLt2MB) {
-                              message.error(
-                                `${file.name} is larger than 2MB. Please upload a smaller file.`
-                              );
-                            }
-                            return isLt2MB;
-                          }}
-                        >
-                          <Button startIcon={<UploadOutlined />}>Upload</Button>
-                        </Upload>
-                      ),
-                    },
-                    {
-                      title: 'File(s)',
-                      key: 'files',
-                      width: '30%',
-                      render: (_, record) =>
-                        record.file ? (
-                          <span>{record.file.name}</span> // Display the uploaded file name
-                        ) : (
-                          <span style={{ color: 'gray' }}>
-                            No file uploaded
-                          </span> // Placeholder if no file is uploaded
-                        ),
-                    },
-                    {
-                      title: 'Preview',
-                      key: 'preview',
-                      width: '30%',
-                      render: (_, record) => {
-                        const file = record.file;
-                        return file ? (
-                          <Button
-                            style={{
-                              backgroundColor: '#006990',
-                              color: 'white',
-                              border: 'none',
-                              padding: '2px 10px',
-                            }}
-                            startIcon={
-                              <Launch
-                                sx={{
-                                  fontSize: '14px',
+                  columns={
+                    clickedItem?.attachments?.length > 0
+                      ? [
+                          {
+                            title: 'File Name',
+                            dataIndex: 'fileName',
+                            key: 'fileName',
+                            width: '50%',
+                            render: (text) => <span>{text}</span>, // Display the file name
+                          },
+                          {
+                            title: 'Preview',
+                            key: 'preview',
+                            width: '50%',
+                            render: (_, record) => (
+                              <Button
+                                style={{
+                                  backgroundColor: '#006990',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '2px 10px',
+                                }}
+                                startIcon={
+                                  <Launch
+                                    sx={{
+                                      fontSize: '14px',
+                                    }}
+                                  />
+                                }
+                                onClick={() => {
+                                  // Pass the edmsFileId to the ViewerPage component
+                                  setPreviewContent(
+                                    <BaseEdmsViewer docId={record.edmsFileId} />
+                                  );
+                                  setPreviewOpen(true);
+                                }}
+                              >
+                                Preview
+                              </Button>
+                            ),
+                          },
+                        ]
+                      : [
+                          {
+                            title: 'File Name',
+                            dataIndex: 'name',
+                            key: 'name',
+                            width: '30%',
+                            render: (text, record, index) => (
+                              <TextField
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                value={record.name}
+                                onChange={(e) => {
+                                  const updatedAttachments = [
+                                    ...formData.attachments,
+                                  ];
+                                  updatedAttachments[index].name =
+                                    e.target.value; // Update the name
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    attachments: updatedAttachments,
+                                  }));
                                 }}
                               />
-                            }
-                            onClick={() => {
-                              const file =
-                                record.file?.originFileObj || record.file;
-                              if (!file) {
-                                message.error('No file available for preview.');
-                                return;
-                              }
+                            ),
+                          },
+                          {
+                            title: 'Upload',
+                            key: 'upload',
+                            width: '30%',
+                            render: (_, record, index) => (
+                              <Upload
+                                name={record.name}
+                                onChange={(info) => {
+                                  const updatedAttachments = [
+                                    ...formData.attachments,
+                                  ];
+                                  updatedAttachments[index].file =
+                                    info.file.originFileObj;
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    attachments: updatedAttachments,
+                                  }));
+                                }}
+                                fileList={[]}
+                                // fileList={record.file ? [record.file] : []}
+                                beforeUpload={(file) => {
+                                  const isLt2MB = file.size / 1024 / 1024 < 2;
+                                  if (!isLt2MB) {
+                                    message.error(
+                                      `${file.name} is larger than 2MB. Please upload a smaller file.`
+                                    );
+                                  }
+                                  return isLt2MB;
+                                }}
+                              >
+                                <Button startIcon={<UploadOutlined />}>
+                                  Upload
+                                </Button>
+                              </Upload>
+                            ),
+                          },
+                          {
+                            title: 'File(s)',
+                            key: 'files',
+                            width: '30%',
+                            render: (_, record) =>
+                              record.file ? (
+                                <span>{record.file.name}</span> // Display the uploaded file name
+                              ) : (
+                                <span style={{ color: 'gray' }}>
+                                  No file uploaded
+                                </span> // Placeholder if no file is uploaded
+                              ),
+                          },
 
-                              setPreviewContent(
-                                <embed
-                                  src={URL.createObjectURL(file)}
-                                  type="application/pdf"
-                                  width="100%"
-                                  height="1000px"
-                                />
+                          {
+                            title: 'Preview',
+                            key: 'preview',
+                            width: '30%',
+                            render: (_, record) => {
+                              const file = record.file;
+                              return file ? (
+                                <Button
+                                  style={{
+                                    backgroundColor: '#006990',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '2px 10px',
+                                  }}
+                                  startIcon={
+                                    <Launch
+                                      sx={{
+                                        fontSize: '14px',
+                                      }}
+                                    />
+                                  }
+                                  onClick={() => {
+                                    const file =
+                                      record.file?.originFileObj || record.file;
+                                    if (!file) {
+                                      message.error(
+                                        'No file available for preview.'
+                                      );
+                                      return;
+                                    }
+
+                                    setPreviewContent(
+                                      <embed
+                                        src={URL.createObjectURL(file)}
+                                        type="application/pdf"
+                                        width="100%"
+                                        height="1000px"
+                                      />
+                                    );
+                                    setPreviewOpen(true);
+                                  }}
+                                >
+                                  Preview
+                                </Button>
+                              ) : (
+                                <Button disabled>Preview</Button>
                               );
-                              setPreviewOpen(true);
-                            }}
-                          >
-                            Preview
-                          </Button>
-                        ) : (
-                          <Button disabled>Preview</Button>
-                        );
-                      },
-                    },
-                  ]}
+                            },
+                          },
+                        ]
+                  }
                   dataSource={formData.attachments}
                   pagination={false}
                   rowKey={(record, index) => index}

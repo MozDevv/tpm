@@ -186,6 +186,9 @@ const CourtCase = () => {
   };
   const [claimLookup, setClaimLookup] = React.useState(false);
 
+  const [selectedItems, setSelectedItems] = React.useState([]);
+  const [refreshData, setRefreshData] = React.useState(false);
+
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
@@ -198,6 +201,33 @@ const CourtCase = () => {
     reports: () => console.log('Reports clicked'),
     notify: () => console.log('Notify clicked'),
     claimLookup: () => setClaimLookup(true),
+
+    resolve: async () => {
+      if (selectedItems && selectedItems.length > 0) {
+        try {
+          for (const item of selectedItems) {
+            const { attachments, status, ...rest } = item;
+
+            const formData = new FormData();
+
+            Object.keys(rest).forEach((key) => {
+              formData.append(key, rest[key]);
+            });
+
+            formData.append('status', 1);
+            formData.append('referecenceNo', 'attachments');
+
+            await apiService.post(endpoints.createOmbudsman, formData);
+          }
+          setRefreshData((prev) => !prev);
+          console.log('All selected items resolved successfully.');
+        } catch (error) {
+          console.error('Error resolving items:', error);
+        }
+      } else {
+        console.log('No items selected to resolve.');
+      }
+    },
   };
 
   const baseCardHandlers = {
@@ -335,6 +365,9 @@ const CourtCase = () => {
         breadcrumbTitle="Court Case"
         currentTitle="Court Case"
         segmentFilterParameter2="status"
+        onSelectionChange={(selectedRows) => {
+          setSelectedItems(selectedRows);
+        }}
         segmentOptions2={[
           { value: 0, label: 'On Going' },
           { value: 1, label: 'Resolved' },

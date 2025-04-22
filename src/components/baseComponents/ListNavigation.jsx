@@ -722,6 +722,12 @@ const ListNavigation = ({
       action: 'notifyDependant',
       requiredPermissions: [],
     },
+    {
+      name: 'Resolve',
+      icon: EditNote,
+      action: 'resolve',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

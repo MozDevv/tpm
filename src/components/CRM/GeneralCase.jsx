@@ -170,6 +170,7 @@ const GeneralCase = () => {
       label: 'Attachments',
       type: 'attachments',
       required: false,
+      addName: true,
     },
   ];
 
