@@ -334,8 +334,8 @@ const CourtCase = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            // postApiFunction={apiService.post}
+            apiEndpoint={endpoints.createCourtCase}
+            postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}

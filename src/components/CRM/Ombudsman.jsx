@@ -380,8 +380,8 @@ const Ombudsman = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            // postApiFunction={apiService.post}
+            apiEndpoint={endpoints.createOmbudsman}
+            postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}

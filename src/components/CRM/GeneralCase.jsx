@@ -197,8 +197,8 @@ const GeneralCase = () => {
         {clickedItem ? (
           <BaseInputCard
             fields={fields}
-            // apiEndpoint={endpoints.updateDepartment(clickedItem.id)}
-            // postApiFunction={apiService.post}
+            apiEndpoint={endpoints.createGeneralPolicy}
+            postApiFunction={apiService.post}
             clickedItem={clickedItem}
             useRequestBody={false}
             setOpenBaseCard={setOpenBaseCard}

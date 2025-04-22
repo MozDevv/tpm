@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, IconButton } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import { Checkbox } from 'antd';
@@ -11,6 +11,11 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   const [skipBlankEntries, setSkipBlankEntries] = useState(false);
   const [selectedColumns, setSelectedColumns] = useState([]);
   const [error, setError] = useState('');
+
+  // Initialize selectedColumns with all columns selected by default
+  useEffect(() => {
+    setSelectedColumns(columnDefs.map((col) => col.field));
+  }, [columnDefs]);
 
   // Handlers
   const handleStartDateChange = (event) => {
@@ -47,6 +52,7 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
   const [loading, setLoading] = useState(false);
   const [rowData, setRowData] = useState([]);
   const contentRef = React.createRef();
+
   const handleDownload = async () => {
     setLoading(true);
 
@@ -55,9 +61,6 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
     // Load html2pdf.js dynamically, only in the browser
     const html2pdf = (await import('html2pdf.js')).default;
 
-    const fixedWidth = 750; // Reduced width in pixels
-    const fixedHeight = 1123; // A4 height in pixels (11.69 inches * 96 DPI)
-
     const options = {
       margin: 0.5, // Default margin (in inches)
       filename: 'Ombudsman Report.pdf',
@@ -65,23 +68,9 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
 
-    const wrapper = document.createElement('div');
-
-    wrapper.style.position = 'relative';
-    wrapper.style.display = 'flex';
-    wrapper.style.alignItems = 'center';
-    wrapper.style.justifyContent = 'center';
-    wrapper.style.overflow = 'hidden';
-
-    const clonedElement = element.cloneNode(true);
-    clonedElement.style.transform = 'scale(1)';
-    clonedElement.style.transformOrigin = 'top left';
-
-    wrapper.appendChild(clonedElement);
-
     html2pdf()
       .set(options)
-      .from(wrapper)
+      .from(element)
       .save()
       .then(() => {
         setLoading(false);
@@ -107,76 +96,9 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
       console.log(error);
     }
   };
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-5 bg-white rounded-lg px-4">
-      <div
-        className=""
-        style={
-          {
-            //   display: 'none',
-          }
-        }
-      >
-        <div className="max-w-3xl mx-auto" ref={contentRef}>
-          <div className="text-center space-y-1 text-[11px] font-sans">
-            <div className="text-center">
-              <img
-                src="/kenya.png"
-                height={60}
-                width={100}
-                className="mb-2 inline-block"
-              />
-            </div>
-
-            <p className="font-bold uppercase">Republic of Kenya</p>
-            <p className="font-bold uppercase">
-              The National Treasury & Economic Planning
-            </p>
-            <p className="">
-              Name of Public Institution: The National Treasury & Economic
-              Planning
-            </p>
-            <p className="">Financial Year: 2023/2024</p>
-            <p className="font-semibold">
-              Resolution of Public Complaints Received from CAJ – Report for the
-              3rd Quarter Ending 30th April, 2024
-            </p>
-          </div>
-          <table
-            style={{
-              transform: 'scale(0.8)',
-              transformOrigin: 'top left',
-              width: '100%',
-            }}
-            className=" border-collapse font-sans text-[10px]"
-          >
-            <thead>
-              <tr className="">
-                {columnDefs.map((header, index) => (
-                  <th key={index} className="text-left px-4 py-2 font-bold">
-                    {header.headerName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rowData.map((row, rowIndex) => (
-                <tr key={rowIndex} className="">
-                  {columnDefs.map((cell, cellIndex) => (
-                    <td
-                      key={cellIndex}
-                      className=" text-gray-600 text-start pl-3"
-                    >
-                      {row[cell.field] || '-'}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <h1 className="text-2xl font-bold text-primary mb-14 mt-[-20px]">
         Ombudsman Report
       </h1>
@@ -271,10 +193,7 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
       </div>
 
       <div className=" bg-white py-4  border-t flex justify-between mt-5 ">
-        <button
-          // onClick={handleExportExcel}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
-        >
+        <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition">
           Export to Excel
         </button>
         <button
@@ -283,12 +202,6 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
         >
           Export to PDF
         </button>
-        {/* <button
-            onClick={() => handlePreviewPDF(filteredData)}
-            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition"
-          >
-            Preview PDF
-          </button> */}
       </div>
     </div>
   );
