@@ -74,6 +74,13 @@ const IGCDocumentsSetups = () => {
       flex: 1,
     },
     {
+      field: 'officer_upload',
+      headerName: 'Officer Upload',
+      headerClass: 'prefix-header',
+      filter: true,
+      flex: 1,
+    },
+    {
       field: 'front',
       headerName: 'Front',
       headerClass: 'prefix-header',
@@ -167,6 +174,11 @@ const IGCDocumentsSetups = () => {
     {
       name: 'back',
       label: 'Back',
+      type: 'switch',
+    },
+    {
+      name: 'officer_upload',
+      label: 'Officer Upload',
       type: 'switch',
     },
   ];

@@ -30,7 +30,7 @@ function DependantsEnrollment() {
   const [confirmed, setConfirmed] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const { data: documentTypes } = useFetchAsync(
-    endpoints.getDependantPensioNiGCDocuments,
+    endpoints.getDependantPensioNiGCDocumentsOfficerUpload,
     apiService
   );
 

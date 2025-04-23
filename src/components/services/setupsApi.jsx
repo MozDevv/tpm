@@ -550,6 +550,8 @@ const endpoints = {
     `/api/IGCClaimInitiation/GetIGCs?filterCriterion.criterions[0].propertyName=igc_submission_status&filterCriterion.criterions[0].propertyValue=${id}&filterCriterion.criterions[0].criterionType=0`,
   getDependantPensioNiGCDocuments:
     'api/Setups/GetIGCDocuments?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=igC_Type&filterCriterion.criterions[0].propertyValue=0&paging.pageNumber=1&paging.pageSize=1000',
+  getDependantPensioNiGCDocumentsOfficerUpload:
+    'api/Setups/GetIGCDocuments?filterCriterion.criterions[0].criterionType=0&filterCriterion.criterions[0].propertyName=igC_Type&filterCriterion.criterions[0].propertyValue=0&filterCriterion.criterions[1].criterionType=0&filterCriterion.criterions[1].propertyName=officer_upload&filterCriterion.criterions[1].propertyValue=true&paging.pageNumber=1&paging.pageSize=1000',
 
   getClaimById: (id) => `api/Claims/claimsList?id=${id}`,
   addPaymentReasons: '/api/AccountsSetup/AddPaymentReturnReason',
