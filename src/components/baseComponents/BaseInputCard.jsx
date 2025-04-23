@@ -825,7 +825,7 @@ const BaseInputCard = ({
                       'filterCriterion.criterions[0].propertyName': `prospectivePensioner.${searchType}`,
                       'filterCriterion.criterions[0].propertyValue':
                         searchInput,
-                      'filterCriterion.criterions[0].criterionType': 1,
+                      'filterCriterion.criterions[0].criterionType': 0,
                       // formData.searchInput === 'pensioner_number' ? 0 : 2,
                     };
                     try {

@@ -58,12 +58,12 @@ const ClaimLookupPolicy = () => {
     const filter = {
       'filterCriterion.criterions[0].propertyName': `prospectivePensioner.${formData.searchType}`,
       'filterCriterion.criterions[0].propertyValue': formData.searchInput,
-      'filterCriterion.criterions[0].criterionType': 1,
+      'filterCriterion.criterions[0].criterionType': 0,
       // formData.searchInput === 'pensioner_number' ? 0 : 2,
     };
     try {
       const response = await assessApiService.get(
-        assessEndpoints.getAssessmentClaims,
+        assessEndpoints.getClaimsListings,
         { ...filter }
       );
 
