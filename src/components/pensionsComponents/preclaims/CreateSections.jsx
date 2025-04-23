@@ -704,6 +704,16 @@ export const createSections = (
               ],
               pensionCap: ['CAP189', 'CAP190', 'CAP195', 'CAP195'],
             },
+            {
+              label: 'has_wcps_refund',
+              name: 'Has Wcps Refund',
+              type: 'select',
+              children: [
+                { id: true, name: 'Yes' },
+                { id: false, name: 'No' },
+              ],
+              pensionCap: ['CAP189', 'CAP190', 'CAP195', 'CAP195'],
+            },
           ]
         : []),
       {
