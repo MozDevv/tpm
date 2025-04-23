@@ -819,7 +819,7 @@ const BaseInputCard = ({
                         ? 'national_id'
                         : 'passport_number';
 
-                    const searchInput = formData.pensionerIdentifierType;
+                    const searchInput = formData.pensionerIdentificationNumber;
 
                     const filter = {
                       'filterCriterion.criterions[0].propertyName': `prospectivePensioner.${searchType}`,
