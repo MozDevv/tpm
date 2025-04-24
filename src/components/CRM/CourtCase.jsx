@@ -344,7 +344,7 @@ const CourtCase = () => {
       name: 'partyName',
       label: 'Represented By',
       type: 'text',
-      required: true,
+      required: false,
     },
     {
       name: 'postalCodeId',

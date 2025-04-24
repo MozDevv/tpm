@@ -373,7 +373,7 @@ const Ombudsman = () => {
       name: 'receivedAt',
       label: 'Date Recieved',
       type: 'date',
-      required: false,
+      required: true,
     },
     // { name: 'attachments', label: 'Attachments', type: 'file', required: false },
     {

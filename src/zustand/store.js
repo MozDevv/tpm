@@ -42,6 +42,8 @@ export const useSelectedSegmentStore = stateFactory('selectedSegment');
 export const useSelectedSegmentStore2 = stateFactory('selectedSegment2');
 export const useStageStore = stateFactory('stage');
 
+export const useApprovalRefreshStore = stateFactory('approvalRefresh');
+
 /** const [stage, setStage] = useState('');
   const [description, setDescription] = useState('');
   const [percentage, setPercentage] = useState(0);

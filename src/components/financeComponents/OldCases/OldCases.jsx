@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Assume this is your transformation function
 import BaseTable from '@/components/baseComponents/BaseTable';
@@ -93,6 +93,7 @@ const OldCases = () => {
 
   const [openApprove, setOpenApprove] = React.useState(0);
   const [workFlowChange, setWorkFlowChange] = React.useState(0);
+  const [refreshData, setRefreshData] = React.useState(0);
   const handlers = {
     // notifyUser: async () => {
     //   try {
@@ -132,6 +133,12 @@ const OldCases = () => {
     //   }
     // },
 
+    ...((!selectedSegment ||
+      selectedSegment === 0 ||
+      selectedSegment === undefined) && {
+      scheduleForNotification: () => handleScheduleForNotification(),
+    }),
+
     ...(selectedSegment === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
@@ -147,11 +154,49 @@ const OldCases = () => {
       : {}),
 
     ...(selectedSegment === 2 && {
-      // postReceiptToGL: () => setOpenPV(true),
-      scheduleForNotification: () => handleScheduleForNotification(),
+      notifyUser: async () => {
+        if (selectedRows.length === 0) {
+          message.warning('Please select at least one row to notify.');
+          return;
+        }
 
-      postReceiptToGL: () => {
-        setOpenAction(true);
+        try {
+          // Prepare the payload using selectedRows
+          const payload = {
+            paymentReturnNotificationDetail: selectedRows.map((row) => ({
+              prospectivePensionerId: row.prospectivePensionerId,
+              beneficiaryId: row.beneficiaryId || null, // Use null if not available
+              reason: row.returnReasonEnum || 0, // Default to 0 if not provided
+              returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
+            })),
+          };
+
+          // Send the API request
+          const res = await apiService.post(
+            financeEndpoints.notifyUser,
+            payload
+          );
+
+          // Handle the response
+          if (
+            res.status === 200 &&
+            res.data.succeeded &&
+            res.data.messages[0]
+          ) {
+            message.success(res.data.messages[0]);
+          } else if (
+            res.status === 200 &&
+            !res.data.succeeded &&
+            res.data.messages[0]
+          ) {
+            message.error(res.data.messages[0]);
+          } else {
+            message.error('An error occurred while sending notifications.');
+          }
+        } catch (error) {
+          console.error('Error sending notifications:', error);
+          message.error('An error occurred while sending the notifications.');
+        }
       },
     }),
   };
@@ -160,48 +205,57 @@ const OldCases = () => {
     addReturnToIGC: () => {
       handleReturnToIgc();
     },
-    // notifyUser: async () => {
-    //   try {
-    //     // Prepare the payload using clickedItem details
-    //     const payload = {
-    //       paymentReturnNotificationDetail: [
-    //         {
-    //           prospectivePensionerId: clickedItem?.prospectivePensionerId,
-    //           beneficiaryId: clickedItem?.beneficiaryId || null, // Use null if not available
-    //           reason: clickedItem?.returnReasonEnum || 0, // Default to 0 if not provided
-    //           returnOwnertType: clickedItem?.returnOwnertType || 0, // Default to 0 if not provided
-    //         },
-    //       ],
-    //     };
+    ...(selectedSegment === 2 && {
+      notifyUser: async () => {
+        try {
+          // Prepare the payload using clickedItem details
+          const payload = {
+            paymentReturnNotificationDetail: [
+              {
+                prospectivePensionerId: clickedItem?.prospectivePensionerId,
+                beneficiaryId: clickedItem?.beneficiaryId || null, // Use null if not available
+                reason: clickedItem?.returnReasonEnum || 0, // Default to 0 if not provided
+                returnOwnertType: clickedItem?.returnOwnertType || 0, // Default to 0 if not provided
+              },
+            ],
+          };
 
-    //     // Send the API request
-    //     const res = await apiService.post(financeEndpoints.notifyUser, payload);
+          // Send the API request
+          const res = await apiService.post(
+            financeEndpoints.notifyUser,
+            payload
+          );
 
-    //     // Handle the response
-    //     if (res.status === 200 && res.data.succeeded) {
-    //       message.success('Notification sent successfully');
-    //     } else if (
-    //       res.status === 200 &&
-    //       !res.data.succeeded &&
-    //       res.data.messages[0]
-    //     ) {
-    //       message.error(res.data.messages[0]);
-    //     } else {
-    //       message.error('An error occurred');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error sending notification:', error);
-    //     message.error('An error occurred while sending the notification.');
-    //   }
-    // },
+          // Handle the response
+          if (
+            res.status === 200 &&
+            res.data.succeeded &&
+            res.data.messages[0]
+          ) {
+            message.success(res.data.messages[0]);
+          } else if (
+            res.status === 200 &&
+            !res.data.succeeded &&
+            res.data.messages[0]
+          ) {
+            message.error(res.data.messages[0]);
+          } else {
+            message.error('An error occurred');
+          }
+        } catch (error) {
+          console.error('Error sending notification:', error);
+          message.error('An error occurred while sending the notification.');
+        }
+      },
+    }),
   };
 
   const handleScheduleForNotification = async () => {
     const requestData =
       selectedRows.length > 0
-        ? selectedRows.map((journal) => journal.id) // Return an array of IDs
+        ? selectedRows.map((journal) => journal.returnNotificationTrackerId) // Return an array of returnNotificationTrackerId	s
         : clickedItem
-        ? [clickedItem.id] // Wrap the single ID in an array
+        ? [clickedItem.returnNotificationTrackerId] // Wrap the single ID in an array
         : [];
 
     try {
@@ -212,6 +266,7 @@ const OldCases = () => {
         }
       );
       if (res.status === 200 && res.data.succeeded && res.data.messages[0]) {
+        setRefreshData((prev) => prev + 1);
         message.success(res.data.messages[0]);
       } else if (
         res.status === 200 &&

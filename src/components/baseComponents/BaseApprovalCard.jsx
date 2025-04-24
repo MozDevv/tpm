@@ -8,6 +8,7 @@ import workflowsEndpoints, {
   workflowsApiService,
 } from '../services/workflowsApi';
 import { useStatus } from '@/context/StatusContext';
+import { useApprovalRefreshStore } from '@/zustand/store';
 
 function BaseApprovalCard({
   openApprove,
@@ -27,7 +28,7 @@ function BaseApprovalCard({
   useEffect(() => {
     console.log('documentNo', documentNo);
   }, [openApprove]);
-
+  const { setApprovalRefresh } = useApprovalRefreshStore();
   const handleApprove = async () => {
     if (!comments || comments.length < 10) {
       setErrors({
@@ -94,6 +95,7 @@ function BaseApprovalCard({
                 ? `Document ${docNo} Rejected`
                 : `Approval Delegated for ${docNo}`
             );
+            setApprovalRefresh(Date.now()); // Trigger refresh
           } else if (
             response.data.messages &&
             response.data.messages.length > 0

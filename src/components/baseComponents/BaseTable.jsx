@@ -36,6 +36,7 @@ import axios from 'axios';
 import FilterComponent from './FilterComponent';
 import BaseExcelComponent from './BaseExcelComponent';
 import {
+  useApprovalRefreshStore,
   useClickedIgcStore,
   useSelectedSegmentStore,
   useSelectedSegmentStore2,
@@ -140,6 +141,8 @@ const BaseTable = ({
   );
   const { setStatus } = useStatusStore();
 
+  const { approvalRefresh } = useApprovalRefreshStore();
+
   useEffect(() => {
     const applyFiltersAndFetchData = () => {
       setStatus?.(activeSegment);
@@ -193,6 +196,7 @@ const BaseTable = ({
       fetchData();
     }
   }, [
+    approvalRefresh,
     pageNumber,
     openBaseCard,
     openAction,

@@ -279,6 +279,21 @@ const SuspensionsResumptions = () => {
             claimId={claim?.id}
             setOpenBaseCard={setOpenBaseCard}
           >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+                p: 2,
+                bgcolor: '#f0f9ff', // Very light blue
+                borderRadius: 1,
+                borderLeft: '4px solid #006990',
+              }}
+            >
+              <p className="text-[15px] text-primary font-sans font-semibold">
+                {clickedItem?.reason}
+              </p>
+            </Box>
             <BaseInputCard
               fields={fields}
               // apiEndpoint={endpoints.createDepartment}

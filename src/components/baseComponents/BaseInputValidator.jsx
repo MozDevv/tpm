@@ -88,21 +88,19 @@ export const baseInputValidator = (field, value, formData) => {
 
   // Validation for phone number fields
   if (field.name === 'partyPhone' && value) {
-    const phonePattern = /^\+?[0-9]{10,13}$/; // General phone number pattern
+    const phonePattern = /^\+254(7\d{8}|1\d{8}|20\d{7}|0800\d{6})$/; // Kenyan phone number pattern
     if (!phonePattern.test(value)) {
-      newErrors[field.name] = `${field.label} is not a valid phone number`;
-    } else if (value.startsWith('+254') && value.length !== 13) {
       newErrors[
         field.name
-      ] = `${field.label} must be a valid Kenyan phone number`;
+      ] = `${field.label} must be a valid Kenyan phone number (e.g., +254 712 345 678, +254 20 123 4567, or 0800 123456).`;
     }
-    if (field.name === 'pensionerNumber' && value) {
-      const pensionerPattern = /^[a-zA-Z0-9/]+$/; // Matches alphanumeric characters and /
-      if (!pensionerPattern.test(value)) {
-        newErrors[
-          field.name
-        ] = `${field.label} must contain only alphanumeric characters or '/'`;
-      }
+  }
+  if (field.name === 'pensionerNumber' && value) {
+    const pensionerPattern = /^[a-zA-Z0-9/]+$/; // Matches alphanumeric characters and /
+    if (!pensionerPattern.test(value)) {
+      newErrors[
+        field.name
+      ] = `${field.label} must contain only alphanumeric characters or '/'`;
     }
   }
   if (field.name === 'partyName' && value) {
@@ -114,11 +112,11 @@ export const baseInputValidator = (field, value, formData) => {
     }
   }
   if (field.name === 'nature' && value) {
-    const naturePattern = /^[a-zA-Z\s]+$/; // Allows only letters and spaces
+    const naturePattern = /^[a-zA-Z\s'&-_]+$/; // Allows letters, spaces, and special characters (' & - _)
     if (!naturePattern.test(value)) {
       newErrors[
         field.name
-      ] = `${field.label} must contain only letters and spaces`;
+      ] = `${field.label} must contain only letters, spaces, and the special characters (' - _ &)`;
     }
   }
 

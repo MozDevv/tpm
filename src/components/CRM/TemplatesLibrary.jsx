@@ -133,8 +133,8 @@ const TemplatesLibrary = () => {
   );
 
   const title = clickedItem
-    ? 'General Policy'
-    : 'Create Parliamentary Business';
+    ? 'Documentation Library'
+    : 'Create Documentation Library';
 
   const fields = [
     // { name: 'id', label: 'ID', type: 'text', required: true },

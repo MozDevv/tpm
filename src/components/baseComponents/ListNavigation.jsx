@@ -98,11 +98,11 @@ const ListNavigation = ({
 
   const getApprovalActionsForUser = async () => {
     const possibleKeys = [
-      'no_series',
-      'no',
       'documentNo',
       'document_no',
       'document_number',
+      'no_series',
+      'no',
     ];
 
     const documentNo = possibleKeys
