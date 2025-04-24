@@ -316,7 +316,8 @@ function OmbudsmanReport({ columnDefs, onGenerateReport }) {
       <div className="mb-10 mt-10">
         <label className="inline-flex items-center">
           <Checkbox
-            checked={skipBlankEntries}
+            checked={true}
+            disabled
             onChange={() => setSkipBlankEntries(!skipBlankEntries)}
             className="mr-2"
           />
