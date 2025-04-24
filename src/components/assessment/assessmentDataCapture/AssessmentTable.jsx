@@ -214,13 +214,12 @@ const AssessmentTable = ({ status, statusArr }) => {
         ]
       : [
           {
-            headerName: 'Claim No.',
-            field: 'claim_id',
+            headerName: 'Pensioner No.',
+            field: 'pensioner_number',
             width: 150,
             checkboxSelection: true,
             headerCheckboxSelection: true,
             pinned: 'left',
-            filter: true,
             cellRenderer: (params) => {
               return (
                 <p className="text-primary font-semibold underline ">
@@ -229,6 +228,17 @@ const AssessmentTable = ({ status, statusArr }) => {
               );
             },
           },
+          {
+            headerName: 'Claim No.',
+            field: 'claim_id',
+            width: 150,
+
+            filter: true,
+            cellRenderer: (params) => {
+              return <p className="text-primary  ">{params.value}</p>;
+            },
+          },
+
           {
             headerName: 'First Name',
             field: 'prospectivePensioner.first_name',
