@@ -29,22 +29,22 @@ stages:
               docker builder prune -a -f
             displayName: 'Remove local Docker image'
 
-  # - stage: DeployToTest
-  #   displayName: 'Deploy to Test Environment'
-  #   jobs:
-  #     - job: DeployToTest
-  #       displayName: 'Deploy to Test Environment'
-  #       pool:
-  #         name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
-  #       steps:
-  #         # Step 2: SSH into remote server and run start_core_app.sh
-  #         - task: SSH@0
-  #           displayName: 'SSH into remote server and run start_core_app.sh'
-  #           inputs:
-  #             sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
-  #             runOptions: 'commands' # Running inline commands
-  #             inline: |
-  #               echo "Starting Deployment..."
-  #               ~/configs/start_core_app.sh
-  #               echo "Script execution finished.👌🟢🟢"
-  #               exit 0
+  - stage: DeployToTest
+    displayName: 'Deploy to Test Environment'
+    jobs:
+      - job: DeployToTest
+        displayName: 'Deploy to Test Environment'
+        pool:
+          name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
+        steps:
+          # Step 2: SSH into remote server and run start_core_app.sh
+          - task: SSH@0
+            displayName: 'SSH into remote server and run start_core_app.sh'
+            inputs:
+              sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
+              runOptions: 'commands' # Running inline commands
+              inline: |
+                echo "Starting Deployment..."
+                ~/configs/start_core_app.sh
+                echo "Script execution finished.👌🟢🟢"
+                exit 0
