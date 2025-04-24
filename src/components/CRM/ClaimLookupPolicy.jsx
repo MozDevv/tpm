@@ -67,7 +67,7 @@ const ClaimLookupPolicy = () => {
     };
     try {
       const response = await assessApiService.get(
-        assessEndpoints.getClaimsListings,
+        assessEndpoints.getAssessmentClaims,
         { ...filter }
       );
 
@@ -313,6 +313,11 @@ const ClaimLookupPolicy = () => {
               <MenuItem value="pensioner_number">Pensioner Number</MenuItem>
               <MenuItem value="personal_number">Personal Number</MenuItem>
               <MenuItem value="national_id">Pensioner National ID</MenuItem>
+              <MenuItem value="first_name">First Name</MenuItem>
+              <MenuItem value="surname">Surname</MenuItem>
+              <MenuItem value="death_certificate_number">
+                Death Certificate Number
+              </MenuItem>
             </TextField>
           </div>
           {/* Input Field for Search */}

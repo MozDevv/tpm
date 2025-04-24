@@ -470,6 +470,7 @@ const OldCases = () => {
                 />
 
                 <BaseInputTable
+                  disableAll={selectedSegment}
                   title="Return Details"
                   fields={returnLineFields}
                   id={clickedItem?.id}
