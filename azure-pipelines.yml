@@ -43,7 +43,7 @@ stages:
             inputs:
               sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
               runOptions: 'commands' # Running inline commands
-              inline: |
+              commands: |
                 echo "Starting Deployment..."
                 ~/configs/start_core_app.sh
                 echo "Script execution finished.👌🟢🟢"
