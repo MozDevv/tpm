@@ -14,6 +14,7 @@ import { Dialog } from '@mui/material';
 import OmbudsmanReport from './OmbudsmanReport';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
+import { statusIcons } from './GeneralCase';
 
 const Ombudsman = () => {
   const statusIcons2 = {
