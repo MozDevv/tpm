@@ -213,144 +213,253 @@ export const mapRowData = (items) =>
     was_in_mixed_service: item?.prospectivePensioner?.was_in_mixed_service,
   }));
 
-const colDefs = [
-  {
-    headerName: 'Claim No.',
-    field: 'claim_id',
-    width: 150,
-    checkboxSelection: true,
-    headerCheckboxSelection: true,
-    pinned: 'left',
-    filter: true,
-    cellRenderer: (params) => {
-      return (
-        <p className="text-primary font-semibold underline ">{params.value}</p>
-      );
-    },
-  },
-  {
-    headerName: 'First Name',
-    field: 'prospectivePensioner.first_name',
-    width: 150,
-    filter: true,
-  },
-  {
-    headerName: 'Surname',
-    field: 'prospectivePensioner.surname',
-    width: 150,
-  },
-  {
-    headerName: 'Stage',
-    field: 'stage',
-    width: 150,
-    cellRenderer: (params) => {
-      const status = notificationStatusMap[params.value];
-      if (!status) return null;
-
-      return (
-        <Button
-          variant="text"
-          sx={{
-            borderColor: status.color,
-            maxHeight: '22px',
-            cursor: 'pointer',
-            color: status.color,
-            fontSize: '10px',
-            fontWeight: 'bold',
-          }}
-        >
-          {status.name.toLowerCase()}
-        </Button>
-      );
-    },
-  },
-  {
-    headerName: 'Approval Status',
-    field: 'document_status',
-    width: 150,
-    filter: true,
-    cellRenderer: (params) => {
-      const status = statusIcons[params.value];
-      if (!status) return null;
-
-      const IconComponent = status.icon;
-
-      return (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IconComponent
-            style={{
-              color: status.color,
-              marginRight: '6px',
-              fontSize: '17px',
-            }}
-          />
-          <span
-            style={{
-              color: status.color,
-              fontWeight: 'semibold',
-              fontSize: '13px',
-            }}
-          >
-            {status.name}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    headerName: 'Email Address',
-    field: 'prospectivePensioner.email_address',
-    width: 200,
-    filter: true,
-  },
-  {
-    headerName: 'Gender',
-    field: 'prospectivePensioner.gender',
-    width: 120,
-    cellRenderer: (params) => {
-      return params.value === 0 ? 'Male' : 'Female';
-    },
-  },
-  {
-    headerName: 'Phone Number',
-    field: 'prospectivePensioner.phone_number',
-    width: 180,
-  },
-  {
-    headerName: 'Personal Number',
-    field: 'prospectivePensioner.personal_number',
-    width: 180,
-  },
-
-  {
-    headerName: 'National ID',
-    field: 'prospectivePensioner.national_id',
-    width: 150,
-  },
-
-  {
-    headerName: 'Retirement Date',
-    field: 'prospectivePensioner.retirement_date',
-    width: 180,
-    cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
-    },
-  },
-  {
-    headerName: 'Date of Birth',
-    field: 'prospectivePensioner.dob',
-    width: 180,
-    cellRenderer: function (params) {
-      return params.value ? new Date(params.value).toLocaleDateString() : '';
-    },
-  },
-  {
-    headerName: 'Comments',
-    field: 'comments',
-    width: 150,
-  },
-];
 const ClaimsTable = ({ status, isDashboard }) => {
+  const [activeSegment, setActiveSegment] = useState(0);
+
+  const colDefs = [
+    ...(activeSegment !== 0
+      ? [
+          {
+            headerName: 'Claim No.',
+            field: 'claim_id',
+            width: 150,
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            pinned: 'left',
+            filter: true,
+            cellRenderer: (params) => {
+              return (
+                <p className="text-primary font-semibold underline ">
+                  {params.value}
+                </p>
+              );
+            },
+          },
+          {
+            headerName: 'First Name',
+            field: 'igc_beneficiary_track.beneficiary.first_name',
+            flex: 1,
+            filter: true,
+          },
+          {
+            headerName: 'Surname',
+            field: 'igc_beneficiary_track.beneficiary.surname',
+            flex: 1,
+          },
+          {
+            headerName: 'Email Address',
+            field: 'igc_beneficiary_track.beneficiary.email_address',
+            filter: true,
+            flex: 1,
+          },
+          {
+            headerName: 'Stage',
+            field: 'stage',
+            flex: 1,
+            cellRenderer: (params) => {
+              const status = notificationStatusMap[params.value];
+              if (!status) return null;
+
+              return (
+                <Button
+                  variant="text"
+                  sx={{
+                    borderColor: status.color,
+                    maxHeight: '22px',
+                    cursor: 'pointer',
+                    color: status.color,
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {status.name.toLowerCase()}
+                </Button>
+              );
+            },
+          },
+          {
+            headerName: 'Approval Status',
+            field: 'document_status',
+            flex: 1,
+            filter: true,
+            cellRenderer: (params) => {
+              const status = statusIcons[params.value];
+              if (!status) return null;
+
+              const IconComponent = status.icon;
+
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <IconComponent
+                    style={{
+                      color: status.color,
+                      marginRight: '6px',
+                      fontSize: '17px',
+                    }}
+                  />
+                  <span
+                    style={{
+                      color: status.color,
+                      fontWeight: 'semibold',
+                      fontSize: '13px',
+                    }}
+                  >
+                    {status.name}
+                  </span>
+                </div>
+              );
+            },
+          },
+          {
+            headerName: 'Phone Number',
+            field: 'igc_beneficiary_track.beneficiary.mobile_number',
+            width: 180,
+          },
+        ]
+      : [
+          {
+            headerName: 'Claim No.',
+            field: 'claim_id',
+            width: 150,
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            pinned: 'left',
+            filter: true,
+            cellRenderer: (params) => {
+              return (
+                <p className="text-primary font-semibold underline ">
+                  {params.value}
+                </p>
+              );
+            },
+          },
+          {
+            headerName: 'First Name',
+            field: 'prospectivePensioner.first_name',
+            width: 150,
+            filter: true,
+          },
+          {
+            headerName: 'Surname',
+            field: 'prospectivePensioner.surname',
+            width: 150,
+          },
+          {
+            headerName: 'Stage',
+            field: 'stage',
+            width: 150,
+            cellRenderer: (params) => {
+              const status = notificationStatusMap[params.value];
+              if (!status) return null;
+
+              return (
+                <Button
+                  variant="text"
+                  sx={{
+                    borderColor: status.color,
+                    maxHeight: '22px',
+                    cursor: 'pointer',
+                    color: status.color,
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {status.name.toLowerCase()}
+                </Button>
+              );
+            },
+          },
+          {
+            headerName: 'Approval Status',
+            field: 'document_status',
+            width: 150,
+            filter: true,
+            cellRenderer: (params) => {
+              const status = statusIcons[params.value];
+              if (!status) return null;
+
+              const IconComponent = status.icon;
+
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <IconComponent
+                    style={{
+                      color: status.color,
+                      marginRight: '6px',
+                      fontSize: '17px',
+                    }}
+                  />
+                  <span
+                    style={{
+                      color: status.color,
+                      fontWeight: 'semibold',
+                      fontSize: '13px',
+                    }}
+                  >
+                    {status.name}
+                  </span>
+                </div>
+              );
+            },
+          },
+          {
+            headerName: 'Email Address',
+            field: 'prospectivePensioner.email_address',
+            width: 200,
+            filter: true,
+          },
+          {
+            headerName: 'Gender',
+            field: 'prospectivePensioner.gender',
+            width: 120,
+            cellRenderer: (params) => {
+              return params.value === 0 ? 'Male' : 'Female';
+            },
+          },
+          {
+            headerName: 'Phone Number',
+            field: 'prospectivePensioner.phone_number',
+            width: 180,
+          },
+          {
+            headerName: 'Personal Number',
+            field: 'prospectivePensioner.personal_number',
+            width: 180,
+          },
+
+          {
+            headerName: 'National ID',
+            field: 'prospectivePensioner.national_id',
+            width: 150,
+          },
+
+          {
+            headerName: 'Retirement Date',
+            field: 'prospectivePensioner.retirement_date',
+            width: 180,
+            cellRenderer: function (params) {
+              return params.value
+                ? new Date(params.value).toLocaleDateString()
+                : '';
+            },
+          },
+          {
+            headerName: 'Date of Birth',
+            field: 'prospectivePensioner.dob',
+            width: 180,
+            cellRenderer: function (params) {
+              return params.value
+                ? new Date(params.value).toLocaleDateString()
+                : '';
+            },
+          },
+          {
+            headerName: 'Comments',
+            field: 'comments',
+            width: 150,
+          },
+        ]),
+  ];
   const [dummyData, setDummyData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
@@ -385,8 +494,6 @@ const ClaimsTable = ({ status, isDashboard }) => {
   const [rowData, setRowData] = useState([]);
 
   const [loading, setLoading] = useState(false);
-
-  const [activeSegment, setActiveSegment] = useState(0);
 
   useEffect(() => {
     if (activeSegment !== 3) {
@@ -438,6 +545,20 @@ const ClaimsTable = ({ status, isDashboard }) => {
         id: item?.prospectivePensioner?.id,
         id_claim: item?.id,
         notification_status: item?.prospectivePensioner?.notification_status,
+        ...(item?.claim_type !== 0 && {
+          first_name: item?.igc_beneficiary_track?.beneficiary?.first_name
+            ? item?.igc_beneficiary_track?.beneficiary?.first_name
+            : item?.prospectivePensioner?.first_name,
+          surname: item?.igc_beneficiary_track?.beneficiary?.surname
+            ? item?.igc_beneficiary_track?.beneficiary?.surname
+            : item?.prospectivePensioner?.surname,
+          other_name: item?.igc_beneficiary_track?.beneficiary?.other_name
+            ? item?.igc_beneficiary_track?.beneficiary?.other_name
+            : item?.prospectivePensioner?.other_name,
+          email_address: item?.igc_beneficiary_track?.beneficiary?.email_address
+            ? item?.igc_beneficiary_track?.beneficiary?.email_address
+            : item?.prospectivePensioner?.email_address,
+        }),
       }));
 
       setRowData([...mapSomeRequiredData]);
@@ -901,6 +1022,7 @@ const ClaimsTable = ({ status, isDashboard }) => {
               clickedItem={clickedItem}
               status={clickedItem?.stage}
               isPreclaim={false}
+              activeSegment={activeSegment}
             />
           </div>
           <motion.div

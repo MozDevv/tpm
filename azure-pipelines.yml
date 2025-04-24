@@ -3,43 +3,48 @@ trigger:
 
 # Define the self-hosted agent pool for the entire pipeline
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'tnt-selfhosted-devpool'
+
 stages:
   - stage: BuildAndPush
     displayName: 'Build and Push Docker Image'
     jobs:
       - job: BuildAndPush
         displayName: 'Build and Push Docker Image'
-        pool:
-          vmImage: 'tnt-selfhosted-testpool' # Using Ubuntu VM image for the build task
         steps:
-          # Step 1: Build and push Docker image to Docker Hub
+          # Build and push Docker image to Docker Hub
           - task: Docker@2
             displayName: 'Building and pushing Docker image with build arguments'
             inputs:
               command: buildAndPush
-              repository: agilesam/pmis # Replace with your Docker Hub repository
+              repository: $(IMAGE) # Replace with your Docker Hub repository
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'SammyDockerHubSvcConnection' # Your Docker Hub service connection
-              tags: latest
+              containerRegistry: 'AlexDockerHubSvcConnection' # Your Docker Hub service connection
+              tags: $(TAG)
 
-  - stage: DeployToTest
-    displayName: 'Deploy to Test Environment'
-    jobs:
-      - job: DeployToTest
-        displayName: 'Deploy to Test Environment'
-        pool:
-          name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
-        steps:
-          # Step 2: SSH into remote server and run start_core_app.sh
-          - task: SSH@0
-            displayName: 'SSH into remote server and run start_core_app.sh'
-            inputs:
-              sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
-              runOptions: 'inline' # Running inline commands
-              inline: |
-                echo "Starting Deployment..."
-                cd configs
-                ./start_core_app.sh
-                echo "Script execution finished.👌🟢🟢"
-                exit 0
+          # cleanup
+          - script: |
+              echo "Removing local Docker image..."
+              docker rmi $(IMAGE):$(TAG) || echo "Image not found or already removed"
+              docker builder prune -a -f
+            displayName: 'Remove local Docker image'
+
+  # - stage: DeployToTest
+  #   displayName: 'Deploy to Test Environment'
+  #   jobs:
+  #     - job: DeployToTest
+  #       displayName: 'Deploy to Test Environment'
+  #       pool:
+  #         name: 'tnt-selfhosted-testpool' # Using self-hosted agent pool for SSH task
+  #       steps:
+  #         # Step 2: SSH into remote server and run start_core_app.sh
+  #         - task: SSH@0
+  #           displayName: 'SSH into remote server and run start_core_app.sh'
+  #           inputs:
+  #             sshEndpoint: 'FrontendSSHServiceConnection' # The SSH service connection name you set up
+  #             runOptions: 'commands' # Running inline commands
+  #             inline: |
+  #               echo "Starting Deployment..."
+  #               ~/configs/start_core_app.sh
+  #               echo "Script execution finished.👌🟢🟢"
+  #               exit 0

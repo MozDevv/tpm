@@ -20,6 +20,7 @@ import preClaimsEndpoints, {
 } from '@/components/services/preclaimsApi';
 import { mapRowData } from '../Preclaims';
 import { useLoadedRetireeDetailsStore } from '@/zustand/store';
+import BeneficiaryInfoTab from '../../ClaimsManagementTable/BeneficiaryInfoTab';
 
 const { TabPane } = Tabs;
 
@@ -88,13 +89,33 @@ function CreateProspectivePensioner({
               style={{ zIndex: 1 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
+              {clickedItem?.claim_type !== 0 && (
+                <>
+                  <TabPane
+                    tab={
+                      <span className="text-primary font-montserrat">
+                        Dependant Information
+                      </span>
+                    }
+                    key="1"
+                    style={{ zIndex: 1 }}
+                  >
+                    <BeneficiaryInfoTab
+                      clickedItem={
+                        clickedItem?.igc_beneficiary_track?.beneficiary
+                      }
+                    />
+                  </TabPane>
+                </>
+              )}
+
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
                     General Information
                   </span>
                 }
-                key="1"
+                key="17"
                 style={{ zIndex: 1 }}
               >
                 <div className="">

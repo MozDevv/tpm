@@ -504,6 +504,7 @@ const financeEndpoints = {
     `/Contribution/GetContributions?MemberId=${id}`,
 
   createContributionPv: '/Posting/PostContributionPIToledger',
+  scheduleForNotification: '/Revenue/ScheduleReturnForNotification',
   // updateContributionType
 };
 

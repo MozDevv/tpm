@@ -81,6 +81,7 @@ const BaseTable = ({
   segmentOptions2,
   segmentFilterParameter2,
   isOmbudsman,
+  segment2Criterion,
 }) => {
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);

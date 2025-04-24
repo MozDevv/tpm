@@ -40,6 +40,7 @@ import assessEndpoints, {
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import ReceiptVoucher from '../../payments/reciepts/ReceiptVoucher';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
+import { useSelectedSegmentStore } from '@/zustand/store';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -85,10 +86,12 @@ const Returns = ({ status }) => {
     }));
   };
 
+  const { selectedSegment, setSelectedSegment } = useSelectedSegmentStore();
+
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    ...(status === 0 && {
+    ...((selectedSegment === 0 || !selectedSegment) && {
       generateReturnTemplate: () => generateBudgetUploadTemplate(),
       uploadReturn: () => {
         setUploadExcel(true);
@@ -99,7 +102,7 @@ const Returns = ({ status }) => {
         setOpenBaseCard(true);
       },
     }),
-    ...(status === 0
+    ...(selectedSegment === 0 || !selectedSegment
       ? {
           submitReturnForApproval: () => {
             if (clickedItem) {
@@ -109,7 +112,7 @@ const Returns = ({ status }) => {
             }
           },
         }
-      : status === 1
+      : selectedSegment === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),
@@ -123,8 +126,10 @@ const Returns = ({ status }) => {
         }
       : {}),
 
-    ...(status === 2 && {
+    ...(selectedSegment === 2 && {
       // postReceiptToGL: () => setOpenPV(true),
+      scheduleForNotification: () => handleScheduleForNotification(),
+
       postReceiptToGL: () => {
         setOpenAction(true);
       },
@@ -135,16 +140,16 @@ const Returns = ({ status }) => {
   const baseCardHandlers = {
     'Receipt Voucher': () => setOpenReceiptReport(true),
     // ...(clickedItem &&
-    //   status === 2 && {
+    //   selectedSegment === 2 && {
     //     createReturnReceipt: () => {
     //       setOpenAction(true);
     //     },
     //   }),
-    ...(status === 0 &&
+    ...((selectedSegment === 0 || !selectedSegment) &&
       clickedItem && {
         generateReturnTemplate: () => generateBudgetUploadTemplate(),
       }),
-    ...(status === 0 && clickedItem
+    ...((selectedSegment === 0 || !selectedSegment) && clickedItem
       ? {
           submitReturnForApproval: () => {
             if (clickedItem) {
@@ -154,7 +159,7 @@ const Returns = ({ status }) => {
             }
           },
         }
-      : status === 1
+      : selectedSegment === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),
@@ -167,13 +172,46 @@ const Returns = ({ status }) => {
           },
         }
       : {}),
-    ...(status === 2
+    ...(selectedSegment === 2
       ? {
+          scheduleForNotification: () => handleScheduleForNotification(),
           postReceiptToLedger: () => handlePostReceiptToLedger(),
         }
       : {}),
   };
 
+  const handleScheduleForNotification = async () => {
+    const requestData =
+      selectedRows.length > 0
+        ? selectedRows.map((journal) => journal.id) // Return an array of IDs
+        : clickedItem
+        ? [clickedItem.id] // Wrap the single ID in an array
+        : [];
+
+    try {
+      const res = await apiService.post(
+        financeEndpoints.scheduleForNotification,
+        {
+          returnNotificationIds: requestData,
+        }
+      );
+      if (res.status === 200 && res.data.succeeded && res.data.messages[0]) {
+        message.success(res.data.messages[0]);
+      } else if (
+        res.status === 200 &&
+        !res.data.succeeded &&
+        res.data.messages[0]
+      ) {
+        message.error(
+          res.data.messages?.[0] || 'Failed to post receipts to ledger.'
+        );
+      } else {
+        message.error('Error scheduling');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handlePostReceiptToLedger = async () => {
     try {
       // Prepare request data
@@ -505,6 +543,17 @@ const Returns = ({ status }) => {
     financeEndpoints.getReceiptPostingGroups,
     apiService
   );
+
+  /**  {
+        Rd_New,
+        Rd_Pending_Approval,
+        Rd_Approved,
+        Rd_Pensioner_Notified,
+        Rd_Required_Details_Submitted,
+        Rd_Paid,
+        Rd_Rejected,
+        Rd_Reverted,
+    } */
   const columnDefs = [
     {
       field: 'documentNo',
@@ -1148,7 +1197,7 @@ const Returns = ({ status }) => {
           setClickedItem={setClickedItem}
           setOpenBaseCard={setOpenBaseCard}
           columnDefs={columnDefs}
-          fetchApiEndpoint={financeEndpoints.getReturnsByStage(status)}
+          fetchApiEndpoint={financeEndpoints.getReturns}
           fetchApiService={apiService.get}
           transformData={transformData}
           uploadExcel={uploadExcel}
@@ -1159,6 +1208,18 @@ const Returns = ({ status }) => {
           selectedRows={selectedRows}
           onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           openApproveDialog={openApprove}
+          segmentFilterParameter="stage"
+          // segment2Criterion={0}
+          segmentOptions={[
+            { value: 0, label: 'New' },
+            { value: 1, label: 'Pending Approval' },
+            { value: 2, label: 'Approved' },
+            { value: 3, label: 'Pensioner Notified' },
+            { value: 4, label: 'Required Details Submitted' },
+            { value: 5, label: 'Paid' },
+            { value: 6, label: 'Rejected' },
+            { value: 7, label: 'Reverted' },
+          ]}
         />
       </div>
     </div>

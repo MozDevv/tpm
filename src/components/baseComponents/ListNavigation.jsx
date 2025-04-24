@@ -728,6 +728,12 @@ const ListNavigation = ({
       action: 'resolve',
       requiredPermissions: [],
     },
+    {
+      name: 'Schedule For Notification',
+      icon: IosShare,
+      action: 'scheduleForNotification',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

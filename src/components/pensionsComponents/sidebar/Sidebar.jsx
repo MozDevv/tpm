@@ -400,32 +400,33 @@ export const menuItems = [
 
       {
         title: 'Receipt Voucher',
-        subChildren: [
-          {
-            title: 'New Receipt Voucher',
-            path: '/pensions/finance/revenue',
-          },
-          {
-            title: 'Receipt Voucher Pending Approval',
-            path: '/pensions/finance/revenue/pending-approval',
-          },
-          {
-            title: 'Approved Receipt Voucher',
-            path: '/pensions/finance/revenue/approved',
-          },
-          {
-            title: 'Posted Receipt Voucher',
-            path: '/pensions/finance/revenue/posted',
-          },
-          {
-            title: 'Paid Receipt Voucher',
-            path: '/pensions/finance/revenue/paid',
-          },
-          {
-            title: 'Rejected Receipt Voucher',
-            path: '/pensions/finance/revenue/rejected',
-          },
-        ],
+        path: '/pensions/finance/revenue',
+        // subChildren: [
+        //   {
+        //     title: 'New Receipt Voucher',
+        //     path: '/pensions/finance/revenue',
+        //   },
+        //   {
+        //     title: 'Receipt Voucher Pending Approval',
+        //     path: '/pensions/finance/revenue/pending-approval',
+        //   },
+        //   {
+        //     title: 'Approved Receipt Voucher',
+        //     path: '/pensions/finance/revenue/approved',
+        //   },
+        //   {
+        //     title: 'Posted Receipt Voucher',
+        //     path: '/pensions/finance/revenue/posted',
+        //   },
+        //   {
+        //     title: 'Paid Receipt Voucher',
+        //     path: '/pensions/finance/revenue/paid',
+        //   },
+        //   {
+        //     title: 'Rejected Receipt Voucher',
+        //     path: '/pensions/finance/revenue/rejected',
+        //   },
+        // ],
       },
       {
         title: 'Failed Payments',

@@ -13,6 +13,7 @@ import Deductions from '@/components/pensionsComponents/preclaims/deductions/Ded
 import WcpsCard from '@/components/pensionsComponents/preclaims/wcps/WcpsCard';
 import ParliamentContributions from '@/components/pensionsComponents/preclaims/Contributions/ParliamentContributions';
 import ViewBeneficiaries from '@/components/pensionsComponents/preclaims/ViewBeneficiaries';
+import BeneficiaryInfoTab from '@/components/pensionsComponents/ClaimsManagementTable/BeneficiaryInfoTab';
 
 const { TabPane } = Tabs;
 
@@ -86,6 +87,25 @@ function AssessmentCard({
                   />
                 </div>
               </TabPane>
+              {clickedItem?.claim_type !== 0 && (
+                <>
+                  <TabPane
+                    tab={
+                      <span className="text-primary font-montserrat">
+                        Dependant Information
+                      </span>
+                    }
+                    key="17"
+                    style={{ zIndex: 1 }}
+                  >
+                    <BeneficiaryInfoTab
+                      clickedItem={
+                        clickedItem?.igc_beneficiary_track?.beneficiary
+                      }
+                    />
+                  </TabPane>
+                </>
+              )}
               {clickedItem?.notification_status &&
                 clickedItem.notification_status !== 2 && (
                   <>
