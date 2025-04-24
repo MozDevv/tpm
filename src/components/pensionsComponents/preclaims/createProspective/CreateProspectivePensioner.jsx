@@ -89,7 +89,8 @@ function CreateProspectivePensioner({
               style={{ zIndex: 1 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
-              {clickedItem?.claim_type !== 0 && (
+              {(clickedItem?.claim_type === 1 ||
+                clickedItem?.claim_type === 2) && (
                 <>
                   <TabPane
                     tab={
@@ -115,7 +116,11 @@ function CreateProspectivePensioner({
                     General Information
                   </span>
                 }
-                key={clickedItem?.claim_type !== 0 ? '17' : '1'}
+                key={
+                  clickedItem?.claim_type === 1 || clickedItem?.claim_type === 2
+                    ? '17'
+                    : '1'
+                }
                 style={{ zIndex: 1 }}
               >
                 <div className="">

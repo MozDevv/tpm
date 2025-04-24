@@ -16,7 +16,10 @@ import useFetchAsync from '@/components/hooks/DynamicFetchHook';
 import preClaimsEndpoints from '@/components/services/preclaimsApi';
 import { apiService as preApiservice } from '@/components/services/preclaimsApi';
 import { message } from 'antd';
-import { useSelectedSegmentStore } from '@/zustand/store';
+import {
+  useApprovalRefreshStore,
+  useSelectedSegmentStore,
+} from '@/zustand/store';
 import BaseApprovalCard from '@/components/baseComponents/BaseApprovalCard';
 
 const columnDefs = [
@@ -80,6 +83,7 @@ const OldCases = () => {
     });
   };
   const [selectedRows, setSelectedRows] = React.useState([]);
+  const { setapprovalRefresh } = useApprovalRefreshStore();
 
   // const []
 
@@ -95,44 +99,6 @@ const OldCases = () => {
   const [workFlowChange, setWorkFlowChange] = React.useState(0);
   const [refreshData, setRefreshData] = React.useState(0);
   const handlers = {
-    // notifyUser: async () => {
-    //   try {
-    //     if (selectedRows.length === 0) {
-    //       message.warning('Please select at least one row to notify.');
-    //       return;
-    //     }
-
-    //     // Prepare the payload using selected rows
-    //     const payload = {
-    //       paymentReturnNotificationDetail: selectedRows.map((row) => ({
-    //         prospectivePensionerId: row.prospectivePensionerId,
-    //         beneficiaryId: row.beneficiaryId || null, // Use null if not available
-    //         reason: row.returnReasonEnum || 0, // Default to 0 if not provided
-    //         returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
-    //       })),
-    //     };
-
-    //     // Send the API request
-    //     const res = await apiService.post(financeEndpoints.notifyUser, payload);
-
-    //     // Handle the response
-    //     if (res.status === 200 && res.data.succeeded) {
-    //       message.success('Notification sent successfully');
-    //     } else if (
-    //       res.status === 200 &&
-    //       !res.data.succeeded &&
-    //       res.data.messages[0]
-    //     ) {
-    //       message.error(res.data.messages[0]);
-    //     } else {
-    //       message.error('An error occurred');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error sending notification:', error);
-    //     message.error('An error occurred while sending the notification.');
-    //   }
-    // },
-
     ...((!selectedSegment ||
       selectedSegment === 0 ||
       selectedSegment === undefined) && {
@@ -183,6 +149,8 @@ const OldCases = () => {
             res.data.succeeded &&
             res.data.messages[0]
           ) {
+            setapprovalRefresh(Date.now());
+
             message.success(res.data.messages[0]);
           } else if (
             res.status === 200 &&
@@ -232,6 +200,8 @@ const OldCases = () => {
             res.data.succeeded &&
             res.data.messages[0]
           ) {
+            setapprovalRefresh(Date.now());
+
             message.success(res.data.messages[0]);
           } else if (
             res.status === 200 &&
@@ -266,6 +236,7 @@ const OldCases = () => {
         }
       );
       if (res.status === 200 && res.data.succeeded && res.data.messages[0]) {
+        setapprovalRefresh(Date.now());
         setRefreshData((prev) => prev + 1);
         message.success(res.data.messages[0]);
       } else if (

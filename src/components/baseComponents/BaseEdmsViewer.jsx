@@ -27,7 +27,9 @@ import {
 import { useDocumentBase64 } from '../hooks/useDocumentBase64';
 
 export default function BaseEdmsViewer({ doc, onClose }) {
-  const { base64, loading, error } = useDocumentBase64(doc.edmsFileId);
+  const { base64, loading, error } = useDocumentBase64(
+    doc.edmsFileId || doc.edms_id
+  );
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {

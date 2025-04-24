@@ -64,6 +64,8 @@ import {
   Upload as MuiUpload,
 } from '@mui/icons-material';
 import { BASE_CORE_API } from '@/utils/constants';
+import BaseFileViewer from './BaseFileViewer';
+import BaseEdmsViewer from './BaseEdmsViewer';
 
 const BaseInputTable = ({
   fields = [],
@@ -656,35 +658,7 @@ const BaseInputTable = ({
   const [previewContent, setPreviewContent] = useState(null);
   const [clickedDocument, setClickedDocument] = useState(null);
 
-  const handlePreview = async (record) => {
-    setLoading(true);
-    try {
-      const res = await apiService.get(
-        `${BASE_CORE_API}api/ProspectivePensioners/getUploadedPensionerSelectionFile?document_selection_id=${record.id}`
-      );
-      const base64Data = res.data?.messages[0];
-      if (base64Data) {
-        setPreviewContent(
-          <embed
-            src={`data:application/pdf;base64,${base64Data}`}
-            type="application/pdf"
-            width="100%"
-            height="100%"
-          />
-        );
-        setPreviewTitle(record.name);
-        setPreviewVisible(true);
-      } else {
-        message.error('No preview available for this document.');
-      }
-    } catch (error) {
-      console.log('Error fetching document:', error);
-      message.error('Failed to fetch document.');
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [openPreview, setOpenPreview] = useState(false);
 
   const handleSave = async (data) => {
     const formattedFormData = { ...data };
@@ -1116,8 +1090,10 @@ const BaseInputTable = ({
                 <div className="mb-4">
                   <AntButton
                     onClick={() => {
-                      setClickedDocument(params.data.documentUpload);
-                      handlePreview(params.data.documentUpload);
+                      setOpenPreview(true);
+                      params.data.documentUpload &&
+                        setClickedDocument(params.data.documentUpload);
+                      //  handlePreview(params.data.documentUpload);
                     }}
                     type="primary"
                     style={{
@@ -1946,64 +1922,20 @@ const BaseInputTable = ({
 
   return (
     <>
-      <Dialog
-        open={previewVisible}
-        onClose={() => setPreviewVisible(false)}
-        sx={{
-          '& .MuiPaper-root': {
-            minHeight: '75vh',
-            maxHeight: '85vh',
-            minWidth: '60vw',
-            maxWidth: '35vw',
-          },
-        }}
-      >
-        <div
-          className="bg-white h-[90px] flex flex-row justify-between pt-2 items-center  px-4 w-full"
-          style={{ boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)' }}
-        >
-          <div className="flex flex-col">
-            <h2 className="text-xl font-bold text-gray-800 mt-1">
-              {clickedDocument?.fileName}
-            </h2>
-            <p className="text-sm text-gray-500 py-2">
-              Preview of the document
-            </p>
-          </div>
-          <div className="space-x-4">
-            <IconButton onClick={handlePreview}>
-              <Refresh />
-            </IconButton>
-            <Button
-              // onClick={handleDownload}
-              variant="contained"
-              color="primary"
-              startIcon={<GetApp />}
-              className="px-6 py-2 rounded hover:bg-blue-600 transition duration-300"
-            >
-              Download PDF
-            </Button>
-            <Button
-              onClick={() => setPreviewVisible(false)}
-              variant="outlined"
-              color="primary"
-              startIcon={<Cancel />}
-              className="px-6 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
-        {previewContent ? (
-          <div className="h-[100vh] overflow-auto">{previewContent}</div>
-        ) : (
-          <div className="flex items-center justify-center min-h-[65vh]">
-            <div className="text-center">
-              <Empty description="No PDF available to display." />
-            </div>
-          </div>
-        )}
-      </Dialog>
+      {previewFile && openPreview && !clickedDocument && (
+        <BaseFileViewer
+          file={previewFile}
+          onClose={() => setOpenPreview(false)} // Close the viewer
+        />
+      )}
+
+      {openPreview && clickedDocument && !previewFile && (
+        <BaseEdmsViewer
+          doc={clickedDocument}
+          onClose={() => setOpenPreview(false)}
+        />
+      )}
+
       <div className="flex items-center gap-1">
         <Dialog open={openExcel} onClose={() => setOpenExcel(false)} sx={{}}>
           <BaseExcelComponent
