@@ -55,6 +55,7 @@ import workflowsEndpoints, {
 import { Divider, Menu, MenuItem, TextField } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { name } from 'dayjs/locale/en-au';
+import { useSelectedSegmentStore } from '@/zustand/store';
 
 const ListNavigation = ({
   handlers,
@@ -80,7 +81,11 @@ const ListNavigation = ({
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const { selectedSegment, setSelectedSegment } = useSelectedSegmentStore();
 
+  useEffect(() => {
+    setShowApprovalButtons(false);
+  }, [selectedSegment]);
   const handleMenuClose = () => {
     setAnchorEl(null);
   };

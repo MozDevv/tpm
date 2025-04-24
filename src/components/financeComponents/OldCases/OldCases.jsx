@@ -119,54 +119,55 @@ const OldCases = () => {
         }
       : {}),
 
-    ...(selectedSegment === 2 && {
-      notifyUser: async () => {
-        if (selectedRows.length === 0) {
-          message.warning('Please select at least one row to notify.');
-          return;
-        }
-
-        try {
-          // Prepare the payload using selectedRows
-          const payload = {
-            paymentReturnNotificationDetail: selectedRows.map((row) => ({
-              prospectivePensionerId: row.prospectivePensionerId,
-              beneficiaryId: row.beneficiaryId || null, // Use null if not available
-              reason: row.returnReasonEnum || 0, // Default to 0 if not provided
-              returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
-            })),
-          };
-
-          // Send the API request
-          const res = await apiService.post(
-            financeEndpoints.notifyUser,
-            payload
-          );
-
-          // Handle the response
-          if (
-            res.status === 200 &&
-            res.data.succeeded &&
-            res.data.messages[0]
-          ) {
-            setapprovalRefresh(Date.now());
-
-            message.success(res.data.messages[0]);
-          } else if (
-            res.status === 200 &&
-            !res.data.succeeded &&
-            res.data.messages[0]
-          ) {
-            message.error(res.data.messages[0]);
-          } else {
-            message.error('An error occurred while sending notifications.');
+    ...(selectedSegment &&
+      selectedSegment === 2 && {
+        notifyUser: async () => {
+          if (selectedRows.length === 0) {
+            message.warning('Please select at least one row to notify.');
+            return;
           }
-        } catch (error) {
-          console.error('Error sending notifications:', error);
-          message.error('An error occurred while sending the notifications.');
-        }
-      },
-    }),
+
+          try {
+            // Prepare the payload using selectedRows
+            const payload = {
+              paymentReturnNotificationDetail: selectedRows.map((row) => ({
+                prospectivePensionerId: row.prospectivePensionerId,
+                beneficiaryId: row.beneficiaryId || null, // Use null if not available
+                reason: row.returnReasonEnum || 0, // Default to 0 if not provided
+                returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
+              })),
+            };
+
+            // Send the API request
+            const res = await apiService.post(
+              financeEndpoints.notifyUser,
+              payload
+            );
+
+            // Handle the response
+            if (
+              res.status === 200 &&
+              res.data.succeeded &&
+              res.data.messages[0]
+            ) {
+              setapprovalRefresh(Date.now());
+
+              message.success(res.data.messages[0]);
+            } else if (
+              res.status === 200 &&
+              !res.data.succeeded &&
+              res.data.messages[0]
+            ) {
+              message.error(res.data.messages[0]);
+            } else {
+              message.error('An error occurred while sending notifications.');
+            }
+          } catch (error) {
+            console.error('Error sending notifications:', error);
+            message.error('An error occurred while sending the notifications.');
+          }
+        },
+      }),
   };
 
   const baseCardHandlers = {

@@ -126,14 +126,14 @@ const Returns = ({ status }) => {
         }
       : {}),
 
-    ...(selectedSegment === 2 && {
-      // postReceiptToGL: () => setOpenPV(true),
-      scheduleForNotification: () => handleScheduleForNotification(),
+    // ...(selectedSegment === 2 && {
+    //   // postReceiptToGL: () => setOpenPV(true),
+    //   scheduleForNotification: () => handleScheduleForNotification(),
 
-      postReceiptToGL: () => {
-        setOpenAction(true);
-      },
-    }),
+    //   postReceiptToGL: () => {
+    //     setOpenAction(true);
+    //   },
+    // }),
   };
   const [openReceiptReport, setOpenReceiptReport] = React.useState(false);
 
@@ -172,12 +172,12 @@ const Returns = ({ status }) => {
           },
         }
       : {}),
-    ...(selectedSegment === 2
-      ? {
-          scheduleForNotification: () => handleScheduleForNotification(),
-          postReceiptToLedger: () => handlePostReceiptToLedger(),
-        }
-      : {}),
+    // ...(selectedSegment === 2
+    //   ? {
+    //       scheduleForNotification: () => handleScheduleForNotification(),
+    //       postReceiptToLedger: () => handlePostReceiptToLedger(),
+    //     }
+    //   : {}),
   };
 
   const handleScheduleForNotification = async () => {
