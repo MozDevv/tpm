@@ -12,6 +12,19 @@ import ClaimLookupPolicy from './ClaimLookupPolicy';
 import { Dialog } from '@mui/material';
 import GeneralCaseReport from './GeneralCaseReport';
 import useFetchAsync from '../hooks/DynamicFetchHook';
+import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
+import { useState } from 'react';
+export const statusIcons = {
+  /**  {
+        PENDING,
+        APPROVED,
+        REJECTED
+    } */
+  // 0: { icon: Visibility, name: 'Open', color: '#1976d2' }, // Blue
+  0: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
+  1: { icon: Verified, name: 'Approved', color: '#2e7d32' }, // Green
+  2: { icon: Cancel, name: 'Rejected', color: '#d32f2f' }, // Red
+};
 
 const GeneralCase = () => {
   const columnDefs = [
@@ -45,6 +58,7 @@ const GeneralCase = () => {
       filter: true,
       flex: 1,
     },
+
     // {
     //   field: 'partyName',
     //   headerName: 'Source',
@@ -59,6 +73,39 @@ const GeneralCase = () => {
       headerClass: 'prefix-header',
       filter: true,
       flex: 1,
+    },
+    {
+      headerName: 'Approval Status',
+      field: 'approvalStatus',
+      width: 150,
+      filter: true,
+      cellRenderer: (params) => {
+        const status = statusIcons[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       field: 'source',

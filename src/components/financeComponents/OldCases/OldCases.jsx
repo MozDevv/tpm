@@ -52,13 +52,25 @@ const columnDefs = [
     filter: true,
     flex: 1,
   },
-
+  {
+    field: 'approvalStatus',
+    headerName: 'Approval Status',
+    filter: true,
+    flex: 1,
+  },
+  {
+    field: 'notificationStatus',
+    headerName: 'Notification Status',
+    filter: true,
+    flex: 1,
+  },
   {
     field: 'returnReason',
     headerName: 'Return Reason',
     filter: true,
     flex: 1,
   },
+
   {
     field: 'amount',
     headerName: 'Amount',
@@ -454,7 +466,11 @@ const OldCases = () => {
         {clickedItem ? (
           <>
             <AssessmentCard
-              claim={{ ...clickedItem, prospectivePensionerId, claimId }}
+              claim={{
+                ...clickedItem,
+                prospectivePensionerId,
+                id_claim: claimId,
+              }}
               clickedItem={retiree}
               claimId={claimId}
               setOpenBaseCard={setOpenBaseCard}
@@ -518,12 +534,11 @@ const OldCases = () => {
         segmentOptions={[
           { value: 0, label: 'New' },
           { value: 1, label: 'Pending Approval' },
-          { value: 2, label: 'Approved' },
-          { value: 3, label: 'Pensioner Notified' },
-          { value: 4, label: 'Required Details Submitted' },
-          { value: 5, label: 'Paid' },
-          { value: 6, label: 'Rejected' },
-          { value: 7, label: 'Reverted' },
+          { value: 2, label: 'Pensioner Notified' },
+          { value: 3, label: 'Required Details Submitted' },
+          { value: 4, label: 'Paid' },
+          { value: 5, label: 'Rejected' },
+          { value: 6, label: 'Reverted' },
         ]}
         onSelectionChange={(selectedRows) => {
           setSelectedRows(selectedRows);
