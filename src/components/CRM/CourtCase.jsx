@@ -14,9 +14,11 @@ import { Dialog } from '@mui/material';
 import OmbudsmanReport from './OmbudsmanReport';
 import CourtCaseReport from './CourtCaseReport';
 import useFetchAsync from '../hooks/DynamicFetchHook';
+import { statusIcons } from './GeneralCase';
+import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
 
 const CourtCase = () => {
-  const statusIcons = {
+  const statusIcons2 = {
     0: { icon: Visibility, name: 'On Going', color: '#1976d2' }, // Blue
     // 1: { icon: AccessTime, name: 'Pending', color: '#fbc02d' }, // Yellow
     1: { icon: Verified, name: 'Resolved', color: '#2e7d32' }, // Green
@@ -68,18 +70,44 @@ const CourtCase = () => {
       width: 200,
     },
     {
-      field: 'pensionerNumber',
-      headerName: 'Pensioner Number',
-      headerClass: 'prefix-header',
-      filter: true,
-      width: 200,
-    },
-    {
       field: 'status',
       headerName: 'Status',
       headerClass: 'prefix-header',
       filter: true,
       width: 200,
+      cellRenderer: (params) => {
+        const status = statusIcons2[params.value];
+        if (!status) return null;
+
+        const IconComponent = status.icon;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconComponent
+              style={{
+                color: status.color,
+                marginRight: '6px',
+                fontSize: '17px',
+              }}
+            />
+            <span
+              style={{
+                color: status.color,
+                fontWeight: 'semibold',
+                fontSize: '13px',
+              }}
+            >
+              {status.name}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: 'Approval Status',
+      field: 'approvalStatus',
+      width: 150,
+      filter: true,
       cellRenderer: (params) => {
         const status = statusIcons[params.value];
         if (!status) return null;
@@ -108,6 +136,14 @@ const CourtCase = () => {
         );
       },
     },
+    {
+      field: 'pensionerNumber',
+      headerName: 'Pensioner Number',
+      headerClass: 'prefix-header',
+      filter: true,
+      width: 200,
+    },
+
     {
       field: 'pensionerNationalID',
       headerName: 'Pensioner National ID',
@@ -193,6 +229,9 @@ const CourtCase = () => {
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [refreshData, setRefreshData] = React.useState(false);
   const [openReport, setOpenReport] = React.useState(false);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [workFlowChange, setWorkFlowChange] = React.useState(0);
 
   const reportItems = ['Court Case Report'];
 
@@ -203,10 +242,16 @@ const CourtCase = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
+    approvalRequest: () => console.log('Approval Request clicked'),
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => {
+      setOpenApprove(5);
+      setWorkFlowChange(Date.now());
+    },
+
     claimLookup: () => setClaimLookup(true),
 
     resolve: async () => {
@@ -242,17 +287,18 @@ const CourtCase = () => {
   };
 
   const baseCardHandlers = {
+    approvalRequest: () => console.log('Approval Request clicked'),
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => {
+      setOpenApprove(5);
+      setWorkFlowChange(Date.now());
+    },
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
-    },
-    edit: (item) => {
-      // setOpenBaseCard(true);
-      // setClickedItem(item);
-    },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
     },
   };
 
@@ -396,6 +442,17 @@ const CourtCase = () => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         open={openReport}
         onClose={() => setOpenReport(false)}
@@ -473,6 +530,7 @@ const CourtCase = () => {
         segmentFilterParameter2="status"
         onSelectionChange={(selectedRows) => {
           setSelectedItems(selectedRows);
+          setSelectedRows(selectedRows);
         }}
         segmentOptions2={[
           { value: 0, label: 'On Going' },

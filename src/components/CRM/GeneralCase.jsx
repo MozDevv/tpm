@@ -14,6 +14,8 @@ import GeneralCaseReport from './GeneralCaseReport';
 import useFetchAsync from '../hooks/DynamicFetchHook';
 import { AccessTime, Cancel, Verified, Visibility } from '@mui/icons-material';
 import { useState } from 'react';
+import BaseApprovalCard from '../baseComponents/BaseApprovalCard';
+
 export const statusIcons = {
   /**  {
         PENDING,
@@ -153,6 +155,9 @@ const GeneralCase = () => {
   const [claimLookup, setClaimLookup] = React.useState(false);
 
   const [openReport, setOpenReport] = React.useState(false);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  const [openApprove, setOpenApprove] = React.useState(0);
+  const [workFlowChange, setWorkFlowChange] = React.useState(0);
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
@@ -161,10 +166,16 @@ const GeneralCase = () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log('Edit clicked'),
-    // delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
+
+    approvalRequest: () => console.log('Approval Request clicked'),
+    sendApprovalRequest: () => setOpenApprove(1),
+    cancelApprovalRequest: () => setOpenApprove(2),
+    approveDocument: () => setOpenApprove(3),
+    rejectDocumentApproval: () => setOpenApprove(4),
+    delegateApproval: () => {
+      setOpenApprove(5);
+      setWorkFlowChange(Date.now());
+    },
     claimLookup: () => setClaimLookup(true),
     'General Case Report': () => {
       setOpenReport(true);
@@ -322,6 +333,17 @@ const GeneralCase = () => {
 
   return (
     <div className="">
+      <BaseApprovalCard
+        openApprove={openApprove}
+        setOpenApprove={setOpenApprove}
+        documentNo={
+          selectedRows.length > 0
+            ? selectedRows.map((item) => item.documentNo)
+            : clickedItem
+            ? [clickedItem.documentNo]
+            : []
+        }
+      />
       <Dialog
         open={openReport}
         onClose={() => setOpenReport(false)}
@@ -395,6 +417,10 @@ const GeneralCase = () => {
         handlers={handlers}
         breadcrumbTitle="General Policy Matters"
         currentTitle="General Policy Matters"
+        onSelectionChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+          console.log('Selected Rows:', selectedRows);
+        }}
       />
     </div>
   );
