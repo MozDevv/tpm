@@ -131,106 +131,106 @@ const OldCases = () => {
         }
       : {}),
 
-    ...(selectedSegment &&
-      selectedSegment === 2 && {
-        notifyUser: async () => {
-          if (selectedRows.length === 0) {
-            message.warning('Please select at least one row to notify.');
-            return;
-          }
+    // ...(selectedSegment &&
+    //   selectedSegment === 2 && {
+    //     notifyUser: async () => {
+    //       if (selectedRows.length === 0) {
+    //         message.warning('Please select at least one row to notify.');
+    //         return;
+    //       }
 
-          try {
-            // Prepare the payload using selectedRows
-            const payload = {
-              paymentReturnNotificationDetail: selectedRows.map((row) => ({
-                prospectivePensionerId: row.prospectivePensionerId,
-                beneficiaryId: row.beneficiaryId || null, // Use null if not available
-                reason: row.returnReasonEnum || 0, // Default to 0 if not provided
-                returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
-              })),
-            };
+    //       try {
+    //         // Prepare the payload using selectedRows
+    //         const payload = {
+    //           paymentReturnNotificationDetail: selectedRows.map((row) => ({
+    //             prospectivePensionerId: row.prospectivePensionerId,
+    //             beneficiaryId: row.beneficiaryId || null, // Use null if not available
+    //             reason: row.returnReasonEnum || 0, // Default to 0 if not provided
+    //             returnOwnertType: row.returnOwnertType || 0, // Default to 0 if not provided
+    //           })),
+    //         };
 
-            // Send the API request
-            const res = await apiService.post(
-              financeEndpoints.notifyUser,
-              payload
-            );
+    //         // Send the API request
+    //         const res = await apiService.post(
+    //           financeEndpoints.notifyUser,
+    //           payload
+    //         );
 
-            // Handle the response
-            if (
-              res.status === 200 &&
-              res.data.succeeded &&
-              res.data.messages[0]
-            ) {
-              setapprovalRefresh(Date.now());
+    //         // Handle the response
+    //         if (
+    //           res.status === 200 &&
+    //           res.data.succeeded &&
+    //           res.data.messages[0]
+    //         ) {
+    //           setapprovalRefresh(Date.now());
 
-              message.success(res.data.messages[0]);
-            } else if (
-              res.status === 200 &&
-              !res.data.succeeded &&
-              res.data.messages[0]
-            ) {
-              message.error(res.data.messages[0]);
-            } else {
-              message.error('An error occurred while sending notifications.');
-            }
-          } catch (error) {
-            console.error('Error sending notifications:', error);
-            message.error('An error occurred while sending the notifications.');
-          }
-        },
-      }),
+    //           message.success(res.data.messages[0]);
+    //         } else if (
+    //           res.status === 200 &&
+    //           !res.data.succeeded &&
+    //           res.data.messages[0]
+    //         ) {
+    //           message.error(res.data.messages[0]);
+    //         } else {
+    //           message.error('An error occurred while sending notifications.');
+    //         }
+    //       } catch (error) {
+    //         console.error('Error sending notifications:', error);
+    //         message.error('An error occurred while sending the notifications.');
+    //       }
+    //     },
+    //   }),
   };
 
   const baseCardHandlers = {
     addReturnToIGC: () => {
       handleReturnToIgc();
     },
-    ...(selectedSegment === 2 && {
-      notifyUser: async () => {
-        try {
-          // Prepare the payload using clickedItem details
-          const payload = {
-            paymentReturnNotificationDetail: [
-              {
-                prospectivePensionerId: clickedItem?.prospectivePensionerId,
-                beneficiaryId: clickedItem?.beneficiaryId || null, // Use null if not available
-                reason: clickedItem?.returnReasonEnum || 0, // Default to 0 if not provided
-                returnOwnertType: clickedItem?.returnOwnertType || 0, // Default to 0 if not provided
-              },
-            ],
-          };
+    // ...(selectedSegment === 2 && {
+    //   notifyUser: async () => {
+    //     try {
+    //       // Prepare the payload using clickedItem details
+    //       const payload = {
+    //         paymentReturnNotificationDetail: [
+    //           {
+    //             prospectivePensionerId: clickedItem?.prospectivePensionerId,
+    //             beneficiaryId: clickedItem?.beneficiaryId || null, // Use null if not available
+    //             reason: clickedItem?.returnReasonEnum || 0, // Default to 0 if not provided
+    //             returnOwnertType: clickedItem?.returnOwnertType || 0, // Default to 0 if not provided
+    //           },
+    //         ],
+    //       };
 
-          // Send the API request
-          const res = await apiService.post(
-            financeEndpoints.notifyUser,
-            payload
-          );
+    //       // Send the API request
+    //       const res = await apiService.post(
+    //         financeEndpoints.notifyUser,
+    //         payload
+    //       );
 
-          // Handle the response
-          if (
-            res.status === 200 &&
-            res.data.succeeded &&
-            res.data.messages[0]
-          ) {
-            setapprovalRefresh(Date.now());
+    //       // Handle the response
+    //       if (
+    //         res.status === 200 &&
+    //         res.data.succeeded &&
+    //         res.data.messages[0]
+    //       ) {
+    //         setapprovalRefresh(Date.now());
 
-            message.success(res.data.messages[0]);
-          } else if (
-            res.status === 200 &&
-            !res.data.succeeded &&
-            res.data.messages[0]
-          ) {
-            message.error(res.data.messages[0]);
-          } else {
-            message.error('An error occurred');
-          }
-        } catch (error) {
-          console.error('Error sending notification:', error);
-          message.error('An error occurred while sending the notification.');
-        }
-      },
-    }),
+    //         message.success(res.data.messages[0]);
+    //       } else if (
+    //         res.status === 200 &&
+    //         !res.data.succeeded &&
+    //         res.data.messages[0]
+    //       ) {
+    //         message.error(res.data.messages[0]);
+    //       } else {
+    //         message.error('An error occurred');
+    //       }
+    //     } catch (error) {
+    //       console.error('Error sending notification:', error);
+    //       message.error('An error occurred while sending the notification.');
+    //     }
+    //   },
+    // }),
   };
 
   const handleScheduleForNotification = async () => {
@@ -534,11 +534,12 @@ const OldCases = () => {
         segmentOptions={[
           { value: 0, label: 'New' },
           { value: 1, label: 'Pending Approval' },
-          { value: 2, label: 'Pensioner Notified' },
-          { value: 3, label: 'Required Details Submitted' },
-          { value: 4, label: 'Paid' },
-          { value: 5, label: 'Rejected' },
-          { value: 6, label: 'Reverted' },
+          { value: 2, label: 'Approved' },
+          { value: 3, label: 'Pensioner Notified' },
+          { value: 4, label: 'Required Details Submitted' },
+          { value: 5, label: 'Paid' },
+          { value: 6, label: 'Rejected' },
+          { value: 7, label: 'Reverted' },
         ]}
         onSelectionChange={(selectedRows) => {
           setSelectedRows(selectedRows);
