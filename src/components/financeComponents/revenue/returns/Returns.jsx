@@ -1188,6 +1188,8 @@ const Returns = ({ status }) => {
         ) : (
           <></>
         )}
+
+        {/* {JSON.stringify(clickedItem)} */}
       </BaseCard>
       <div className="">
         <BaseTable

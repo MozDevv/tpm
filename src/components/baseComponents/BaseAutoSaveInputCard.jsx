@@ -503,7 +503,11 @@ const BaseAutoSaveInputCard = ({
     console.log('getInitialData: getApiFunction: ', getApiFunction);
     try {
       const res = await getApiFunction(getApiEndpoint(id));
-      if (res.status === 200) {
+      if (
+        res.status === 200 &&
+        Array.isArray(res.data.data) &&
+        res.data.data.length > 0
+      ) {
         const data = transformData(res.data.data);
         setClickedItem(data[0]);
         setFormData(data[0]);
