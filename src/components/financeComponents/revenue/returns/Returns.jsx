@@ -1216,11 +1216,8 @@ const Returns = ({ status }) => {
             { value: 0, label: 'New' },
             { value: 1, label: 'Pending Approval' },
             { value: 2, label: 'Approved' },
-            { value: 3, label: 'Pensioner Notified' },
-            { value: 4, label: 'Required Details Submitted' },
-            { value: 5, label: 'Paid' },
-            { value: 6, label: 'Rejected' },
-            { value: 7, label: 'Reverted' },
+            { value: 3, label: 'Closed' },
+            { value: 4, label: 'Rejected' },
           ]}
         />
       </div>

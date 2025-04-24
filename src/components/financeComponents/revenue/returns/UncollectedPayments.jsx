@@ -40,7 +40,7 @@ import assessEndpoints, {
 import BaseFinanceInputTable from '@/components/baseComponents/BaseFinanceInputTable';
 import ReceiptVoucher from '../../payments/reciepts/ReceiptVoucher';
 import BaseAutoSaveInputCard from '@/components/baseComponents/BaseAutoSaveInputCard';
-import { useRowDataSore } from '@/zustand/store';
+import { useRowDataSore, useSelectedSegmentStore } from '@/zustand/store';
 
 const statusIcons = {
   0: { icon: Visibility, name: 'New', color: '#1976d2' }, // Blue
@@ -80,40 +80,39 @@ const UncollectedPayments = ({ status }) => {
 
   const transformData = (data) => {
     return data.map((item, index) => ({
-      no: index + 1,
+      // no: index + 1,
       ...item,
       receiptNo: item?.recieptNo,
     }));
   };
+  const { selectedSegment, setSelectedSegment } = useSelectedSegmentStore();
 
   const handlers = {
     // filter: () => console.log("Filter clicked"),
     // openInExcel: () => console.log("Export to Excel clicked"),
-    create: () => {
-      setOpenBaseCard(true);
-    },
-    ...(status === 0 && {
-      generateReturnTemplate: () => generateBudgetUploadTemplate(),
-      uploadReturn: () => {
-        setUploadExcel(true);
+
+    ...((!selectedSegment ||
+      selectedSegment === 0 ||
+      selectedSegment === undefined) && {
+      create: () => {
         setOpenBaseCard(true);
       },
-      addReturn: () => {
-        setOpenAddReturn(true);
-        setOpenBaseCard(true);
+      submitReturnForApproval: () => {
+        if (selectedRows.length > 0) {
+          const returnIds = selectedRows.map((item) => item.returnId); // Extract returnIds from selectedRows
+          returnIds.forEach((id) => {
+            submitBudgetForApproval(id); // Call submitBudgetForApproval for each returnId
+          });
+          // message.success('Selected budgets submitted for approval.');
+        } else if (clickedItem) {
+          submitBudgetForApproval(clickedItem.returnId); // Submit the clicked item's returnId
+          message.success('Budget submitted for approval.');
+        } else {
+          message.error('Please select a budget to submit for approval.');
+        }
       },
     }),
-    ...(status === 0
-      ? {
-          submitReturnForApproval: () => {
-            if (clickedItem) {
-              submitBudgetForApproval();
-            } else {
-              message.error('Please select a budget to submit for approval');
-            }
-          },
-        }
-      : status === 1
+    ...(selectedSegment === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),
@@ -127,12 +126,12 @@ const UncollectedPayments = ({ status }) => {
         }
       : {}),
 
-    ...(status === 2 && {
-      // postReceiptToGL: () => setOpenPV(true),
-      postReceiptToGL: () => {
-        setOpenAction(true);
-      },
-    }),
+    // ...(selectedSegment === 2 && {
+    //   // postReceiptToGL: () => setOpenPV(true),
+    //   postReceiptToGL: () => {
+    //     setOpenAction(true);
+    //   },
+    // }),
   };
   const [openReceiptReport, setOpenReceiptReport] = React.useState(false);
 
@@ -140,26 +139,25 @@ const UncollectedPayments = ({ status }) => {
     // create:
     'Receipt Voucher': () => setOpenReceiptReport(true),
     // ...(clickedItem &&
-    //   status === 2 && {
+    //   selectedSegment === 2 && {
     //     createReturnReceipt: () => {
     //       setOpenAction(true);
     //     },
     //   }),
-    ...(status === 0 &&
-      clickedItem && {
-        generateReturnTemplate: () => generateBudgetUploadTemplate(),
-      }),
-    ...(status === 0 && clickedItem
+    ...(!selectedSegment || selectedSegment === 0
       ? {
+          create: () => {
+            setOpenBaseCard(true);
+          },
           submitReturnForApproval: () => {
             if (clickedItem) {
-              submitBudgetForApproval();
+              submitBudgetForApproval(clickedItem?.returnId);
             } else {
               message.error('Please select a budget to submit for approval');
             }
           },
         }
-      : status === 1
+      : selectedSegment === 1
       ? {
           approvalRequest: () => console.log('Approval Request clicked'),
           sendApprovalRequest: () => setOpenApprove(1),
@@ -170,11 +168,6 @@ const UncollectedPayments = ({ status }) => {
             setOpenApprove(5);
             setWorkFlowChange(Date.now());
           },
-        }
-      : {}),
-    ...(status === 2
-      ? {
-          postReceiptToLedger: () => handlePostReceiptToLedger(),
         }
       : {}),
   };
@@ -219,13 +212,17 @@ const UncollectedPayments = ({ status }) => {
       message.error('An error occurred while posting receipts to ledger.');
     }
   };
-  const submitBudgetForApproval = async () => {
+  const submitBudgetForApproval = async (id) => {
     try {
       const response = await apiService.post(
-        financeEndpoints.submitReturnForApproval(clickedItem.id)
+        financeEndpoints.submitReturnForApproval(id)
       );
-      if (response.status === 200 && response.data.succeeded) {
-        message.success('Return submitted for approval successfully');
+      if (
+        response.status === 200 &&
+        response.data.succeeded &&
+        res.data.messages[0]
+      ) {
+        message.success(res.data.messages[0]);
         if (openBaseCard) {
           setOpenBaseCard(false);
         }
@@ -596,6 +593,15 @@ const UncollectedPayments = ({ status }) => {
       },
     },
     {
+      field: 'documentNo',
+      headerName: 'Document No',
+      headerClass: 'prefix-header',
+      flex: 1,
+      cellRenderer: (params) => {
+        return <p className="text-primary ">{params.value}</p>;
+      },
+    },
+    {
       field: 'pensionerNo',
       headerName: 'Pensioner No',
       headerClass: 'prefix-header',
@@ -604,6 +610,7 @@ const UncollectedPayments = ({ status }) => {
         return <p className="text-primary font-semibold">{params.value}</p>;
       },
     },
+
     {
       field: 'pensionerName',
       headerName: 'Pensioner Name',
@@ -795,9 +802,9 @@ const UncollectedPayments = ({ status }) => {
         setOpenApprove={setOpenApprove}
         documentNo={
           selectedRows.length > 0
-            ? selectedRows.map((item) => item.documentNo)
+            ? selectedRows.map((item) => item.returnDocumentNo)
             : clickedItem
-            ? [clickedItem.documentNo]
+            ? [clickedItem.returnDocumentNo]
             : []
         }
       />
@@ -927,6 +934,17 @@ const UncollectedPayments = ({ status }) => {
           selectedRows={selectedRows}
           onSelectionChange={(selectedRows) => setSelectedRows(selectedRows)}
           openApproveDialog={openApprove}
+          segmentFilterParameter="stage"
+          segmentOptions={[
+            { value: 0, label: 'New' },
+            { value: 1, label: 'Pending Approval' },
+            { value: 2, label: 'Approved' },
+            { value: 3, label: 'Pensioner Notified' },
+            { value: 4, label: 'Required Details Submitted' },
+            { value: 5, label: 'Paid' },
+            { value: 6, label: 'Rejected' },
+            { value: 7, label: 'Reverted' },
+          ]}
         />
       </div>
     </div>
