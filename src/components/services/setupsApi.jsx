@@ -579,6 +579,12 @@ const endpoints = {
 
   getGeneralSenders: '/api/Setups/GetGeneralPolicyMatterSenders',
   createGeneralSenders: '/api/Setups/CreateGeneralPolicyMattersSender',
+  submitClaimSuspensionOrResumptionRequest:
+    '/api/Claims/SubmitClaimSuspensionOrResumptionRequest',
+  getClaimSuspensionOrResumptionRequest:
+    '/api/Claims/GetClaimSuspensionOrResumptionRequests',
+
+  // getClaimById,
 };
 
 export const apiService = {

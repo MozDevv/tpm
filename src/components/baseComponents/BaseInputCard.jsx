@@ -46,6 +46,7 @@ import { baseInputValidator } from './BaseInputValidator';
 import BaseCollapse from './BaseCollapse';
 import BaseEdmsViewer from './BaseEdmsViewer';
 import assessEndpoints, { assessApiService } from '../services/assessmentApi';
+import BaseFileViewer from './BaseFileViewer';
 
 const BaseInputCard = ({
   handlePreview,
@@ -817,7 +818,7 @@ const BaseInputCard = ({
                     const searchType =
                       formData.pensionerIdentifierType === 0
                         ? 'national_id'
-                        : 'passport_number';
+                        : 'passport_no';
 
                     const searchInput = formData.pensionerIdentificationNumber;
 
@@ -1306,10 +1307,17 @@ const BaseInputCard = ({
             </div>
           ))}
       </div>
-      {previewOpen && (
+      {previewOpen && clickedItem && (
         <BaseEdmsViewer
           doc={previewContent}
           onClose={() => setPreviewOpen(false)}
+        />
+      )}
+
+      {previewOpen && previewContent && !clickedItem && (
+        <BaseFileViewer
+          file={previewContent}
+          onClose={() => setPreviewOpen(false)} // Close the viewer
         />
       )}
 
@@ -1515,14 +1523,7 @@ const BaseInputCard = ({
                                       return;
                                     }
 
-                                    setPreviewContent(
-                                      <embed
-                                        src={URL.createObjectURL(file)}
-                                        type="application/pdf"
-                                        width="100%"
-                                        height="1000px"
-                                      />
-                                    );
+                                    setPreviewContent(file);
                                     setPreviewOpen(true);
                                   }}
                                 >

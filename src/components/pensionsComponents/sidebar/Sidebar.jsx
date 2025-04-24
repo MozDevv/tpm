@@ -145,6 +145,10 @@ export const menuItems = [
         ],
       },
       {
+        title: 'Claims Suspension/Resumption Requests',
+        path: '/pensions/claims/suspension-resumption-requests',
+      },
+      {
         title: 'Claims Management',
         path: '/pensions/claims/claims-management',
       },
@@ -728,7 +732,7 @@ export const menuItems = [
         path: '/pensions/customer-relations/policy/parliament-business',
       },
       {
-        title: 'Templates Library',
+        title: 'Documentation Library',
         path: '/pensions/customer-relations/policy/templates-library',
       },
     ],

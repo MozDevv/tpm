@@ -27,6 +27,8 @@ function AssessmentCard({
   viewBreakDown,
   setViewCompleteSummary,
   viewCompleteSummary,
+  childTitle,
+  children,
 }) {
   console.log('clickedItem', clickedItem);
 
@@ -64,13 +66,26 @@ function AssessmentCard({
               style={{ zIndex: 999999999 }}
               tabBarExtraContent={<div className="bg-primary h-1" />} // Custom ink bar style
             >
+              {' '}
+              {children && (
+                <TabPane
+                  tab={
+                    <span className="text-primary font-montserrat">
+                      {childTitle || 'Payment Details'}
+                    </span>
+                  }
+                  key="1"
+                >
+                  <div className="">{children}</div>
+                </TabPane>
+              )}
               <TabPane
                 tab={
                   <span className="text-primary font-montserrat">
                     Computation
                   </span>
                 }
-                key="1"
+                key={children ? '18' : '1'}
               >
                 <div className="">
                   <AssessmentDetails

@@ -241,8 +241,8 @@ const TemplatesLibrary = () => {
         transformData={transformData}
         pageSize={30}
         handlers={handlers}
-        breadcrumbTitle="Templates Library"
-        currentTitle="Templates Library"
+        breadcrumbTitle="Documentation Library"
+        currentTitle="Documentation Library"
       />
     </div>
   );

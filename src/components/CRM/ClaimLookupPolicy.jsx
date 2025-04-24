@@ -18,10 +18,13 @@ import {
   Dialog,
   IconButton,
   Tooltip,
+  TextareaAutosize,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
 import { Alert, message } from 'antd';
 import DocumentHistory from './DocumentHistory';
-import { ArrowBack, OpenInFull } from '@mui/icons-material';
+import { ArrowBack, Close, OpenInFull } from '@mui/icons-material';
 import BaseExpandCard from '../baseComponents/BaseExpandCard';
 import assessEndpoints, { assessApiService } from '../services/assessmentApi';
 import AssessmentCard from '../financeComponents/payments/PensionerDetailsTabs';
@@ -47,9 +50,10 @@ const ClaimLookupPolicy = () => {
   const [openClaimInquiryDialpog, setOpenClaimInquiryDialog] =
     React.useState(false);
   const [fetchedData, setFetchedData] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const handleSearch = async () => {
+    setLoading(true);
     if (!formData.searchType || !formData.searchInput) {
       message.error('Please select a filter and provide a value to search.');
       return;
@@ -85,12 +89,87 @@ const ClaimLookupPolicy = () => {
       message.error(
         'An error occurred while fetching the claim inquiry. Please try again.'
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [openComplaintDialog, setOpenComplaintDialog] = React.useState(false);
+  const [comments, setComments] = React.useState('');
+  const [openBaseCard, setOpenBaseCard] = React.useState(false);
+
+  const baseCardHandlers = {
+    submitClaimSuspensionRequest: () => {
+      setOpenComplaintDialog(true);
+    },
+  };
+
+  const handleSumbitRequest = async () => {
+    if (!fetchedData?.id || !comments) {
+      message.error('Please provide a valid claim and reason for suspension.');
+      return;
+    }
+
+    const requestData = {
+      suspendRequests: [
+        {
+          claim_id: fetchedData.id, // Use the fetched claim ID
+          reason: comments, // Use the comments as the reason
+          request_type: 0, // Assuming 0 is the request type for suspension
+        },
+      ],
+    };
+
+    try {
+      const response = await apiService.post(
+        endpoints.submitClaimSuspensionOrResumptionRequest,
+        requestData
+      );
+
+      if (response.data.succeeded && response.data.messages[0]) {
+        message.success(response.data.messages[0]);
+        setOpenComplaintDialog(false); // Close the dialog
+        setComments(''); // Clear the comments
+      } else if (
+        response.data.succeeded === false &&
+        response.data.messages[0]
+      ) {
+        message.error(response.data.messages[0]);
+      } else {
+        message.error(
+          response.data?.message || 'Failed to submit the suspension request.'
+        );
+      }
+    } catch (error) {
+      console.error('Error submitting claim suspension request:', error);
+      message.error(
+        error.response?.data?.message ||
+          'An error occurred while submitting the suspension request. Please try again.'
+      );
     }
   };
 
   return (
     <div className="bg-white mt-3 px-10 py-4">
-      {/* Title and Subtitle */}
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.modal + 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+        onClose={() => setLoading(false)}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+        <Typography variant="h6" component="div">
+          Fetching Claim Details
+          <Box component="span" sx={{ animation: 'blink 1.4s infinite' }}>
+            ...
+          </Box>
+        </Typography>
+      </Backdrop>
       <BaseCard
         openBaseCard={openClaimInquiryDialpog}
         setOpenBaseCard={setOpenClaimInquiryDialog}
@@ -100,7 +179,77 @@ const ClaimLookupPolicy = () => {
         isUserComponent={false}
         retireeId={fetchedData?.prospectivePensionerId}
         isClaim={true}
+        handlers={baseCardHandlers}
       >
+        <Dialog
+          open={openComplaintDialog}
+          onClose={() => setOpenComplaintDialog(false)}
+          maxWidth="sm"
+          fullWidth
+          //add padding to the dialog
+          PaperProps={{
+            style: {
+              padding: '32px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            },
+          }}
+        >
+          <div className="flex items-center mb-5">
+            <p className="text-primary relative font-semibold text-lg ">
+              Submit Claim Suspension Request
+            </p>
+            <IconButton
+              sx={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                backgroundColor: 'white',
+
+                borderRadius: '50%',
+                padding: '3px',
+                marginRight: '10px',
+                color: '#006990',
+              }}
+              onClick={() => setOpenComplaintDialog(false)}
+            >
+              <Close sx={{ color: '#006990' }} />
+            </IconButton>
+          </div>
+
+          <div>
+            <label
+              htmlFor="comments"
+              className=" text-xs font-medium text-gray-700"
+            >
+              Add Comments
+            </label>
+            <TextareaAutosize
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              required
+              error={errors.status}
+              minRows={3}
+              style={{
+                fontSize: '13px',
+                width: '100%',
+                padding: '9px',
+                borderRadius: '4px',
+                border: '1px solid gray',
+              }}
+            />
+          </div>
+          <div className="mt-5">
+            <Button
+              onClick={handleSumbitRequest}
+              variant="contained"
+              fullWidth
+              color="primary"
+            >
+              Submit Request
+            </Button>
+          </div>
+        </Dialog>
         <AssessmentCard
           claim={
             fetchedData

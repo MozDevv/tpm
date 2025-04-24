@@ -701,10 +701,12 @@ const BaseInputTable = ({
       }
     });
 
-    console.log(
-      'IFormData',
-      useFormData ? `${useFormData} muli` : formattedFormData
-    );
+    // Remove fields with null values
+    Object.keys(formattedFormData).forEach((key) => {
+      if (formattedFormData[key] === null) {
+        delete formattedFormData[key];
+      }
+    });
 
     try {
       let requestData;
@@ -1229,6 +1231,8 @@ const BaseInputTable = ({
         const { colDef, data, newValue } = params;
         const field = colDef.field;
         const rowIndex = params.node.rowIndex; // Get the index of the row being edited
+
+        console.log('Data to send', data);
 
         if (field === 'dob' && parentDob && data.dob) {
           const relationshipField = fields.find(

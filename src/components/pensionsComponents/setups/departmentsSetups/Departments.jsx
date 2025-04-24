@@ -11,7 +11,7 @@ import { formatDate } from '@/utils/dateFormatter';
 const columnDefs = [
   {
     field: 'no',
-    headerName: 'No',
+    headerName: '',
     headerClass: 'prefix-header',
     width: 90,
     filter: true,

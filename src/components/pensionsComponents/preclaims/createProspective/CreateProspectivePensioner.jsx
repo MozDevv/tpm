@@ -115,7 +115,7 @@ function CreateProspectivePensioner({
                     General Information
                   </span>
                 }
-                key="17"
+                key={clickedItem?.claim_type !== 0 ? '17' : '1'}
                 style={{ zIndex: 1 }}
               >
                 <div className="">

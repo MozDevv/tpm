@@ -45,13 +45,13 @@ const GeneralCase = () => {
       filter: true,
       flex: 1,
     },
-    {
-      field: 'partyName',
-      headerName: 'Source',
-      headerClass: 'prefix-header',
-      filter: true,
-      flex: 1,
-    },
+    // {
+    //   field: 'partyName',
+    //   headerName: 'Source',
+    //   headerClass: 'prefix-header',
+    //   filter: true,
+    //   flex: 1,
+    // },
 
     {
       field: 'nature',
@@ -220,7 +220,7 @@ const GeneralCase = () => {
       type: 'text',
       required: true,
     },
-    { name: 'partyName', label: 'Source', type: 'text', required: true },
+    // { name: 'partyName', label: 'Source', type: 'text', required: true },
     {
       name: 'postalCodeId',
       label: 'Postal Code',

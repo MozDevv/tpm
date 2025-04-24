@@ -734,6 +734,12 @@ const ListNavigation = ({
       action: 'scheduleForNotification',
       requiredPermissions: [],
     },
+    {
+      name: 'Submit Claim Suspension Request',
+      icon: IosShare,
+      action: 'submitClaimSuspensionRequest',
+      requiredPermissions: [],
+    },
   ];
 
   const collapseParents = [

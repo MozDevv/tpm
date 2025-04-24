@@ -34,6 +34,7 @@ import {
   useIgEditedStore,
   useRevisionPayloadFetchedStore,
 } from '@/zustand/store';
+import ViewBeneficiaries from '@/components/pensionsComponents/preclaims/ViewBeneficiaries';
 
 const { TabPane } = Tabs;
 
@@ -435,6 +436,18 @@ function AssessmentCard({
                         </div>
                       </TabPane>
                     )}
+
+                    <TabPane
+                      tab={
+                        <span className="text-primary font-montserrat">
+                          Beneficiaries & Guardian Details
+                        </span>
+                      }
+                      key="5"
+                      style={{ zIndex: 1 }}
+                    >
+                      <ViewBeneficiaries clickedItem={clickedItem} />
+                    </TabPane>
 
                     <TabPane
                       tab={

@@ -364,6 +364,12 @@ const CourtCase = () => {
       type: 'text',
     },
     {
+      name: 'nextMentionDate',
+      label: 'Next Mention Date',
+      type: 'date',
+      required: false,
+    },
+    {
       name: 'status',
       label: 'Status',
       type: 'select',

@@ -25,6 +25,8 @@ const columnDefs = [
     headerName: 'Document No',
     filter: true,
     flex: 1,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
     cellRenderer: (params) => {
       return (
         <div className=" text-primary underline font-semibold">
