@@ -164,7 +164,8 @@ const Deductions = ({ id, clickedItem2, enabled, sectionIndex }) => {
         getApiService={apiService.get}
         postApiService={apiService.post}
         putApiService={apiService.put}
-        getEndpoint={endpoints.getDeductions(id)}
+        // getEndpoint={endpoints.getDeductions(id)}
+        getEndpoint={endpoints.getDeductionsRefunds(id)}
         postEndpoint={endpoints.createDeductions}
         putEndpoint={endpoints.updateGovernmentSalary}
         passProspectivePensionerId={true}

@@ -305,6 +305,8 @@ const endpoints = {
 
   getDeductions: (id) =>
     `/api/ProspectivePensioners/GetPensionerDeductions?prospective_pensioner_id=${id}`,
+  getDeductionsRefunds: (id) =>
+    `/api/ProspectivePensioners/GetPensionerDeductionsRefund?prospective_pensioner_id=${id}`,
 
   createDeductions: '/api/ProspectivePensioners/CreatePensionerDeduction',
 

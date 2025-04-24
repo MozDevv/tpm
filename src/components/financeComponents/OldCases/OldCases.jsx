@@ -534,7 +534,7 @@ const OldCases = () => {
         segmentOptions={[
           { value: 0, label: 'New' },
           { value: 1, label: 'Pending Approval' },
-          { value: 2, label: 'Approved' },
+          // { value: 2, label: 'Approved' },
           { value: 3, label: 'Pensioner Notified' },
           { value: 4, label: 'Required Details Submitted' },
           { value: 5, label: 'Paid' },
