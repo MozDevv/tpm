@@ -64,6 +64,7 @@ function GeneralJournalCard({
   useEffect(() => {
     fetchNewOptions();
   }, []);
+  const [inputData, setInputData] = useState({});
   const tableFields = [
     {
       value: 'accountTypeId',
@@ -95,16 +96,18 @@ function GeneralJournalCard({
       label: 'Account No',
       type: 'select',
       required: true,
-      // options: selectedAccountTypeId
-      //   ? selectedAccountTypeId.map((acc) => {
-      //       return {
-      //         id: acc.id,
-      //         name: acc.accountNo,
-      //         accountName: acc.name,
-      //       };
-      //     })
-      //   : allOptions && allOptions,
-      options: allOptions && allOptions,
+      options:
+        inputData && inputData?.accountTypeId
+          ? allOptions
+              .filter((acc) => acc.accountType === inputData.accountTypeId)
+              .map((acc) => {
+                return {
+                  id: acc.id,
+                  name: acc.accountNo,
+                  accountName: acc.name,
+                };
+              })
+          : allOptions && allOptions,
     },
     {
       value: 'accountName',
@@ -183,6 +186,7 @@ function GeneralJournalCard({
                   {' '}
                   {/* Make this grow too */}
                   <BaseFinanceInputTable
+                    setInputData={setInputData}
                     allOptions={allOptions}
                     setSelectedAccountTypeId={setSelectedAccountTypeId}
                     selectedAccountTypeId={selectedAccountTypeId}
@@ -203,6 +207,7 @@ function GeneralJournalCard({
                     passProspectivePensionerId={true}
                   />
                 </div>
+                {JSON.stringify(inputData)}
 
                 <div className="flex justify-between mt-10">
                   <div className="flex flex-row justify-between w-full">

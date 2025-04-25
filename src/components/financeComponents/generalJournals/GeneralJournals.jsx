@@ -111,16 +111,11 @@ const GeneralJournals = () => {
   const [openPostToGL, setOpenPostToGL] = React.useState(false);
   const [openBaseCard, setOpenBaseCard] = React.useState(false);
   const handlers = {
-    // filter: () => console.log("Filter clicked"),
-    // openInExcel: () => console.log("Export to Excel clicked"),
     create: () => {
       setOpenBaseCard(true);
       setClickedItem(null);
     },
-    edit: () => console.log('Edit clicked'),
-    delete: () => console.log('Delete clicked'),
-    reports: () => console.log('Reports clicked'),
-    notify: () => console.log('Notify clicked'),
+
     postToGL: () => selectedRows.length > 0 && setOpenPostToGL(true),
   };
 
@@ -137,10 +132,7 @@ const GeneralJournals = () => {
       // setOpenBaseCard(true);
       // setClickedItem(item);
     },
-    delete: (item) => {
-      //  setOpenBaseCard(true);
-      //  setClickedItem(item);
-    },
+
     createConstituency: () => {
       setDialogType('branch');
       setOpenAction(true);

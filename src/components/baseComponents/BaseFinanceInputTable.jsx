@@ -616,7 +616,7 @@ const BaseFinanceInputTable = ({
         // Set the cellEditorParams for your custom editor
         columnDef.cellEditorParams = (params) => {
           const { data } = params.node;
-          const accountTypeId = data.accountTypeId || data.accountType;
+          const accountTypeId = data.accountTypeIwlekd || data.accountType;
 
           // Map the options to include both id and name
           const options = col.options.map((option) => ({
