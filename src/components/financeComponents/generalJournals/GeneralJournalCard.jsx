@@ -97,14 +97,14 @@ function GeneralJournalCard({
       type: 'select',
       required: true,
       options:
-        inputData && inputData?.accountTypeId
+        inputData && inputData?.accountTypeId !== undefined
           ? allOptions
               .filter((acc) => acc.accountType === inputData.accountTypeId)
               .map((acc) => {
                 return {
                   id: acc.id,
-                  name: acc.accountNo,
-                  accountName: acc.name,
+                  name: acc.name,
+                  accountName: acc.accountName,
                 };
               })
           : allOptions && allOptions,
@@ -207,7 +207,7 @@ function GeneralJournalCard({
                     passProspectivePensionerId={true}
                   />
                 </div>
-                {JSON.stringify(inputData)}
+                {/* {JSON.stringify(allOptions)} */}
 
                 <div className="flex justify-between mt-10">
                   <div className="flex flex-row justify-between w-full">
